@@ -1497,6 +1497,36 @@ attribute must do as described below, depending on the
  <dd>Do nothing.
 </dl>
 
+<hr>
+
+<p>When a user agent is to <dfn title=concept-ensure-samedoc>ensure</dfn> that
+two <code>Node</code>s, <var title>old</var> and <var title>new</var>, are in
+the same <code>Document</code>, it must run the following steps:
+
+<ol>
+ <li><p>If <var title>new</var> is a <code>DocumentType</code> and its
+ <code title=dom-Node-ownerDocument>ownerDocument</code> is not null, throw a
+ <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
+ exception and terminate these steps.
+
+ <li><p>If <var title>new</var> is a <code>DocumentType</code>, set its
+ <code title=dom-Node-ownerDocument>ownerDocument</code> to
+ <var title>old</var>'s <code title=dom-Node-ownerDocument>ownerDocument</code>.
+
+ <li><p>If <var title>new</var> is not a <code>DocumentType</code>, let
+ <var title>newChild</var> be the result of invoking <var title>old</var>'s
+ <code title=dom-Node-ownerDocument>ownerDocument</code>'s
+ <code title=dom-Document-adoptNode>adoptNode</code> method with
+ <var title>newChild</var> as its argument.
+
+ <li><p>If <var title>old</var>'s
+ <code title=dom-Node-ownerDocument>ownerDocument</code> and
+ <var title>new</var>'s
+ <code title=dom-Node-ownerDocument>ownerDocument</code> are not the same,
+ throw a
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+</ol>
+
 <p>The
 <dfn title=dom-Node-insertBefore><code>insertBefore(<var title>newChild</var>, <var title>refChild</var>)</code></dfn>
 method must run these steps:
@@ -1508,47 +1538,35 @@ method must run these steps:
  and terminate these steps.
 
  <li><p>If <var title>refChild</var> is null, return the result of invoking
- <span>context object</span>'s
+ the <span>context object</span>'s
  <code title=dom-Node-appendChild>appendChild</code> with
  <var title>newChild</var> as argument and terminate these steps.
 
  <li><p>If <var title>refChild</var> is not a child of the
- <span>context object</span>, then throw a
+ <span>context object</span>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
 
  <li><p>If <var title>newChild</var> is the <span>context object</span> or an
  <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span> throw a
+ <span>context object</span>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
  <!-- XXXhierarchy -->
 
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node and its
- <code title=dom-Node-ownerDocument>ownerDocument</code> is not null throw a
- <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
- exception and terminate these steps.
+ <li><p><span title=concept-ensure-samedoc>Ensure</span> the
+ <span>context object</span> and <var title>newChild</var> are in the same
+ <code>Document</code>.
 
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node set its
- <code title=dom-Node-ownerDocument>ownerDocument</code> to the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>.
-
- <li><p>If <var title>newChild</var> is not a <code>DocumentType</code> node let
- <var title>newChild</var> be the result of invoking the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>
- <code title=dom-Document-adoptNode>adoptNode</code> method with
- <var title>newChild</var> as its argument.
-
- <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code> node,
+ <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code>,
  insert the children of <var title>newChild</var> in the
  <span>context object</span>, in <span>tree order</span>, so that the last
  child becomes the previous sibling of <var title>refChild</var>.
 
  <li><p>Otherwise insert <var title>newChild</var> in the
- <span>context object</span> as the previous sibling of <var title>refChild</var>.
+ <span>context object</span> as the previous sibling of
+ <var title>refChild</var>.
 
  <li><p>Return <var title>newChild</var>.
 </ol>
@@ -1564,34 +1582,21 @@ method must run these steps:
  and terminate these steps.
 
  <li><p>If <var title>oldChild</var> is not a child of the
- <span>context object</span>, then throw a
+ <span>context object</span>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
 
  <li><p>If <var title>newChild</var> is the <span>context object</span> or an
  <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span> throw a
+ <span>context object</span>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
  <!-- XXXhierarchy -->
 
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node and its
- <code title=dom-Node-ownerDocument>ownerDocument</code> is not null throw a
- <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
- exception and terminate these steps.
-
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node set its
- <code title=dom-Node-ownerDocument>ownerDocument</code> to the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>.
-
- <li><p>If <var title>newChild</var> is not a <code>DocumentType</code> node let
- <var title>newChild</var> be the result of invoking the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>
- <code title=dom-Document-adoptNode>adoptNode</code> method with
- <var title>newChild</var> as its argument.
+ <li><p><span title=concept-ensure-samedoc>Ensure</span> the
+ <span>context object</span> and <var title>newChild</var> are in the same
+ <code>Document</code>.
 
  <li><p>Let <var title>refChild</var> be <var title>oldChild</var>'s
  first <span title=concept-tree-next-sibling>next sibling</span>.
@@ -1638,28 +1643,15 @@ method must run these steps:
 
  <li><p>If <var title>newChild</var> is the <span>context object</span> or an
  <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span> throw a
+ <span>context object</span>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
  <!-- XXXhierarchy -->
 
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node and its
- <code title=dom-Node-ownerDocument>ownerDocument</code> is not null throw a
- <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
- exception and terminate these steps.
-
- <li><p>If <var title>newChild</var> is a <code>DocumentType</code> node set its
- <code title=dom-Node-ownerDocument>ownerDocument</code> to the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>.
-
- <li><p>If <var title>newChild</var> is not a <code>DocumentType</code> node let
- <var title>newChild</var> be the result of invoking the
- <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>
- <code title=dom-Document-adoptNode>adoptNode</code> method with
- <var title>newChild</var> as its argument.
+ <li><p><span title=concept-ensure-samedoc>Ensure</span> the
+ <span>context object</span> and <var title>newChild</var> are in the same
+ <code>Document</code>.
 
  <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code> node,
  append the children of <var title>newChild</var> to the
