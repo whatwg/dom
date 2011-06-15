@@ -3443,9 +3443,9 @@ or false otherwise.
 
 
 <h3 id="interface-domtokenlist"><span class="secno">7.2 </span>Interface <code><a href="#domtokenlist">DOMTokenList</a></code></h3>
-<p>The <code><a href="#domtokenlist">DOMTokenList</a></code> interface represents an interface
-to an underlying string that consists of a <a href="#set-of-space-separated-tokens">set of
-space-separated tokens</a>.
+<p>The <code><a href="#domtokenlist">DOMTokenList</a></code> interface represents an interface to an
+<dfn id="concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</dfn> that
+consists of a <a href="#set-of-space-separated-tokens">set of space-separated tokens</a>.
 
 <p class="note"><code><a href="#domtokenlist">DOMTokenList</a></code> objects are always
 <a href="#case-sensitive">case-sensitive</a>, even when the underlying string might
@@ -3502,24 +3502,39 @@ ordinarily be treated in a case-insensitive manner.
 
 <div class="impl">
 
-<p>The <dfn id="dom-domtokenlist-length" title="dom-DOMTokenList-length"><code>length</code></dfn>
-attribute must return the number of tokens that result from <a href="#split-a-string-on-spaces" title="split a string on spaces">splitting the underlying string on
-spaces</a>. This is the <var title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></var>.
+<p>The <dfn id="dom-domtokenlist-length" title="dom-DOMTokenList-length"><code>length</code></dfn> attribute
+must return the number of tokens that result from
+<a href="#split-a-string-on-spaces" title="split a string on spaces">splitting</a> the
+<a href="#context-object">context object</a>'s
+<a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
+spaces.
 
 <p>The object's <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-supported-property-indices">supported property indices</a>
-are the numbers in the range zero to
-<span title=""><var title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></var>&minus;1</span>,
-unless the <var title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></var> is zero, in which
-case there are no
-<a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-supported-property-indices">supported property indices</a>.
+are the numbers in the range zero to the <a href="#context-object">context object</a>'s
+<code title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></code>&minus;1, unless the
+<a href="#context-object">context object</a>'s
+<code title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></code> is zero, in which case there
+are no <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-supported-property-indices">supported property indices</a>.
 
 <p>The
 <dfn id="dom-domtokenlist-item" title="dom-DOMTokenList-item"><code>item(<var title="">index</var>)</code></dfn>
-method must
-<a href="#split-a-string-on-spaces" title="split a string on spaces">split the underlying string on spaces</a>,
-preserving the order of the tokens as found in the underlying string, and then
-return the <var title="">index</var>th item in this list. If <var title="">index</var>
-is equal to or greater than the number of tokens, then the method must return null.
+method must run the following steps:
+
+<ol>
+ <li>If <var title="">index</var> is equal to or greater than the
+ <a href="#context-object">context object</a>'s
+ <code title="dom-DOMTokenList-length"><a href="#dom-domtokenlist-length">length</a></code>, then return null and
+ terminate these steps.
+
+ <li><a href="#split-a-string-on-spaces" title="split a string on spaces">Split</a> the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
+ spaces, preserving the order of the tokens as found in the
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>, to
+ get the list of tokens.
+
+ <li>Return the <var title="">index</var>th item in this list.
+</ol>
 
 <p class="example">For example, if the string is "<code title="">a b a c</code>"
 then there are four tokens: the token with index 0 is "<code title="">a</code>",
@@ -3528,116 +3543,122 @@ the token with index 1 is "<code title="">b</code>", the token with index 2 is
 
 <p>The
 <dfn id="dom-domtokenlist-contains" title="dom-DOMTokenList-contains"><code>contains(<var title="">token</var>)</code></dfn>
-method must run the following algorithm:
+method must run the following steps:
 
 <ol>
- <li>If the <var title="">token</var> argument is the empty string, then throw a
+ <li>If <var title="">token</var> is the empty string, then throw a
  <code title="dom-DOMException-SYNTAX_ERR"><a href="#dom-domexception-syntax_err">SYNTAX_ERR</a></code> exception and
  terminate these steps.
 
- <li>If the <var title="">token</var> argument contains any
+ <li>If <var title="">token</var> contains any
  <a href="#space-character" title="space character">space characters</a>, then throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
 
- <li>Otherwise,
- <a href="#split-a-string-on-spaces" title="split a string on spaces">split the underlying string on spaces</a>
- to get the list of tokens in the object's underlying string.
+ <li><a href="#split-a-string-on-spaces" title="split a string on spaces">Split</a> the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
+ spaces to get the list of tokens.
 
- <li>If the token indicated by <var title="">token</var> is a
- <a href="#case-sensitive">case-sensitive</a> match for one of the tokens in the object's
- underlying string then return true and terminate these steps.
-
- <li>Otherwise, return false.
+ <li>Return whether <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a>
+ match for one of the tokens in the list found in the previous step.
 </ol>
 
 <p>The
 <dfn id="dom-domtokenlist-add" title="dom-DOMTokenList-add"><code>add(<var title="">token</var>)</code></dfn>
-method must run the following algorithm:
+method must run the following steps:
 
 <ol>
- <li>If the <var title="">token</var> argument is the empty string, then throw a
+ <li>If <var title="">token</var> is the empty string, then throw a
  <code title="dom-DOMException-SYNTAX_ERR"><a href="#dom-domexception-syntax_err">SYNTAX_ERR</a></code> exception and
  terminate these steps.
 
- <li>If the <var title="">token</var> argument contains any
+ <li>If <var title="">token</var> contains any
  <a href="#space-character" title="space character">space characters</a>, then throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
 
- <li>Otherwise,
- <a href="#split-a-string-on-spaces" title="split a string on spaces">split the underlying string on spaces</a>
- to get the list of tokens in the object's underlying string.
+ <li><a href="#split-a-string-on-spaces" title="split a string on spaces">Split</a> the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
+ spaces to get the list of tokens.
 
  <li>If the given <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match
- for one of the tokens in the <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying
- string then terminate these steps.
+ for one of the tokens in the list found in the previous step, then terminate
+ these steps.
 
- <li>Otherwise, if the <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying string is
- not the empty string and the last character of that string is not a
- <a href="#space-character">space character</a>, then append a U+0020 SPACE character to the end
- of that string.
+ <li>If the <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> is not
+ the empty string and the last character of that string is not a
+ <a href="#space-character">space character</a>, then append a U+0020 SPACE character to that
+ string.
 
- <li>Append the value of <var title="">token</var> to the end of the
- <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying string.
+ <li>Append <var title="">token</var> to the <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>.
 </ol>
 
 <p>The
 <dfn id="dom-domtokenlist-remove" title="dom-DOMTokenList-remove"><code>remove(<var title="">token</var>)</code></dfn>
-method must run the following algorithm:
+method must run the following steps:
 
 <ol>
- <li>If the <var title="">token</var> argument is the empty string, then throw a
+ <li>If <var title="">token</var> is the empty string, then throw a
  <code title="dom-DOMException-SYNTAX_ERR"><a href="#dom-domexception-syntax_err">SYNTAX_ERR</a></code> exception and
  terminate these steps.
 
- <li>If the <var title="">token</var> argument contains any
+ <li>If <var title="">token</var> contains any
  <a href="#space-character" title="space character">space characters</a>, then throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
 
- <li>Otherwise,
- <a href="#remove-a-token-from-a-string" title="remove a token from a string">remove the given <var title="">token</var> from the underlying string</a>.
+ <li><a href="#remove-a-token-from-a-string" title="remove a token from a string">Remove</a>
+ <var title="">token</var> from  the <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>.
 </ol>
 
 <p>The
 <dfn id="dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle"><code>toggle(<var title="">token</var>)</code></dfn>
-method must run the following algorithm:
+method must run the following steps:
 
 <ol>
- <li>If the <var title="">token</var> argument is the empty string, then throw a
+ <li>If <var title="">token</var> is the empty string, then throw a
  <code title="dom-DOMException-SYNTAX_ERR"><a href="#dom-domexception-syntax_err">SYNTAX_ERR</a></code> exception and
  terminate these steps.
 
- <li>If the <var title="">token</var> argument contains any
+ <li>If <var title="">token</var> contains any
  <a href="#space-character" title="space character">space characters</a>, then throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
 
- <li>Otherwise,
- <a href="#split-a-string-on-spaces" title="split a string on spaces">split the underlying string on spaces</a>
- to get the list of tokens in the object's underlying string.
+ <li><a href="#split-a-string-on-spaces" title="split a string on spaces">Split</a> the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
+ spaces to get the list of tokens.
 
- <li>If the given <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match
- for one of the tokens in the <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying
- string then
- <a href="#remove-a-token-from-a-string" title="remove a token from a string">remove the given <var title="">token</var> from the underlying string</a>,
+ <li>If <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match for one of
+ the tokens in the list found in the previous step, then
+ <a href="#remove-a-token-from-a-string" title="remove a token from a string">remove</a>
+ <var title="">token</var> from  the <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>,
  return false and terminate these steps.
 
- <li>Otherwise, if the <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying string is
+ <li>If the <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> is
  not the empty string and the last character of that string is not a
- <a href="#space-character">space character</a>, then append a U+0020 SPACE character to the end
- of that string.
+ <a href="#space-character">space character</a>, then append a U+0020 SPACE character to that
+ string.
 
- <li>Append the value of <var title="">token</var> to the end of the
- <code><a href="#domtokenlist">DOMTokenList</a></code> object's underlying string.
+ <li>Append the value of <var title="">token</var> to the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>.
 
  <li>Return true.
 </ol>
 
-<p>Objects implementing the <code><a href="#domtokenlist">DOMTokenList</a></code> interface must
-<dfn id="dom-domtokenlist-tostring" title="dom-DOMTokenList-toString">stringify</dfn> to the object's
-underlying string representation.
+<p><code><a href="#domtokenlist">DOMTokenList</a></code> objects must
+<dfn id="dom-domtokenlist-tostring" title="dom-DOMTokenList-toString">stringify</dfn> to the
+<a href="#context-object">context object</a>'s
+<a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>.
 
 </div>
 
