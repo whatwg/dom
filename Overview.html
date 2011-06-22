@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-18-june-2011">Editor's Draft 18 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-22-june-2011">Editor's Draft 22 June 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -91,7 +91,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 18 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 22 June 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -670,7 +670,14 @@ prefer.
   readonly attribute boolean <a href="#dom-event-istrusted" title="dom-Event-isTrusted">isTrusted</a>;
   readonly attribute DOMTimeStamp <a href="#dom-event-timestamp" title="dom-Event-timeStamp">timeStamp</a>;
 
+  void <a href="#dom-event-init" title="dom-Event-init">init</a>(<a href="#initevent">InitEvent</a> <var title="">initEventDict</var>);
   void <a href="#dom-event-initevent" title="dom-Event-initEvent">initEvent</a>(DOMString <var title="">type</var>, boolean <var title="">bubbles</var>, boolean <var title="">cancelable</var>);
+};
+
+dictionary <dfn id="initevent">InitEvent</dfn> {
+  DOMString <a href="#dom-initevent-type" title="dom-InitEvent-type">type</a> = "";
+  boolean <a href="#dom-initevent-bubbles" title="dom-InitEvent-bubbles">bubbles</a> = false;
+  boolean <a href="#dom-initevent-cancelable" title="dom-InitEvent-cancelable">cancelable</a> = false;
 };</pre>
 
 <p>An <dfn id="concept-event" title="concept-event">event</dfn> allows for signaling that something has occurred. E.g. that an image has completed downloading.</p>
@@ -754,6 +761,47 @@ otherwise.
 <p class="XXX">The <dfn id="dom-event-timestamp" title="dom-Event-timeStamp"><code>timeStamp</code></dfn>
 attribute ... <a href="http://www.w3.org/2008/webapps/track/issues/172">More information.</a>
 
+<p>Each <a href="#concept-event" title="concept-event">event</a> <em>interface</em> has an
+associated
+<dfn id="concept-event-init" title="concept-event-init">event initialization dictionary</dfn>. For
+<a href="#concept-event" title="concept-event">events</a> using the <code><a href="#event">Event</a></code>
+interface this is <code><a href="#initevent">InitEvent</a></code>, which is also the dictionary all
+other
+<a href="#concept-event-init" title="concept-event-init">event initialization dictionaries</a>
+inherit from (either directly or indirectly).</p>
+
+<p>Each
+<a href="#concept-event-init" title="concept-event-init">event initialization dictionary</a> also
+defines a <dfn id="concept-event-init-mapping" title="concept-event-init-mapping">mapping</dfn> as to how
+dictionary members map to the <a href="#concept-event" title="concept-event">event</a>.</p>
+
+<p>The <a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
+<code><a href="#initevent">InitEvent</a></code> is as follows:</p>
+
+<dl>
+ <dt><dfn id="dom-initevent-type" title="dom-InitEvent-type"><code>type</code></dfn>
+ <dd>Sets <a href="#concept-event-type" title="concept-event-type">type</a>.
+ <dt><dfn id="dom-initevent-bubbles" title="dom-InitEvent-bubbles"><code>bubbles</code></dfn>
+ <dd>Sets the <a href="#bubble-flag">bubble flag</a> when true, otherwise unsets it.</dd>
+ <dt><dfn id="dom-initevent-cancelable" title="dom-InitEvent-cancelable"><code>cancelable</code></dfn>
+ <dd>Sets the <a href="#cancel-flag">cancel flag</a> when true, otherwise unsets it.</dd>
+</dl>
+<!-- XXX could also do: set when true, unset when false, leave unchanged when not specified. Thoughts? -->
+
+<p>When the <dfn id="dom-event-init" title="dom-Event-init"><code>init(<var title="">initEventDict</var>)</code></dfn>
+method is invoked these steps must be run:</p>
+
+<ol>
+ <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
+ <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
+ <li><p>Unset the <a href="#stop-propagation-flag">stop propagation flag</a>,
+ <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
+ and <a href="#trusted-flag">trusted flag</a>.
+ <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
+ <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the
+ <var title="">initEventDict</var> dictionary.
+</ol>
+
 <p>When the <dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
 method is invoked these steps must be run:</p>
 
@@ -776,9 +824,13 @@ method is invoked these steps must be run:</p>
 <h3 id="interface-customevent"><span class="secno">4.2 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
 <pre class="idl">interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
-  readonly attribute object? <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;
-  void <a href="#dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent">initCustomEvent</a>(DOMString <var title="">type</var>, boolean <var title="">bubbles</var>, boolean <var title="">cancelable</var>, object? <var title="">detail</var>);
-};</pre>
+  readonly attribute object? <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;<!--
+  void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
+};
+
+dictionary <dfn id="initcustomevent">InitCustomEvent</dfn> : <a href="#initevent">InitEvent</a> {
+  object? <a href="#dom-initcustomevent-detail" title="dom-InitCustomEvent-detail">detail</a> = null;
+}</pre>
 
 <p><a href="#concept-event" title="concept-event">Events</a> using the
 <code><a href="#customevent">CustomEvent</a></code> interface can be used for synthetic events that
@@ -791,17 +843,30 @@ need to carry data.</p>
 return <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>, if it is set,
 and null otherwise.
 
-<p>When the <dfn id="dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent"><code>initCustomEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>, <var title="">detail</var>)</code></dfn>
+<p>For <a href="#concept-event" title="concept-event">events</a> using the
+<code><a href="#customevent">CustomEvent</a></code> interface the
+<a href="#concept-event-init" title="concept-event-init">event initialization dictionary</a> is
+<code><a href="#initcustomevent">InitCustomEvent</a></code>. The
+<a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
+<code><a href="#initcustomevent">InitCustomEvent</a></code> is as follows:</p>
+
+<dl>
+ <dt><dfn id="dom-initcustomevent-detail" title="dom-InitCustomEvent-detail"><code>detail</code></dfn>
+ <dd>Sets <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>.
+</dl>
+
+<!--
+<p>When the <dfn title=dom-CustomEvent-initCustomEvent><code>initCustomEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>, <var title>detail</var>)</code></dfn>
 method is invoked these steps must be run:</p>
 
 <ol>
- <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
- <li><p>Invoke <code title="dom-Event-initEvent"><a href="#dom-event-initevent">initEvent()</a></code> with the
+ <li><p>If the <span>dispatch flag</span> is set, terminate these steps.
+ <li><p>Invoke <code title=dom-Event-initEvent>initEvent()</code> with the
  first three arguments.</li>
- <li><p>Set <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a> to the
- <var title="">detail</var> argument.
+ <li><p>Set <span title=concept-CustomEvent-detail>detail</span> to the
+ <var title>detail</var> argument.
 </ol>
-
+-->
 
 <h3 id="interface-eventtarget"><span class="secno">4.3 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
