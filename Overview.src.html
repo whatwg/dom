@@ -617,14 +617,13 @@ prefer.
   readonly attribute boolean <span title=dom-Event-isTrusted>isTrusted</span>;
   readonly attribute DOMTimeStamp <span title=dom-Event-timeStamp>timeStamp</span>;
 
-  void <span title=dom-Event-init>init</span>(<span>InitEvent</span> <var title>initEventDict</var>);
+  void <span title=dom-Event-init>init</span>(DOMString <var title>type</var>, optional <span>EventInit</span> <var title>eventInitDict</var>);
   void <span title=dom-Event-initEvent>initEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>);
 };
 
-dictionary <dfn>InitEvent</dfn> {
-  DOMString <span title=dom-InitEvent-type>type</span> = "";
-  boolean <span title=dom-InitEvent-bubbles>bubbles</span> = false;
-  boolean <span title=dom-InitEvent-cancelable>cancelable</span> = false;
+dictionary <dfn>EventInit</dfn> {
+  boolean <span title=dom-EventInit-bubbles>bubbles</span> = false;
+  boolean <span title=dom-EventInit-cancelable>cancelable</span> = false;
 };</pre>
 
 <p>An <dfn title=concept-event>event</dfn> allows for signaling that something has occurred. E.g. that an image has completed downloading.</p>
@@ -681,6 +680,7 @@ flags that are all initially unset:</p>
  <li><dfn>initialized flag</dfn>
  <li><dfn>dispatch flag</dfn>
 </ul>
+
 <p>When the
 <dfn title=dom-Event-stopPropagation><code>stopPropagation()</code></dfn>
 method is invoked the <span>stop propagation flag</span> must be set.
@@ -712,7 +712,7 @@ attribute ... <a href="http://www.w3.org/2008/webapps/track/issues/172">More inf
 associated
 <dfn title=concept-event-init>event initialization dictionary</dfn>. For
 <span title=concept-event>events</span> using the <code>Event</code>
-interface this is <code>InitEvent</code>, which is also the dictionary all
+interface this is <code>EventInit</code>, which is also the dictionary all
 other
 <span title=concept-event-init>event initialization dictionaries</span>
 inherit from (either directly or indirectly).</p>
@@ -723,19 +723,17 @@ defines a <dfn title=concept-event-init-mapping>mapping</dfn> as to how
 dictionary members map to the <span title=concept-event>event</span>.</p>
 
 <p>The <span title=concept-event-init-mapping>mapping</span> for
-<code>InitEvent</code> is as follows:</p>
+<code>EventInit</code> is as follows:</p>
 
 <dl>
- <dt><dfn title=dom-InitEvent-type><code>type</code></dfn>
- <dd>Sets <span title=concept-event-type>type</span>.
- <dt><dfn title=dom-InitEvent-bubbles><code>bubbles</code></dfn>
+ <dt><dfn title=dom-EventInit-bubbles><code>bubbles</code></dfn>
  <dd>Sets the <span>bubble flag</span> when true, otherwise unsets it.</dd>
- <dt><dfn title=dom-InitEvent-cancelable><code>cancelable</code></dfn>
+ <dt><dfn title=dom-EventInit-cancelable><code>cancelable</code></dfn>
  <dd>Sets the <span>cancel flag</span> when true, otherwise unsets it.</dd>
 </dl>
 <!-- XXX could also do: set when true, unset when false, leave unchanged when not specified. Thoughts? -->
 
-<p>When the <dfn title=dom-Event-init><code>init(<var title>initEventDict</var>)</code></dfn>
+<p>When the <dfn title=dom-Event-init><code>init(<var title>type</var>, <var title>eventInitDict</var>)</code></dfn>
 method is invoked these steps must be run:</p>
 
 <ol>
@@ -745,8 +743,10 @@ method is invoked these steps must be run:</p>
  <span>stop immediate propagation flag</span>, <span>canceled flag</span>,
  and <span>trusted flag</span>.
  <li><p>Set <span title=concept-event-target>target</span> to null.
+ <li><p>Set <span title=concept-event-type>type</span> to the
+ <var title>type</var> argument.
  <li><p><span title=concept-event-init-mapping>Map</span> the
- <var title>initEventDict</var> dictionary.
+ <var title>eventInitDict</var> dictionary, if any.
 </ol>
 
 <p>When the <dfn title=dom-Event-initEvent><code>initEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>)</code></dfn>
@@ -775,8 +775,8 @@ method is invoked these steps must be run:</p>
   void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
 };
 
-dictionary <dfn>InitCustomEvent</dfn> : <span>InitEvent</span> {
-  object? <span title=dom-InitCustomEvent-detail>detail</span> = null;
+dictionary <dfn>CustomEventInit</dfn> : <span>EventInit</span> {
+  object? <span title=dom-CustomEventInit-detail>detail</span> = null;
 }</pre>
 
 <p><span title=concept-event>Events</span> using the
@@ -793,12 +793,12 @@ and null otherwise.
 <p>For <span title=concept-event>events</span> using the
 <code>CustomEvent</code> interface the
 <span title=concept-event-init>event initialization dictionary</span> is
-<code>InitCustomEvent</code>. The
+<code>CustomEventInit</code>. The
 <span title=concept-event-init-mapping>mapping</span> for
-<code>InitCustomEvent</code> is as follows:</p>
+<code>CustomEventInit</code> is as follows:</p>
 
 <dl>
- <dt><dfn title=dom-InitCustomEvent-detail><code>detail</code></dfn>
+ <dt><dfn title=dom-CustomEventInit-detail><code>detail</code></dfn>
  <dd>Sets <span title=concept-CustomEvent-detail>detail</span>.
 </dl>
 
