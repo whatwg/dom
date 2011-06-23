@@ -156,7 +156,6 @@ specification) and do the following:
  <li>Node.compareDocumentPosition
  <li>Document.documentURI
  <li>Move DOMStringMap here?
- <li>Move Document.charset / Document.characterSet / Document.defaultCharset here?
 </ul>
 
 
@@ -238,6 +237,12 @@ this specification.
 or attribute being discussed was called. When the <span>context object</span>
 is unambiguous, the term can be omitted.
 
+<p>The <dfn id="preferred-mime-name">preferred MIME name</dfn> of a
+character encoding is the name or alias labeled as "preferred MIME name" in
+the IANA <cite>Character Sets</cite> registry, if there is one, or the
+encoding's name, if none of the aliases are so labeled.
+<span data-anolis-ref>IANACHARSET</span>
+<!-- copied from HTML -->
 
 <h3>Trees</h3> <!-- Sorry reddit, this is not /r/trees -->
 
@@ -1980,6 +1985,11 @@ method must run these steps:
            attribute DOMString <span title=dom-Document-documentURI>documentURI</span>;
   readonly attribute DOMString <span title=dom-Document-compatMode>compatMode</span>;
 
+           attribute DOMString <span title=dom-Document-charset>charset</span>;
+  readonly attribute DOMString <span title=dom-Document-characterSet>characterSet</span>;
+  readonly attribute DOMString <span title=dom-Document-defaultCharset>defaultCharset</span>;
+  readonly attribute DOMString <span title=dom-Document-contentType>contentType</span>;
+
   readonly attribute <span>DocumentType</span>? <span title=dom-Document-doctype>doctype</span>;
   readonly attribute <span>Element</span>? <span title=dom-Document-documentElement>documentElement</span>;
   <span>NodeList</span> <span title=dom-Document-getElementsByTagName>getElementsByTagName</span>(DOMString <var title>qualifiedName</var>);
@@ -2012,23 +2022,39 @@ method must run these steps:
   <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>eventInterfaceName</var>);
 };</pre>
 
-<p>A <code>Document</code> node is assumed to be an <dfn>XML document</dfn>
-unless it is flagged as being an <dfn>HTML document</dfn>. Whether a
-document is an <span>HTML document</span> or an <span>XML document</span>
-affects the behavior of certain APIs.
+<p><code>Document</code> <span title=concept-node>nodes</span> are simply
+known as <dfn title=concept-document>documents</dfn>.
 
-<p>A <code>Document</code> node is always set to one of three modes:
-<dfn title=concept-no-quirks-mode>no-quirks mode</dfn>, the default;
-<dfn title=concept-quirks-mode>quirks mode</dfn>, used typically for legacy
-documents; and
+<p>Each <span title=concept-document>document</span> has an associated
+<dfn title=concept-document-character-encoding>character encoding</dfn> and
+<dfn title=concept-document-media-type>media type</dfn>.
+
+<p>Unless explicitly given when a
+<span title=concept-document>document</span> is created its
+<span title=concept-document-character-encoding>character encoding</span> is
+"<code title>UTF-8</code>" and its
+<span title=concept-document-media-type>media type</span> is
+"<code title>application/xml</code>".
+
+<p>A <span title=concept-document>document</span> is assumed to be an
+<dfn>XML document</dfn> unless it is flagged as being an
+<dfn>HTML document</dfn>. Whether a
+<span title=concept-document>document</span> is an
+<span>HTML document</span> or an <span>XML document</span> affects the
+behavior of certain APIs.
+
+<p>A <span title=concept-document>document</span> is always set to one of
+three modes: <dfn title=concept-no-quirks-mode>no-quirks mode</dfn>, the
+default; <dfn title=concept-quirks-mode>quirks mode</dfn>, used typically
+for legacy documents; and
 <dfn title=concept-limited-quirks-mode>limited-quirks mode</dfn>, also known
 as "almost standards" mode. Unless
-<span>other applicable specifications</span> define otherwise, the
-<code>Document</code> must be in
+<span>other applicable specifications</span> define otherwise, a
+<span title=concept-document>document</span> must be in
 <span title=concept-no-quirks-mode>no-quirks mode</span>.
 
 <p class=note>The mode is only ever changed from the default if the
-<code>Document</code> node is created by the
+<span title=concept-document>document</span> is created by the
 <span data-anolis-spec=html>HTML parser</span>, based on the presence,
 absence, or value of the DOCTYPE string.
 <span data-anolis-ref class=informative>HTML</span>
@@ -2059,6 +2085,34 @@ return the literal string "<code title>BackCompat</code>".
 
 <!-- <dfn title=dom-Document-xmlVersion>xmlVersion</dfn>
 http://lists.w3.org/Archives/Public/www-dom/2003JulSep/0049.html -->
+
+<hr>
+
+<p>The <dfn title=dom-Document-charset><code>charset</code></dfn> attribute
+must, on getting, return the <span>preferred MIME name</span> of the
+<span title=concept-document-character-encoding>character encoding</span>.
+On setting, if the new value is an IANA-registered alias for a
+character encoding supported by the user agent, the
+<span title=concept-document-character-encoding>character encoding</span>
+must be set to that character encoding. (Otherwise, nothing happens.)
+<!-- copied from HTML; not removed from HTML -->
+
+<p>The <dfn title=dom-Document-characterSet><code>characterSet</code></dfn>
+attribute must return the <span>preferred MIME name</span> of the
+<span title=concept-document-character-encoding>character encoding</span>.
+<!-- copied from HTML; not removed from HTML -->
+
+<p>The
+<dfn title=dom-Document-defaultCharset><code>defaultCharset</code></dfn>
+attribute must, on getting, return the <span>preferred MIME name</span> of a
+character encoding, possibly the user's default character encoding, or an
+encoding associated with the user's current geographical location, or any
+arbitrary character encoding name.</p>
+<!-- copied from HTML; not removed from HTML -->
+
+<p>The <dfn title=dom-Document-contentType><code>contentType</code></dfn>
+attribute must return the
+<span title=concept-document-media-type>media type</span>.
 
 <hr>
 
@@ -2509,13 +2563,18 @@ title>title</var>)</code></dfn> method, when invoked, must run the following
 steps:
 
 <ol>
- <li><p>Let <var title>doc</var> be a newly created <code>Document</code>
- object.
+ <li><p>Let <var title>doc</var> be a newly created
+ <span title=concept-document>document</span>.
 
  <li><p>Mark <var title>doc</var> as being an <span>HTML document</span>.
 
- <li><p>Create a new <code>DocumentType</code>, with "<code title>html</code>"
- as its <span title=concept-doctype-name>name</span>. Call
+ <li><p>Set <var title>doc</var>'s
+ <span title=concept-document-media-type>media type</span> to
+ "<code title>text/html</code>".
+
+ <li><p>Create a new <code>DocumentType</code>, with
+ "<code title>html</code>" as its
+ <span title=concept-doctype-name>name</span>. Call
  <var title>doc</var>'s <code title=dom-Node-appendChild>appendChild</code>
  method with the newly created node as its argument.
 
@@ -2633,8 +2692,8 @@ otherwise [createAttribute]- ->.
   void setIdAttributeNode(Attr idAttr, boolean isId);-->
 };</pre>
 
-<p><code>Element</code> objects are simply known as
-<dfn title=concept-element>elements</dfn>.</p>
+<p><code>Element</code> <span title=concept-node>nodes</span> are simply
+known as <dfn title=concept-element>elements</dfn>.</p>
 
 <p><span title=concept-element>Elements</span> have an associated <dfn title=concept-element-namespace>namespace</dfn>, <dfn title=concept-element-namespace-prefix>namespace prefix</dfn>, <dfn title=concept-element-local-name>local name</dfn>.
 
