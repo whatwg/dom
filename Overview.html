@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-22-june-2011">Editor's Draft 22 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-23-june-2011">Editor's Draft 23 June 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -91,7 +91,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 22 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 23 June 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -670,14 +670,13 @@ prefer.
   readonly attribute boolean <a href="#dom-event-istrusted" title="dom-Event-isTrusted">isTrusted</a>;
   readonly attribute DOMTimeStamp <a href="#dom-event-timestamp" title="dom-Event-timeStamp">timeStamp</a>;
 
-  void <a href="#dom-event-init" title="dom-Event-init">init</a>(<a href="#initevent">InitEvent</a> <var title="">initEventDict</var>);
+  void <a href="#dom-event-init" title="dom-Event-init">init</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>);
   void <a href="#dom-event-initevent" title="dom-Event-initEvent">initEvent</a>(DOMString <var title="">type</var>, boolean <var title="">bubbles</var>, boolean <var title="">cancelable</var>);
 };
 
-dictionary <dfn id="initevent">InitEvent</dfn> {
-  DOMString <a href="#dom-initevent-type" title="dom-InitEvent-type">type</a> = "";
-  boolean <a href="#dom-initevent-bubbles" title="dom-InitEvent-bubbles">bubbles</a> = false;
-  boolean <a href="#dom-initevent-cancelable" title="dom-InitEvent-cancelable">cancelable</a> = false;
+dictionary <dfn id="eventinit">EventInit</dfn> {
+  boolean <a href="#dom-eventinit-bubbles" title="dom-EventInit-bubbles">bubbles</a> = false;
+  boolean <a href="#dom-eventinit-cancelable" title="dom-EventInit-cancelable">cancelable</a> = false;
 };</pre>
 
 <p>An <dfn id="concept-event" title="concept-event">event</dfn> allows for signaling that something has occurred. E.g. that an image has completed downloading.</p>
@@ -734,6 +733,7 @@ flags that are all initially unset:</p>
  <li><dfn id="initialized-flag">initialized flag</dfn>
  <li><dfn id="dispatch-flag">dispatch flag</dfn>
 </ul>
+
 <p>When the
 <dfn id="dom-event-stoppropagation" title="dom-Event-stopPropagation"><code>stopPropagation()</code></dfn>
 method is invoked the <a href="#stop-propagation-flag">stop propagation flag</a> must be set.
@@ -765,7 +765,7 @@ attribute ... <a href="http://www.w3.org/2008/webapps/track/issues/172">More inf
 associated
 <dfn id="concept-event-init" title="concept-event-init">event initialization dictionary</dfn>. For
 <a href="#concept-event" title="concept-event">events</a> using the <code><a href="#event">Event</a></code>
-interface this is <code><a href="#initevent">InitEvent</a></code>, which is also the dictionary all
+interface this is <code><a href="#eventinit">EventInit</a></code>, which is also the dictionary all
 other
 <a href="#concept-event-init" title="concept-event-init">event initialization dictionaries</a>
 inherit from (either directly or indirectly).</p>
@@ -776,19 +776,17 @@ defines a <dfn id="concept-event-init-mapping" title="concept-event-init-mapping
 dictionary members map to the <a href="#concept-event" title="concept-event">event</a>.</p>
 
 <p>The <a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
-<code><a href="#initevent">InitEvent</a></code> is as follows:</p>
+<code><a href="#eventinit">EventInit</a></code> is as follows:</p>
 
 <dl>
- <dt><dfn id="dom-initevent-type" title="dom-InitEvent-type"><code>type</code></dfn>
- <dd>Sets <a href="#concept-event-type" title="concept-event-type">type</a>.
- <dt><dfn id="dom-initevent-bubbles" title="dom-InitEvent-bubbles"><code>bubbles</code></dfn>
+ <dt><dfn id="dom-eventinit-bubbles" title="dom-EventInit-bubbles"><code>bubbles</code></dfn>
  <dd>Sets the <a href="#bubble-flag">bubble flag</a> when true, otherwise unsets it.</dd>
- <dt><dfn id="dom-initevent-cancelable" title="dom-InitEvent-cancelable"><code>cancelable</code></dfn>
+ <dt><dfn id="dom-eventinit-cancelable" title="dom-EventInit-cancelable"><code>cancelable</code></dfn>
  <dd>Sets the <a href="#cancel-flag">cancel flag</a> when true, otherwise unsets it.</dd>
 </dl>
 <!-- XXX could also do: set when true, unset when false, leave unchanged when not specified. Thoughts? -->
 
-<p>When the <dfn id="dom-event-init" title="dom-Event-init"><code>init(<var title="">initEventDict</var>)</code></dfn>
+<p>When the <dfn id="dom-event-init" title="dom-Event-init"><code>init(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
 method is invoked these steps must be run:</p>
 
 <ol>
@@ -798,8 +796,10 @@ method is invoked these steps must be run:</p>
  <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
  and <a href="#trusted-flag">trusted flag</a>.
  <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
+ <li><p>Set <a href="#concept-event-type" title="concept-event-type">type</a> to the
+ <var title="">type</var> argument.
  <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the
- <var title="">initEventDict</var> dictionary.
+ <var title="">eventInitDict</var> dictionary, if any.
 </ol>
 
 <p>When the <dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
@@ -828,8 +828,8 @@ method is invoked these steps must be run:</p>
   void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
 };
 
-dictionary <dfn id="initcustomevent">InitCustomEvent</dfn> : <a href="#initevent">InitEvent</a> {
-  object? <a href="#dom-initcustomevent-detail" title="dom-InitCustomEvent-detail">detail</a> = null;
+dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit">EventInit</a> {
+  object? <a href="#dom-customeventinit-detail" title="dom-CustomEventInit-detail">detail</a> = null;
 }</pre>
 
 <p><a href="#concept-event" title="concept-event">Events</a> using the
@@ -846,12 +846,12 @@ and null otherwise.
 <p>For <a href="#concept-event" title="concept-event">events</a> using the
 <code><a href="#customevent">CustomEvent</a></code> interface the
 <a href="#concept-event-init" title="concept-event-init">event initialization dictionary</a> is
-<code><a href="#initcustomevent">InitCustomEvent</a></code>. The
+<code><a href="#customeventinit">CustomEventInit</a></code>. The
 <a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
-<code><a href="#initcustomevent">InitCustomEvent</a></code> is as follows:</p>
+<code><a href="#customeventinit">CustomEventInit</a></code> is as follows:</p>
 
 <dl>
- <dt><dfn id="dom-initcustomevent-detail" title="dom-InitCustomEvent-detail"><code>detail</code></dfn>
+ <dt><dfn id="dom-customeventinit-detail" title="dom-CustomEventInit-detail"><code>detail</code></dfn>
  <dd>Sets <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>.
 </dl>
 
@@ -2720,8 +2720,12 @@ must run these steps:
 <!-- all members in this subsection are affected by AttrExodus -->
 
 <p>The <dfn id="dom-element-attributes" title="dom-Element-attributes"><code>attributes</code></dfn>
-attribute must return a <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-read-only-array">read only array</a> of
-the <a href="#context-object">context object</a>'s associated <code><a href="#attr">Attr</a></code> objects.
+attribute must return a <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-read-only-array">read only array</a>
+of the <a href="#context-object">context object</a>'s associated <code><a href="#attr">Attr</a></code> objects.
+The returned <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-read-only-array">read only array</a> must be
+live. I.e. changes to the associated <code><a href="#attr">Attr</a></code> objects are
+reflected.
+<!-- XXXlive define live centrally somewhere for both collections and this? -->
 
 <p>The <dfn id="dom-element-getattribute" title="dom-Element-getAttribute"><code>getAttribute(<var title="">name</var>)</code></dfn> method must run these steps:
 <ol>
