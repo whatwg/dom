@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-3-june-2011">Editor's Draft 3 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-28-may-2011">Editor's Draft 28 May 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -91,7 +91,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 3 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 28 May 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -2417,9 +2417,21 @@ otherwise.
  arguments <var title="">namespace</var> and <var title="">qualifiedName</var> on
  <var title="">document</var>. If that threw an exception, terminate these steps.
 
- <li><p>If <var title="">doctype</var> is not null, call
- <var title="">document</var>'s <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild</a></code>
- method with <var title="">doctype</var> as its argument.
+ <li>
+  <p>If <var title="">doctype</var> is not null, run the following substeps:
+
+  <ol>
+   <li><p>If the <var title="">doctype</var>'s
+   <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> is not null, throw a
+   <code title="dom-DOMException-WRONG_DOCUMENT_ERR"><a href="#dom-domexception-wrong_document_err">WRONG_DOCUMENT_ERR</a></code>
+   exception and terminate the overall set of steps.
+
+   <li><p>Set the <var title="">doctype</var>'s
+   <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> to
+   <var title="">document</var>.
+
+   <li><p>Append <var title="">doctype</var> to <var title="">document</var>.
+  </ol>
 
  <li><p>If <var title="">element</var> is not null, append <var title="">element</var>
  to <var title="">document</var>.
@@ -2436,10 +2448,7 @@ steps:
 
  <li><p>Mark <var title="">doc</var> as being an <a href="#html-document">HTML document</a>.
 
- <li><p>Create a new <code><a href="#documenttype">DocumentType</a></code>, with "<code title="">html</code>"
- as its <a href="#concept-doctype-name" title="concept-doctype-name">name</a>. Call
- <var title="">doc</var>'s <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild</a></code>
- method with the newly created node as its argument.
+ <li><p>Create a new <code><a href="#documenttype">DocumentType</a></code>, with "<code title="">html</code>" as its <a href="#concept-doctype-name" title="concept-doctype-name">name</a> and with its <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to <var title="">doc</var>. Append the newly created node to <var title="">doc</var>.
 
  <li><p>Create an <code title="">html</code> element in the <a href="#html-namespace">HTML
  namespace</a>, and append it to <var title="">doc</var>.
