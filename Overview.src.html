@@ -601,7 +601,8 @@ prefer.
 
 <h3>Interface <code>Event</code></h3>
 
-<pre class="idl">interface <dfn>Event</dfn> {
+<pre class="idl">[<span title=dom-Event>Constructor</span>(DOMString <var title>type</var>, optional <span>EventInit</span> <var title>eventInitDict</var>)]
+interface <dfn>Event</dfn> {
   readonly attribute DOMString <span title=dom-Event-type>type</span>;
   readonly attribute <span>EventTarget</span>? <span title=dom-Event-target>target</span>;
   readonly attribute <span>EventTarget</span>? <span title=dom-Event-currentTarget>currentTarget</span>;
@@ -622,7 +623,6 @@ prefer.
   readonly attribute boolean <span title=dom-Event-isTrusted>isTrusted</span>;
   readonly attribute DOMTimeStamp <span title=dom-Event-timeStamp>timeStamp</span>;
 
-  void <span title=dom-Event-init>init</span>(DOMString <var title>type</var>, optional <span>EventInit</span> <var title>eventInitDict</var>);
   void <span title=dom-Event-initEvent>initEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>);
 };
 
@@ -738,20 +738,17 @@ dictionary members map to the <span title=concept-event>event</span>.</p>
 </dl>
 <!-- XXX could also do: set when true, unset when false, leave unchanged when not specified. Thoughts? -->
 
-<p>When the <dfn title=dom-Event-init><code>init(<var title>type</var>, <var title>eventInitDict</var>)</code></dfn>
-method is invoked these steps must be run:</p>
+<p>When the <dfn title=dom-Event><code>Event(<var title>type</var>, <var title>eventInitDict</var>)</code></dfn>
+constructor is invoked these steps must be run:</p>
 
 <ol>
- <li><p>Set the <span>initialized flag</span>.
- <li><p>If the <span>dispatch flag</span> is set, terminate these steps.
- <li><p>Unset the <span>stop propagation flag</span>,
- <span>stop immediate propagation flag</span>, <span>canceled flag</span>,
- and <span>trusted flag</span>.
- <li><p>Set <span title=concept-event-target>target</span> to null.
- <li><p>Set <span title=concept-event-type>type</span> to the
- <var title>type</var> argument.
- <li><p><span title=concept-event-init-mapping>Map</span> the
- <var title>eventInitDict</var> dictionary, if any.
+ <li><p>Create a new <span title=concept-event>event</span>.
+ <li><p>Set its <span>initialized flag</span>.
+ <li><p>Set its <span title=concept-event-type>type</span> to the value of
+ the <var title>type</var> argument.
+ <li><p><span title=concept-event-init-mapping>Map</span> the value of the
+ <var title>eventInitDict</var> argument, if any.
+ <li><p>Return the <span title=concept-event>event</span>.
 </ol>
 
 <p>When the <dfn title=dom-Event-initEvent><code>initEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>)</code></dfn>
@@ -775,7 +772,8 @@ method is invoked these steps must be run:</p>
 
 <h3>Interface <code>CustomEvent</code></h3>
 
-<pre class=idl>interface <dfn>CustomEvent</dfn> : <span>Event</span> {
+<pre class=idl>[<span title=dom-CustomEvent>Constructor</span>(DOMString <var title>type</var>, optional <span>CustomEventInit</span> <var title>eventInitDict</var>)]
+interface <dfn>CustomEvent</dfn> : <span>Event</span> {
   readonly attribute object? <span title=dom-CustomEvent-detail>detail</span>;<!--
   void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
 };
@@ -806,6 +804,21 @@ and null otherwise.
  <dt><dfn title=dom-CustomEventInit-detail><code>detail</code></dfn>
  <dd>Sets <span title=concept-CustomEvent-detail>detail</span>.
 </dl>
+
+<p>When the <dfn title=dom-CustomEvent><code>CustomEvent(<var title>type</var>, <var title>eventInitDict</var>)</code></dfn>
+constructor is invoked these steps must be run:</p>
+
+<ol>
+ <li><p>Create a new <span title=concept-event>event</span> that uses the
+ <span>CustomEvent</span> interface.
+ <li><p>Set its <span>initialized flag</span>.
+ <li><p>Set its <span title=concept-event-type>type</span> to the value of
+ the <var title>type</var> argument.
+ <li><p><span title=concept-event-init-mapping>Map</span> the value of the
+ <var title>eventInitDict</var> argument, if any.
+ <li><p>Return the <span title=concept-event>event</span>.
+</ol>
+
 
 <!--
 <p>When the <dfn title=dom-CustomEvent-initCustomEvent><code>initCustomEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>, <var title>detail</var>)</code></dfn>
@@ -1059,9 +1072,9 @@ concept to make initializing and
 <p class=XXX>The status of mutation events is currently unclear. The editors
 hope they can eventually be removed from the platform. There is
 <a href=http://lists.w3.org/Archives/Public/public-webapps/2009AprJun/0745.html>a proposal</a>
-for a replacement. We encourage experimentation with that proposal, as well as
-alternative proposals.
-
+for a replacement. We encourage experimentation with that proposal, as well
+as alternative proposals.
+<!-- https://bugzilla.mozilla.org/show_bug.cgi?id=641821 -->
 
 
 <h2>Nodes</h2>
@@ -3946,8 +3959,6 @@ events for specific contexts (e.g. user interface events).
 
 <ul class=brief>
  <li>No more restrictions on <code title=dom-Event-type>Event.type</code>.
- <li>No need to invoke <code title=dom-Event-initEvent>initEvent()</code> to
- initialize an event.</li>
  <li><code title=dom-Event-preventDefault>preventDefault()</code> only
  changes what <code title=dom-Event-defaultPrevented>defaultPrevented</code>
  and <code title=dom-EventTarget-dispatchEvent>dispatchEvent()</code> return
