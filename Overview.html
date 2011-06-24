@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-23-june-2011">Editor's Draft 23 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-24-june-2011">Editor's Draft 24 June 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -91,7 +91,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 23 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 24 June 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -150,10 +150,9 @@ document as other than work in progress.
    <li><a href="#interface-event"><span class="secno">4.1 </span>Interface <code>Event</code></a></li>
    <li><a href="#interface-customevent"><span class="secno">4.2 </span>Interface <code>CustomEvent</code></a></li>
    <li><a href="#interface-eventtarget"><span class="secno">4.3 </span>Interface <code>EventTarget</code></a></li>
-   <li><a href="#creating-events"><span class="secno">4.4 </span>Creating Events</a></li>
-   <li><a href="#dispatching-events"><span class="secno">4.5 </span>Dispatching Events</a></li>
-   <li><a href="#firing-events"><span class="secno">4.6 </span>Firing Events</a></li>
-   <li><a href="#mutation-events"><span class="secno">4.7 </span>Mutation events</a></ol></li>
+   <li><a href="#dispatching-events"><span class="secno">4.4 </span>Dispatching Events</a></li>
+   <li><a href="#firing-events"><span class="secno">4.5 </span>Firing Events</a></li>
+   <li><a href="#mutation-events"><span class="secno">4.6 </span>Mutation events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol class="toc">
    <li><a href="#nodes-model"><span class="secno">5.1 </span>Nodes Model</a></li>
@@ -654,7 +653,8 @@ prefer.
 
 <h3 id="interface-event"><span class="secno">4.1 </span>Interface <code><a href="#event">Event</a></code></h3>
 
-<pre class="idl">interface <dfn id="event">Event</dfn> {
+<pre class="idl">[<a href="#dom-event" title="dom-Event">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>)]
+interface <dfn id="event">Event</dfn> {
   readonly attribute DOMString <a href="#dom-event-type" title="dom-Event-type">type</a>;
   readonly attribute <a href="#eventtarget">EventTarget</a>? <a href="#dom-event-target" title="dom-Event-target">target</a>;
   readonly attribute <a href="#eventtarget">EventTarget</a>? <a href="#dom-event-currenttarget" title="dom-Event-currentTarget">currentTarget</a>;
@@ -675,7 +675,6 @@ prefer.
   readonly attribute boolean <a href="#dom-event-istrusted" title="dom-Event-isTrusted">isTrusted</a>;
   readonly attribute DOMTimeStamp <a href="#dom-event-timestamp" title="dom-Event-timeStamp">timeStamp</a>;
 
-  void <a href="#dom-event-init" title="dom-Event-init">init</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>);
   void <a href="#dom-event-initevent" title="dom-Event-initEvent">initEvent</a>(DOMString <var title="">type</var>, boolean <var title="">bubbles</var>, boolean <var title="">cancelable</var>);
 };
 
@@ -766,6 +765,27 @@ otherwise.
 <p class="XXX">The <dfn id="dom-event-timestamp" title="dom-Event-timeStamp"><code>timeStamp</code></dfn>
 attribute ... <a href="http://www.w3.org/2008/webapps/track/issues/172">More information.</a>
 
+<p>When the <dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
+method is invoked these steps must be run:</p>
+
+<ol>
+ <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
+ <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
+ <li><p>Unset the <a href="#stop-propagation-flag">stop propagation flag</a>,
+ <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
+ and <a href="#trusted-flag">trusted flag</a>.
+ <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
+ <li><p>Set <a href="#concept-event-type" title="concept-event-type">type</a> to the
+ <var title="">type</var> argument.
+ <li><p>If the <var title="">bubbles</var> argument is true, set the
+ <a href="#bubble-flag">bubble flag</a>.
+ <li><p>If the <var title="">cancelable</var> argument is true, set the
+ <a href="#cancel-flag">cancel flag</a>.
+</ol>
+
+<!-- XXX add a note about uselessness of this method -->
+
+
 <p>Each <a href="#concept-event" title="concept-event">event</a> <em>interface</em> has an
 associated
 <dfn id="concept-event-init" title="concept-event-init">event initialization dictionary</dfn>. For
@@ -791,44 +811,24 @@ dictionary members map to the <a href="#concept-event" title="concept-event">eve
 </dl>
 <!-- XXX could also do: set when true, unset when false, leave unchanged when not specified. Thoughts? -->
 
-<p>When the <dfn id="dom-event-init" title="dom-Event-init"><code>init(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
-method is invoked these steps must be run:</p>
+<p>When the <dfn id="dom-event" title="dom-Event"><code>Event(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
+constructor is invoked these steps must be run:</p>
 
 <ol>
- <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
- <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
- <li><p>Unset the <a href="#stop-propagation-flag">stop propagation flag</a>,
- <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
- and <a href="#trusted-flag">trusted flag</a>.
- <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
- <li><p>Set <a href="#concept-event-type" title="concept-event-type">type</a> to the
- <var title="">type</var> argument.
- <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the
- <var title="">eventInitDict</var> dictionary, if any.
-</ol>
-
-<p>When the <dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
-method is invoked these steps must be run:</p>
-
-<ol>
- <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
- <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
- <li><p>Unset the <a href="#stop-propagation-flag">stop propagation flag</a>,
- <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
- and <a href="#trusted-flag">trusted flag</a>.
- <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
- <li><p>Set <a href="#concept-event-type" title="concept-event-type">type</a> to the
- <var title="">type</var> argument.
- <li><p>If the <var title="">bubbles</var> argument is true, set the
- <a href="#bubble-flag">bubble flag</a>.
- <li><p>If the <var title="">cancelable</var> argument is true, set the
- <a href="#cancel-flag">cancel flag</a>.
+ <li><p>Create a new <a href="#concept-event" title="concept-event">event</a>.
+ <li><p>Set its <a href="#initialized-flag">initialized flag</a>.
+ <li><p>Set its <a href="#concept-event-type" title="concept-event-type">type</a> to the value of
+ the <var title="">type</var> argument.
+ <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the value of the
+ <var title="">eventInitDict</var> argument, if any.
+ <li><p>Return the <a href="#concept-event" title="concept-event">event</a>.
 </ol>
 
 
 <h3 id="interface-customevent"><span class="secno">4.2 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
-<pre class="idl">interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
+<pre class="idl">[<a href="#dom-customevent" title="dom-CustomEvent">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
+interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
   readonly attribute object? <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;<!--
   void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
 };
@@ -859,6 +859,21 @@ and null otherwise.
  <dt><dfn id="dom-customeventinit-detail" title="dom-CustomEventInit-detail"><code>detail</code></dfn>
  <dd>Sets <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>.
 </dl>
+
+<p>When the <dfn id="dom-customevent" title="dom-CustomEvent"><code>CustomEvent(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
+constructor is invoked these steps must be run:</p>
+
+<ol>
+ <li><p>Create a new <a href="#concept-event" title="concept-event">event</a> that uses the
+ <a href="#customevent">CustomEvent</a> interface.
+ <li><p>Set its <a href="#initialized-flag">initialized flag</a>.
+ <li><p>Set its <a href="#concept-event-type" title="concept-event-type">type</a> to the value of
+ the <var title="">type</var> argument.
+ <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the value of the
+ <var title="">eventInitDict</var> argument, if any.
+ <li><p>Return the <a href="#concept-event" title="concept-event">event</a>.
+</ol>
+
 
 <!--
 <p>When the <dfn title=dom-CustomEvent-initCustomEvent><code>initCustomEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>, <var title>detail</var>)</code></dfn>
@@ -935,46 +950,7 @@ method is invoked these steps must be run:
 </ol>
 
 
-<h3 id="creating-events"><span class="secno">4.4 </span>Creating Events</h3>
-
-<p class="note">Although the <code><a href="#document">Document</a></code> object is introduced later
-it was thought better to describe its
-<code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code> method here.
-
-<p>When the <dfn id="dom-document-createevent" title="dom-Document-createEvent"><code>createEvent(<var title="">eventInterfaceName</var>)</code></dfn> methed is invoked these steps must be run:
-
-<ol>
- <li>
-  <p>If <var title="">eventInterfaceName</var> is an
-  <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for any of the strings in the first
-  column in the following table, let <var title="">eventInterfaceName</var> be the
-  string in the second column on the same row as the matching string:</p>
-  <table>
-  <thead>
-   <tr><th>Input interface <th>Replacement interface
-  <tbody>
-   <tr><td>"<code title="">htmlevents</code>"<td>"<code title="">event</code>"
-   <tr><td>"<code title="">mouseevents</code>"<td>"<code title="">mouseevent</code>"
-   <tr><td>"<code title="">mutationevents</code>"<td>"<code title="">mutationevent</code>"
-   <tr><td>"<code title="">uievents</code>"<td>"<code title="">uievent</code>"
-  </table>
-  <!-- XXX WebKit/Gecko (IE?) support "events" -> "event". Add it or make sure it's not supported? -->
- </li>
- <li><p>If <var title="">eventInterfaceName</var> is <em>not</em> an
- <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for "<code title="">event</code>" or
- for the name of an interface that inherits from the <code><a href="#event">Event</a></code>
- interface and is supported by the user agent, throw a
- <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> and
- terminate these steps.
- <li><p>Create an <a href="#concept-event" title="concept-event">event</a> implementing the
- interface whose name <var title="">eventInterfaceName</var> is an
- <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for and return it.
-</ol>
-
-<p class="note">Because <code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code> is located on the <code><a href="#document">Document</a></code> object it cannot be used by Web Workers. Please let us know if this bothers you.
-
-
-<h3 id="dispatching-events"><span class="secno">4.5 </span>Dispatching Events</h3>
+<h3 id="dispatching-events"><span class="secno">4.4 </span>Dispatching Events</h3>
 
 <p>To <dfn id="concept-event-dispatch" title="concept-event-dispatch">dispatch</dfn> an
 <a href="#concept-event" title="concept-event">event</a> on a given object run these
@@ -1084,7 +1060,7 @@ steps:</p>
 </ol>
 
 
-<h3 id="firing-events"><span class="secno">4.6 </span>Firing Events</h3>
+<h3 id="firing-events"><span class="secno">4.5 </span>Firing Events</h3>
 <p>To
 <dfn id="concept-event-fire" title="concept-event-fire">fire an event named <var title="">e</var></dfn>
 means that an <a href="#concept-event" title="concept-event">event</a> using the
@@ -1108,13 +1084,13 @@ concept to make initializing and
 <code title="">submit</code> with its <a href="#cancel-flag">cancel flag</a> set".
 
 
-<h3 id="mutation-events"><span class="secno">4.7 </span>Mutation events</h3>
+<h3 id="mutation-events"><span class="secno">4.6 </span>Mutation events</h3>
 <p class="XXX">The status of mutation events is currently unclear. The editors
 hope they can eventually be removed from the platform. There is
 <a href="http://lists.w3.org/Archives/Public/public-webapps/2009AprJun/0745.html">a proposal</a>
-for a replacement. We encourage experimentation with that proposal, as well as
-alternative proposals.
-
+for a replacement. We encourage experimentation with that proposal, as well
+as alternative proposals.
+<!-- https://bugzilla.mozilla.org/show_bug.cgi?id=641821 -->
 
 
 <h2 id="nodes"><span class="secno">5 </span>Nodes</h2>
@@ -2446,6 +2422,42 @@ method must run these steps:
  <code>Attr</code> nodes--> to the <a href="#context-object">context object</a>.
 
  <li><p>Return <var title="">node</var>.
+</ol>
+
+<hr>
+
+<p class="note">This method is pretty much obsolete as
+<a href="#concept-event" title="concept-event">events</a> have constructors these days, but
+needs to be supported for legacy content. Tough.
+
+<p>When the <dfn id="dom-document-createevent" title="dom-Document-createEvent"><code>createEvent(<var title="">eventInterfaceName</var>)</code></dfn> methed is invoked these steps must be run:
+
+<ol>
+ <li>
+  <p>If <var title="">eventInterfaceName</var> is an
+  <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for any of the strings in the first
+  column in the following table, let <var title="">eventInterfaceName</var> be the
+  string in the second column on the same row as the matching string:</p>
+  <table>
+  <thead>
+   <tr><th>Input interface <th>Replacement interface
+  <tbody>
+   <tr><td>"<code title="">htmlevents</code>"<td>"<code title="">event</code>"
+   <tr><td>"<code title="">mouseevents</code>"<td>"<code title="">mouseevent</code>"
+   <tr><td>"<code title="">mutationevents</code>"<td>"<code title="">mutationevent</code>"
+   <tr><td>"<code title="">uievents</code>"<td>"<code title="">uievent</code>"
+  </table>
+  <!-- XXX WebKit/Gecko (IE?) support "events" -> "event". Add it or make sure it's not supported? -->
+ </li>
+ <li><p>If <var title="">eventInterfaceName</var> is <em>not</em> an
+ <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for "<code title="">event</code>" or
+ for the name of an interface that inherits from the <code><a href="#event">Event</a></code>
+ interface and is supported by the user agent, throw a
+ <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> and
+ terminate these steps.
+ <li><p>Create an <a href="#concept-event" title="concept-event">event</a> implementing the
+ interface whose name <var title="">eventInterfaceName</var> is an
+ <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for and return it.
 </ol>
 
 
@@ -3912,9 +3924,8 @@ events for specific contexts (e.g. user interface events).
 <p>It makes the following changes:</p>
 
 <ul class="brief">
+ <li>Events have constructors now.
  <li>No more restrictions on <code title="dom-Event-type"><a href="#dom-event-type">Event.type</a></code>.
- <li>No need to invoke <code title="dom-Event-initEvent"><a href="#dom-event-initevent">initEvent()</a></code> to
- initialize an event.</li>
  <li><code title="dom-Event-preventDefault"><a href="#dom-event-preventdefault">preventDefault()</a></code> only
  changes what <code title="dom-Event-defaultPrevented"><a href="#dom-event-defaultprevented">defaultPrevented</a></code>
  and <code title="dom-EventTarget-dispatchEvent"><a href="#dom-eventtarget-dispatchevent">dispatchEvent()</a></code> return
