@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-25-june-2011">Editor's Draft 25 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-27-june-2011">Editor's Draft 27 June 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -90,7 +90,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 25 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 27 June 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -151,7 +151,7 @@ document as other than work in progress.
    <li><a href="#interface-eventtarget"><span class="secno">4.3 </span>Interface <code>EventTarget</code></a></li>
    <li><a href="#dispatching-events"><span class="secno">4.4 </span>Dispatching Events</a></li>
    <li><a href="#firing-events"><span class="secno">4.5 </span>Firing Events</a></li>
-   <li><a href="#mutation-events"><span class="secno">4.6 </span>Mutation events</a></ol></li>
+   <li><a href="#mutation-events"><span class="secno">4.6 </span>Mutation Events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol class="toc">
    <li><a href="#nodes-model"><span class="secno">5.1 </span>Nodes Model</a></li>
@@ -677,51 +677,52 @@ interface <dfn id="event">Event</dfn> {
 };
 
 dictionary <dfn id="eventinit">EventInit</dfn> {
-  boolean <a href="#dom-eventinit-bubbles" title="dom-EventInit-bubbles">bubbles</a> = false;
-  boolean <a href="#dom-eventinit-cancelable" title="dom-EventInit-cancelable">cancelable</a> = false;
+  boolean <span title="dom-EventInit-bubbles">bubbles</span> = false;
+  boolean <span title="dom-EventInit-cancelable">cancelable</span> = false;
 };</pre>
 
 <p>An <dfn id="concept-event" title="concept-event">event</dfn> allows for signaling that something has occurred. E.g. that an image has completed downloading.</p>
 
-<p>Each <a href="#concept-event" title="concept-event">event</a> has a <dfn id="concept-event-type" title="concept-event-type">type</dfn> which is initially the empty string. The
-<dfn id="dom-event-type" title="dom-Event-type"><code>type</code></dfn> attribute must
-return the <a href="#concept-event-type" title="concept-event-type">type</a>.</p>
+<p>The <dfn id="dom-event-type" title="dom-Event-type"><code>type</code></dfn> attribute must
+return the value it was initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attribute must be
+initialized to the empty string.
 
-<p>Each <a href="#concept-event" title="concept-event">event</a> has an associated
-<dfn id="concept-event-target" title="concept-event-target">target</dfn> and
-<dfn id="concept-event-current-target" title="concept-event-current-target">current target</dfn> which are both
-initially null and then set while
-<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatching</a> the
-<a href="#concept-event" title="concept-event">event</a>. The
-<dfn id="dom-event-target" title="dom-Event-target"><code>target</code></dfn> attribute must return
-the <a href="#concept-event-target" title="concept-event-target">target</a> and the
+<p>The <dfn id="dom-event-target" title="dom-Event-target"><code>target</code></dfn> and
 <dfn id="dom-event-currenttarget" title="dom-Event-currentTarget"><code>currentTarget</code></dfn>
-attribute must return the
-<a href="#concept-event-current-target" title="concept-event-current-target">current target</a>.
+attributes must return the values they were initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attributes must be
+initialized to null.
 
-<p>Each <a href="#concept-event" title="concept-event">event</a> has a
-<dfn id="concept-event-phase" title="concept-event-phase">phase</dfn>. The
-<dfn id="dom-event-eventphase" title="dom-Event-eventPhase"><code>eventPhase</code></dfn> attribute must
-return the current <a href="#concept-event-phase" title="concept-event-phase">phase</a>, which must
-be one of the following:</p>
+<p class="note">The <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> and
+<code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> attributes are
+initialized to different values while
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatching</a> the
+<a href="#concept-event" title="concept-event">event</a>
+
+<p>The <dfn id="dom-event-eventphase" title="dom-Event-eventPhase"><code>eventPhase</code></dfn>
+attribute must return the value it was initialized to, which must be one of
+the following:</p>
 <dl>
  <dt><dfn id="dom-event-capturing_phase" title="dom-Event-CAPTURING_PHASE"><code>CAPTURING_PHASE</code></dfn> (numeric value 1)</dt>
  <dd><p>When an <a href="#concept-event" title="concept-event">event</a> is
  <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> on an object that
  <a href="#concept-tree-participate" title="concept-tree-participate">participates</a> in a
  <a href="#concept-tree" title="concept-tree">tree</a> it will be in this phase before it
- reaches its <a href="#concept-event-target" title="concept-event-target">target</a>.
+ reaches its <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value.
  <dt><dfn id="dom-event-at_target" title="dom-Event-AT_TARGET"><code>AT_TARGET</code></dfn> (numeric value 2)
- <dd><p>When an <a href="#concept-event" title="concept-event">event</a> is <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> it will be in this phase on its <a href="#concept-event-target" title="concept-event-target">target</a>.
+ <dd><p>When an <a href="#concept-event" title="concept-event">event</a> is
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> it will be in this
+ phase on its <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value.
  <dt><dfn id="dom-event-bubbling_phase" title="dom-Event-BUBBLING_PHASE"><code>BUBBLING_PHASE</code></dfn> (numeric value 3)
  <dd><p>When an <a href="#concept-event" title="concept-event">event</a> is
  <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> on an object that
  <a href="#concept-tree-participate" title="concept-tree-participate">participates</a> in a
  <a href="#concept-tree" title="concept-tree">tree</a> it will be in this phase after it
- reaches its <a href="#concept-event-target" title="concept-event-target">target</a>.
+ reaches its <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value.
 </dl>
-<p>Initially the <a href="#concept-event-phase" title="concept-event-phase">phase</a> is
-<a href="#dom-event-at_target" title="dom-Event-AT_TARGET">AT_TARGET</a>.
+<p>Initially the attribute must be initialized to
+<code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
 
 <hr>
 
@@ -730,10 +731,7 @@ flags that are all initially unset:</p>
 <ul>
  <li><dfn id="stop-propagation-flag">stop propagation flag</dfn>
  <li><dfn id="stop-immediate-propagation-flag">stop immediate propagation flag</dfn>
- <li><dfn id="bubble-flag">bubble flag</dfn>
- <li><dfn id="cancel-flag">cancel flag</dfn>
  <li><dfn id="canceled-flag">canceled flag</dfn>
- <li><dfn id="trusted-flag">trusted flag</dfn>
  <li><dfn id="initialized-flag">initialized flag</dfn>
  <li><dfn id="dispatch-flag">dispatch flag</dfn>
 </ul>
@@ -745,33 +743,34 @@ method is invoked the <a href="#stop-propagation-flag">stop propagation flag</a>
 <dfn id="dom-event-stopimmediatepropagation" title="dom-Event-stopImmediatePropagation"><code>stopImmediatePropagation()</code></dfn>
 method is invoked both the <a href="#stop-propagation-flag">stop propagation flag</a> and
 <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a> must be set.
-<p>The <dfn id="dom-event-bubbles" title="dom-Event-bubbles"><code>bubbles</code></dfn> attribute
-must return true if the <a href="#bubble-flag">bubble flag</a> is set and false otherwise.
-<p>The <dfn id="dom-event-cancelable" title="dom-Event-cancelable"><code>cancelable</code></dfn>
-attribute must return true if the <a href="#cancel-flag">cancel flag</a> is set and false
-otherwise.
+
+<p>The <dfn id="dom-event-bubbles" title="dom-Event-bubbles"><code>bubbles</code></dfn> and
+<dfn id="dom-event-cancelable" title="dom-Event-cancelable"><code>cancelable</code></dfn> attributes
+must return the values they were initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attributes must be
+initialized to false.
+
 <p>When the
 <dfn id="dom-event-preventdefault" title="dom-Event-preventDefault"><code>preventDefault()</code></dfn>
-method is invoked and the <a href="#cancel-flag">cancel flag</a> is set, the
-<a href="#canceled-flag">canceled flag</a> must be set.
+method is invoked and the <code title="dom-Event-cancelable"><a href="#dom-event-cancelable">cancelable</a></code>
+attribute is true, the <a href="#canceled-flag">canceled flag</a> must be set.
+
 <p>The <dfn id="dom-event-defaultprevented" title="dom-Event-defaultPrevented"><code>defaultPrevented</code></dfn>
 attribute must return true if the <a href="#canceled-flag">canceled flag</a> is set and
 false otherwise.
 
-<p>The <dfn id="dom-event-istrusted" title="dom-Event-isTrusted"><code>isTrusted</code></dfn> attribute
-must return true if the <a href="#trusted-flag">trusted flag</a> is set and false
-otherwise.
-
 <hr>
 
-<p>Each <a href="#concept-event" title="concept-event">event</a> has an associated
-<dfn id="concept-event-timestamp" title="concept-event-timestamp">timestamp</dfn>. It is set to the amount
-of milliseconds that has passed since 00:00:00 UTC on 1 January 1970 when
-the <a href="#concept-event" title="concept-event">event</a> is created.
+<p>The <dfn id="dom-event-istrusted" title="dom-Event-isTrusted"><code>isTrusted</code></dfn> attribute
+must return the value it was initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attribute must be
+initialized to false.
 
 <p>The <dfn id="dom-event-timestamp" title="dom-Event-timeStamp"><code>timeStamp</code></dfn> attribute
-must return the associated
-<a href="#concept-event-timestamp" title="concept-event-timestamp">timestamp</a>.
+must return the value it was initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attribute must be
+initialized to the amount of milliseconds that has passed since
+00:00:00 UTC on 1 January 1970.
 
 <hr>
 
@@ -782,15 +781,18 @@ method is invoked these steps must be run:</p>
  <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
  <li><p>If the <a href="#dispatch-flag">dispatch flag</a> is set, terminate these steps.
  <li><p>Unset the <a href="#stop-propagation-flag">stop propagation flag</a>,
- <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, <a href="#canceled-flag">canceled flag</a>,
- and <a href="#trusted-flag">trusted flag</a>.
- <li><p>Set <a href="#concept-event-target" title="concept-event-target">target</a> to null.
- <li><p>Set <a href="#concept-event-type" title="concept-event-type">type</a> to the
- <var title="">type</var> argument.
- <li><p>If the <var title="">bubbles</var> argument is true, set the
- <a href="#bubble-flag">bubble flag</a>.
- <li><p>If the <var title="">cancelable</var> argument is true, set the
- <a href="#cancel-flag">cancel flag</a>.
+ <a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>, and
+ <a href="#canceled-flag">canceled flag</a>.
+ <li><p>Initialize the <code title="dom-Event-isTrusted"><a href="#dom-event-istrusted">isTrusted</a></code>
+ attribute to false.
+ <li><p>Initialize the <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute
+ to null.
+ <li><p>Initialize the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to
+ the <var title="">type</var> argument.
+ <li><p>Initialize the <code title="dom-Event-bubbles"><a href="#dom-event-bubbles">bubbles</a></code>
+ attribute to the <var title="">bubbles</var> argument.
+ <li><p>Initialize the <code title="dom-Event-cancelable"><a href="#dom-event-cancelable">cancelable</a></code>
+ attribute to the <var title="">cancelable</var> argument.
 </ol>
 
 <p class="note">As <a href="#concept-event" title="concept-event">events</a> have constructors
@@ -799,46 +801,26 @@ it has to be supported for legacy content.
 
 <hr>
 
-<p>Each <a href="#concept-event" title="concept-event">event</a> <em>interface</em> has an
-associated
-<dfn id="concept-event-init" title="concept-event-init">event initialization dictionary</dfn>. For
-<a href="#concept-event" title="concept-event">events</a> using the <code><a href="#event">Event</a></code>
-interface this is <code><a href="#eventinit">EventInit</a></code>, which is also the dictionary all
-other
-<a href="#concept-event-init" title="concept-event-init">event initialization dictionaries</a>
-inherit from (either directly or indirectly).</p>
-
-<p>Each
-<a href="#concept-event-init" title="concept-event-init">event initialization dictionary</a> also
-defines a <dfn id="concept-event-init-mapping" title="concept-event-init-mapping">mapping</dfn> as to how
-dictionary members map to the <a href="#concept-event" title="concept-event">event</a>.</p>
-
-<p>The <a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
-<code><a href="#eventinit">EventInit</a></code> is as follows:</p>
-
-<dl>
- <dt><dfn id="dom-eventinit-bubbles" title="dom-EventInit-bubbles"><code>bubbles</code></dfn>
- <dd>Sets the <a href="#bubble-flag">bubble flag</a> when true, otherwise unsets it.</dd>
- <dt><dfn id="dom-eventinit-cancelable" title="dom-EventInit-cancelable"><code>cancelable</code></dfn>
- <dd>Sets the <a href="#cancel-flag">cancel flag</a> when true, otherwise unsets it.</dd>
-</dl>
-
 <p><dfn id="dom-event" title="dom-Event"><code>Event(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
-is an
-<a href="#concept-event-constructor" title="concept-event-constructor">event constructor for <code>Event</code></a>.
+is an <a href="#concept-event-constructor" title="concept-event-constructor">event constructor</a>.
 
-<p>When an
-<dfn id="concept-event-constructor" title="concept-event-constructor">event constructor for <var title="">interface</var></dfn>
-is invoked these steps must be run:</p>
+<p>When an <dfn id="concept-event-constructor" title="concept-event-constructor">event constructor</dfn> is
+invoked these steps must be run:</p>
 
 <ol>
  <li><p>Create a new <a href="#concept-event" title="concept-event">event</a> that uses the
- interface <var title="">interface</var>.
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-interface">interface</a> the constructor was invoked
+ upon.
  <li><p>Set its <a href="#initialized-flag">initialized flag</a>.
- <li><p>Set its <a href="#concept-event-type" title="concept-event-type">type</a> to the value of
+ <li><p>Initialize the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to
  the <var title="">type</var> argument.
- <li><p><a href="#concept-event-init-mapping" title="concept-event-init-mapping">Map</a> the value of the
- <var title="">eventInitDict</var> argument, if any.
+ <li><p>If there is an <var title="">eventInitDict</var> argument then for each
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> defined therein find
+ the attribute on <a href="#concept-event" title="concept-event">event</a> whose
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-identifier">identifier</a> matches the key of
+ the <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> and then
+ initialize the attribute to the value of that
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a>.
  <li><p>Return the <a href="#concept-event" title="concept-event">event</a>.
 </ol>
 
@@ -847,40 +829,27 @@ is invoked these steps must be run:</p>
 
 <pre class="idl">[<a href="#dom-customevent" title="dom-CustomEvent">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
-  readonly attribute object? <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;<!--
-  void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, object? <var title>detail</var>);-->
+  readonly attribute any <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;<!--
+  void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, any <var title>detail</var>);-->
 };
 
 dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit">EventInit</a> {
-  object? <a href="#dom-customeventinit-detail" title="dom-CustomEventInit-detail">detail</a> = null;
+  any <span title="dom-CustomEventInit-detail">detail</span> = null;
 }</pre>
 
 <p><a href="#concept-event" title="concept-event">Events</a> using the
 <code><a href="#customevent">CustomEvent</a></code> interface can be used for synthetic events that
 need to carry data.</p>
 
-<p><a href="#concept-event" title="concept-event">Events</a> using the
-<code><a href="#customevent">CustomEvent</a></code> interface have an associated
-<dfn id="concept-customevent-detail" title="concept-CustomEvent-detail">detail</dfn> variable. The
-<dfn id="dom-customevent-detail" title="dom-CustomEvent-detail"><code>detail</code></dfn> attribute must
-return <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>, if it is set,
-and null otherwise.
+<p>The <dfn id="dom-customevent-detail" title="dom-CustomEvent-detail"><code>detail</code></dfn> attribute
+must return the value it was initialized to. When an
+<a href="#concept-event" title="concept-event">event</a> is created the attribute must be
+initialized to null.
 
-<p>For <a href="#concept-event" title="concept-event">events</a> using the
-<code><a href="#customevent">CustomEvent</a></code> interface the
-<a href="#concept-event-init" title="concept-event-init">event initialization dictionary</a> is
-<code><a href="#customeventinit">CustomEventInit</a></code>. The
-<a href="#concept-event-init-mapping" title="concept-event-init-mapping">mapping</a> for
-<code><a href="#customeventinit">CustomEventInit</a></code> is as follows:</p>
-
-<dl>
- <dt><dfn id="dom-customeventinit-detail" title="dom-CustomEventInit-detail"><code>detail</code></dfn>
- <dd>Sets <a href="#concept-customevent-detail" title="concept-CustomEvent-detail">detail</a>.
-</dl>
+<hr>
 
 <p><dfn id="dom-customevent" title="dom-CustomEvent"><code>CustomEvent(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
-is an
-<a href="#concept-event-constructor" title="concept-event-constructor">event constructor for <code>CustomEvent</code></a>.
+is an <a href="#concept-event-constructor" title="concept-event-constructor">event constructor</a>.
 
 
 <!--
@@ -948,11 +917,12 @@ method is invoked these steps must be run:
 <p>When the
 <dfn id="dom-eventtarget-dispatchevent" title="dom-EventTarget-dispatchEvent"><code>dispatchEvent(<var title="">event</var>)</code></dfn> method is invoked these steps must be run:
 <ol>
- <li><p>If <var title="">event</var>'s <a href="#dispatch-flag">dispatch flag</a> is set, or if its
- <a href="#initialized-flag">initialized flag</a> isn't set, throw an
+ <li><p>If <var title="">event</var>'s <a href="#dispatch-flag">dispatch flag</a> is set, or if
+ its <a href="#initialized-flag">initialized flag</a> is not set, throw an
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
- <li><p>Unset <var title="">event</var>'s <a href="#trusted-flag">trusted flag</a>.
+ <li><p>Initialize <var title="">event</var>'s
+ <code title="dom-Event-isTrusted"><a href="#dom-event-istrusted">isTrusted</a></code> attribute to false.
  <li><p><a href="#concept-event-dispatch" title="concept-event-dispatch">Dispatch</a> the
  <var title="">event</var> and return the value that returns.
 </ol>
@@ -969,38 +939,45 @@ steps:</p>
  <li><p>Let <var title="">event</var> be the
  <a href="#concept-event" title="concept-event">event</a> that is dispatched.
  <li><p>Set <var title="">event</var>'s <a href="#dispatch-flag">dispatch flag</a>.
- <li><p>Set <var title="">event</var>'s
- <a href="#concept-event-target" title="concept-event-target">target</a> to the object on which
+ <li><p>Initialize <var title="">event</var>'s
+ <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute to the object on which
  <var title="">event</var> is dispatched.
  <li>
   <dl>
    <dt>If <var title="">event</var>'s
-   <a href="#concept-event-target" title="concept-event-target">target</a> is
+   <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value is
    <a href="#concept-tree-participate" title="concept-tree-participate">participating</a> in a
    <a href="#concept-tree" title="concept-tree">tree</a>
    <dd>
     <ol>
      <li><p>Let <var title="">event path</var> be a static ordered list of all
      <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a> of
-     <var title="">event</var>'s <a href="#concept-event-target" title="concept-event-target">target</a>
-     in <a href="#tree-order">tree order</a>.</li>
-     <li><p>Set <var title="">event</var>'s <a href="#concept-event-phase" title="concept-event-phase">phase</a> to <a href="#dom-event-capturing_phase" title="dom-Event-CAPTURING_PHASE">CAPTURING_PHASE</a>.
+     <var title="">event</var>'s <code title="dom-Event-target"><a href="#dom-event-target">target</a></code>
+     attribute value in <a href="#tree-order">tree order</a>.</li>
+     <li><p>Initialize <var title="">event</var>'s
+     <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute to
+     <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>.
      <li><p>For each object in the <var title="">event path</var>
      <a href="#concept-event-listener-invoke" title="concept-event-listener-invoke">invoke</a> its
      <a href="#concept-event-listener" title="concept-event-listener">event listeners</a>, as long as
      <var title="">event</var>'s <a href="#stop-propagation-flag">stop propagation flag</a> is unset.
-     <li><p>Set <var title="">event</var>'s <a href="#concept-event-phase" title="concept-event-phase">phase</a> to <a href="#dom-event-at_target" title="dom-Event-AT_TARGET">AT_TARGET</a>.
+     <li><p>Initialize <var title="">event</var>'s
+     <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute to
+     <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
      <li><p><a href="#concept-event-listener-invoke" title="concept-event-listener-invoke">Invoke</a> the
      <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> of
      <var title="">event</var>'s
-     <a href="#concept-event-target" title="concept-event-target">target</a>, if
+     <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value, if
      <var title="">event</var>'s <a href="#stop-propagation-flag">stop propagation flag</a> is unset.
      <li>
-      <p>If <var title="">event</var>'s <a href="#bubble-flag">bubble flag</a> is set run
+      <p>If <var title="">event</var>'s
+      <code title="dom-Event-bubbles"><a href="#dom-event-bubbles">bubbles</a></code> attribute is true run
       these substeps:</p>
       <ol>
        <li><p>Reverse the order of <var title="">event path</var>.
-       <li><p>Set <var title="">event</var>'s <a href="#concept-event-phase" title="concept-event-phase">phase</a> to <a href="#dom-event-bubbling_phase" title="dom-Event-BUBBLING_PHASE">BUBBLING_PHASE</a>.
+       <li><p>Initialize <var title="">event</var>'s
+       <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute to
+       <code title="dom-Event-BUBBLING_PHASE"><a href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>.
        <li><p>For each object in the <var title="">event path</var>
        <a href="#concept-event-listener-invoke" title="concept-event-listener-invoke">invoke</a> its
        <a href="#concept-event-listener" title="concept-event-listener">event listeners</a>, as long as
@@ -1011,14 +988,18 @@ steps:</p>
    <dt>Otherwise
    <dd><p><a href="#concept-event-listener-invoke" title="concept-event-listener-invoke">Invoke</a> the
    <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> of
-   <var title="">event</var>'s <a href="#concept-event-target" title="concept-event-target">target</a>.
+   <var title="">event</var>'s <code title="dom-Event-target"><a href="#dom-event-target">target</a></code>
+   attribute value.
   </dl>
   <!-- XXX This could be flattened by just letting "event path" be empty for
            objects not participating in a tree. -->
  </li>
  <li><p>Unset <var title="">event</var>'s <a href="#dispatch-flag">dispatch flag</a>.
- <li><p>Set <var title="">event</var>'s <a href="#concept-event-phase" title="concept-event-phase">phase</a> to <a href="#dom-event-at_target" title="dom-Event-AT_TARGET">AT_TARGET</a>.
- <li><p>Set <var title="">event</var>'s <a href="#concept-event-current-target" title="concept-event-current-target">current target</a> to null.
+ <li><p>Initialize <var title="">event</var>'s
+ <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute to
+ <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
+ <li><p>Initialize <var title="">event</var>'s
+ <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> to null.
  <li><p>Return false if <var title="">event</var>'s <a href="#canceled-flag">canceled flag</a>
  is set and true otherwise.
 </ol>
@@ -1026,15 +1007,15 @@ steps:</p>
 
 <p>To <dfn id="concept-event-listener-invoke" title="concept-event-listener-invoke">invoke</dfn> the <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> for an object run these steps:</p>
 <ol>
- <li><p>Let <var title="">event</var> be the <a href="#concept-event" title="concept-event">event</a>
- for which the <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> are
- invoked.
+ <li><p>Let <var title="">event</var> be the
+ <a href="#concept-event" title="concept-event">event</a> for which the
+ <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> are invoked.
  <li><p>Let <var title="">listeners</var> be a static list of the
  <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> associated with
  the object for which these steps are run.
- <li><p>Set <var title="">event</var>'s
- <a href="#concept-event-current-target" title="concept-event-current-target">current target</a> to the
- object for which these steps are run.
+ <li><p>Initialize <var title="">event</var>'s
+ <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> to the object for
+ which these steps are run.
  <li>
   <p>Then run these substeps for each
   <a href="#concept-event-listener" title="concept-event-listener">event listener</a> in
@@ -1045,20 +1026,20 @@ steps:</p>
    <a href="#concept-event-listener-invoke" title="concept-event-listener-invoke">invoke</a> algorithm.
    <li><p>Let <var title="">listener</var> be the
    <a href="#concept-event-listener" title="concept-event-listener">event listener</a>.
-   <li><p>If <var title="">event</var>'s
-   <a href="#concept-event-type" title="concept-event-type">type</a> is not
-   <var title="">listener</var>'s <b>name</b>, terminate these substeps (and
-   run them for the next
+   <li><p>If <var title="">event</var>'s <code title="dom-Event-type"><a href="#dom-event-type">type</a></code>
+   attribute value is not <var title="">listener</var>'s <b>name</b>, terminate
+   these substeps (and run them for the next
    <a href="#concept-event-listener" title="concept-event-listener">event listener</a>).
    <li><p>If <var title="">event</var>'s
-   <a href="#concept-event-phase" title="concept-event-phase">phase</a> is
-   <a href="#dom-event-capturing_phase" title="dom-Event-CAPTURING_PHASE">CAPTURING_PHASE</a> and
+   <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute value is
+   <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code> and
    <var title="">listener</var>'s <b>capture</b> is false, terminate these
    substeps (and run them for the next
    <a href="#concept-event-listener" title="concept-event-listener">event listener</a>).
    <li><p>If <var title="">event</var>'s
-   <a href="#concept-event-phase" title="concept-event-phase">phase</a> is
-   <a href="#dom-event-bubbling_phase" title="dom-Event-BUBBLING_PHASE">BUBBLING_PHASE</a> and
+   <li><p>If <var title="">event</var>'s
+   <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute value is
+   <code title="dom-Event-BUBBLING_PHASE"><a href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and
    <var title="">listener</var>'s <b>capture</b> is true, terminate these
    substeps (and run them for the next
    <a href="#concept-event-listener" title="concept-event-listener">event listener</a>).
@@ -1069,13 +1050,15 @@ steps:</p>
 
 
 <h3 id="firing-events"><span class="secno">4.5 </span>Firing Events</h3>
+
 <p>To
 <dfn id="concept-event-fire" title="concept-event-fire">fire an event named <var title="">e</var></dfn>
 means that an <a href="#concept-event" title="concept-event">event</a> using the
 <code><a href="#event">Event</a></code> interface, with its
-<a href="#concept-event-type" title="concept-event-type">type</a> set to <var title="">e</var>, and
-its <a href="#trusted-flag">trusted flag</a> set, is to be
-<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> at the indicated
+<code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute initialized to
+<var title="">e</var>, and its <code title="dom-Event-isTrusted"><a href="#dom-event-istrusted">isTrusted</a></code>
+attribute initialized to true, is to be
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> at the given
 object.</p>
 
 <p class="note">Fire is short for initializing and
@@ -1086,13 +1069,14 @@ object.</p>
 concept to make initializing and
 <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatching</a> an
 <a href="#concept-event" title="concept-event">event</a> easier to write down. If the
-<a href="#concept-event" title="concept-event">event</a> needs its <a href="#bubble-flag">bubble flag</a> or
-<a href="#cancel-flag">cancel flag</a> set, one would write e.g.
+<a href="#concept-event" title="concept-event">event</a> needs its <code>bubbles</code> or
+<code>cancelable</code> attribute initialized, one could write
 "<a href="#concept-event-fire" title="concept-event-fire">fire an event</a> named
-<code title="">submit</code> with its <a href="#cancel-flag">cancel flag</a> set".
+<code title="">submit</code> with its <code>cancelable</code> attribute
+initialized to true".
 
 
-<h3 id="mutation-events"><span class="secno">4.6 </span>Mutation events</h3>
+<h3 id="mutation-events"><span class="secno">4.6 </span>Mutation Events</h3>
 <p class="XXX"><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13042">The
 status of mutation events is currently unclear.</a> The editors
 hope they can eventually be removed from the platform. There is
