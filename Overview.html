@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-28-june-2011">Editor's Draft 28 June 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-29-june-2011">Editor's Draft 29 June 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -90,7 +90,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 28 June 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 29 June 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -217,7 +217,11 @@ specification) and do the following:
 
 <ul class="XXX">
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13045">Document.documentURI</a>
+ <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13040">Mutation listeners</a> (and updating the methods that mutate)
  <li>Move DOMStringMap here?
+ <li>Superglobal id=""/class="" attributes?
+ <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">replaceWholeText()</a>
+ <li>Replace DOMStringList by DOMString[]?
 </ul>
 
 <!--
@@ -1513,19 +1517,19 @@ method must run these steps:</p>
  <!-- original spec also increments by implementation_specific ... -->
 
  <li><p>If <var title="">other</var> is an
- <span title="concept-ancestor">ancestor</span> of <var title="">reference</var>,
- return the result of adding
+ <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+ <var title="">reference</var>, return the result of adding
  <code title="dom-Node-DOCUMENT_POSITION_CONTAINS"><a href="#dom-node-document_position_contains">DOCUMENT_POSITION_CONTAINS</a></code>
  to
  <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code>
  and terminate these steps.
 
- <li><p>If <var title="">other</var> is an
- <span title="concept-descendant">descendant</span> of
+ <li><p>If <var title="">other</var> is a
+ <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
  <var title="">reference</var>, return the result of adding
  <code title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><a href="#dom-node-document_position_contained_by">DOCUMENT_POSITION_CONTAINED_BY</a></code>
  to
- <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>,
+ <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>
  and terminate these steps.
 
  <li><p>If <var title="">other</var> comes before <var title="">reference</var>,
@@ -1536,6 +1540,9 @@ method must run these steps:</p>
  <li><p>Return
  <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>.
 </ol>
+
+<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
+     from node -->
 
 
 <hr>
@@ -1595,7 +1602,7 @@ attribute must return the following, depending on the
  <code title="dom-ProcessingInstruction-data"><a href="#dom-processinginstruction-data">data</a></code> attribute.
 
  <dt>Any other node
- <dd>Null.
+ <dd><p>Null.
 </dl>
 
 <p>The <code title="dom-Node-textContent"><a href="#dom-node-textcontent">textContent</a></code> attribute must, on
@@ -1628,7 +1635,7 @@ and then do as described below, depending on the <a href="#context-object">conte
  given value.
 
  <dt>Any other node
- <dd>Do nothing.
+ <dd><p>Do nothing.
 </dl>
 
 <hr>
@@ -3240,11 +3247,14 @@ attribute must return the
 <p><code><a href="#processinginstruction">ProcessingInstruction</a></code> nodes have an associated <dfn id="concept-pi-target" title="concept-PI-target">target</dfn> and <dfn id="concept-pi-data" title="concept-PI-data">data</dfn>. When a <code><a href="#processinginstruction">ProcessingInstruction</a></code> node is created both are given.
 
 <p>The <dfn id="dom-processinginstruction-target" title="dom-ProcessingInstruction-target"><code>target</code></dfn>
-attribute must return the <a href="#context-object">context object</a>'s <a href="#concept-pi-target" title="concept-PI-target">target</a>.
+attribute must return the <a href="#concept-pi-target" title="concept-PI-target">target</a>.
 
 <p>The <dfn id="dom-processinginstruction-data" title="dom-ProcessingInstruction-data"><code>data</code></dfn>
-attribute must return the <a href="#context-object">context object</a>'s <a href="#concept-pi-data" title="concept-PI-data">data</a>, and on setting, set the
-<a href="#context-object">context object</a>'s <a href="#concept-pi-data" title="concept-PI-data">data</a> to the new value.
+attribute must return the <a href="#concept-pi-data" title="concept-PI-data">data</a>.
+
+<p>Setting the <code title="dom-ProcessingInstruction-data"><a href="#dom-processinginstruction-data">data</a></code>
+attribute must set <a href="#concept-pi-data" title="concept-PI-data">data</a> to the given
+value.
 
 
 <h3 id="interface-characterdata"><span class="secno">5.9 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
