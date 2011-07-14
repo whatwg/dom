@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-11-july-2011">Editor's Draft 11 July 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-14-july-2011">Editor's Draft 14 July 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -87,7 +87,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 11 July 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 14 July 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -3267,70 +3267,89 @@ value.
   void <a href="#dom-characterdata-replacedata" title="dom-CharacterData-replaceData">replaceData</a>(unsigned long <var title="">offset</var>, unsigned long <var title="">count</var>, DOMString <var title="">data</var>);
 };</pre>
 
-<p>The <dfn id="dom-characterdata-data" title="dom-CharacterData-data"><code>data</code></dfn> attribute must return the data of the node, and on setting, must change the node's data to the new value.
+<p>Each <code><a href="#characterdata">CharacterData</a></code> object has an associated mutable string
+called <dfn id="concept-cd-data" title="concept-CD-data">data</dfn>.
 
-<p>The <dfn id="dom-characterdata-length" title="dom-CharacterData-length"><code>length</code></dfn> attribute must return the number of UTF-16 code units represented by the node's data.
+<p>To <dfn id="concept-cd-replace" title="concept-CD-replace">replace data</dfn> with offset
+<var title="">offset</var>, count <var title="">count</var>, and data
+<var title="">data</var>, run these steps:</p>
+
+<ol>
+ <li><p>If <var title="">offset</var> is greater than the
+ <a href="#context-object">context object</a>'s
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, throw an
+ <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code> exception
+ and terminate these steps.
+
+ <li><p>If <var title="">offset</var> plus <var title="">count</var> is greater
+ than the <a href="#context-object">context object</a>'s
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> let
+ <var title="">count</var> be
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> minus
+ <var title="">offset</var>.
+
+ <li><p>Insert <var title="">data</var> into the
+ <a href="#concept-cd-data" title="concept-CD-data">data</a> after <var title="">offset</var>
+ UTF-16 code units.
+
+ <li><p>Let <var title="">delete offset</var> be <var title="">offset</var> plus
+ the number of UTF-16 code units in <var title="">data</var>.
+
+ <li><p>Starting from <var title="">delete offset</var> UTF-16 code units,
+ remove <var title="">count</var> UTF-16 code units from
+ <a href="#concept-cd-data" title="concept-CD-data">data</a>.
+</ol>
+<!-- delete after insert for better cursor positioning with editing
+     http://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
+
+<p>The <dfn id="dom-characterdata-data" title="dom-CharacterData-data"><code>data</code></dfn> attribute must return <a href="#concept-cd-data" title="concept-CD-data">data</a>, and on setting, must
+<a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset 0, count
+<code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, and data new value.
+
+<p>The <dfn id="dom-characterdata-length" title="dom-CharacterData-length"><code>length</code></dfn> attribute must return the number of UTF-16 code units in
+<a href="#concept-cd-data" title="concept-CD-data">data</a>.
 
 <p>The
 <dfn id="dom-characterdata-substringdata" title="dom-CharacterData-substringData"><code>substringData(<var title="">offset</var>, <var title="">count</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>If <var title="">offset</var> is greater than the
- <a href="#context-object">context object</a>'s <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>,
+ <li><p>If <var title="">offset</var> is greater than
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>,
  throw an <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>If <span title=""><var title="">offset</var>+<var title="">count</var></span> is
- greater than the <a href="#context-object">context object</a>'s <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, return a <code class="external"><a href="#domstring">DOMString</a></code> whose value is the UTF-16 code units
- from the <var title="">offset</var>th UTF-16 code unit to the end of <var title="">data</var>.
+ <li><p>If <var title="">offset</var> plus <var title="">count</var> is
+ greater than <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, return a
+ string whose value is the UTF-16 code units from the
+ <var title="">offset</var><sup>th</sup> UTF-16 code unit to the end of
+ <var title="">data</var>.
 
- <li><p>Return a <code class="external"><a href="#domstring">DOMString</a></code> whose value is
- the UTF-16 code units from the <var title="">offset</var>th UTF-16 code unit to
- the <span title=""><var title="">offset</var>+<var title="">count</var></span>th UTF-16
+ <li><p>Return a string whose value is the UTF-16 code units from the
+ <var title="">offset</var><sup>th</sup> UTF-16 code unit to
+ the <var title="">offset</var>+<var title="">count</var><sup>th</sup> UTF-16
  code unit in <var title="">data</var>.
 </ol>
 
-<p>The <dfn id="dom-characterdata-appenddata" title="dom-CharacterData-appendData"><code>appendData(<var title="">data</var>)</code></dfn> method must append <var title="">data</var> to the <a href="#context-object">context object</a>'s data.
+<p>The <dfn id="dom-characterdata-appenddata" title="dom-CharacterData-appendData"><code>appendData(<var title="">data</var>)</code></dfn>
+method must <a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset
+<code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, count 0, and data
+<var title="">data</var>.
 
-<p>The <dfn id="dom-characterdata-insertdata" title="dom-CharacterData-insertData"><code>insertData(<var title="">offset</var>, <var title="">data</var>)</code></dfn> method must run these steps:
+<p>The <dfn id="dom-characterdata-insertdata" title="dom-CharacterData-insertData"><code>insertData(<var title="">offset</var>, <var title="">data</var>)</code></dfn>
+method must <a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset
+<var title="">offset</var>, count 0, and data <var title="">data</var>.
 
-<ol>
- <li><p>If <var title="">offset</var> is greater than the <a href="#context-object">context object</a>'s
- <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, throw an
- <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code> exception
- and terminate these steps.
-
- <li><p>Insert <var title="">data</var> into the <a href="#context-object">context object</a>'s data
- after <var title="">offset</var> UTF-16 code units.
-</ol>
-
-<p>The <dfn id="dom-characterdata-deletedata" title="dom-CharacterData-deleteData"><code>deleteData(<var title="">offset</var>, <var title="">count</var>)</code></dfn> method must run these steps:
-
-<ol>
- <li><p>If <var title="">offset</var> is greater than the <a href="#context-object">context object</a>'s
- <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, throw an
- <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code> exception
- and terminate these steps.
-
- <li><p>If <var title="">offset</var>+<var title="">count</var> is greater than the
- <a href="#context-object">context object</a>'s
- <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> let <var title="">count</var> be
- <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>-<var title="">offset</var>.
-
- <li><p>Starting from <var title="">offset</var> UTF-16 code units remove
- <var title="">count</var> UTF-16 code units from the <a href="#context-object">context object</a>'s
- data.
-</ol>
+<p>The <dfn id="dom-characterdata-deletedata" title="dom-CharacterData-deleteData"><code>deleteData(<var title="">offset</var>, <var title="">count</var>)</code></dfn>
+method must <a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset
+<var title="">offset</var>, count <var title="">count</var>, and data the empty
+string.
 
 <p>The
 <dfn id="dom-characterdata-replacedata" title="dom-CharacterData-replaceData"><code>replaceData(<var title="">offset</var>, <var title="">count</var>, <var title="">data</var>)</code></dfn>
-method must act as if the
-<code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData()</a></code> method is invoked
-with <var title="">offset</var> and <var title="">count</var> as arguments followed by
-the <code title="dom-CharacterData-insertData"><a href="#dom-characterdata-insertdata">insertData()</a></code> method with
-<var title="">offset</var> and <var title="">data</var> as arguments and re-throw any
-exceptions these methods might have thrown.
+method must <a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset
+<var title="">offset</var>, count <var title="">count</var>, and data
+<var title="">data</var>.
 
 
 <h3 id="interface-text"><span class="secno">5.10 </span>Interface <code><a href="#text">Text</a></code></h3>
