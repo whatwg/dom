@@ -3300,18 +3300,8 @@ called <dfn id="concept-cd-data" title="concept-CD-data">data</dfn>.
 <!-- delete after insert for better cursor positioning with editing
      http://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
 
-<p>The <dfn id="dom-characterdata-data" title="dom-CharacterData-data"><code>data</code></dfn> attribute
-must return <a href="#concept-cd-data" title="concept-CD-data">data</a>, and on setting, must
-<a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset 0, count
-<code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, and data new value.
-
-<p>The <dfn id="dom-characterdata-length" title="dom-CharacterData-length"><code>length</code></dfn>
-attribute must return the number of UTF-16 code units in
-<a href="#concept-cd-data" title="concept-CD-data">data</a>.
-
-<p>The
-<dfn id="dom-characterdata-substringdata" title="dom-CharacterData-substringData"><code>substringData(<var title="">offset</var>, <var title="">count</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn id="concept-cd-substring" title="concept-CD-substring">substring data</dfn> with offset
+<var title="">offset</var> and count <var title="">count</var>, run these steps:
 
 <ol>
  <li><p>If <var title="">offset</var> is greater than
@@ -3321,15 +3311,31 @@ method must run these steps:
 
  <li><p>If <var title="">offset</var> plus <var title="">count</var> is
  greater than <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, return a
- string whose value is the UTF-16 code units from the
- <var title="">offset</var><sup>th</sup> UTF-16 code unit to the end of
+ string whose value is the code units from the
+ <var title="">offset</var><sup>th</sup> code unit to the end of
  <var title="">data</var>.
 
- <li><p>Return a string whose value is the UTF-16 code units from the
- <var title="">offset</var><sup>th</sup> UTF-16 code unit to
- the <var title="">offset</var>+<var title="">count</var><sup>th</sup> UTF-16
- code unit in <var title="">data</var>.
+ <li><p>Return a string whose value is the code units from the
+ <var title="">offset</var><sup>th</sup> code unit to the
+ <var title="">offset</var>+<var title="">count</var><sup>th</sup> code unit in
+ <var title="">data</var>.
 </ol>
+<!-- XXX ref "code unit" -->
+
+<p>The <dfn id="dom-characterdata-data" title="dom-CharacterData-data"><code>data</code></dfn> attribute
+must return <a href="#concept-cd-data" title="concept-CD-data">data</a>, and on setting, must
+<a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with offset 0, count
+<code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, and data new value.
+
+<p>The <dfn id="dom-characterdata-length" title="dom-CharacterData-length"><code>length</code></dfn>
+attribute must return the number of code units in
+<a href="#concept-cd-data" title="concept-CD-data">data</a>.
+<!-- XXX ref "code unit" -->
+
+<p>The
+<dfn id="dom-characterdata-substringdata" title="dom-CharacterData-substringData"><code>substringData(<var title="">offset</var>, <var title="">count</var>)</code></dfn>
+method must <a href="#concept-cd-substring" title="concept-CD-substring">substring data</a>
+with offset <var title="">offset</var> and count <var title="">count</var>.
 
 <p>The
 <dfn id="dom-characterdata-appenddata" title="dom-CharacterData-appendData"><code>appendData(<var title="">data</var>)</code></dfn>
@@ -3365,35 +3371,32 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
 
 <p>The
 <dfn id="dom-text-splittext" title="dom-Text-splitText"><code>splitText(<var title="">offset</var>)</code></dfn>
-method must run the following steps:
+method must run these steps:
 
 <ol>
-  <li>If <var title="">offset</var> is greater than
+  <li><p>If <var title="">offset</var> is greater than
   <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code>, throw an
   <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
   exception and terminate these steps.
 
-  <li>Let <var title="">length</var> be
-  <span title=""><code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> &minus;
-  <var title="">offset</var></span>.
+  <li><p>Let <var title="">length</var> be
+  <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> minus
+  <var title="">offset</var>.
 
-  <li>Call the <a href="#context-object">context object</a>'s
-  <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData</a></code> method with
-  <var title="">offset</var> and <var title="">length</var> as its arguments.
-  If this threw an exception, terminate these steps. Otherwise, let
-  <var title="">new data</var> be the value returned.
+  <li><p>Let <var title="">new data</var> be the result of
+  <a href="#concept-cd-substring" title="concept-CD-substring">substringing data</a> with offset
+  <var title="">offset</var> and count <var title="">length</var>.
 
-  <li>Call the <a href="#context-object">context object</a>'s
-  <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData</a></code> method with
-  <var title="">offset</var> and <var title="">length</var> as its arguments.
-  If this threw an exception, terminate these steps.
+  <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with offset
+  <var title="">offset</var>, count <var title="">length</var>, and data the empty
+  string.
 
-  <li>Let <var title="">new node</var> be a new <code><a href="#text">Text</a></code> object, with the
-  same <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> as the
-  <a href="#context-object">context object</a>. Set <var title="">new node</var>'s
-  <code title="dom-CharacterData-data"><a href="#dom-characterdata-data">data</a></code> to <var title="">new data</var>.
+  <li><p>Let <var title="">new node</var> be a new <code><a href="#text">Text</a></code> object,
+  with the same <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> as
+  the <a href="#context-object">context object</a>. Set <var title="">new node</var>'s
+  <a href="#concept-cd-data" title="concept-CD-data">data</a> to <var title="">new data</var>.
 
-  <li>Let <var title="">parent</var> be the <a href="#context-object">context object</a>'s
+  <li><p>Let <var title="">parent</var> be the <a href="#context-object">context object</a>'s
   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>. If <var title="">parent</var>
   is null, return <var title="">new node</var> and terminate these steps.
 
@@ -3401,6 +3404,7 @@ method must run the following steps:
   <code title="dom-Node-insertBefore"><a href="#dom-node-insertbefore">insertBefore</a></code> method with
   <var title="">new node</var> and the <a href="#context-object">context object</a>'s first
   <span title="concept-tree-next-sibling">next sibling as its argument.
+  <!-- XXX need algorithm for insertBefore -->
 
   </span><li>Return <var title="">new node</var>.
 </ol>
