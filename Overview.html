@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-15-july-2011">Editor's Draft 15 July 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-19-july-2011">Editor's Draft 19 July 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -87,7 +87,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 15 July 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 19 July 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -166,21 +166,28 @@ document as other than work in progress.
    <li><a href="#interface-characterdata"><span class="secno">5.9 </span>Interface <code>CharacterData</code></a></li>
    <li><a href="#interface-text"><span class="secno">5.10 </span>Interface <code>Text</code></a></li>
    <li><a href="#interface-comment"><span class="secno">5.11 </span>Interface <code>Comment</code></a></ol></li>
- <li><a href="#collections"><span class="secno">6 </span>Collections</a>
+ <li><a href="#traversal"><span class="secno">6 </span>Traversal</a>
   <ol class="toc">
-   <li><a href="#interface-nodelist"><span class="secno">6.1 </span>Interface <code>NodeList</code></a></li>
-   <li><a href="#interface-htmlcollection"><span class="secno">6.2 </span>Interface <code>HTMLCollection</code></a></ol></li>
- <li><a href="#lists"><span class="secno">7 </span>Lists</a>
+   <li><a href="#to-be-merged-with-document"><span class="secno">6.1 </span>To be merged with <code title="">Document</code></a></li>
+   <li><a href="#interface-nodefilter"><span class="secno">6.2 </span>Interface <code title="">NodeFilter</code></a></li>
+   <li><a href="#interface-nodeiterator"><span class="secno">6.3 </span>Interface <code title="">NodeIterator</code></a></li>
+   <li><a href="#interface-treewalker"><span class="secno">6.4 </span>Interface <code title="">TreeWalker</code></a></ol></li>
+ <li><a href="#collections"><span class="secno">7 </span>Collections</a>
   <ol class="toc">
-   <li><a href="#interface-domstringlist"><span class="secno">7.1 </span>Interface <code>DOMStringList</code></a></li>
-   <li><a href="#interface-domtokenlist"><span class="secno">7.2 </span>Interface <code>DOMTokenList</code></a></li>
-   <li><a href="#interface-domsettabletokenlist"><span class="secno">7.3 </span>Interface <code>DOMSettableTokenList</code></a></ol></li>
- <li><a href="#dom-features"><span class="secno">8 </span>DOM features</a></li>
- <li><a href="#historical"><span class="secno">9 </span>Historical</a>
+   <li><a href="#interface-nodelist"><span class="secno">7.1 </span>Interface <code>NodeList</code></a></li>
+   <li><a href="#interface-htmlcollection"><span class="secno">7.2 </span>Interface <code>HTMLCollection</code></a></ol></li>
+ <li><a href="#lists"><span class="secno">8 </span>Lists</a>
   <ol class="toc">
-   <li><a href="#dom-events"><span class="secno">9.1 </span>DOM Events</a></li>
-   <li><a href="#dom-core"><span class="secno">9.2 </span>DOM Core</a></li>
-   <li><a href="#html"><span class="secno">9.3 </span>HTML</a></ol></li>
+   <li><a href="#interface-domstringlist"><span class="secno">8.1 </span>Interface <code>DOMStringList</code></a></li>
+   <li><a href="#interface-domtokenlist"><span class="secno">8.2 </span>Interface <code>DOMTokenList</code></a></li>
+   <li><a href="#interface-domsettabletokenlist"><span class="secno">8.3 </span>Interface <code>DOMSettableTokenList</code></a></ol></li>
+ <li><a href="#dom-features"><span class="secno">9 </span>DOM features</a></li>
+ <li><a href="#historical"><span class="secno">10 </span>Historical</a>
+  <ol class="toc">
+   <li><a href="#dom-events"><span class="secno">10.1 </span>DOM Events</a></li>
+   <li><a href="#dom-core"><span class="secno">10.2 </span>DOM Core</a></li>
+   <li><a href="#dom-traversal"><span class="secno">10.3 </span>DOM Traversal</a></li>
+   <li><a href="#html"><span class="secno">10.4 </span>HTML</a></ol></li>
  <li><a class="no-num" href="#references">References</a>
   <ol class="toc">
    <li><a class="no-num" href="#normative-references">Normative references</a></li>
@@ -3463,7 +3470,246 @@ space, tab, newline -->
 
 
 
-<h2 id="collections"><span class="secno">6 </span>Collections</h2>
+
+<h2 id="traversal"><span class="secno">6 </span>Traversal</h2>
+
+
+<h3 id="to-be-merged-with-document"><span class="secno">6.1 </span>To be merged with <code title="">Document</code></h3>
+
+<pre class="idl">partial interface <a href="#document">Document</a> {
+  <a href="#nodeiterator">NodeIterator</a> <a href="#dom-document-createnodeiterator" title="dom-Document-createNodeIterator">createNodeIterator</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a> <var title="">filter</var>);
+  <span>TreeWalker</span> <a href="#dom-document-createtreewalker" title="dom-Document-createTreeWalker">createTreeWalker</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a> <var title="">filter</var>);
+};</pre>
+
+<p>When the
+<dfn id="dom-document-createnodeiterator" title="dom-Document-createNodeIterator"><code>createNodeIterator</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>Create a new <code><a href="#nodeiterator">NodeIterator</a></code> object.
+ <li><p>Initialize its <code title="dom-NodeIterator-root"><a href="#dom-nodeiterator-root">root</a></code> and
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code>
+ attributes to <var title="">root</var>.
+ <li><p>Initialize its
+ <code title="dom-NodeIterator-whatToShow"><a href="#dom-nodeiterator-whattoshow">whatToShow</a></code> attribute to
+ <var title="">whatToShow</var>.
+ <li><p>Initialize its <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code>
+ attribute to <var title="">filter</var>.
+</ol>
+
+<p class="XXX">When the
+<dfn id="dom-document-createtreewalker" title="dom-Document-createTreeWalker"><code>createTreeWalker</code></dfn>
+method is invoked these steps must be run: &hellip;
+
+
+
+<h3 id="interface-nodefilter"><span class="secno">6.2 </span>Interface <code title="">NodeFilter</code></h3>
+
+<pre class="idl">interface <dfn id="nodefilter">NodeFilter</dfn> {
+
+  // Constants for acceptNode
+  const unsigned short <span title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</span> = 1;
+  const unsigned short <span title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</span> = 2;
+  const unsigned short <span title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</span> = 3;
+
+  // Constants for whatToShow
+  const unsigned long <span title="dom-NodeFilter-SHOW_ALL">SHOW_ALL</span> = 0xFFFFFFFF;
+  const unsigned long <span title="dom-NodeFilter-SHOW_ELEMENT">SHOW_ELEMENT</span> = 0x00000001;
+  const unsigned long <span title="dom-NodeFilter-SHOW_ATTRIBUTE">SHOW_ATTRIBUTE</span> = 0x00000002; // historical
+  const unsigned long <span title="dom-NodeFilter-SHOW_TEXT">SHOW_TEXT</span> = 0x00000004;
+  const unsigned long <span title="dom-NodeFilter-SHOW_CDATA_SECTION">SHOW_CDATA_SECTION</span> = 0x00000008; // historical
+  const unsigned long <span title="dom-NodeFilter-SHOW_ENTITY_REFERENCE">SHOW_ENTITY_REFERENCE</span> = 0x00000010; // historical
+  const unsigned long <span title="dom-NodeFilter-SHOW_ENTITY">SHOW_ENTITY</span> = 0x00000020; // historical
+  const unsigned long <span title="dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION">SHOW_PROCESSING_INSTRUCTION</span> = 0x00000040;
+  const unsigned long <span title="dom-NodeFilter-SHOW_COMMENT">SHOW_COMMENT</span> = 0x00000080;
+  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT">SHOW_DOCUMENT</span> = 0x00000100;
+  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT_TYPE">SHOW_DOCUMENT_TYPE</span> = 0x00000200;
+  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT">SHOW_DOCUMENT_FRAGMENT</span> = 0x00000400;
+  const unsigned long <span title="dom-NodeFilter-SHOW_NOTATION">SHOW_NOTATION</span> = 0x00000800; // historical
+
+  unsigned short <span title="dom-NodeFilter-acceptNode">acceptNode</span>(<a href="#node">Node</a> <var title="">node</var>);
+};</pre>
+
+<!-- acceptNode constants were signed before -->
+
+<p class="XXX">&hellip;
+
+
+
+<h3 id="interface-nodeiterator"><span class="secno">6.3 </span>Interface <code title="">NodeIterator</code></h3>
+
+<pre class="idl">interface <dfn id="nodeiterator">NodeIterator</dfn> {
+  readonly attribute <a href="#node">Node</a> <a href="#dom-nodeiterator-root" title="dom-NodeIterator-root">root</a>;
+  readonly attribute <a href="#node">Node</a> <a href="#dom-nodeiterator-referencenode" title="dom-NodeIterator-referenceNode">referenceNode</a>;
+  readonly attribute boolean <a href="#dom-nodeiterator-pointerbeforereferencenode" title="dom-NodeIterator-pointerBeforeReferenceNode">pointerBeforeReferenceNode</a>;
+  readonly attribute unsigned long <a href="#dom-nodeiterator-whattoshow" title="dom-NodeIterator-whatToShow">whatToShow</a>;
+  readonly attribute <a href="#nodefilter">NodeFilter</a> <a href="#dom-nodeiterator-filter" title="dom-NodeIterator-filter">filter</a>;<!--
+  readonly attribute boolean <span title=dom-NodeIterator-expandEntityReferences>expandEntityReferences</span>;-->
+
+  <a href="#node">Node</a> <a href="#dom-nodeiterator-nextnode" title="dom-NodeIterator-nextNode">nextNode</a>();
+  <a href="#node">Node</a> <a href="#dom-nodeiterator-previousnode" title="dom-NodeIterator-previousNode">previousNode</a>();
+
+  void <a href="#dom-nodeiterator-detach" title="dom-NodeIterator-detach">detach</a>();
+};</pre>
+
+<p>Each <code><a href="#nodeiterator">NodeIterator</a></code> object has an associated
+<dfn id="iterator-collection">iterator collection</dfn>, which is a
+<a href="#concept-collection" title="concept-collection">collection</a> rooted at the
+<code title="dom-NodeIterator-root"><a href="#dom-nodeiterator-root">root</a></code> attribute value, whose filter
+matches any <a href="#concept-node" title="concept-node">node</a>.
+
+<p class="XXX">Whenever the <a href="#iterator-collection">iterator collection</a> is mutated&hellip;</p>
+
+<p>Each <code><a href="#nodeiterator">NodeIterator</a></code> object also has an associated
+<dfn id="detached-flag">detached flag</dfn> which is initially unset.
+
+<hr>
+
+<p>The <dfn id="dom-nodeiterator-root" title="dom-NodeIterator-root"><code>root</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The
+<dfn id="dom-nodeiterator-referencenode" title="dom-NodeIterator-referenceNode"><code>referenceNode</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The
+<dfn id="dom-nodeiterator-pointerbeforereferencenode" title="dom-NodeIterator-pointerBeforeReferenceNode"><code>pointerBeforeReferenceNode</code></dfn>
+attribute must return what it was initialized to. When a
+<code><a href="#nodeiterator">NodeIterator</a></code> is created it must be initialized to true.</p>
+
+<p>The <dfn id="dom-nodeiterator-whattoshow" title="dom-NodeIterator-whatToShow"><code>whatToShow</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The <dfn id="dom-nodeiterator-filter" title="dom-NodeIterator-filter"><code>filter</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>When the
+<dfn id="dom-nodeiterator-nextnode" title="dom-NodeIterator-nextNode"><code>nextNode()</code></dfn> method
+is invoked these steps must be run:
+
+<ol>
+ <li><p>If the <a href="#detached-flag">detached flag</a> is set throw an
+ <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+ exception and terminate these steps.
+
+ <li><p>Let <var title="">node</var> be the value of
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code>.
+
+ <li>
+  <p>Run these substeps:
+  <ol>
+   <li><p>If the
+   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+   attribute value is false, let <var title="">node</var> be the
+   <a href="#concept-node" title="concept-node">node</a> following <var title="">node</var> in
+   the <a href="#iterator-collection">iterator collection</a>. If there is no such
+   <a href="#concept-node" title="concept-node">node</a> return null and terminate these
+   steps.
+   <li><p>If the
+   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+   attribute value is true, set it to false.
+   <li><p>Let <var title="">n</var> be <var title="">node</var>'s
+   <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
+   <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
+   significant bit) of the
+   <code title="dom-NodeIterator-whatToShow"><a href="#dom-nodeiterator-whattoshow">whatToShow</a></code> attribute value
+   is not set, run these substeps again.
+   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
+   <!-- AGAIN -->
+   <li><p>If the <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute
+   value is null, go to the next step in the overall set of steps.
+   <!-- SUCCESS -->
+   <li>
+    <p>Let <var title="">result</var> be the return value of invoking the
+    <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute value.
+    <p>If an exception was thrown, re-throw the exception and terminate
+    these steps.</p>
+    <p>If the <a href="#detached-flag">detached flag</a> is set throw an
+    <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+    exception and terminate these steps.
+   </li>
+   <li>
+    <p>If <var title="">result</var> is
+    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, go to the
+    next step in the overall set of steps.
+    <!-- SUCCESS -->
+    <p>Otherwise, run these substeps again.
+    <!-- AGAIN -->
+  </ol>
+ <li><p>Initialize the
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
+ to <var title="">node</var> and return <var title="">node</var>.
+</ol>
+
+<p>When the
+<dfn id="dom-nodeiterator-previousnode" title="dom-NodeIterator-previousNode"><code>previousNode()</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>If the <a href="#detached-flag">detached flag</a> is set throw an
+ <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+ exception and terminate these steps.
+
+ <li><p>Let <var title="">node</var> be the value of
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code>.
+
+ <li>
+  <p>Run these substeps:
+  <ol>
+   <li><p>If the
+   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+   attribute value is true, let <var title="">node</var> be the
+   <a href="#concept-node" title="concept-node">node</a> preceding <var title="">node</var> in
+   the <a href="#iterator-collection">iterator collection</a>. If there is no such
+   <a href="#concept-node" title="concept-node">node</a> return null and terminate these
+   steps.
+   <li><p>If the
+   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+   attribute value is false, set it to true.
+   <li><p>Let <var title="">n</var> be <var title="">node</var>'s
+   <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
+   <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
+   significant bit) of the
+   <code title="dom-NodeIterator-whatToShow"><a href="#dom-nodeiterator-whattoshow">whatToShow</a></code> attribute value
+   is not set, run these substeps again.
+   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
+   <!-- AGAIN -->
+   <li><p>If the <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute
+   value is null, go to the next step in the overall set of steps.
+   <!-- SUCCESS -->
+   <li>
+    <p>Let <var title="">result</var> be the return value of invoking the
+    <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute value.
+    <p>If an exception was thrown, re-throw the exception and terminate
+    these steps.</p>
+    <p>If the <a href="#detached-flag">detached flag</a> is set throw an
+    <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+    exception and terminate these steps.
+   </li>
+   <li>
+    <p>If <var title="">result</var> is
+    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, go to the
+    next step in the overall set of steps.
+    <!-- SUCCESS -->
+    <p>Otherwise, run these substeps again.
+    <!-- AGAIN -->
+  </ol>
+ <li><p>Initialize the
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
+ to <var title="">node</var> and return <var title="">node</var>.
+</ol>
+
+<p>When the <dfn id="dom-nodeiterator-detach" title="dom-NodeIterator-detach"><code>detach()</code></dfn>
+method is invoked set the <a href="#detached-flag">detached flag</a>.
+
+
+<h3 id="interface-treewalker"><span class="secno">6.4 </span>Interface <code title="">TreeWalker</code></h3>
+
+<p class="XXX">Another day&hellip;</p>
+
+
+
+<h2 id="collections"><span class="secno">7 </span>Collections</h2>
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
 <a href="#concept-collection" title="concept-collection">collection</a> can be either
@@ -3493,7 +3739,7 @@ the <a href="#concept-collection" title="concept-collection">collection</a> must
 every time it is retrieved.
 
 
-<h3 id="interface-nodelist"><span class="secno">6.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h3>
+<h3 id="interface-nodelist"><span class="secno">7.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h3>
 <p>A <code><a href="#nodelist">NodeList</a></code> object is a kind of
 <a href="#concept-collection" title="concept-collection">collection</a>.
 
@@ -3530,7 +3776,7 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 </div>
 
 
-<h3 id="interface-htmlcollection"><span class="secno">6.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h3>
+<h3 id="interface-htmlcollection"><span class="secno">7.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h3>
 <p>The <code><a href="#htmlcollection">HTMLCollection</a></code> interface represents a generic <a href="#concept-collection" title="concept-collection">collection</a> of elements.
 
 <p class="note">This interface is called <code><a href="#htmlcollection">HTMLCollection</a></code> for
@@ -3650,9 +3896,9 @@ title=concept-collection>collection</span>, whose primary purpose is to expose
 -->
 
 
-<h2 id="lists"><span class="secno">7 </span>Lists</h2>
+<h2 id="lists"><span class="secno">8 </span>Lists</h2>
 
-<h3 id="interface-domstringlist"><span class="secno">7.1 </span>Interface <code><a href="#domstringlist">DOMStringList</a></code></h3>
+<h3 id="interface-domstringlist"><span class="secno">8.1 </span>Interface <code><a href="#domstringlist">DOMStringList</a></code></h3>
 
 <p class="XXX">Only HTMLPropertiesCollection.names, DataTranser.types, Clipboard.types, Document.styleSheetSets, and some IndexedDB APIs seem to use this API. Should they use something like DOMString[] instead if Web IDL introduces that?
 
@@ -3706,7 +3952,7 @@ or false otherwise.
 </div>
 
 
-<h3 id="interface-domtokenlist"><span class="secno">7.2 </span>Interface <code><a href="#domtokenlist">DOMTokenList</a></code></h3>
+<h3 id="interface-domtokenlist"><span class="secno">8.2 </span>Interface <code><a href="#domtokenlist">DOMTokenList</a></code></h3>
 <p>The <code><a href="#domtokenlist">DOMTokenList</a></code> interface represents an interface to an
 <dfn id="concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</dfn> that
 consists of a <a href="#set-of-space-separated-tokens">set of space-separated tokens</a>.
@@ -3925,7 +4171,7 @@ method must run the following steps:
 </div>
 
 
-<h3 id="interface-domsettabletokenlist"><span class="secno">7.3 </span>Interface <code><a href="#domsettabletokenlist">DOMSettableTokenList</a></code></h3>
+<h3 id="interface-domsettabletokenlist"><span class="secno">8.3 </span>Interface <code><a href="#domsettabletokenlist">DOMSettableTokenList</a></code></h3>
 
 <p>The <code><a href="#domsettabletokenlist">DOMSettableTokenList</a></code> interface is the same as the
 <code><a href="#domtokenlist">DOMTokenList</a></code> interface, except that it allows the
@@ -3956,7 +4202,7 @@ attribute must return the underlying string and, on setting must replace the und
 
 
 
-<h2 id="dom-features"><span class="secno">8 </span>DOM features</h2>
+<h2 id="dom-features"><span class="secno">9 </span>DOM features</h2>
 <p class="warning">Authors are strongly discouraged from using
 <a href="#concept-domfeature" title="concept-DOMfeature">DOM features</a>, as they are notoriously
 unreliable and imprecise. Authors are encouraged to rely on explicit feature
@@ -3996,7 +4242,7 @@ feature</a> with the version "2.0" associated with it.
 
 
 
-<h2 id="historical"><span class="secno">9 </span>Historical</h2>
+<h2 id="historical"><span class="secno">10 </span>Historical</h2>
 
 <!-- XXX we should probably just nuke this section in due course. No need to keep old dreams alive. -->
 
@@ -4010,7 +4256,7 @@ such this specification includes features defined by former DOM Events and
 DOM Core specifications, features once defined by HTML, and features defined
 by the Element Traversal specification.</p>
 
-<h3 id="dom-events"><span class="secno">9.1 </span>DOM Events</h3>
+<h3 id="dom-events"><span class="secno">10.1 </span>DOM Events</h3>
 
 <p>This specification only replaces the core event model and not any of the
 events for specific contexts (e.g. user interface events).
@@ -4033,7 +4279,7 @@ events for specific contexts (e.g. user interface events).
 </ul>
 
 
-<h3 id="dom-core"><span class="secno">9.2 </span>DOM Core</h3>
+<h3 id="dom-core"><span class="secno">10.2 </span>DOM Core</h3>
 
 <p><dfn id="domstring"><code>DOMString</code></dfn> and
 <dfn id="domtimestamp"><code>DOMTimeStamp</code></dfn> originally defined in DOM Level 3 Core
@@ -4134,8 +4380,39 @@ will not support them.
   <p><dfn id="dom-text-iselementcontentwhitespace" title="dom-Text-isElementContentWhitespace"><code>isElementContentWhitespace</code></dfn>
 </dl>
 
+<h3 id="dom-traversal"><span class="secno">10.3 </span>DOM Traversal</h3>
 
-<h3 id="html"><span class="secno">9.3 </span>HTML</h3>
+<p>Differences with respect to
+<code title="dom-Document-createNodeIterator"><a href="#dom-document-createnodeiterator">createNodeIterator()</a></code> and
+<code title="dom-Document-createTreeWalker"><a href="#dom-document-createtreewalker">createTreeWalker()</a></code>:</p>
+
+<ul>
+ <li><p>In the previous edition of DOM Traversal both these methods accepted
+ a fourth argument named <var title="">entityReferenceExpansion</var> that has
+ been dropped as the DOM never actually exposed entity references in
+ practice.
+
+ <li><p>In the previous edition of DOM Traversal both these methods threw a
+ <code>NOT_SUPPORTED_ERR</code> when the <var title="">root</var> was null.
+ Now this will throw a language-binding specific exception.
+
+ <li><p>In the previous edition of DOM Traversal both these methods did not
+ have optional arguments. That was changed for convenience.
+</ul>
+
+<p><code title="dom-NodeFilter-acceptNode">acceptNode()</code> and its
+constants have been changed to use unsigned short, rather than just short.
+
+<p>The <code title="">expandEntityReferences</code> attribute has been removed
+from the <code><a href="#nodeiterator">NodeIterator</a></code> and <code>TreeWalker</code> objects.
+
+<p>The <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> and
+<code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+attributes have been added to <code><a href="#nodeiterator">NodeIterator</a></code> objects to align
+with user agents.
+
+
+<h3 id="html"><span class="secno">10.4 </span>HTML</h3>
 
 <p>A number of DOM methods behave in a special way based on the
 <a href="#html-namespace">HTML namespace</a> or <a href="#html-document">HTML document</a> variables. This

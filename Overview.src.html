@@ -3467,6 +3467,245 @@ space, tab, newline -->
 
 
 
+
+<h2>Traversal</h2>
+
+
+<h3>To be merged with <code title>Document</code></h3>
+
+<pre class=idl>partial interface <span>Document</span> {
+  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span> <var title>filter</var>);
+  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span> <var title>filter</var>);
+};</pre>
+
+<p>When the
+<dfn title=dom-Document-createNodeIterator><code>createNodeIterator</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>Create a new <code>NodeIterator</code> object.
+ <li><p>Initialize its <code title=dom-NodeIterator-root>root</code> and
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code>
+ attributes to <var title>root</var>.
+ <li><p>Initialize its
+ <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute to
+ <var title>whatToShow</var>.
+ <li><p>Initialize its <code title=dom-NodeIterator-filter>filter</code>
+ attribute to <var title>filter</var>.
+</ol>
+
+<p class=XXX>When the
+<dfn title=dom-Document-createTreeWalker><code>createTreeWalker</code></dfn>
+method is invoked these steps must be run: &hellip;
+
+
+
+<h3>Interface <code title>NodeFilter</code></h3>
+
+<pre class=idl>interface <dfn>NodeFilter</dfn> {
+
+  // Constants for acceptNode
+  const unsigned short <span title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</span> = 1;
+  const unsigned short <span title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</span> = 2;
+  const unsigned short <span title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</span> = 3;
+
+  // Constants for whatToShow
+  const unsigned long <span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span> = 0xFFFFFFFF;
+  const unsigned long <span title=dom-NodeFilter-SHOW_ELEMENT>SHOW_ELEMENT</span> = 0x00000001;
+  const unsigned long <span title=dom-NodeFilter-SHOW_ATTRIBUTE>SHOW_ATTRIBUTE</span> = 0x00000002; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_TEXT>SHOW_TEXT</span> = 0x00000004;
+  const unsigned long <span title=dom-NodeFilter-SHOW_CDATA_SECTION>SHOW_CDATA_SECTION</span> = 0x00000008; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY_REFERENCE>SHOW_ENTITY_REFERENCE</span> = 0x00000010; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY>SHOW_ENTITY</span> = 0x00000020; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION>SHOW_PROCESSING_INSTRUCTION</span> = 0x00000040;
+  const unsigned long <span title=dom-NodeFilter-SHOW_COMMENT>SHOW_COMMENT</span> = 0x00000080;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT>SHOW_DOCUMENT</span> = 0x00000100;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_TYPE>SHOW_DOCUMENT_TYPE</span> = 0x00000200;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT>SHOW_DOCUMENT_FRAGMENT</span> = 0x00000400;
+  const unsigned long <span title=dom-NodeFilter-SHOW_NOTATION>SHOW_NOTATION</span> = 0x00000800; // historical
+
+  unsigned short <span title=dom-NodeFilter-acceptNode>acceptNode</span>(<span>Node</span> <var title>node</var>);
+};</pre>
+
+<!-- acceptNode constants were signed before -->
+
+<p class=XXX>&hellip;
+
+
+
+<h3>Interface <code title>NodeIterator</code></h3>
+
+<pre class=idl>interface <dfn>NodeIterator</dfn> {
+  readonly attribute <span>Node</span> <span title=dom-NodeIterator-root>root</span>;
+  readonly attribute <span>Node</span> <span title=dom-NodeIterator-referenceNode>referenceNode</span>;
+  readonly attribute boolean <span title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</span>;
+  readonly attribute unsigned long <span title=dom-NodeIterator-whatToShow>whatToShow</span>;
+  readonly attribute <span>NodeFilter</span> <span title=dom-NodeIterator-filter>filter</span>;<!--
+  readonly attribute boolean <span title=dom-NodeIterator-expandEntityReferences>expandEntityReferences</span>;-->
+
+  <span>Node</span> <span title=dom-NodeIterator-nextNode>nextNode</span>();
+  <span>Node</span> <span title=dom-NodeIterator-previousNode>previousNode</span>();
+
+  void <span title=dom-NodeIterator-detach>detach</span>();
+};</pre>
+
+<p>Each <code>NodeIterator</code> object has an associated
+<dfn>iterator collection</dfn>, which is a
+<span title=concept-collection>collection</span> rooted at the
+<code title=dom-NodeIterator-root>root</code> attribute value, whose filter
+matches any <span title=concept-node>node</span>.
+
+<p class=XXX>Whenever the <span>iterator collection</span> is mutated&hellip;</p>
+
+<p>Each <code>NodeIterator</code> object also has an associated
+<dfn>detached flag</dfn> which is initially unset.
+
+<hr>
+
+<p>The <dfn title=dom-NodeIterator-root><code>root</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The
+<dfn title=dom-NodeIterator-referenceNode><code>referenceNode</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The
+<dfn title=dom-NodeIterator-pointerBeforeReferenceNode><code>pointerBeforeReferenceNode</code></dfn>
+attribute must return what it was initialized to. When a
+<code>NodeIterator</code> is created it must be initialized to true.</p>
+
+<p>The <dfn title=dom-NodeIterator-whatToShow><code>whatToShow</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The <dfn title=dom-NodeIterator-filter><code>filter</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>When the
+<dfn title=dom-NodeIterator-nextNode><code>nextNode()</code></dfn> method
+is invoked these steps must be run:
+
+<ol>
+ <li><p>If the <span>detached flag</span> is set throw an
+ <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+ exception and terminate these steps.
+
+ <li><p>Let <var title>node</var> be the value of
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code>.
+
+ <li>
+  <p>Run these substeps:
+  <ol>
+   <li><p>If the
+   <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+   attribute value is false, let <var title>node</var> be the
+   <span title=concept-node>node</span> following <var title>node</var> in
+   the <span>iterator collection</span>. If there is no such
+   <span title=concept-node>node</span> return null and terminate these
+   steps.
+   <li><p>If the
+   <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+   attribute value is true, set it to false.
+   <li><p>Let <var title>n</var> be <var title>node</var>'s
+   <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
+   <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
+   significant bit) of the
+   <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute value
+   is not set, run these substeps again.
+   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
+   <!-- AGAIN -->
+   <li><p>If the <code title=dom-NodeIterator-filter>filter</code> attribute
+   value is null, go to the next step in the overall set of steps.
+   <!-- SUCCESS -->
+   <li>
+    <p>Let <var title>result</var> be the return value of invoking the
+    <code title=dom-NodeIterator-filter>filter</code> attribute value.
+    <p>If an exception was thrown, re-throw the exception and terminate
+    these steps.</p>
+    <p>If the <span>detached flag</span> is set throw an
+    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+    exception and terminate these steps.
+   </li>
+   <li>
+    <p>If <var title>result</var> is
+    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, go to the
+    next step in the overall set of steps.
+    <!-- SUCCESS -->
+    <p>Otherwise, run these substeps again.
+    <!-- AGAIN -->
+  </ol>
+ <li><p>Initialize the
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
+ to <var title>node</var> and return <var title>node</var>.
+</ol>
+
+<p>When the
+<dfn title=dom-NodeIterator-previousNode><code>previousNode()</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>If the <span>detached flag</span> is set throw an
+ <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+ exception and terminate these steps.
+
+ <li><p>Let <var title>node</var> be the value of
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code>.
+
+ <li>
+  <p>Run these substeps:
+  <ol>
+   <li><p>If the
+   <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+   attribute value is true, let <var title>node</var> be the
+   <span title=concept-node>node</span> preceding <var title>node</var> in
+   the <span>iterator collection</span>. If there is no such
+   <span title=concept-node>node</span> return null and terminate these
+   steps.
+   <li><p>If the
+   <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+   attribute value is false, set it to true.
+   <li><p>Let <var title>n</var> be <var title>node</var>'s
+   <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
+   <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
+   significant bit) of the
+   <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute value
+   is not set, run these substeps again.
+   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
+   <!-- AGAIN -->
+   <li><p>If the <code title=dom-NodeIterator-filter>filter</code> attribute
+   value is null, go to the next step in the overall set of steps.
+   <!-- SUCCESS -->
+   <li>
+    <p>Let <var title>result</var> be the return value of invoking the
+    <code title=dom-NodeIterator-filter>filter</code> attribute value.
+    <p>If an exception was thrown, re-throw the exception and terminate
+    these steps.</p>
+    <p>If the <span>detached flag</span> is set throw an
+    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+    exception and terminate these steps.
+   </li>
+   <li>
+    <p>If <var title>result</var> is
+    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, go to the
+    next step in the overall set of steps.
+    <!-- SUCCESS -->
+    <p>Otherwise, run these substeps again.
+    <!-- AGAIN -->
+  </ol>
+ <li><p>Initialize the
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
+ to <var title>node</var> and return <var title>node</var>.
+</ol>
+
+<p>When the <dfn title=dom-NodeIterator-detach><code>detach()</code></dfn>
+method is invoked set the <span>detached flag</span>.
+
+
+<h3>Interface <code title>TreeWalker</code></h3>
+
+<p class=XXX>Another day&hellip;</p>
+
+
+
 <h2>Collections</h2>
 <p>A <dfn title=concept-collection>collection</dfn> is an object that
 represents a lists of DOM nodes. A
@@ -4163,6 +4402,37 @@ will not support them.
  <dd>
   <p><dfn title=dom-Text-isElementContentWhitespace><code>isElementContentWhitespace</code></dfn>
 </dl>
+
+<h3>DOM Traversal</h3>
+
+<p>Differences with respect to
+<code title=dom-Document-createNodeIterator>createNodeIterator()</code> and
+<code title=dom-Document-createTreeWalker>createTreeWalker()</code>:</p>
+
+<ul>
+ <li><p>In the previous edition of DOM Traversal both these methods accepted
+ a fourth argument named <var title>entityReferenceExpansion</var> that has
+ been dropped as the DOM never actually exposed entity references in
+ practice.
+
+ <li><p>In the previous edition of DOM Traversal both these methods threw a
+ <code>NOT_SUPPORTED_ERR</code> when the <var title=>root</var> was null.
+ Now this will throw a language-binding specific exception.
+
+ <li><p>In the previous edition of DOM Traversal both these methods did not
+ have optional arguments. That was changed for convenience.
+</ul>
+
+<p><code title=dom-NodeFilter-acceptNode>acceptNode()</code> and its
+constants have been changed to use unsigned short, rather than just short.
+
+<p>The <code title>expandEntityReferences</code> attribute has been removed
+from the <code>NodeIterator</code> and <code>TreeWalker</code> objects.
+
+<p>The <code title=dom-NodeIterator-referenceNode>referenceNode</code> and
+<code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+attributes have been added to <code>NodeIterator</code> objects to align
+with user agents.
 
 
 <h3>HTML</h3>
