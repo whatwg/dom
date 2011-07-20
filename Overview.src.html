@@ -3559,7 +3559,8 @@ matches any <span title=concept-node>node</span>.
 <p class=XXX>Whenever the <span>iterator collection</span> is mutated&hellip;</p>
 
 <p>Each <code>NodeIterator</code> object also has an associated
-<dfn>detached flag</dfn> which is initially unset.
+<dfn>detached flag</dfn> and <dfn>locked flag</span> which are initially
+unset.
 
 <hr>
 
@@ -3586,7 +3587,8 @@ attribute must return what it was initialized to.</p>
 is invoked these steps must be run:
 
 <ol>
- <li><p>If the <span>detached flag</span> is set throw an
+ <li><p>If the <span>detached flag</span> or <span>locked flag</span> is set
+ throw an
  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
  exception and terminate these steps.
 
@@ -3605,7 +3607,7 @@ is invoked these steps must be run:
    steps.
    <li><p>If the
    <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
-   attribute value is true, set it to false.
+   attribute value is true, initialize it to false.
    <li><p>Let <var title>n</var> be <var title>node</var>'s
    <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
    <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
@@ -3617,15 +3619,15 @@ is invoked these steps must be run:
    <li><p>If the <code title=dom-NodeIterator-filter>filter</code> attribute
    value is null, go to the next step in the overall set of steps.
    <!-- SUCCESS -->
-   <li>
-    <p>Let <var title>result</var> be the return value of invoking the
-    <code title=dom-NodeIterator-filter>filter</code> attribute value.
-    <p>If an exception was thrown, re-throw the exception and terminate
-    these steps.</p>
-    <p>If the <span>detached flag</span> is set throw an
-    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
-    exception and terminate these steps.
-   </li>
+   <li><p>Set the <span>locked flag</span>.
+   <li><p>let <var title>result</var> be the return value of invoking the
+   <code title=dom-NodeIterator-filter>filter</code> attribute value.
+   <li><p>Unset the <span>locked flag</span>.
+   <li><p>If an exception was thrown, re-throw the exception and terminate
+   these steps.</p>
+   <li><p>If the <span>detached flag</span> is set throw an
+   <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+   exception and terminate these steps.
    <li>
     <p>If <var title>result</var> is
     <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, go to the
@@ -3644,7 +3646,8 @@ is invoked these steps must be run:
 method is invoked these steps must be run:
 
 <ol>
- <li><p>If the <span>detached flag</span> is set throw an
+ <li><p>If the <span>detached flag</span> or <span>locked flag</span> is set
+ throw an
  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
  exception and terminate these steps.
 
@@ -3663,7 +3666,7 @@ method is invoked these steps must be run:
    steps.
    <li><p>If the
    <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
-   attribute value is false, set it to true.
+   attribute value is false, initialize it to true.
    <li><p>Let <var title>n</var> be <var title>node</var>'s
    <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
    <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
@@ -3675,15 +3678,15 @@ method is invoked these steps must be run:
    <li><p>If the <code title=dom-NodeIterator-filter>filter</code> attribute
    value is null, go to the next step in the overall set of steps.
    <!-- SUCCESS -->
-   <li>
-    <p>Let <var title>result</var> be the return value of invoking the
-    <code title=dom-NodeIterator-filter>filter</code> attribute value.
-    <p>If an exception was thrown, re-throw the exception and terminate
-    these steps.</p>
-    <p>If the <span>detached flag</span> is set throw an
-    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
-    exception and terminate these steps.
-   </li>
+   <li><p>Set the <span>locked flag</span>.
+   <li><p>let <var title>result</var> be the return value of invoking the
+   <code title=dom-NodeIterator-filter>filter</code> attribute value.
+   <li><p>Unset the <span>locked flag</span>.
+   <li><p>If an exception was thrown, re-throw the exception and terminate
+   these steps.</p>
+   <li><p>If the <span>detached flag</span> is set throw an
+   <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+   exception and terminate these steps.
    <li>
     <p>If <var title>result</var> is
     <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, go to the
