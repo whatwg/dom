@@ -3585,11 +3585,10 @@ attribute must return what it was initialized to.</p>
 <p>The <dfn id="dom-nodeiterator-filter" title="dom-NodeIterator-filter"><code>filter</code></dfn>
 attribute must return what it was initialized to.</p>
 
-<p>When the
-<dfn id="dom-nodeiterator-nextnode" title="dom-NodeIterator-nextNode"><code>nextNode()</code></dfn> method
-is invoked these steps must be run:
+<p>To <dfn id="concept-nodeiterator-traverse" title="concept-NodeIterator-traverse">traverse in direction
+<var title="">direction</var> run these steps:
 
-<ol>
+</dfn><ol>
  <li><p>If the <a href="#detached-flag">detached flag</a> or <a href="#locked-flag">locked flag</a> is set
  throw an
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
@@ -3601,16 +3600,33 @@ is invoked these steps must be run:
  <li>
   <p>Run these substeps:
   <ol>
-   <li><p>If the
-   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-   attribute value is false, let <var title="">node</var> be the
-   <a href="#concept-node" title="concept-node">node</a> following <var title="">node</var> in
-   the <a href="#iterator-collection">iterator collection</a>. If there is no such
-   <a href="#concept-node" title="concept-node">node</a> return null and terminate these
-   steps.
-   <li><p>If the
-   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-   attribute value is true, set it to false.
+   <li>
+    <dl class="switch">
+     <dt>If direction is next</dt>
+     <dd>
+      <p>If the
+      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+      attribute value is false, let <var title="">node</var> be the
+      <a href="#concept-node" title="concept-node">node</a> following <var title="">node</var>
+      in the <a href="#iterator-collection">iterator collection</a>. If there is no such
+      <a href="#concept-node" title="concept-node">node</a> return null and terminate these
+      steps.
+      <p>If the
+      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+      attribute value is true, set it to false.
+     <dt>If direction is previous</dt>
+     <dd>
+      <p>If the
+      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+      attribute value is true, let <var title="">node</var> be the
+      <a href="#concept-node" title="concept-node">node</a> preceding <var title="">node</var>
+      in the <a href="#iterator-collection">iterator collection</a>. If there is no such
+      <a href="#concept-node" title="concept-node">node</a> return null and terminate these
+      steps.
+      <p>If the
+      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+      attribute value is false, set it to true.
+    </dl>
    <li><p>Let <var title="">n</var> be <var title="">node</var>'s
    <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
    <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
@@ -3644,64 +3660,14 @@ is invoked these steps must be run:
  to <var title="">node</var> and return <var title="">node</var>.
 </ol>
 
-<p>When the
+<p>The <dfn id="dom-nodeiterator-nextnode" title="dom-NodeIterator-nextNode"><code>nextNode()</code></dfn>
+method must <a href="#concept-nodeiterator-traverse" title="concept-NodeIterator-traverse">traverse</a> in
+direction next.
+
+<p>The
 <dfn id="dom-nodeiterator-previousnode" title="dom-NodeIterator-previousNode"><code>previousNode()</code></dfn>
-method is invoked these steps must be run:
-
-<ol>
- <li><p>If the <a href="#detached-flag">detached flag</a> or <a href="#locked-flag">locked flag</a> is set
- throw an
- <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
- exception and terminate these steps.
-
- <li><p>Let <var title="">node</var> be the value of
- <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code>.
-
- <li>
-  <p>Run these substeps:
-  <ol>
-   <li><p>If the
-   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-   attribute value is true, let <var title="">node</var> be the
-   <a href="#concept-node" title="concept-node">node</a> preceding <var title="">node</var> in
-   the <a href="#iterator-collection">iterator collection</a>. If there is no such
-   <a href="#concept-node" title="concept-node">node</a> return null and terminate these
-   steps.
-   <li><p>If the
-   <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-   attribute value is false, set it to true.
-   <li><p>Let <var title="">n</var> be <var title="">node</var>'s
-   <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
-   <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
-   significant bit) of the
-   <code title="dom-NodeIterator-whatToShow"><a href="#dom-nodeiterator-whattoshow">whatToShow</a></code> attribute value
-   is not set, run these substeps again.
-   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
-   <!-- AGAIN -->
-   <li><p>If the <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute
-   value is null, go to the next step in the overall set of steps.
-   <!-- SUCCESS -->
-   <li><p>Set the <a href="#locked-flag">locked flag</a>.
-   <li><p>let <var title="">result</var> be the return value of invoking the
-   <code title="dom-NodeIterator-filter"><a href="#dom-nodeiterator-filter">filter</a></code> attribute value.
-   <li><p>Unset the <a href="#locked-flag">locked flag</a>.
-   <li><p>If an exception was thrown, re-throw the exception and terminate
-   these steps.</p>
-   <li><p>If the <a href="#detached-flag">detached flag</a> is set throw an
-   <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
-   exception and terminate these steps.
-   <li>
-    <p>If <var title="">result</var> is
-    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, go to the
-    next step in the overall set of steps.
-    <!-- SUCCESS -->
-    <p>Otherwise, run these substeps again.
-    <!-- AGAIN -->
-  </ol>
- <li><p>Set the
- <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
- to <var title="">node</var> and return <var title="">node</var>.
-</ol>
+method must <a href="#concept-nodeiterator-traverse" title="concept-NodeIterator-traverse">traverse</a> in
+direction previous.
 
 <p>When the <dfn id="dom-nodeiterator-detach" title="dom-NodeIterator-detach"><code>detach()</code></dfn>
 method is invoked set the <a href="#detached-flag">detached flag</a> and set the
