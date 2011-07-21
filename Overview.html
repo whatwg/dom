@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-20-july-2011">Editor's Draft 20 July 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-21-july-2011">Editor's Draft 21 July 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -87,7 +87,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 20 July 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 21 July 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -3603,8 +3603,8 @@ unset.
 
 <hr>
 
-<p>The <dfn id="dom-nodeiterator-root" title="dom-NodeIterator-root"><code>root</code></dfn>
-attribute must return what it was initialized to.</p>
+<p>The <dfn id="dom-nodeiterator-root" title="dom-NodeIterator-root"><code>root</code></dfn> attribute
+must return what it was initialized to.</p>
 
 <p>The
 <dfn id="dom-nodeiterator-referencenode" title="dom-NodeIterator-referenceNode"><code>referenceNode</code></dfn>
@@ -3630,8 +3630,12 @@ attribute must return what it was initialized to.</p>
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">node</var> be the value of
- <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code>.
+ <li><p>Let <var title="">node</var> be the value of the
+ <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute.
+
+ <li><p>Let <var title="">before node</var> be the value of the
+ <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+ attribute.
 
  <li>
   <p>Run these substeps:
@@ -3640,28 +3644,20 @@ attribute must return what it was initialized to.</p>
     <dl class="switch">
      <dt>If direction is next</dt>
      <dd>
-      <p>If the
-      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-      attribute value is false, let <var title="">node</var> be the
-      <a href="#concept-node" title="concept-node">node</a> following <var title="">node</var>
-      in the <a href="#iterator-collection">iterator collection</a>. If there is no such
-      <a href="#concept-node" title="concept-node">node</a> return null and terminate these
-      steps.
-      <p>If the
-      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-      attribute value is true, set it to false.
+      <p>If <var title="">before node</var> is false, let <var title="">node</var>
+      be the <a href="#concept-node" title="concept-node">node</a> following
+      <var title="">node</var> in the <a href="#iterator-collection">iterator collection</a>. If
+      there is no such <a href="#concept-node" title="concept-node">node</a> return null and
+      terminate these steps.
+      <p>If <var title="">before node</var> is true, set it to false.
      <dt>If direction is previous</dt>
      <dd>
-      <p>If the
-      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-      attribute value is true, let <var title="">node</var> be the
-      <a href="#concept-node" title="concept-node">node</a> preceding <var title="">node</var>
-      in the <a href="#iterator-collection">iterator collection</a>. If there is no such
-      <a href="#concept-node" title="concept-node">node</a> return null and terminate these
-      steps.
-      <p>If the
-      <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-      attribute value is false, set it to true.
+      <p>If <var title="">before node</var> is true, let <var title="">node</var>
+      be the <a href="#concept-node" title="concept-node">node</a> preceding
+      <var title="">node</var> in the <a href="#iterator-collection">iterator collection</a>. If
+      there is no such <a href="#concept-node" title="concept-node">node</a> return null and
+      terminate these steps.
+      <p>If <var title="">before node</var> is false, set it to true.
     </dl>
    <li><p>Let <var title="">n</var> be <var title="">node</var>'s
    <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
@@ -3693,7 +3689,10 @@ attribute must return what it was initialized to.</p>
   </ol>
  <li><p>Set the
  <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
- to <var title="">node</var> and return <var title="">node</var>.
+ to <var title="">node</var>, set the
+ <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+ attribute to <var title="">before node</var>, and return
+ <var title="">node</var>.
 </ol>
 
 <p>The <dfn id="dom-nodeiterator-nextnode" title="dom-NodeIterator-nextNode"><code>nextNode()</code></dfn>
@@ -3714,11 +3713,11 @@ null.
 <h3 id="interface-treewalker"><span class="secno">6.4 </span>Interface <code title="">TreeWalker</code></h3>
 
 <pre class="idl">interface <dfn id="treewalker">TreeWalker</dfn> {
-  readonly attribute <a href="#node">Node</a> <span title="dom-TreeWalker-root">root</span>;
-  readonly attribute unsigned long <span title="dom-TreeWalker-whatToShow">whatToShow</span>;
-  readonly attribute <a href="#nodefilter">NodeFilter</a> <span title="dom-TreeWalker-filter">filter</span>;<!--
+  readonly attribute <a href="#node">Node</a> <a href="#dom-treewalker-root" title="dom-TreeWalker-root">root</a>;
+  readonly attribute unsigned long <a href="#dom-treewalker-whattoshow" title="dom-TreeWalker-whatToShow">whatToShow</a>;
+  readonly attribute <a href="#nodefilter">NodeFilter</a> <a href="#dom-treewalker-filter" title="dom-TreeWalker-filter">filter</a>;<!--
   readonly attribute boolean <span title=dom-TreeWalker-expandEntityReferences>expandEntityReferences</span>;-->
-           attribute <a href="#node">Node</a> <span title="dom-TreeWalker-currentNode">currentNode</span>;
+           attribute <a href="#node">Node</a> <a href="#dom-treewalker-currentnode" title="dom-TreeWalker-currentNode">currentNode</a>;
 
   <a href="#node">Node</a> <span title="dom-TreeWalker-parentNode">parentNode</span>();
   <a href="#node">Node</a> <span title="dom-TreeWalker-firstChild">firstChild</span>();
@@ -3729,11 +3728,29 @@ null.
   <a href="#node">Node</a> <span title="dom-TreeWalker-nextNode">nextNode</span>();
 };</pre>
 
+<p>The <dfn id="dom-treewalker-root" title="dom-TreeWalker-root"><code>root</code></dfn> attribute must
+return what it was initialized to.</p>
+
+<p>The <dfn id="dom-treewalker-whattoshow" title="dom-TreeWalker-whatToShow"><code>whatToShow</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>The <dfn id="dom-treewalker-filter" title="dom-TreeWalker-filter"><code>filter</code></dfn> attribute
+must return what it was initialized to.</p>
+
+<p>The <dfn id="dom-treewalker-currentnode" title="dom-TreeWalker-currentNode"><code>currentNode</code></dfn>
+attribute must return what it was initialized to.</p>
+
+<p>Setting the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
+attribute must set it to the new value.</p>
+
 <p class="XXX">Another day&hellip;</p>
 
 
 
 <h2 id="collections"><span class="secno">7 </span>Collections</h2>
+
+
+
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
 <a href="#concept-collection" title="concept-collection">collection</a> can be either
@@ -4491,6 +4508,7 @@ Dethe Elza,
 David Flanagan,
 Glenn Maynard,
 Jacob Rossi,
+James Graham,
 Jonas Sicking,
 Henri Sivonen,
 Ojan Vafai,
