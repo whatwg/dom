@@ -3803,8 +3803,8 @@ method must run these steps:
  <li><p>Return null.
 </ol>
 
-<p>The <dfn title=dom-TreeWalker-firstChild><code>firstChild()</code></dfn>
-method must run these steps:
+<p>To <dfn title=concept-traverse-children>traverse children</dfn> of type
+<var title>type</var> run these steps:
 
 <ol>
  <li><p>Let <var title>root</var> be the value of the
@@ -3827,20 +3827,37 @@ method must run these steps:
    attribute to <var title>node</var>, return <var title>node</var>, and
    terminate these steps.
 
-   <li><p>If <var title>result</var> is
-   <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and
-   <var title>node</var> has a <span title=concept-tree-child>child</span>,
-   then set <var title>node</var> to the first
-   <span title=concept-tree-child>child</span> and run these substeps again.
+   <li>
+    <p>If <var title>result</var> is
+    <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and
+    <var title>node</var> has a <span title=concept-tree-child>child</span>,
+    then set <var title>node</var> as follows and run these substeps again:
+
+    <dl class=switch>
+     <dt>If type is first
+     <dd><p>Set it to the first <span title=concept-tree-child>child</span>
+     <dt>If type is last
+     <dd><p>Set it to the last <span title=concept-tree-child>child</span>
+    </dl>
 
    <li>
     <p>While <var title>node</var> is not null, run these inner substeps:
 
     <ol>
-     <li><p>If <var title>node</var> has a
-     <span title=concept-tree-following-sibling>following sibling</span>,
-     then set <var title>node</var> to it and terminate these inner
-     substeps.
+     <li>
+      <dl class=switch>
+       <dt>If type is first
+       <dd><p>Let <var title>sibling</var> be the
+       <span title=concept-tree-following-sibling>following sibling</span>
+       of <var title>node</var>.
+       <dt>If type is last
+       <dd><p>Let <var title>sibling</var> be the
+       <span title=concept-tree-preceding-sibling>preceding sibling</span>,
+       of <var title>node</var>.
+      </dl>
+
+     <li><p>If <var title>sibling</var> is not null, set
+     <var title>node</var> to it and terminate these inner substeps.
 
      <!-- bring it on jgraham -->
 
@@ -3854,6 +3871,15 @@ method must run these steps:
     </ol>
   </ol>
 </ol>
+
+<p>The <dfn title=dom-TreeWalker-firstChild><code>firstChild()</code></dfn>
+method must <span title=concept-traverse-children>traverse children</span>
+of type first.
+
+<p>The <dfn title=dom-TreeWalker-lastChild><code>lastChild()</code></dfn>
+method must <span title=concept-traverse-children>traverse children</span>
+of type last.
+
 
 <p class=XXX>Another day&hellip;</p>
 
