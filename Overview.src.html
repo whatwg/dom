@@ -3487,12 +3487,11 @@ method is invoked these steps must be run:
  <li><p>Initialize the <code title=dom-NodeIterator-root>root</code> and
  <code title=dom-NodeIterator-referenceNode>referenceNode</code>
  attributes to the <var title>root</var> argument.
- <li><p>Initialize the
- <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute to the
- <var title>whatToShow</var> argument, or to
+ <li><p>Set <span title=concept-traversal-visibility>visibility</span> to
+ the <var title>whatToShow</var> argument, or to
  <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
- <li><p>Initialize its <code title=dom-NodeIterator-filter>filter</code>
- attribute to <var title>filter</var>, or to null if omitted.
+ <li><p>Set <span title=concept-traversal-filter>filter</span> to
+ <var title>filter</var>, or to null if omitted.
 </ol>
 
 <p class=XXX>When the
@@ -3536,32 +3535,37 @@ interface <dfn>NodeFilter</dfn> {
 <p class=XXX>&hellip;
 
 <p>Each <code>NodeIterator</code> and <code>TreeWalker</code> object has an
-associated <dfn>active flag</dfn> to avoid recursive invocations. It is
-initially unset.
+associated <dfn title=concept-traversal-active>active flag</dfn> to avoid
+recursive invocations. It is initially unset.
 
-<p>To <dfn title=concept-node-filter>filter</dfn> <var title>node</var> with
-bitmask <var title>whatToShow</var> and filter <var title>filter</var> run
+<p>Each <code>NodeIterator</code> and <code>TreeWalker</code> object also
+has an associated <dfn title=concept-traversal-visibility>visibility</dfn>
+bitmask and <dfn title=concept-traversal-filter>filter</dfn> callback.
+
+<p>To <dfn title=concept-node-filter>filter</dfn> <var title>node</var> run
 these steps:
 
 <ol>
- <li><p>If <span>active flag</span> is set throw
- an <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>,
+ <li><p>If <span title=concept-traversal-active>active flag</span> is set
+ throw an
+ <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>,
  terminate these steps, and terminate the steps of the algorithm that
  invoked this algorithm.
  <li><p>Let <var title>n</var> be <var title>node</var>'s
  <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
  <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
- significant bit) of <var title>whatToShow</var> is not set, return
- <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and terminate
- these steps.
+ significant bit) of
+ <span title=concept-traversal-visibility>visibility</span> is not set,
+ return <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and
+ terminate these steps.
  <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
- <li><p>If <var title>filter</var> is null return
+ <li><p>If <span title=concept-traversal-filter>filter</span> is null return
  <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code> and terminate
  these steps.
- <li><p>Set the <span>active flag</span>.
+ <li><p>Set the <span title=concept-traversal-active>active flag</span>.
  <li><p>Let <var title>result</var> be the return value of invoking
- <var title>filter</var>.
- <li><p>Unset the <span>active flag</span>.
+ <span title=concept-traversal-filter>filter</span>.
+ <li><p>Unset the <span title=concept-traversal-active>active flag</span>.
  <li><p>If an exception was thrown, re-throw the exception, terminate these
  steps, and terminate the steps of the algorithm that invoked this
  algorithm.
@@ -3633,7 +3637,9 @@ matches any <span title=concept-node>node</span>.
 <dfn>detached flag</dfn> which is initially unset.
 
 <p class=note>As mentioned earlier <code>NodeIterator</code> objects have an
-associated <span>active flag</span> as well.
+associated <span title=concept-traversal-active>active flag</span>,
+<span title=concept-traversal-visibility>visibility</span> bitmask, and
+<span title=concept-traversal-filter>filter</span> callback as well.
 
 <hr>
 
@@ -3650,10 +3656,11 @@ attribute must return what it was initialized to. When a
 <code>NodeIterator</code> is created it must be initialized to true.</p>
 
 <p>The <dfn title=dom-NodeIterator-whatToShow><code>whatToShow</code></dfn>
-attribute must return what it was initialized to.</p>
+attribute must return
+<span title=concept-traversal-visibility>visibility</span>.
 
 <p>The <dfn title=dom-NodeIterator-filter><code>filter</code></dfn>
-attribute must return what it was initialized to.</p>
+attribute must return <span title=concept-traversal-filter>filter</span>.
 
 <p>To <dfn title=concept-NodeIterator-traverse>traverse</dfn> in direction
 <var title>direction</var> run these steps:
@@ -3669,12 +3676,6 @@ attribute must return what it was initialized to.</p>
  <li><p>Let <var title>before node</var> be the value of the
  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
  attribute.
-
- <li><p>Let <var title>whatToShow</var> be the value of the
- <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute.
-
- <li><p>Let <var title>filter</var> be the value of the
- <code title=dom-NodeIterator-filter>filter</code> attribute.
 
  <li>
   <p>Run these substeps:
@@ -3699,8 +3700,7 @@ attribute must return what it was initialized to.</p>
       <p>If <var title>before node</var> is false, set it to true.
     </dl>
    <li><p><span title=concept-node-filter>Filter</span>
-   <var title>node</var> with bitmask <var title>whatToShow</var> and filter
-   <var title>filter</var> and let <var title>result</var> be the return
+   <var title>node</var> and let <var title>result</var> be the return
    value.
    <li><p>If the <span>detached flag</span> is set throw an
    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
@@ -3752,14 +3752,20 @@ null.
   <span>Node</span> <span title=dom-TreeWalker-nextNode>nextNode</span>();
 };</pre>
 
+<p class=note>As mentioned earlier <code>TreeWalker</code> objects have an
+associated <span title=concept-traversal-active>active flag</span>,
+<span title=concept-traversal-visibility>visibility</span> bitmask, and
+<span title=concept-traversal-filter>filter</span> callback.
+
 <p>The <dfn title=dom-TreeWalker-root><code>root</code></dfn> attribute must
 return what it was initialized to.</p>
 
 <p>The <dfn title=dom-TreeWalker-whatToShow><code>whatToShow</code></dfn>
-attribute must return what it was initialized to.</p>
+attribute must return
+<span title=concept-traversal-visibility>visibility</span>.
 
 <p>The <dfn title=dom-TreeWalker-filter><code>filter</code></dfn> attribute
-must return what it was initialized to.</p>
+must return <span title=concept-traversal-filter>filter</span>.
 
 <p>The <dfn title=dom-TreeWalker-currentNode><code>currentNode</code></dfn>
 attribute must return what it was initialized to.</p>
@@ -3778,12 +3784,6 @@ method must run these steps:
  <li><p>Let <var title>node</var> be the value of the
  <code title=dom-TreeWalker-currentNode>currentNode</code> attribute.
 
- <li><p>Let <var title>whatToShow</var> be the value of the
- <code title=dom-TreeWalker-whatToShow>whatToShow</code> attribute.
-
- <li><p>Let <var title>filter</var> be the value of the
- <code title=dom-TreeWalker-filter>filter</code> attribute.
-
  <li>
   <p>While <var title>node</var> is not null and is not the
   <var title>root</var>, run these substeps:
@@ -3794,12 +3794,10 @@ method must run these steps:
 
    <li><p>If <var title>node</var> is not null and
    <span title=concept-node-filter>filtering</span> <var title>node</var>
-   with bitmask <var title>whatToShow</var> and filter
-   <var title>filter</var> returns
-   <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
-   the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute
-   to <var title>node</var>, return <var title>node</var>, and terminate
-   these steps.</p>
+   returns <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>,
+   then set the <code title=dom-TreeWalker-currentNode>currentNode</code>
+   attribute to <var title>node</var>, return <var title>node</var>, and
+   terminate these steps.
   </ol>
 
  <li><p>Return null.
