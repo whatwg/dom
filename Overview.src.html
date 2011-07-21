@@ -3503,7 +3503,8 @@ method is invoked these steps must be run: &hellip;
 
 <h3>Interface <code title>NodeFilter</code></h3>
 
-<pre class=idl>interface <dfn>NodeFilter</dfn> {
+<pre class=idl>[Callback]
+interface <dfn>NodeFilter</dfn> {
 
   // Constants for acceptNode
   const unsigned short <span title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</span> = 1;
@@ -3528,10 +3529,44 @@ method is invoked these steps must be run: &hellip;
   unsigned short <span title=dom-NodeFilter-acceptNode>acceptNode</span>(<span>Node</span> <var title>node</var>);
 };</pre>
 
+
+
 <!-- acceptNode constants were signed before -->
 
 <p class=XXX>&hellip;
 
+<p>Each <code>NodeIterator</code> and <code>TreeWalker</code> object has an
+associated <dfn>active flag</dfn> to avoid recursive invocations. It is
+initially unset.
+
+<p>To <dfn title=concept-node-filter>filter</dfn> <var title>node</var> with
+bitmask <var title>whatToShow</var> and filter <var title>filter</var> run
+these steps:
+
+<ol>
+ <li><p>If <span>active flag</span> is set throw
+ an <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>,
+ terminate these steps, and terminate the steps of the algorithm that
+ invoked this algorithm.
+ <li><p>Let <var title>n</var> be <var title>node</var>'s
+ <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
+ <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
+ significant bit) of <var title>whatToShow</var> is not set, return
+ <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and terminate
+ these steps.
+ <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
+ <li><p>If <var title>filter</var> is null return
+ <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code> and terminate
+ these steps.
+ <li><p>Set the <span>active flag</span>.
+ <li><p>Let <var title>result</var> be the return value of invoking
+ <var title>filter</var>.
+ <li><p>Unset the <span>active flag</span>.
+ <li><p>If an exception was thrown, re-throw the exception, terminate these
+ steps, and terminate the steps of the algorithm that invoked this
+ algorithm.
+ <li><p>Return <var title>result</var>.
+</ol>
 
 
 <h3>Interface <code title>NodeIterator</code></h3>
@@ -3595,8 +3630,10 @@ matches any <span title=concept-node>node</span>.
 
 
 <p>Each <code>NodeIterator</code> object also has an associated
-<dfn>detached flag</dfn> and <dfn>locked flag</dfn> which are initially
-unset.
+<dfn>detached flag</dfn> which is initially unset.
+
+<p class=note>As mentioned earlier <code>NodeIterator</code> objects have an
+associated <span>active flag</span> as well.
 
 <hr>
 
@@ -3622,8 +3659,7 @@ attribute must return what it was initialized to.</p>
 <var title>direction</var> run these steps:
 
 <ol>
- <li><p>If the <span>detached flag</span> or <span>locked flag</span> is set
- throw an
+ <li><p>If the <span>detached flag</span> is set throw an
  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
  exception and terminate these steps.
 
@@ -3633,6 +3669,12 @@ attribute must return what it was initialized to.</p>
  <li><p>Let <var title>before node</var> be the value of the
  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
  attribute.
+
+ <li><p>Let <var title>whatToShow</var> be the value of the
+ <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute.
+
+ <li><p>Let <var title>filter</var> be the value of the
+ <code title=dom-NodeIterator-filter>filter</code> attribute.
 
  <li>
   <p>Run these substeps:
@@ -3656,23 +3698,10 @@ attribute must return what it was initialized to.</p>
       terminate these steps.
       <p>If <var title>before node</var> is false, set it to true.
     </dl>
-   <li><p>Let <var title>n</var> be <var title>node</var>'s
-   <code title=dom-Node-nodeType>nodeType</code> attribute value minus 1.
-   <li><p>If the <var title>n</var><sup>th</sup> bit (where 0 is the least
-   significant bit) of the
-   <code title=dom-NodeIterator-whatToShow>whatToShow</code> attribute value
-   is not set, run these substeps again.
-   <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
-   <!-- AGAIN -->
-   <li><p>If the <code title=dom-NodeIterator-filter>filter</code> attribute
-   value is null, go to the next step in the overall set of steps.
-   <!-- SUCCESS -->
-   <li><p>Set the <span>locked flag</span>.
-   <li><p>let <var title>result</var> be the return value of invoking the
-   <code title=dom-NodeIterator-filter>filter</code> attribute value.
-   <li><p>Unset the <span>locked flag</span>.
-   <li><p>If an exception was thrown, re-throw the exception and terminate
-   these steps.</p>
+   <li><p><span title=concept-node-filter>Filter</span>
+   <var title>node</var> with bitmask <var title>whatToShow</var> and filter
+   <var title>filter</var> and let <var title>result</var> be the return
+   value.
    <li><p>If the <span>detached flag</span> is set throw an
    <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
    exception and terminate these steps.
@@ -3680,9 +3709,7 @@ attribute must return what it was initialized to.</p>
     <p>If <var title>result</var> is
     <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, go to the
     next step in the overall set of steps.
-    <!-- SUCCESS -->
     <p>Otherwise, run these substeps again.
-    <!-- AGAIN -->
   </ol>
  <li><p>Set the
  <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
