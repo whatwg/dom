@@ -3747,7 +3747,7 @@ null.
            attribute <a href="#node">Node</a> <a href="#dom-treewalker-currentnode" title="dom-TreeWalker-currentNode">currentNode</a>;
 
   <a href="#node">Node</a> <a href="#dom-treewalker-parentnode" title="dom-TreeWalker-parentNode">parentNode</a>();
-  <a href="#node">Node</a> <span title="dom-TreeWalker-firstChild">firstChild</span>();
+  <a href="#node">Node</a> <a href="#dom-treewalker-firstchild" title="dom-TreeWalker-firstChild">firstChild</a>();
   <a href="#node">Node</a> <span title="dom-TreeWalker-lastChild">lastChild</span>();
   <a href="#node">Node</a> <span title="dom-TreeWalker-previousSibling">previousSibling</span>();
   <a href="#node">Node</a> <span title="dom-TreeWalker-nextSibling">nextSibling</span>();
@@ -3804,6 +3804,58 @@ method must run these steps:
   </ol>
 
  <li><p>Return null.
+</ol>
+
+<p>The <dfn id="dom-treewalker-firstchild" title="dom-TreeWalker-firstChild"><code>firstChild()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title="">root</var> be the value of the
+ <code title="dom-TreeWalker-root"><a href="#dom-treewalker-root">root</a></code> attribute.
+
+ <li><p>Let <var title="">node</var> and <var title="">current</var> be the value
+ of the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute.
+
+ <li>
+  <p>While <var title="">node</var> is not null, run these substeps:
+
+  <ol>
+   <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+   <var title="">node</var> and let <var title="">result</var> be the return
+   value.
+
+   <li><p>If <var title="">result</var> is
+   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
+   attribute to <var title="">node</var>, return <var title="">node</var>, and
+   terminate these steps.
+
+   <li><p>If <var title="">result</var> is
+   <code title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</code> and
+   <var title="">node</var> has a <a href="#concept-tree-child" title="concept-tree-child">child</a>,
+   then set <var title="">node</var> to the first
+   <a href="#concept-tree-child" title="concept-tree-child">child</a> and run these substeps again.
+
+   <li>
+    <p>While <var title="">node</var> is not null, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title="">node</var> has a
+     <a href="#concept-tree-following-sibling" title="concept-tree-following-sibling">following sibling</a>,
+     then set <var title="">node</var> to it and terminate these inner
+     substeps.
+
+     <!-- bring it on jgraham -->
+
+     <li>
+      <p>If <var title="">node</var> has a
+      <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> that is not
+      <var title="">root</var> or <var title="">current</var> then set
+      <var title="">node</var> to it.
+
+      <p>Otherwise, return null and terminate these steps.
+    </ol>
+  </ol>
 </ol>
 
 <p class="XXX">Another day&hellip;</p>
