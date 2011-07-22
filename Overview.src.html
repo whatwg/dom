@@ -256,7 +256,10 @@ encoding's name, if none of the aliases are so labeled.
 
 <p>Just like most programming paradigms the Web platform has finite
 hierarchical tree structures, simply named
-<dfn title=concept-tree>trees</dfn>.
+<dfn title=concept-tree>trees</dfn>. The
+<dfn title=concept-tree-order>tree order</dfn> is preorder, depth-first
+traversal.
+<!-- http://en.wikipedia.org/wiki/Tree_traversal#Depth-first_Traversal -->
 
 <p>An object that <dfn title=concept-tree-participate>participates</dfn> in
 a <span title=concept-tree>tree</span> has a
@@ -285,25 +288,43 @@ object <var title>C</var> that is a
 <dfn title=concept-tree-sibling>sibling</dfn> of an object
 <var title>B</var>, if and only if <var title>B</var> and <var title>A</var>
 share the same non-null <span title=concept-tree-parent>parent</span>.
-<var title>A</var> is a
-<dfn title=concept-tree-preceding-sibling>preceding sibling</dfn> of
-<var title>B</var> if <var title>A</var> and <var title>B</var> are
-<span title=concept-tree-sibling>siblings</span> and <var title>A</var>
-comes before <var title>B</var> in their shared
-<span title=concept-tree-parent>parent</span>.
-<var title>A</var> is a
-<dfn title=concept-tree-following-sibling>following sibling</dfn> of
-<var title>B</var> if <var title>A</var> and <var title>B</var> are
-<span title=concept-sibling-node>siblings</span> and <var title>A</var>
-comes after <var title>B</var> in their shared
-<span title=concept-tree-parent>parent</span>.
 
-<hr>
+<p>An object <var title>A</var> is
+<dfn title=concept-tree-preceding>preceding</dfn> an object
+<var title>B</var> if <var title>A</var> and <var title>B</var> are in the
+same <span title=concept-tree>tree</span> and <var title>A</var> comes
+before <var title>B</var> in
+<span title=concept-tree-order>tree order</span>.
 
-<p>The term <dfn>tree order</dfn> means a pre-order, depth-first traversal
-of a <span title=concept-tree>tree</span>.
-<!-- XXX should that use concept- ? -->
-<!-- http://en.wikipedia.org/wiki/Tree_traversal#Depth-first_Traversal -->
+<p>An object <var title>A</var> is
+<dfn title=concept-tree-following>following</dfn> an object
+<var title>B</var> if <var title>A</var> and <var title>B</var> are in the
+same <span title=concept-tree>tree</span> and <var title>A</var> comes
+after <var title>B</var> in
+<span title=concept-tree-order>tree order</span>.
+
+<p>The <dfn title=concept-tree-first-child>first child</dfn> of an object
+<var title>A</var> is its first <span title=concept-tree-child>child</span>
+or null if it has no <span title=concept-tree-child>child</span>.
+
+<p>The <dfn title=concept-tree-last-child>last child</dfn> of an object
+<var title>A</var> is its last <span title=concept-tree-child>child</span>
+or null if it has no <span title=concept-tree-child>child</span>.
+
+<p>The <dfn title=concept-tree-previous-sibling>previous sibling</dfn> of an
+object <var title>A</var> is its first
+<span title=concept-tree-preceding>preceding</span>
+<span title=concept-tree-sibling>sibling</span> or null if it has no
+<span title=concept-tree-preceding>preceding</span>
+<span title=concept-tree-sibling>sibling</span>.
+
+<p>The <dfn title=concept-tree-next-sibling>next sibling</dfn> of an
+object <var title>A</var> is its first
+<span title=concept-tree-following>following</span>
+<span title=concept-tree-sibling>sibling</span> or null if it has no
+<span title=concept-tree-following>following</span>
+<span title=concept-tree-sibling>sibling</span>.
+
 
 
 <h3>Strings</h3>
@@ -900,7 +921,7 @@ steps:</p>
      <li><p>Let <var title>event path</var> be a static ordered list of all
      <span title=concept-tree-ancestor>ancestors</span> of
      <var title>event</var>'s <code title=dom-Event-target>target</code>
-     attribute value in <span>tree order</span>.</li>
+     attribute value in <span title=concept-tree-order>tree order</span>.
      <li><p>Initialize <var title>event</var>'s
      <code title=dom-Event-eventPhase>eventPhase</code> attribute to
      <code title=dom-Event-CAPTURING_PHASE>CAPTURING_PHASE</code>.
@@ -1047,7 +1068,7 @@ and its allowed <span title=concept-tree-child>children</span>:
 <dl>
  <dt><code>Document</code>
  <dd>
-  <p>In <span>tree order</span>:
+  <p>In <span title=concept-tree-order>tree order</span>:
   <ol>
    <li><p>Zero or more nodes each of which is either
    <code>ProcessingInstruction</code> or <code>Comment</code>.
@@ -1407,17 +1428,16 @@ attribute must return a <code>NodeList</code> rooted at the
 <span>context object</span> matching only
 <span title=concept-tree-child>children</span>.
 
-<p>The <dfn title=dom-Node-firstChild><code>firstChild</code></dfn> attribute must return the first <span title=concept-tree-child>child</span>
-of the <span>context object</span>, or null if there is none.
+<p>The <dfn title=dom-Node-firstChild><code>firstChild</code></dfn>
+attribute must return the
+<span title=concept-tree-first-child>first child</span>.
 
-<p>The <dfn title=dom-Node-lastChild><code>lastChild</code></dfn> attribute must return the last <span title=concept-tree-child>child</span> of the
-<span>context object</span>, or null if there is none.
+<p>The <dfn title=dom-Node-lastChild><code>lastChild</code></dfn> attribute must return the <span title=concept-tree-last-child>last child</span>.
 
 <p>The
 <dfn title=dom-Node-previousSibling><code>previousSibling</code></dfn>
 attribute must return the
-<span title=concept-tree-preceding-sibling>preceding sibling</span> of the
-<span>context object</span>, or null if there is none.
+<span title=concept-tree-previous-sibling>previous sibling</span>.
 <!-- AttrExodus
  <li><p>If the <span>context object</span> is an <code>Attr</code> node,
  return null and terminate these steps.
@@ -1425,8 +1445,7 @@ attribute must return the
 
 <p>The <dfn title=dom-Node-nextSibling><code>nextSibling</code></dfn>
 attribute must return the
-<span title=concept-tree-following-sibling>following sibling</span> of the
-<span>context object</span>, or null if there is none.
+<span title=concept-tree-next-sibling>next sibling</span>.
 <!-- AttrExodus
  <li><p>If the <span>context object</span> is an <code>Attr</code> node,
  return null and terminate these steps.
@@ -1485,8 +1504,9 @@ method must run these steps:</p>
  <code title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</code>
  and terminate these steps.
 
- <li><p>If <var title>other</var> comes before <var title>reference</var>,
- in <span>tree order</span>, return
+ <li><p>If <var title>other</var> is
+ <span title=concept-tree-preceding>preceding</span>
+ <var title>reference</var> return
  <code title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</code>
  and terminate these steps.
 
@@ -1542,7 +1562,8 @@ attribute must return the following, depending on the
  <dd><p>The concatenation of <span title=concept-CD-data>data</span> of all
  the <code>Text</code> <span title=concept-node>node</span>
  <span title=concept-tree-descendant>descendants</span> of the
- <span>context object</span>, in <span>tree order</span>.
+ <span>context object</span>, in
+ <span title=concept-tree-order>tree order</span>.
 
  <dt><code>Text</code>
  <dt><code>Comment</code>
@@ -1661,11 +1682,15 @@ method must run these steps:
 
  <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code>,
  insert the children of <var title>newChild</var> in the
- <span>context object</span>, in <span>tree order</span>, so that the last
- child becomes the previous sibling of <var title>refChild</var>.
+ <span>context object</span>, in
+ <span title=concept-tree-order>tree order</span>, so that the
+ <span title=concept-tree-last-child>last child</span> becomes the
+ <span title=concept-tree-previous-sibling>previous sibling</span> of
+ <var title>refChild</var>.
 
  <li><p>Otherwise insert <var title>newChild</var> in the
- <span>context object</span> as the previous sibling of
+ <span>context object</span> as the
+ <span title=concept-tree-previous-sibling>previous sibling</span> of
  <var title>refChild</var>.
 
  <li><p>Return <var title>newChild</var>.
@@ -1699,7 +1724,7 @@ method must run these steps:
  <code>Document</code>.
 
  <li><p>Let <var title>refChild</var> be <var title>oldChild</var>'s
- first <span title=concept-tree-next-sibling>next sibling</span>.
+ <span title=concept-tree-next-sibling>next sibling</span>.
 
  <li><p>Remove <var title>oldChild</var> from the <span>context object</span>.
 
@@ -1753,9 +1778,10 @@ method must run these steps:
  <span>context object</span> and <var title>newChild</var> are in the same
  <code>Document</code>.
 
- <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code> node,
+ <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code>,
  append the children of <var title>newChild</var> to the
- <span>context object</span>, in <span>tree order</span>.
+ <span>context object</span>, in
+ <span title=concept-tree-order>tree order</span>.
 
  <li><p>Otherwise, append <var title>newChild</var> to the
  <span>context object</span>.
@@ -2268,9 +2294,10 @@ case-insensitive</span> manner, otherwise, the comparisons must be done in a
 <p>The
 <dfn title=dom-Document-getElementById><code>getElementById(<var title>elementId</var>)</code></dfn>
 method must return the first <span title=concept-element>element</span>, in
-<span>tree order</span>, within the <span>context object</span>'s
-<span title=concept-tree>tree</span>, whose <span title=concept-ID>ID</span>
-is <var title>elementId</var>, or null if there is none.
+<span title=concept-tree-order>tree order</span>, within the
+<span>context object</span>'s <span title=concept-tree>tree</span>, whose
+<span title=concept-ID>ID</span> is <var title>elementId</var>, or null if
+there is none.
 
 <hr>
 
@@ -3132,28 +3159,27 @@ must return an <code>HTMLCollection</code>
 <p>The
 <dfn title=dom-Element-firstElementChild><code>firstElementChild</code></dfn>
 attribute must return the first <span title=concept-tree-child>child</span>
-of the <span>context object</span> that is an
-<span title=concept-element>element</span>, or null otherwise.
+that is an <span title=concept-element>element</span>, or null otherwise.
 
 <p>The
 <dfn title=dom-Element-lastElementChild><code>lastElementChild</code></dfn>
 attribute must return the last <span title=concept-tree-child>child</span>
-of the <span>context object</span> that is an
-<span title=concept-element>element</span>, or null otherwise.
+that is an <span title=concept-element>element</span>, or null otherwise.
 
 <p>The
 <dfn title=dom-Element-previousElementSibling><code>previousElementSibling</code></dfn>
 attribute must return the first
-<span title=concept-tree-preceding-sibling>preceding sibling</span> of the
-<span>context object</span> that is an
+<span title=concept-tree-preceding>preceding</span>
+<span title=concept-tree-sibling>sibling</span> that is an
 <span title=concept-element>element</span>, or null otherwise.
 
 <p>The
 <dfn title=dom-Element-nextElementSibling><code>nextElementSibling</code></dfn>
 attribute must return the first
-<span title=concept-tree-following-sibling>following sibling</span> of the
-<span>context object</span> that is an
+<span title=concept-tree-following>following</span>
+<span title=concept-tree-sibling>sibling</span> that is an
 <span title=concept-element>element</span>, or null otherwise.
+
 
 <p>The
 <dfn title=dom-Element-childElementCount><code>childElementCount</code></dfn>
@@ -3429,17 +3455,20 @@ method must run these steps:
 </ol>
 
 <p>The <dfn>contiguous <code>Text</code> nodes</dfn> of a node are the node
-itself, the previous sibling <code>Text</code> node (if any) and its
-<span>contiguous <code>Text</code> nodes</span>, and the next sibling
+itself, the
+<span title=concept-tree-previous-sibling>previous sibling</span>
 <code>Text</code> node (if any) and its
-<span>contiguous <code>Text</code> nodes</span>, avoiding any
-duplicates.
+<span>contiguous <code>Text</code> nodes</span>, and the
+<span title=concept-tree-next-sibling>next sibling</span> <code>Text</code>
+node (if any) and its <span>contiguous <code>Text</code> nodes</span>,
+avoiding any duplicates.
 
 <p>The <dfn title=dom-Text-wholeText><code>wholeText</code></dfn>
 attribute must return a concatenation of the
 <span title=concept-CD-data>data</span> of the
 <span>contiguous <code>Text</code> nodes</span> of the
-<span>context object</span>, in <span>tree order</span>.
+<span>context object</span>, in
+<span title=concept-tree-order>tree order</span>.
 
 <p>The
 <dfn title=dom-Text-replaceWholeText><code>replaceWholeText(<var title>data</var>)</code></dfn>
@@ -3623,21 +3652,24 @@ matches any <span title=concept-node>node</span>.
  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
  attribute value is false, set the
  <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- to the <span title=concept-node>node</span> preceding the
+ to the first <span title=concept-node>node</span>
+ <span title=concept-tree-preceding>preceding</span> the
  <span title=concept-node>node</span> that is being removed, and terminate
  these steps.
 
  <li><p>If the
  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
  attribute value is true and there is a <span title=concept-node>node</span>
- following the <span title=concept-node>node</span> that is being removed,
- set the <code title=dom-NodeIterator-referenceNode>referenceNode</code>
- attribute to that <span title=concept-node>node</span>, and terminate
- these steps.
+ <span title=concept-tree-following>following</span> the
+ <span title=concept-node>node</span> that is being removed, set the
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
+ to the first such <span title=concept-node>node</span>, and terminate these
+ steps.
 
  <li><p>Set the
  <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- to the <span title=concept-node>node</span> preceding the
+ to the first <span title=concept-node>node</span>
+ <span title=concept-tree-preceding>preceding</span> the
  <span title=concept-node>node</span> that is being removed and set the
  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
  attribute to false.
@@ -3696,7 +3728,8 @@ attribute must return <span title=concept-traversal-filter>filter</span>.
      <dt>If direction is next</dt>
      <dd>
       <p>If <var title>before node</var> is false, let <var title>node</var>
-      be the <span title=concept-node>node</span> following
+      be the first <span title=concept-node>node</span>
+      <span title=concept-tree-following>following</span>
       <var title>node</var> in the <span>iterator collection</span>. If
       there is no such <span title=concept-node>node</span> return null and
       terminate these steps.
@@ -3704,7 +3737,8 @@ attribute must return <span title=concept-traversal-filter>filter</span>.
      <dt>If direction is previous</dt>
      <dd>
       <p>If <var title>before node</var> is true, let <var title>node</var>
-      be the <span title=concept-node>node</span> preceding
+      be the first <span title=concept-node>node</span>
+      <span title=concept-tree-preceding>preceding</span>
       <var title>node</var> in the <span>iterator collection</span>. If
       there is no such <span title=concept-node>node</span> return null and
       terminate these steps.
@@ -3846,9 +3880,11 @@ method must run these steps:
 
     <dl class=switch>
      <dt>If type is first
-     <dd><p>Set it to the first <span title=concept-tree-child>child</span>
+     <dd><p>Set it to the
+     <span title=concept-tree-first-child>first child</span>
      <dt>If type is last
-     <dd><p>Set it to the last <span title=concept-tree-child>child</span>
+     <dd><p>Set it to the
+     <span title=concept-tree-last-child>last child</span>
     </dl>
 
    <li>
@@ -3859,12 +3895,12 @@ method must run these steps:
       <dl class=switch>
        <dt>If type is first
        <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-following-sibling>following sibling</span>
-       of <var title>node</var>.
+       <span title=concept-tree-next-sibling>next sibling</span> of
+       <var title>node</var>.
        <dt>If type is last
        <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-preceding-sibling>preceding sibling</span>
-       of <var title>node</var>.
+       <span title=concept-tree-previous-sibling>previous sibling</span> of
+       <var title>node</var>.
       </dl>
 
      <li><p>If <var title>sibling</var> is not null, set
@@ -3912,11 +3948,11 @@ of type last.
     <dl class=switch>
      <dt>If type is next
      <dd><p>Let <var title>sibling</var> be the
-     <span title=concept-tree-following-sibling>following sibling</span> of
+     <span title=concept-tree-next-sibling>next sibling</span> of
      <var title>node</var>.
      <dt>If type is previous
      <dd><p>Let <var title>sibling</var> be the
-     <span title=concept-tree-preceding-sibling>preceding sibling</span> of
+     <span title=concept-tree-previous-sibling>previous sibling</span> of
      <var title>node</var>.
     </dl>
 
@@ -3939,11 +3975,13 @@ of type last.
      <li>
       <dl class=switch>
        <dt>If type is next
-       <dd><p>Let <var title>sibling</var> be the first
-       <span title=concept-tree-child>child</span> of <var title>node</var>.
+       <dd><p>Let <var title>sibling</var> be the
+       <span title=concept-tree-first-child>first child</span> of
+       <var title>node</var>.
        <dt>If type is previous
-       <dd><p>Let <var title>sibling</var> be the last
-       <span title=concept-tree-child>child</span> of <var title>node</var>.
+       <dd><p>Let <var title>sibling</var> be the
+       <span title=concept-tree-last-child>last child</span> of
+       <var title>node</var>.
       </dl>
 
      <li>
@@ -3955,12 +3993,12 @@ of type last.
       <dl class=switch>
        <dt>If type is next
        <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-following-sibling>following sibling</span>
-       of <var title>node</var>.
+       <span title=concept-tree-next-sibling>next sibling</span> of
+       <var title>node</var>.
        <dt>If type is previous
        <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-preceding-sibling>preceding sibling</span>
-       of <var title>node</var>.
+       <span title=concept-tree-previous-sibling>previous sibling</span> of
+       <var title>node</var>.
       </dl>
     </ol>
 
@@ -4007,7 +4045,7 @@ method must run these steps:
 
   <ol>
    <li><p>Let <var title>sibling</var> be the
-   <span title=concept-tree-preceding-sibling>preceding sibling</span> of
+   <span title=concept-tree-previous-sibling>previous sibling</span> of
    <var title>node</var>.
 
    <li>
@@ -4098,9 +4136,11 @@ method must run these steps:
     </ol>
 
    <li>
-    <p>If the <span title=concept-node>node</span> following
-    <var title>node</var>, in <span>tree order</span>, is not null, and is
-    not following <var title>root</var>, set <var title>node</var> to that
+    <p>If a <span title=concept-node>node</span> is
+    <span title=tree-concept-following>following</span>
+    <var title>node</var> and is not
+    <span title=tree-concept-following>following</span>
+    <var title>root</var>, set <var title>node</var> to that
     <span title=concept-node>node</span>.
     <p>Otherwise, run these substeps again.
     <!-- Implemented as iterating over parent/nextSibling in Gecko -->
@@ -4142,7 +4182,7 @@ subtree rooted at the <span title=concept-collection>collection's</span>
 root, containing only nodes that match the given filter. The view is linear.
 In the absence of specific requirements to the contrary, the nodes within
 the <span title=concept-collection>collection</span> must be sorted in
-<span>tree order</span>.
+<span title=concept-tree-order>tree order</span>.
 
 <p>An attribute that returns a
 <span title=concept-collection-live>live</span>
@@ -4167,7 +4207,7 @@ every time it is retrieved.
  <dt><var title>element</var> = <var title>collection</var> . <code title=dom-NodeList-item>item</code>(<var title>index</var>)
  <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
  <dd>
-  <p>Returns the item with index <var title>index</var> from the collection. The items are sorted in <span>tree order</span>.
+  <p>Returns the item with index <var title>index</var> from the collection. The items are sorted in <span title=concept-tree-order>tree order</span>.
 </dl>
 
 <div class=impl>
@@ -4212,7 +4252,7 @@ it, which return other objects for historical reasons.
  <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-item>item</code>(<var title>index</var>)
  <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
  <dd>
-  <p>Returns the item with index <var title>index</var> from the collection. The items are sorted in <span>tree order</span>.
+  <p>Returns the item with index <var title>index</var> from the collection. The items are sorted in <span title=concept-tree-order>tree order</span>.
 
  <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-namedItem>namedItem</code>(<var title>name</var>)
  <dt><var title>element</var> = <var title>collection</var>[<var title>name</var>]
