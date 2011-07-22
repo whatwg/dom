@@ -3763,7 +3763,7 @@ null.
   <a href="#node">Node</a> <a href="#dom-treewalker-previoussibling" title="dom-TreeWalker-previousSibling">previousSibling</a>();
   <a href="#node">Node</a> <a href="#dom-treewalker-nextsibling" title="dom-TreeWalker-nextSibling">nextSibling</a>();
   <a href="#node">Node</a> <a href="#dom-treewalker-previousnode" title="dom-TreeWalker-previousNode">previousNode</a>();
-  <a href="#node">Node</a> <span title="dom-TreeWalker-nextNode">nextNode</span>();
+  <a href="#node">Node</a> <a href="#dom-treewalker-nextnode" title="dom-TreeWalker-nextNode">nextNode</a>();
 };</pre>
 
 <p class="note">As mentioned earlier <code><a href="#treewalker">TreeWalker</a></code> objects have an
@@ -4062,7 +4062,60 @@ method must run these steps:
   </ol>
 </ol>
 
-<p class="XXX">Another day&hellip;</p>
+<p>The <dfn id="dom-treewalker-nextnode" title="dom-TreeWalker-nextNode"><code>nextNode()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title="">root</var> be the value of the
+ <code title="dom-TreeWalker-root"><a href="#dom-treewalker-root">root</a></code> attribute.
+
+ <li><p>Let <var title="">node</var> be the value of the
+ <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute.
+
+ <li><p>Let <var title="">result</var> be
+ <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>.
+
+ <li>
+  <p>Run these substeps:
+
+  <ol>
+   <li>
+    <p>While <var title="">result</var> is not
+    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code> and
+    <var title="">node</var> has a <a href="#concept-tree-child" title="concept-tree-child">child</a>,
+    run these inner substeps:
+
+    <ol>
+     <li><p>Set <var title="">node</var> to its first
+     <a href="#concept-tree-child" title="concept-tree-child">child</a>
+
+     <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+     <var title="">node</var> and let <var title="">result</var> be the return
+     value.
+
+     <li><p>If <var title="">result</var> is
+     <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+     the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
+     to <var title="">node</var>, return <var title="">node</var>, and terminate
+     these steps.
+    </ol>
+
+   <li>
+    <p>If the <a href="#concept-node" title="concept-node">node</a> following
+    <var title="">node</var>, in <a href="#tree-order">tree order</a>, is not null, and is
+    not following <var title="">root</var>, set <var title="">node</var> to that
+    <a href="#concept-node" title="concept-node">node</a>.
+    <p>Otherwise, run these substeps again.
+    <!-- Implemented as iterating over parent/nextSibling in Gecko -->
+
+   <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+   <var title="">node</var> and if the return value is
+   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
+   to <var title="">node</var>, return <var title="">node</var>, and terminate
+   these steps.
+  </ol>
+</ol>
 
 
 
