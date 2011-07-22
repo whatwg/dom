@@ -3537,40 +3537,9 @@ space, tab, newline -->
 
 <h2>Traversal</h2>
 
-
-<h3>Interface <code title>NodeFilter</code></h3>
-
-<pre class=idl>[Callback]
-interface <dfn>NodeFilter</dfn> {
-
-  // Constants for acceptNode
-  const unsigned short <span title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</span> = 1;
-  const unsigned short <span title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</span> = 2;
-  const unsigned short <span title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</span> = 3;
-
-  // Constants for whatToShow
-  const unsigned long <span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span> = 0xFFFFFFFF;
-  const unsigned long <span title=dom-NodeFilter-SHOW_ELEMENT>SHOW_ELEMENT</span> = 0x00000001;
-  const unsigned long <span title=dom-NodeFilter-SHOW_ATTRIBUTE>SHOW_ATTRIBUTE</span> = 0x00000002; // historical
-  const unsigned long <span title=dom-NodeFilter-SHOW_TEXT>SHOW_TEXT</span> = 0x00000004;
-  const unsigned long <span title=dom-NodeFilter-SHOW_CDATA_SECTION>SHOW_CDATA_SECTION</span> = 0x00000008; // historical
-  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY_REFERENCE>SHOW_ENTITY_REFERENCE</span> = 0x00000010; // historical
-  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY>SHOW_ENTITY</span> = 0x00000020; // historical
-  const unsigned long <span title=dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION>SHOW_PROCESSING_INSTRUCTION</span> = 0x00000040;
-  const unsigned long <span title=dom-NodeFilter-SHOW_COMMENT>SHOW_COMMENT</span> = 0x00000080;
-  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT>SHOW_DOCUMENT</span> = 0x00000100;
-  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_TYPE>SHOW_DOCUMENT_TYPE</span> = 0x00000200;
-  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT>SHOW_DOCUMENT_FRAGMENT</span> = 0x00000400;
-  const unsigned long <span title=dom-NodeFilter-SHOW_NOTATION>SHOW_NOTATION</span> = 0x00000800; // historical
-
-  unsigned short <span title=dom-NodeFilter-acceptNode>acceptNode</span>(<span>Node</span> <var title>node</var>);
-};</pre>
-
-
-
-<!-- acceptNode constants were signed before -->
-
-<p class=XXX>&hellip;
+<p><code>NodeIterator</code> and <code>TreeWalker</code> objects can be used
+to filter and traverse <span title=concept-node>node</span>
+<span title=concept-tree>trees</span>.
 
 <p>Each <code>NodeIterator</code> and <code>TreeWalker</code> object has an
 associated <dfn title=concept-traversal-active>active flag</dfn> to avoid
@@ -4161,9 +4130,72 @@ method must run these steps:
 
 
 
+<h3>Interface <code title>NodeFilter</code></h3>
+
+<pre class=idl>[Callback]
+interface <dfn>NodeFilter</dfn> {
+
+  // Constants for acceptNode
+  const unsigned short <span title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</span> = 1;
+  const unsigned short <span title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</span> = 2;
+  const unsigned short <span title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</span> = 3;
+
+  // Constants for <span title=concept-traversal-visibility>visibility</span>
+  const unsigned long <span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span> = 0xFFFFFFFF;
+  const unsigned long <span title=dom-NodeFilter-SHOW_ELEMENT>SHOW_ELEMENT</span> = 0x1;
+  const unsigned long <span title=dom-NodeFilter-SHOW_ATTRIBUTE>SHOW_ATTRIBUTE</span> = 0x2; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_TEXT>SHOW_TEXT</span> = 0x4;
+  const unsigned long <span title=dom-NodeFilter-SHOW_CDATA_SECTION>SHOW_CDATA_SECTION</span> = 0x8; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY_REFERENCE>SHOW_ENTITY_REFERENCE</span> = 0x10; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_ENTITY>SHOW_ENTITY</span> = 0x20; // historical
+  const unsigned long <span title=dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION>SHOW_PROCESSING_INSTRUCTION</span> = 0x40;
+  const unsigned long <span title=dom-NodeFilter-SHOW_COMMENT>SHOW_COMMENT</span> = 0x80;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT>SHOW_DOCUMENT</span> = 0x100;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_TYPE>SHOW_DOCUMENT_TYPE</span> = 0x200;
+  const unsigned long <span title=dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT>SHOW_DOCUMENT_FRAGMENT</span> = 0x400;
+  const unsigned long <span title=dom-NodeFilter-SHOW_NOTATION>SHOW_NOTATION</span> = 0x800; // historical
+
+  unsigned short <span title=dom-NodeFilter-acceptNode>acceptNode</span>(<span>Node</span> <var title>node</var>);
+};</pre>
+
+<p><code>NodeFilter</code> objects can be used as
+<span title=concept-traversal-filter>filter</span> callback and provide
+constants for the <span title=concept-traversal-visibility>visibility</span>
+bitmask.
+
+<p class=note>It is typically implemented as ECMAScript function.
+
+<p>These constants can be used as callback return value:
+
+<ul>
+ <li><dfn title=dom-NodeFilter-FILTER_ACCEPT><code>FILTER_ACCEPT</code></dfn> (1);
+ <li><dfn title=dom-NodeFilter-FILTER_REJECT><code>FILTER_REJECT</code></dfn> (2);
+ <li><dfn title=dom-NodeFilter-FILTER_SKIP><code>FILTER_SKIP</code></dfn> (3);
+</ul>
+
+<p>These constants can be used for the
+<span title=concept-traversal-visibility>visibility</span> bitmask:
+
+<ul>
+ <li><dfn title=dom-NodeFilter-SHOW_ALL><code>SHOW_ALL</code></dfn> = (4294967295, FFFFFFFF in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_ELEMENT><code>SHOW_ELEMENT</code></dfn> (1)
+ <li><dfn title=dom-NodeFilter-SHOW_ATTRIBUTE><code>SHOW_ATTRIBUTE</code></dfn> (2, historical);
+ <li><dfn title=dom-NodeFilter-SHOW_TEXT><code>SHOW_TEXT</code></dfn> (4)
+ <li><dfn title=dom-NodeFilter-SHOW_CDATA_SECTION><code>SHOW_CDATA_SECTION</code></dfn> (8, historical);
+ <li><dfn title=dom-NodeFilter-SHOW_ENTITY_REFERENCE><code>SHOW_ENTITY_REFERENCE</code></dfn> (16; 10 in hexadecimal, historical)
+ <li><dfn title=dom-NodeFilter-SHOW_ENTITY><code>SHOW_ENTITY</code></dfn> (32, 20 in hexadecimal, historical);
+ <li><dfn title=dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION><code>SHOW_PROCESSING_INSTRUCTION</code></dfn> (64, 40 in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_COMMENT><code>SHOW_COMMENT</code></dfn> (128, 80 in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_DOCUMENT><code>SHOW_DOCUMENT</code></dfn> (256, 100 in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_DOCUMENT_TYPE><code>SHOW_DOCUMENT_TYPE</code></dfn> (512, 200 in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT><code>SHOW_DOCUMENT_FRAGMENT</code></dfn> (1024, 400 in hexadecimal);
+ <li><dfn title=dom-NodeFilter-SHOW_NOTATION><code>SHOW_NOTATION</code></dfn> (2048, 800 in hexadecimal, historical);
+</ul>
+
+
+
+
 <h2>Collections</h2>
-
-
 
 <p>A <dfn title=concept-collection>collection</dfn> is an object that
 represents a lists of DOM nodes. A

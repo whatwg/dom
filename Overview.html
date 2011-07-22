@@ -168,9 +168,9 @@ document as other than work in progress.
    <li><a href="#interface-comment"><span class="secno">5.11 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#traversal"><span class="secno">6 </span>Traversal</a>
   <ol class="toc">
-   <li><a href="#interface-nodefilter"><span class="secno">6.1 </span>Interface <code title="">NodeFilter</code></a></li>
-   <li><a href="#interface-nodeiterator"><span class="secno">6.2 </span>Interface <code title="">NodeIterator</code></a></li>
-   <li><a href="#interface-treewalker"><span class="secno">6.3 </span>Interface <code title="">TreeWalker</code></a></ol></li>
+   <li><a href="#interface-nodeiterator"><span class="secno">6.1 </span>Interface <code title="">NodeIterator</code></a></li>
+   <li><a href="#interface-treewalker"><span class="secno">6.2 </span>Interface <code title="">TreeWalker</code></a></li>
+   <li><a href="#interface-nodefilter"><span class="secno">6.3 </span>Interface <code title="">NodeFilter</code></a></ol></li>
  <li><a href="#collections"><span class="secno">7 </span>Collections</a>
   <ol class="toc">
    <li><a href="#interface-nodelist"><span class="secno">7.1 </span>Interface <code>NodeList</code></a></li>
@@ -2557,7 +2557,7 @@ method is invoked these steps must be run:
  attributes to the <var title="">root</var> argument.
  <li><p>Set <a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a> to
  the <var title="">whatToShow</var> argument, or to
- <code title="dom-NodeFilter-SHOW_ALL">SHOW_ALL</code> if omitted.
+ <code title="dom-NodeFilter-SHOW_ALL"><a href="#dom-nodefilter-show_all">SHOW_ALL</a></code> if omitted.
  <li><p>Set <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> to
  <var title="">filter</var>, or to null if omitted.
 </ol>
@@ -2573,7 +2573,7 @@ method is invoked these steps must be run:
  <var title="">root</var> argument.
  <li><p>Set <a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a> to
  the <var title="">whatToShow</var> argument, or to
- <code title="dom-NodeFilter-SHOW_ALL">SHOW_ALL</code> if omitted.
+ <code title="dom-NodeFilter-SHOW_ALL"><a href="#dom-nodefilter-show_all">SHOW_ALL</a></code> if omitted.
  <li><p>Set <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> to
  <var title="">filter</var>, or to null if omitted.
 </ol>
@@ -3539,40 +3539,9 @@ space, tab, newline -->
 
 <h2 id="traversal"><span class="secno">6 </span>Traversal</h2>
 
-
-<h3 id="interface-nodefilter"><span class="secno">6.1 </span>Interface <code title="">NodeFilter</code></h3>
-
-<pre class="idl">[Callback]
-interface <dfn id="nodefilter">NodeFilter</dfn> {
-
-  // Constants for acceptNode
-  const unsigned short <span title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</span> = 1;
-  const unsigned short <span title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</span> = 2;
-  const unsigned short <span title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</span> = 3;
-
-  // Constants for whatToShow
-  const unsigned long <span title="dom-NodeFilter-SHOW_ALL">SHOW_ALL</span> = 0xFFFFFFFF;
-  const unsigned long <span title="dom-NodeFilter-SHOW_ELEMENT">SHOW_ELEMENT</span> = 0x00000001;
-  const unsigned long <span title="dom-NodeFilter-SHOW_ATTRIBUTE">SHOW_ATTRIBUTE</span> = 0x00000002; // historical
-  const unsigned long <span title="dom-NodeFilter-SHOW_TEXT">SHOW_TEXT</span> = 0x00000004;
-  const unsigned long <span title="dom-NodeFilter-SHOW_CDATA_SECTION">SHOW_CDATA_SECTION</span> = 0x00000008; // historical
-  const unsigned long <span title="dom-NodeFilter-SHOW_ENTITY_REFERENCE">SHOW_ENTITY_REFERENCE</span> = 0x00000010; // historical
-  const unsigned long <span title="dom-NodeFilter-SHOW_ENTITY">SHOW_ENTITY</span> = 0x00000020; // historical
-  const unsigned long <span title="dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION">SHOW_PROCESSING_INSTRUCTION</span> = 0x00000040;
-  const unsigned long <span title="dom-NodeFilter-SHOW_COMMENT">SHOW_COMMENT</span> = 0x00000080;
-  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT">SHOW_DOCUMENT</span> = 0x00000100;
-  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT_TYPE">SHOW_DOCUMENT_TYPE</span> = 0x00000200;
-  const unsigned long <span title="dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT">SHOW_DOCUMENT_FRAGMENT</span> = 0x00000400;
-  const unsigned long <span title="dom-NodeFilter-SHOW_NOTATION">SHOW_NOTATION</span> = 0x00000800; // historical
-
-  unsigned short <span title="dom-NodeFilter-acceptNode">acceptNode</span>(<a href="#node">Node</a> <var title="">node</var>);
-};</pre>
-
-
-
-<!-- acceptNode constants were signed before -->
-
-<p class="XXX">&hellip;
+<p><code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> objects can be used
+to filter and traverse <a href="#concept-node" title="concept-node">node</a>
+<a href="#concept-tree" title="concept-tree">trees</a>.
 
 <p>Each <code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> object has an
 associated <dfn id="concept-traversal-active" title="concept-traversal-active">active flag</dfn> to avoid
@@ -3596,11 +3565,11 @@ these steps:
  <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
  significant bit) of
  <a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a> is not set,
- return <code title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</code> and
+ return <code title="dom-NodeFilter-FILTER_SKIP"><a href="#dom-nodefilter-filter_skip">FILTER_SKIP</a></code> and
  terminate these steps.
  <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
  <li><p>If <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> is null return
- <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code> and terminate
+ <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code> and terminate
  these steps.
  <li><p>Set the <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a>.
  <li><p>Let <var title="">result</var> be the return value of invoking
@@ -3613,7 +3582,7 @@ these steps:
 </ol>
 
 
-<h3 id="interface-nodeiterator"><span class="secno">6.2 </span>Interface <code title="">NodeIterator</code></h3>
+<h3 id="interface-nodeiterator"><span class="secno">6.1 </span>Interface <code title="">NodeIterator</code></h3>
 
 <pre class="idl">interface <dfn id="nodeiterator">NodeIterator</dfn> {
   readonly attribute <a href="#node">Node</a> <a href="#dom-nodeiterator-root" title="dom-NodeIterator-root">root</a>;
@@ -3756,7 +3725,7 @@ attribute must return <a href="#concept-traversal-filter" title="concept-travers
    exception and terminate these steps.
    <li>
     <p>If <var title="">result</var> is
-    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, go to the
+    <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, go to the
     next step in the overall set of steps.
     <p>Otherwise, run these substeps again.
   </ol>
@@ -3783,7 +3752,7 @@ method is invoked set the <a href="#detached-flag">detached flag</a> and set the
 null.
 
 
-<h3 id="interface-treewalker"><span class="secno">6.3 </span>Interface <code title="">TreeWalker</code></h3>
+<h3 id="interface-treewalker"><span class="secno">6.2 </span>Interface <code title="">TreeWalker</code></h3>
 
 <pre class="idl">interface <dfn id="treewalker">TreeWalker</dfn> {
   readonly attribute <a href="#node">Node</a> <a href="#dom-treewalker-root" title="dom-TreeWalker-root">root</a>;
@@ -3846,7 +3815,7 @@ method must run these steps:
 
    <li><p>If <var title="">node</var> is not null and
    <a href="#concept-node-filter" title="concept-node-filter">filtering</a> <var title="">node</var>
-   returns <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>,
+   returns <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>,
    then set the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
    attribute to <var title="">node</var>, return <var title="">node</var>, and
    terminate these steps.
@@ -3874,14 +3843,14 @@ method must run these steps:
    value.
 
    <li><p>If <var title="">result</var> is
-   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
    the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
    attribute to <var title="">node</var>, return <var title="">node</var>, and
    terminate these steps.
 
    <li>
     <p>If <var title="">result</var> is
-    <code title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</code> and
+    <code title="dom-NodeFilter-FILTER_SKIP"><a href="#dom-nodefilter-filter_skip">FILTER_SKIP</a></code> and
     <var title="">node</var> has a <a href="#concept-tree-child" title="concept-tree-child">child</a>,
     then set <var title="">node</var> as follows and run these substeps again:
 
@@ -3974,7 +3943,7 @@ of type last.
      value.
 
      <li><p>If <var title="">result</var> is
-     <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+     <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
      the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
      attribute to <var title="">node</var>, return <var title="">node</var>, and
      terminate these steps.
@@ -3993,7 +3962,7 @@ of type last.
 
      <li>
       <p>If <var title="">result</var> is
-      <code title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</code> or
+      <code title="dom-NodeFilter-FILTER_REJECT"><a href="#dom-nodefilter-filter_reject">FILTER_REJECT</a></code> or
       <var title="">sibling</var> is null, then set <var title="">sibling</var> as
       follows:
 
@@ -4017,7 +3986,7 @@ of type last.
 
    <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
    <var title="">node</var> and if the return value is
-   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then
+   <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then
    return null and terminate these steps.
    <!-- XXX WTF? -->
 
@@ -4067,7 +4036,7 @@ method must run these steps:
 
      <li>
       <p>While <var title="">result</var> is not
-      <code title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</code> and
+      <code title="dom-NodeFilter-FILTER_REJECT"><a href="#dom-nodefilter-filter_reject">FILTER_REJECT</a></code> and
       <var title="">node</var> has a
       <a href="#concept-tree-child" title="concept-tree-child">child</a>, run these innermost
       substeps:
@@ -4082,7 +4051,7 @@ method must run these steps:
       </ol>
 
      <li><p>If <var title="">result</var> is
-     <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+     <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
      the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
      attribute to <var title="">node</var>, return <var title="">node</var>, and
      terminate these steps.
@@ -4097,7 +4066,7 @@ method must run these steps:
 
    <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
    <var title="">node</var> and if the return value is
-   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
    the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
    to <var title="">node</var>, return <var title="">node</var>, and terminate
    these steps.
@@ -4115,7 +4084,7 @@ method must run these steps:
  <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute.
 
  <li><p>Let <var title="">result</var> be
- <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>.
+ <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>.
 
  <li>
   <p>Run these substeps:
@@ -4123,7 +4092,7 @@ method must run these steps:
   <ol>
    <li>
     <p>While <var title="">result</var> is not
-    <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code> and
+    <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code> and
     <var title="">node</var> has a <a href="#concept-tree-child" title="concept-tree-child">child</a>,
     run these inner substeps:
 
@@ -4136,7 +4105,7 @@ method must run these steps:
      value.
 
      <li><p>If <var title="">result</var> is
-     <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+     <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
      the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
      to <var title="">node</var>, return <var title="">node</var>, and terminate
      these steps.
@@ -4154,7 +4123,7 @@ method must run these steps:
 
    <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
    <var title="">node</var> and if the return value is
-   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>, then set
    the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
    to <var title="">node</var>, return <var title="">node</var>, and terminate
    these steps.
@@ -4163,9 +4132,72 @@ method must run these steps:
 
 
 
+<h3 id="interface-nodefilter"><span class="secno">6.3 </span>Interface <code title="">NodeFilter</code></h3>
+
+<pre class="idl">[Callback]
+interface <dfn id="nodefilter">NodeFilter</dfn> {
+
+  // Constants for acceptNode
+  const unsigned short <a href="#dom-nodefilter-filter_accept" title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</a> = 1;
+  const unsigned short <a href="#dom-nodefilter-filter_reject" title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</a> = 2;
+  const unsigned short <a href="#dom-nodefilter-filter_skip" title="dom-NodeFilter-FILTER_SKIP">FILTER_SKIP</a> = 3;
+
+  // Constants for <a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a>
+  const unsigned long <a href="#dom-nodefilter-show_all" title="dom-NodeFilter-SHOW_ALL">SHOW_ALL</a> = 0xFFFFFFFF;
+  const unsigned long <a href="#dom-nodefilter-show_element" title="dom-NodeFilter-SHOW_ELEMENT">SHOW_ELEMENT</a> = 0x1;
+  const unsigned long <a href="#dom-nodefilter-show_attribute" title="dom-NodeFilter-SHOW_ATTRIBUTE">SHOW_ATTRIBUTE</a> = 0x2; // historical
+  const unsigned long <a href="#dom-nodefilter-show_text" title="dom-NodeFilter-SHOW_TEXT">SHOW_TEXT</a> = 0x4;
+  const unsigned long <a href="#dom-nodefilter-show_cdata_section" title="dom-NodeFilter-SHOW_CDATA_SECTION">SHOW_CDATA_SECTION</a> = 0x8; // historical
+  const unsigned long <a href="#dom-nodefilter-show_entity_reference" title="dom-NodeFilter-SHOW_ENTITY_REFERENCE">SHOW_ENTITY_REFERENCE</a> = 0x10; // historical
+  const unsigned long <a href="#dom-nodefilter-show_entity" title="dom-NodeFilter-SHOW_ENTITY">SHOW_ENTITY</a> = 0x20; // historical
+  const unsigned long <a href="#dom-nodefilter-show_processing_instruction" title="dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION">SHOW_PROCESSING_INSTRUCTION</a> = 0x40;
+  const unsigned long <a href="#dom-nodefilter-show_comment" title="dom-NodeFilter-SHOW_COMMENT">SHOW_COMMENT</a> = 0x80;
+  const unsigned long <a href="#dom-nodefilter-show_document" title="dom-NodeFilter-SHOW_DOCUMENT">SHOW_DOCUMENT</a> = 0x100;
+  const unsigned long <a href="#dom-nodefilter-show_document_type" title="dom-NodeFilter-SHOW_DOCUMENT_TYPE">SHOW_DOCUMENT_TYPE</a> = 0x200;
+  const unsigned long <a href="#dom-nodefilter-show_document_fragment" title="dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT">SHOW_DOCUMENT_FRAGMENT</a> = 0x400;
+  const unsigned long <a href="#dom-nodefilter-show_notation" title="dom-NodeFilter-SHOW_NOTATION">SHOW_NOTATION</a> = 0x800; // historical
+
+  unsigned short <span title="dom-NodeFilter-acceptNode">acceptNode</span>(<a href="#node">Node</a> <var title="">node</var>);
+};</pre>
+
+<p><code><a href="#nodefilter">NodeFilter</a></code> objects can be used as
+<a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> callback and provide
+constants for the <a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a>
+bitmask.
+
+<p class="note">It is typically implemented as ECMAScript function.
+
+<p>These constants can be used as callback return value:
+
+<ul>
+ <li><dfn id="dom-nodefilter-filter_accept" title="dom-NodeFilter-FILTER_ACCEPT"><code>FILTER_ACCEPT</code></dfn> (1);
+ <li><dfn id="dom-nodefilter-filter_reject" title="dom-NodeFilter-FILTER_REJECT"><code>FILTER_REJECT</code></dfn> (2);
+ <li><dfn id="dom-nodefilter-filter_skip" title="dom-NodeFilter-FILTER_SKIP"><code>FILTER_SKIP</code></dfn> (3);
+</ul>
+
+<p>These constants can be used for the
+<a href="#concept-traversal-visibility" title="concept-traversal-visibility">visibility</a> bitmask:
+
+<ul>
+ <li><dfn id="dom-nodefilter-show_all" title="dom-NodeFilter-SHOW_ALL"><code>SHOW_ALL</code></dfn> = (4294967295, FFFFFFFF in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_element" title="dom-NodeFilter-SHOW_ELEMENT"><code>SHOW_ELEMENT</code></dfn> (1)
+ <li><dfn id="dom-nodefilter-show_attribute" title="dom-NodeFilter-SHOW_ATTRIBUTE"><code>SHOW_ATTRIBUTE</code></dfn> (2, historical);
+ <li><dfn id="dom-nodefilter-show_text" title="dom-NodeFilter-SHOW_TEXT"><code>SHOW_TEXT</code></dfn> (4)
+ <li><dfn id="dom-nodefilter-show_cdata_section" title="dom-NodeFilter-SHOW_CDATA_SECTION"><code>SHOW_CDATA_SECTION</code></dfn> (8, historical);
+ <li><dfn id="dom-nodefilter-show_entity_reference" title="dom-NodeFilter-SHOW_ENTITY_REFERENCE"><code>SHOW_ENTITY_REFERENCE</code></dfn> (16; 10 in hexadecimal, historical)
+ <li><dfn id="dom-nodefilter-show_entity" title="dom-NodeFilter-SHOW_ENTITY"><code>SHOW_ENTITY</code></dfn> (32, 20 in hexadecimal, historical);
+ <li><dfn id="dom-nodefilter-show_processing_instruction" title="dom-NodeFilter-SHOW_PROCESSING_INSTRUCTION"><code>SHOW_PROCESSING_INSTRUCTION</code></dfn> (64, 40 in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_comment" title="dom-NodeFilter-SHOW_COMMENT"><code>SHOW_COMMENT</code></dfn> (128, 80 in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_document" title="dom-NodeFilter-SHOW_DOCUMENT"><code>SHOW_DOCUMENT</code></dfn> (256, 100 in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_document_type" title="dom-NodeFilter-SHOW_DOCUMENT_TYPE"><code>SHOW_DOCUMENT_TYPE</code></dfn> (512, 200 in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_document_fragment" title="dom-NodeFilter-SHOW_DOCUMENT_FRAGMENT"><code>SHOW_DOCUMENT_FRAGMENT</code></dfn> (1024, 400 in hexadecimal);
+ <li><dfn id="dom-nodefilter-show_notation" title="dom-NodeFilter-SHOW_NOTATION"><code>SHOW_NOTATION</code></dfn> (2048, 800 in hexadecimal, historical);
+</ul>
+
+
+
+
 <h2 id="collections"><span class="secno">7 </span>Collections</h2>
-
-
 
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
