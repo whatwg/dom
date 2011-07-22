@@ -2061,6 +2061,9 @@ method must run these steps:
   Node renameNode(Node n, DOMString namespace, DOMString qualifiedName);-->
 
   <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>eventInterfaceName</var>);
+
+  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
+  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
 };</pre>
 
 <p><code>Document</code> <span title=concept-node>nodes</span> are simply
@@ -2474,10 +2477,6 @@ method must run these steps:
 
 <hr>
 
-<p class="note">This method is pretty much obsolete as
-<span title=concept-event>events</span> have constructors these days, but
-needs to be supported for legacy content. Tough.
-
 <p>When the <dfn title=dom-Document-createEvent><code>createEvent(<var title>eventInterfaceName</var>)</code></dfn> methed is invoked these steps must be run:
 
 <ol>
@@ -2507,6 +2506,45 @@ needs to be supported for legacy content. Tough.
  interface whose name <var title>eventInterfaceName</var> is an
  <span>ASCII case-insensitive</span> match for and return it.
 </ol>
+
+<p class="note">This method is pretty much obsolete as
+<span title=concept-event>events</span> have constructors these days, but
+needs to be supported for legacy content. Tough.
+
+<hr>
+
+<p>When the
+<dfn title=dom-Document-createNodeIterator><code>createNodeIterator(<var>root</var>, <var>whatToShow</var>, <var>filter</var>)</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>Create a new <code>NodeIterator</code> object.
+ <li><p>Initialize the <code title=dom-NodeIterator-root>root</code> and
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code>
+ attributes to the <var title>root</var> argument.
+ <li><p>Set <span title=concept-traversal-visibility>visibility</span> to
+ the <var title>whatToShow</var> argument, or to
+ <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
+ <li><p>Set <span title=concept-traversal-filter>filter</span> to
+ <var title>filter</var>, or to null if omitted.
+</ol>
+
+<p>When the
+<dfn title=dom-Document-createTreeWalker><code>createTreeWalker(<var>root</var>, <var>whatToShow</var>, <var>filter</var>)</code></dfn>
+method is invoked these steps must be run:
+
+<ol>
+ <li><p>Create a new <code>TreeWalker</code> object.
+ <li><p>Initialize the <code title=dom-TreeWalker-root>root</code> and
+ <code title=dom-TreeWalker-currentNode>currentNode</code> attributes to the
+ <var title>root</var> argument.
+ <li><p>Set <span title=concept-traversal-visibility>visibility</span> to
+ the <var title>whatToShow</var> argument, or to
+ <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
+ <li><p>Set <span title=concept-traversal-filter>filter</span> to
+ <var title>filter</var>, or to null if omitted.
+</ol>
+
 
 
 <h4>Interface <code>DOMImplementation</code></h4>
@@ -3500,46 +3538,6 @@ space, tab, newline -->
 <h2>Traversal</h2>
 
 
-<h3>To be merged with <code title>Document</code></h3>
-
-<pre class=idl>partial interface <span>Document</span> {
-  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
-  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
-};</pre>
-
-<p>When the
-<dfn title=dom-Document-createNodeIterator><code>createNodeIterator(<var>root</var>, <var>whatToShow</var>, <var>filter</var>)</code></dfn>
-method is invoked these steps must be run:
-
-<ol>
- <li><p>Create a new <code>NodeIterator</code> object.
- <li><p>Initialize the <code title=dom-NodeIterator-root>root</code> and
- <code title=dom-NodeIterator-referenceNode>referenceNode</code>
- attributes to the <var title>root</var> argument.
- <li><p>Set <span title=concept-traversal-visibility>visibility</span> to
- the <var title>whatToShow</var> argument, or to
- <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
- <li><p>Set <span title=concept-traversal-filter>filter</span> to
- <var title>filter</var>, or to null if omitted.
-</ol>
-
-<p>When the
-<dfn title=dom-Document-createTreeWalker><code>createTreeWalker(<var>root</var>, <var>whatToShow</var>, <var>filter</var>)</code></dfn>
-method is invoked these steps must be run:
-
-<ol>
- <li><p>Create a new <code>TreeWalker</code> object.
- <li><p>Initialize the <code title=dom-TreeWalker-root>root</code> and
- <code title=dom-TreeWalker-currentNode>currentNode</code> attributes to the
- <var title>root</var> argument.
- <li><p>Set <span title=concept-traversal-visibility>visibility</span> to
- the <var title>whatToShow</var> argument, or to
- <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
- <li><p>Set <span title=concept-traversal-filter>filter</span> to
- <var title>filter</var>, or to null if omitted.
-</ol>
-
-
 <h3>Interface <code title>NodeFilter</code></h3>
 
 <pre class=idl>[Callback]
@@ -3628,6 +3626,10 @@ these steps:
 
   void <span title=dom-NodeIterator-detach>detach</span>();
 };</pre>
+
+<p class=note><code>NodeIterator</code> objects can be created using the
+<code title=dom-Document-createNodeIterator>createNodeIterator()</code>
+method.
 
 <p>Each <code>NodeIterator</code> object has an associated
 <dfn>iterator collection</dfn>, which is a
@@ -3796,6 +3798,9 @@ null.
   <span>Node</span> <span title=dom-TreeWalker-previousNode>previousNode</span>();
   <span>Node</span> <span title=dom-TreeWalker-nextNode>nextNode</span>();
 };</pre>
+
+<p class=note><code>TreeWalker</code> objects can be created using the
+<code title=dom-Document-createTreeWalker>createTreeWalker()</code> method.
 
 <p class=note>As mentioned earlier <code>TreeWalker</code> objects have an
 associated <span title=concept-traversal-active>active flag</span>,
