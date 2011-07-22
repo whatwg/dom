@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-21-july-2011">Editor's Draft 21 July 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-22-july-2011">Editor's Draft 22 July 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -87,7 +87,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 21 July 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 22 July 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -3762,7 +3762,7 @@ null.
   <a href="#node">Node</a> <a href="#dom-treewalker-lastchild" title="dom-TreeWalker-lastChild">lastChild</a>();
   <a href="#node">Node</a> <a href="#dom-treewalker-previoussibling" title="dom-TreeWalker-previousSibling">previousSibling</a>();
   <a href="#node">Node</a> <a href="#dom-treewalker-nextsibling" title="dom-TreeWalker-nextSibling">nextSibling</a>();
-  <a href="#node">Node</a> <span title="dom-TreeWalker-previousNode">previousNode</span>();
+  <a href="#node">Node</a> <a href="#dom-treewalker-previousnode" title="dom-TreeWalker-previousNode">previousNode</a>();
   <a href="#node">Node</a> <span title="dom-TreeWalker-nextNode">nextNode</span>();
 };</pre>
 
@@ -3992,6 +3992,75 @@ of type next.
 <dfn id="dom-treewalker-previoussibling" title="dom-TreeWalker-previousSibling"><code>previousSibling()</code></dfn>
 method must <a href="#concept-traverse-children" title="concept-traverse-children">traverse children</a>
 of type previous.
+
+<p>The
+<dfn id="dom-treewalker-previousnode" title="dom-TreeWalker-previousNode"><code>previousNode()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title="">root</var> be the value of the
+ <code title="dom-TreeWalker-root"><a href="#dom-treewalker-root">root</a></code> attribute.
+
+ <li><p>Let <var title="">node</var> be the value of the
+ <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute.
+
+ <li>
+  <p>While <var title="">node</var> is not <var title="">root</var> run these
+  substeps:
+
+  <ol>
+   <li><p>Let <var title="">sibling</var> be the
+   <a href="#concept-tree-preceding-sibling" title="concept-tree-preceding-sibling">preceding sibling</a> of
+   <var title="">node</var>.
+
+   <li>
+    <p>While <var title="">sibling</var> is not null run these inner substeps:
+
+    <ol>
+     <li><p>Set <var title="">node</var> to <var title="">sibling</var>.
+
+     <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+     <var title="">node</var> and let <var title="">result</var> be the return
+     value.
+
+     <li>
+      <p>While <var title="">result</var> is not
+      <code title="dom-NodeFilter-FILTER_REJECT">FILTER_REJECT</code> and
+      <var title="">node</var> has a
+      <a href="#concept-tree-child" title="concept-tree-child">child</a>, run these innermost
+      substeps:
+
+      <ol>
+       <li><p>Set <var title="">node</var> to its last
+       <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+
+       <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+       <var title="">node</var> and set <var title="">result</var> to the return
+       value.
+      </ol>
+
+     <li><p>If <var title="">result</var> is
+     <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+     the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code>
+     attribute to <var title="">node</var>, return <var title="">node</var>, and
+     terminate these steps.
+    </ol>
+
+   <li><p>If <var title="">node</var> is <var title="">root</var> or has no
+   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, return null and
+   terminate these steps.
+
+   <li><p>Set <var title="">node</var> to its
+   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+   <li><p><a href="#concept-node-filter" title="concept-node-filter">Filter</a>
+   <var title="">node</var> and if the return value is
+   <code title="dom-NodeFilter-FILTER_ACCEPT">FILTER_ACCEPT</code>, then set
+   the <code title="dom-TreeWalker-currentNode"><a href="#dom-treewalker-currentnode">currentNode</a></code> attribute
+   to <var title="">node</var>, return <var title="">node</var>, and terminate
+   these steps.
+  </ol>
+</ol>
 
 <p class="XXX">Another day&hellip;</p>
 

@@ -3990,6 +3990,75 @@ of type next.
 method must <span title=concept-traverse-children>traverse children</span>
 of type previous.
 
+<p>The
+<dfn title=dom-TreeWalker-previousNode><code>previousNode()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title>root</var> be the value of the
+ <code title=dom-TreeWalker-root>root</code> attribute.
+
+ <li><p>Let <var title>node</var> be the value of the
+ <code title=dom-TreeWalker-currentNode>currentNode</code> attribute.
+
+ <li>
+  <p>While <var title>node</var> is not <var title>root</var> run these
+  substeps:
+
+  <ol>
+   <li><p>Let <var title>sibling</var> be the
+   <span title=concept-tree-preceding-sibling>preceding sibling</span> of
+   <var title>node</var>.
+
+   <li>
+    <p>While <var title>sibling</var> is not null run these inner substeps:
+
+    <ol>
+     <li><p>Set <var title>node</var> to <var title>sibling</var>.
+
+     <li><p><span title=concept-node-filter>Filter</span>
+     <var title>node</var> and let <var title>result</var> be the return
+     value.
+
+     <li>
+      <p>While <var title>result</var> is not
+      <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> and
+      <var title>node</var> has a
+      <span title=concept-tree-child>child</span>, run these innermost
+      substeps:
+
+      <ol>
+       <li><p>Set <var title>node</var> to its last
+       <span title=concept-tree-child>child</span>.
+
+       <li><p><span title=concept-node-filter>Filter</span>
+       <var title>node</var> and set <var title>result</var> to the return
+       value.
+      </ol>
+
+     <li><p>If <var title>result</var> is
+     <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
+     the <code title=dom-TreeWalker-currentNode>currentNode</code>
+     attribute to <var title>node</var>, return <var title>node</var>, and
+     terminate these steps.
+    </ol>
+
+   <li><p>If <var title>node</var> is <var title>root</var> or has no
+   <span title=concept-tree-parent>parent</span>, return null and
+   terminate these steps.
+
+   <li><p>Set <var title>node</var> to its
+   <span title=concept-tree-parent>parent</span>.
+
+   <li><p><span title=concept-node-filter>Filter</span>
+   <var title>node</var> and if the return value is
+   <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
+   the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute
+   to <var title>node</var>, return <var title>node</var>, and terminate
+   these steps.
+  </ol>
+</ol>
+
 <p class=XXX>Another day&hellip;</p>
 
 
