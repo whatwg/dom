@@ -48,7 +48,7 @@
 <p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
 <!--end-logo-->
  <h1>DOM Core</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-23-july-2011">Editor's Draft 23 July 2011</h2>
+ <h2 class="no-num no-toc" id="editor-s-draft-24-july-2011">Editor's Draft 24 July 2011</h2>
 
  <dl>
   <dt>This Version:
@@ -87,7 +87,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 23 July 2011 Editor's Draft of DOM Core. Please send
+<p>This is the 24 July 2011 Editor's Draft of DOM Core. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOMCore%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -2559,10 +2559,95 @@ there is none.
 
 <hr>
 
+<dl class="domintro">
+ <dt><var title="">element</var> = <var title="">document</var> . <code tilte="dom-Document-createElement">createElement(<var>localName</var>)</code>
+ <dd>
+  <p>Returns an <a href="#concept-element" title="concept-element">element</a> in the
+  <a href="#html-namespace">HTML namespace</a> with <var title="">localName</var> as
+  <a href="#concept-element-local-name" title="concept-element-local-name">local name</a>. (In an
+  <a href="#html-document">HTML document</a> <var title="">localName</var> is lowercased.)
+
+  <p>If <var title="">localName</var> does not match the
+  <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an
+  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+  exception will be thrown.
+
+ <dt><var title="">element</var> = <var title="">document</var> . <code tilte="dom-Document-createElement">createElementNS(<var>namespace</var>, <var>qualifiedName</var>)</code>
+
+ <dd>
+  <p>Returns an <a href="#concept-element" title="concept-element">element</a> with
+  <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a>
+  <var title="">namespace</var>. Its
+  <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a> will
+  be everything before "<code title="">:</code>" (U+003E) in
+  <var title="">qualifiedName</var> or null. Its
+  <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> will be
+  everything after "<code title="">:</code>" (U+003E) in
+  <var title="">qualifiedName</var> or <var title="">qualifiedName</var>.
+
+  <p>If <var title="">localName</var> does not match the
+  <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an
+  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+  exception will be thrown.
+
+  <p>If one of the following conditions is true a
+  <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
+  will be thrown:
+
+  <ul>
+   <li><var title="">localName</var> does not match the
+   <code class="external"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production.
+   <li><a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">Namespace prefix</a>
+   is not null and <var title="">namespace</var> is the empty string.
+   <li><a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">Namespace prefix</a>
+   is "<code title="">xml</code>" and <var title="">namespace</var> is not the
+   <a href="#xml-namespace">XML namespace</a>.
+   <li><var title="">qualifiedName</var> or
+   <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a>
+   is "<code title="">xmlns</code>" and <var title="">namespace</var> is not the
+   <a href="#xmlns-namespace">XMLNS namespace</a>.
+   <li><var title="">namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a> and
+   neither <var title="">qualifiedName</var> nor
+   <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a>
+   is "<code title="">xmlns</code>".
+  </ul>
+
+ <dt><var title="">documentFragment</var> = <var title="">document</var> . <code title="dom-Document-createDocumentFragment"><a href="#dom-document-createdocumentfragment">createDocumentFragment()</a></code>
+ <dd><p>Returns a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>.
+
+ <dt><var title="">text</var> = <var title="">document</var> . <code title="dom-Document-createTextNode"><a href="#dom-document-createtextnode">createTextNode(<var>data</var>)</a></code>
+ <dd><p>Returns a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>
+ whose <a href="#concept-cd-data" title="concept-CD-data"> is <var title="">data</var>.
+
+ </a><dt><var title="">comment</var> = <var title="">document</var> . <code title="dom-Document-createComment"><a href="#dom-document-createcomment">createComment(<var>data</var>)</a></code>
+ <dd><p>Returns a <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>
+ whose <a href="#concept-cd-data" title="concept-CD-data"> is <var title="">data</var>.
+
+ </a><dt><var title="">processingInstruction</var> = <var title="">document</var> . <code title="dom-Document-createProcessingInstruction"><a href="#dom-document-createprocessinginstruction">createProcessingInstruction(<var>target</var>, <var>data</var>)</a></code>
+ <dd>
+  <p>Returns a <code><a href="#processinginstruction">ProcessingInstruction</a></code>
+  <a href="#concept-node" title="concept-node">node</a> whose
+  <a href="#concept-pi-target" title="concept-PI-target">target</a> is <var title="">target</var> and
+  <a href="#concept-pi-data" title="concept-PI-data"> is <var title="">data</var>.
+  </a><p>If <var title="concept-document"><a href="#concept-document">document</a></var> is an
+  <a href="#html-document">HTML document</a> a
+  <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code>
+  exception will be thrown.
+  <p>If <var title="">target</var> does not match the
+  <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an
+  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+  exception will be thrown.
+  <p>If <var title="">data</var> contains "<code title="">?&gt;</code>" an
+  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+  exception will be thrown.
+</dl>
+
 <p>The <dfn id="dom-document-createelement" title="dom-Document-createElement"><code>createElement(<var title="">localName</var>)</code></dfn> method must run the these steps:
 
 <ol>
- <li><p>If <var title="">localName</var> does not match the <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML, throw an
+ <li><p>If <var title="">localName</var> does not match the
+ <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
 
@@ -2572,9 +2657,8 @@ there is none.
  <!-- XXX why restrict this to HTML documents? -->
 
  <li><p>Return a new <a href="#concept-element" title="concept-element">element</a> with no
- attributes,
- <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> set to the
- <a href="#html-namespace">HTML namespace</a>,
+ attributes, <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> set to
+ the <a href="#html-namespace">HTML namespace</a>,
  <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> set to
  <var title="">localName</var>, and
  <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
@@ -2586,19 +2670,20 @@ there is none.
 method must run these steps:
 <ol>
  <li><p>If <var title="">qualifiedName</var> does not match the
- <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML, throw an
+ <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps.
  <li><p>If <var title="">qualifiedName</var> does not match the
- <code class="external"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production in Namespaces in XML,
- throw a <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code>
- exception and terminate these steps.
- <li><p>If <var title="">qualifiedName</var> contains a "<code>:</code>" (U+003E),
- then split the string on it and let <var title="">prefix</var> be the part before
- and <var title="">localName</var> the part after. Otherwise, let <var title="">prefix</var>
- be null and <var title="">localName</var> be <var title="">qualifiedName</var>.
- <li><p>If <var title="">prefix</var> is not null and <var title="">namespace</var> is an
- empty string, throw a
+ <code class="external"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production, throw a
+ <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
+ and terminate these steps.
+ <li><p>If <var title="">qualifiedName</var> contains a "<code>:</code>"
+ (U+003E), then split the string on it and let <var title="">prefix</var> be
+ the part before and <var title="">localName</var> the part after. Otherwise,
+ let <var title="">prefix</var> be null and <var title="">localName</var> be
+ <var title="">qualifiedName</var>.
+ <li><p>If <var title="">prefix</var> is not null and
+ <var title="">namespace</var> is an empty string, throw a
  <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
  and terminate these steps.
  <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and
@@ -2610,44 +2695,49 @@ method must run these steps:
  <a href="#xmlns-namespace">XMLNS namespace</a>, throw a
  <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
  and terminate these steps.
- <li><p>If <var title="">namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a> and
- neither <var title="">qualifiedName</var> nor <var title="">prefix</var> is
+ <li><p>If <var title="">namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a>
+ and neither <var title="">qualifiedName</var> nor <var title="">prefix</var> is
  "<code title="">xmlns</code>", throw a
  <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
  and terminate these steps.
- <li><p>Return a new <a href="#concept-element" title="concept-element">element</a> with no attributes,
- <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> set to <var title="">namespace</var>,
+ <li><p>Return a new <a href="#concept-element" title="concept-element">element</a> with no
+ attributes, <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> set to
+ <var title="">namespace</var>,
  <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a> set to
- <var title="">prefix</var>, <a href="#concept-element-local-name" title="concept-element-local-name">local name</a>
- set to <var title="">localName</var>, and
+ <var title="">prefix</var>,
+ <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> set to
+ <var title="">localName</var>, and
  <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
  <a href="#context-object">context object</a>.
 </ol>
 
 <p>The
 <dfn id="dom-document-createdocumentfragment" title="dom-Document-createDocumentFragment"><code>createDocumentFragment()</code></dfn>
-method must return a new <code><a href="#documentfragment">DocumentFragment</a></code> node with its
+method must return a new <code><a href="#documentfragment">DocumentFragment</a></code>
+<a href="#concept-node" title="concept-node">node</a> with its
 <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
 <a href="#context-object">context object</a>.
 
 <p>The
 <dfn id="dom-document-createtextnode" title="dom-Document-createTextNode"><code>createTextNode(<var title="">data</var>)</code></dfn>
-method must return a new <code><a href="#text">Text</a></code> node with its
+method must return a new <code><a href="#text">Text</a></code>
+<a href="#concept-node" title="concept-node">node</a> with its
 <a href="#concept-cd-data" title="concept-CD-data">data</a> set to <var title="">data</var> and
 <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
 <a href="#context-object">context object</a>.
-<p class="note">No check is performed that the text node contains characters
-that match the <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production in XML.
+<p class="note">No check is performed that <var title="">data</var> consists of
+characters that match the <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production.
 
 <p>The
 <dfn id="dom-document-createcomment" title="dom-Document-createComment"><code>createComment(<var title="">data</var>)</code></dfn>
-method must return a new <code><a href="#comment">Comment</a></code> node with its
+method must return a new <code><a href="#comment">Comment</a></code>
+<a href="#concept-node" title="concept-node">node</a> with its
 <a href="#concept-cd-data" title="concept-CD-data">data</a> set to <var title="">data</var> and
 <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
 <a href="#context-object">context object</a>.
-<p class="note">No check is performed that the comment contains characters
-that match the <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production in XML or
-that it contains two adjacent hyphens or ends with a hyphen.
+<p class="note">No check is performed that <var title="">data</var> consists of
+characters that match the <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production
+or that it contains two adjacent hyphens or ends with a hyphen.
 
 <p>The <dfn id="dom-document-createprocessinginstruction" title="dom-Document-createProcessingInstruction"><code>createProcessingInstruction(<var title="">target</var>, <var title="">data</var>)</code></dfn> method must run these steps:
 
@@ -2656,27 +2746,31 @@ that it contains two adjacent hyphens or ends with a hyphen.
  a <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>If <var title="">target</var> does not match the <!--<code
- data-anolis-spec=xml>PITarget</code>--> <code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code>
- production in XML, throw an <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
- exception and terminate these steps. <!-- DOM3 didn't check for "xml" -->
+ <li><p>If <var title="">target</var> does not match the
+ <!--<code data-anolis-spec=xml>PITarget</code>--><code class="external"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code>
+ production, throw an
+ <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+ exception and terminate these steps. <!-- DOM3 does not check for "xml" -->
 
- <li><p>If <var title="">data</var> contains the string "<code title="">?&gt;</code>",
- throw an <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
+ <li><p>If <var title="">data</var> contains the string
+ "<code title="">?&gt;</code>", throw an
+ <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
  exception and terminate these steps. <!-- Gecko does this. -->
 
  <!--<li><p>If <var title>target</var> contains a U+003A COLON (":") character, throw a <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception and terminate these steps.--> <!-- DOM3 didn't check this -->
 
- <li><p>Return a new <code><a href="#processinginstruction">ProcessingInstruction</a></code>, with
+ <li><p>Return a new <code><a href="#processinginstruction">ProcessingInstruction</a></code>
+ <a href="#concept-node" title="concept-node">node</a>, with
  <a href="#concept-pi-target" title="concept-PI-target">target</a> set to <var title="">target</var>,
  <a href="#concept-pi-data" title="concept-PI-data">data</a> set to <var title="">data</var>, and
  <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> set to the
  <a href="#context-object">context object</a>.
 </ol>
 
-<p class="note">No check is performed that the processing instruction target
-contains "xml" or the colon, or that the data contains characters that match the
-<code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production in XML.
+<p class="note">No check is performed that <var title="">target</var> contains
+"<code title="">xml</code>" or "<code title="">:</code>", or that
+<var title="">data</var> contains characters that match the
+<code class="external"><a href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production.
 
 <!--
 [createAttribute]

@@ -2510,13 +2510,96 @@ there is none.
 
 <hr>
 
+<dl class=domintro>
+ <dt><var title>element</var> = <var title>document</var> . <code tilte=dom-Document-createElement>createElement(<var>localName</var>)</code>
+ <dd>
+  <p>Returns an <span title=concept-element>element</span> in the
+  <span>HTML namespace</span> with <var title>localName</var> as
+  <span title=concept-element-local-name>local name</span>. (In an
+  <span>HTML document</span> <var title>localName</var> is lowercased.)
+
+  <p>If <var title>localName</var> does not match the
+  <code data-anolis-spec=xml>Name</code> production an
+  <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+  exception will be thrown.
+
+ <dt><var title>element</var> = <var title>document</var> . <code tilte=dom-Document-createElement>createElementNS(<var>namespace</var>, <var>qualifiedName</var>)</code>
+
+ <dd>
+  <p>Returns an <span title=concept-element>element</span> with
+  <span title=concept-element-namespace>namespace</span>
+  <var title>namespace</var>. Its
+  <span title=concept-element-namespace-prefix>namespace prefix</span> will
+  be everything before "<code title>:</code>" (U+003E) in
+  <var title>qualifiedName</var> or null. Its
+  <span title=concept-element-local-name>local name</span> will be
+  everything after "<code title>:</code>" (U+003E) in
+  <var title>qualifiedName</var> or <var title>qualifiedName</var>.
+
+  <p>If <var title>localName</var> does not match the
+  <code data-anolis-spec=xml>Name</code> production an
+  <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+  exception will be thrown.
+
+  <p>If one of the following conditions is true a
+  <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception
+  will be thrown:
+
+  <ul>
+   <li><var title>localName</var> does not match the
+   <code data-anolis-spec=xmlns>QName</code> production.
+   <li><span title=concept-element-namespace-prefix>Namespace prefix</span>
+   is not null and <var title>namespace</var> is the empty string.
+   <li><span title=concept-element-namespace-prefix>Namespace prefix</span>
+   is "<code title>xml</code>" and <var title>namespace</var> is not the
+   <span>XML namespace</span>.
+   <li><var title>qualifiedName</var> or
+   <span title=concept-element-namespace-prefix>namespace prefix</span>
+   is "<code title>xmlns</code>" and <var title>namespace</var> is not the
+   <span>XMLNS namespace</span>.
+   <li><var title>namespace</var> is the <span>XMLNS namespace</span> and
+   neither <var title>qualifiedName</var> nor
+   <span title=concept-element-namespace-prefix>namespace prefix</span>
+   is "<code title>xmlns</code>".
+  </ul>
+
+ <dt><var title>documentFragment</var> = <var title>document</var> . <code title=dom-Document-createDocumentFragment>createDocumentFragment()</code>
+ <dd><p>Returns a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>.
+
+ <dt><var title>text</var> = <var title>document</var> . <code title=dom-Document-createTextNode>createTextNode(<var>data</var>)</code>
+ <dd><p>Returns a <code>Text</code> <span title=concept-node>node</span>
+ whose <span title=concept-CD-data> is <var title>data</var>.
+
+ <dt><var title>comment</var> = <var title>document</var> . <code title=dom-Document-createComment>createComment(<var>data</var>)</code>
+ <dd><p>Returns a <code>Comment</code> <span title=concept-node>node</span>
+ whose <span title=concept-CD-data> is <var title>data</var>.
+
+ <dt><var title>processingInstruction</var> = <var title>document</var> . <code title=dom-Document-createProcessingInstruction>createProcessingInstruction(<var>target</var>, <var>data</var>)</code>
+ <dd>
+  <p>Returns a <code>ProcessingInstruction</code>
+  <span title=concept-node>node</span> whose
+  <span title=concept-PI-target>target</span> is <var title>target</var> and
+  <span title=concept-PI-data> is <var title>data</var>.
+  <p>If <var title=concept-document>document</var> is an
+  <span>HTML document</span> a
+  <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
+  exception will be thrown.
+  <p>If <var title>target</var> does not match the
+  <code data-anolis-spec=xml>Name</code> production an
+  <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+  exception will be thrown.
+  <p>If <var title>data</var> contains "<code title>?></code>" an
+  <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+  exception will be thrown.
+</dl>
+
 <p>The <dfn title=dom-Document-createElement><code>createElement(<var title>localName</var>)</code></dfn> method must run the these steps:
 
 <ol>
- <li><p>If <var title>localName</var> does not match the <code
- data-anolis-spec=xml>Name</code> production in XML, throw an
- <code
- title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+ <li><p>If <var title>localName</var> does not match the
+ <code data-anolis-spec=xml>Name</code> production, throw an
+ <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
  exception and terminate these steps.
 
  <li><p>If the <span>context object</span> is an <span>HTML document</span>,
@@ -2525,9 +2608,8 @@ there is none.
  <!-- XXX why restrict this to HTML documents? -->
 
  <li><p>Return a new <span title=concept-element>element</span> with no
- attributes,
- <span title=concept-element-namespace>namespace</span> set to the
- <span>HTML namespace</span>,
+ attributes, <span title=concept-element-namespace>namespace</span> set to
+ the <span>HTML namespace</span>,
  <span title=concept-element-local-name>local name</span> set to
  <var title>localName</var>, and
  <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
@@ -2539,19 +2621,20 @@ there is none.
 method must run these steps:
 <ol>
  <li><p>If <var title>qualifiedName</var> does not match the
- <code data-anolis-spec=xml>Name</code> production in XML, throw an
+ <code data-anolis-spec=xml>Name</code> production, throw an
  <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
  exception and terminate these steps.
  <li><p>If <var title>qualifiedName</var> does not match the
- <code data-anolis-spec=xmlns>QName</code> production in Namespaces in XML,
- throw a <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code>
- exception and terminate these steps.
- <li><p>If <var title>qualifiedName</var> contains a "<code>:</code>" (U+003E),
- then split the string on it and let <var title>prefix</var> be the part before
- and <var title>localName</var> the part after. Otherwise, let <var title>prefix</var>
- be null and <var title>localName</var> be <var title>qualifiedName</var>.
- <li><p>If <var title>prefix</var> is not null and <var title>namespace</var> is an
- empty string, throw a
+ <code data-anolis-spec=xmlns>QName</code> production, throw a
+ <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception
+ and terminate these steps.
+ <li><p>If <var title>qualifiedName</var> contains a "<code>:</code>"
+ (U+003E), then split the string on it and let <var title>prefix</var> be
+ the part before and <var title>localName</var> the part after. Otherwise,
+ let <var title>prefix</var> be null and <var title>localName</var> be
+ <var title>qualifiedName</var>.
+ <li><p>If <var title>prefix</var> is not null and
+ <var title>namespace</var> is an empty string, throw a
  <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception
  and terminate these steps.
  <li><p>If <var title>prefix</var> is "<code title>xml</code>" and
@@ -2563,44 +2646,49 @@ method must run these steps:
  <span>XMLNS namespace</span>, throw a
  <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception
  and terminate these steps.
- <li><p>If <var title>namespace</var> is the <span>XMLNS namespace</span> and
- neither <var title>qualifiedName</var> nor <var title>prefix</var> is
+ <li><p>If <var title>namespace</var> is the <span>XMLNS namespace</span>
+ and neither <var title>qualifiedName</var> nor <var title>prefix</var> is
  "<code title>xmlns</code>", throw a
  <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception
  and terminate these steps.
- <li><p>Return a new <span title=concept-element>element</span> with no attributes,
- <span title=concept-element-namespace>namespace</span> set to <var title>namespace</var>,
+ <li><p>Return a new <span title=concept-element>element</span> with no
+ attributes, <span title=concept-element-namespace>namespace</span> set to
+ <var title>namespace</var>,
  <span title=concept-element-namespace-prefix>namespace prefix</span> set to
- <var title>prefix</var>, <span title=concept-element-local-name>local name</span>
- set to <var title>localName</var>, and
+ <var title>prefix</var>,
+ <span title=concept-element-local-name>local name</span> set to
+ <var title>localName</var>, and
  <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
  <span>context object</span>.
 </ol>
 
 <p>The
 <dfn title=dom-Document-createDocumentFragment><code>createDocumentFragment()</code></dfn>
-method must return a new <code>DocumentFragment</code> node with its
+method must return a new <code>DocumentFragment</code>
+<span title=concept-node>node</span> with its
 <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
 <span>context object</span>.
 
 <p>The
 <dfn title=dom-Document-createTextNode><code>createTextNode(<var title>data</var>)</code></dfn>
-method must return a new <code>Text</code> node with its
+method must return a new <code>Text</code>
+<span title=concept-node>node</span> with its
 <span title=concept-CD-data>data</span> set to <var title>data</var> and
 <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
 <span>context object</span>.
-<p class=note>No check is performed that the text node contains characters
-that match the <code data-anolis-spec=xml>Char</code> production in XML.
+<p class=note>No check is performed that <var title>data</var> consists of
+characters that match the <code data-anolis-spec=xml>Char</code> production.
 
 <p>The
 <dfn title=dom-Document-createComment><code>createComment(<var title>data</var>)</code></dfn>
-method must return a new <code>Comment</code> node with its
+method must return a new <code>Comment</code>
+<span title=concept-node>node</span> with its
 <span title=concept-CD-data>data</span> set to <var title>data</var> and
 <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
 <span>context object</span>.
-<p class=note>No check is performed that the comment contains characters
-that match the <code data-anolis-spec=xml>Char</code> production in XML or
-that it contains two adjacent hyphens or ends with a hyphen.
+<p class=note>No check is performed that <var title>data</var> consists of
+characters that match the <code data-anolis-spec=xml>Char</code> production
+or that it contains two adjacent hyphens or ends with a hyphen.
 
 <p>The <dfn title=dom-Document-createProcessingInstruction><code
 >createProcessingInstruction(<var title>target</var>, <var
@@ -2611,29 +2699,31 @@ title>data</var>)</code></dfn> method must run these steps:
  a <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
  exception and terminate these steps.
 
- <li><p>If <var title>target</var> does not match the <!--<code
- data-anolis-spec=xml>PITarget</code>--> <code data-anolis-spec=xml>Name</code>
- production in XML, throw an <code
- title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
- exception and terminate these steps. <!-- DOM3 didn't check for "xml" -->
+ <li><p>If <var title>target</var> does not match the
+ <!--<code data-anolis-spec=xml>PITarget</code>--><code data-anolis-spec=xml>Name</code>
+ production, throw an
+ <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+ exception and terminate these steps. <!-- DOM3 does not check for "xml" -->
 
- <li><p>If <var title>data</var> contains the string "<code title>?></code>",
- throw an <code
- title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
+ <li><p>If <var title>data</var> contains the string
+ "<code title>?></code>", throw an
+ <code title=dom-DOMException-INVALID_CHARACTER_ERR>INVALID_CHARACTER_ERR</code>
  exception and terminate these steps. <!-- Gecko does this. -->
 
  <!--<li><p>If <var title>target</var> contains a U+003A COLON (":") character, throw a <code title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</code> exception and terminate these steps.--> <!-- DOM3 didn't check this -->
 
- <li><p>Return a new <code>ProcessingInstruction</code>, with
+ <li><p>Return a new <code>ProcessingInstruction</code>
+ <span title=concept-node>node</span>, with
  <span title=concept-PI-target>target</span> set to <var title>target</var>,
  <span title=concept-PI-data>data</span> set to <var title>data</var>, and
  <code title=dom-Node-ownerDocument>ownerDocument</code> set to the
  <span>context object</span>.
 </ol>
 
-<p class=note>No check is performed that the processing instruction target
-contains "xml" or the colon, or that the data contains characters that match the
-<code data-anolis-spec=xml>Char</code> production in XML.
+<p class=note>No check is performed that <var title>target</var> contains
+"<code title>xml</code>" or "<code title>:</code>", or that
+<var title>data</var> contains characters that match the
+<code data-anolis-spec=xml>Char</code> production.
 
 <!--
 [createAttribute]
