@@ -152,20 +152,19 @@ document as other than work in progress.
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol class="toc">
    <li><a href="#nodes-model"><span class="secno">5.1 </span>Nodes model</a></li>
-   <li><a href="#cloning-nodes"><span class="secno">5.2 </span>Cloning nodes</a></li>
-   <li><a href="#interface-node"><span class="secno">5.3 </span>Interface <code>Node</code></a></li>
-   <li><a href="#interface-documentfragment"><span class="secno">5.4 </span>Interface <code>DocumentFragment</code></a></li>
-   <li><a href="#interface-document"><span class="secno">5.5 </span>Interface <code>Document</code></a>
+   <li><a href="#interface-node"><span class="secno">5.2 </span>Interface <code>Node</code></a></li>
+   <li><a href="#interface-documentfragment"><span class="secno">5.3 </span>Interface <code>DocumentFragment</code></a></li>
+   <li><a href="#interface-document"><span class="secno">5.4 </span>Interface <code>Document</code></a>
     <ol class="toc">
-     <li><a href="#interface-domimplementation"><span class="secno">5.5.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
-   <li><a href="#interface-element"><span class="secno">5.6 </span>Interface <code>Element</code></a>
+     <li><a href="#interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
+   <li><a href="#interface-element"><span class="secno">5.5 </span>Interface <code>Element</code></a>
     <ol class="toc">
-     <li><a href="#interface-attr"><span class="secno">5.6.1 </span>Interface <code>Attr</code></a></ol></li>
-   <li><a href="#interface-documenttype"><span class="secno">5.7 </span>Interface <code>DocumentType</code></a></li>
-   <li><a href="#interface-processinginstruction"><span class="secno">5.8 </span>Interface <code>ProcessingInstruction</code></a></li>
-   <li><a href="#interface-characterdata"><span class="secno">5.9 </span>Interface <code>CharacterData</code></a></li>
-   <li><a href="#interface-text"><span class="secno">5.10 </span>Interface <code>Text</code></a></li>
-   <li><a href="#interface-comment"><span class="secno">5.11 </span>Interface <code>Comment</code></a></ol></li>
+     <li><a href="#interface-attr"><span class="secno">5.5.1 </span>Interface <code>Attr</code></a></ol></li>
+   <li><a href="#interface-documenttype"><span class="secno">5.6 </span>Interface <code>DocumentType</code></a></li>
+   <li><a href="#interface-processinginstruction"><span class="secno">5.7 </span>Interface <code>ProcessingInstruction</code></a></li>
+   <li><a href="#interface-characterdata"><span class="secno">5.8 </span>Interface <code>CharacterData</code></a></li>
+   <li><a href="#interface-text"><span class="secno">5.9 </span>Interface <code>Text</code></a></li>
+   <li><a href="#interface-comment"><span class="secno">5.10 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#traversal"><span class="secno">6 </span>Traversal</a>
   <ol class="toc">
    <li><a href="#interface-nodeiterator"><span class="secno">6.1 </span>Interface <code title="">NodeIterator</code></a></li>
@@ -1184,70 +1183,7 @@ normative requirements to make this note true are not yet in place.</a>
 <!-- XXXhierarchy - make sure to expand DocumentFragment before checking -->
 
 
-<h3 id="cloning-nodes"><span class="secno">5.2 </span>Cloning nodes</h3>
-<p>Specifications may define
-<dfn id="concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</dfn> for all or some
-<a href="#concept-node" title="concept-node">nodes</a>.
-
-<p>To <dfn id="concept-node-clone" title="concept-node-clone">clone</dfn> a <var title="">node</var>,
-with a <var title="">new ownerDocument</var> and with a
-<dfn id="clone-children-flag"><i>clone children flag</i></dfn>, these steps must be run:
-<!-- used by dom-Node-cloneNode and dom-Document-importNode -->
-
-<ol>
- <li><p>Let <var title="">copy</var> be a <code><a href="#node">Node</a></code> that implements the
- same interfaces as <var title="">node</var>.
- <li><p>If <var title="">copy</var> is not a
- <a href="#concept-document" title="concept-document">document</a> set its
- <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> to
- <var title="">new ownerDocument</var>, or null otherwise.
- <li>
-  <p>Copy the following, depending on the type of <var title="">node</var>:
-  <dl class="switch">
-   <dt><code><a href="#element">Element</a></code>
-   <dd><p>Its <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a>,
-   <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a>,
-   <a href="#concept-element-local-name" title="concept-element-local-name">local name</a>, and its
-   associated collection of <a href="#concept-attribute" title="concept-attribute">attributes</a>.
-
-   <!--AttrExodus
-   <dt><code>Attr</code>
-   <dd><p><code title=dom-Attr-value>value</code>
-   -->
-
-   <dt><code><a href="#documenttype">DocumentType</a></code>
-   <dd><p>Its <a href="#concept-doctype-name" title="concept-doctype-name">name</a>,
-   <a href="#concept-doctype-publicid" title="concept-doctype-publicid">public ID</a>, and
-   <a href="#concept-doctype-systemid" title="concept-doctype-systemid">system ID</a>.
-
-   <dt><code><a href="#processinginstruction">ProcessingInstruction</a></code>
-   <dd><p>Its <a href="#concept-pi-target" title="concept-PI-target">target</a> and
-   <a href="#concept-pi-data" title="concept-PI-data">data</a>.
-
-   <dt><code><a href="#text">Text</a></code>
-   <dt><code><a href="#comment">Comment</a></code>
-   <dd><p>Its <a href="#concept-cd-data" title="concept-CD-data">data</a>.
-
-   <dt>Any other node
-   <dd><p>&mdash;
-  </dl>
-
- <li><p>Run any <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a>
- defined for <var title="">node</var> in
- <a href="#other-applicable-specifications">other applicable specifications</a>.
-
- <li><p>If the <i><a href="#clone-children-flag">clone children flag</a></i> is set,
- <a href="#concept-node-clone" title="concept-node-clone">clone</a> all the
- <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> and
- append them to <var title="">copy</var>, with the same
- <var title="">new ownerDocument</var> and the <i><a href="#clone-children-flag">clone children flag</a></i> being
- set.
-
- <li><p>Return <var title="">copy</var>.
-</ol>
-
-
-<h3 id="interface-node"><span class="secno">5.3 </span>Interface <code><a href="#node">Node</a></code></h3>
+<h3 id="interface-node"><span class="secno">5.2 </span>Interface <code><a href="#node">Node</a></code></h3>
 <pre class="idl">interface <dfn id="node">Node</dfn> : <a href="#eventtarget">EventTarget</a> {
   const unsigned short <a href="#dom-node-element_node" title="dom-Node-ELEMENT_NODE">ELEMENT_NODE</a> = 1;
   const unsigned short <a href="#dom-node-attribute_node" title="dom-Node-ATTRIBUTE_NODE">ATTRIBUTE_NODE</a> = 2; // historical
@@ -1972,6 +1908,67 @@ method must run these steps:
 
 <div class="impl">
 
+<p>Specifications may define
+<dfn id="concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</dfn> for all or some
+<a href="#concept-node" title="concept-node">nodes</a>.
+
+<p>To <dfn id="concept-node-clone" title="concept-node-clone">clone</dfn> a <var title="">node</var>,
+with a <var title="">new ownerDocument</var> and with a
+<dfn id="clone-children-flag"><i>clone children flag</i></dfn>, these steps must be run:
+<!-- used by dom-Node-cloneNode and dom-Document-importNode -->
+
+<ol>
+ <li><p>Let <var title="">copy</var> be a <code><a href="#node">Node</a></code> that implements the
+ same interfaces as <var title="">node</var>.
+ <li><p>If <var title="">copy</var> is not a
+ <a href="#concept-document" title="concept-document">document</a> set its
+ <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> to
+ <var title="">new ownerDocument</var>, or null otherwise.
+ <li>
+  <p>Copy the following, depending on the type of <var title="">node</var>:
+  <dl class="switch">
+   <dt><code><a href="#element">Element</a></code>
+   <dd><p>Its <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a>,
+   <a href="#concept-element-namespace-prefix" title="concept-element-namespace-prefix">namespace prefix</a>,
+   <a href="#concept-element-local-name" title="concept-element-local-name">local name</a>, and its
+   associated collection of <a href="#concept-attribute" title="concept-attribute">attributes</a>.
+
+   <!--AttrExodus
+   <dt><code>Attr</code>
+   <dd><p><code title=dom-Attr-value>value</code>
+   -->
+
+   <dt><code><a href="#documenttype">DocumentType</a></code>
+   <dd><p>Its <a href="#concept-doctype-name" title="concept-doctype-name">name</a>,
+   <a href="#concept-doctype-publicid" title="concept-doctype-publicid">public ID</a>, and
+   <a href="#concept-doctype-systemid" title="concept-doctype-systemid">system ID</a>.
+
+   <dt><code><a href="#processinginstruction">ProcessingInstruction</a></code>
+   <dd><p>Its <a href="#concept-pi-target" title="concept-PI-target">target</a> and
+   <a href="#concept-pi-data" title="concept-PI-data">data</a>.
+
+   <dt><code><a href="#text">Text</a></code>
+   <dt><code><a href="#comment">Comment</a></code>
+   <dd><p>Its <a href="#concept-cd-data" title="concept-CD-data">data</a>.
+
+   <dt>Any other node
+   <dd><p>&mdash;
+  </dl>
+
+ <li><p>Run any <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a>
+ defined for <var title="">node</var> in
+ <a href="#other-applicable-specifications">other applicable specifications</a>.
+
+ <li><p>If the <i><a href="#clone-children-flag">clone children flag</a></i> is set,
+ <a href="#concept-node-clone" title="concept-node-clone">clone</a> all the
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> and
+ append them to <var title="">copy</var>, with the same
+ <var title="">new ownerDocument</var> and the <i><a href="#clone-children-flag">clone children flag</a></i> being
+ set.
+
+ <li><p>Return <var title="">copy</var>.
+</ol>
+
 <p>The
 <dfn id="dom-node-clonenode" title="dom-Node-cloneNode"><code>cloneNode(<var title="">deep</var>)</code></dfn>
 method must return a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of the
@@ -2177,12 +2174,12 @@ method must run these steps:
 </ol>
 
 
-<h3 id="interface-documentfragment"><span class="secno">5.4 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
+<h3 id="interface-documentfragment"><span class="secno">5.3 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
 <pre class="idl">interface <dfn id="documentfragment">DocumentFragment</dfn> : <a href="#node">Node</a> {
 };</pre>
 
 
-<h3 id="interface-document"><span class="secno">5.5 </span>Interface <code><a href="#document">Document</a></code></h3>
+<h3 id="interface-document"><span class="secno">5.4 </span>Interface <code><a href="#document">Document</a></code></h3>
 <pre class="idl">interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   readonly attribute <a href="#domimplementation">DOMImplementation</a> <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a>;
            attribute DOMString <a href="#dom-document-documenturi" title="dom-Document-documentURI">documentURI</a>;
@@ -2936,7 +2933,7 @@ method is invoked these steps must be run:
 
 
 
-<h4 id="interface-domimplementation"><span class="secno">5.5.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
+<h4 id="interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
 <p>User agents must create a <code><a href="#domimplementation">DOMImplementation</a></code> object whenever
 a <a href="#concept-document" title="concept-document">document</a> is created and associate it
 with that <a href="#concept-document" title="concept-document">document</a>.
@@ -3181,7 +3178,7 @@ otherwise [createAttribute]- ->.
 -->
 
 
-<h3 id="interface-element"><span class="secno">5.6 </span>Interface <code><a href="#element">Element</a></code></h3>
+<h3 id="interface-element"><span class="secno">5.5 </span>Interface <code><a href="#element">Element</a></code></h3>
 <pre class="idl">interface <dfn id="element">Element</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString? <a href="#dom-element-namespaceuri" title="dom-Element-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-element-prefix" title="dom-Element-prefix">prefix</a>;
@@ -3665,7 +3662,7 @@ attribute must return the number of
 -->
 
 
-<h4 id="interface-attr"><span class="secno">5.6.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
+<h4 id="interface-attr"><span class="secno">5.5.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
 <pre class="idl">interface <dfn id="attr">Attr</dfn> {
   readonly attribute DOMString? <a href="#dom-attr-namespaceuri" title="dom-Attr-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-attr-prefix" title="dom-Attr-prefix">prefix</a>;
@@ -3731,7 +3728,7 @@ return the <a href="#concept-attribute-value" title="concept-attribute-value">va
 <a href="#concept-attribute-value" title="concept-attribute-value">value</a> to the new value.
 
 
-<h3 id="interface-documenttype"><span class="secno">5.7 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
+<h3 id="interface-documenttype"><span class="secno">5.6 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
 <pre class="idl">interface <dfn id="documenttype">DocumentType</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString <a href="#dom-documenttype-name" title="dom-DocumentType-name">name</a>;<!--
   readonly attribute NamedNodeMap entities;
@@ -3767,7 +3764,7 @@ attribute must return the
 <a href="#concept-doctype-systemid" title="concept-doctype-systemid">system ID</a>.
 
 
-<h3 id="interface-processinginstruction"><span class="secno">5.8 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
+<h3 id="interface-processinginstruction"><span class="secno">5.7 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
 <pre class="idl">interface <dfn id="processinginstruction">ProcessingInstruction</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString <a href="#dom-processinginstruction-target" title="dom-ProcessingInstruction-target">target</a>;
            attribute DOMString <a href="#dom-processinginstruction-data" title="dom-ProcessingInstruction-data">data</a>;
@@ -3789,7 +3786,7 @@ attribute must return the <a href="#concept-pi-data" title="concept-PI-data">dat
 attribute must set <a href="#concept-pi-data" title="concept-PI-data">data</a> to the new value.
 
 
-<h3 id="interface-characterdata"><span class="secno">5.9 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
+<h3 id="interface-characterdata"><span class="secno">5.8 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
 <pre class="idl">interface <dfn id="characterdata">CharacterData</dfn> : <a href="#node">Node</a> {
   [TreatNullAs=EmptyString] attribute DOMString <a href="#dom-characterdata-data" title="dom-CharacterData-data">data</a>;
   readonly attribute unsigned long <a href="#dom-characterdata-length" title="dom-CharacterData-length">length</a>;
@@ -3892,7 +3889,7 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
 <var title="">data</var>.
 
 
-<h3 id="interface-text"><span class="secno">5.10 </span>Interface <code><a href="#text">Text</a></code></h3>
+<h3 id="interface-text"><span class="secno">5.9 </span>Interface <code><a href="#text">Text</a></code></h3>
 <pre class="idl">interface <dfn id="text">Text</dfn> : <a href="#characterdata">CharacterData</a> {
   <a href="#text">Text</a> <a href="#dom-text-splittext" title="dom-Text-splitText">splitText</a>(unsigned long <var title="">offset</var>);<!--
   readonly attribute boolean isElementContentWhitespace;-->
@@ -3976,7 +3973,7 @@ method must run these steps:
 space, tab, newline -->
 
 
-<h3 id="interface-comment"><span class="secno">5.11 </span>Interface <code><a href="#comment">Comment</a></code></h3>
+<h3 id="interface-comment"><span class="secno">5.10 </span>Interface <code><a href="#comment">Comment</a></code></h3>
 <pre class="idl">interface <dfn id="comment">Comment</dfn> : <a href="#characterdata">CharacterData</a> {
 };</pre>
 
