@@ -1129,24 +1129,24 @@ normative requirements to make this note true are not yet in place.</a>
 
 
 <h3>Cloning nodes</h3>
-<p>Specifications may define <dfn title=concept-clone-ext>cloning steps</dfn>
-for all or some <span title=concept-node>nodes</span>.
+<p>Specifications may define
+<dfn title=concept-clone-ext>cloning steps</dfn> for all or some
+<span title=concept-node>nodes</span>.
 
 <p>To <dfn>clone</dfn> a <var title>node</var>, with a
 <var title>new ownerDocument</var> and with a
 <dfn><i>clone children flag</i></dfn>, these steps must be run:
+<!-- used by dom-Node-cloneNode and dom-Document-importNode -->
 
 <ol>
- <li><p>If <var title>node</var> is a
- <span title=concept-document>document</span> or
- <span title=concept-doctype>doctype</span>, throw a
- <code title=dom-DOMException-DATA_CLONE_ERR>DATA_CLONE_ERR</code> exception
- and terminate these steps. <!--XXX wrong? -->
-
+ <li><p>Let <var title>copy</var> be a <code>Node</code> that implements the
+ same interfaces as <var title>node</var>.
+ <li><p>If <var title>copy</var> is not a
+ <span title=concept-document>document</span> set its
+ <code title=dom-Node-ownerDocument>ownerDocument</code> to
+ <var title>new ownerDocument</var>, or null otherwise.
  <li>
-  <p>Let <var title>copy</var> be a new <code>Node</code> that implements the same interfaces as <var title>node</var>, with <code title=dom-Node-ownerDocument>ownerDocument</code> set to
-  <var title>new ownerDocument</var>. Also copy the following, depending on the
-  <var title>node</var>:
+  <p>Copy the following, depending on the type of <var title>node</var>:
   <dl class=switch>
    <dt><code>Element</code>
    <dd><p>Its <span title=concept-element-namespace>namespace</span>,
@@ -1159,23 +1159,31 @@ for all or some <span title=concept-node>nodes</span>.
    <dd><p><code title=dom-Attr-value>value</code>
    -->
 
+   <dt><code>DocumentType</code>
+   <dd><p>Its <span title=concept-doctype-name>name</span>,
+   <span title=concept-doctype-publicid>public ID</span>, and
+   <span title=concept-doctype-systemid>system ID</span>.
+
+   <dt><code>ProcessingInstruction</code>
+   <dd><p>Its <span title=concept-PI-target>target</span> and
+   <span title=concept-PI-data>data</span>.
+
    <dt><code>Text</code>
    <dt><code>Comment</code>
    <dd><p>Its <span title=concept-CD-data>data</span>.
-
-   <dt><code>ProcessingInstruction</code>
-
-   <dd><p>Its <span title=concept-PI-target>target</span> and
-   <span title=concept-PI-data>data</span>.
 
    <dt>Any other node
    <dd><p>&mdash;
   </dl>
 
- <li><p>Run any <span title=concept-clone-ext>cloning steps</span> defined for
- <var title>node</var> in <span>other applicable specifications</span>.
+ <li><p>Run any <span title=concept-clone-ext>cloning steps</span> defined
+ for <var title>node</var> in <span>other applicable specifications</span>.
 
- <li><p>If the <i>clone children flag</i> is set, <span>clone</span> all the children of <var title>node</var> and append them to <var title>copy</var>, with the same <var title>new ownerDocument</var> and the <i>clone children flag</i> being set.
+ <li><p>If the <i>clone children flag</i> is set, <span>clone</span> all the
+ <span title=concept-tree-child>children</span> of <var title>node</var> and
+ append them to <var title>copy</var>, with the same
+ <var title>new ownerDocument</var> and the <i>clone children flag</i> being
+ set.
 
  <li><p>Return <var title>copy</var>.
 </ol>
@@ -2732,10 +2740,15 @@ data-anolis-spec=xmlns>NCName</code> production in Namespaces in XML.-->
 
 <dl class=domintro>
  <dt><var title>clone</var> = <var title>document</var> . <code title=dom-Document-importNode>importNode(<var>node</var>, <var>deep</var>)</code>
- <dd><p>Returns a copy of <var title>node</var>, including its
- <span title=concept-tree-child>children</span> if <var title>deep</var> is
- true.
- <!--XXX exception?-->
+ <dd>
+  <p>Returns a copy of <var title>node</var>, including its
+  <span title=concept-tree-child>children</span> if <var title>deep</var> is
+  true.
+
+  <p>If <var title>node</var> is a
+  <span title=concept-document>document</span> throws a
+  <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
+  exception.
 
  <dt><var title>node</var> = <var title>document</var> . <code title=dom-Document-adoptNode>adoptNode(<var>node</var>)</code>
 
@@ -2751,9 +2764,18 @@ data-anolis-spec=xmlns>NCName</code> production in Namespaces in XML.-->
 
 <p>The
 <dfn title=dom-Document-importNode><code>importNode(<var title>node</var>, <var title>deep</var>)</code></dfn>
-method must return a <span>clone</span> of <var title>node</var>, with
-<var title>new ownerDocument</var> being the <span>context object</span>, and the
-<i>clone children flag</i> set if <var title>deep</var> is true.
+method must run these steps:
+
+<ol>
+ <li><p>If <var title>node</var> is a
+ <span title=concept-document>document</span> raise a
+ <code title=dom-DOMException-NOT_SUPPORTED_ERR>NOT_SUPPORTED_ERR</code>
+ exception and terminate these steps.
+
+ <li><p>Return a <span>clone</span> of <var title>node</var>, with
+ <var title>new ownerDocument</var> being the <span>context object</span>,
+ and the <i>clone children flag</i> set if <var title>deep</var> is true.
+<ol>
 
 <p>The
 <dfn title=dom-Document-adoptNode><code>adoptNode(<var title>node</var>)</code></dfn>
