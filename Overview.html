@@ -1718,26 +1718,6 @@ instead, and then do as described below, depending on the <a href="#context-obje
 
 <hr>
 
-<p>When a user agent is to <dfn id="concept-ensure-samedoc" title="concept-ensure-samedoc">ensure</dfn>
-that two <a href="#concept-node" title="concept-node">nodes</a>, <var title="">old</var> and
-<var title="">new</var>, are in the same
-<a href="#concept-document" title="concept-document">document</a>, it must run these steps:
-
-<ol>
- <li><p>Invoke <var title="">old</var>'s
- <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code>'s
- <code title="dom-Document-adoptNode"><a href="#dom-document-adoptnode">adoptNode</a></code> method with
- <var title="">new</var> as its argument.
-
- <li><p>If <var title="">old</var>'s
- <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> and
- <var title="">new</var>'s
- <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> are not the same,
- throw a
- <code title="dom-DOMException-HIERARCHY_REQUEST_ERR"><a href="#dom-domexception-hierarchy_request_err">HIERARCHY_REQUEST_ERR</a></code>
- exception.
-</ol>
-
 <p>The
 <dfn id="dom-node-insertbefore" title="dom-Node-insertBefore"><code>insertBefore(<var title="">newChild</var>, <var title="">refChild</var>)</code></dfn>
 method must run these steps:
@@ -1767,9 +1747,9 @@ method must run these steps:
 
  <!-- XXXhierarchy -->
 
- <li><p><a href="#concept-ensure-samedoc" title="concept-ensure-samedoc">Ensure</a> the
- <a href="#context-object">context object</a> and <var title="">newChild</var> are in the same
- <a href="#concept-document" title="concept-document">document</a>.
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
+ <var title="">newChild</var> with <a href="#context-object">context object</a>'s
+ <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code>.
 
  <li><p>If <var title="">newChild</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>,
  insert the children of <var title="">newChild</var> in the
@@ -1811,9 +1791,9 @@ method must run these steps:
 
  <!-- XXXhierarchy -->
 
- <li><p><a href="#concept-ensure-samedoc" title="concept-ensure-samedoc">Ensure</a> the
- <a href="#context-object">context object</a> and <var title="">newChild</var> are in the same
- <a href="#concept-document" title="concept-document">document</a>.
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
+ <var title="">newChild</var> with <a href="#context-object">context object</a>'s
+ <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code>.
 
  <li><p>Let <var title="">refChild</var> be <var title="">oldChild</var>'s
  <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
@@ -1865,9 +1845,9 @@ method must run these steps:
 
  <!-- XXXhierarchy -->
 
- <li><p><a href="#concept-ensure-samedoc" title="concept-ensure-samedoc">Ensure</a> the
- <a href="#context-object">context object</a> and <var title="">newChild</var> are in the same
- <a href="#concept-document" title="concept-document">document</a>.
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
+ <var title="">newChild</var> with <a href="#context-object">context object</a>'s
+ <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code>.
 
  <li><p>If <var title="">newChild</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>,
  append the children of <var title="">newChild</var> to the
@@ -2823,16 +2803,10 @@ method must run these steps:
  <i>clone children flag</i> set if <var title="">deep</var> is true or omitted.
 </ol>
 
-<p>The
-<dfn id="dom-document-adoptnode" title="dom-Document-adoptNode"><code>adoptNode(<var title="">node</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn id="concept-node-adopt" title="concept-node-adopt">adopt</dfn> a <var title="">node</var>,
+with an <var title="">ownerDocument</var>, run these steps:
 
 <ol>
- <li><p>If <var title="">node</var> is a
- <a href="#concept-document" title="concept-document">document</a> throw a
- <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code>
- exception and terminate these steps.
-
  <li><p>If <var title="">node</var> is an
  <a href="#concept-element" title="concept-element">element</a>, it is
  <a href="#affected-by-a-base-url-change">affected by a base URL change</a>.
@@ -2843,10 +2817,24 @@ method must run these steps:
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>Set <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> for
- <var title="">node</var> and all its <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a><!--AttrExodus as well as any associated
- <code>Attr</code> nodes--> to the <a href="#context-object">context object</a>.
+ <var title="">node</var> and all its
+ <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>
+ <!--AttrExodus as well as any associated <code>Attr</code> nodes-->
+ to <var title="">ownerDocument</var>.
+</ol>
 
- <li><p>Return <var title="">node</var>.
+<p>The
+<dfn id="dom-document-adoptnode" title="dom-Document-adoptNode"><code>adoptNode(<var title="">node</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If <var title="">node</var> is a
+ <a href="#concept-document" title="concept-document">document</a> throw a
+ <code title="dom-DOMException-NOT_SUPPORTED_ERR"><a href="#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code>
+ exception and terminate these steps.
+
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a> <var title="">node</var>
+ with the <a href="#context-object">context object</a> and return it.
 </ol>
 
 <hr>
