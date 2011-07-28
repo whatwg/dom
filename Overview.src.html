@@ -560,7 +560,7 @@ following:
  the text does not fit in a <code data-anolis-spec=webidl>DOMString</code>
  (historical);
  <li><dfn title=dom-DOMException-HIERARCHY_REQUEST_ERR><code>HIERARCHY_REQUEST_ERR</code></dfn> (3):
- the operation would yield an incorrect nodes model; <!-- XXXhierarchy -->
+ the operation would yield an incorrect nodes model;
  <li><dfn title=dom-DOMException-WRONG_DOCUMENT_ERR><code>WRONG_DOCUMENT_ERR</code></dfn> (4):
  the object is in the wrong <span title=concept-document>document</span>, a
  call to <code title=dom-Document-importNode>importNode()</code> is
@@ -1108,22 +1108,12 @@ and its allowed <span title=concept-tree-child>children</span>:
  <dd><p>None.
 </dl>
 
-<p>A <span title=concept-node>node</span>, or its
-<span title=concept-tree-child>children</span> in case of a
-<code>DocumentFragment</code> object, are said to
-<dfn>violate the node hierarchy</dfn> of another
-<span title=concept-node>node</span> if inserting them within the other
-<span title=concept-node>node</span>'s <span title=concept-tree>tree</span>
-would violate the constraints listed above.
-
-<p class="note">Operations that would cause a node to
-<span>violate the node hierarchy</span> of another node will throw a
-<code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>.
-
-<p class=XXX><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13041">The
-normative requirements to make this note true are not yet in place.</a>
-
 <!--AttrExodus -->
+
+<p class=>The <span title=concept-node-insert>insert</span> and
+<span title=concept-node-replace>replace</span> algorithms throw a
+<code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+if the constraints listed above are violated.
 
 <h3>Interface <code>Node</code></h3>
 <pre class=idl>interface <dfn>Node</dfn> : <span>EventTarget</span> {
@@ -1172,10 +1162,10 @@ normative requirements to make this note true are not yet in place.</a>
 
            attribute DOMString? <span title=dom-Node-nodeValue>nodeValue</span>;
            attribute DOMString? <span title=dom-Node-textContent>textContent</span>;
-  <span>Node</span> <span title=dom-Node-insertBefore>insertBefore</span>(<span>Node</span> <var title>newChild</var>, <span>Node</span>? <var title>refChild</var>);
-  <span>Node</span> <span title=dom-Node-replaceChild>replaceChild</span>(<span>Node</span> <var title>newChild</var>, <span>Node</span> <var title>oldChild</var>);
-  <span>Node</span> <span title=dom-Node-removeChild>removeChild</span>(<span>Node</span> <var title>oldChild</var>);
-  <span>Node</span> <span title=dom-Node-appendChild>appendChild</span>(<span>Node</span> <var title>newChild</var>);<!--
+  <span>Node</span> <span title=dom-Node-insertBefore>insertBefore</span>(<span>Node</span> <var title>node</var>, <span>Node</span>? <var title>child</var>);
+  <span>Node</span> <span title=dom-Node-replaceChild>replaceChild</span>(<span>Node</span> <var title>node</var>, <span>Node</span> <var title>child</var>);
+  <span>Node</span> <span title=dom-Node-removeChild>removeChild</span>(<span>Node</span> <var title>child</var>);
+  <span>Node</span> <span title=dom-Node-appendChild>appendChild</span>(<span>Node</span> <var title>node</var>);<!--
   void normalize();-->
 
   <span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var>);
@@ -1664,149 +1654,267 @@ instead, and then do as described below, depending on the <span>context object</
 
 <hr>
 
-<p>The
-<dfn title=dom-Node-insertBefore><code>insertBefore(<var title>newChild</var>, <var title>refChild</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
+into a <var title>parent</var> before a <var title>child</var>, run these
+steps:
 
 <ol>
- <li><p>If the <span>context object</span> is not a <code>Document</code>,
- <code>DocumentFragment</code> or <code>Element</code>, throw a
- <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
- and terminate these steps.
-
- <li><p>If <var title>refChild</var> is null, return the result of invoking
- the <span>context object</span>'s
- <code title=dom-Node-appendChild>appendChild</code> with
- <var title>newChild</var> as argument and terminate these steps.
-
- <li><p>If <var title>refChild</var>'s
- <span title=concept-tree-parent>parent</span> is not the
- <span>context object</span>, throw a
+ <li><p>If <var title>child</var> is not null and its
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
 
- <li><p>If <var title>newChild</var> is the <span>context object</span> or an
- <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span>, throw a
+ <li><p>If <var title>node</var> is <var title>parent</var> or an
+ <span title=concept-tree-ancestor>ancestor</span> of
+ <var title>parent</var>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
- <!-- XXXhierarchy -->
+ <li><p>If <var title>parent</var> is not a <code>Document</code>,
+ <code>DocumentFragment</code>, or <code>Element</code>
+ <span title=concept-node>node</span>, throw a
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+ and terminate these steps.
+
+ <li>
+  <p>If <var title>parent</var> is a
+  <span title=concept-document>document</span>, run these substeps:
+
+  <ol>
+   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
+   <code>ProcessingInstruction</code>, <code>DocumentType</code>,
+   <code>Element</code>, or <code>Comment</code>
+   <span title=concept-node>node</span>, throw a
+   <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+   and terminate these steps.
+
+   <li>
+    <p>If <var title>node</var> is a <code>DocumentFragment</code>
+    <span title=concept-node>node</span>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title>node</var> has more than one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or has a <code>Text</code>
+     <span title=concept-node>node</span>
+     <span title=concept-tree-child>child</span>, throw a
+     <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+     and terminate these steps.
+
+     <li><p>If <var title>node</var> has one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> and either
+     <var title>parent</var> has an
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or <var title>child</var>
+     is not null and a <span title=concept-doctype>doctype</span> is
+     <span title=concept-tree-following>following</span>
+     <var title>child</var>, throw a
+     <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+     and terminate these steps.
+    </ol>
+
+   <li><p>If <var title>node</var> is an
+   <span title=concept-element>element</span> and either
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span> or <var title>child</var>
+   is not null and a <span title=concept-doctype>doctype</span> is
+   <span title=concept-tree-following>following</span>
+   <var title>child</var>, throw a
+   <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+   and terminate these steps.
+
+   <li><p>If <var title>node</var> is a
+   <span title=concept-doctype>doctype</span> and either
+   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
+   <span title=concept-tree-child>child</span>, an
+   <span title=concept-element>element</span> is
+   <span title=concept-tree-preceding>preceding</span>
+   <var title>child</var>, or <var title>child</var> is null and
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span>.
+  </ol>
+
+ <li><p>Otherwise if <var title>parent</var> is a
+ <code>DocumentFragment</code> or <code>Element</code>
+ <span title=concept-node>node</span> and <var title>node</var> is not a
+ <code>DocumentFragment</code>, <code>ProcessingInstruction</code>,
+ <code>Element</code>, <code>Text</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>, throw a
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+ and terminate these steps.
 
  <li><p><span title=concept-node-adopt>Adopt</span>
- <var title>newChild</var> with <span>context object</span>'s
+ <var title>node</var> with <var title>parent</var>'s
  <code title=dom-Node-ownerDocument>ownerDocument</code>.
 
- <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code>,
- insert the children of <var title>newChild</var> in the
- <span>context object</span>, in
- <span title=concept-tree-order>tree order</span>, so that the
- <span title=concept-tree-last-child>last child</span> becomes the
- <span title=concept-tree-previous-sibling>previous sibling</span> of
- <var title>refChild</var>.
+ <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, insert its
+ <span title=concept-tree-child>children</span> (preserving
+ <span title=concept-tree-order>tree order</span>), before
+ <var title>child</var> or at the end of <var title>parent</var> if
+ <var title>child</var> is null.
 
- <li><p>Otherwise insert <var title>newChild</var> in the
- <span>context object</span> as the
- <span title=concept-tree-previous-sibling>previous sibling</span> of
- <var title>refChild</var>.
+ <li><p>Otherwise insert <var title>node</var> before
+ <var title>child</var> or at the end of <var title>parent</var> if
+ <var title>child</var> is null.
 
- <li><p>Return <var title>newChild</var>.
+ <li><p>Return <var title>child</var>.
 </ol>
 
-<p>The
-<dfn title=dom-Node-replaceChild><code>replaceChild(<var title>newChild</var>, <var title>oldChild</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn title=concept-node-replace>replace</dfn> a <var title>child</var>
+with <var title>node</var> within a <var title>parent</var>, run these
+steps:
 
 <ol>
- <li><p>If the <span>context object</span> is not a <code>Document</code>,
- <code>DocumentFragment</code> or <code>Element</code>, throw a
- <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
- and terminate these steps.
-
- <li><p>If <var title>oldChild</var>'s
- <span title=concept-tree-parent>parent</span> is not the
- <span>context object</span>, throw a
+ <li><p>If <var title>child</var>'s
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
 
- <li><p>If <var title>newChild</var> is the <span>context object</span> or an
- <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span>, throw a
+ <li><p>If <var title>node</var> is <var title>parent</var> or an
+ <span title=concept-tree-ancestor>ancestor</span> of
+ <var title>parent</var>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
- <!-- XXXhierarchy -->
+ <li><p>If <var title>parent</var> is not a <code>Document</code>,
+ <code>DocumentFragment</code>, or <code>Element</code>
+ <span title=concept-node>node</span>, throw a
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+ and terminate these steps.
+
+ <li>
+  <p>If <var title>parent</var> is a
+  <span title=concept-document>document</span>, run these substeps:
+
+  <ol>
+   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
+   <code>ProcessingInstruction</code>, <code>DocumentType</code>,
+   <code>Element</code>, or <code>Comment</code>
+   <span title=concept-node>node</span>, throw a
+   <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+   and terminate these steps.
+
+   <li>
+    <p>If <var title>node</var> is a <code>DocumentFragment</code>
+    <span title=concept-node>node</span>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title>node</var> has more than one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or has a <code>Text</code>
+     <span title=concept-node>node</span>
+     <span title=concept-tree-child>child</span>, throw a
+     <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+     and terminate these steps.
+
+     <li><p>If <var title>node</var> has one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> and either
+     <var title>parent</var> has an
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> that is not
+     <var title>child</var> or a <span title=concept-doctype>doctype</span>
+     is <span title=concept-tree-following>following</span>
+     <var title>child</var>, throw a
+     <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+     and terminate these steps.
+    </ol>
+
+   <li><p>If <var title>node</var> is an
+   <span title=concept-element>element</span> and either
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span> that is not
+   <var title>child</var> or a <span title=concept-doctype>doctype</span> is
+   <span title=concept-tree-following>following</span>
+   <var title>child</var>, throw a
+   <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+   and terminate these steps.
+
+   <li><p>If <var title>node</var> is a
+   <span title=concept-doctype>doctype</span> and either
+   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
+   <span title=concept-tree-child>child</span> that is not
+   <var title>child</var>, or an <span title=concept-element>element</span>
+   is <span title=concept-tree-preceding>preceding</span>
+   <var title>child</var>.
+  </ol>
+
+ <li><p>Otherwise if <var title>parent</var> is a
+ <code>DocumentFragment</code> or <code>Element</code>
+ <span title=concept-node>node</span> and <var title>node</var> is not a
+ <code>DocumentFragment</code>, <code>ProcessingInstruction</code>,
+ <code>Element</code>, <code>Text</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>, throw a
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+ and terminate these steps.
 
  <li><p><span title=concept-node-adopt>Adopt</span>
- <var title>newChild</var> with <span>context object</span>'s
+ <var title>node</var> with <var title>parent</var>'s
  <code title=dom-Node-ownerDocument>ownerDocument</code>.
 
- <li><p>Let <var title>refChild</var> be <var title>oldChild</var>'s
+ <li><p>Let <var title>reference child</var> be <var title>child</var>'s
  <span title=concept-tree-next-sibling>next sibling</span>.
 
- <li><p>Remove <var title>oldChild</var> from the <span>context object</span>.
+ <li><p>Remove <var title>child</var> from its <var title>parent</var>.
 
- <li><p>Return the result of invoking the <span>context object</span>'s
- <code title=dom-Node-insertBefore>insertBefore</code> method with
- <var title>newChild</var> and <var title>refChild</var> as arguments.
+ <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, insert its
+ <span title=concept-tree-child>children</span> (preserving
+ <span title=concept-tree-order>tree order</span>), before
+ <var title>reference child</var> or at the end of <var title>parent</var>
+ if <var title>reference child</var> is null.
+
+ <li><p>Otherwise insert <var title>node</var> before
+ <var title>reference child</var> or at the end of <var title>parent</var>
+ if <var title>reference child</var> is null.
+
+ <li><p>Return <var title>child</var>.
 </ol>
 
 <p>The
+<dfn title=dom-Node-insertBefore><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method must <span title=concept-node-insert>insert</span>
+<var title>node</var> into the <span>context object</span> before
+<var title>child</var>.
+
+<p>The
+<dfn title=dom-Node-replaceChild><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
+method must <span title=concept-node-replace>replace</span>
+<var title>child</var> with <var title>node</var> within
+<var tilte>parent</var>.
+
+<p>The
 <dfn
-title=dom-Node-removeChild><code>removeChild(<var title>oldChild</var>)</code></dfn>
+title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
 method must run these steps:
 
 <ol>
  <li><p>If the <span>context object</span> is not a <code>Document</code>,
- <code>DocumentFragment</code> or <code>Element</code>, throw a
+ <code>DocumentFragment</code> or <code>Element</code>
+ <span title=concept-node>node</span>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
- <li><p>If <var title>oldChild</var>'s
+ <li><p>If <var title>child</var>'s
  <span title=concept-tree-parent>parent</span> is not the
  <span>context object</span>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
- <!-- Including other documents. -->
 
- <li><p>Remove <var title>oldChild</var> from the <span>context object</span>.
+ <li><p>Remove <var title>child</var> from the <span>context object</span>.
 
- <li><p>Return <var title>oldChild</var>.
+ <li><p>Return <var title>child</var>.
 </ol>
 
 <p>The
 <dfn
-title=dom-Node-appendChild><code>appendChild(<var title>newChild</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span> is not a <code>Document</code>,
- <code>DocumentFragment</code> or <code>Element</code>, throw a
- <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
- and terminate these steps.
-
- <li><p>If <var title>newChild</var> is the <span>context object</span> or an
- <span title=concept-tree-ancestor>ancestor</span> of the
- <span>context object</span>, throw a
- <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
- and terminate these steps.
-
- <!-- XXXhierarchy -->
-
- <li><p><span title=concept-node-adopt>Adopt</span>
- <var title>newChild</var> with <span>context object</span>'s
- <code title=dom-Node-ownerDocument>ownerDocument</code>.
-
- <li><p>If <var title>newChild</var> is a <code>DocumentFragment</code>,
- append the children of <var title>newChild</var> to the
- <span>context object</span>, in
- <span title=concept-tree-order>tree order</span>.
-
- <li><p>Otherwise, append <var title>newChild</var> to the
- <span>context object</span>.
-
- <li><p>Return <var title>newChild</var>.
-</ol>
+title=dom-Node-appendChild><code>appendChild(<var>node</var>)</code></dfn>
+method must <span title=concept-node-insert>insert</span>
+<var title>node</var> into the <span>context object</span> before null.
 
 <hr>
 
@@ -3888,11 +3996,10 @@ method must run these steps:
   <span title=concept-tree-parent>parent</span>. If <var title>parent</var>
   is null, return <var title>new node</var> and terminate these steps.
 
-  <li><p>Call <var title>parent</var>'s
-  <code title=dom-Node-insertBefore>insertBefore</code> method with
-  <var title>new node</var> and the <span>context object</span>'s first
-  <span title=concept-tree-next-sibling>next sibling</span> as its argument.
-  <!-- XXX need algorithm for insertBefore -->
+  <li><p><span title=concept-node-insert>Insert</span>
+  <var title>new node</var> into <var title>parent</var> before
+  <span>context object</span>'s
+  <span title=concept-tree-next-sibling>next sibling</span>.
 
   <li><p>Return <var title>new node</var>.
 </ol>
