@@ -177,7 +177,6 @@ DOM Level 2 Traversal and Range, and do the following:
 <h2 class=no-num>Issues</h2>
 
 <ul class=XXX>
- <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13045">Document.documentURI</a>
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13040">Mutation listeners</a> (and updating the methods that mutate)
  <li>Move DOMStringMap here?
  <li>Superglobal id=""/class="" attributes?
@@ -2240,6 +2239,7 @@ method must run these steps:
 <h3>Interface <code>Document</code></h3>
 <pre class=idl>interface <dfn>Document</dfn> : <span>Node</span> {
   readonly attribute <span>DOMImplementation</span> <span title=dom-Document-implementation>implementation</span>;
+  readonly attribute DOMString <span title=dom-Document-URL>URL</span>;
   readonly attribute DOMString <span title=dom-Document-documentURI>documentURI</span>;
   readonly attribute DOMString <span title=dom-Document-compatMode>compatMode</span>;
 
@@ -2287,15 +2287,18 @@ method must run these steps:
 known as <dfn title=concept-document>documents</dfn>.
 
 <p>Each <span title=concept-document>document</span> has an associated
-<dfn title=concept-document-character-encoding>character encoding</dfn> and
-<dfn title=concept-document-media-type>media type</dfn>.
+<dfn title=concept-document-character-encoding>character encoding</dfn>,
+<dfn title=concept-document-media-type>media type</dfn>, and
+<dfn title=concept-document-url>URL</dfn>.
 
 <p>Unless explicitly given when a
 <span title=concept-document>document</span> is created its
 <span title=concept-document-character-encoding>character encoding</span> is
-"<code title>UTF-8</code>" and its
+"<code title>UTF-8</code>", its
 <span title=concept-document-media-type>media type</span> is
-"<code title>application/xml</code>".
+"<code title>application/xml</code>", and its
+<span title=concept-document-url>URL</span> is
+"<code title>about:blank</code>"
 
 <p>A <span title=concept-document>document</span> is assumed to be an
 <dfn>XML document</dfn> unless it is flagged as being an
@@ -2326,6 +2329,10 @@ absence, or value of the DOCTYPE string.
  <dt><var title>document</var> . <code title=dom-Document-implementation>implementation</code>
  <dd><p>Returns the associated <code>DOMImplementation</code> object.
 
+ <dt><var title>document</var> . <code title=dom-Document-URL>URL</code>
+ <dt><var title>document</var> . <code title=dom-Document-documentURI>documentURI</code>
+ <dd><p>Returns the <span title=concept-document-url>URL</span>.
+
  <dt><var title>document</var> . <code title=dom-Document-compatMode>compatMode</code>
  <dd>
   <p>Returns the string "<code title>CSS1Compat</code>" if
@@ -2341,14 +2348,15 @@ absence, or value of the DOCTYPE string.
 attribute must return the <code>DOMImplementation</code> object that is
 associated with the <span title=concept-document>document</span>.
 
-<p class=XXX><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13045"><dfn title=dom-Document-documentURI>documentURI</dfn>
-Should document.documentURI really exist?</a>
+<p>The <dfn title=dom-Document-URL><code>URL</code></dfn> and
+<dfn title=dom-Document-documentURI><code>documentURI</code></dfn>
+attributes must return the <span title=concept-document-url>URL</span>.
 
 <p>The <dfn title=dom-Document-compatMode><code>compatMode</code></dfn> IDL
-attribute must return the literal string "<code title>CSS1Compat</code>" unless
-the <span>context object</span> is in <span
-title=concept-quirks-mode>quirks mode</span>, in which case it must instead
-return the literal string "<code title>BackCompat</code>".
+attribute must return the literal string "<code title>CSS1Compat</code>"
+unless the <span>context object</span> is in
+<span title=concept-quirks-mode>quirks mode</span>, in which case it must
+instead return the literal string "<code title>BackCompat</code>".
 
 <!-- <dfn title=dom-Document-xmlVersion>xmlVersion</dfn>
 http://lists.w3.org/Archives/Public/www-dom/2003JulSep/0049.html -->
