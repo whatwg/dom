@@ -1135,10 +1135,13 @@ and its allowed <span title=concept-tree-child>children</span>:
 
 <!--AttrExodus -->
 
-<p class=note>The <span title=concept-node-insert>insert</span> and
-<span title=concept-node-replace>replace</span> algorithms throw a
+<p class=note>The <span title=concept-node-pre-insert>pre-insert</span>,
+<span title=concept-node-replace>replace</span>, and
+<span title=concept-node-pre-remove>pre-remove</span> algorithms throw a
 <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
-if the constraints listed above are violated.
+if the constraints listed above are violated. These algorithms are used by
+methods that manipulate the <span title=concept-tree>tree</span> of
+<span title=concept-node>nodes</span>.
 
 <h3>Interface <code>Node</code></h3>
 <pre class=idl>interface <dfn>Node</dfn> : <span>EventTarget</span> {
@@ -1680,9 +1683,9 @@ instead, and then do as described below, depending on the <span>context object</
 
 <hr>
 
-<p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
-into a <var title>parent</var> before a <var title>child</var>, run these
-steps:
+<p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
+<var title>node</var> into a <var title>parent</var> before a
+<var title>child</var>, run these steps:
 
 <ol>
  <li><p>If <var title>child</var> is not null and its
@@ -1775,6 +1778,18 @@ steps:
  <var title>node</var> with <var title>parent</var>'s
  <span title=concept-node-document>node document</span>.
 
+ <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
+ into <var title>parent</var> before <var title>child</var>.
+
+ <li><p>Return <var title>child</var>.
+ <!-- technically this is post-insert -->
+</ol>
+
+<p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
+into a <var title>parent</var> before a <var title>child</var>, run these
+steps:
+
+<ol>
  <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
  <span title=concept-node>node</span>, insert its
  <span title=concept-tree-child>children</span> (preserving
@@ -1785,9 +1800,15 @@ steps:
  <li><p>Otherwise insert <var title>node</var> before
  <var title>child</var> or at the end of <var title>parent</var> if
  <var title>child</var> is null.
-
- <li><p>Return <var title>child</var>.
 </ol>
+
+
+<p>The
+<dfn title=dom-Node-insertBefore><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method must <span title=concept-node-pre-insert>pre-insert</span>
+<var title>node</var> into the <span>context object</span> before
+<var title>child</var>.
+
 
 <p>To <dfn title=concept-node-replace>replace</dfn> a <var title>child</var>
 with <var title>node</var> within a <var title>parent</var>, run these
@@ -1885,27 +1906,14 @@ steps:
  <li><p>Let <var title>reference child</var> be <var title>child</var>'s
  <span title=concept-tree-next-sibling>next sibling</span>.
 
- <li><p>Remove <var title>child</var> from its <var title>parent</var>.
+ <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
+ from its <var title>parent</var>.
 
- <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
- <span title=concept-node>node</span>, insert its
- <span title=concept-tree-child>children</span> (preserving
- <span title=concept-tree-order>tree order</span>), before
- <var title>reference child</var> or at the end of <var title>parent</var>
- if <var title>reference child</var> is null.
-
- <li><p>Otherwise insert <var title>node</var> before
- <var title>reference child</var> or at the end of <var title>parent</var>
- if <var title>reference child</var> is null.
+ <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
+ into <var title>parent</var> before <var title>reference child</var>.
 
  <li><p>Return <var title>child</var>.
 </ol>
-
-<p>The
-<dfn title=dom-Node-insertBefore><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
-method must <span title=concept-node-insert>insert</span>
-<var title>node</var> into the <span>context object</span> before
-<var title>child</var>.
 
 <p>The
 <dfn title=dom-Node-replaceChild><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
@@ -1913,33 +1921,46 @@ method must <span title=concept-node-replace>replace</span>
 <var title>child</var> with <var title>node</var> within
 <var tilte>parent</var>.
 
-<p>The
-<dfn
-title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn title=concept-node-pre-remove>pre-remove</dfn> a
+<var title>node</var> from a <var title>parent</var>, run these steps:</p>
 
 <ol>
- <li><p>If the <span>context object</span> is not a <code>Document</code>,
+ <li><p>If <var title>parent</var> is not a <code>Document</code>,
  <code>DocumentFragment</code> or <code>Element</code>
  <span title=concept-node>node</span>, throw a
  <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
  and terminate these steps.
 
  <li><p>If <var title>child</var>'s
- <span title=concept-tree-parent>parent</span> is not the
- <span>context object</span>, throw a
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, throw a
  <code title=dom-DOMException-NOT_FOUND_ERR>NOT_FOUND_ERR</code> exception
  and terminate these steps.
 
- <li><p>Remove <var title>child</var> from the <span>context object</span>.
+ <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
+ from <var title>parent</var>.
 
  <li><p>Return <var title>child</var>.
+ <!-- technically this is post-remove -->
+</ol>
+
+<p>To <dfn title=concept-node-remove>remove</dfn> a <var title>node</var>
+from a <var title>parent</var>, run these steps:
+
+<ol>
+ <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 </ol>
 
 <p>The
 <dfn
+title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
+method must <span title=concept-node-pre-remove>pre-remove</span>
+<var title>child</var> from the <span>context object</span>.
+
+<p>The
+<dfn
 title=dom-Node-appendChild><code>appendChild(<var>node</var>)</code></dfn>
-method must <span title=concept-node-insert>insert</span>
+method must <span title=concept-node-pre-insert>pre-insert</span>
 <var title>node</var> into the <span>context object</span> before null.
 
 <hr>
