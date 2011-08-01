@@ -154,7 +154,6 @@ DOM Level 2 Traversal and Range, and do the following:
 <ul class="XXX">
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13040">Mutation listeners</a> (and updating the methods that mutate)
  <li>Move DOMStringMap here?
- <li>Superglobal id=""/class="" attributes?
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">replaceWholeText()</a>
 </ul>
 
@@ -3313,6 +3312,10 @@ otherwise [createAttribute]- ->.
   readonly attribute DOMString <a href="#dom-element-localname" title="dom-Element-localName">localName</a>;
   readonly attribute DOMString <a href="#dom-element-tagname" title="dom-Element-tagName">tagName</a>;
 
+           attribute DOMString <a href="#dom-element-id" title="dom-Element-id">id</a>;
+           attribute DOMString <a href="#dom-element-classname" title="dom-Element-className">className</a>;
+  readonly attribute <a href="#domtokenlist">DOMTokenList</a> <a href="#dom-element-classlist" title="dom-Element-classList">classList</a>;
+
   readonly attribute <a href="#attr">Attr</a>[] <a href="#dom-element-attributes" title="dom-Element-attributes">attributes</a>;
   DOMString? <a href="#dom-element-getattribute" title="dom-Element-getAttribute">getAttribute</a>(DOMString <var title="">qualifiedName</var>);
   DOMString? <a href="#dom-element-getattributens" title="dom-Element-getAttributeNS">getAttributeNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
@@ -3359,10 +3362,32 @@ collection of <a href="#concept-attribute" title="concept-attribute">attributes<
 <dfn id="concept-id" title="concept-id">unique identifier (ID)</dfn> and
 <dfn id="concept-class" title="concept-class">classes</dfn> associated with them.
 
-<p class="XXX">I think rather than leaving this up to markup specifications we
-should just state that id="" sets the ID and class="" sets the classes. We
-can then also define Element.id, Element.className, and Element.classList
-here. It would simplify a lot of stuff.
+<p>Whenever an <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
+<a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
+<code title="">id</code> and
+<a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is null is set or
+modified on an <a href="#concept-element" title="concept-element">element</a>, the
+<a href="#concept-element" title="concept-element">element</a>'s
+<a href="#concept-id" title="concept-id">ID</a> must be set to the
+<a href="#concept-attribute" title="concept-attribute">attribute</a>'s
+<a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
+
+<p>Whenever an <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
+<a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
+<code title="">class</code> and
+<a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is null is set or
+modified on an <a href="#concept-element" title="concept-element">element</a>, the
+<a href="#concept-element" title="concept-element">element</a>'s
+<a href="#concept-class" title="concept-class">classes</a> must be set to the
+<a href="#concept-attribute" title="concept-attribute">attribute</a>'s
+<a href="#concept-attribute-value" title="concept-attribute-value">value</a>,
+<a href="#split-a-string-on-spaces" title="split a string on spaces">split on spaces</a>.
+
+<p class="note">While this specification defines user agent processing
+requirements for <code title="">id</code> and <code title="">class</code>
+<a href="#concept-attribute" title="concept-attribute">attributes</a> on any
+<a href="#concept-element" title="concept-element">element</a>, it makes no claims as to whether
+using them is conforming or not.
 
 <hr>
 
@@ -3450,6 +3475,36 @@ must run these steps:
 
  <li><p>Return <var title="">qualified name</var>.
 </ol>
+
+<hr>
+
+<!--
+ XXX This section argues for generic get/set attribute algorithms; might
+ need more text for DOMTokenList explaining various reflecting conditions.
+-->
+
+<p>The <dfn id="dom-element-id" title="dom-Element-id"><code>id</code></dfn> attribute must return
+the result of invoking
+<code title="dom-Element-getAttribute"><a href="#dom-element-getattribute">getAttribute()</a></code> with
+"<code title="">id</code>" as argument.
+
+<p>Setting the <code title="dom-Element-id"><a href="#dom-element-id">id</a></code> attribute must invoke
+<code title="dom-Element-getAttribute"><a href="#dom-element-getattribute">setAttribute()</a></code> with
+"<code title="">id</code>" and new value as arguments.
+
+<p>The <dfn id="dom-element-classname" title="dom-Element-className"><code>className</code></dfn>
+attribute must return the result of invoking
+<code title="dom-Element-getAttribute"><a href="#dom-element-getattribute">getAttribute()</a></code> with
+"<code title="">class</code>" as argument.
+
+<p>Setting the <code title="dom-Element-className"><a href="#dom-element-classname">className</a></code> attribute
+must invoke <code title="dom-Element-getAttribute"><a href="#dom-element-getattribute">setAttribute()</a></code> with
+"<code title="">class</code>" and new value as arguments.
+
+<p>The <dfn id="dom-element-classlist" title="dom-Element-classList"><code>classList</code></dfn>
+attribute must return a <code><a href="#domtokenlist">DOMTokenList</a></code> whose
+<a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> is
+the <code title="dom-Element-className"><a href="#dom-element-classname">className</a></code> attribute value.
 
 <hr>
 

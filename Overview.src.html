@@ -179,7 +179,6 @@ DOM Level 2 Traversal and Range, and do the following:
 <ul class=XXX>
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13040">Mutation listeners</a> (and updating the methods that mutate)
  <li>Move DOMStringMap here?
- <li>Superglobal id=""/class="" attributes?
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">replaceWholeText()</a>
 </ul>
 
@@ -3370,6 +3369,10 @@ otherwise [createAttribute]- ->.
   readonly attribute DOMString <span title=dom-Element-localName>localName</span>;
   readonly attribute DOMString <span title=dom-Element-tagName>tagName</span>;
 
+           attribute DOMString <span title=dom-Element-id>id</span>;
+           attribute DOMString <span title=dom-Element-className>className</span>;
+  readonly attribute <span>DOMTokenList</span> <span title=dom-Element-classList>classList</span>;
+
   readonly attribute <span>Attr</span>[] <span title=dom-Element-attributes>attributes</span>;
   DOMString? <span title=dom-Element-getAttribute>getAttribute</span>(DOMString <var title>qualifiedName</var>);
   DOMString? <span title=dom-Element-getAttributeNS>getAttributeNS</span>(DOMString <var title>namespace</var>, DOMString <var title>localName</var>);
@@ -3416,10 +3419,32 @@ collection of <span title=concept-attribute>attributes</span>.
 <dfn title=concept-id>unique identifier (ID)</dfn> and
 <dfn title=concept-class>classes</dfn> associated with them.
 
-<p class=XXX>I think rather than leaving this up to markup specifications we
-should just state that id="" sets the ID and class="" sets the classes. We
-can then also define Element.id, Element.className, and Element.classList
-here. It would simplify a lot of stuff.
+<p>Whenever an <span title=concept-attribute>attribute</span> whose
+<span title=concept-attribute-local-name>local name</span> is
+<code title>id</code> and
+<span title=concept-attribute-namespace>namespace</span> is null is set or
+modified on an <span title=concept-element>element</span>, the
+<span title=concept-element>element</span>'s
+<span title=concept-id>ID</span> must be set to the
+<span title=concept-attribute>attribute</span>'s
+<span title=concept-attribute-value>value</span>.
+
+<p>Whenever an <span title=concept-attribute>attribute</span> whose
+<span title=concept-attribute-local-name>local name</span> is
+<code title>class</code> and
+<span title=concept-attribute-namespace>namespace</span> is null is set or
+modified on an <span title=concept-element>element</span>, the
+<span title=concept-element>element</span>'s
+<span title=concept-class>classes</span> must be set to the
+<span title=concept-attribute>attribute</span>'s
+<span title=concept-attribute-value>value</span>,
+<span title="split a string on spaces">split on spaces</span>.
+
+<p class=note>While this specification defines user agent processing
+requirements for <code title>id</code> and <code title>class</code>
+<span title=concept-attribute>attributes</span> on any
+<span title=concept-element>element</span>, it makes no claims as to whether
+using them is conforming or not.
 
 <hr>
 
@@ -3507,6 +3532,36 @@ must run these steps:
 
  <li><p>Return <var title>qualified name</var>.
 </ol>
+
+<hr>
+
+<!--
+ XXX This section argues for generic get/set attribute algorithms; might
+ need more text for DOMTokenList explaining various reflecting conditions.
+-->
+
+<p>The <dfn title=dom-Element-id><code>id</code></dfn> attribute must return
+the result of invoking
+<code title=dom-Element-getAttribute>getAttribute()</code> with
+"<code title>id</code>" as argument.
+
+<p>Setting the <code title=dom-Element-id>id</code> attribute must invoke
+<code title=dom-Element-getAttribute>setAttribute()</code> with
+"<code title>id</code>" and new value as arguments.
+
+<p>The <dfn title=dom-Element-className><code>className</code></dfn>
+attribute must return the result of invoking
+<code title=dom-Element-getAttribute>getAttribute()</code> with
+"<code title>class</code>" as argument.
+
+<p>Setting the <code title=dom-Element-className>className</code> attribute
+must invoke <code title=dom-Element-getAttribute>setAttribute()</code> with
+"<code title>class</code>" and new value as arguments.
+
+<p>The <dfn title=dom-Element-classList><code>classList</code></dfn>
+attribute must return a <code>DOMTokenList</code> whose
+<span title=concept-tokenlist-underlying-string>underlying string</span> is
+the <code title=dom-Element-className>className</code> attribute value.
 
 <hr>
 
