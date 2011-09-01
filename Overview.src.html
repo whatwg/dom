@@ -2044,9 +2044,10 @@ method must <span title=concept-node-pre-remove>pre-remove</span>
 <span title=concept-node>nodes</span>.
 
 <p>To <dfn title=concept-node-clone>clone</dfn> a <var title>node</var>,
-with an <var title>ownerDocument</var> and a <i>clone children flag</i>,
-run these steps:
-<!-- used by dom-Node-cloneNode and dom-Document-importNode -->
+with an <var title>ownerDocument</var> and optionally a
+<i>clone children flag</i>, run these steps:
+<!-- This algorithm is used by dom-Node-cloneNode, dom-Document-importNode,
+and dom-Range-extractContents -->
 
 <ol>
  <li><p>Let <var title>copy</var> be a <span title=concept-node>node</span>
@@ -5024,14 +5025,16 @@ must run these steps:
   title=concept-range-bp-node>nodes</span> and <span
   title=concept-range-bp-offset>offsets</span>, respectively.
 
-  <li>If <var title>original start node</var> and <var title>original end
-  node</var> are the same, and they are a <code>Text</code> or
-  <code>Comment</code> node:
+ <li>
+  <p>If <var title>original start node</var> equals
+  <var title>original end node</var>, and they are a <code>Text</code> or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original start node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original start node</var> with
+   <var title>original start node</var>'s <span>node document</span>.
 
     <li>Set the data of <var title>clone</var> to the result of calling <code
 
@@ -5142,22 +5145,23 @@ must run these steps:
   <!-- Now we start with mutations, so we can't refer to the context object
   anymore unless we carefully consider how it will have mutated. -->
 
-  <li>If <var title>first partially contained child</var> is a <code
- >Text</code> or <code
- >Comment</code> node:
+ <li>
+  <p>If <var title>first partially contained child</var> is a
+  <code>Text</code> or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <p class=note>In this case, the first partially contained child is the
   original start node.
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original start node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original start node</var>, with
+   <var title>original start node</var>'s <span>node document</span>.
 
-    <li>Set the data of <var title>clone</var> to the result of calling <code
-
-    title=dom-CharacterData-substringData>substringData()</code> on <var
-    title>original start node</var>, with <var title>original
+   <li><p>Set the data of <var title>clone</var> to the result of calling
+   <code title=dom-CharacterData-substringData>substringData()</code> on
+   <var title>original start node</var>, with <var title>original
     start offset</var> as the first argument and (<span
     title=concept-node-length>length</span> of <var title>original start
     node</var> &minus; <var title>original start offset</var>) as the second.
@@ -5173,13 +5177,16 @@ must run these steps:
     node</var> &minus; <var title>original start offset</var>) as the second.
   </ol>
 
-  <li>Otherwise, if <var title>first partially contained child</var> is not
+ <li>
+  <p>Otherwise, if <var title>first partially contained child</var> is not
   null:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>first partially contained child</var>.
+   <li>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>first partially contained child</var>, with
+   <var title>first partially contained child</var>'s
+   <span>node document</span>.
 
     <li>Append <var title>clone</var> as the last <span
     title=concept-tree-child>child</span> of <var
@@ -5213,17 +5220,19 @@ must run these steps:
   title=concept-tree-child>child</span> of <var
   title>frag</var>.
 
-  <li>If <var title>last partially contained child</var> is a <code
- >Text</code> or <code
- >Comment</code> node:
+ <li>
+  <p>If <var title>last partially contained child</var> is a
+  <code>Text</code> or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <p class=note>In this case, the last partially contained child is the
   original end node.
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original end node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original end node</var>, with
+   <var title>original end node</var>'s <span>node document</span>.
 
     <li>Set the data of <var title>clone</var> to the result of calling <code
 
@@ -5240,13 +5249,15 @@ must run these steps:
     offset</var>)</code> on <var title>original end node</var>.
   </ol>
 
-  <li>Otherwise, if <var title>last partially contained child</var> is not
-  null:
+  <li><p>Otherwise, if <var title>last partially contained child</var> is
+  not null:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>last partially contained child</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>last partially contained child</var>, with
+   <var title>last partially contained child</var>'s
+   <span>node document</span>.
 
     <li>Append <var title>clone</var> as the last <span
     title=concept-tree-child>child</span> of <var
@@ -5313,15 +5324,16 @@ method must run these steps:
   title=concept-range-bp-node>nodes</span> and <span
   title=concept-range-bp-offset>offsets</span>, respectively.
 
-  <li>If <var title>original start node</var> and <var title>original end
-  node</var> are the same, and they are a <code
- >Text</code> or <code
- >Comment</code> node:
+ <li>
+  <p>If <var title>original start node</var> equals
+  <var title>original end node</var>, and they are a <code>Text</code> or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original start node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original start node</var>, with
+   <var title>original start node</var>'s <span>node document</span>.
 
     <li>Set the data of <var title>clone</var> to the result of calling <code
 
@@ -5389,17 +5401,19 @@ method must run these steps:
   can't be a boundary point of a range, and it can't be the ancestor of
   anything.
 
-  <li>If <var title>first partially contained child</var> is a <code
- >Text</code> or <code
- >Comment</code> node:
+ <li>
+  <p>If <var title>first partially contained child</var> is a
+  <code>Text</code> or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <p class=note>In this case, the first partially contained child is the
   original start node.
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original start node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original start node</var>, with
+   <var title>original start node</var>'s <span>node document</span>.
 
     <li>Set the data of <var title>clone</var> to the result of calling <code
 
@@ -5413,13 +5427,16 @@ method must run these steps:
     title>frag</var>.
   </ol>
 
-  <li>Otherwise, if <var title>first partially contained child</var> is not
+ <li>
+  <p>Otherwise, if <var title>first partially contained child</var> is not
   null:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>first partially contained child</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>first partially contained child</var>, with
+   <var title>first partially contained child</var>'s
+   <span>node document</span>.
 
     <li>Append <var title>clone</var> as the last <span
     title=concept-tree-child>child</span> of <var
@@ -5448,30 +5465,34 @@ method must run these steps:
     <span title=concept-tree-child>child</span>.
   </ol>
 
-  <li>For each <var title>contained child</var> in <var title>contained
-  children</var>:
+ <li>
+  <p>For each <var title>contained child</var> in
+  <var title>contained children</var>:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(true)</code> of
-    <var title>contained child</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>contained child</var>, with <var title>contained child</var>'s
+   <span>node document</span>.
 
     <li>Append <var title>clone</var> as the last <span
     title=concept-tree-child>child</span> of <var
     title>frag</var>.
   </ol>
 
-  <li>If <var title>last partially contained child</var> is a <code
- >Text</code> or <code
- >Comment</code> node:
+ <li>
+  <p>If <var title>last partially contained child</var> is a
+  <code>Text</code> or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <p class=note>In this case, the last partially contained child is the
   original end node.
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>original end node</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>original end node</var>, with
+   <var title>original end node</var>'s <span>node document</span>.
 
     <li>Set the data of <var title>clone</var> to the result of calling <code
 
@@ -5484,13 +5505,16 @@ method must run these steps:
     title>frag</var>.
   </ol>
 
-  <li>Otherwise, if <var title>last partially contained child</var> is not
+ <li>
+  <p>Otherwise, if <var title>last partially contained child</var> is not
   null:
 
   <ol>
-    <li>Let <var title>clone</var> be the result of calling <code
-    title=dom-Node-cloneNode>cloneNode(false)</code>
-    on <var title>last partially contained child</var>.
+   <li><p>Let <var title>clone</var> be a
+   <span title=concept-node-clone>clone</span> of
+   <var title>last partially contained child</var>, with
+   <var title>last partially contained child</var>'s
+   <span>node document</span>.
 
     <li>Append <var title>clone</var> as the last <span
     title=concept-tree-child>child</span> of <var
