@@ -99,7 +99,10 @@ documents.
    <li><a href="#interface-text"><span class="secno">5.8 </span>Interface <code>Text</code></a></li>
    <li><a href="#interface-processinginstruction"><span class="secno">5.9 </span>Interface <code>ProcessingInstruction</code></a></li>
    <li><a href="#interface-comment"><span class="secno">5.10 </span>Interface <code>Comment</code></a></ol></li>
- <li><a href="#ranges"><span class="secno">6 </span>Ranges</a></li>
+ <li><a href="#ranges"><span class="secno">6 </span>Ranges</a>
+  <ol>
+   <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></li>
+   <li><a href="#range-behavior-under-document-mutation"><span class="secno">6.2 </span>Range behavior under document mutation</a></ol></li>
  <li><a href="#traversal"><span class="secno">7 </span>Traversal</a>
   <ol>
    <li><a href="#interface-nodeiterator"><span class="secno">7.1 </span>Interface <code>NodeIterator</code></a></li>
@@ -170,7 +173,7 @@ follows:</p>
 
 <ul class="XXX">
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13040">Mutation listeners</a> (and updating the methods that mutate)
- <li>Import <code>Range</code> from <a href="http://html5.org/specs/dom-range.html">DOM Range</a>.
+ <li>Import <code><a href="#range">Range</a></code> from <a href="http://html5.org/specs/dom-range.html">DOM Range</a>.
  <li>Define event handlers. Define list of event handler IDL attributes? Define a concept for event handler content attributes?
  <li>Move DOMStringMap here?
  <li><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">replaceWholeText()</a>
@@ -285,8 +288,9 @@ a <a href="#concept-tree" title="concept-tree">tree</a> has a
 or null, and an ordered list of zero or more
 <dfn id="concept-tree-child" title="concept-tree-child">child</dfn> objects.
 
-<p>An object whose <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null is
-called the <dfn id="concept-tree-root" title="concept-tree-root">root</dfn> object.
+<p>The <dfn id="concept-tree-root" title="concept-tree-root">root</dfn> of an object is itself, if it
+has no <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, or else it is the
+<span>root</span> of its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
 <p>An object <var title="">A</var> is called a
 <dfn id="concept-tree-descendant" title="concept-tree-descendant">descendant</dfn> of an object
@@ -301,6 +305,9 @@ object <var title="">C</var> that is a
 <var title="">B</var> if and only if <var title="">B</var> is a
 <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
 <var title="">A</var>.
+
+<p>An <dfn id="concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</dfn> is
+an object or one of its <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a>.
 
 <p>An object <var title="">A</var> is called a
 <dfn id="concept-tree-sibling" title="concept-tree-sibling">sibling</dfn> of an object
@@ -321,28 +328,29 @@ same <a href="#concept-tree" title="concept-tree">tree</a> and <var title="">A</
 after <var title="">B</var> in
 <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
-<p>The <dfn id="concept-tree-first-child" title="concept-tree-first-child">first child</dfn> of an object
-<var title="">A</var> is its first <a href="#concept-tree-child" title="concept-tree-child">child</a>
-or null if it has no <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+<p>The <dfn id="concept-tree-first-child" title="concept-tree-first-child">first child</dfn> of an object is
+its first <a href="#concept-tree-child" title="concept-tree-child">child</a> or null if it has no
+<a href="#concept-tree-child" title="concept-tree-child">child</a>.
 
-<p>The <dfn id="concept-tree-last-child" title="concept-tree-last-child">last child</dfn> of an object
-<var title="">A</var> is its last <a href="#concept-tree-child" title="concept-tree-child">child</a>
-or null if it has no <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+<p>The <dfn id="concept-tree-last-child" title="concept-tree-last-child">last child</dfn> of an object is
+its last <a href="#concept-tree-child" title="concept-tree-child">child</a> or null if it has no
+<a href="#concept-tree-child" title="concept-tree-child">child</a>.
 
 <p>The <dfn id="concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</dfn> of an
-object <var title="">A</var> is its first
-<a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+object is its first <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
 <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> or null if it has no
 <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
 <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a>.
 
 <p>The <dfn id="concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</dfn> of an
-object <var title="">A</var> is its first
-<a href="#concept-tree-following" title="concept-tree-following">following</a>
+object is its first <a href="#concept-tree-following" title="concept-tree-following">following</a>
 <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> or null if it has no
 <a href="#concept-tree-following" title="concept-tree-following">following</a>
 <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a>.
 
+<p>The <dfn id="concept-tree-index" title="concept-tree-index">index</dfn> of an object is its number
+of <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+<a href="#concept-tree-sibling" title="concept-tree-sibling">siblings</a>.
 
 
 <h3 id="strings"><span class="secno">2.2 </span>Strings</h3>
@@ -4205,9 +4213,1571 @@ attribute must return the <a href="#concept-pi-target" title="concept-PI-target"
 
 <h2 id="ranges"><span class="secno">6 </span>Ranges</h2>
 
-<p class="XXX"><a href="http://html5.org/specs/dom-range.html">DOM Range</a>
-will be put here in due course (minus the <code title="">Selection</code>
-interface, which moves to Editing).
+<!-- only needed by Ranges thus far -->
+<p>The <dfn id="concept-node-length" title="concept-node-length">length</dfn> of a
+<a href="#concept-node" title="concept-node">node</a> <var title="">node</var> depends on
+<var title="">node</var>:
+<dl class="switch">
+ <dt><code><a href="#documenttype">DocumentType</a></code>
+ <dt><code><a href="#processinginstruction">ProcessingInstruction</a></code>
+ <dd>Always 0.
+
+ <dt><code><a href="#text">Text</a></code>
+ <dt><code><a href="#comment">Comment</a></code>
+ <dd><var title="">node</var>'s
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> attribute value.
+
+ <dt>Any other node
+ <dd>The number of <a href="#concept-tree-child" title="concept-tree-child">children</a> of
+ <var title="">node</var>.
+</dl>
+
+<p class="XXX">The remainder of this section has just been merged in. Please
+report any issues you find.
+
+<p>A <dfn id="concept-boundary-point" title="concept-boundary-point">boundary point</dfn> is a
+(<var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var>,
+<var title="concept-boundary-point-offset"><a href="#concept-boundary-point-offset">offset</a></var>) pair, where
+<dfn id="concept-boundary-point-node" title="concept-boundary-point-node">node</dfn> is a
+<a href="#concept-node" title="concept-node">node</a> and
+<dfn id="concept-boundary-point-offset" title="concept-boundary-point-offset">offset</dfn> is an
+<code class="external" data-anolis-spec="webidl"><a href="http://dev.w3.org/2006/webapi/WebIDL/#idl-unsigned-long">unsigned long</a></code>.
+
+<p class="note">Generally speaking, a boundary point's offset will be between
+zero and the boundary point's length, inclusive. If a DOM mutation causes a
+range's boundary point's offset to be greater than its node's length, the
+user agent will correct it before the anomaly is visible to scripts,
+following the <a href="#range-mutation-rules">range mutation rules</a>.
+
+<p>If a term is defined for <a href="#concept-node" title="concept-node">nodes</a>, then
+when applied to a <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>,
+it applies to the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>'s
+<a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>. For instance, the
+<a href="#concept-tree-root" title="concept-tree-root">root</a> of a
+<a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> is the
+<a href="#concept-tree-root" title="concept-tree-root">root</a> of its
+<a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>.
+<!-- This is actually obvious, but I'm spelling it out to be precise. -->
+
+<p>If two <a href="#concept-boundary-point" title="concept-boundary-point">boundary points</a>
+(<var title="">node A</var>, <var title="">offset A</var>) and
+(<var title="">node B</var>, <var title="">offset B</var>) have the same
+<a href="#concept-tree-root" title="concept-tree-root">root</a>, the
+<dfn id="concept-bp-position" title="concept-bp-position">position</dfn> of the first relative to the
+second is either <dfn id="concept-bp-before" title="concept-bp-before">before</dfn>,
+<dfn id="concept-bp-equal" title="concept-bp-equal">equal</dfn>, or
+<dfn id="concept-bp-after" title="concept-bp-after">after</dfn>,
+as returned by the following algorithm:
+
+<ol>
+ <li><p>If <var title="">node A</var> is the same as <var title="">node B</var>,
+ return <a href="#concept-bp-equal" title="concept-bp-equal">equal</a> if
+ <var title="">offset A</var> equals <var title="">offset B</var>,
+ <a href="#concept-bp-before" title="concept-bp-before">before</a> if <var title="">offset A</var> is
+ less than <var title="">offset B</var>, and
+ <a href="#concept-bp-after" title="concept-bp-after">after</a> if <var title="">offset A</var> is
+ greater than <var title="">offset B</var>.
+
+ <li><p>If <var title="">node A</var> is after <var title="">node B</var> in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, compute the
+ <a href="#concept-bp-position" title="concept-bp-position">position</a> of
+ (<var title="">node B</var>, <var title="">offset B</var>) relative to
+ (<var title="">node A</var>, <var title="">offset A</var>). If it is
+ <a href="#concept-bp-before" title="concept-bp-before">before</a>, return
+ <a href="#concept-bp-after" title="concept-bp-after">after</a>. If it is
+ <a href="#concept-bp-after" title="concept-bp-after">after</a>, return
+ <a href="#concept-bp-before" title="concept-bp-before">before</a>.
+
+ <li>
+  <p>If <var title="">node A</var> is an
+  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+  <var title="">node B</var>:
+
+  <ol>
+   <li><p>Let <var title="">child</var> equal <var title="">node B</var>.
+
+   <li><p>While <var title="">child</var> is not a
+   <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">node A</var>,
+   set <var title="">child</var> to its
+   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+   <li><p>If the <a href="#concept-tree-index" title="concept-tree-index">index</a> of
+   <var title="">child</var> is less than <var title="">offset A</var>, return
+   <a href="#concept-bp-after" title="concept-bp-after">after</a>.
+  </ol>
+
+  <li><p>Return <a href="#concept-bp-before" title="concept-bp-before">before</a>.
+</ol>
+
+<p>A <dfn id="concept-range" title="concept-range">range</dfn> has a the following data
+associated with it:
+
+<ul class="brief">
+ <li>two <a href="#concept-boundary-point" title="concept-boundary-point">boundary points</a>, the
+ <a href="#concept-range" title="concept-range">range</a>'s
+ <dfn id="concept-range-start" title="concept-range-start">start</dfn> and
+ <dfn id="concept-range-end" title="concept-range-end">end</dfn>;
+ <li>a <dfn id="concept-range-detached" title="concept-range-detached">detached flag</dfn>, which is
+ initially unset.
+</ul>
+
+<p>The <dfn id="concept-range-root" title="concept-range-root">root</dfn> of a
+<a href="#concept-range" title="concept-range">range</a> is the
+<a href="#concept-tree-root" title="concept-tree-root">root</a> of its
+<a href="#concept-range-start" title="concept-range-start">start</a>
+<a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>, or null if its
+<a href="#concept-range-start" title="concept-range-start">start</a>
+<a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is null.
+<!-- Could have chosen the end as well, doesn't matter. -->
+
+<p>A <a href="#concept-node" title="concept-node">node</a> <var title="">node</var> is
+<dfn id="contained">contained</dfn> in a <a href="#concept-range" title="concept-range">range</a> <var title="">range</var> if <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a> is
+the same as <var title="">range</var>'s <a href="#concept-range-root" title="concept-range-root">root</a>, and (<var title="">node</var>, 0) is <a href="#concept-bp-after" title="concept-bp-after">after</a> <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a>, and (<var title="">node</var>, <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">node</var>) is <a href="#concept-bp-before" title="concept-bp-before">before</a> <var title="">range</var>'s <a href="#concept-range-end" title="concept-range-end">end</a>.
+
+<p>A <a href="#concept-node" title="concept-node">node</a> is <dfn id="partially-contained">partially
+contained</dfn> in a <a href="#concept-range" title="concept-range">range</a> if it is an
+<span>inclusive ancestor</span> of the <a href="#concept-range" title="concept-range">range</a>'s
+<a href="#concept-range-start" title="concept-range-start">start</a> but not its <a href="#concept-range-end" title="concept-range-end">end</a>, or vice versa.
+
+<div class="note">
+<p>Some facts to better understand these definitions:
+
+<ul>
+ <li>The content that one would think of as being within the range consists
+ of all contained nodes, plus possibly some of the contents of the start and
+ end nodes if those are <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> nodes.
+ <li>The nodes that are contained in a range will generally not be
+ contiguous, because the parent of a contained node will not always be
+ contained.
+ <li>However, the descendants of a contained node are contained, and if two
+ siblings are contained, so are any siblings that lie between them.
+ <li>The first contained node (if there are any) will always be after the
+ start node, and the last contained node will always be equal to or before
+ the end node's last descendant.
+ <li>The start and end nodes of a range are never contained within it.
+ <li>There exists some partially contained node if and only if the start and
+ end nodes are different.
+ <li>The
+ <code title="dom-Range-commonAncestorContainer"><a href="#dom-range-commonancestorcontainer">commonAncestorContainer</a></code>
+ is never either contained or partially contained.
+ <li>If the start node is an ancestor of the end node, the common ancestor
+ container will be the start node. Exactly one of its children will be
+ partially contained, and a child will be contained if and only if it
+ precedes the partially contained child. If the end is an ancestor of the
+ start, the opposite holds.
+ <li>If the start node is not an inclusive ancestor of the end node nor vice
+ versa, the common inclusive ancestor will be distinct from both of them.
+ Exactly two of its children will be partially contained, and a child will
+ be contained if and only if it lies between those two.
+</ul>
+</div>
+
+
+<h3 id="interface-range"><span class="secno">6.1 </span>Interface <code><a href="#range">Range</a></code></h3>
+<pre class="idl">interface <dfn id="range">Range</dfn> {
+  readonly attribute <a href="#node">Node</a>? <a href="#dom-range-startcontainer" title="dom-Range-startContainer">startContainer</a>;
+  readonly attribute unsigned long <a href="#dom-range-startoffset" title="dom-Range-startOffset">startOffset</a>;
+  readonly attribute <a href="#node">Node</a>? <a href="#dom-range-endcontainer" title="dom-Range-endContainer">endContainer</a>;
+  readonly attribute unsigned long <a href="#dom-range-endoffset" title="dom-Range-endOffset">endOffset</a>;
+  readonly attribute boolean <a href="#dom-range-collapsed" title="dom-Range-collapsed">collapsed</a>;
+  readonly attribute <a href="#node">Node</a> <a href="#dom-range-commonancestorcontainer" title="dom-Range-commonAncestorContainer">commonAncestorContainer</a>;
+
+  void <a href="#dom-range-setstart" title="dom-Range-setStart">setStart</a>(<a href="#node">Node</a> refNode, unsigned long offset);
+  void <a href="#dom-range-setend" title="dom-Range-setEnd">setEnd</a>(<a href="#node">Node</a> refNode, unsigned long offset);
+  void <a href="#dom-range-setstartbefore" title="dom-Range-setStartBefore">setStartBefore</a>(<a href="#node">Node</a> refNode);
+  void <a href="#dom-range-setstartafter" title="dom-Range-setStartAfter">setStartAfter</a>(<a href="#node">Node</a> refNode);
+  void <a href="#dom-range-setendbefore" title="dom-Range-setEndBefore">setEndBefore</a>(<a href="#node">Node</a> refNode);
+  void <a href="#dom-range-setendafter" title="dom-Range-setEndAfter">setEndAfter</a>(<a href="#node">Node</a> refNode);
+  void <a href="#dom-range-collapse" title="dom-Range-collapse">collapse</a>(boolean toStart);
+  void <a href="#dom-range-selectnode" title="dom-Range-selectNode">selectNode</a>(<a href="#node">Node</a> refNode);
+  void <a href="#dom-range-selectnodecontents" title="dom-Range-selectNodeContents">selectNodeContents</a>(<a href="#node">Node</a> refNode);
+
+  enum <dfn id="dom-range-enum-comparehow" title="dom-Range-enum-CompareHow">CompareHow</dfn> : unsigned short {
+    <dfn id="dom-comparehow-start_to_start" title="dom-CompareHow-START_TO_START">START_TO_START</dfn> = 0,
+    <dfn id="dom-comparehow-start_to_end" title="dom-CompareHow-START_TO_END">START_TO_END</dfn>   = 1,
+    <dfn id="dom-comparehow-end_to_end" title="dom-CompareHow-END_TO_END">END_TO_END</dfn>     = 2,
+    <dfn id="dom-comparehow-end_to_start" title="dom-CompareHow-END_TO_START">END_TO_START</dfn>   = 3
+  };
+
+  short <a href="#dom-range-compareboundarypoints" title="dom-Range-compareBoundaryPoints">compareBoundaryPoints</a>(<a href="#dom-range-enum-comparehow" title="dom-Range-enum-CompareHow">CompareHow</a> how, <a href="#range">Range</a> sourceRange);
+  void <a href="#dom-range-deletecontents" title="dom-Range-deleteContents">deleteContents</a>()
+  <a href="#documentfragment">DocumentFragment</a> <a href="#dom-range-extractcontents" title="dom-Range-extractContents">extractContents</a>();
+  <a href="#documentfragment">DocumentFragment</a> <a href="#dom-range-clonecontents" title="dom-Range-cloneContents">cloneContents</a>();
+  void <a href="#dom-range-insertnode" title="dom-Range-insertNode">insertNode</a>(<a href="#node">Node</a> newNode);
+  void <a href="#dom-range-surroundcontents" title="dom-Range-surroundContents">surroundContents</a>(<a href="#node">Node</a> newParent);
+  <a href="#range">Range</a> <a href="#dom-range-clonerange" title="dom-Range-cloneRange">cloneRange</a>();
+  void <a href="#dom-range-detach" title="dom-Range-detach">detach</a>();
+
+  boolean <a href="#dom-range-ispointinrange" title="dom-Range-isPointInRange">isPointInRange</a>(<a href="#node">Node</a> parent, unsigned long offset);
+  short <a href="#dom-range-comparepoint" title="dom-Range-comparePoint">comparePoint</a>(<a href="#node">Node</a> parent, unsigned long offset);
+
+  boolean <a href="#dom-range-intersectsnode" title="dom-Range-intersectsNode">intersectsNode</a>(<a href="#node">Node</a> node);
+
+  <a href="#dom-range-stringifier" title="dom-Range-stringifier">stringifier</a>;
+};</pre>
+
+<p class="note">The <code><a href="#range">Range</a></code> interface represents a
+<a href="#concept-range" title="concept-range">range</a>.
+
+<dl class="domintro">
+ <dt><var title="">node</var> = <var title="">range</var> . <code title="dom-Range-startContainer"><a href="#dom-range-startcontainer">startContainer</a></code>
+ <dd><p>Returns <var title="">range</var>'s
+ <a href="#concept-range-start" title="concept-range-start">start</a>'s
+ <var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var>.
+
+  <dt><var title="">offset</var> = <var title="">range</var> .
+    <code title="dom-Range-startOffset"><a href="#dom-range-startoffset">startOffset</a></code>
+  <dd>
+    <p>Returns <var title="">range</var>'s
+    <a href="#concept-range-start" title="concept-range-start">start</a>'s
+    <var title="concept-boundary-point-offset"><a href="#concept-boundary-point-offset">offset</a></var>.
+
+  <dt><var title="">node</var> = <var title="">range</var> .
+    <code title="dom-Range-endContainer"><a href="#dom-range-endcontainer">endContainer</a></code>
+  <dd>
+    <p>Returns <var title="">range</var>'s
+    <a href="#concept-range-end" title="concept-range-end">end</a>'s
+    <var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var>.
+
+  <dt><var title="">offset</var> = <var title="">range</var> .
+    <code title="dom-Range-endOffset"><a href="#dom-range-endoffset">endOffset</a></code>
+  <dd>
+    <p>Returns <var title="">range</var>'s
+    <a href="#concept-range-end" title="concept-range-end">end</a>'s
+    <var title="concept-boundary-point-offset"><a href="#concept-boundary-point-offset">offset</a></var>.
+
+  <dt><var title="">collapsed</var> = <var title="">range</var> .
+    <code title="dom-Range-collapsed"><a href="#dom-range-collapsed">collapsed</a></code>
+  <dd>
+    <p>Returns whether <var title="">range</var>'s
+    <a href="#concept-range-start" title="concept-range-start">start</a> and
+    <a href="#concept-range-end" title="concept-range-end">end</a> are the same.
+
+  <dt><var title="">container</var> = <var title="">range</var> .
+    <code title="dom-Range-commonAncestorContainer"><a href="#dom-range-commonancestorcontainer">commonAncestorContainer</a></code>
+  <dd>
+    <p>Returns the node, furthest away from the document node, that is an
+    ancestor of both <var title="">range</var>'s
+    <a href="#concept-range-start" title="concept-range-start">start</a> and
+    <a href="#concept-range-end" title="concept-range-end">end</a>.
+</dl>
+
+<p>The <dfn id="dom-range-startcontainer" title="dom-Range-startContainer"><code>startContainer</code></dfn>
+attribute must return the <a href="#context-object">context object</a>'s
+<a href="#concept-range-start" title="concept-range-start">start</a>'s
+<var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var>, unless the
+<a href="#context-object">context object</a>'s
+<a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, in which case an
+<code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+exception must be raised.
+
+<p>The <dfn id="dom-range-startoffset" title="dom-Range-startOffset"><code>startOffset</code></dfn>
+attribute must return the <a href="#context-object">context object</a>'s
+<a href="#concept-range-start" title="concept-range-start">start</a>'s
+<var title="concept-boundary-point-offset"><a href="#concept-boundary-point-offset">offset</a></var>, unless the
+<a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a>
+is set, in which case an
+<code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+exception must be raised.
+
+<p>The <dfn id="dom-range-endcontainer" title="dom-Range-endContainer"><code>endContainer</code></dfn>
+attribute must return the <a href="#context-object">context object</a>'s
+<a href="#concept-range-end" title="concept-range-end">end</a>'s
+<var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var>, unless the
+<a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a>
+is set, in which case an
+<code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+exception must be raised.
+
+<p>The <dfn id="dom-range-endoffset" title="dom-Range-endOffset"><code>endOffset</code></dfn>
+attribute must return the <a href="#context-object">context object</a>'s
+<a href="#concept-range-end" title="concept-range-end">end</a>'s
+<var title="concept-boundary-point-offset"><a href="#concept-boundary-point-offset">offset</a></var>, unless the
+<a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a>
+is set, in which case an
+<code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+exception must be raised.
+
+<p>The <dfn id="dom-range-collapsed" title="dom-Range-collapsed"><code>collapsed</code></dfn> attribute
+must return true if the <a href="#context-object">context object</a>'s
+<a href="#concept-range-start" title="concept-range-start">start</a> equals the
+<a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> and false
+otherwise, unless the
+<a href="#context-object">context object</a>'s
+<a href="#concept-range-detached" title="concept-range-detached">detached flag</a>
+is set, in which case an
+<code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+exception must be raised.
+
+<p>The
+<dfn id="dom-range-commonancestorcontainer" title="dom-Range-commonAncestorContainer"><code>commonAncestorContainer</code></dfn>
+attribute must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">container</var> be the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-start" title="concept-range-start">start</a>.
+
+  <li>While <var title="">container</var> is not an <span>inclusive ancestor</span>
+  of the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a>,
+  let <var title="">container</var> be <var title="">container</var>'s
+  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+  <li>Return <var title="">container</var>.
+</ol>
+
+<hr>
+
+<p>The
+<dfn id="dom-range-setstart" title="dom-Range-setStart"><code>setStart(<var>refNode</var>, <var>offset</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If <var title="">refNode</var> is a
+  <code><a href="#documenttype">DocumentType</a></code> or <code><a href="#processinginstruction">ProcessingInstruction</a></code>, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  exception and abort these steps.
+  <!-- Firefox 4.0 and Chrome 11 dev actually allow ProcessingInstructions as
+  range endpoints, while IE9 and Opera 11 throw exceptions. They were becoming
+  too much of a nuisance to support given the lack of utility, so we changed
+  the spec from Gecko/WebKit's behavior to IE/Opera's behavior. -->
+
+  <li>If <var title="">offset</var> is greater than <var title="">refNode</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>, raise an
+  <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">new start</var> be the
+  <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>
+  (<var title="">refNode</var>, <var title="">offset</var>).
+
+  <li>If <var title="">new start</var> is <a href="#concept-bp-after" title="concept-bp-after">after</a> the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a>, or if the
+  <a href="#context-object">context object</a>'s <a href="#concept-range-root" title="concept-range-root">root</a> is
+  not equal to <var title="">refNode</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, let
+  <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> be
+  <var title="">new start</var>.
+
+  <li>Let <a href="#context-object">context object</a>'s
+  <a href="#concept-range-start" title="concept-range-start">start</a> be <var title="">new start</var>.
+</ol>
+
+<p>The
+<dfn id="dom-range-setend" title="dom-Range-setEnd"><code>setEnd(<var>refNode</var>, <var>offset</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If <var title="">refNode</var> is a
+  <code><a href="#documenttype">DocumentType</a></code> or <code><a href="#processinginstruction">ProcessingInstruction</a></code>, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If <var title="">offset</var> is greater than <var title="">refNode</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>, raise an
+  <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">new end</var> be the
+  <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>
+  (<var title="">refNode</var>, <var title="">offset</var>).
+
+  <li>If <var title="">new end</var> is <a href="#concept-bp-before" title="concept-bp-before">before</a> the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>, or if the
+  <a href="#context-object">context object</a>'s <a href="#concept-range-root" title="concept-range-root">root</a> is
+  not equal to <var title="">refNode</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, let
+  <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> be
+  <var title="">new end</var>.
+
+  <li>Let <a href="#context-object">context object</a>'s
+  <a href="#concept-range-end" title="concept-range-end">end</a> be <var title="">new end</var>.
+</ol>
+
+<p>The
+<dfn id="dom-range-setstartbefore" title="dom-Range-setStartBefore"><code>setStartBefore(<var title="">refNode</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">refNode</var>'s
+  <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>.
+
+  <li>If <var title="">parent</var> is null, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Call the <a href="#context-object">context object</a>'s
+  <code title="dom-Range-setStart"><a href="#dom-range-setstart">setStart</a></code> method with
+  <var title="">parent</var> and the <a href="#concept-tree-index" title="concept-tree-index">index</a> of
+  <var title="">refNode</var> as its arguments.
+</ol>
+
+<p>The
+<dfn id="dom-range-setstartafter" title="dom-Range-setStartAfter"><code>setStartAfter(<var title="">refNode</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">refNode</var>'s
+  <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>.
+
+  <li>If <var title="">parent</var> is null, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Call the <a href="#context-object">context object</a>'s
+  <code title="dom-Range-setStart"><a href="#dom-range-setstart">setStart</a></code> method with
+  <var title="">parent</var> and one plus the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>
+  as its arguments.
+</ol>
+
+<p>The
+<dfn id="dom-range-setendbefore" title="dom-Range-setEndBefore"><code>setEndBefore(<var title="">refNode</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">refNode</var>'s
+  <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>.
+
+  <li>If <var title="">parent</var> is null, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Call the <a href="#context-object">context object</a>'s
+  <code title="dom-Range-setEnd"><a href="#dom-range-setend">setEnd</a></code> method with
+  <var title="">parent</var> and the <a href="#concept-tree-index" title="concept-tree-index">index</a> of
+  <var title="">refNode</var> as its arguments.
+</ol>
+
+<p>The
+<dfn id="dom-range-setendafter" title="dom-Range-setEndAfter"><code>setEndAfter(<var title="">refNode</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">refNode</var>'s
+  <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>.
+
+  <li>If <var title="">parent</var> is null, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Call the <a href="#context-object">context object</a>'s
+  <code title="dom-Range-setEnd"><a href="#dom-range-setend">setEnd</a></code> method with
+  <var title="">parent</var> and one plus the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>
+  as its arguments.
+</ol>
+
+
+<p>The <dfn id="dom-range-collapse" title="dom-Range-collapse"><code>collapse(<var title="">toStart</var>)</code></dfn> method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If <var title="">toStart</var> is true, set the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> to its <a href="#concept-range-start" title="concept-range-start">start</a>. Otherwise, set its <a href="#concept-range-start" title="concept-range-start">start</a> to its <a href="#concept-range-end" title="concept-range-end">end</a>.
+</ol>
+
+
+<p>The <dfn id="dom-range-selectnode" title="dom-Range-selectNode"><code>selectNode(<var title="">refNode</var>)</code></dfn> method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">refNode</var>'s
+  <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>.
+
+  <li>If <var title="">parent</var> is null, raise an
+  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Let <var title="">index</var> be the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>.
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> to the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">parent</var>,
+  <var title="">index</var>).
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> to the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">parent</var>,
+  <var title="">index</var> + 1).
+</ol>
+
+<p>The <dfn id="dom-range-selectnodecontents" title="dom-Range-selectNodeContents"><code>selectNodeContents(<var title="">refNode</var>)</code></dfn> method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If <var title="">refNode</var> is a <code><a href="#documenttype">DocumentType</a></code> or <code><a href="#processinginstruction">ProcessingInstruction</a></code> node, raise an <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  and abort these steps.
+
+  <li>Let <var title="">length</var> be the <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">refNode</var>.
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> to the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">refNode</var>,
+  0).
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> to the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">refNode</var>,
+  <var title="">length</var>).
+</ol>
+
+<hr>
+
+<p>The
+<dfn id="dom-range-compareboundarypoints" title="dom-Range-compareBoundaryPoints"><code>compareBoundaryPoints(<var title="">how</var>,
+<var title="">sourceRange</var>)</code></dfn> method must run the
+following algorithm:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s or <var title="">sourceRange</var>'s
+  <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-root" title="concept-range-root">root</a> doesn't equal
+  <var title="">sourceRange</var>'s <a href="#concept-range-root" title="concept-range-root">root</a>,
+  raise a
+  <code title="dom-DOMException-WRONG_DOCUMENT_ERR"><a href="#dom-domexception-wrong_document_err">WRONG_DOCUMENT_ERR</a></code>
+  exception and abort these steps.
+
+  <li>
+    <p>If <var title="">how</var> is:
+    <dl class="switch">
+      <dt><code title="dom-CompareHow-START_TO_START"><a href="#dom-comparehow-start_to_start">START_TO_START</a></code>:
+      <dd>
+        <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
+        <a href="#concept-range-start" title="concept-range-start">start</a>.
+        <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+        <a href="#concept-range-start" title="concept-range-start">start</a>.
+
+      <dt><code title="dom-CompareHow-START_TO_END"><a href="#dom-comparehow-start_to_end">START_TO_END</a></code>:
+      <dd>
+        <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
+        <a href="#concept-range-start" title="concept-range-start">start</a>.
+        <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+        <a href="#concept-range-end" title="concept-range-end">end</a>.
+
+      <dt><code title="dom-CompareHow-END_TO_END"><a href="#dom-comparehow-end_to_end">END_TO_END</a></code>:
+      <dd>
+        <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
+        <a href="#concept-range-end" title="concept-range-end">end</a>.
+        <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+        <a href="#concept-range-end" title="concept-range-end">end</a>.
+
+      <dt><code title="dom-CompareHow-END_TO_START"><a href="#dom-comparehow-end_to_start">END_TO_END</a></code>:
+      <dd>
+        <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
+        <a href="#concept-range-end" title="concept-range-end">end</a>.
+        <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+        <a href="#concept-range-start" title="concept-range-start">start</a>.
+    </dl>
+
+  <li>
+    <p>If the <a href="#concept-bp-position" title="concept-bp-position">position</a> of
+    <var title="">this point</var> relative to <var title="">other point</var> is
+
+    <dl class="switch">
+      <dt>"before"
+      <dd>Return &minus;1 and abort these steps.
+
+      <dt>"equal"
+      <dd>Return 0 and abort these steps.
+
+      <dt>"after"
+      <dd>Return 1 and abort these steps.
+    </dl>
+</ol>
+
+<p>The <dfn id="dom-range-deletecontents" title="dom-Range-deleteContents"><code>deleteContents()</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception
+  and abort these steps.
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> are the same, abort this method.
+  <!-- This might actually make no difference, but it's not immediately obvious
+  what would happen otherwise if the start/end were text/comment: are all
+  the substeps of the next step actually no-ops, or could some have
+  side effects? -->
+
+  <li>Let <var title="">original start node</var>, <var title="">original start
+  offset</var>, <var title="">original end node</var>, and <var title="">original end
+  offset</var> be the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">nodes</a> and <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offsets</a>, respectively.
+
+  <li>If <var title="">original start node</var> and <var title="">original end
+  node</var> are the same, and they are a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node, call <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData(<var title="">original start offset</var>, <var title="">original end offset</var>
+  &minus; <var title="">original start offset</var>)</a></code> on that node, and
+  abort these steps.
+
+  <li>Let <var title="">nodes to remove</var> be a list of all the
+  <a href="#concept-node" title="concept-node">nodes</a> that are <a href="#contained">contained</a> in the
+  <a href="#context-object">context object</a>, in
+  <a href="#concept-tree-order" title="concept-tree-order">tree order</a>,
+  omitting any <a href="#concept-node" title="concept-node">node</a> whose
+  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is
+  also <a href="#contained">contained</a> in the <a href="#context-object">context object</a>.
+
+  <li>If <var title="">original start node</var> is an <span>ancestor
+  container</span> of <var title="">original end node</var>, set <var title="">new
+  node</var> to <var title="">original start node</var> and <var title="">new
+  offset</var> to <var title="">original start offset</var>.
+
+  <li>Otherwise:
+  <ol>
+    <li>Let <var title="">reference node</var> equal <var title="">original start
+    node</var>.
+
+    <li>While <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null and is not an
+    <span>inclusive ancestor</span> of <var title="">original end
+    node</var>, set <var title="">reference node</var> to its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+    <li>Set <var title="">new node</var> to the <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of <var title="">reference node</var>,
+    and <var title="">new offset</var> to one plus the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">reference node</var>.
+
+    <p class="note">If <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> were null,
+    it would be the <a href="#concept-range-root" title="concept-range-root">root</a> of the
+    <a href="#context-object">context object</a>, so would be an <span>ancestor
+    container</span> of
+    <var title="">original end node</var>, and we couldn't reach this point.
+  </ol>
+
+  <li>If <var title="">original start node</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node, run <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData()</a></code> on it, with <var title="">original start offset</var> as the first argument and (<a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">original start
+  node</var> &minus; <var title="">original start offset</var>) as the second.
+
+  <li>For each <var title="">node</var> in <var title="">nodes to remove</var>, in
+  order, remove <var title="">node</var> from its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+  <li>If <var title="">original end node</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node, run <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData(0,
+  <var title="">original end offset</var>)</a></code> on it.
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> to (<var title="">new node</var>, <var title="">new offset</var>).
+</ol>
+
+<p>The <dfn id="dom-range-extractcontents" title="dom-Range-extractContents"><code>extractContents()</code></dfn> method
+must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception
+  and abort these steps.
+
+  <li>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code> whose <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> is
+  the same as the <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> of the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>.
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> are the same, abort this method, returning
+  <var title="">frag</var>.
+  <!-- This is only really needed when the start and end nodes are
+  text/comment, to avoid creating an empty clone as the child of the
+  fragment. (Opera 11 actually does include such an empty clone, it seems, but
+  Gecko and WebKit do not as of March 2011, so we follow them.)  Otherwise, the
+  following steps are all no-ops. But it's simplest to include this step
+  anyway. -->
+
+  <li>Let <var title="">original start node</var>, <var title="">original start
+  offset</var>, <var title="">original end node</var>, and <var title="">original end
+  offset</var> be the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">nodes</a> and <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offsets</a>, respectively.
+
+  <li>If <var title="">original start node</var> and <var title="">original end
+  node</var> are the same, and they are a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original start node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData(<var title="">original
+    start offset</var>, <var title="">original end offset</var> &minus; <var title="">original start offset</var>)</a></code> on <var title="">original start
+    node</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Call <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData(<var title="">original start
+    offset</var>, <var title="">original end offset</var> &minus; <var title="">original start offset</var>)</a></code> on <var title="">original start
+    node</var>.
+
+    <li>Abort this method, returning <var title="">frag</var>.
+  </ol>
+
+  <li>Let <var title="">common ancestor</var> equal <var title="">original start
+  node</var>.
+
+  <li>While <var title="">common ancestor</var> is not an <span>ancestor
+  container</span> of <var title="">original end node</var>, set <var title="">common
+  ancestor</var> to its own <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+  <li>If <var title="">original start node</var> is an <span>ancestor
+  container</span> of <var title="">original end node</var>, let <var title="">first
+  partially contained child</var> be null.
+
+  <li>Otherwise, let <var title="">first partially contained child</var> be the
+  first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+  the <a href="#context-object">context object</a>.
+
+  <li>If <var title="">original end node</var> is an <span>ancestor
+  container</span> of <var title="">original start node</var>, let <var title="">last
+  partially contained child</var> be null.
+
+  <li>Otherwise, let <var title="">last partially contained child</var> be the
+  last <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+  the <a href="#context-object">context object</a>.
+
+  <p class="note">These variable assignments do actually always make sense. For
+  instance, if the original start node is not an inclusive ancestor of the
+  original end node, the original start node is itself partially contained in
+  the range, and so are all its ancestors up until a child of the common
+  ancestor. The common ancestor can't be original start node, because it must
+  be an inclusive ancestor of the original end node. The other case is
+  similar. Also, notice that the two children will never be equal if both are
+  defined.
+
+  <li>Let <var title="">contained children</var> be a list of all <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">common ancestor</var> that are <a href="#contained">contained</a> in the <var title="">context object</var>, in
+  <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+
+  <li>If any member of <var title="">contained children</var> is a <code><a href="#documenttype">DocumentType</a></code>, raise a <code title="dom-DOMException-HIERARCHY_REQUEST_ERR"><a href="#dom-domexception-hierarchy_request_err">HIERARCHY_REQUEST_ERR</a></code>
+  exception and abort these steps.
+  <!-- Firefox 4.0 actually removes the non-DocumentType nodes before throwing
+  the exception. Opera 11.00 removes the DocumentType too, and doesn't throw.
+  I go with IE9 and Chrome 12 dev, which don't remove any nodes. DOM 2 Range
+  doesn't specify what exactly happens here, except that an exception should be
+  raised. -->
+
+  <p class="note">We don't have to worry about the first or last partially
+  contained node, because a DocumentType can never be partially contained. It
+  can't be a boundary point of a range, and it can't be the ancestor of
+  anything.
+
+  <li>If <var title="">original start node</var> is an <span>ancestor
+  container</span> of <var title="">original end node</var>, set <var title="">new
+  node</var> to <var title="">original start node</var> and <var title="">new
+  offset</var> to <var title="">original start offset</var>.
+
+  <li>Otherwise:
+  <ol>
+    <li>Let <var title="">reference node</var> equal <var title="">original start
+    node</var>.
+
+    <li>While <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null and is not an
+    <span>inclusive ancestor</span> of <var title="">original end node</var>,
+    set <var title="">reference node</var> to its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+    <li>Set <var title="">new node</var> to the <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of <var title="">reference node</var>,
+    and <var title="">new offset</var> to one plus the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">reference node</var>.
+
+    <p class="note">If <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> were null,
+    it would be the <a href="#concept-range-root" title="concept-range-root">root</a> of the
+    <a href="#context-object">context object</a>, so would be an <span>ancestor
+    container</span> of <var title="">original end node</var>, and we couldn't
+    reach this point.
+  </ol>
+
+  <!-- Now we start with mutations, so we can't refer to the context object
+  anymore unless we carefully consider how it will have mutated. -->
+
+  <li>If <var title="">first partially contained child</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <p class="note">In this case, the first partially contained child is the
+  original start node.
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original start node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData()</a></code> on <var title="">original start node</var>, with <var title="">original
+    start offset</var> as the first argument and (<a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">original start
+    node</var> &minus; <var title="">original start offset</var>) as the second.
+
+    <li>Append <var title="">clone</var> as the last child of <var title="">frag</var>.
+
+    <li>Call <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData()</a></code> on <var title="">original start node</var>, with <var title="">original start
+    offset</var> as the first argument and (<a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">original start
+    node</var> &minus; <var title="">original start offset</var>) as the second.
+  </ol>
+
+  <li>Otherwise, if <var title="">first partially contained child</var> is not
+  null:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">first partially contained child</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">original start
+    node</var>, <var title="">original start offset</var>) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">first partially contained
+    child</var>, <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">first partially contained child</var>).
+
+    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on <var title="">subrange</var>.
+
+    <p class="XXX">Is this method of recursing black-box detectable?  E.g., would
+    it fire extra DOM mutation events or something?  What we really mean is to
+    get a list of nodes to insert, then insert them directly into <var title="">frag</var>, without an intermediate document fragment.
+
+    <li>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">subfrag</var>, in
+    order, append that <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var> as its last
+    <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+  </ol>
+
+  <li>For each <var title="">contained child</var> in <var title="">contained
+  children</var>, append <var title="">contained child</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+  <li>If <var title="">last partially contained child</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <p class="note">In this case, the last partially contained child is the
+  original end node.
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original end node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData(0, <var title="">original
+    end offset</var>)</a></code> on <var title="">original end node</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Call <code title="dom-CharacterData-deleteData"><a href="#dom-characterdata-deletedata">deleteData(0, <var title="">original end
+    offset</var>)</a></code> on <var title="">original end node</var>.
+  </ol>
+
+  <li>Otherwise, if <var title="">last partially contained child</var> is not
+  null:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">last partially contained child</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">last partially
+    contained child</var>, 0) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">original end node</var>,
+    <var title="">original end offset</var>).
+
+    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on <var title="">subrange</var>.
+
+    <li>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">subfrag</var>, in
+    order, append that <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var> as its last
+    <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+  </ol>
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> to (<var title="">new node</var>, <var title="">new offset</var>).
+
+  <li>Return <var title="">frag</var>.
+</ol>
+
+<p>The <dfn id="dom-range-clonecontents" title="dom-Range-cloneContents"><code>cloneContents()</code></dfn>
+method must run these steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception
+  and abort these steps.
+
+  <li>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code> whose <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> is
+  the same as the <code title="dom-Node-ownerDocument"><a href="#dom-node-ownerdocument">ownerDocument</a></code> of the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>.
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> are the same, abort this method, returning
+  <var title="">frag</var>.
+  <!-- This is only really needed when the start and end nodes are
+  text/comment, to avoid creating an empty clone as the child of the
+  fragment. (Opera 11 actually does include such an empty clone, it seems, but
+  Gecko and WebKit do not as of March 2011, so we follow them.)  Otherwise, the
+  following steps are all no-ops. But it's simplest to include this step
+  anyway. -->
+
+  <li>Let <var title="">original start node</var>, <var title="">original start
+  offset</var>, <var title="">original end node</var>, and <var title="">original end
+  offset</var> be the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">nodes</a> and <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offsets</a>, respectively.
+
+  <li>If <var title="">original start node</var> and <var title="">original end
+  node</var> are the same, and they are a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original start node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData(<var title="">original
+    start offset</var>, <var title="">original end offset</var> &minus; <var title="">original start offset</var>)</a></code> on <var title="">original start
+    node</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Abort this method, returning <var title="">frag</var>.
+  </ol>
+
+  <li>Let <var title="">common ancestor</var> equal <var title="">original start
+  node</var>.
+
+  <li>While <var title="">common ancestor</var> is not an <span>ancestor
+  container</span> of <var title="">original end node</var>, set <var title="">common
+  ancestor</var> to its own <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+  <li>If <var title="">original start node</var> is an <span>ancestor
+  container</span> of <var title="">original end node</var>, let <var title="">first
+  partially contained child</var> be null.
+
+  <li>Otherwise, let <var title="">first partially contained child</var> be the
+  first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+  the <a href="#context-object">context object</a>.
+
+  <li>If <var title="">original end node</var> is an <span>ancestor
+  container</span> of <var title="">original start node</var>, let <var title="">last
+  partially contained child</var> be null.
+
+  <li>Otherwise, let <var title="">last partially contained child</var> be the
+  last <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+  the <a href="#context-object">context object</a>.
+
+  <p class="note">These variable assignments do actually always make sense. For
+  instance, if the original start node is not an inclusive ancestor of the
+  original end node, the original start node is itself partially contained in
+  the range, and so are all its ancestors up until a child of the common
+  ancestor. The common ancestor can't be original start node, because it must
+  be an inclusive ancestor of the original end node. The other case is
+  similar. Also, notice that the two children will never be equal if both are
+  defined.
+
+  <li>Let <var title="">contained children</var> be a list of all <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">common ancestor</var> that are <a href="#contained">contained</a> in the <var title="">context object</var>, in
+  <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+
+  <li>If any member of <var title="">contained children</var> is a <code><a href="#documenttype">DocumentType</a></code>, raise a <code title="dom-DOMException-HIERARCHY_REQUEST_ERR"><a href="#dom-domexception-hierarchy_request_err">HIERARCHY_REQUEST_ERR</a></code>
+  exception and abort these steps.
+
+  <p class="note">We don't have to worry about the first or last partially
+  contained node, because a DocumentType can never be partially contained. It
+  can't be a boundary point of a range, and it can't be the ancestor of
+  anything.
+
+  <li>If <var title="">first partially contained child</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <p class="note">In this case, the first partially contained child is the
+  original start node.
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original start node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData()</a></code> on <var title="">original start node</var>, with <var title="">original
+    start offset</var> as the first argument and (<a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">original start
+    node</var> &minus; <var title="">original start offset</var>) as the second.
+
+    <li>Append <var title="">clone</var> as the last child of <var title="">frag</var>.
+  </ol>
+
+  <li>Otherwise, if <var title="">first partially contained child</var> is not
+  null:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">first partially contained child</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">original start
+    node</var>, <var title="">original start offset</var>) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">first partially contained
+    child</var>, <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">first partially contained child</var>).
+
+    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-cloneContents"><a href="#dom-range-clonecontents">cloneContents()</a></code> on <var title="">subrange</var>.
+
+    <p class="XXX">Is this method of recursing black-box detectable?  E.g., would
+    it fire extra DOM mutation events or something?  What we really mean is to
+    get a list of nodes to insert, then insert them directly into <var title="">frag</var>, without an intermediate document fragment.
+
+    <li>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">subfrag</var>, in
+    order, append that <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var> as its last
+    <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+  </ol>
+
+  <li>For each <var title="">contained child</var> in <var title="">contained
+  children</var>:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(true)</a></code> of
+    <var title="">contained child</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+  </ol>
+
+  <li>If <var title="">last partially contained child</var> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node:
+
+  <p class="note">In this case, the last partially contained child is the
+  original end node.
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">original end node</var>.
+
+    <li>Set the data of <var title="">clone</var> to the result of calling <code title="dom-CharacterData-substringData"><a href="#dom-characterdata-substringdata">substringData(0, <var title="">original
+    end offset</var>)</a></code> on <var title="">original end node</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+  </ol>
+
+  <li>Otherwise, if <var title="">last partially contained child</var> is not
+  null:
+
+  <ol>
+    <li>Let <var title="">clone</var> be the result of calling <code title="dom-Node-cloneNode"><a href="#dom-node-clonenode">cloneNode(false)</a></code>
+    on <var title="">last partially contained child</var>.
+
+    <li>Append <var title="">clone</var> as the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">frag</var>.
+
+    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">last partially
+    contained child</var>, 0) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">original end node</var>,
+    <var title="">original end offset</var>).
+
+    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-cloneContents"><a href="#dom-range-clonecontents">cloneContents()</a></code> on <var title="">subrange</var>.
+
+    <li>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">subfrag</var>, in
+    order, append that <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var> as its last
+    <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+  </ol>
+
+  <li>Return <var title="">frag</var>.
+</ol>
+
+<p>The <dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var title="">newNode</var>)</code></dfn> method must run these steps:
+
+<p class="XXX">Browsers disagree on how to handle the case where the range is
+collapsed: do you increment the end offset so the node is now included, or not?
+DOM 2 Range says no, and Gecko follows that, but all other browsers disagree.
+Apparently this traces back to Acid3 at one point requiring the non-standard
+behavior. As of June 2011, smaug is checking with other browsers' implementers
+to see if they're willing to change to match the spec; otherwise the spec needs
+to be changed to match them.
+<ol>
+  <!-- IE9 and Opera 11.00 throw WRONG_DOCUMENT_ERR if the documents don't
+  match, as is their wont, and as DOM 2 Range requires. But as elsewhere, we
+  just let the UA change the document if it doesn't match.
+
+  Chrome 12 dev also throws HIERARCHY_REQUEST_ERR if newNode is the same as the
+  start node (at least for text nodes). This doesn't seem to make much sense,
+  since insertBefore() works fine to move a node to its current position, and
+  other browsers disagree, so the spec follows the majority. -->
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached
+  flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is a <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code> node and its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null,
+  raise an <code title="dom-DOMException-HIERARCHY_REQUEST_ERR"><a href="#dom-domexception-hierarchy_request_err">HIERARCHY_REQUEST_ERR</a></code>
+  exception and abort these steps.
+  <!--
+  IE9: Allows it to go through, resulting in the text/comment node having a
+    non-null previousSibling but a null parentNode. (?!)
+  Firefox 4.0: Throws non-standard exception
+  Chrome 12 dev: Throws HIERARCHY_REQUEST_ERR
+  Opera 11.00: Doesn't come up, doesn't allow ranges on detached nodes
+
+  IE is clearly crazy, and non-standard exceptions are no good, so we go with
+  WebKit.
+  -->
+
+  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text node
+  if the insertBefore() is going to throw an exception (at least if the new
+  node is the parent of the start node, for instance). Firefox 4.0 and Opera
+  11.00 don't, and the latter behavior is much easier to spec, so that's what I
+  go with.
+
+  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
+  with what all other browsers do. -->
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is a <code><a href="#text">Text</a></code> node, run <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code> on it with the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> as its argument, and let
+  <var title="">reference node</var> be the result.
+
+  <li>Otherwise, if the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is a <code><a href="#comment">Comment</a></code>, let <var title="">reference node</var>
+  be the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>.
+
+  <li>Otherwise, let <var title="">reference node</var> be the <a href="#concept-tree-child" title="concept-tree-child">child</a> of the
+  <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
+  <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> with <a href="#concept-tree-index" title="concept-tree-index">index</a> equal to the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>, or null if there is no
+  such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+
+  <li>If <var title="">reference node</var> is null, let <var title="">parent
+  node</var> be the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a>.
+
+  <li>Otherwise, let <var title="">parent node</var> be the <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of <var title="">reference node</var>.
+
+  <li>Call <code title="dom-Node-insertBefore"><a href="#dom-node-insertbefore">insertBefore(<var title="">newNode</var>, <var title="">reference node</var>)</a></code> on <var title="">parent node</var>.
+
+  <!-- Mutation rules are enough to handle where the range endpoints are
+  supposed to be. WebKit tries to be clever in some cases, apparently to
+  ensure that the new node is always contained in the range, but no other
+  browser does. Plus, you can't guarantee that anyway, since the range start
+  might lie in a comment, which isn't split up. -->
+</ol>
+
+<p>The <dfn id="dom-range-surroundcontents" title="dom-Range-surroundContents"><code>surroundContents(<var title="">newParent</var>)</code></dfn> method must run these steps:
+
+<!--
+IE9 and Chrome 12 dev throw exceptions before doing any DOM mutations in at
+least some cases, so they don't wind up modifying the DOM halfway. Like if you
+try surrounding a selection with an ancestor. As with insertNode(), this is
+slightly nicer, but Firefox 4.0 and Opera 11.00 don't do this, and their
+behavior is slightly easier to spec, so I go with them for exceptions that are
+thrown by things we call, like insertNode(). However, for
+BAD_BOUNDARYPOINTS_ERR/INVALID_NODE_TYPE_ERR that we throw ourselves, I do the
+check first thing, which matches everyone but Firefox.
+-->
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached
+  flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If some non-<code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a> is <a href="#partially-contained">partially
+  contained</a> in the <a href="#context-object">context object</a>, raise a
+  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+  <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
+  unexpected. -->
+
+  <p class="XXX">Could we rephrase this condition to be more algorithmic and less
+  declarative?
+
+  <li>If <var title="">newParent</var> is a <code><a href="#document">Document</a></code>, <code><a href="#documenttype">DocumentType</a></code>, or <code><a href="#documentfragment">DocumentFragment</a></code>, raise an <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  exception and abort these steps.
+  <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
+  and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
+  absolutely no sense, but it's what DOM 2 Range specifies, and it's what IE9,
+  Chrome 12 dev, and Opera 11.00 implement. Firefox 4.0 only throws
+  INVALID_NODE_TYPE_ERR on DocumentFragments, it falls through to
+  HIERARCHY_REQUEST_ERR for Documents and DocumentTypes.
+
+  Firefox 4.0 does this check later on, so it will do DOM mutations of some
+  type if passed a DocumentFragment. We match IE9, Chrome 12 dev, and Opera
+  11.00 in doing the check early.
+
+  If newParent is a Document/DocumentType/DocumentFragment, and some node is
+  also partially contained, DOM 2 Range doesn't say whether to throw
+  BAD_BOUNDARYPOINTS_ERR or INVALID_NODE_TYPE_ERR. IE9 and Chrome 12 dev throw
+  INVALID_NODE_TYPE_ERR, while Firefox 4.0 and Opera 11.00 throw
+  BAD_BOUNDARYPOINTS_ERR. I chose the latter because it's the first thing I
+  happened to write down and it makes no real difference, with the even split.
+  -->
+
+  <li>Call <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on
+  the <a href="#context-object">context object</a>, and let <var title="">fragment</var> be the
+  result.
+  <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
+  immediately throw here. Firefox removes the non-DocumentType nodes and
+  throws, Opera removes all nodes and doesn't throw. This applies to
+  extractContents() proper, and also affects surroundContents(). I match DOM 2
+  Range, IE9, and Chrome 12 dev. -->
+
+  <li>While <var title="">newParent</var> has <a href="#concept-tree-child" title="concept-tree-child">children</a>, remove its first <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+
+  <li>Call <code title="dom-Range-insertNode"><a href="#dom-range-insertnode">insertNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
+
+  <li>Call <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild(<var title="">fragment</var>)</a></code> on
+  <var title="">newParent</var>.
+
+  <li>Call <code title="dom-Range-selectNode"><a href="#dom-range-selectnode">selectNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
+</ol>
+
+<p>The <dfn id="dom-range-clonerange" title="dom-Range-cloneRange"><code>cloneRange()</code></dfn> method
+must raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception if
+the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached
+flag</a> is set. Otherwise, it must return a new <code><a href="#range">Range</a></code> object
+with the same <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> as the <a href="#context-object">context object</a>.
+
+<p>The <dfn id="dom-range-detach" title="dom-Range-detach"><code>detach()</code></dfn> method must run
+these steps:
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached
+  flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>Set the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached flag</a>.
+
+  <li>Let the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> be (null, 0).
+</ol>
+
+<hr>
+
+<dl class="domintro">
+  <dt><var title="">position</var> = <var title="">range</var> . <code title="dom-Range-comparePoint"><a href="#dom-range-comparepoint">comparePoint</a></code>( <var title="">parent</var>,
+  <var title="">offset</var> )
+  <dd>
+    <p>Returns &minus;1 if the point is before the range, 0 if the point is in
+    the range, and 1 if the point is after the range.
+
+  <dt><var title="">intersects</var> = <var title="">range</var> . <code title="dom-Range-intersectsNode"><a href="#dom-range-intersectsnode">intersectsNode</a></code>( <var title="">node</var> )
+  <dd>
+    <p>Returns whether <var title="">range</var> intersects <var title="">node</var>.
+</dl>
+
+<div class="impl">
+
+<p class="XXX">The <dfn id="dom-range-ispointinrange" title="dom-Range-isPointInRange"><code>isPointInRange(<var title="">parent</var>, <var title="">offset</var>)</code></dfn> method must&hellip;
+
+<p>The <dfn id="dom-range-comparepoint" title="dom-Range-comparePoint"><code>comparePoint(<var title="">parent</var>, <var title="">offset</var>)</code></dfn> method must run the
+following steps:
+
+<ol>
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-detached" title="concept-range-detached">detached
+  flag</a> is set, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
+  exception and abort these steps.
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start's</a> <var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var> is null, raise an <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception
+  and abort these steps.
+
+  <li>If <var title="">parent</var> is not a descendant of the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-root" title="concept-range-root">root</a>, raise a <code title="dom-DOMException-WRONG_DOCUMENT_ERR"><a href="#dom-domexception-wrong_document_err">WRONG_DOCUMENT_ERR</a></code> exception
+  and abort these steps.
+
+  <li>If <var title="">parent</var> is a <code><a href="#documenttype">DocumentType</a></code>, raise an <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  exception and abort these steps.
+
+  <p class="XXX">What about PIs?
+
+  <li>Let <var title="">boundary</var> be the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">parent</var>,
+  <var title="">offset</var>).
+  <!-- XXX validate offset? -->
+
+  <li>If <var title="">boundary</var> is <a href="#concept-bp-before" title="concept-bp-before">before</a> the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>, return &minus;1 and abort
+  these steps.
+
+  <li>If <var title="">boundary</var> is <a href="#concept-bp-after" title="concept-bp-after">after</a>
+  the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a>,
+  return 1 and abort these steps.
+
+  <li>Otherwise, return 0.
+</ol>
+
+<hr>
+
+<p>The <dfn id="dom-range-intersectsnode" title="dom-Range-intersectsNode"><code>intersectsNode(<var title="">node</var>)</code></dfn> method must run these steps:
+
+<p class="XXX">Doesn't handle the case where <var title="">node</var> has a
+different root (see comments)
+
+<ol>
+  <!-- detached? -->
+  <li>If <var title="">node</var> is not an
+  <code><a href="#element">Element</a></code>,
+  <code><a href="#documenttype">DocumentType</a></code>,
+  <code><a href="#documentfragment">DocumentFragment</a></code>,
+  <code><a href="#processinginstruction">ProcessingInstruction</a></code>,
+  <code><a href="#comment">Comment</a></code>, or
+  <code><a href="#text">Text</a></code>, raise a <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
+  exception and abort these steps.
+
+<!--
+  <li>If <var title>node</var>'s <span>root
+  element</span> doesn't equal the <span>context object</span>'s <span
+  title=concept-range-root>root</span>, return false and abort these
+  steps.
+
+  <li>If <var title>node</var> is <span>in a <code
+ >Document</code></span>, and the <span>context
+  object</span>'s <span title=concept-range-start>start's</span> <var
+  title=concept-boundary-point-node>node</var> is null, return false
+  and abort these steps.
+
+  <li>If <var title>node</var> is not <span>in a <code
+ >Document</code></span>, and the <span>context
+  object</span>'s <span title=concept-range-start>start's</span> <var
+  title=concept-boundary-point-node>node</var> is not null, return
+  false and abort these steps.
+-->
+
+  <li>If either the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start's</a> <var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var> or the <a href="#context-object">context
+  object</a>'s <a href="#concept-range-end" title="concept-range-end">end's</a> <var title="concept-boundary-point-node"><a href="#concept-boundary-point-node">node</a></var> is null, return false and abort
+  these steps.
+
+  <li>Let <var title="">parent</var> be <var title="">node</var>'s <code title="dom-Node-parentNode"><a href="#dom-node-parentnode">parentNode</a></code>. If <var title="">parent</var> is null, raise a <code title="dom-DOMException-NOT_FOUND_ERR"><a href="#dom-domexception-not_found_err">NOT_FOUND_ERR</a></code> exception and abort
+  these steps.
+
+  <li>Let <var title="">offset</var> be the
+  <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">node</var>.
+
+  <!-- range end is before node start -->
+  <li>Let <var title="">before boundary</var> be the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">parent</var>,
+  <var title="">offset</var>).
+
+  <li>If <var title="">before boundary</var> is <a href="#concept-bp-before" title="concept-bp-before">before</a> or <a href="#concept-bp-equal" title="concept-bp-equal">equal</a> to the <a href="#context-object">context object</a>'s
+  <a href="#concept-range-end" title="concept-range-end">end</a>, return
+  false and abort these steps.
+
+  <!-- range start is after node end -->
+  <li>Let <var title="">after boundary</var> be the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> (<var title="">parent</var>,
+  <var title="">offset</var> + 1).
+
+  <li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> is <a href="#concept-bp-equal" title="concept-bp-equal">equal</a> to or <a href="#concept-bp-after" title="concept-bp-after">after</a> <var title="">after boundary</var>,
+  return false and abort these steps.
+
+  <li>Otherwise, return true.
+</ol>
+
+</div>
+
+<hr>
+
+<p>The <dfn id="dom-range-stringifier" title="dom-Range-stringifier">stringifier</dfn> must run the
+following steps:
+
+<p class="XXX">Untested, might be wrong. Basically should behave like
+textContent for text nodes in the range.
+
+<ol>
+<li>Let <var title="">s</var> be the empty string.
+
+<li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> and <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">nodes</a> are the same, and they are a
+<code><a href="#text">Text</a></code> node, return the substring of that
+<code><a href="#text">Text</a></code> node's <code class="external" data-anolis-spec="domcore" title="dom-CharacterData-data"><a href="#dom-characterdata-data">data</a></code> beginning at
+the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
+<a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> and ending at its
+<a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>, and abort these steps.
+
+<li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is a <code class="external" data-anolis-spec="domcore"><a href="#text">Text</a></code> node, append to <var title="">s</var> the
+substring of that node's <code title="dom-CharacterData-data"><a href="#dom-characterdata-data">data</a></code> from the <a href="#context-object">context object</a>'s
+<a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> until the end.
+
+<li>Append to <var title="">s</var> the concatenation, in
+<a href="#concept-tree-order" title="concept-tree-order">tree order</a>, of
+the <code title="dom-CharacterData-data"><a href="#dom-characterdata-data">data</a></code> of
+all <code><a href="#text">Text</a></code> nodes that are
+<a href="#contained">contained</a> in the <a href="#context-object">context object</a>.
+
+<li>If the <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is a <code class="external" data-anolis-spec="domcore"><a href="#text">Text</a></code> node, append to <var title="">s</var> the
+substring of that node's <code title="dom-CharacterData-data"><a href="#dom-characterdata-data">data</a></code> from its start until the <a href="#context-object">context
+object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>.
+
+<li>Return <var title="">s</var>.
+</ol>
+
+<hr>
+
+<div class="note">
+<p>The following extensions to the <code><a href="#range">Range</a></code> interface are defined in
+various other specifications:
+<ul>
+  <li>the <code class="external" data-anolis-spec="domps" title="dom-Range-createContextualFragment"><a href="http://html5.org/specs/dom-parsing.html#dom-range-createcontextualfragment">createContextualFragment</a></code>
+  method; <a class="informative" data-anolis-ref="" href="#refsDOMPS">[DOMPS]</a>
+  <li>the <code class="external" data-anolis-spec="cssom-view" title="dom-Range-getClientRects"><a href="http://dev.w3.org/csswg/cssom-view/#dom-range-getclientrects">getClientRects</a></code>
+  method; and
+  <li>the <code class="external" data-anolis-spec="cssom-view" title="dom-Range-getBoundingClientRect"><a href="http://dev.w3.org/csswg/cssom-view/#dom-range-getboundingclientrect">getBoundingClientRect</a></code>
+  method. <a class="informative" data-anolis-ref="" href="#refsCSSOMVIEW">[CSSOMVIEW]</a>
+</ul>
+</div>
+
+
+<h3 id="range-behavior-under-document-mutation"><span class="secno">6.2 </span>Range behavior under document mutation</h3>
+
+<p class="XXX">This section needs to be integrated throughout the nodes
+section rather than be standalone.
+
+<p>When certain changes occur in the DOM, all existing <code><a href="#range">Range</a></code>s must
+be modified according to the <dfn id="range-mutation-rules">range mutation rules</dfn> in this section,
+as applicable. The stated
+modifications must mutate the <code><a href="#range">Range</a></code> in-place, so that all scripts
+holding references to the <code><a href="#range">Range</a></code> must immediately have access to
+the new version instead of the old version, and any <code>Selection</code>
+containing the <code><a href="#range">Range</a></code> must be immediately updated.
+<code>Selection</code> updates due to <code><a href="#range">Range</a></code> changes must be
+reflected both in the <code>Selection</code> objects visible to scripts, and in
+the user-visible selection.
+
+<dl class="switch">
+  <dt>When the <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code> method is called on a <code><a href="#text">Text</a></code> node
+
+  <dd>User agents must run these steps whenever they execute <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code>, as
+  though they were written in the specification for that method after all other
+  steps, but before the method returns. In particular, the steps must not be
+  executed if the method threw an exception, but must be executed before any
+  return, if the method implementation can return from multiple points.
+
+  <p class="note">Thus they must be executed after following the range mutation
+  rules for any changes to data or insertions that the method caused.
+
+  <p class="XXX">What if a range ends in the text node's parent, immediately
+  after the text node?  Currently the spec says it should stay where it is, so
+  it's before the newly-created next sibling, and browsers all match that.
+  However, it makes more sense to go after. Is there any justification for
+  having another special case beyond "it makes more sense"?
+
+  <!-- Firefox 4.0 and Opera 11 seem to behave like the DOM Level 2 Range spec
+  implies, and don't special-case splitText(). Thus if you have a Range ending
+  two characters into "Abc", and splitText(1) it, the Range ends one character
+  into "A". Chrome 11 dev behaves much more nicely, and ends one character
+  into "bc", so it's still at the same logical place. IE 9 appears to end two
+  characters into "bc", which makes no sense from any perspective. I follow
+  WebKit here, which to be honest I probably would have done even if no one
+  actually did it, since it makes the most sense. In particular, if not for
+  the special case here, I'd have to add at least one special case to
+  execCommand(), and while we're adding special cases we may as well at least
+  make them a bit less special. -->
+  <ol>
+    <li>Let <var title="">old node</var> be the <code><a href="#text">Text</a></code> node that the method was called on,
+    let <var title="">offset</var> be the argument to the method, and let <var title="">new node</var> be the <code><a href="#text">Text</a></code> node
+    that the method returned.
+
+    <!--
+    Tricky case: what if the node was detached?  Then you can't have the range
+    span the two nodes. Firefox 4.0 and Opera 11 don't allow this situation to
+    arise, because Gecko always stays on the old node and Opera doesn't let you
+    make ranges on detached nodes in the first place. IE 9 and Chrome 11 dev
+    both produce entirely bogus results, respectively having the range's start
+    and end nodes not have a common ancestor, and having an offset that's
+    larger than the node's length.
+
+    I just don't provide any special case here if the parent is null, so the
+    range clamps in all cases.
+    -->
+    <li>If <var title="">old node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null, then for every <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> whose <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is <var title="">old node</var>:
+
+    <ol>
+      <li>Let <var title="">original offset</var> equal what the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>'s <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> was <em>before</em>
+      this <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText</a></code> invocation <a href="#concept-cd-replace" title="concept-cd-replace">replaced the
+      data</a> of <var title="">node</var>. <!-- Yay comefrom. -->
+
+      <li>If <var title="">original offset</var> is greater than <var title="">offset</var>, set the <a href="#concept-boundary-point" title="concept-boundary-point">boundary
+      point</a>'s <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> to
+      <var title="">new node</var> and its <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> to <var title="">original
+      offset</var> minus <var title="">offset</var>.
+    </ol>
+  </ol>
+
+  <dt>When something <a href="#concept-cd-replace" title="concept-cd-replace">replaces data</a> of a <code><a href="#characterdata">CharacterData</a></code> node
+
+  <dd>User agents must run these steps whenever they <a href="#concept-cd-replace" title="concept-cd-replace">replace data</a> of a
+  <code><a href="#characterdata">CharacterData</a></code> node, as though they were
+  written in the specification for that algorithm after all other steps. In
+  particular, the steps must not be executed if the algorithm threw an
+  exception.
+
+  <ol>
+    <li>Let <var title="">node</var> be the <code><a href="#characterdata">CharacterData</a></code> node that the algorithm was
+    invoked on, and let <var title="">offset</var>, <var title="">count</var>, and
+    <var title="">data</var> be as in the <a href="#concept-cd-replace" title="concept-cd-replace">replace data</a> algorithm.
+
+    <li>For every <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>
+    whose <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is <var title="">node</var>, and whose <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> is greater than <var title="">offset</var> but less than or equal to <var title="">offset</var> plus
+    <var title="">count</var>, set its <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> to <var title="">offset</var>.
+
+    <li>For every <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>
+    whose <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is <var title="">node</var>, and whose <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> is greater than <var title="">offset</var> plus <var title="">count</var>, add the length of <var title="">data</var> to its <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>, then subtract <var title="">count</var> from it.
+  </ol>
+
+  <!--
+  If you set a node's data to a new value (e.g., using the data attribute):
+
+  IE 9: Acts like the node was deleted and recreated, moves the boundary points
+    up to the parent
+  Firefox 4: Resets the offset to 0, always
+  Chrome 11 dev: Resets the offset to 0, except it does nothing if the new data
+    is the same as the old data
+  Opera 11: Sets a start offset to 0 and an end offset to the end of the data,
+    always
+
+  The spec originally followed WebKit, since it seemed to make the most sense.
+  Opera's approach of setting end offsets to the length of the new data
+  arguably makes more sense, but that's debatable, and it's greatly
+  outnumbered. However, after some feedback by bzbarsky that checking for
+  equality is expensive, I removed the special case and matched Firefox:
+
+  http://www.w3.org/Bugs/Public/show_bug.cgi?id=13250
+
+  Authors who want WebKit-like behavior can always use replaceData() instead.
+  -->
+
+  <!-- replaceWholeText() acts just like removing the sibling nodes and setting
+  the data of the node you call it on, in Firefox 4.0 and Chrome 11 dev and
+  Opera 11. Note this disagrees with current DOM Core description of how
+  replaceWholeText() works, see bug:
+  <http://www.w3.org/Bugs/Public/show_bug.cgi?id=12389>. With that bug fixed,
+  the spec will describe browser behavior correctly.
+  -->
+
+  <dt>When a <a href="#concept-node" title="concept-node">node</a> is
+  inserted into a new <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>
+
+  <dd>User agents must run these steps whenever a <a href="#concept-node" title="concept-node">node</a>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> changes from
+  null to not null. Occasions when user agents must run
+  these steps include (but are not necessarily limited to) when a script or
+  specification invokes <code title="dom-Node-insertBefore"><a href="#dom-node-insertbefore">insertBefore()</a></code>, <code title="dom-Node-replaceChild"><a href="#dom-node-replacechild">replaceChild()</a></code>,
+  <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild()</a></code>, or <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code>, or sets
+  the <code title="dom-Node-textContent"><a href="#dom-node-textcontent">textContent</a></code> property of a <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code> to a nonempty string, or when a
+  specification otherwise says to insert a <a href="#concept-node" title="concept-node">node</a>.
+
+  <p class="XXX">This (and node removals) intends to match DOM 2 Range and
+  current browser behavior. I've thought of a possibly <a href="http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2011-March/031053.html">better
+  system</a>, but Boris Zbarsky points out that it would be pretty hairy to
+  specify as long as DOM mutation events exist, so I'm putting it off.
+
+  <ol>
+    <li>For each <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> whose
+    <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is the new <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of the
+    affected <a href="#concept-node" title="concept-node">node</a> and
+    whose <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> is greater
+    than the new <a href="#concept-tree-index" title="concept-tree-index">index</a> of the affected <a href="#concept-node" title="concept-node">node</a>, add one to the
+    <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a>'s <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>.
+  </ol>
+
+  <dt>When a <a href="#concept-node" title="concept-node">node</a> is
+  removed from its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>
+
+  <dd>User agents must run these steps whenever a <a href="#concept-node" title="concept-node">node</a>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> changes from
+  not null to null. Occasions when user agents must run
+  these steps include (but are not necessarily limited to) when a script or
+  specification invokes <code title="dom-Node-insertBefore"><a href="#dom-node-insertbefore">insertBefore()</a></code>, <code title="dom-Node-replaceChild"><a href="#dom-node-replacechild">replaceChild()</a></code>,
+  <code title="dom-Node-removeChild"><a href="#dom-node-removechild">removeChild()</a></code>, <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild()</a></code>,
+  <code title="dom-Document-adoptNode"><a href="#dom-document-adoptnode">adoptNode()</a></code>, or <code title="dom-Text-replaceWholeText"><a href="#dom-text-replacewholetext">replaceWholeText()</a></code>, or sets the <code title="dom-Node-textContent"><a href="#dom-node-textcontent">textContent</a></code>
+  property of a <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code>, or when a specification otherwise
+  says to remove a <a href="#concept-node" title="concept-node">node</a>.
+
+  <ol>
+    <li>Let <var title="">removed node</var> be the removed <a href="#concept-node" title="concept-node">node</a>, let <var title="">old
+    parent</var> be the (non-null) <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> that <var title="">removed node</var>
+    was just removed from, and let <var title="">old index</var> be the <a href="#concept-tree-index" title="concept-tree-index">index</a> that <var title="">removed node</var> had
+    before it was removed.
+
+    <li>For each <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> whose
+    <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is <var title="">removed
+    node</var> or a <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of it, set the <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> to (<var title="">old
+    parent</var>, <var title="">old index</var>).
+
+    <li>For each <a href="#concept-boundary-point" title="concept-boundary-point">boundary point</a> whose
+    <a href="#concept-boundary-point-node" title="concept-boundary-point-node">node</a> is <var title="">old
+    parent</var> and whose <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a> is greater than <var title="">old index</var>, subtract one from its <a href="#concept-boundary-point-offset" title="concept-boundary-point-offset">offset</a>.
+  </ol>
+</dl>
 
 
 
@@ -5600,7 +7170,10 @@ specification makes that an intrinsic part of the DOM.
 
 
 <h2 class="no-num" id="references">References</h2>
-<div class="now3c" id="anolis-references"><dl><dt id="refsDOM2TR">[DOM2TR]
+<div class="now3c" id="anolis-references"><dl><dt id="refsCSSOMVIEW">[CSSOMVIEW]
+<dd>(Non-normative) <cite><a href="http://dev.w3.org/csswg/cssom-view/">CSSOM View</a></cite>, Anne van Kesteren. W3C.
+
+<dt id="refsDOM2TR">[DOM2TR]
 <dd>(Non-normative) <cite><a href="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/">Document Object Model (DOM) Level 2 Traversal and Range Specification</a></cite>, Joe Kesselman, Jonathan Robie, Mike Champion et al.. W3C.
 
 <dt id="refsDOM3CORE">[DOM3CORE]
@@ -5608,6 +7181,9 @@ specification makes that an intrinsic part of the DOM.
 
 <dt id="refsDOM3EVENTS">[DOM3EVENTS]
 <dd>(Non-normative) <cite><a href="http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html">Document Object Model (DOM) Level 3 Events Specification</a></cite>, Doug Schepers and Jacob Rossi. W3C.
+
+<dt id="refsDOMPS">[DOMPS]
+<dd>(Non-normative) <cite><a href="http://html5.org/specs/dom-parsing.html">DOM Parsing and Serialization</a></cite>, Ms2ger. WHATWG.
 
 <dt id="refsELEMENTTRAVERSAL">[ELEMENTTRAVERSAL]
 <dd>(Non-normative) <cite><a href="http://www.w3.org/TR/ElementTraversal/">Element Traversal Specification</a></cite>, Doug Schepers. W3C.
