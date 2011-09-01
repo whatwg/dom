@@ -4404,9 +4404,10 @@ title=concept-node-length>length</span> of <var title>node</var>) is <span
 title=concept-range-bp-before>before</span> <var title>range</var>'s <span
 title=concept-range-end>end</span>.
 
-<p>A <span title=concept-node>node</span> is <dfn>partially
-contained</dfn> in a <span title=concept-range>range</span> if it is an
-<span>inclusive ancestor</span> of the <span title=concept-range>range</span>'s
+<p>A <span title=concept-node>node</span> is <dfn>partially contained</dfn>
+in a <span title=concept-range>range</span> if it is an
+<span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of the
+<span title=concept-range>range</span>'s
 <span title=concept-range-start>start</span> but not its <span
 title=concept-range-end>end</span>, or vice versa.
 
@@ -4431,13 +4432,18 @@ title=concept-range-end>end</span>, or vice versa.
  <li>The
  <code title=dom-Range-commonAncestorContainer>commonAncestorContainer</code>
  is never either contained or partially contained.
- <li>If the start node is an ancestor of the end node, the common ancestor
- container will be the start node. Exactly one of its children will be
+ <li>If the start node is an ancestor of the end node, the common
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span>
+ will be the start node. Exactly one of its children will be
  partially contained, and a child will be contained if and only if it
  precedes the partially contained child. If the end is an ancestor of the
  start, the opposite holds.
- <li>If the start node is not an inclusive ancestor of the end node nor vice
- versa, the common inclusive ancestor will be distinct from both of them.
+ <li>If the start node is not an
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+ the end node nor vice
+ versa, the common
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> will
+ be distinct from both of them.
  Exactly two of its children will be partially contained, and a child will
  be contained if and only if it lies between those two.
 </ul>
@@ -4578,7 +4584,7 @@ attribute must run these steps:
  <span title=concept-range-start>start</span>.
 
  <li><p>While <var title>container</var> is not an
- <span>inclusive ancestor</span> of
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
  <span title=concept-range-end>end</span>, let <var title>container</var> be
  <var title>container</var>'s <span title=concept-tree-parent>parent</span>.
 
@@ -4921,83 +4927,81 @@ method must run these steps:
  are all the substeps of the next step actually no-ops, or could some have
  side effects? -->
 
- <li><p>Let <var title>original start node</var>, <var title>original start
-  offset</var>, <var title>original end node</var>, and <var title>original end
-  offset</var> be the <span>context object</span>'s <span
-  title=concept-range-start>start</span> and <span
-  title=concept-range-end>end</span> <span
-  title=concept-range-bp-node>nodes</span> and <span
-  title=concept-range-bp-offset>offsets</span>, respectively.
+ <li><p>Let <var title>original start node</var>,
+ <var title>original start offset</var>, <var title>original end node</var>,
+ and <var title>original end offset</var> be the
+ <span>context object</span>'s
+ <span title=concept-range-start>start</span> and
+ <span title=concept-range-end>end</span>
+ <span title=concept-range-bp-node>nodes</span> and
+ <span title=concept-range-bp-offset>offsets</span>, respectively.
 
-  <li>If <var title>original start node</var> and <var title>original end
-  node</var> are the same, and they are a <code
- >Text</code> or <code
- >Comment</code> node, call <code
-  title=dom-CharacterData-deleteData>deleteData(<var
-  title>original start offset</var>, <var title>original end offset</var>
-  &minus; <var title>original start offset</var>)</code> on that node, and
-  terminate these steps.
+ <li><p>If <var title>original start node</var> and
+ <var title>original end node</var> are the same, and they are a
+ <code>Text</code> or <code>Comment</code>
+ <span title=concept-node>node</span>, call
+ <code title=dom-CharacterData-deleteData>deleteData(<var title>original start offset</var>, <var title>original end offset</var> &minus; <var title>original start offset</var>)</code>
+ on that node, and terminate these steps.
 
-  <li>Let <var title>nodes to remove</var> be a list of all the
-  <span title=concept-node>nodes</span> that are <span>contained</span> in the
-  <span>context object</span>, in
-  <span title=concept-tree-order>tree order</span>,
-  omitting any <span title=concept-node>node</span> whose
-  <span title=concept-tree-parent>parent</span> is
-  also <span>contained</span> in the <span>context object</span>.
+ <li><p>Let <var title>nodes to remove</var> be a list of all the
+ <span title=concept-node>nodes</span> that are <span>contained</span> in
+ the <span>context object</span>, in
+ <span title=concept-tree-order>tree order</span>, omitting any
+ <span title=concept-node>node</span> whose
+ <span title=concept-tree-parent>parent</span> is also
+ <span>contained</span> in the <span>context object</span>.
 
-  <li>If <var title>original start node</var> is an <span>ancestor
-  container</span> of <var title>original end node</var>, set <var title>new
-  node</var> to <var title>original start node</var> and <var title>new
-  offset</var> to <var title>original start offset</var>.
+ <li><p>If <var title>original start node</var> is an
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+ <var title>original end node</var>, set
+ <var title>new node</var> to <var title>original start node</var> and
+ <var title>new offset</var> to <var title>original start offset</var>.
 
-  <li>Otherwise:
+ <li>
+  <p>Otherwise:
   <ol>
-    <li>Let <var title>reference node</var> equal <var title>original start
-    node</var>.
+   <li><p>Let <var title>reference node</var> equal
+   <var title>original start node</var>.
 
-    <li>While <var title>reference node</var>'s <span
-    title=concept-tree-parent>parent</span> is not null and is not an
-    <span>inclusive ancestor</span> of <var title>original end
-    node</var>, set <var title>reference node</var> to its <span
-    title=concept-tree-parent>parent</span>.
+   <li><p>While <var title>reference node</var>'s
+   <span title=concept-tree-parent>parent</span> is not null and is not an
+   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+   <var title>original end node</var>, set <var title>reference node</var>
+   to its <span title=concept-tree-parent>parent</span>.
 
-    <li>Set <var title>new node</var> to the <span
-    title=concept-tree-parent>parent</span> of <var title>reference node</var>,
-    and <var title>new offset</var> to one plus the <span
-    title=concept-tree-index>index</span> of <var title>reference node</var>.
+   <li>
+    <p>Set <var title>new node</var> to the
+    <span title=concept-tree-parent>parent</span> of
+    <var title>reference node</var>, and <var title>new offset</var> to one
+    plus the <span title=concept-tree-index>index</span> of
+    <var title>reference node</var>.
 
-    <p class=note>If <var title>reference node</var>'s <span
-    title=concept-tree-parent>parent</span> were null,
-    it would be the <span title=concept-range-root>root</span> of the
-    <span>context object</span>, so would be an <span>ancestor
-    container</span> of
-    <var title>original end node</var>, and we couldn't reach this point.
+    <p class=note>If <var title>reference node</var>'s
+    <span title=concept-tree-parent>parent</span> were null, it would be the
+    <span title=concept-range-root>root</span> of the
+    <span>context object</span>, so would be an
+    <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+    <var title>original end node</var>, and we could not reach this point.
   </ol>
 
-  <li>If <var title>original start node</var> is a <code
- >Text</code> or <code
- >Comment</code> node, run <code
+ <li><p>If <var title>original start node</var> is a <code>Text</code> or
+ <code>Comment</code> <span title=concept-node>node</span>, run
+ <code title=dom-CharacterData-deleteData>deleteData()</code> on it, with
+ <var title>original start offset</var> as the first argument and
+ (<span title=concept-node-length>length</span> of <var title>original start node</var> &minus; <var title>original start offset</var>)
+ as the second.
 
-  title=dom-CharacterData-deleteData>deleteData()</code> on it, with <var
-  title>original start offset</var> as the first argument and (<span
-  title=concept-node-length>length</span> of <var title>original start
-  node</var> &minus; <var title>original start offset</var>) as the second.
+ <li><p>For each <var title>node</var> in <var title>nodes to remove</var>,
+ in order, remove <var title>node</var> from its <span title=concept-tree-parent>parent</span>.
+ <!-- XXX use concept-node-remove? -->
 
-  <li>For each <var title>node</var> in <var title>nodes to remove</var>, in
-  order, remove <var title>node</var> from its <span
-  title=concept-tree-parent>parent</span>.
+ <li>If <var title>original end node</var> is a <code>Text</code> or
+ <code>Comment</code> <span title=concept-node>node</span>, run
+ <code title=dom-CharacterData-deleteData>deleteData(0, <var title>original end offset</var>)</code> on it.
 
-  <li>If <var title>original end node</var> is a <code
- >Text</code> or <code
- >Comment</code> node, run <code
-  title=dom-CharacterData-deleteData>deleteData(0,
-  <var title>original end offset</var>)</code> on it.
-
-  <li>Set the <span>context object</span>'s <span
-  title=concept-range-start>start</span> and <span
-  title=concept-range-end>end</span> to (<var title>new node</var>, <var
-  title>new offset</var>).
+ <li><p>Set <span title=concept-range-start>start</span> and
+ <span title=concept-range-end>end</span> to
+ (<var title>new node</var>, <var title>new offset</var>).
 </ol>
 
 <p>The <dfn
@@ -5067,13 +5071,14 @@ must run these steps:
   <li>Let <var title>common ancestor</var> equal <var title>original start
   node</var>.
 
-  <li>While <var title>common ancestor</var> is not an <span>ancestor
-  container</span> of <var title>original end node</var>, set <var title>common
-  ancestor</var> to its own <span
-  title=concept-tree-parent>parent</span>.
+  <li>While <var title>common ancestor</var> is not an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original end node</var>, set
+  <var title>common ancestor</var> to its own
+  <span title=concept-tree-parent>parent</span>.
 
-  <li>If <var title>original start node</var> is an <span>ancestor
-  container</span> of <var title>original end node</var>, let <var title>first
+  <li>If <var title>original start node</var> is an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of <var title>original end node</var>, let <var title>first
   partially contained child</var> be null.
 
   <li>Otherwise, let <var title>first partially contained child</var> be the
@@ -5081,8 +5086,8 @@ must run these steps:
   <var title>common ancestor</var> that is <span>partially contained</span> in
   the <span>context object</span>.
 
-  <li>If <var title>original end node</var> is an <span>ancestor
-  container</span> of <var title>original start node</var>, let <var title>last
+  <li>If <var title>original end node</var> is an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of <var title>original start node</var>, let <var title>last
   partially contained child</var> be null.
 
   <li>Otherwise, let <var title>last partially contained child</var> be the
@@ -5090,12 +5095,16 @@ must run these steps:
   <var title>common ancestor</var> that is <span>partially contained</span> in
   the <span>context object</span>.
 
-  <p class=note>These variable assignments do actually always make sense. For
-  instance, if the original start node is not an inclusive ancestor of the
+  <p class=note>These variable assignments do actually always make sense.
+  For instance, if the original start node is not an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  the
   original end node, the original start node is itself partially contained in
   the range, and so are all its ancestors up until a child of the common
   ancestor. The common ancestor can't be original start node, because it must
-  be an inclusive ancestor of the original end node. The other case is
+  be an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  the original end node. The other case is
   similar. Also, notice that the two children will never be equal if both are
   defined.
 
@@ -5121,8 +5130,8 @@ must run these steps:
    partially contained. It cannot be a boundary point of a range, and it
    cannot be the ancestor of anything.
 
-  <li>If <var title>original start node</var> is an <span>ancestor
-  container</span> of <var title>original end node</var>, set <var title>new
+  <li>If <var title>original start node</var> is an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of <var title>original end node</var>, set <var title>new
   node</var> to <var title>original start node</var> and <var title>new
   offset</var> to <var title>original start offset</var>.
 
@@ -5133,7 +5142,8 @@ must run these steps:
 
     <li>While <var title>reference node</var>'s <span
     title=concept-tree-parent>parent</span> is not null and is not an
-    <span>inclusive ancestor</span> of <var title>original end node</var>,
+    <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+    <var title>original end node</var>,
     set <var title>reference node</var> to its <span
     title=concept-tree-parent>parent</span>.
 
@@ -5145,8 +5155,8 @@ must run these steps:
     <p class=note>If <var title>reference node</var>'s <span
     title=concept-tree-parent>parent</span> were null,
     it would be the <span title=concept-range-root>root</span> of the
-    <span>context object</span>, so would be an <span>ancestor
-    container</span> of <var title>original end node</var>, and we couldn't
+    <span>context object</span>, so would be an
+    <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of <var title>original end node</var>, and we couldn't
     reach this point.
   </ol>
 
@@ -5350,13 +5360,15 @@ method must run these steps:
   <li>Let <var title>common ancestor</var> equal <var title>original start
   node</var>.
 
-  <li>While <var title>common ancestor</var> is not an <span>ancestor
-  container</span> of <var title>original end node</var>, set <var title>common
+  <li>While <var title>common ancestor</var> is not an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original end node</var>, set <var title>common
   ancestor</var> to its own <span
   title=concept-tree-parent>parent</span>.
 
-  <li>If <var title>original start node</var> is an <span>ancestor
-  container</span> of <var title>original end node</var>, let <var title>first
+  <li>If <var title>original start node</var> is an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original end node</var>, let <var title>first
   partially contained child</var> be null.
 
   <li>Otherwise, let <var title>first partially contained child</var> be the
@@ -5364,8 +5376,9 @@ method must run these steps:
   <var title>common ancestor</var> that is <span>partially contained</span> in
   the <span>context object</span>.
 
-  <li>If <var title>original end node</var> is an <span>ancestor
-  container</span> of <var title>original start node</var>, let <var title>last
+  <li>If <var title>original end node</var> is an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original start node</var>, let <var title>last
   partially contained child</var> be null.
 
   <li>Otherwise, let <var title>last partially contained child</var> be the
@@ -5374,11 +5387,15 @@ method must run these steps:
   the <span>context object</span>.
 
   <p class=note>These variable assignments do actually always make sense. For
-  instance, if the original start node is not an inclusive ancestor of the
+  instance, if the original start node is not an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  the
   original end node, the original start node is itself partially contained in
   the range, and so are all its ancestors up until a child of the common
   ancestor. The common ancestor can't be original start node, because it must
-  be an inclusive ancestor of the original end node. The other case is
+  be an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  the original end node. The other case is
   similar. Also, notice that the two children will never be equal if both are
   defined.
 
