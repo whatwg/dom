@@ -4270,7 +4270,7 @@ attribute must return the <span title=concept-PI-target>target</span>.
 <!--
  TODO
 
- * setStart and setEnd need to be concepts
+ * setStart, setEnd, extractContents need to be concepts
  * ProcessingInstruction inheriting from CharacterData should allow for
    simplifications
  * make sure all methods do not call other methods but use concepts
@@ -5048,24 +5048,23 @@ must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-    <li>Set the data of <var title>clone</var> to the result of calling <code
+   <li>Set the data of <var title>clone</var> to the result of calling <code
 
     title=dom-CharacterData-substringData>substringData(<var title>original
     start offset</var>, <var title>original end offset</var> &minus; <var
     title>original start offset</var>)</code> on <var title>original start
     node</var>.
 
-    <li>Append <var title>clone</var> as the last <span
-    title=concept-tree-child>child</span> of <var
-    title>frag</var>.
+   <li><p>Append <var title>clone</var> to <var title>frag</var>.
+   <!-- XXX concept-node-append? -->
 
-    <li>Call <code
+   <li><p>Call <code
     title=dom-CharacterData-deleteData>deleteData(<var title>original start
     offset</var>, <var title>original end offset</var> &minus; <var
     title>original start offset</var>)</code> on <var title>original start
     node</var>.
 
-    <li>Return <var title>frag</var> and terminate these steps.
+   <li><p>Return <var title>frag</var> and terminate these steps.
   </ol>
 
   <li>Let <var title>common ancestor</var> equal <var title>original start
@@ -5297,7 +5296,7 @@ must run these steps:
   title=concept-range-end>end</span> to (<var title>new node</var>, <var
   title>new offset</var>).
 
-  <li>Return <var title>frag</var>.
+ <li><p>Return <var title>frag</var>.
 </ol>
 
 <p>The <dfn title=dom-Range-cloneContents><code>cloneContents()</code></dfn>
@@ -5315,15 +5314,15 @@ method must run these steps:
  <span>context object</span>'s <span title=concept-range-start>start</span>
  <span title=concept-range-bp-node>node</span>.
 
-  <li>If the <span>context object</span>'s <span
-  title=concept-range-start>start</span> and <span
-  title=concept-range-end>end</span> are the same, return <var title>frag</var>, and terminate these steps.
-  <!-- This is only really needed when the start and end nodes are
-  text/comment, to avoid creating an empty clone as the child of the
-  fragment. (Opera 11 actually does include such an empty clone, it seems, but
-  Gecko and WebKit do not as of March 2011, so we follow them.)  Otherwise, the
-  following steps are all no-ops. But it's simplest to include this step
-  anyway. -->
+ <li><p>If <span title=concept-range-start>start</span> equals
+ <span title=concept-range-end>end</span>, return <var title>frag</var>, and
+ terminate these steps.
+ <!-- This is only really needed when the start and end nodes are
+ text/comment, to avoid creating an empty clone as the child of the
+ fragment. (Opera 11 actually does include such an empty clone, it seems,
+ but Gecko and WebKit do not as of March 2011, so we follow them.)
+ Otherwise, the following steps are all no-ops. But it's simplest to include
+ this step anyway. -->
 
   <li>Let <var title>original start node</var>, <var title>original start
   offset</var>, <var title>original end node</var>, and <var title>original end
@@ -5343,18 +5342,16 @@ method must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-    <li>Set the data of <var title>clone</var> to the result of calling <code
-
-    title=dom-CharacterData-substringData>substringData(<var title>original
+   <li><p>Set the data of <var title>clone</var> to the result of calling
+   <code title=dom-CharacterData-substringData>substringData(<var title>original
     start offset</var>, <var title>original end offset</var> &minus; <var
     title>original start offset</var>)</code> on <var title>original start
     node</var>.
 
-    <li>Append <var title>clone</var> as the last <span
-    title=concept-tree-child>child</span> of <var
-    title>frag</var>.
+   <li><p>Append <var title>clone</var> to <var title>frag</var>.
+   <!-- XXX concept-node-append? -->
 
-    <li>Return <var title>frag</var> and terminate these steps.
+   <li><p>Return <var title>frag</var> and terminate these steps.
   </ol>
 
   <li>Let <var title>common ancestor</var> equal <var title>original start
@@ -5545,11 +5542,12 @@ method must run these steps:
     <span title=concept-tree-child>child</span>.
   </ol>
 
-  <li>Return <var title>frag</var>.
+ <li><p>Return <var title>frag</var>.
 </ol>
 
-<p>The <dfn title=dom-Range-insertNode><code>insertNode(<var
-title>newNode</var>)</code></dfn> method must run these steps:
+<p>The
+<dfn title=dom-Range-insertNode><code>insertNode(<var>newNode</var>)</code></dfn>
+method must run these steps:
 
 <p class=XXX>Browsers disagree on how to handle the case where the range is
 collapsed: do you increment the end offset so the node is now included, or not?
@@ -5568,20 +5566,18 @@ to be changed to match them.
   since insertBefore() works fine to move a node to its current position, and
   other browsers disagree, so the spec follows the majority. -->
 
-  <li><p>If the <span title=concept-range-detached>detached flag</span> is
-  set, throw an
-  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
-  exception and terminate these steps.
+ <li><p>If the <span title=concept-range-detached>detached flag</span> is
+ set, throw an
+ <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+ exception and terminate these steps.
 
-  <li>If the <span>context object</span>'s <span
-  title=concept-range-start>start</span> <span
-  title=concept-range-bp-node>node</span> is a <code
- >Text</code> or <code
- >Comment</code> node and its <span
-  title=concept-tree-parent>parent</span> is null,
-  throw an <code
-  title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
-  exception and terminate these steps.
+ <li><p>If the <span>context object</span>'s
+ <span title=concept-range-start>start</span>
+ <span title=concept-range-bp-node>node</span> is a <code>Text</code> or
+ <code>Comment</code> <span title=concept-node>node</span> and its
+ <span title=concept-tree-parent>parent</span> is null, throw an
+ <code title=dom-DOMException-HIERARCHY_REQUEST_ERR>HIERARCHY_REQUEST_ERR</code>
+ exception and terminate these steps.
   <!--
   IE9: Allows it to go through, resulting in the text/comment node having a
     non-null previousSibling but a null parentNode. (?!)
@@ -5601,16 +5597,16 @@ to be changed to match them.
 
   IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
   with what all other browsers do. -->
-  <li>If the <span>context object</span>'s <span
-  title=concept-range-start>start</span> <span
-  title=concept-range-bp-node>node</span> is a <code
- >Text</code> node, run <code
-  title=dom-Text-splitText>splitText()</code> on it with the <span>context
+ <li><p>If the <span>context object</span>'s
+ <span title=concept-range-start>start</span>
+ <span title=concept-range-bp-node>node</span> is a <code>Text</code>
+ <span title=concept-node>node</span>, run
+ <code title=dom-Text-splitText>splitText()</code> on it with the <span>context
   object</span>'s <span title=concept-range-start>start</span> <span
   title=concept-range-bp-offset>offset</span> as its argument, and let
   <var title>reference node</var> be the result.
 
-  <li>Otherwise, if the <span>context object</span>'s <span
+ <li><p>Otherwise, if the <span>context object</span>'s <span
   title=concept-range-start>start</span> <span
   title=concept-range-bp-node>node</span> is a <code
  >Comment</code>, let <var title>reference node</var>
@@ -5632,11 +5628,11 @@ to be changed to match them.
   title=concept-range-start>start</span> <span
   title=concept-range-bp-node>node</span>.
 
-  <li>Otherwise, let <var title>parent node</var> be the <span
-  title=concept-tree-parent>parent</span> of <var
-  title>reference node</var>.
+ <li><p>Otherwise, let <var title>parent node</var> be the
+ <span title=concept-tree-parent>parent</span> of
+ <var title>reference node</var>.
 
-  <li>Call <code
+ <li><p>Call <code
   title=dom-Node-insertBefore>insertBefore(<var title>newNode</var>, <var
   title>reference node</var>)</code> on <var title>parent node</var>.
 
@@ -5647,8 +5643,9 @@ to be changed to match them.
   might lie in a comment, which isn't split up. -->
 </ol>
 
-<p>The <dfn title=dom-Range-surroundContents><code>surroundContents(<var
-title>newParent</var>)</code></dfn> method must run these steps:
+<p>The
+<dfn title=dom-Range-surroundContents><code>surroundContents(<var>newParent</var>)</code></dfn>
+method must run these steps:
 
 <!--
 IE9 and Chrome 12 dev throw exceptions before doing any DOM mutations in at
@@ -5664,8 +5661,8 @@ check first thing, which matches everyone but Firefox.
 <ol>
  <li><p>If the <span title=concept-range-detached>detached flag</span> is
  set, throw an
-  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
-  exception and terminate these steps.
+ <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+ exception and terminate these steps.
 
   <li>If some non-<code>Text</code> <span
   title=concept-node>node</span> is <span>partially
