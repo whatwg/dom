@@ -4308,160 +4308,6 @@ attribute must return the <span title=concept-PI-target>target</span>.
  <dd><p>Its number of <span title=concept-tree-child>children</span>.
 </dl>
 
-<p class=XXX>The remainder of this section has just been merged in. Please
-report any issues you find.
-
-<p>A <dfn title=concept-range-bp>boundary point</dfn> is a
-(<dfn title=concept-range-bp-node>node</dfn>,
-<dfn title=concept-range-bp-offset>offset</dfn>) tuple, where
-<span title=concept-range-bp-node>node</span> is a
-<span title=concept-node>node</span> and
-<span title=concept-range-bp-offset>offset</span> is a non-negative
-integer.
-
-<p class=note>Generally speaking, a boundary point's offset will be between
-zero and the boundary point's length, inclusive. If a DOM mutation causes a
-range's boundary point's offset to be greater than its node's length, the
-user agent will correct it before the anomaly is visible to scripts,
-following the <span>range mutation rules</span>.
-
-<p>If a term is defined for <span title=concept-node>nodes</span>, then
-when applied to a <span title=concept-range-bp>boundary point</span>,
-it applies to the <span title=concept-range-bp>boundary point</span>'s
-<span title=concept-range-bp-node>node</span>.
-
-<p class=example>The <span title=concept-tree-root>root</span> of a
-<span title=concept-range-bp>boundary point</span> is the
-<span title=concept-tree-root>root</span> of its
-<span title=concept-range-bp-node>node</span>.
-
-<p>If two <span title=concept-range-bp>boundary points</span>
-(<var title>node A</var>, <var title>offset A</var>) and
-(<var title>node B</var>, <var title>offset B</var>) have the same
-<span title=concept-tree-root>root</span>, the
-<dfn title=concept-range-bp-position>position</dfn> of the first relative to the
-second is either <dfn title=concept-range-bp-before>before</dfn>,
-<dfn title=concept-range-bp-equal>equal</dfn>, or
-<dfn title=concept-range-bp-after>after</dfn>,
-as returned by the following algorithm:
-
-<ol>
- <li><p>If <var title>node A</var> is the same as <var title>node B</var>,
- return <span title=concept-range-bp-equal>equal</span> if
- <var title>offset A</var> equals <var title>offset B</var>,
- <span title=concept-range-bp-before>before</span> if <var title>offset A</var> is
- less than <var title>offset B</var>, and
- <span title=concept-range-bp-after>after</span> if <var title>offset A</var> is
- greater than <var title>offset B</var>.
-
- <li><p>If <var title>node A</var> is after <var title>node B</var> in
- <span title=concept-tree-order>tree order</span>, compute the
- <span title=concept-range-bp-position>position</span> of
- (<var title>node B</var>, <var title>offset B</var>) relative to
- (<var title>node A</var>, <var title>offset A</var>). If it is
- <span title=concept-range-bp-before>before</span>, return
- <span title=concept-range-bp-after>after</span>. If it is
- <span title=concept-range-bp-after>after</span>, return
- <span title=concept-range-bp-before>before</span>.
-
- <li>
-  <p>If <var title>node A</var> is an
-  <span title=concept-tree-ancestor>ancestor</span> of
-  <var title>node B</var>:
-
-  <ol>
-   <li><p>Let <var title>child</var> equal <var title>node B</var>.
-
-   <li><p>While <var title>child</var> is not a
-   <span title=concept-tree-child>child</span> of <var title>node A</var>,
-   set <var title>child</var> to its
-   <span title=concept-tree-parent>parent</span>.
-
-   <li><p>If the <span title=concept-tree-index>index</span> of
-   <var title>child</var> is less than <var title>offset A</var>, return
-   <span title=concept-range-bp-after>after</span>.
-  </ol>
-
-  <li><p>Return <span title=concept-range-bp-before>before</span>.
-</ol>
-
-<p>A <span title=concept-range>range</span> has a the following data
-associated with it:
-
-<ul class=brief>
- <li>two <span title=concept-range-bp>boundary points</span>, the
- <span title=concept-range>range</span>'s
- <dfn title=concept-range-start>start</dfn> and
- <dfn title=concept-range-end>end</dfn>;
- <li>a <dfn title=concept-range-detached>detached flag</dfn>, which is
- initially unset.
-</ul>
-
-<p>The <dfn title=concept-range-root>root</dfn> of a
-<span title=concept-range>range</span> is the
-<span title=concept-tree-root>root</span> of its
-<span title=concept-range-start>start</span>
-<span title=concept-range-bp-node>node</span>, or null if its
-<span title=concept-range-detached>detached flag</span> is set.
-<!-- Could have chosen the end as well, doesn't matter. -->
-
-<p>A <span title=concept-node>node</span> <var title>node</var> is
-<dfn>contained</dfn> in a <span title=concept-range>range</span> <var
-title>range</var> if <var title>node</var>'s <span title=concept-tree-root>root</span> is
-the same as <var title>range</var>'s <span
-title=concept-range-root>root</span>, and (<var title>node</var>, 0) is <span
-title=concept-range-bp-after>after</span> <var title>range</var>'s <span
-title=concept-range-start>start</span>, and (<var title>node</var>, <span
-title=concept-node-length>length</span> of <var title>node</var>) is <span
-title=concept-range-bp-before>before</span> <var title>range</var>'s <span
-title=concept-range-end>end</span>.
-
-<p>A <span title=concept-node>node</span> is <dfn>partially contained</dfn>
-in a <span title=concept-range>range</span> if it is an
-<span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of the
-<span title=concept-range>range</span>'s
-<span title=concept-range-start>start</span> but not its <span
-title=concept-range-end>end</span>, or vice versa.
-
-<div class=note>
-<p>Some facts to better understand these definitions:
-
-<ul>
- <li>The content that one would think of as being within the range consists
- of all contained nodes, plus possibly some of the contents of the start and
- end nodes if those are <code>Text</code> or <code>Comment</code> nodes.
- <li>The nodes that are contained in a range will generally not be
- contiguous, because the parent of a contained node will not always be
- contained.
- <li>However, the descendants of a contained node are contained, and if two
- siblings are contained, so are any siblings that lie between them.
- <li>The first contained node (if there are any) will always be after the
- start node, and the last contained node will always be equal to or before
- the end node's last descendant.
- <li>The start and end nodes of a range are never contained within it.
- <li>There exists some partially contained node if and only if the start and
- end nodes are different.
- <li>The
- <code title=dom-Range-commonAncestorContainer>commonAncestorContainer</code>
- is never either contained or partially contained.
- <li>If the start node is an ancestor of the end node, the common
- <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span>
- will be the start node. Exactly one of its children will be
- partially contained, and a child will be contained if and only if it
- precedes the partially contained child. If the end is an ancestor of the
- start, the opposite holds.
- <li>If the start node is not an
- <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
- the end node nor vice
- versa, the common
- <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> will
- be distinct from both of them.
- Exactly two of its children will be partially contained, and a child will
- be contained if and only if it lies between those two.
-</ul>
-</div>
-
-
 <h3>Interface <code>Range</code></h3>
 <pre class=idl>interface <dfn>Range</dfn> {
   readonly attribute <span>Node</span> <span title=dom-Range-startContainer>startContainer</span>;
@@ -4510,6 +4356,154 @@ title=concept-range-end>end</span>, or vice versa.
 
 <p class=note><span title=concept-range>Ranges</span> can be created using
 the <code title=dom-Document-createRange>createRange()</code> method.
+
+<p>A <dfn title=concept-range-bp>boundary point</dfn> is a
+(<dfn title=concept-range-bp-node>node</dfn>,
+<dfn title=concept-range-bp-offset>offset</dfn>) tuple, where
+<span title=concept-range-bp-node>node</span> is a
+<span title=concept-node>node</span> and
+<span title=concept-range-bp-offset>offset</span> is a non-negative
+integer.
+
+<p class=note>Generally speaking, a boundary point's offset will be between
+zero and the boundary point's length, inclusive. If a DOM mutation causes a
+range's boundary point's offset to be greater than its node's length, the
+user agent will correct it before the anomaly is visible to scripts,
+following the <span>range mutation rules</span>.
+
+<p>If a term is defined for <span title=concept-node>nodes</span>, then
+when applied to a <span title=concept-range-bp>boundary point</span>,
+it applies to the <span title=concept-range-bp>boundary point</span>'s
+<span title=concept-range-bp-node>node</span>.
+
+<p class=example>The <span title=concept-tree-root>root</span> of a
+<span title=concept-range-bp>boundary point</span> is the
+<span title=concept-tree-root>root</span> of its
+<span title=concept-range-bp-node>node</span>.
+
+<p>If two <span title=concept-range-bp>boundary points</span>
+(<var title>node A</var>, <var title>offset A</var>) and
+(<var title>node B</var>, <var title>offset B</var>) have the same
+<span title=concept-tree-root>root</span>, the
+<dfn title=concept-range-bp-position>position</dfn> of the first relative to the
+second is either <dfn title=concept-range-bp-before>before</dfn>,
+<dfn title=concept-range-bp-equal>equal</dfn>, or
+<dfn title=concept-range-bp-after>after</dfn>,
+as returned by the following algorithm:
+
+<ol>
+ <li><p>If <var title>node A</var> is the same as <var title>node B</var>,
+ return <span title=concept-range-bp-equal>equal</span> if
+ <var title>offset A</var> equals <var title>offset B</var>,
+ <span title=concept-range-bp-before>before</span> if
+ <var title>offset A</var> is less than <var title>offset B</var>, and
+ <span title=concept-range-bp-after>after</span> if
+ <var title>offset A</var> is greater than <var title>offset B</var>.
+
+ <li><p>If <var title>node A</var> is after <var title>node B</var> in
+ <span title=concept-tree-order>tree order</span>, compute the
+ <span title=concept-range-bp-position>position</span> of
+ (<var title>node B</var>, <var title>offset B</var>) relative to
+ (<var title>node A</var>, <var title>offset A</var>). If it is
+ <span title=concept-range-bp-before>before</span>, return
+ <span title=concept-range-bp-after>after</span>. If it is
+ <span title=concept-range-bp-after>after</span>, return
+ <span title=concept-range-bp-before>before</span>.
+
+ <li>
+  <p>If <var title>node A</var> is an
+  <span title=concept-tree-ancestor>ancestor</span> of
+  <var title>node B</var>:
+
+  <ol>
+   <li><p>Let <var title>child</var> equal <var title>node B</var>.
+
+   <li><p>While <var title>child</var> is not a
+   <span title=concept-tree-child>child</span> of <var title>node A</var>,
+   set <var title>child</var> to its
+   <span title=concept-tree-parent>parent</span>.
+
+   <li><p>If the <span title=concept-tree-index>index</span> of
+   <var title>child</var> is less than <var title>offset A</var>, return
+   <span title=concept-range-bp-after>after</span>.
+  </ol>
+
+ <li><p>Return <span title=concept-range-bp-before>before</span>.
+</ol>
+
+<p>Each <span title=concept-range>range</span> has two associated
+<span title=concept-range-bp>boundary points</span> — a
+<dfn title=concept-range-start>start</dfn> and
+<dfn title=concept-range-end>end</dfn> — and an associated
+<dfn title=concept-range-detached>detached flag</dfn>, which is initially
+unset.
+
+<p>The <dfn title=concept-range-root>root</dfn> of a
+<span title=concept-range>range</span> is the
+<span title=concept-tree-root>root</span> of its
+<span title=concept-range-start>start</span>
+<span title=concept-range-bp-node>node</span>, or null if its
+<span title=concept-range-detached>detached flag</span> is set.
+<!-- Could have chosen the end as well, doesn't matter. -->
+
+<p>A <span title=concept-node>node</span> <var title>node</var> is
+<dfn>contained</dfn> in a <span title=concept-range>range</span>
+<var title>range</var> if <var title>node</var>'s
+<span title=concept-tree-root>root</span> is
+the same as <var title>range</var>'s
+<span title=concept-range-root>root</span>, and (<var title>node</var>, 0)
+is <span title=concept-range-bp-after>after</span> <var title>range</var>'s
+<span title=concept-range-start>start</span>, and (<var title>node</var>,
+<span title=concept-node-length>length</span> of <var title>node</var>) is
+<span title=concept-range-bp-before>before</span> <var title>range</var>'s
+<span title=concept-range-end>end</span>.
+
+<p>A <span title=concept-node>node</span> is <dfn>partially contained</dfn>
+in a <span title=concept-range>range</span> if it is an
+<span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of the
+<span title=concept-range>range</span>'s
+<span title=concept-range-start>start</span> but not its
+<span title=concept-range-end>end</span>, or vice versa.
+
+<div class=note>
+<p>Some facts to better understand these definitions:
+
+<ul>
+ <li>The content that one would think of as being within the range consists
+ of all contained nodes, plus possibly some of the contents of the start and
+ end nodes if those are <code>Text</code> or <code>Comment</code> nodes.
+ <li>The nodes that are contained in a range will generally not be
+ contiguous, because the parent of a contained node will not always be
+ contained.
+ <li>However, the descendants of a contained node are contained, and if two
+ siblings are contained, so are any siblings that lie between them.
+ <li>The first contained node (if there are any) will always be after the
+ start node, and the last contained node will always be equal to or before
+ the end node's last descendant.
+ <li>The start and end nodes of a range are never contained within it.
+ <li>There exists some partially contained node if and only if the start and
+ end nodes are different.
+ <li>The
+ <code title=dom-Range-commonAncestorContainer>commonAncestorContainer</code>
+ is never either contained or partially contained.
+ <li>If the start node is an ancestor of the end node, the common
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span>
+ will be the start node. Exactly one of its children will be
+ partially contained, and a child will be contained if and only if it
+ precedes the partially contained child. If the end is an ancestor of the
+ start, the opposite holds.
+ <li>If the start node is not an
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+ the end node nor vice
+ versa, the common
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> will
+ be distinct from both of them.
+ Exactly two of its children will be partially contained, and a child will
+ be contained if and only if it lies between those two.
+</ul>
+</div>
+
+<hr>
 
 <dl class=domintro>
  <dt><var title>node</var> = <var title>range</var> . <code title=dom-Range-startContainer>startContainer</code>
