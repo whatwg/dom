@@ -4398,16 +4398,6 @@ it before the anomaly is visible to scripts, following the
 <a href="#range-mutation-rules">range mutation rules</a>.
 <!-- XXX range modify -->
 
-<p>If a term is defined for <a href="#concept-node" title="concept-node">nodes</a>, then
-when applied to a <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>,
-it applies to the <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>'s
-<a href="#concept-node" title="concept-node">node</a>.
-
-<p class="example">The <a href="#concept-tree-root" title="concept-tree-root">root</a> of a
-<a href="#concept-range-bp" title="concept-range-bp">boundary point</a> is the
-<a href="#concept-tree-root" title="concept-tree-root">root</a> of its
-<a href="#concept-node" title="concept-node">node</a>.
-
 <p>If two <a href="#concept-range-bp" title="concept-range-bp">boundary points</a>
 (<var title="">node A</var>, <var title="">offset A</var>) and
 (<var title="">node B</var>, <var title="">offset B</var>) have the same
@@ -4465,11 +4455,23 @@ as returned by the following algorithm:
 <dfn id="concept-range-detached" title="concept-range-detached">detached flag</dfn>, which is initially
 unset.
 
+<p>For convenience, <dfn id="concept-range-start-node" title="concept-range-start-node">start node</dfn> is
+<a href="#concept-range-start" title="concept-range-start">start</a>'s
+<a href="#concept-node" title="concept-node">node</a>,
+<dfn id="concept-range-start-offset" title="concept-range-start-offset">start offset</dfn> is
+<a href="#concept-range-start" title="concept-range-start">start</a>'s
+<a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>,
+<dfn id="concept-range-end-node" title="concept-range-end-node">end node</dfn> is
+<a href="#concept-range-end" title="concept-range-end">end</a>'s
+<a href="#concept-node" title="concept-node">node</a>,  and
+<dfn id="concept-range-end-offset" title="concept-range-end-offset">end offset</dfn> is
+<a href="#concept-range-end" title="concept-range-end">end</a>'s
+<a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>.
+
 <p>The <dfn id="concept-range-root" title="concept-range-root">root</dfn> of a
 <a href="#concept-range" title="concept-range">range</a> is the
 <a href="#concept-tree-root" title="concept-tree-root">root</a> of its
-<a href="#concept-range-start" title="concept-range-start">start</a>
-<a href="#concept-node" title="concept-node">node</a>, or null if its
+<a href="#concept-range-start-node" title="concept-range-start-node">start node</a>, or null if its
 <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set.
 <!-- Could have chosen the end as well, doesn't matter. -->
 
@@ -4489,8 +4491,8 @@ is <a href="#concept-range-bp-after" title="concept-range-bp-after">after</a> <v
 in a <a href="#concept-range" title="concept-range">range</a> if it is an
 <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of the
 <a href="#concept-range" title="concept-range">range</a>'s
-<a href="#concept-range-start" title="concept-range-start">start</a> but not its
-<a href="#concept-range-end" title="concept-range-end">end</a>, or vice versa.
+<a href="#concept-range-start-node" title="concept-range-start-node">start node</a> but not its
+<a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, or vice versa.
 
 <div class="note">
  <p>Some facts to better understand these definitions:
@@ -4500,9 +4502,8 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
   <a href="#concept-range" title="concept-range">range</a> consists of all
   <a href="#contained">contained</a> <a href="#concept-node" title="concept-node">nodes</a>, plus
   possibly some of the contents of the
-  <a href="#concept-range-start" title="concept-range-start">start</a> and
-  <a href="#concept-range-end" title="concept-range-end">end</a>
-  <a href="#concept-node" title="concept-node">nodes</a> if those are
+  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> and
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> if those are
   <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code>
   <a href="#concept-node" title="concept-node">nodes</a>.
 
@@ -4521,48 +4522,47 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
 
   <li><p>The first <a href="#contained">contained</a>
   <a href="#concept-node" title="concept-node">node</a> (if there are any) will always be
-  after the <a href="#concept-range-start" title="concept-range-start">start</a>
-  <a href="#concept-node" title="concept-node">node</a>, and the last
-  <a href="#contained">contained</a> <a href="#concept-node" title="concept-node">node</a> will always be
-  equal to or before the <a href="#concept-range-end" title="concept-range-end">end</a>
-  <a href="#concept-node" title="concept-node">node</a>'s last
+  after the <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>, and the
+  last <a href="#contained">contained</a> <a href="#concept-node" title="concept-node">node</a> will
+  always be equal to or before the
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>'s last
   <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a>.
 
-  <li><p>The <a href="#concept-range-start" title="concept-range-start">start</a> and
-  <a href="#concept-range-end" title="concept-range-end">end</a>
-  <a href="#concept-node" title="concept-node">nodes</a> of a
+  <li><p>The <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> and
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> of a
   <a href="#concept-range" title="concept-range">range</a> are never <a href="#contained">contained</a>
   within it.
 
   <li><p>There exists some partially contained
   <a href="#concept-node" title="concept-node">node</a> if and only if the
-  <a href="#concept-range-start" title="concept-range-start">start</a> and
-  <a href="#concept-range-end" title="concept-range-end">end</a>
-  <a href="#concept-node" title="concept-node">nodes</a> are different.
+  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> and
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> are different.
 
   <li><p>The
   <code title="dom-Range-commonAncestorContainer"><a href="#dom-range-commonancestorcontainer">commonAncestorContainer</a></code>
   is never <a href="#contained">contained</a> or <a href="#partially-contained">partially contained</a>.
 
-  <li>If the <a href="#concept-range-start" title="concept-range-start">start</a> is an
+  <li>If the <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is an
   <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of the
-  <a href="#concept-range-end" title="concept-range-end">end</a>, the common
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, the common
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> will
-  be the <a href="#concept-range-start" title="concept-range-start">start</a>
-  <a href="#concept-node" title="concept-node">node</a>. Exactly one of its
-  <a href="#concept-tree-child" title="concept-tree-child">children</a> will be
+  be the <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>. Exactly one
+  of its <a href="#concept-tree-child" title="concept-tree-child">children</a> will be
   <a href="#partially-contained">partially contained</a>, and a
   <a href="#concept-tree-child" title="concept-tree-child">child</a> will be <a href="#contained">contained</a>
   if and only if it <a href="#concept-tree-preceding" title="concept-tree-preceding">precedes</a> the
   <a href="#partially-contained">partially contained</a>
   <a href="#concept-tree-child" title="concept-tree-child">child</a>. If the
-  <a href="#concept-range-end" title="concept-range-end">end</a> is an
+  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is an
   <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of the
-  <a href="#concept-range-start" title="concept-range-start">start</a>, the opposite holds.
+  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>, the opposite
+  holds.
 
-  <li><p>If the <a href="#concept-range-start" title="concept-range-start">start</a> is not an
+  <li><p>If the <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+  not an
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  the <a href="#concept-range-end" title="concept-range-end">end</a>, nor vice versa, the common
+  the <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, nor vice versa,
+  the common
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> will
   be distinct from both of them. Exactly two of its
   <a href="#concept-tree-child" title="concept-tree-child">children</a> will be
@@ -4577,23 +4577,19 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
 <dl class="domintro">
  <dt><var title="">node</var> = <var title="">range</var> . <code title="dom-Range-startContainer"><a href="#dom-range-startcontainer">startContainer</a></code>
  <dd><p>Returns <var title="">range</var>'s
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <dt><var title="">offset</var> = <var title="">range</var> . <code title="dom-Range-startOffset"><a href="#dom-range-startoffset">startOffset</a></code>
  <dd><p>Returns <var title="">range</var>'s
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>.
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>.
 
  <dt><var title="">node</var> = <var title="">range</var> . <code title="dom-Range-endContainer"><a href="#dom-range-endcontainer">endContainer</a></code>
  <dd><p>Returns <var title="">range</var>'s
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>.
 
  <dt><var title="">offset</var> = <var title="">range</var> . <code title="dom-Range-endOffset"><a href="#dom-range-endoffset">endOffset</a></code>
  <dd><p>Returns <var title="">range</var>'s
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>.
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>.
 
  <dt><var title="">collapsed</var> = <var title="">range</var> . <code title="dom-Range-collapsed"><a href="#dom-range-collapsed">collapsed</a></code>
  <dd><p>Returns true if <var title="">range</var>'s
@@ -4604,37 +4600,38 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
  <dd><p>Returns the <a href="#concept-node" title="concept-node">node</a>, furthest away from
  the <a href="#concept-document" title="concept-document">document</a>, that is an
  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of both
- <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> and
- <a href="#concept-range-end" title="concept-range-end">end</a>.
+ <var title="">range</var>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> and
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>.
 </dl>
 
 <p>The <dfn id="dom-range-startcontainer" title="dom-Range-startContainer"><code>startContainer</code></dfn>
-attribute must return the <a href="#concept-range-start" title="concept-range-start">start</a>
-<a href="#concept-node" title="concept-node">node</a>, unless the
+attribute must return the
+<a href="#concept-range-start-node" title="concept-range-start-node">start node</a>, unless the
 <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, in which
 case an
 <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
 exception must be thrown.
 
 <p>The <dfn id="dom-range-startoffset" title="dom-Range-startOffset"><code>startOffset</code></dfn>
-attribute must return the <a href="#concept-range-start" title="concept-range-start">start</a>
-<var title="concept-range-bp-offset"><a href="#concept-range-bp-offset">offset</a></var>, unless the
+attribute must return the
+<a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, unless the
 <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, in which
 case an
 <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
 exception must be thrown.
 
 <p>The <dfn id="dom-range-endcontainer" title="dom-Range-endContainer"><code>endContainer</code></dfn>
-attribute must return the <a href="#concept-range-end" title="concept-range-end">end</a>
-<var title="concept-node"><a href="#concept-node">node</a></var>, unless the
+attribute must return the
+<a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, unless the
 <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, in which
 case an
 <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
 exception must be thrown.
 
 <p>The <dfn id="dom-range-endoffset" title="dom-Range-endOffset"><code>endOffset</code></dfn>
-attribute must return the <a href="#concept-range-end" title="concept-range-end">end</a>
-<var title="concept-range-bp-offset"><a href="#concept-range-bp-offset">offset</a></var>, unless the
+attribute must return the
+<a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, unless the
 <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set, in which
 case an
 <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
@@ -4659,12 +4656,13 @@ attribute must run these steps:
  exception and terminate these steps.
 
  <li><p>Let <var title="">container</var> be
- <a href="#concept-range-start" title="concept-range-start">start</a>.
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <li><p>While <var title="">container</var> is not an
  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
- <a href="#concept-range-end" title="concept-range-end">end</a>, let <var title="">container</var> be
- <var title="">container</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, let
+ <var title="">container</var> be <var title="">container</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>Return <var title="">container</var>.
 </ol>
@@ -5009,10 +5007,10 @@ method must run these steps:
  <var title="">original start offset</var>, <var title="">original end node</var>,
  and <var title="">original end offset</var> be the
  <a href="#context-object">context object</a>'s
- <a href="#concept-range-start" title="concept-range-start">start</a> and
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">nodes</a> and
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offsets</a>, respectively.
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, respectively.
 
  <li><p>If <var title="">original start node</var> and
  <var title="">original end node</var> are the same, and they are a
@@ -5095,8 +5093,8 @@ must run these steps:
  <li><p>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
  whose <a href="#concept-node-document" title="concept-node-document">node document</a> is the same as
  the <a href="#concept-node-document" title="concept-node-document">node document</a> of the
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> equals
  <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">frag</var>, and
@@ -5111,10 +5109,11 @@ must run these steps:
  <li><p>Let <var title="">original start node</var>,
  <var title="">original start offset</var>, <var title="">original end node</var>,
  and <var title="">original end offset</var> be the
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
- and <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">nodes</a> and
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offsets</a>, respectively.
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, respectively.
 
  <li>
   <p>If <var title="">original start node</var> equals
@@ -5362,8 +5361,8 @@ method must run these steps:
  <li><p>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
  whose <a href="#concept-node-document" title="concept-node-document">node document</a> is the same as
  the <a href="#concept-node-document" title="concept-node-document">node document</a> of the
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> equals
  <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">frag</var>, and
@@ -5378,10 +5377,11 @@ method must run these steps:
  <li><p>Let <var title="">original start node</var>,
  <var title="">original start offset</var>, <var title="">original end node</var>,
  and <var title="">original end offset</var> be the
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
- and <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">nodes</a> and
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offsets</a>, respectively.
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, respectively.
 
  <li>
   <p>If <var title="">original start node</var> equals
@@ -5598,9 +5598,9 @@ to be changed to match them.
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> is a <code><a href="#text">Text</a></code> or
- <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a> and its
+ <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
+ <code><a href="#text">Text</a></code> or <code><a href="#comment">Comment</a></code>
+ <a href="#concept-node" title="concept-node">node</a> and its
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null, throw an
  <code title="dom-DOMException-HIERARCHY_REQUEST_ERR"><a href="#dom-domexception-hierarchy_request_err">HIERARCHY_REQUEST_ERR</a></code>
  exception and terminate these steps.
@@ -5623,32 +5623,28 @@ to be changed to match them.
 
   IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
   with what all other browsers do. -->
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> is a <code><a href="#text">Text</a></code>
- <a href="#concept-node" title="concept-node">node</a>, run
+ <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
+ <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>, run
  <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code> on it with the <a href="#context-object">context
-  object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a> <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> as its argument, and let
+  object</a>'s <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>
+  as its argument, and let
   <var title="">reference node</var> be the result.
 
- <li><p>Otherwise, if <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> is a <code><a href="#comment">Comment</a></code>
- <a href="#concept-node" title="concept-node">node</a>, let <var title="">reference node</var>
- be the <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <li><p>Otherwise, if <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is a <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>, let
+ <var title="">reference node</var> be the
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <li><p>Otherwise, let <var title="">reference node</var> be the
  <a href="#concept-tree-child" title="concept-tree-child">child</a> of
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> whose
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> whose
  <a href="#concept-tree-index" title="concept-tree-index">index</a> is
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>, or null if there is no
- such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, or null if
+ there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
 
  <li><p>If <var title="">reference node</var> is null, let
  <var title="">parent node</var> be
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a>.
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
 
  <li><p>Otherwise, let <var title="">parent node</var> be the
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of
@@ -5897,25 +5893,20 @@ steps:
 
  <li><p>Let <var title="">s</var> be the empty string.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> equals
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">node</a>, and they are a
+ <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> equals
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and it is a
  <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>, return the
  substring of that <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>'s <a href="#concept-cd-data" title="concept-CD-data">data</a> beginning at
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> and ending at
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>, and terminate these
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> and ending at
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, and terminate these
  steps.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-node" title="concept-node">node</a> is a <code><a href="#text">Text</a></code>
- <a href="#concept-node" title="concept-node">node</a>, append to <var title="">s</var> the
- substring of that <a href="#concept-node" title="concept-node">node</a>'s
+ <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
+ <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>, append to
+ <var title="">s</var> the substring of that
+ <a href="#concept-node" title="concept-node">node</a>'s
  <a href="#concept-cd-data" title="concept-CD-data">data</a> from the
- <a href="#concept-range-start" title="concept-range-start">start</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> until the end.
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> until the end.
 
  <li><p>Append to <var title="">s</var> the concatenation, in
  <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, of the
@@ -5923,13 +5914,12 @@ steps:
  <a href="#concept-node" title="concept-node">nodes</a> that are <a href="#contained">contained</a> in
  the <a href="#context-object">context object</a>.
 
- <li><p>If <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-node" title="concept-node">node</a> is a <code><a href="#text">Text</a></code>
- <a href="#concept-node" title="concept-node">node</a>, append to <var title="">s</var> the
- substring of that <a href="#concept-node" title="concept-node">node</a>'s
+ <li><p>If <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is a
+ <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>, append to
+ <var title="">s</var> the substring of that
+ <a href="#concept-node" title="concept-node">node</a>'s
  <a href="#concept-cd-data" title="concept-CD-data">data</a> from its start until the
- <a href="#concept-range-end" title="concept-range-end">end</a>
- <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>.
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>.
 
  <li><p>Return <var title="">s</var>.
 </ol>
