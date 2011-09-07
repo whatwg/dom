@@ -203,6 +203,9 @@ follows:</p>
  In the "would be nice" department:
 
  * Section explaining how to define new events
+
+ * Alternative way of doing concept-node-insert and concept-node-remove for
+   ranges: http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2011-March/031053.html
 -->
 
 
@@ -1841,6 +1844,29 @@ into a <var title>parent</var> before a <var title>child</var>, run these
 steps:
 
 <ol>
+ <li><p>Let <var title>count</var> be the number of
+ <span title=concept-tree-child>children</span> of <var title>node</var> if
+ it is a <code>DocumentFragment</code> <span title=concept-node>node</span>,
+ or one otherwise.
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>child</var>'s <span title=concept-tree-index>index</span>,
+ increase its <span title=concept-range-start-offset>start offset</span> by
+ <var title>count</var>.
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-end-node>end node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-end-offset>end offset</span> is greater than
+ <var title>child</var>'s <span title=concept-tree-index>index</span>,
+ increase its <span title=concept-range-end-offset>end offset</span> by
+ <var title>count</var>.
+
  <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
  <span title=concept-node>node</span>, insert its
  <span title=concept-tree-child>children</span> (preserving
@@ -2004,6 +2030,41 @@ method must <span title=concept-node-replace>replace</span>
 from a <var title>parent</var>, run these steps:
 
 <ol>
+ <li><p>Let <var title>index</var> be <var title>node</var>'s
+ <span title=concept-tree-index>index</span>.
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-start-node>start node</span> is a
+ <span title=concept-tree-descendant>descendant</span> of
+ <var title>parent</var>, set its
+ <span title=concept-range-start>start</span> to
+ (<var title>parent</var>, <var title>index</var>).
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-end-node>end node</span> is a
+ <span title=concept-tree-descendant>descendant</span> of
+ <var title>parent</var>, set its
+ <span title=concept-range-end>end</span> to
+ (<var title>parent</var>, <var title>index</var>).
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>index</var>, decrease its
+ <span title=concept-range-start-offset>start offset</span> by one.
+
+ <li><p>For each <span title=concept-range>range</span> in the same
+ <span title=concept-tree>tree</span> as <var title>parent</var> whose
+ <span title=concept-range-end-node>end node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-end-offset>end offset</span> is greater than
+ <var title>index</var>, decrease its
+ <span title=concept-range-end-offset>end offset</span> by one.
+
  <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 </ol>
 
@@ -6126,94 +6187,6 @@ the user-visible selection.
   the spec will describe browser behavior correctly.
   -->
 
-  <dt>When a <span title=concept-node>node</span> is
-  inserted into a new <span
-  title=concept-tree-parent>parent</span>
-
-  <dd>User agents must run these steps whenever a <span
-  title=concept-node>node</span>'s <span
-  title=concept-tree-parent>parent</span> changes from
-  null to not null. Occasions when user agents must run
-  these steps include (but are not necessarily limited to) when a script or
-  specification invokes <code
-  title=dom-Node-insertBefore>insertBefore()</code>, <code
-  title=dom-Node-replaceChild>replaceChild()</code>,
-  <code
-  title=dom-Node-appendChild>appendChild()</code>, or <code
-  title=dom-Text-splitText>splitText()</code>, or sets
-  the <code
-  title=dom-Node-textContent>textContent</code> property of a <code
- >DocumentFragment</code> or <code
- >Element</code> to a nonempty string, or when a
-  specification otherwise says to insert a <span
-  title=concept-node>node</span>.
-
-  <p class=XXX>This (and node removals) intends to match DOM 2 Range and
-  current browser behavior. I've thought of a possibly <a
-  href=http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2011-March/031053.html>better
-  system</a>, but Boris Zbarsky points out that it would be pretty hairy to
-  specify as long as DOM mutation events exist, so I'm putting it off.
-
-  <ol>
-    <li>For each <span title=concept-range-bp>boundary point</span> whose
-    <span title=concept-node>node</span> is the new <span
-    title=concept-tree-parent>parent</span> of the
-    affected <span title=concept-node>node</span> and
-    whose <span title=concept-range-bp-offset>offset</span> is greater
-    than the new <span title=concept-tree-index>index</span> of the affected <span
-    title=concept-node>node</span>, add one to the
-    <span title=concept-range-bp>boundary point</span>'s <span
-    title=concept-range-bp-offset>offset</span>.
-  </ol>
-
-  <dt>When a <span title=concept-node>node</span> is
-  removed from its <span
-  title=concept-tree-parent>parent</span>
-
-  <dd>User agents must run these steps whenever a <span
-  title=concept-node>node</span>'s <span
-  title=concept-tree-parent>parent</span> changes from
-  not null to null. Occasions when user agents must run
-  these steps include (but are not necessarily limited to) when a script or
-  specification invokes <code
-  title=dom-Node-insertBefore>insertBefore()</code>, <code
-  title=dom-Node-replaceChild>replaceChild()</code>,
-  <code
-  title=dom-Node-removeChild>removeChild()</code>, <code
-  title=dom-Node-appendChild>appendChild()</code>,
-  <code
-  title=dom-Document-adoptNode>adoptNode()</code>, or <code
-
-  title=dom-Text-replaceWholeText>replaceWholeText()</code>, or sets the <code
-  title=dom-Node-textContent>textContent</code>
-  property of a <code>DocumentFragment</code> or <code
- >Element</code>, or when a specification otherwise
-  says to remove a <span
-  title=concept-node>node</span>.
-
-  <ol>
-    <li>Let <var title>removed node</var> be the removed <span
-    title=concept-node>node</span>, let <var title>old
-    parent</var> be the (non-null) <span
-    title=concept-tree-parent>parent</span> that <var title>removed node</var>
-    was just removed from, and let <var title>old index</var> be the <span
-    title=concept-tree-index>index</span> that <var title>removed node</var> had
-    before it was removed.
-
-    <li>For each <span title=concept-range-bp>boundary point</span> whose
-    <span title=concept-node>node</span> is <var title>removed
-    node</var> or a <span
-    title=concept-tree-descendant>descendant</span> of it, set the <span
-    title=concept-range-bp>boundary point</span> to (<var title>old
-    parent</var>, <var title>old index</var>).
-
-    <li>For each <span title=concept-range-bp>boundary point</span> whose
-    <span title=concept-node>node</span> is <var title>old
-    parent</var> and whose <span
-    title=concept-range-bp-offset>offset</span> is greater than <var
-    title>old index</var>, subtract one from its <span
-    title=concept-range-bp-offset>offset</span>.
-  </ol>
 </dl>
 
 
