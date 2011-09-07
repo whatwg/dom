@@ -101,8 +101,7 @@ documents.
    <li><a href="#interface-comment"><span class="secno">5.10 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#ranges"><span class="secno">6 </span>Ranges</a>
   <ol>
-   <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></li>
-   <li><a href="#range-behavior-under-document-mutation"><span class="secno">6.2 </span>Range behavior under document mutation</a></ol></li>
+   <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></ol></li>
  <li><a href="#traversal"><span class="secno">7 </span>Traversal</a>
   <ol>
    <li><a href="#interface-nodeiterator"><span class="secno">7.1 </span>Interface <code>NodeIterator</code></a></li>
@@ -4280,8 +4279,55 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
   <a href="#concept-cd-data" title="concept-CD-data">data</a> to <var title="">new data</var>.
 
   <li><p>Let <var title="">parent</var> be the <var title="">node</var>'s
-  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>. If <var title="">parent</var>
-  is null, return <var title="">new node</var> and terminate these steps.
+  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+ <li>
+  <p>If <var title="">parent</var> is null, run these substeps:</p>
+
+  <ol>
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+   <var title="">node</var>,
+   <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than or equal to <var title="">offset</var>, and
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+   <var title="">offset</var>, set both its
+   <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> and
+   <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> to
+   <var title="">new node</var> and decrease its
+   <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> and
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
+   <var title="">offset</var>.
+
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+   <var title="">node</var> and
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+   <var title="">offset</var>, set its
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is
+   <var title="">offset</var>.
+
+   <li><p>Return <var title="">new node</var> and terminate these steps.</li>
+  </ol>
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+ <var title="">node</var> and
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
+ <var title="">offset</var>, set its
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> to
+ <var title="">new node</var> and decrease its
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
+ <var title="">offset</var>.
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+ <var title="">node</var> and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+ <var title="">offset</var>, set its
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> to
+ <var title="">new node</var> and decrease its
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
+ <var title="">offset</var>.
 
   <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a>
   <var title="">new node</var> into <var title="">parent</var> before
@@ -4452,15 +4498,14 @@ integer.
 <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> will be between zero and
 the <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>'s
 <a href="#concept-node" title="concept-node">node</a>
-<a href="#concept-node-length" title="concept-node-length">length</a>, inclusive. If a DOM mutation
-causes a <a href="#concept-range" title="concept-range">range</a>'s
-<a href="#concept-range-bp" title="concept-range-bp">boundary point</a>'s
-<a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> to be greater than its
-<a href="#concept-node" title="concept-node">node</a>
-<a href="#concept-node-length" title="concept-node-length">length</a>, the user agent will correct
-it before the anomaly is visible to scripts, following the
-<a href="#range-mutation-rules">range mutation rules</a>.
-<!-- XXX range modify -->
+<a href="#concept-node-length" title="concept-node-length">length</a>, inclusive. Algorithms that
+modify a <a href="#concept-tree" title="concept-tree">tree</a> (in particular the
+<a href="#concept-node-insert" title="concept-node-insert">insert</a>,
+<a href="#concept-node-remove" title="concept-node-remove">remove</a>,
+<a href="#concept-cd-replace" title="concept-CD-replace">replace data</a>, and
+<a href="#concept-text-split" title="concept-Text-split">split</a> algorithms) also modify
+<a href="#concept-range" title="concept-range">ranges</a> associated with that
+<a href="#concept-tree" title="concept-tree">tree</a>.
 
 <p>If two <a href="#concept-range-bp" title="concept-range-bp">boundary points</a>
 (<var title="">node A</var>, <var title="">offset A</var>) and
@@ -6001,85 +6046,6 @@ in various other specifications:
  <a class="informative" data-anolis-ref="" href="#refsCSSOMVIEW">[CSSOMVIEW]</a>
 </ul>
 </div>
-
-
-<h3 id="range-behavior-under-document-mutation"><span class="secno">6.2 </span>Range behavior under document mutation</h3>
-
-<p class="XXX">This section needs to be integrated throughout the nodes
-section rather than be standalone.
-
-<p>When certain changes occur in the DOM, all existing <code><a href="#range">Range</a></code>s must
-be modified according to the <dfn id="range-mutation-rules">range mutation rules</dfn> in this section,
-as applicable. The stated
-modifications must mutate the <code><a href="#range">Range</a></code> in-place, so that all scripts
-holding references to the <code><a href="#range">Range</a></code> must immediately have access to
-the new version instead of the old version, and any <code>Selection</code>
-containing the <code><a href="#range">Range</a></code> must be immediately updated.
-<code>Selection</code> updates due to <code><a href="#range">Range</a></code> changes must be
-reflected both in the <code>Selection</code> objects visible to scripts, and in
-the user-visible selection.
-
-<dl class="switch">
-  <dt>When the <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code> method is called on a <code><a href="#text">Text</a></code> node
-
-  <dd>User agents must run these steps whenever they execute <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText()</a></code>, as
-  though they were written in the specification for that method after all other
-  steps, but before the method returns. In particular, the steps must not be
-  executed if the method threw an exception, but must be executed before any
-  return, if the method implementation can return from multiple points.
-
-  <p class="note">Thus they must be executed after following the range mutation
-  rules for any changes to data or insertions that the method caused.
-
-  <p class="XXX">What if a range ends in the text node's parent, immediately
-  after the text node?  Currently the spec says it should stay where it is, so
-  it's before the newly-created next sibling, and browsers all match that.
-  However, it makes more sense to go after. Is there any justification for
-  having another special case beyond "it makes more sense"?
-
-  <!-- Firefox 4.0 and Opera 11 seem to behave like the DOM Level 2 Range spec
-  implies, and don't special-case splitText(). Thus if you have a Range ending
-  two characters into "Abc", and splitText(1) it, the Range ends one character
-  into "A". Chrome 11 dev behaves much more nicely, and ends one character
-  into "bc", so it's still at the same logical place. IE 9 appears to end two
-  characters into "bc", which makes no sense from any perspective. I follow
-  WebKit here, which to be honest I probably would have done even if no one
-  actually did it, since it makes the most sense. In particular, if not for
-  the special case here, I'd have to add at least one special case to
-  execCommand(), and while we're adding special cases we may as well at least
-  make them a bit less special. -->
-  <ol>
-    <li>Let <var title="">old node</var> be the <code><a href="#text">Text</a></code> node that the method was called on,
-    let <var title="">offset</var> be the argument to the method, and let <var title="">new node</var> be the <code><a href="#text">Text</a></code> node
-    that the method returned.
-
-    <!--
-    Tricky case: what if the node was detached?  Then you can't have the range
-    span the two nodes. Firefox 4.0 and Opera 11 don't allow this situation to
-    arise, because Gecko always stays on the old node and Opera doesn't let you
-    make ranges on detached nodes in the first place. IE 9 and Chrome 11 dev
-    both produce entirely bogus results, respectively having the range's start
-    and end nodes not have a common ancestor, and having an offset that's
-    larger than the node's length.
-
-    I just don't provide any special case here if the parent is null, so the
-    range clamps in all cases.
-    -->
-    <li>If <var title="">old node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null, then for every <a href="#concept-range-bp" title="concept-range-bp">boundary point</a> whose <a href="#concept-node" title="concept-node">node</a> is <var title="">old node</var>:
-
-    <ol>
-      <li>Let <var title="">original offset</var> equal what the <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>'s <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> was <em>before</em>
-      this <code title="dom-Text-splitText"><a href="#dom-text-splittext">splitText</a></code> invocation <a href="#concept-cd-replace" title="concept-cd-replace">replaced the
-      data</a> of <var title="">node</var>. <!-- Yay comefrom. -->
-
-      <li>If <var title="">original offset</var> is greater than <var title="">offset</var>, set the <a href="#concept-range-bp" title="concept-range-bp">boundary
-      point</a>'s <a href="#concept-node" title="concept-node">node</a> to
-      <var title="">new node</var> and its <a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a> to <var title="">original
-      offset</var> minus <var title="">offset</var>.
-    </ol>
-  </ol>
-</dl>
-
 
 
 
