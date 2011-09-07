@@ -4158,9 +4158,80 @@ called <dfn title=concept-CD-data>data</dfn>.
  <var title>count</var>
  <span data-anolis-spec=webidl title="code unit">code units</span> from
  <var title>node</var>'s <span title=concept-CD-data>data</span>.
+
+ <!-- ranges -->
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>node</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>offset</var> but less than or equal to <var title>offset</var>
+ plus <var title>count</var>, set its
+ <span title=concept-range-start-offset>start offset</span> to
+ <var title>offset</var>.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-end-node>end node</span> is
+ <var title>node</var> and
+ <span title=concept-range-end-offset>end offset</span> is greater than
+ <var title>offset</var> but less than or equal to <var title>offset</var>
+ plus <var title>count</var>, set its
+ <span title=concept-range-end-offset>end offset</span> to
+ <var title>offset</var>.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>node</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>offset</var> plus <var title>count</var>, increase its
+ <span title=concept-range-start-offset>start offset</span> by the number of
+ <span data-anolis-spec=webidl title="code unit">code units</span> in
+ <var title>data</var>, then decrease it by <var title>count</var>.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>node</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>offset</var> plus <var title>count</var>, increase its
+ <span title=concept-range-start-offset>start offset</span> by the number of
+ <span data-anolis-spec=webidl title="code unit">code units</span> in
+ <var title>data</var>, then decrease it by <var title>count</var>.
 </ol>
-<!-- delete after insert for better cursor positioning with editing
-     http://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
+<!-- delete happens after insert for better cursor positioning with editing
+http://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
+
+<!-- If you set a node's data to a new value (e.g., using the data
+attribute):
+
+IE 9: Acts like the node was deleted and recreated, moves the boundary
+points up to the parent
+Firefox 4: Resets the offset to 0, always
+Chrome 11 dev: Resets the offset to 0, except it does nothing if the new
+data is the same as the old data
+Opera 11: Sets a start offset to 0 and an end offset to the end of the
+data, always
+
+The spec originally followed WebKit, since it seemed to make the most sense.
+Opera's approach of setting end offsets to the length of the new data
+arguably makes more sense, but that's debatable, and it's greatly
+outnumbered. However, after some feedback by bzbarsky that checking for
+equality is expensive, I removed the special case and matched Firefox:
+
+http://www.w3.org/Bugs/Public/show_bug.cgi?id=13250
+
+Authors who want WebKit-like behavior can always use replaceData() instead.
+
+XXX replaceData is the same as setting data these days -->
+
+<!-- XXX replaceWholeText() acts just like removing the sibling nodes and
+setting the data of the node you call it on, in Firefox 4.0 and Chrome 11
+dev and Opera 11. Note this disagrees with current DOM Core description of
+how replaceWholeText() works, see bug:
+
+http://www.w3.org/Bugs/Public/show_bug.cgi?id=12389
+
+With that bug fixed, the spec will describe browser behavior correctly.
+-->
+
 
 <p>To <dfn title=concept-CD-substring>substring data</dfn> with offset
 <var title>offset</var> and count <var title>count</var>, run these steps:
@@ -6116,74 +6187,6 @@ the user-visible selection.
       offset</var> minus <var title>offset</var>.
     </ol>
   </ol>
-
-  <dt>When something <span
-  title=concept-cd-replace>replaces data</span> of a <code
- >CharacterData</code> node
-
-  <dd>User agents must run these steps whenever they <span
-  title=concept-cd-replace>replace data</span> of a
-  <code>CharacterData</code> node, as though they were
-  written in the specification for that algorithm after all other steps. In
-  particular, the steps must not be executed if the algorithm threw an
-  exception.
-
-  <ol>
-    <li>Let <var title>node</var> be the <code
-   >CharacterData</code> node that the algorithm was
-    invoked on, and let <var title>offset</var>, <var title>count</var>, and
-    <var title>data</var> be as in the <span
-    title=concept-cd-replace>replace data</span> algorithm.
-
-    <li>For every <span title=concept-range-bp>boundary point</span>
-    whose <span title=concept-node>node</span> is <var
-    title>node</var>, and whose <span
-    title=concept-range-bp-offset>offset</span> is greater than <var
-    title>offset</var> but less than or equal to <var title>offset</var> plus
-    <var title>count</var>, set its <span
-    title=concept-range-bp-offset>offset</span> to <var
-    title>offset</var>.
-
-    <li>For every <span title=concept-range-bp>boundary point</span>
-    whose <span title=concept-node>node</span> is <var
-    title>node</var>, and whose <span
-    title=concept-range-bp-offset>offset</span> is greater than <var
-    title>offset</var> plus <var title>count</var>, add the length of <var
-    title>data</var> to its <span
-    title=concept-range-bp-offset>offset</span>, then subtract <var
-    title>count</var> from it.
-  </ol>
-
-  <!--
-  If you set a node's data to a new value (e.g., using the data attribute):
-
-  IE 9: Acts like the node was deleted and recreated, moves the boundary points
-    up to the parent
-  Firefox 4: Resets the offset to 0, always
-  Chrome 11 dev: Resets the offset to 0, except it does nothing if the new data
-    is the same as the old data
-  Opera 11: Sets a start offset to 0 and an end offset to the end of the data,
-    always
-
-  The spec originally followed WebKit, since it seemed to make the most sense.
-  Opera's approach of setting end offsets to the length of the new data
-  arguably makes more sense, but that's debatable, and it's greatly
-  outnumbered. However, after some feedback by bzbarsky that checking for
-  equality is expensive, I removed the special case and matched Firefox:
-
-  http://www.w3.org/Bugs/Public/show_bug.cgi?id=13250
-
-  Authors who want WebKit-like behavior can always use replaceData() instead.
-  -->
-
-  <!-- replaceWholeText() acts just like removing the sibling nodes and setting
-  the data of the node you call it on, in Firefox 4.0 and Chrome 11 dev and
-  Opera 11. Note this disagrees with current DOM Core description of how
-  replaceWholeText() works, see bug:
-  <http://www.w3.org/Bugs/Public/show_bug.cgi?id=12389>. With that bug fixed,
-  the spec will describe browser behavior correctly.
-  -->
-
 </dl>
 
 
