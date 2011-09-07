@@ -4222,16 +4222,6 @@ Authors who want WebKit-like behavior can always use replaceData() instead.
 
 XXX replaceData is the same as setting data these days -->
 
-<!-- XXX replaceWholeText() acts just like removing the sibling nodes and
-setting the data of the node you call it on, in Firefox 4.0 and Chrome 11
-dev and Opera 11. Note this disagrees with current DOM Core description of
-how replaceWholeText() works, see bug:
-
-http://www.w3.org/Bugs/Public/show_bug.cgi?id=12389
-
-With that bug fixed, the spec will describe browser behavior correctly.
--->
-
 
 <p>To <dfn title=concept-CD-substring>substring data</dfn> with offset
 <var title>offset</var> and count <var title>count</var>, run these steps:
@@ -4372,18 +4362,26 @@ method must run these steps:
 
 <ol>
  <li><p>Remove the <span>contiguous <code>Text</code> nodes</span> of the
- <span>context object</span>.
- <li><p>If <var title>data</var> is not the empty string, insert a new
- <code>Text</code> node whose <span title=concept-CD-data>data</span> is
- <var title>data</var> at the place of the removed nodes, return the new
- <code>Text</code> node, and then terminate these steps.
+ <span>context object</span>, in
+ <span title=concept-tree-order>tree order</span>, except for the
+ <span>context object</span> itself if <var title>data</var> is not the
+ empty string.
+ <!-- XXX concept-node-remove -->
+
+ <li><p>If <var title>data</var> is not the empty string,
+ <span title=concept-CD-replace>replace data</span> with node
+ <span>context object</span>, offset 0, count
+ <code title=dom-CharacterData-length>length</code> attribute value, and
+ data <var title>data</var>, return the <span>context object</span>, and
+ then terminate these steps.
+
  <li><p>Return null.
 </ol>
 
 <p class=XXX><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">Can we remove replaceWholeText() in favor of making wholeText no longer readonly? Do we even need this wholeText business?</a>
 
-<!-- isElementContentWhitespace: Mozilla returns true if the node contains only
-space, tab, newline -->
+<!-- isElementContentWhitespace: Mozilla returns true if the node contains
+only space, tab, newline -->
 
 
 

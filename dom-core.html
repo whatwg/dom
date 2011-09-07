@@ -4167,16 +4167,6 @@ Authors who want WebKit-like behavior can always use replaceData() instead.
 
 XXX replaceData is the same as setting data these days -->
 
-<!-- XXX replaceWholeText() acts just like removing the sibling nodes and
-setting the data of the node you call it on, in Firefox 4.0 and Chrome 11
-dev and Opera 11. Note this disagrees with current DOM Core description of
-how replaceWholeText() works, see bug:
-
-http://www.w3.org/Bugs/Public/show_bug.cgi?id=12389
-
-With that bug fixed, the spec will describe browser behavior correctly.
--->
-
 
 <p>To <dfn id="concept-cd-substring" title="concept-CD-substring">substring data</dfn> with offset
 <var title="">offset</var> and count <var title="">count</var>, run these steps:
@@ -4317,18 +4307,26 @@ method must run these steps:
 
 <ol>
  <li><p>Remove the <a href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a> of the
- <a href="#context-object">context object</a>.
- <li><p>If <var title="">data</var> is not the empty string, insert a new
- <code><a href="#text">Text</a></code> node whose <a href="#concept-cd-data" title="concept-CD-data">data</a> is
- <var title="">data</var> at the place of the removed nodes, return the new
- <code><a href="#text">Text</a></code> node, and then terminate these steps.
+ <a href="#context-object">context object</a>, in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, except for the
+ <a href="#context-object">context object</a> itself if <var title="">data</var> is not the
+ empty string.
+ <!-- XXX concept-node-remove -->
+
+ <li><p>If <var title="">data</var> is not the empty string,
+ <a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> with node
+ <a href="#context-object">context object</a>, offset 0, count
+ <code title="dom-CharacterData-length"><a href="#dom-characterdata-length">length</a></code> attribute value, and
+ data <var title="">data</var>, return the <a href="#context-object">context object</a>, and
+ then terminate these steps.
+
  <li><p>Return null.
 </ol>
 
 <p class="XXX"><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13046">Can we remove replaceWholeText() in favor of making wholeText no longer readonly? Do we even need this wholeText business?</a>
 
-<!-- isElementContentWhitespace: Mozilla returns true if the node contains only
-space, tab, newline -->
+<!-- isElementContentWhitespace: Mozilla returns true if the node contains
+only space, tab, newline -->
 
 
 
