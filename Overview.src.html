@@ -4231,11 +4231,12 @@ Authors who want WebKit-like behavior can always use replaceData() instead.
 XXX replaceData is the same as setting data these days -->
 
 
-<p>To <dfn title=concept-CD-substring>substring data</dfn> with offset
-<var title>offset</var> and count <var title>count</var>, run these steps:
+<p>To <dfn title=concept-CD-substring>substring data</dfn> with node
+<var title>node</var>, offset <var title>offset</var>, and count
+<var title>count</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>length</var> be the
+ <li><p>Let <var title>length</var> be <var title>node</var>'s
  <code title=dom-CharacterData-length>length</code> attribute value.
 
  <li><p>If <var title>offset</var> is greater than <var title>length</var>,
@@ -4247,14 +4248,16 @@ XXX replaceData is the same as setting data these days -->
  <span data-anolis-spec=webidl title="code unit">code units</span> from the
  <var title>offset</var><sup>th</sup>
  <span data-anolis-spec=webidl>code unit</span> to the end of
- <var title>data</var>.
+ <var title>node</var>'s <span title=concept-CD-data>data</span>, and then
+ terminate these steps.
 
  <li><p>Return a string whose value is the
  <span data-anolis-spec=webidl title="code unit">code units</span> from the
  <var title>offset</var><sup>th</sup>
  <span data-anolis-spec=webidl>code unit</span> to the
  <var title>offset</var>+<var title>count</var><sup>th</sup>
- <span data-anolis-spec=webidl>code unit</span> in <var title>data</var>.
+ <span data-anolis-spec=webidl>code unit</span> in <var title>node</var>'s
+ <span title=concept-CD-data>data</span>.
 </ol>
 
 <p>The <dfn title=dom-CharacterData-data><code>data</code></dfn> attribute
@@ -4271,8 +4274,9 @@ attribute must return the number of
 
 <p>The
 <dfn title=dom-CharacterData-substringData><code>substringData(<var title>offset</var>, <var title>count</var>)</code></dfn>
-method must <span title=concept-CD-substring>substring data</span>
-with offset <var title>offset</var> and count <var title>count</var>.
+method must <span title=concept-CD-substring>substring data</span> with node
+<span>context object</span>, offset <var title>offset</var>, and count
+<var title>count</var>.
 
 <p>The
 <dfn title=dom-CharacterData-appendData><code>appendData(<var title>data</var>)</code></dfn>
@@ -4324,11 +4328,12 @@ method must <span title=concept-CD-replace>replace data</span> with node
  <var title>offset</var>.
 
  <li><p>Let <var title>new data</var> be the result of
- <span title=concept-CD-substring>substringing data</span> with offset
- <var title>offset</var> and count <var title>count</var>.
+ <span title=concept-CD-substring>substringing data</span> with node
+ <var title>node</var>, offset <var title>offset</var>, and count
+ <var title>count</var>.
 
  <li><p><span title=concept-CD-replace>Replace data</span> with node
- <var title>node</var> offset <var title>offset</var>, count
+ <var title>node</var>, offset <var title>offset</var>, count
  <var title>count</var>, and data the empty string.
 
  <li><p>Let <var title>new node</var> be a new <code>Text</code>
@@ -5294,12 +5299,13 @@ must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-   <li>Set the data of <var title>clone</var> to the result of calling <code
-
-    title=dom-CharacterData-substringData>substringData(<var title>original
-    start offset</var>, <var title>original end offset</var> &minus; <var
-    title>original start offset</var>)</code> on <var title>original start
-    node</var>.
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original start node</var>, offset
+   <var title>original start offset</var>, and count
+   <var title>original end offset</var> minus
+   <var title>original start offset</var>.
 
    <li><p>Append <var title>clone</var> to <var title>frag</var>.
    <!-- XXX concept-node-append? -->
@@ -5425,12 +5431,14 @@ must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-   <li><p>Set the data of <var title>clone</var> to the result of calling
-   <code title=dom-CharacterData-substringData>substringData()</code> on
-   <var title>original start node</var>, with <var title>original
-    start offset</var> as the first argument and (<span
-    title=concept-node-length>length</span> of <var title>original start
-    node</var> &minus; <var title>original start offset</var>) as the second.
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original start node</var>, offset
+   <var title>original start offset</var>, and count
+   <var title>original start node</var>'s
+   <span title=concept-node-length>length</span> minus
+   <var title>original start offset</var>.
 
    <li><p>Append <var title>clone</var> to <var title>frag</var>.
    <!-- XXX concept-node-append? -->
@@ -5496,11 +5504,11 @@ must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original end node</var>.
 
-    <li>Set the data of <var title>clone</var> to the result of calling <code
-
-    title=dom-CharacterData-substringData>substringData(0, <var title>original
-    end offset</var>)</code> on <var
-    title>original end node</var>.
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original end node</var>, offset 0, and count
+   <var title>original end offset</var>.
 
    <li><p>Append <var title>clone</var> to <var title>frag</var>.
    <!-- XXX concept-node-append? -->
@@ -5590,8 +5598,13 @@ method must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-   <li><p>Set the data of <var title>clone</var> to the result of calling
-   <code title=dom-CharacterData-substringData>substringData(<var title>original start offset</var>, <var title>original end offset</var> &minus; <var title>original start offset</var>)</code> on <var title>original start node</var>.
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original start node</var>, offset
+   <var title>original start offset</var>, and count
+   <var title>original end offset</var> minus
+   <var title>original start offset</var>.
 
    <li><p>Append <var title>clone</var> to <var title>frag</var>.
    <!-- XXX concept-node-append? -->
@@ -5671,17 +5684,18 @@ method must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
-   <li>Set the data of <var title>clone</var> to the result of calling <code
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original start node</var>, offset
+   <var title>original start offset</var>, and count
+   <var title>original start node</var>'s
+   <span title=concept-node-length>length</span> minus
+   <var title>original start offset</var>.
 
-    title=dom-CharacterData-substringData>substringData()</code> on <var
-    title>original start node</var>, with <var title>original
-    start offset</var> as the first argument and (<span
-    title=concept-node-length>length</span> of <var title>original start
-    node</var> &minus; <var title>original start offset</var>) as the second.
-
-  <li><p>Append <var title>clone</var> to <var title>frag</var>.
-  <!-- XXX concept-node-append? -->
- </ol>
+   <li><p>Append <var title>clone</var> to <var title>frag</var>.
+   <!-- XXX concept-node-append? -->
+  </ol>
 
  <li>
   <p>Otherwise, if <var title>first partially contained child</var> is not
@@ -5744,11 +5758,11 @@ method must run these steps:
    <span title=concept-node-clone>clone</span> of
    <var title>original end node</var>.
 
-    <li>Set the data of <var title>clone</var> to the result of calling <code
-
-    title=dom-CharacterData-substringData>substringData(0, <var title>original
-    end offset</var>)</code> on <var
-    title>original end node</var>.
+   <li>Set the <span title=concept-CD-data>data</span> of
+   <var title>clone</var> to the result of
+   <span title=concept-CD-substring>substringing data</span> with node
+   <var title>original end node</var>, offset 0, and count
+   <var title>original end offset</var>.
 
    <li><p>Append <var title>clone</var> to <var title>frag</var>.
    <!-- XXX concept-node-append? -->
