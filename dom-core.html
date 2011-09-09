@@ -1207,9 +1207,9 @@ methods that manipulate the <a href="#concept-tree" title="concept-tree">tree</a
   boolean <a href="#dom-node-issamenode" title="dom-Node-isSameNode">isSameNode</a>(<a href="#node">Node</a>? <var title="">node</var>);
   boolean <a href="#dom-node-isequalnode" title="dom-Node-isEqualNode">isEqualNode</a>(<a href="#node">Node</a>? <var title="">node</var>);
 
-  DOMString <a href="#dom-node-lookupprefix" title="dom-Node-lookupPrefix">lookupPrefix</a>([TreatNullAs=EmptyString] DOMString <var title="">namespace</var>);
+  DOMString <a href="#dom-node-lookupprefix" title="dom-Node-lookupPrefix">lookupPrefix</a>(DOMString? <var title="">namespace</var>);
   DOMString <a href="#dom-node-lookupnamespaceuri" title="dom-Node-lookupNamespaceURI">lookupNamespaceURI</a>(DOMString? <var title="">prefix</var>);
-  boolean <a href="#dom-node-isdefaultnamespace" title="dom-Node-isDefaultNamespace">isDefaultNamespace</a>([TreatNullAs=EmptyString] DOMString <var title="">namespace</var>);<!--
+  boolean <a href="#dom-node-isdefaultnamespace" title="dom-Node-isDefaultNamespace">isDefaultNamespace</a>(DOMString? <var title="">namespace</var>);<!--
   DOMObject getFeature(DOMString feature, DOMString version);
   DOMUserData setUserData(DOMString key, DOMUserData data, UserDataHandler handler);
   DOMUserData getUserData(DOMString key);-->
@@ -2301,7 +2301,7 @@ false otherwise:
 method must run these steps:
 
 <ol>
- <li><p>If <var title="">namespace</var> is the empty string return null.
+ <li><p>If <var title="">namespace</var> is null or the empty string, return null.
 
  <li>
   <p>Otherwise it depends on the <a href="#context-object">context object</a>:
@@ -2340,14 +2340,13 @@ the <a href="#context-object">context object</a> using <var title="">prefix</var
 method must run these steps:
 
 <ol>
+ <li><p>If <var title="">namespace</var> is the empty string, set it to null.
+
  <li><p>Let <var title="">defaultNamespace</var> be the result of running
  <a href="#locate-a-namespace">locate a namespace</a> for the <a href="#context-object">context object</a> using
  null.
 
- <li><p>If <var title="">defaultNamespace</var> is null, set it to the empty
- string.
-
- <li><p>Return true if <var title="">defaultNamespace</var> is
+ <li><p>Return true if <var title="">defaultNamespace</var> is the same as
  <var title="">namespace</var>, or false otherwise.
 </ol>
 
@@ -2368,12 +2367,12 @@ method must run these steps:
   readonly attribute <a href="#documenttype">DocumentType</a>? <a href="#dom-document-doctype" title="dom-Document-doctype">doctype</a>;
   readonly attribute <a href="#element">Element</a>? <a href="#dom-document-documentelement" title="dom-Document-documentElement">documentElement</a>;
   <a href="#nodelist">NodeList</a> <a href="#dom-document-getelementsbytagname" title="dom-Document-getElementsByTagName">getElementsByTagName</a>(DOMString <var title="">qualifiedName</var>);
-  <a href="#nodelist">NodeList</a> <a href="#dom-document-getelementsbytagnamens" title="dom-Document-getElementsByTagNameNS">getElementsByTagNameNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
+  <a href="#nodelist">NodeList</a> <a href="#dom-document-getelementsbytagnamens" title="dom-Document-getElementsByTagNameNS">getElementsByTagNameNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
   <a href="#nodelist">NodeList</a> <a href="#dom-document-getelementsbyclassname" title="dom-Document-getElementsByClassName">getElementsByClassName</a>(DOMString <var title="">classNames</var>);
   <a href="#element">Element</a>? <a href="#dom-document-getelementbyid" title="dom-Document-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
 
   <a href="#element">Element</a> <a href="#dom-document-createelement" title="dom-Document-createElement">createElement</a>([TreatNullAs=EmptyString] DOMString <var title="">localName</var>);
-  <a href="#element">Element</a> <a href="#dom-document-createelementns" title="dom-Document-createElementNS">createElementNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>);
+  <a href="#element">Element</a> <a href="#dom-document-createelementns" title="dom-Document-createElementNS">createElementNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>);
   <a href="#documentfragment">DocumentFragment</a> <a href="#dom-document-createdocumentfragment" title="dom-Document-createDocumentFragment">createDocumentFragment</a>();
   <a href="#text">Text</a> <a href="#dom-document-createtextnode" title="dom-Document-createTextNode">createTextNode</a>(DOMString <var title="">data</var>);
   <a href="#comment">Comment</a> <a href="#dom-document-createcomment" title="dom-Document-createComment">createComment</a>(DOMString <var title="">data</var>);
@@ -2653,24 +2652,38 @@ that are in the <a href="#html-namespace">HTML namespace</a>.
 
 
 <p>The <dfn id="dom-document-getelementsbytagnamens" title="dom-Document-getElementsByTagNameNS"><code>getElementsByTagNameNS(<var title="">namespace</var>, <var title="">localName</var>)</code></dfn> method must run these steps:
+
 <ol>
- <li><p>If both <var title="">namespace</var> and <var title="">localName</var> are
- "<code>*</code>" (U+002A) return a <code><a href="#nodelist">NodeList</a></code> rooted at the
- <a href="#context-object">context object</a>, whose filter matches only <a href="#concept-element" title="concept-element">elements</a>.
+ <li><p>If <var title="">namespace</var> is the empty string, set it to null.
+
+ <li><p>If both <var title="">namespace</var> and <var title="">localName</var>
+ are "<code>*</code>" (U+002A) return a <code><a href="#nodelist">NodeList</a></code> rooted at the
+ <a href="#context-object">context object</a>, whose filter matches only
+ <a href="#concept-element" title="concept-element">elements</a>.
+
  <li><p>Otherwise, if just <var title="">namespace</var> is "<code>*</code>"
  (U+002A), return a <code><a href="#nodelist">NodeList</a></code> rooted at the
- <a href="#context-object">context object</a>, whose filter matches only <a href="#concept-element" title="concept-element">elements</a> whose <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> is
+ <a href="#context-object">context object</a>, whose filter matches only
+ <a href="#concept-element" title="concept-element">elements</a> whose
+ <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> is
  <var title="">localName</var>.
+
  <li><p>Otherwise, if just <var title="">localName</var> is "<code>*</code>"
  (U+002A), return a <code><a href="#nodelist">NodeList</a></code> rooted at the
- <a href="#context-object">context object</a>, whose filter matches only <a href="#concept-element" title="concept-element">elements</a> whose <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> is
+ <a href="#context-object">context object</a>, whose filter matches only
+ <a href="#concept-element" title="concept-element">elements</a> whose
+ <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> is
  <var title="">namespace</var>.
+
  <li><p>Otherwise, return a <code><a href="#nodelist">NodeList</a></code> rooted at the
- <a href="#context-object">context object</a>, whose filter matches only <a href="#concept-element" title="concept-element">elements</a> whose <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> is
+ <a href="#context-object">context object</a>, whose filter matches only
+ <a href="#concept-element" title="concept-element">elements</a> whose
+ <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a> is
  <var title="">namespace</var> and
  <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> is
  <var title="">localName</var>.
 </ol>
+
 <p>When invoked with the same argument the same <code><a href="#nodelist">NodeList</a></code> object may be returned as returned by an earlier call.
 
 
@@ -2853,6 +2866,8 @@ there is none.
 <dfn id="dom-document-createelementns" title="dom-Document-createElementNS"><code>createElementNS(<var title="">namespace</var>, <var title="">qualifiedName</var>)</code></dfn>
 method must run these steps:
 <ol>
+ <li><p>If <var title="">namespace</var> is the empty string, set it to null.
+
  <li><p>If <var title="">qualifiedName</var> does not match the
  <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
@@ -2867,7 +2882,7 @@ method must run these steps:
  let <var title="">prefix</var> be null and <var title="">localName</var> be
  <var title="">qualifiedName</var>.
  <li><p>If <var title="">prefix</var> is not null and
- <var title="">namespace</var> is the empty string, throw a
+ <var title="">namespace</var> is null, throw a
  <code title="dom-DOMException-NAMESPACE_ERR"><a href="#dom-domexception-namespace_err">NAMESPACE_ERR</a></code> exception
  and terminate these steps.
  <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and
@@ -3150,8 +3165,8 @@ with that <a href="#concept-document" title="concept-document">document</a>.
 <pre class="idl">interface <dfn id="domimplementation">DOMImplementation</dfn> {
   boolean <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 
-  <a href="#documenttype">DocumentType</a> <a href="#dom-domimplementation-createdocumenttype" title="dom-DOMImplementation-createDocumentType">createDocumentType</a>([TreatNullAs=EmptyString] DOMString qualifiedName, DOMString publicId, DOMString systemId);
-  <a href="#document">Document</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>([TreatNullAs=EmptyString] DOMString namespace, [TreatNullAs=EmptyString] DOMString qualifiedName, <a href="#documenttype">DocumentType</a>? doctype);<!--
+  <a href="#documenttype">DocumentType</a> <a href="#dom-domimplementation-createdocumenttype" title="dom-DOMImplementation-createDocumentType">createDocumentType</a>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
+  <a href="#document">Document</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, <a href="#documenttype">DocumentType</a>? <var title="">doctype</var>);<!--
   DOMObject getFeature(DOMString feature, DOMString version);-->
   <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(DOMString title);
 };</pre>
@@ -3439,13 +3454,13 @@ otherwise [createAttribute]- ->.
 
   readonly attribute <a href="#attr">Attr</a>[] <a href="#dom-element-attributes" title="dom-Element-attributes">attributes</a>;
   DOMString? <a href="#dom-element-getattribute" title="dom-Element-getAttribute">getAttribute</a>(DOMString <var title="">qualifiedName</var>);
-  DOMString? <a href="#dom-element-getattributens" title="dom-Element-getAttributeNS">getAttributeNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
+  DOMString? <a href="#dom-element-getattributens" title="dom-Element-getAttributeNS">getAttributeNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
   void <a href="#dom-element-setattribute" title="dom-Element-setAttribute">setAttribute</a>(DOMString <var title="">qualifiedName</var>, DOMString <var title="">value</var>);
-  void <a href="#dom-element-setattributens" title="dom-Element-setAttributeNS">setAttributeNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, DOMString <var title="">value</var>);
+  void <a href="#dom-element-setattributens" title="dom-Element-setAttributeNS">setAttributeNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, DOMString <var title="">value</var>);
   void <a href="#dom-element-removeattribute" title="dom-Element-removeAttribute">removeAttribute</a>(DOMString <var title="">qualifiedName</var>);
-  void <a href="#dom-element-removeattributens" title="dom-Element-removeAttributeNS">removeAttributeNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
+  void <a href="#dom-element-removeattributens" title="dom-Element-removeAttributeNS">removeAttributeNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
   boolean <a href="#dom-element-hasattribute" title="dom-Element-hasAttribute">hasAttribute</a>(DOMString <var title="">qualifiedName</var>);
-  boolean <a href="#dom-element-hasattributens" title="dom-Element-hasAttributeNS">hasAttributeNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
+  boolean <a href="#dom-element-hasattributens" title="dom-Element-hasAttributeNS">hasAttributeNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
 <!--
   <span>Attr</span> <span title=dom-Element-getAttributeNode>getAttributeNode</span>(DOMString name);
   <span>Attr</span> <span title=dom-Element-getAttributeNodeNS>getAttributeNodeNS</span>(DOMString namespace, DOMString localName);
@@ -3453,7 +3468,7 @@ otherwise [createAttribute]- ->.
   <span>Attr</span> <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(Attr oldAttr);
 -->
   <a href="#nodelist">NodeList</a> <a href="#dom-element-getelementsbytagname" title="dom-Element-getElementsByTagName">getElementsByTagName</a>(DOMString <var title="">qualifiedName</var>);
-  <a href="#nodelist">NodeList</a> <a href="#dom-element-getelementsbytagnamens" title="dom-Element-getElementsByTagNameNS">getElementsByTagNameNS</a>(DOMString <var title="">namespace</var>, DOMString <var title="">localName</var>);
+  <a href="#nodelist">NodeList</a> <a href="#dom-element-getelementsbytagnamens" title="dom-Element-getElementsByTagNameNS">getElementsByTagNameNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
   <a href="#nodelist">NodeList</a> <a href="#dom-element-getelementsbyclassname" title="dom-Element-getElementsByClassName">getElementsByClassName</a>(DOMString <var title="">classNames</var>);
 
   readonly attribute <a href="#htmlcollection">HTMLCollection</a> <a href="#dom-element-children" title="dom-Element-children">children</a>;
@@ -3669,8 +3684,7 @@ live. I.e. changes to the associated
 <dfn id="dom-element-getattributens" title="dom-Element-getAttributeNS"><code>getAttributeNS(<var title="">namespace</var>, <var title="">localName</var>)</code></dfn>
 method must return the following steps:
 <ol>
-  <li><p>If <var title="">namespace</var> is the empty string, let
-  <var title="">namespace</var> be null.
+  <li><p>If <var title="">namespace</var> is the empty string, set it to null.
 
   <li><p>Return the <a href="#concept-attribute-value" title="concept-attribute-value">value</a> of the
   <a href="#concept-attribute" title="concept-attribute">attribute</a> in the
@@ -3728,6 +3742,8 @@ method must run these steps:
 method must run these steps:
 
 <ol>
+ <li><p>If <var title="">namespace</var> is the empty string, set it to null.
+
  <li><p>If <var title="">qualifiedName</var> does not match the
  <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML, throw an
  <code title="dom-DOMException-INVALID_CHARACTER_ERR"><a href="#dom-domexception-invalid_character_err">INVALID_CHARACTER_ERR</a></code>
@@ -3743,9 +3759,6 @@ method must run these steps:
  before and <var title="">localName</var> the part after. Otherwise, let
  <var title="">prefix</var> be null and <var title="">localName</var> be
  <var title="">qualifiedName</var>.
-
- <li><p>If <var title="">namespace</var> is the empty string, let
- <var title="">namespace</var> be null.
 
  <li><p>If <var title="">prefix</var> is not null and
  <var title="">namespace</var> is null, throw a
@@ -3821,8 +3834,7 @@ method must run these steps:
 <dfn id="dom-element-removeattributens" title="dom-Element-removeAttributeNS"><code>removeAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method must return the following steps:
 <ol>
-  <li><p>If <var title="">namespace</var> is the empty string, let
-  <var title="">namespace</var> be null.
+  <li><p>If <var title="">namespace</var> is the empty string, set it to null.
 
   <li><p>Remove the <a href="#concept-attribute" title="concept-attribute">attribute</a> in the
   <a href="#context-object">context object</a>'s
@@ -3854,8 +3866,7 @@ method must run these steps:
 <dfn id="dom-element-hasattributens" title="dom-Element-hasAttributeNS"><code>hasAttributeNS(<var title="">namespace</var>, <var title="">localName</var>)</code></dfn>
 method must return the following steps:
 <ol>
-  <li><p>If <var title="">namespace</var> is the empty string, let
-  <var title="">namespace</var> be null.
+  <li><p>If <var title="">namespace</var> is the empty string, set it to null.
 
   <li><p>Return true if <a href="#context-object">context object</a>'s
   <code title="dom-Element-attributes"><a href="#dom-element-attributes">attributes</a></code> contains an
