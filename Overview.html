@@ -51,8 +51,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-9-september-2011">
-  <span class="w3conly">Editor's Draft 9 September 2011</span>
+ <h2 class="no-num no-toc" id="editor-s-draft-10-september-2011">
+  <span class="w3conly">Editor's Draft 10 September 2011</span>
   </h2>
 
  <dl>
@@ -98,7 +98,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 9 September 2011 Editor's Draft of DOM4. Please send
+<p>This is the 10 September 2011 Editor's Draft of DOM4. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOM%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -154,10 +154,11 @@ document as other than work in progress.
   <ol class="toc">
    <li><a href="#interface-event"><span class="secno">4.1 </span>Interface <code>Event</code></a></li>
    <li><a href="#interface-customevent"><span class="secno">4.2 </span>Interface <code>CustomEvent</code></a></li>
-   <li><a href="#interface-eventtarget"><span class="secno">4.3 </span>Interface <code>EventTarget</code></a></li>
-   <li><a href="#dispatching-events"><span class="secno">4.4 </span>Dispatching events</a></li>
-   <li><a href="#firing-events"><span class="secno">4.5 </span>Firing events</a></li>
-   <li><a href="#mutation-events"><span class="secno">4.6 </span>Mutation events</a></ol></li>
+   <li><a href="#constructing-events"><span class="secno">4.3 </span>Constructing events</a></li>
+   <li><a href="#interface-eventtarget"><span class="secno">4.4 </span>Interface <code>EventTarget</code></a></li>
+   <li><a href="#dispatching-events"><span class="secno">4.5 </span>Dispatching events</a></li>
+   <li><a href="#firing-events"><span class="secno">4.6 </span>Firing events</a></li>
+   <li><a href="#mutation-events"><span class="secno">4.7 </span>Mutation events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol class="toc">
    <li><a href="#nodes-model"><span class="secno">5.1 </span>Nodes model</a></li>
@@ -743,7 +744,7 @@ prefer.
 
 <h3 id="interface-event"><span class="secno">4.1 </span>Interface <code><a href="#event">Event</a></code></h3>
 
-<pre class="idl">[<a href="#dom-event" title="dom-Event">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>)]
+<pre class="idl">[Constructor(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="event">Event</dfn> {
   readonly attribute DOMString <a href="#dom-event-type" title="dom-Event-type">type</a>;
   readonly attribute <a href="#eventtarget">EventTarget</a>? <a href="#dom-event-target" title="dom-Event-target">target</a>;
@@ -894,35 +895,10 @@ method is invoked these steps must be run:</p>
 <code title="dom-Event-initEvent"><a href="#dom-event-initevent">initEvent()</a></code> is superfluous. However,
 it has to be supported for legacy content.
 
-<hr>
-
-<p><dfn id="dom-event" title="dom-Event"><code>Event(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
-is an <a href="#concept-event-constructor" title="concept-event-constructor">event constructor</a>.
-
-<p>When an <dfn id="concept-event-constructor" title="concept-event-constructor">event constructor</dfn> is
-invoked these steps must be run:</p>
-
-<ol>
- <li><p>Create an <a href="#concept-event" title="concept-event">event</a> that uses the
- <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-interface">interface</a> the constructor was invoked
- upon.
- <li><p>Set its <a href="#initialized-flag">initialized flag</a>.
- <li><p>Initialize the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to
- the <var title="">type</var> argument.
- <li><p>If there is an <var title="">eventInitDict</var> argument then for each
- <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> defined therein find
- the attribute on <a href="#concept-event" title="concept-event">event</a> whose
- <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-identifier">identifier</a> matches the key of
- the <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> and then
- set the attribute to the value of that
- <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a>.
- <li><p>Return the <a href="#concept-event" title="concept-event">event</a>.
-</ol>
-
 
 <h3 id="interface-customevent"><span class="secno">4.2 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
-<pre class="idl">[<a href="#dom-customevent" title="dom-CustomEvent">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
+<pre class="idl">[Constructor(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
   readonly attribute any <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;
 };
@@ -940,13 +916,35 @@ must return the value it was initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attribute must be
 initialized to null.
 
-<hr>
 
-<p><dfn id="dom-customevent" title="dom-CustomEvent"><code>CustomEvent(<var title="">type</var>, <var title="">eventInitDict</var>)</code></dfn>
-is an <a href="#concept-event-constructor" title="concept-event-constructor">event constructor</a>.
+<h3 id="constructing-events"><span class="secno">4.3 </span>Constructing events</h3>
+
+<p>When a constructor of the <code><a href="#event">Event</a></code> interface, or of an
+interface that inherits from the <code><a href="#event">Event</a></code> interface, is invoked,
+these steps must be run:
+
+<ol>
+ <li><p>Create an <a href="#concept-event" title="concept-event">event</a> that uses the
+ interface the constructor was invoked upon.
+
+ <li><p>Set its <a href="#initialized-flag">initialized flag</a>.
+
+ <li><p>Initialize the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to
+ the <var title="">type</var> argument.
+
+ <li><p>If there is an <var title="">eventInitDict</var> argument then for each
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> defined therein find
+ the attribute on <a href="#concept-event" title="concept-event">event</a> whose
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-identifier">identifier</a> matches the key of
+ the <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a> and then
+ set the attribute to the value of that
+ <a class="external" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-dictionary-member">dictionary member</a>.
+
+ <li><p>Return the <a href="#concept-event" title="concept-event">event</a>.
+</ol>
 
 
-<h3 id="interface-eventtarget"><span class="secno">4.3 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
+<h3 id="interface-eventtarget"><span class="secno">4.4 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
 <pre class="idl">interface <dfn id="eventtarget">EventTarget</dfn> {
   void <a href="#dom-eventtarget-addeventlistener" title="dom-EventTarget-addEventListener">addEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">listener</var>, optional boolean <var title="">capture</var>);
@@ -1010,7 +1008,7 @@ method is invoked these steps must be run:
 </ol>
 
 
-<h3 id="dispatching-events"><span class="secno">4.4 </span>Dispatching events</h3>
+<h3 id="dispatching-events"><span class="secno">4.5 </span>Dispatching events</h3>
 
 <p>To <dfn id="concept-event-dispatch" title="concept-event-dispatch">dispatch</dfn> an
 <a href="#concept-event" title="concept-event">event</a> on a given object run these
@@ -1135,7 +1133,7 @@ steps:</p>
 </ol>
 
 
-<h3 id="firing-events"><span class="secno">4.5 </span>Firing events</h3>
+<h3 id="firing-events"><span class="secno">4.6 </span>Firing events</h3>
 
 <p>To
 <dfn id="concept-event-fire" title="concept-event-fire">fire an event named <var title="">e</var></dfn>
@@ -1162,7 +1160,7 @@ concept to make initializing and
 initialized to true".
 
 
-<h3 id="mutation-events"><span class="secno">4.6 </span>Mutation events</h3>
+<h3 id="mutation-events"><span class="secno">4.7 </span>Mutation events</h3>
 <p class="XXX"><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13042">The
 status of mutation events is currently unclear.</a> The editors
 hope they can eventually be removed from the platform. There is
