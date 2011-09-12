@@ -4858,6 +4858,7 @@ attribute must run these steps:
 <span title=concept-range-bp>boundary point</span>
 (<var title>node</var>, <var title>offset</var>), run these steps:
 
+<ol>
  <li><p>If <var title>range</var>'s
  <span title=concept-range-detached>detached flag</span> is
  set, throw an
@@ -5919,39 +5920,38 @@ check first thing, which matches everyone but Firefox.
  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
  exception and terminate these steps.
 
-  <li>If some non-<code>Text</code> <span
-  title=concept-node>node</span> is <span>partially
-  contained</span> in the <span>context object</span>, throw a
-  <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
-  exception and terminate these steps.
-  <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
-  unexpected. -->
-
-  <p class=XXX>Could we rephrase this condition to be more algorithmic and less
-  declarative?
+ <li><p>If a non-<code>Text</code> <span title=concept-node>node</span> is
+ <span>partially contained</span> in the <span>context object</span>, throw
+ a <code title=dom-DOMException-INVALID_STATE_ERR>INVALID_STATE_ERR</code>
+ exception and terminate these steps.
+ <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
+ unexpected. -->
+ <!-- XXX Could we rephrase this condition to be more algorithmic and less
+ declarative?-->
 
  <li><p>If <var title>newParent</var> is a <code>Document</code>,
- <code>DocumentType</code>, or <code>DocumentFragment</code>, throw an
+ <code>DocumentType</code>, or <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, throw an
  <code title=dom-DOMException-INVALID_NODE_TYPE_ERR>INVALID_NODE_TYPE_ERR</code>
  exception and terminate these steps.
-  <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
-  and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
-  absolutely no sense, but it's what DOM 2 Range specifies, and it's what IE9,
-  Chrome 12 dev, and Opera 11.00 implement. Firefox 4.0 only throws
-  INVALID_NODE_TYPE_ERR on DocumentFragments, it falls through to
-  HIERARCHY_REQUEST_ERR for Documents and DocumentTypes.
+ <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
+ and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
+ absolutely no sense, but it's what DOM 2 Range specifies, and it's what
+ IE9, Chrome 12 dev, and Opera 11.00 implement. Firefox 4.0 only throws
+ INVALID_NODE_TYPE_ERR on DocumentFragments, it falls through to
+ HIERARCHY_REQUEST_ERR for Documents and DocumentTypes.
 
-  Firefox 4.0 does this check later on, so it will do DOM mutations of some
-  type if passed a DocumentFragment. We match IE9, Chrome 12 dev, and Opera
-  11.00 in doing the check early.
+ Firefox 4.0 does this check later on, so it will do DOM mutations of some
+ type if passed a DocumentFragment. We match IE9, Chrome 12 dev, and Opera
+ 11.00 in doing the check early.
 
-  If newParent is a Document/DocumentType/DocumentFragment, and some node is
-  also partially contained, DOM 2 Range doesn't say whether to throw
-  BAD_BOUNDARYPOINTS_ERR or INVALID_NODE_TYPE_ERR. IE9 and Chrome 12 dev throw
-  INVALID_NODE_TYPE_ERR, while Firefox 4.0 and Opera 11.00 throw
-  BAD_BOUNDARYPOINTS_ERR. I chose the latter because it's the first thing I
-  happened to write down and it makes no real difference, with the even split.
-  -->
+ If newParent is a Document/DocumentType/DocumentFragment, and some node is
+ also partially contained, DOM 2 Range doesn't say whether to throw
+ BAD_BOUNDARYPOINTS_ERR or INVALID_NODE_TYPE_ERR. IE9 and Chrome 12 dev
+ throw INVALID_NODE_TYPE_ERR, while Firefox 4.0 and Opera 11.00 throw
+ BAD_BOUNDARYPOINTS_ERR. I chose the latter because it's the first thing I
+ happened to write down and it makes no real difference, with the even
+ split. -->
 
   <li>Call <code title=dom-Range-extractContents>extractContents()</code> on
   the <span>context object</span>, and let <var title>fragment</var> be the
