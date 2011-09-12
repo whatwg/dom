@@ -4667,7 +4667,8 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
 
   <li><p>The
   <code title="dom-Range-commonAncestorContainer"><a href="#dom-range-commonancestorcontainer">commonAncestorContainer</a></code>
-  is never <a href="#contained">contained</a> or <a href="#partially-contained">partially contained</a>.
+  attribute value is never <a href="#contained">contained</a> or
+  <a href="#partially-contained">partially contained</a>.
 
   <li>If the <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is an
   <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of the
@@ -4796,82 +4797,82 @@ attribute must run these steps:
 
 <hr>
 
-<p>The
-<dfn id="dom-range-setstart" title="dom-Range-setStart"><code>setStart(<var>refNode</var>, <var>offset</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn id="concept-range-bp-set" title="concept-range-bp-set">set the start or end</dfn> of a
+<var title="">range</var> to a
+<a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
+(<var title="">node</var>, <var title="">offset</var>), run these steps:
 
-<ol>
- <li><p>If the <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is
+ </p><li><p>If <var title="">range</var>'s
+ <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is
  set, throw an
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>If <var title="">refNode</var> is a
+ <li><p>If <var title="">node</var> is a
  <a href="#concept-doctype" title="concept-doctype">doctype</a>, throw an
  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
  exception and terminate these steps.
 
  <li><p>If <var title="">offset</var> is greater than
- <var title="">refNode</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>,
+ <var title="">node</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>,
  throw an <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">new start</var> be the
+ <li><p>Let <var title="">bp</var> be the
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
-  (<var title="">refNode</var>, <var title="">offset</var>).
+ (<var title="">node</var>, <var title="">offset</var>).
 
- <li><p>If <var title="">new start</var> is
- <a href="#concept-range-bp-after" title="concept-range-bp-after">after</a> the
- <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a>, or
- if the <a href="#context-object">context object</a>'s
- <a href="#concept-range-root" title="concept-range-root">root</a> is not equal to
- <var title="">refNode</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, let
- <a href="#context-object">context object</a>'s <a href="#concept-range-end" title="concept-range-end">end</a> be
- <var title="">new start</var>.
+ <li>
+  <dl class="switch">
+   <dt>If these steps were invoked as "set the start"
+   <dd>
+    <ol>
+     <li><p>If <var title="">bp</var> is
+     <a href="#concept-range-bp-after" title="concept-range-bp-after">after</a> the
+     <var title="">range</var>'s <a href="#concept-range-end" title="concept-range-end">end</a>, or
+     if the <var title="">range</var>'s
+     <a href="#concept-range-root" title="concept-range-root">root</a> is not equal to
+     <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, set
+     <var title="">range</var>'s <a href="#concept-range-end" title="concept-range-end">end</a> to
+     <var title="">bp</var>.
 
- <li><p>Let <a href="#context-object">context object</a>'s
- <a href="#concept-range-start" title="concept-range-start">start</a> be <var title="">new start</var>.
-</ol>
+     <li><p>Set <var title="">range</var>'s
+     <a href="#concept-range-start" title="concept-range-start">start</a> to <var title="">bp</var>.
+    </ol>
+   <dt>If these steps were invoked as "set the end"
+   <dd>
+    <ol>
+     <li><p>If <var title="">bp</var> is
+     <a href="#concept-range-bp-before" title="concept-range-bp-before">before</a> the
+     <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a>,
+     or if the <var title="">range</var>'s
+     <a href="#concept-range-root" title="concept-range-root">root</a> is not equal to
+     <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, set
+     <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a>
+     to <var title="">bp</var>.
+
+     <li><p>Set <var title="">range</var>'s
+     <a href="#concept-range-end" title="concept-range-end">end</a> to <var title="">bp</var>.
+    </ol>
+  </dl>
+
+
+<p>The
+<dfn id="dom-range-setstart" title="dom-Range-setStart"><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn>
+method must <a href="#concept-range-bp-set" title="concept-range-bp-set">set the start</a> of the
+<a href="#context-object">context object</a> to
+<span title="concept-range-boundary-point">boundary point</span>
+(<var title="">node</var>, <var title="">offset</var>).
 
 <p>The
 <dfn id="dom-range-setend" title="dom-Range-setEnd"><code>setEnd(<var>refNode</var>, <var>offset</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is
- set, throw an
- <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
- exception and terminate these steps.
-
- <li><p>If <var title="">refNode</var> is a
- <a href="#concept-doctype" title="concept-doctype">doctype</a>, throw an
- <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
- exception and terminate these steps.
-
- <li><p>If <var title="">offset</var> is greater than
- <var title="">refNode</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>,
- throw an <code title="dom-DOMException-INDEX_SIZE_ERR"><a href="#dom-domexception-index_size_err">INDEX_SIZE_ERR</a></code>
- exception and terminate these steps.
-
- <li><p>Let <var title="">new end</var> be the
- <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
- (<var title="">refNode</var>, <var title="">offset</var>).
-
- <li><p>If <var title="">new end</var> is
- <a href="#concept-range-bp-before" title="concept-range-bp-before">before</a> the
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>,
- or if the <a href="#context-object">context object</a>'s
- <a href="#concept-range-root" title="concept-range-root">root</a> is not equal to
- <var title="">refNode</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a>, let
- <a href="#context-object">context object</a>'s <a href="#concept-range-start" title="concept-range-start">start</a>
- be <var title="">new end</var>.
-
- <li><p>Let <a href="#context-object">context object</a>'s
- <a href="#concept-range-end" title="concept-range-end">end</a> be <var title="">new end</var>.
-</ol>
+method must <a href="#concept-range-bp-set" title="concept-range-bp-set">set the end</a> of the
+<a href="#context-object">context object</a> to
+<span title="concept-range-boundary-point">boundary point</span>
+(<var title="">node</var>, <var title="">offset</var>).
 
 <p>The
-<dfn id="dom-range-setstartbefore" title="dom-Range-setStartBefore"><code>setStartBefore(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-setstartbefore" title="dom-Range-setStartBefore"><code>setStartBefore(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
@@ -4880,21 +4881,22 @@ method must run these steps:
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">parent</var> be <var title="">refNode</var>'s
+ <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>If <var title="">parent</var> is null, throw an
  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Call the <a href="#context-object">context object</a>'s
- <code title="dom-Range-setStart"><a href="#dom-range-setstart">setStart</a></code> method with
- <var title="">parent</var> and the <a href="#concept-tree-index" title="concept-tree-index">index</a>
- of <var title="">refNode</var> as its arguments.
+ <li><p><a href="#concept-range-bp-set" title="concept-range-bp-set">Set the start</a> of the
+ <a href="#context-object">context object</a> to
+ <span title="concept-range-boundary-point">boundary point</span>
+ (<var title="">parent</var>, <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a>).
 </ol>
 
 <p>The
-<dfn id="dom-range-setstartafter" title="dom-Range-setStartAfter"><code>setStartAfter(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-setstartafter" title="dom-Range-setStartAfter"><code>setStartAfter(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
@@ -4903,22 +4905,22 @@ method must run these steps:
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">parent</var> be <var title="">refNode</var>'s
+ <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>If <var title="">parent</var> is null, throw an
  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Call the <a href="#context-object">context object</a>'s
- <code title="dom-Range-setStart"><a href="#dom-range-setstart">setStart</a></code> method with
- <var title="">parent</var> and one plus the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>
- as its arguments.
+ <li><p><a href="#concept-range-bp-set" title="concept-range-bp-set">Set the start</a> of the
+ <a href="#context-object">context object</a> to
+ <span title="concept-range-boundary-point">boundary point</span>
+ (<var title="">parent</var>, <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a> plus one).
 </ol>
 
 <p>The
-<dfn id="dom-range-setendbefore" title="dom-Range-setEndBefore"><code>setEndBefore(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-setendbefore" title="dom-Range-setEndBefore"><code>setEndBefore(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
@@ -4927,21 +4929,22 @@ method must run these steps:
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">parent</var> be <var title="">refNode</var>'s
+ <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>If <var title="">parent</var> is null, throw an
  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Call the <a href="#context-object">context object</a>'s
- <code title="dom-Range-setEnd"><a href="#dom-range-setend">setEnd</a></code> method with
- <var title="">parent</var> and the <a href="#concept-tree-index" title="concept-tree-index">index</a>
- of <var title="">refNode</var> as its arguments.
+ <li><p><a href="#concept-range-bp-set" title="concept-range-bp-set">Set the end</a> of the
+ <a href="#context-object">context object</a> to
+ <span title="concept-range-boundary-point">boundary point</span>
+ (<var title="">parent</var>, <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a>).
 </ol>
 
 <p>The
-<dfn id="dom-range-setendafter" title="dom-Range-setEndAfter"><code>setEndAfter(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-setendafter" title="dom-Range-setEndAfter"><code>setEndAfter(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
@@ -4950,18 +4953,18 @@ method must run these steps:
  <code title="dom-DOMException-INVALID_STATE_ERR"><a href="#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Let <var title="">parent</var> be <var title="">refNode</var>'s
+ <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>If <var title="">parent</var> is null, throw an
  <code title="dom-DOMException-INVALID_NODE_TYPE_ERR"><a href="#dom-domexception-invalid_node_type_err">INVALID_NODE_TYPE_ERR</a></code>
  exception and terminate these steps.
 
- <li><p>Call the <a href="#context-object">context object</a>'s
- <code title="dom-Range-setEnd"><a href="#dom-range-setend">setEnd</a></code> method with
- <var title="">parent</var> and one plus the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>
- as its arguments.
+ <li><p><a href="#concept-range-bp-set" title="concept-range-bp-set">Set the end</a> of the
+ <a href="#context-object">context object</a> to
+ <span title="concept-range-boundary-point">boundary point</span>
+ (<var title="">parent</var>, <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a> plus one).
 </ol>
 
 
