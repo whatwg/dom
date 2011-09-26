@@ -1271,8 +1271,8 @@ methods that manipulate the <span title=concept-tree>tree</span> of
   <span>Node</span> <span title=dom-Node-insertBefore>insertBefore</span>(<span>Node</span> <var title>node</var>, <span>Node</span>? <var title>child</var>);
   <span>Node</span> <span title=dom-Node-appendChild>appendChild</span>(<span>Node</span> <var title>node</var>);
   <span>Node</span> <span title=dom-Node-replaceChild>replaceChild</span>(<span>Node</span> <var title>node</var>, <span>Node</span> <var title>child</var>);
-  <span>Node</span> <span title=dom-Node-removeChild>removeChild</span>(<span>Node</span> <var title>child</var>);<!--
-  void normalize();-->
+  <span>Node</span> <span title=dom-Node-removeChild>removeChild</span>(<span>Node</span> <var title>child</var>);
+  void <span title=dom-Node-normalize>normalize</span>();
 
   <span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var>);
   boolean <span title=dom-Node-isSameNode>isSameNode</span>(<span>Node</span>? <var title>node</var>);
@@ -1781,6 +1781,12 @@ instead, and then do as described below, depending on the <span>context object</
 
 <hr>
 
+<dl class=domintro>
+ <dt><var title>node</var> . <code title=dom-Node-normalize>normalize()</code>
+ <dd><p>Concatenates <span>contiguous <code>Text</code> nodes</span> into a
+ single <code>Text</code> <span title=concept-node>node</span>.
+</dl>
+
 <p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
 <var title>node</var> into a <var title>parent</var> before a
 <var title>child</var>, run these steps:
@@ -2111,6 +2117,34 @@ from a <var title>parent</var>, run these steps:
 title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
 method must <span title=concept-node-pre-remove>pre-remove</span>
 <var title>child</var> from the <span>context object</span>.
+
+<p>The <dfn title=dom-Node-normalize><code>normalize()</code></dfn> method
+must run these steps:</p>
+
+<p>For each <code>Text</code> <span title=concept-node>node</span>
+<span title=concept-tree-descendant>descendant</span> of the
+<span>context object</span>:
+
+<ol>
+ <li><p>Let <var title>node</var> be the <code>Text</code>
+ <span title=concept-node>node</span>
+ <span title=concept-tree-descendant>descendant</span>.
+
+ <li><p>Let <var title>data</var> be the concatenation of the
+ <span title=concept-CD-data>data</span> of <var title>node</var>'s
+ <span>contiguous <code>Text</code> nodes</span> (excluding itself), in
+ <span title=concept-tree-order>tree order</span>.
+
+ <li><p><span title=concept-CD-replace>Replace data</span> with node
+ <var title>node</var>, offset <var title>node</var>'s
+ <code title=dom-CharacterData-length>length</code> attribute value,
+ count 0, and data <var title>data</var>.
+
+ <li><p><span title=concept-node-remove>Remove</span>
+ <var title>node</var>'s
+ <span>contiguous <code>Text</code> nodes</span> (excluding itself), in
+ <span title=concept-tree-order>tree order</span>.
+</ol>
 
 <hr>
 
@@ -7560,7 +7594,6 @@ this specification will not support them.
    <li><dfn title=dom-Node-prefix><code>prefix</code></dfn>
    <li><dfn title=dom-Node-localName><code>localName</code></dfn>
 
-   <li><dfn title=dom-Node-normalize><code>normalize()</code></dfn>
    <li><dfn title=dom-Node-isSupported><code>isSupported</code></dfn>
    <li><dfn title=dom-Node-getFeature><code>getFeature()</code></dfn>
    <li><dfn title=dom-Node-getUserData><code>getUserData()</code></dfn>
