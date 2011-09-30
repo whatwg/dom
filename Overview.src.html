@@ -4633,8 +4633,8 @@ attribute must return the <span title=concept-PI-target>target</span>.
   void <span title=dom-Range-deleteContents>deleteContents</span>()
   <span>DocumentFragment</span> <span title=dom-Range-extractContents>extractContents</span>();
   <span>DocumentFragment</span> <span title=dom-Range-cloneContents>cloneContents</span>();
-  void <span title=dom-Range-insertNode>insertNode</span>(DOMString <var title>newNode</var>);
-  void <span title=dom-Range-insertNode>insertNode</span>(<span>Node</span> <var title>newNode</var>);
+  void <span title=dom-Range-insertNode>insertNode</span>(DOMString <var title>node</var>);
+  void <span title=dom-Range-insertNode>insertNode</span>(<span>Node</span> <var title>node</var>);
   void <span title=dom-Range-surroundContents>surroundContents</span>(<span>Node</span> <var title>newParent</var>);
   <span>Range</span> <span title=dom-Range-cloneRange>cloneRange</span>();
   void <span title=dom-Range-detach>detach</span>();
@@ -5893,7 +5893,7 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn title=dom-Range-insertNode><code>insertNode(<var>newNode</var>)</code></dfn>
+<dfn title=dom-Range-insertNode><code>insertNode(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <p class=XXX>Browsers disagree on how to handle the case where the range is
@@ -5908,7 +5908,7 @@ to be changed to match them.
   match, as is their wont, and as DOM 2 Range requires. But as elsewhere, we
   just let the UA change the document if it doesn't match.
 
-  Chrome 12 dev also throws "HierarchyRequestError" if newNode is the same
+  Chrome 12 dev also throws "HierarchyRequestError" if node is the same
   as the start node (at least for text nodes). This doesn't seem to make
   much sense, since insertBefore() works fine to move a node to its current
   position, and other browsers disagree, so the spec follows the majority.
@@ -5918,10 +5918,9 @@ to be changed to match them.
  set, <span title=concept-throw>throw</span> an
  "<code title>InvalidStateError</code>" exception and terminate these steps.
 
- <li><p>If <var title>newNode</var> is a string, let
- <var title>newNode</var> be a new <code>Text</code>
- <span title=concept-node>node</span> whose
- <span title=concept-CD-data>data</span> is <var title>newNode</var>.
+ <li><p>If <var title>node</var> is a string, let <var title>node</var> be a
+ new <code>Text</code> <span title=concept-node>node</span> whose
+ <span title=concept-CD-data>data</span> is <var title>node</var>.
 
  <li><p>If <span title=concept-range-start-node>start node</span> is a
  <code>Text</code> or <code>Comment</code>
@@ -5966,19 +5965,19 @@ to be changed to match them.
  there is no such <span title=concept-tree-child>child</span>.
 
  <li><p>If <var title>reference node</var> is null, let
- <var title>parent node</var> be
+ <var title>parent</var> be
  <span title=concept-range-start-node>start node</span>.
 
- <li><p>Otherwise, let <var title>parent node</var> be the
+ <li><p>Otherwise, let <var title>parent</var> be the
  <span title=concept-tree-parent>parent</span> of
  <var title>reference node</var>.
 
  <li><p><span title=concept-node-pre-insert>Pre-insert</span>
- <var title>newNode</var> into <var title>parent node</var> before
+ <var title>node</var> into <var title>parent</var> before
  <var title>reference node</var>.
  <!-- Mutation rules are enough to handle where the range endpoints are
  supposed to be. WebKit tries to be clever in some cases, apparently to
- ensure that the new node is always contained in the range, but no other
+ ensure that the node is always contained in the range, but no other
  browser does. Plus, you can't guarantee that anyway, since the range start
  might lie in a comment, which isn't split up. -->
 </ol>
