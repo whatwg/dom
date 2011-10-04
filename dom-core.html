@@ -12,8 +12,8 @@
 
 <div class="head">
 <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="free-editor-s-draft-1-october-2011">
-  <span class="now3c">Free Editor's Draft 1 October 2011</span>
+ <h2 class="no-num no-toc" id="free-editor-s-draft-4-october-2011">
+  <span class="now3c">Free Editor's Draft 4 October 2011</span>
  </h2>
 
  <dl>
@@ -75,9 +75,10 @@ documents.
      <li><a href="#common-parser-idioms"><span class="secno">2.3.1 </span>Common parser idioms</a></li>
      <li><a href="#space-separated-tokens"><span class="secno">2.3.2 </span>Space-separated tokens</a></ol></li>
    <li><a href="#namespaces"><span class="secno">2.4 </span>Namespaces</a></ol></li>
- <li><a href="#exceptions"><span class="secno">3 </span>Exceptions</a>
+ <li><a href="#errors"><span class="secno">3 </span>Errors</a>
   <ol>
-   <li><a href="#exception-domexception"><span class="secno">3.1 </span>Exception <code>DOMException</code></a></ol></li>
+   <li><a href="#exception-domexception"><span class="secno">3.1 </span>Exception <code>DOMException</code></a></li>
+   <li><a href="#interface-domerror"><span class="secno">3.2 </span>Interface <code>DOMError</code></a></ol></li>
  <li><a href="#events"><span class="secno">4 </span>Events</a>
   <ol>
    <li><a href="#interface-event"><span class="secno">4.1 </span>Interface <code>Event</code></a></li>
@@ -546,7 +547,7 @@ of the string, where such spaces are removed.
 <p>The <dfn id="xmlns-namespace">XMLNS namespace</dfn> is <code title="">http://www.w3.org/2000/xmlns/</code>.
 
 
-<h2 id="exceptions"><span class="secno">3 </span>Exceptions</h2>
+<h2 id="errors"><span class="secno">3 </span>Errors</h2>
 <h3 id="exception-domexception"><span class="secno">3.1 </span>Exception <code><a href="#domexception">DOMException</a></code></h3>
 <pre class="idl">exception <dfn id="domexception">DOMException</dfn> {
   const unsigned short <a href="#dom-domexception-index_size_err" title="dom-DOMException-INDEX_SIZE_ERR">INDEX_SIZE_ERR</a> = 1;
@@ -705,6 +706,30 @@ and actually throw that object as an exception.
 </table>
 
 <!-- XXX Should we have central bookkeeping of exceptions someplace? -->
+
+
+<h3 id="interface-domerror"><span class="secno">3.2 </span>Interface <code><a href="#domerror">DOMError</a></code></h3>
+
+<p class="note">This interface is intended for other specifications that want
+to introduce error handling through other means than exceptions. It is
+expected that the exception types are reused.
+
+<pre class="idl">interface <dfn id="domerror">DOMError</dfn> {
+  readonly attribute DOMString <a href="#dom-domerror-name" title="dom-DOMError-name">name</a>;
+};</pre>
+
+<p>The <dfn id="dom-domerror-name" title="dom-DOMError-name"><code>name</code></dfn> attribute must
+return the value it was initialized to.
+
+<p>A
+<dfn id="concept-domerror" title="concept-DOMError"><var title="">type</var> <code>DOMError</code></dfn>
+means a <code><a href="#domerror">DOMError</a></code> object whose
+<code title="dom-DOMError-name"><a href="#dom-domerror-name">name</a></code> attribute is initialized to
+<var title="">type</var>.
+
+<p class="example">A specification could say that an <code title="">error</code>
+attribute must return a
+<a href="#concept-domerror" title="concept-DOMError">"<code>SyntaxError</code>" <code>DOMError</code></a>.
 
 
 <h2 id="events"><span class="secno">4 </span>Events</h2>
@@ -7487,6 +7512,8 @@ across <a href="#concept-document" title="concept-document">document</a> boundar
 <p><code><a href="#processinginstruction">ProcessingInstruction</a></code> now inherits from
 <code><a href="#characterdata">CharacterData</a></code>.
 
+<p><code><a href="#domerror">DOMError</a></code> is completely redesigned.</p>
+
 <p>The remainder of interfaces and interface members listed in this section
 were removed to simplify the DOM platform. Implementations conforming to
 this specification will not support them.
@@ -7495,7 +7522,6 @@ this specification will not support them.
 <ul class="brief">
  <li><dfn id="cdatasection"><code>CDATASection</code></dfn>
  <li><dfn id="domconfiguration"><code>DOMConfiguration</code></dfn>
- <li><dfn id="domerror"><code>DOMError</code></dfn>
  <li><dfn id="domerrorhandler"><code>DOMErrorHandler</code></dfn>
  <li><dfn id="domimplementationlist"><code>DOMImplementationList</code></dfn>
  <li><dfn id="domimplementationsource"><code>DOMImplementationSource</code></dfn>
