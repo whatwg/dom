@@ -51,8 +51,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-20-october-2011">
-  <span class="w3conly">Editor's Draft 20 October 2011</span>
+ <h2 class="no-num no-toc" id="editor-s-draft-21-october-2011">
+  <span class="w3conly">Editor's Draft 21 October 2011</span>
   </h2>
 
  <dl>
@@ -99,7 +99,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 20 October 2011 Editor's Draft of DOM4. Please send
+<p>This is the 21 October 2011 Editor's Draft of DOM4. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOM%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -1361,10 +1361,7 @@ are violated. These algorithms are used by methods that manipulate the
 
   DOMString <a href="#dom-node-lookupprefix" title="dom-Node-lookupPrefix">lookupPrefix</a>(DOMString? <var title="">namespace</var>);
   DOMString <a href="#dom-node-lookupnamespaceuri" title="dom-Node-lookupNamespaceURI">lookupNamespaceURI</a>(DOMString? <var title="">prefix</var>);
-  boolean <a href="#dom-node-isdefaultnamespace" title="dom-Node-isDefaultNamespace">isDefaultNamespace</a>(DOMString? <var title="">namespace</var>);<!--
-  DOMObject getFeature(DOMString feature, DOMString version);
-  DOMUserData setUserData(DOMString key, DOMUserData data, UserDataHandler handler);
-  DOMUserData getUserData(DOMString key);-->
+  boolean <a href="#dom-node-isdefaultnamespace" title="dom-Node-isDefaultNamespace">isDefaultNamespace</a>(DOMString? <var title="">namespace</var>);
 };</pre>
 
 <p class="note"><code><a href="#node">Node</a></code> is an abstract interface and does not exist
@@ -2595,7 +2592,9 @@ method must run these steps:
 
   <a href="#nodeiterator">NodeIterator</a> <a href="#dom-document-createnodeiterator" title="dom-Document-createNodeIterator">createNodeIterator</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a>? <var title="">filter</var>);
   <a href="#treewalker">TreeWalker</a> <a href="#dom-document-createtreewalker" title="dom-Document-createTreeWalker">createTreeWalker</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a>? <var title="">filter</var>);
-};</pre>
+};
+
+interface <dfn id="xmldocument">XMLDocument</dfn> : <a href="#document">Document</a> {};</pre>
 
 <p><code><a href="#document">Document</a></code> <a href="#concept-node" title="concept-node">nodes</a> are simply
 known as <dfn id="concept-document" title="concept-document">documents</dfn>.
@@ -3358,8 +3357,7 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   boolean <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 
   <a href="#documenttype">DocumentType</a> <a href="#dom-domimplementation-createdocumenttype" title="dom-DOMImplementation-createDocumentType">createDocumentType</a>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
-  <a href="#document">Document</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, <a href="#documenttype">DocumentType</a>? <var title="">doctype</var>);<!--
-  DOMObject getFeature(DOMString feature, DOMString version);-->
+  <a href="#xmldocument">XMLDocument</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, <a href="#documenttype">DocumentType</a>? <var title="">doctype</var>);
   <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(DOMString title);
 };</pre>
 
@@ -3402,7 +3400,7 @@ otherwise.
  <dt><var title="">doc</var> = <var title="">document</var> . <code title="dom-Document-implementation"><a href="#dom-document-implementation">implementation</a></code> . <code title="dom-DOMImplementation-createDocument"><a href="#dom-domimplementation-createdocument">createDocument</a></code>( <var title="">namespace</var>, <var title="">qualifiedName</var>, <var title="">doctype</var> )
 
  <dd>
-  <p>Returns a <a href="#concept-document" title="concept-document">document</a>, with a
+  <p>Returns an <code><a href="#xmldocument">XMLDocument</a></code>, with a
   <a href="#document-element">document element</a> whose
   <a href="#concept-element-local-name" title="concept-element-local-name">local name</a> is
   <var title="">qualifiedName</var> and whose
@@ -3468,8 +3466,15 @@ matches the <code title="">PublicChar</code> or that the
 method must run these steps:
 
 <ol>
- <li><p>Let <var title="">document</var> be a new
- <a href="#concept-document" title="concept-document">document</a>.
+ <li>
+  <p>Let <var title="">document</var> be a new <code><a href="#xmldocument">XMLDocument</a></code>.
+
+  <p class="note">This method creates an <code><a href="#xmldocument">XMLDocument</a></code> rather than
+  a normal <a href="#concept-document" title="concept-document">document</a>. They are identical
+  except for the addition of the
+  <code class="external" title="dom-XMLDocument-load"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-xmldocument-load">load()</a></code>
+  method deployed content relies upon.
+  <a class="informative" href="#refsHTML">[HTML]</a>
 
  <li><p>Let <var title="">element</var> be null.
 

@@ -1317,10 +1317,7 @@ are violated. These algorithms are used by methods that manipulate the
 
   DOMString <span title=dom-Node-lookupPrefix>lookupPrefix</span>(DOMString? <var title>namespace</var>);
   DOMString <span title=dom-Node-lookupNamespaceURI>lookupNamespaceURI</span>(DOMString? <var title>prefix</var>);
-  boolean <span title=dom-Node-isDefaultNamespace>isDefaultNamespace</span>(DOMString? <var title>namespace</var>);<!--
-  DOMObject getFeature(DOMString feature, DOMString version);
-  DOMUserData setUserData(DOMString key, DOMUserData data, UserDataHandler handler);
-  DOMUserData getUserData(DOMString key);-->
+  boolean <span title=dom-Node-isDefaultNamespace>isDefaultNamespace</span>(DOMString? <var title>namespace</var>);
 };</pre>
 
 <p class=note><code>Node</code> is an abstract interface and does not exist
@@ -2554,7 +2551,9 @@ method must run these steps:
 
   <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
   <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
-};</pre>
+};
+
+interface <dfn>XMLDocument</dfn> : <span>Document</span> {};</pre>
 
 <p><code>Document</code> <span title=concept-node>nodes</span> are simply
 known as <dfn title=concept-document>documents</dfn>.
@@ -3321,8 +3320,7 @@ with that <span title=concept-document>document</span>.
   boolean <span title=dom-DOMImplementation-hasFeature>hasFeature</span>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 
   <span>DocumentType</span> <span title=dom-DOMImplementation-createDocumentType>createDocumentType</span>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
-  <span>Document</span> <span title=dom-DOMImplementation-createDocument>createDocument</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>, <span>DocumentType</span>? <var title>doctype</var>);<!--
-  DOMObject getFeature(DOMString feature, DOMString version);-->
+  <span>XMLDocument</span> <span title=dom-DOMImplementation-createDocument>createDocument</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>, <span>DocumentType</span>? <var title>doctype</var>);
   <span>Document</span> <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>(DOMString title);
 };</pre>
 
@@ -3374,7 +3372,7 @@ otherwise.
  title=dom-DOMImplementation-createDocument>createDocument</code>( <var title>namespace</var>, <var title>qualifiedName</var>, <var title>doctype</var> )
 
  <dd>
-  <p>Returns a <span title=concept-document>document</span>, with a
+  <p>Returns an <code>XMLDocument</code>, with a
   <span>document element</span> whose
   <span title=concept-element-local-name>local name</span> is
   <var title>qualifiedName</var> and whose
@@ -3444,8 +3442,15 @@ matches the <code title>PublicChar</code> or that the
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>document</var> be a new
- <span title=concept-document>document</span>.
+ <li>
+  <p>Let <var title>document</var> be a new <code>XMLDocument</code>.
+
+  <p class=note>This method creates an <code>XMLDocument</code> rather than
+  a normal <span title=concept-document>document</span>. They are identical
+  except for the addition of the
+  <code data-anolis-spec=html title=dom-XMLDocument-load>load()</code>
+  method deployed content relies upon.
+  <span class=informative data-anolis-ref>HTML</span>
 
  <li><p>Let <var title>element</var> be null.
 
