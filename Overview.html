@@ -51,8 +51,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-22-october-2011">
-  <span class="w3conly">Editor's Draft 22 October 2011</span>
+ <h2 class="no-num no-toc" id="editor-s-draft-28-october-2011">
+  <span class="w3conly">Editor's Draft 28 October 2011</span>
   </h2>
 
  <dl>
@@ -99,7 +99,7 @@ publications and the latest revision of this technical report can be found in
 the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
 http://www.w3.org/TR/.</i>
 
-<p>This is the 22 October 2011 Editor's Draft of DOM4. Please send
+<p>This is the 28 October 2011 Editor's Draft of DOM4. Please send
 comments to
 <a href="mailto:www-dom@w3.org?subject=%5BDOM%5D%20">www-dom@w3.org</a>
 (<a href="http://lists.w3.org/Archives/Public/www-dom/">archived</a>)
@@ -4676,8 +4676,8 @@ attribute must return the <a href="#concept-pi-target" title="concept-PI-target"
   <a href="#range">Range</a> <a href="#dom-range-clonerange" title="dom-Range-cloneRange">cloneRange</a>();
   void <a href="#dom-range-detach" title="dom-Range-detach">detach</a>();
 
-  boolean <a href="#dom-range-ispointinrange" title="dom-Range-isPointInRange">isPointInRange</a>(<a href="#node">Node</a> <var title="">parent</var>, unsigned long <var title="">offset</var>);
-  short <a href="#dom-range-comparepoint" title="dom-Range-comparePoint">comparePoint</a>(<a href="#node">Node</a> <var title="">parent</var>, unsigned long <var title="">offset</var>);
+  boolean <a href="#dom-range-ispointinrange" title="dom-Range-isPointInRange">isPointInRange</a>(<a href="#node">Node</a> <var title="">node</var>, unsigned long <var title="">offset</var>);
+  short <a href="#dom-range-comparepoint" title="dom-Range-comparePoint">comparePoint</a>(<a href="#node">Node</a> <var title="">node</var>, unsigned long <var title="">offset</var>);
 
   boolean <a href="#dom-range-intersectsnode" title="dom-Range-intersectsNode">intersectsNode</a>(<a href="#node">Node</a> <var title="">node</var>);
 
@@ -6100,36 +6100,42 @@ run these steps:
 <p>The
 <dfn id="dom-range-ispointinrange" title="dom-Range-isPointInRange"><code>isPointInRange(<var>node</var>, <var>offset</var>)</code></dfn>
 must run these steps:
+<!-- Tested October 2011 on Firefox 9.0a2 and Chrome 16 dev.  IE9 and Opera
+11.50 don't support the method. -->
 
 <ol>
  <li><p>If the <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is
  set, <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#invalidstateerror">InvalidStateError</a></code>" exception and terminate these steps.
 
- <li><p>If <var title="">node</var> is not an
- <a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a>
- of the <a href="#context-object">context object</a>'s
- <a href="#concept-range-root" title="concept-range-root">root</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#wrongdocumenterror">WrongDocumentError</a></code>" exception and terminate these
- steps.
+ <li><p>If <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a> is
+ different from the <a href="#context-object">context object</a>'s <a href="#concept-range-root" title="concept-range-root">root</a>, return false and terminate these steps.
+ <!-- This happens even if the offset is negative or too large, or if the node
+ is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
  <li><p>If <var title="">node</var> is a
  <a href="#concept-doctype" title="concept-doctype">doctype</a>,
  <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#invalidnodetypeerror">InvalidNodeTypeError</a></code>" exception and terminate these
  steps.
+ <!-- Firefox 9.0a2 doesn't throw.  It ignores the offset and returns true or
+ false depending on whether the doctype itself is in the range.  This makes
+ some sense, but it doesn't match how other Range APIs handle doctypes, and
+ having the second argument mandatory but ignored is just weird.  Thus I go
+ with Chrome 16 dev, although I can see the merit in how Gecko works here. -->
 
  <li><p>If <var title="">offset</var> is greater than
  <var title="">node</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>,
  <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#indexsizeerror">IndexSizeError</a></code>" exception and terminate these steps.
+ <!-- Firefox 9.0a2 doesn't throw.  It seems to return true if the node is
+ completely contained in the range, like with selectNode(), and false otherwise
+ - even if all boundary points in the node are contained in the range, like
+ with selectNodeContents().  This is weird, and inconsistent with other Range
+ APIs, so I go with Chrome 16 dev.  This is probably an authoring bug, so it's
+ best to throw anyway. -->
 
- <li><p>Let <var title="">boundary</var> be the
- <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
- (<var title="">parent</var>, <var title="">offset</var>).
-
- <li><p>If <var title="">boundary</var> is
+ <li><p>If (<var title="">node</var>, <var title="">offset</var>) is
  <a href="#concept-range-bp-before" title="concept-range-bp-before">before</a>
  <a href="#concept-range-start" title="concept-range-start">start</a> or
  <a href="#concept-range-bp-after" title="concept-range-bp-after">after</a>
@@ -7739,7 +7745,7 @@ throw when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to a
 <div class="w3conly">
 <h3 class="no-num" id="normative-references">Normative references</h3>
 <div id="anolis-references-normative"><dl><dt id="refsIANACHARSET">[IANACHARSET]
-<dd><cite><a href="http://www.iana.org/assignments/character-sets">Character Sets</a></cite>. IANA.
+<dd><cite><a href="http://www.iana.org/assignments/character-sets">Character Sets</a></cite> IANA.
 
 <dt id="refsRFC2119">[RFC2119]
 <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, Scott Bradner. IETF.
