@@ -2491,6 +2491,114 @@ method must run these steps:
  <var title>namespace</var>, or false otherwise.
 </ol>
 
+<hr><!-- Collections -->
+
+<p>The
+<dfn title=concept-getElementsByTagName>list of elements with local name <var title>localName</var></dfn>
+for a <span title=concept-node>node</span> <var title>root</var> is the
+<code>NodeList</code> returned by the following algorithm:
+<ol>
+ <li><p>If <var title>localName</var> is "<code>*</code>" (U+002A),
+ return a <code>NodeList</code> rooted at <var title>root</var>,
+ whose filter matches only <span title=concept-element>elements</span>.
+
+ <li>
+  <p>Otherwise, if <var title>root</var>'s
+  <span title=concept-node-document>node document</span> is an
+  <span>HTML document</span>, return a <code>NodeList</code> rooted at
+  <var title>root</var>, whose filter matches only the following nodes:
+
+  <ul>
+   <li><span title=concept-element>elements</span> in the
+   <span>HTML namespace</span> whose
+   <span title=concept-element-local-name>local name</span> is
+   <var title>localName</var> <span>converted to ASCII lowercase</span>.
+
+   <li><span title=concept-element>elements</span>, <em>not</em> in the
+   <span>HTML namespace</span>, whose
+   <span title=concept-element-local-name>local name</span> is
+   <var title>localName</var>.
+  </ul>
+
+ <li><p>Otherwise, return a <code>NodeList</code> rooted at
+ <var title>root</var>, whose filter matches only
+ <span title=concept-element>elements</span> whose
+ <span title=concept-element-local-name>local name</span> is
+ <var title>localName</var>.
+</ol>
+<p>When invoked with the same argument, the same <code>NodeList</code>
+object may be returned as returned by an earlier call.
+
+
+<p>The
+<dfn title=concept-getElementsByTagNameNS>list of elements with namespace <var title>namespace</var> and local name <var title>localName</var></dfn>
+for a <span title=concept-node>node</span> <var title>root</var> is the
+<code>NodeList</code> returned by the following algorithm:
+<ol>
+ <li><p>If <var title>namespace</var> is the empty string, set it to null.
+
+ <li><p>If both <var title>namespace</var> and <var title>localName</var>
+ are "<code>*</code>" (U+002A) return a <code>NodeList</code> rooted at
+ <var title>root</var>, whose filter matches only
+ <span title=concept-element>elements</span>.
+
+ <li><p>Otherwise, if just <var title>namespace</var> is "<code>*</code>"
+ (U+002A), return a <code>NodeList</code> rooted at
+ <var title>root</var>, whose filter matches only
+ <span title=concept-element>elements</span> whose
+ <span title=concept-element-local-name>local name</span> is
+ <var title>localName</var>.
+
+ <li><p>Otherwise, if just <var title>localName</var> is "<code>*</code>"
+ (U+002A), return a <code>NodeList</code> rooted at
+ <var title>root</var>, whose filter matches only
+ <span title=concept-element>elements</span> whose
+ <span title=concept-element-namespace>namespace</span> is
+ <var title>namespace</var>.
+
+ <li><p>Otherwise, return a <code>NodeList</code> rooted at
+ <var title>root</var>, whose filter matches only
+ <span title=concept-element>elements</span> whose
+ <span title=concept-element-namespace>namespace</span> is
+ <var title>namespace</var> and
+ <span title=concept-element-local-name>local name</span> is
+ <var title>localName</var>.
+</ol>
+
+<p>When invoked with the same arguments, the same <code>NodeList</code>
+object may be returned as returned by an earlier call.
+
+
+<p>The
+<dfn title=concept-getElementsByClassName>list of elements with class names <var title>classNames</var></dfn>
+for a <span title=concept-node>node</span> <var title>root</var> is the
+<code>NodeList</code> returned by the following algorithm:
+<ol>
+ <li>
+  <p>Let <var title>classes</var> be the set of tokens found by
+  <span title="split a string on spaces">splitting</span>
+  <var title>classNames</var> on spaces. (Duplicates are ignored.)
+
+ <li>
+  <p>If <var title>classes</var> is the empty set, return an empty
+  <code>NodeList</code> and terminate these steps.
+
+ <li>
+  <p>Return a <code>NodeList</code> rooted at <var title>root</var>,
+  whose filter matches only
+  <span title=concept-element>elements</span> that have all the
+  <span title=concept-class>classes</span> in <var title>classes</var>.
+
+  <p>If <var title>root</var>'s
+  <span title=concept-node-document>node document</span> is in
+  <span title=concept-quirks-mode>quirks mode</span>, then the comparisons
+  for the <span title=concept-class>classes</span> must be done in an
+  <span>ASCII case-insensitive</span> manner, otherwise, the comparisons
+  must be done in a <span>case-sensitive</span> manner.
+</ol>
+<p>When invoked with the same argument, the same <code>NodeList</code>
+object may be returned as returned by an earlier call.
+
 
 
 <h3>Interface <code>Document</code></h3>
@@ -2757,36 +2865,11 @@ must return the <span title=concept-tree-child>child</span> of the
 <dfn title=dom-Document-documentElement><code>documentElement</code></dfn>
 attribute must return the <span>document element</span>.
 
-<p>The <dfn
-title=dom-Document-getElementsByTagName><code>getElementsByTagName(<var
-title>localName</var>)</code></dfn> method must run these steps:
-
-<ol>
- <li><p>If <var title>localName</var> is "<code>*</code>" (U+002A),
- return a <code>NodeList</code> rooted at the <span>context object</span>,
- whose filter matches only <code>Element</code> nodes.
-
- <li>
-  <p>Otherwise, if the <span>context object</span> is an
-  <span>HTML document</span>, return a <code>NodeList</code> rooted at the
-  <span>context object</span>, whose filter matches only the following nodes:
-
-  <ul>
-   <li><code>Element</code> nodes in the <span>HTML namespace</span> whose
-   <span title=concept-element-local-name>local name</span> is
-   <var title>localName</var> <span>converted to ASCII lowercase</span>.
-
-   <li><code>Element</code> nodes, <em>not</em> in the
-   <span>HTML namespace</span>, whose
-   <span title=concept-element-local-name>local name</span> is
-   <var title>localName</var>.
-  </ul>
-
- <li><p>Otherwise, return a <code>NodeList</code> rooted at the
- <span>context object</span>, whose filter matches only <span title=concept-element>elements</span> whose <span title=concept-element-local-name>local name</span> is
- <var title>localName</var>.
-</ol>
-<p>When invoked with the same argument the same <code>NodeList</code> object may be returned as returned by an earlier call.
+<p>The
+<dfn title=dom-Document-getElementsByTagName><code>getElementsByTagName(<var title>localName</var>)</code></dfn>
+method must return the
+<span title=concept-getElementsByTagName>list of elements with local name <var title>localName</var></span>
+for the <span>context object</span>.
 
 <p class=note>Thus, in an <span>HTML document</span>,
 <code title>document.getElementsByTagName("FOO")</code> will match
@@ -2796,68 +2879,18 @@ the <span>HTML namespace</span>, but not <code title>FOO</code> elements
 that are in the <span>HTML namespace</span>.
 
 
-<p>The <dfn title=dom-Document-getElementsByTagNameNS><code>getElementsByTagNameNS(<var title>namespace</var>, <var title>localName</var>)</code></dfn> method must run these steps:
-
-<ol>
- <li><p>If <var title>namespace</var> is the empty string, set it to null.
-
- <li><p>If both <var title>namespace</var> and <var title>localName</var>
- are "<code>*</code>" (U+002A) return a <code>NodeList</code> rooted at the
- <span>context object</span>, whose filter matches only
- <span title=concept-element>elements</span>.
-
- <li><p>Otherwise, if just <var title>namespace</var> is "<code>*</code>"
- (U+002A), return a <code>NodeList</code> rooted at the
- <span>context object</span>, whose filter matches only
- <span title=concept-element>elements</span> whose
- <span title=concept-element-local-name>local name</span> is
- <var title>localName</var>.
-
- <li><p>Otherwise, if just <var title>localName</var> is "<code>*</code>"
- (U+002A), return a <code>NodeList</code> rooted at the
- <span>context object</span>, whose filter matches only
- <span title=concept-element>elements</span> whose
- <span title=concept-element-namespace>namespace</span> is
- <var title>namespace</var>.
-
- <li><p>Otherwise, return a <code>NodeList</code> rooted at the
- <span>context object</span>, whose filter matches only
- <span title=concept-element>elements</span> whose
- <span title=concept-element-namespace>namespace</span> is
- <var title>namespace</var> and
- <span title=concept-element-local-name>local name</span> is
- <var title>localName</var>.
-</ol>
-
-<p>When invoked with the same argument the same <code>NodeList</code> object may be returned as returned by an earlier call.
-
+<p>The
+<dfn title=dom-Document-getElementsByTagNameNS><code>getElementsByTagNameNS(<var title>namespace</var>, <var title>localName</var>)</code></dfn>
+method must return the
+<span title=concept-getElementsByTagNameNS>list of elements with namespace <var title>namespace</var> and local name <var title>localName</var></span>
+for the <span>context object</span>.
 
 
 <p>The
 <dfn title=dom-Document-getElementsByClassName><code>getElementsByClassName(<var>classNames</var>)</code></dfn>
-method must run these steps:
-<ol>
- <li>
-  <p>Let <var title>classes</var> be the set of tokens found by
-  <span title="split a string on spaces">splitting</span>
-  <var title>classNames</var> on spaces. (Duplicates are ignored.)
-
- <li>
-  <p>If <var title>classes</var> is the empty set, return an empty
-  <code>NodeList</code> and terminate these steps.
-
- <li>
-  <p>Return a <code>NodeList</code> rooted at the
-  <span>context object</span>, whose filter matches only
-  <span title=concept-element>elements</span> that have all the
-  <span title=concept-class>classes</span> in <var title>classes</var>.
-  <p>If the <span>context object</span> is in
-  <span title=concept-quirks-mode>quirks mode</span>, then the comparisons
-  for the <span title=concept-class>classes</span> must be done in an
-  <span>ASCII case-insensitive</span> manner, otherwise, the comparisons
-  must be done in a <span>case-sensitive</span> manner.
-</ol>
-<p>When invoked with the same argument the same <code>NodeList</code> object may be returned as returned by an earlier call.
+method must return the
+<span title=concept-getElementsByClassName>list of elements with class names <var title>classNames</var></span>
+for the <span>context object</span>.
 
 <div class="example">
  <p>Given the following XHTML fragment:
@@ -4067,47 +4100,25 @@ have its name converted to ASCII lowercase before the element is affected.
 
 <p>When the
 <dfn title=dom-Element-getElementsByTagName><code>getElementsByTagName(<var>qualifiedName</var>)</code></dfn>
-method is invoked it must return a <code>NodeList</code> with
-the <span title=concept-element>elements</span> that the
-<code title=dom-Document-getElementsByTagName>getElementsByTagName()</code>
-method would return when called on the <span>context object</span>'s
-<span title=concept-node-document>node document</span> and passed the same
-argument, excluding any <span title=concept-element>elements</span> that are
-not <span title=concept-tree-descendant>descendants</span> of the
-<span>context object</span> on which the method was invoked.
-<p>When invoked with the same argument the same <code>NodeList</code> object
-may be returned as returned by an earlier call.
+method must return the
+<span title=concept-getElementsByTagName>list of elements with local name <var title>localName</var></span>
+for the <span>context object</span>.
 
 
 <p>When the
 <dfn title=dom-Element-getElementsByTagNameNS><code>getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
-method is invoked it must return a <code>NodeList</code> with
-the <span title=concept-element>elements</span> that the
-<code title=dom-Document-getElementsByTagNameNS>getElementsByTagNameNS()</code>
-method would return when called on the <span>context object</span>'s
-<span title=concept-node-document>node document</span> and
-passed the same arguments, excluding any
-<span title=concept-element>elements</span> that are
-not <span title=concept-tree-descendant>descendants</span> of the
-<span>context object</span> on which the method was invoked.
-<p>When invoked with the same argument the same <code>NodeList</code> object
-may be returned as returned by an earlier call.
+method must return the
+<span title=concept-getElementsByTagNameNS>list of elements with namespace <var title>namespace</var> and local name <var title>localName</var></span>
+for the <span>context object</span>.
 
 
 <p>When the
 <dfn
 title=dom-Element-getElementsByClassName><code>getElementsByClassName(<var
 title>classNames</var>)</code></dfn>
-method is invoked it must return a <code>NodeList</code> with the
-<span title=concept-element>elements</span> that the
-<code title="dom-Document-getElementsByClassName">getElementsByClassName()</code>
-method would return when called on the <span>context object</span>'s
-<span title=concept-node-document>node document</span> and passed the same
-argument, excluding any <span title=concept-element>elements</span> that are
-not <span title=concept-tree-descendant>descendants</span> of the
-<span>context object</span> on which the method was invoked.
-<p>When invoked with the same argument the same <code>NodeList</code> object
-may be returned as returned by an earlier call.
+method must return the
+<span title=concept-getElementsByClassName>list of elements with class names <var title>classNames</var></span>
+for the <span>context object</span>.
 
 <hr>
 
