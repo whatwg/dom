@@ -1194,15 +1194,6 @@ concept to make initializing and
 initialized to true".
 
 
-<h3>Mutation events</h3>
-<p class=XXX><a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=13042">The
-status of mutation events is currently unclear.</a> The editors
-hope they can eventually be removed from the platform. There is
-<a href=http://lists.w3.org/Archives/Public/public-webapps/2011AprJun/1318.html>a proposal</a>
-for a replacement. We encourage experimentation with that proposal, as well
-as alternative proposals.
-<!-- https://bugzilla.mozilla.org/show_bug.cgi?id=641821 -->
-
 
 <h2>Nodes</h2>
 <h3>Nodes model</h3>
@@ -1255,6 +1246,83 @@ are violated. These algorithms are used by methods that manipulate the
 <span title=concept-tree>tree</span> of
 <span title=concept-node>nodes</span>.
 
+
+
+<h3>Mutations</h3>
+
+<p class=XXX>This section will define the replacement for the
+"Mutation Events" feature of the platform. For now it contains the interface
+being implemented by vendors.
+
+<!-- https://bugzilla.mozilla.org/show_bug.cgi?id=641821 -->
+
+<pre class="idl">[Constructor(in MutationCallback callback)]
+interface <dfn>MutationObserver</dfn> {
+  void observe(<span>Node</span> target, <span>MutationObserverInit</span> options);
+  void disconnect();
+};
+
+[Callback, NoInterfaceObject]
+interface <dfn>MutationCallback</dfn> {
+  void handleMutations(<span>MutationRecord</span>[] mutations, <span>MutationObserver</span> observer);
+};
+
+dictionary <dfn>MutationObserverInit</dfn> {
+    // Mutation types
+  boolean childList;     // If true, mutations affecting node’s childNodes are included.
+  boolean attributes;    // If true, mutations affecting element’s attributes are included.
+  boolean characterData; // If true, mutations affecting the value of CharacterData nodes are included.
+  // [Note: If none of the known mutation types is specified, an Error is thrown]
+
+  // Subtree observation
+  boolean subtree;  // If true, the observed set of nodes for this registration should include
+                    // descendants of MutationTarget (behavior described below).
+
+  // Old values
+  boolean attributeOldValue;
+  // If true, MutationRecords describing changes to attributes should
+  // contain the value of the attribute before the change. If true
+  // without attribute: true specified, an Error is thrown.
+
+  boolean characterDataOldValue;
+  // If true, MutationRecords describing changes to
+  // CharacterData nodes should contain the value
+  // of the node before the change. If true without
+  // characterData: true, an Error is thrown.
+
+  // Filtering
+  DOMString[] attributeFilter;
+  // If provided, only changes to attributes with localName equaling
+  // one of the provided strings will be delivered. If provided without
+  // attribute: true, an Error is thrown.
+};
+
+interface <dfn>MutationRecord</dfn> {
+  // Mutation type: one of 'childList', 'attributes', or 'characterData'
+  readonly attribute DOMString type;
+
+  // For childList and attributes, target is the owner node affected.
+  // For CharacterData, target is the node affected.
+  readonly attribute <span>Node</span> target;
+
+  // For type == 'childList', Sequence of added and removed nodes in this operation.
+  readonly attribute <span>NodeList</span> addedNodes;
+  readonly attribute <span>NodeList</span> removedNodes;
+
+  // For type == 'childList', The siblings in childNodes immediately preceding following the first
+  // and last nodes added and/or removed.
+  readonly attribute <span>Node</span> previousSibling;
+  readonly attribute <span>Node</span> nextSibling;
+
+  // For type == 'attribute', the name and namespaceURI of the attribute affected
+  readonly attribute DOMString attributeName;
+  readonly attribute DOMString attributeNamespace;
+
+  // For type == 'attribute' or 'characterData', if requested, the value immediately
+  // preceding the mutation.
+  readonly attribute DOMString oldValue;
+};</pre>
+<!-- XXX remove inline comments when this is defined -->
 
 
 <h3>Interface <code>Node</code></h3>
