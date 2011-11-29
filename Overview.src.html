@@ -3732,13 +3732,13 @@ otherwise [createAttribute]- ->.
   readonly attribute <span>DOMTokenList</span> <span title=dom-Element-classList>classList</span>;
 
   readonly attribute <span>Attr</span>[] <span title=dom-Element-attributes>attributes</span>;
-  DOMString? <span title=dom-Element-getAttribute>getAttribute</span>(DOMString <var title>qualifiedName</var>);
+  DOMString? <span title=dom-Element-getAttribute>getAttribute</span>(DOMString <var title>name</var>);
   DOMString? <span title=dom-Element-getAttributeNS>getAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
-  void <span title=dom-Element-setAttribute>setAttribute</span>(DOMString <var title>qualifiedName</var>, DOMString <var title>value</var>);
-  void <span title=dom-Element-setAttributeNS>setAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>, DOMString <var title>value</var>);
-  void <span title=dom-Element-removeAttribute>removeAttribute</span>(DOMString <var title>qualifiedName</var>);
+  void <span title=dom-Element-setAttribute>setAttribute</span>(DOMString <var title>name</var>, DOMString <var title>value</var>);
+  void <span title=dom-Element-setAttributeNS>setAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>name</var>, DOMString <var title>value</var>);
+  void <span title=dom-Element-removeAttribute>removeAttribute</span>(DOMString <var title>name</var>);
   void <span title=dom-Element-removeAttributeNS>removeAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
-  boolean <span title=dom-Element-hasAttribute>hasAttribute</span>(DOMString <var title>qualifiedName</var>);
+  boolean <span title=dom-Element-hasAttribute>hasAttribute</span>(DOMString <var title>name</var>);
   boolean <span title=dom-Element-hasAttributeNS>hasAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
 <!--
   <span>Attr</span> <span title=dom-Element-getAttributeNode>getAttributeNode</span>(DOMString name);
@@ -3967,7 +3967,7 @@ live. I.e. changes to the associated
  <span title=concept-attribute>attribute</span> in the
  <span>context object</span>'s
  <code title=dom-Element-attributes>attributes</code> whose
- <span title=concept-attribute-qualified-name>qualified name</span> is
+ <span title=concept-attribute-name>name</span> is
  <var title>name</var>, or null otherwise.
 </ol>
 
@@ -3988,11 +3988,11 @@ method must return the following steps:
 </ol>
 
 <p>The
-<dfn title=dom-Element-setAttribute><code>setAttribute(<var title>qualifiedName</var>, <var title>value</var>)</code></dfn>
+<dfn title=dom-Element-setAttribute><code>setAttribute(<var title>name</var>, <var title>value</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>If <var title>qualifiedName</var> does not match the
+ <li><p>If <var title>name</var> does not match the
  <code data-anolis-spec=xml>Name</code> production in XML,
  <span title=concept-throw>throw</span> an
  "<code>InvalidCharacterError</code>" exception and terminate these
@@ -4000,21 +4000,21 @@ method must run these steps:
 
  <li><p>If the <span>context object</span> is in the <span>HTML namespace</span>
  and its <span title=concept-node-document>node document</span> is an
- <span>HTML document</span>, let <var title>qualifiedName</var> be
+ <span>HTML document</span>, let <var title>name</var> be
  <span>converted to ASCII lowercase</span>.
 
  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=315805 -->
  <li><p>If "<code title>xmlns</code>" is a <span>prefix match</span> for
- <var title>qualifiedName</var>, <span title=concept-throw>throw</span> a
+ <var title>name</var>, <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" and terminate these steps.
 
  <li><p>If the <span>context object</span> does not have an
  <span title=concept-attribute>attribute</span> whose
- <span title=concept-attribute-qualified-name>qualified name</span> is
- <var title>qualifiedName</var>, create an
+ <span title=concept-attribute-name>name</span> is
+ <var title>name</var>, create an
  <span title=concept-attribute>attribute</span>, whose
- <span title=concept-attribute-local-name>local name</span> is
- <var title>qualifiedName</var> and
+ <span title=concept-attribute-name>name</span> is
+ <var title>name</var> and
  <span title=concept-attribute-value>value</span> is <var title>value</var>.
  Append this <span title=concept-attribute>attribute</span> to the
  <span>context object</span>'s
@@ -4024,33 +4024,33 @@ method must run these steps:
  the first <span title=concept-attribute>attribute</span> in the
  <span>context object</span>'s
  <code title=dom-Element-attributes>attributes</code> whose
- <span title=concept-attribute-qualified-name>qualified name</span> is
- <var title>qualifiedName</var>, to <var title>value</var>.
+ <span title=concept-attribute-name>name</span> is
+ <var title>name</var>, to <var title>value</var>.
 </ol>
 
 <p>The
-<dfn title=dom-Element-setAttributeNS><code>setAttributeNS(<var title>namespace</var>, <var title>qualifiedName</var>, <var title>value</var>)</code></dfn>
+<dfn title=dom-Element-setAttributeNS><code>setAttributeNS(<var title>namespace</var>, <var title>name</var>, <var title>value</var>)</code></dfn>
 method must run these steps:
 
 <ol>
  <li><p>If <var title>namespace</var> is the empty string, set it to null.
 
- <li><p>If <var title>qualifiedName</var> does not match the
+ <li><p>If <var title>name</var> does not match the
  <code data-anolis-spec=xml>Name</code> production in XML,
  <span title=concept-throw>throw</span> an
  "<code>InvalidCharacterError</code>" exception and terminate these
  steps.
 
- <li><p>If <var title>qualifiedName</var> does not match the
+ <li><p>If <var title>name</var> does not match the
  <code data-anolis-spec=xmlns>QName</code> production in Namespaces in XML,
  <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
- <li><p>If <var title>qualifiedName</var> contains a "<code>:</code>" (U+003E),
+ <li><p>If <var title>name</var> contains a "<code>:</code>" (U+003E),
  then split the string on it and let <var title>prefix</var> be the part
  before and <var title>localName</var> the part after. Otherwise, let
  <var title>prefix</var> be null and <var title>localName</var> be
- <var title>qualifiedName</var>.
+ <var title>name</var>.
 
  <li><p>If <var title>prefix</var> is not null and
  <var title>namespace</var> is null, <span title=concept-throw>throw</span>
@@ -4061,13 +4061,13 @@ method must run these steps:
  <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
- <li><p>If <var title>qualifiedName</var> or <var title>prefix</var> is
+ <li><p>If <var title>name</var> or <var title>prefix</var> is
  "<code title>xmlns</code>" and <var title>namespace</var> is not the
  <span>XMLNS namespace</span>, <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
  <li><p>If <var title>namespace</var> is the <span>XMLNS namespace</span>
- and neither <var title>qualifiedName</var> nor <var title>prefix</var> is
+ and neither <var title>name</var> nor <var title>prefix</var> is
  "<code title>xmlns</code>", <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
@@ -4079,6 +4079,8 @@ method must run these steps:
  <span title=concept-attribute-local-name>local name</span> is
  <var title>localName</var>, create an
  <span title=concept-attribute>attribute</span>, whose
+ <span title=concept-attribute-name>name</span> is
+ <var title>name</var>,
  <span title=concept-attribute-namespace>namespace</span> is
  <var title>namespace</var>,
  <span title=concept-attribute-namespace-prefix>namespace prefix</span> is
@@ -4101,22 +4103,22 @@ method must run these steps:
  <span title=concept-attribute-namespace-prefix>namespace prefix</span> to
  <var title>prefix</var>.
 </ol>
+<!-- XXX prefix http://lists.w3.org/Archives/Public/www-dom/2011OctDec/0214.html -->
 
 <p>The
-<dfn title=dom-Element-removeAttribute><code>removeAttribute(<var>qualifiedName</var>)</code></dfn>
+<dfn title=dom-Element-removeAttribute><code>removeAttribute(<var>name</var>)</code></dfn>
 method must run these steps:
 <ol>
  <li><p>If the <span>context object</span> is in the
  <span>HTML namespace</span> and its
  <span title=concept-node-document>node document</span> is an
- <span>HTML document</span>, let <var title>qualifiedName</var> be
+ <span>HTML document</span>, let <var title>name</var> be
  <span>converted to ASCII lowercase</span>.
 
  <li><p>Remove the first <span title=concept-attribute>attribute</span> in
  the <span>context object</span>'s
  <code title=dom-Element-attributes>attributes</code> whose
- <span title=concept-attribute-qualified-name>qualified name</span> is
- <var title>qualifiedName</var>.
+ <span title=concept-attribute-name>name</span> is <var title>name</var>.
 </ol>
 
 <p>The
@@ -4135,20 +4137,20 @@ method must return the following steps:
 </ol>
 
 <p>The
-<dfn title=dom-Element-hasAttribute><code>hasAttribute(<var>qualifiedName</var>)</code></dfn>
+<dfn title=dom-Element-hasAttribute><code>hasAttribute(<var>name</var>)</code></dfn>
 method must run these steps:
 <ol>
  <li><p>If the <span>context object</span> is in the
  <span>HTML namespace</span> and its
  <span title=concept-node-document>node document</span> is an
- <span>HTML document</span>, let <var title>qualifiedName</var> be
+ <span>HTML document</span>, let <var title>name</var> be
  <span>converted to ASCII lowercase</span>.
 
  <li><p>Return true if <span>context object</span>'s
  <code title=dom-Element-attributes>attributes</code> contains an
  <span title=concept-attribute>attribute</span> whose
- <span title=concept-attribute-qualified-name>qualified name</span> is
- <var title>qualifiedName</var>, or false otherwise.
+ <span title=concept-attribute-name>name</span> is
+ <var title>name</var>, or false otherwise.
 </ol>
 
 <p>The
@@ -4275,45 +4277,46 @@ attribute must return the number of
 
 <h4>Interface <code>Attr</code></h4>
 <pre class=idl>interface <dfn>Attr</dfn> {
+  readonly attribute DOMString <span title=dom-Attr-name>name</span>;
+           attribute DOMString <span title=dom-Attr-value>value</span>;
+
   readonly attribute DOMString? <span title=dom-Attr-namespaceURI>namespaceURI</span>;
   readonly attribute DOMString? <span title=dom-Attr-prefix>prefix</span>;
   readonly attribute DOMString <span title=dom-Attr-localName>localName</span>;
-  readonly attribute DOMString <span title=dom-Attr-name>name</span>;
-           attribute DOMString <span title=dom-Attr-value>value</span>;
 };</pre>
 
 <p><code>Attr</code> objects are simply known as
 <dfn title=concept-attribute>attributes</dfn>.
 
-<p>Just like <span title=concept-element>elements</span>,
-<span title=concept-attribute>attributes</span> have an associated
-<dfn title=concept-attribute-namespace>namespace</dfn>,
-<dfn title=concept-attribute-namespace-prefix>namespace prefix</dfn>,
-<dfn title=concept-attribute-local-name>local name</dfn>, and
-<dfn title=concept-attribute-qualified-name>qualified name</dfn>.
+<p><span title=concept-attribute>Attributes</span> have a
+<dfn title=concept-attribute-name>name</dfn> and
+<dfn title=concept-attribute-value>value</dfn>.
+
+<p>For legacy reasons, <span title=concept-attribute>attributes</span> also
+have an associated <dfn title=concept-attribute-namespace>namespace</dfn>,
+<dfn title=concept-attribute-namespace-prefix>namespace prefix</dfn>, and
+<dfn title=concept-attribute-local-name>local name</dfn>.
 
 <p>When an <span title=concept-attribute>attribute</span> is created, its
-<span title=concept-attribute-local-name>local name</span> is always given.
-Unless explicitly given when an
-<span title=concept-attribute>attribute</span> is created, its
+<span title=concept-attribute-name>name</span> and
+<span title=concept-attribute-value>value</span> are always given. Unless
+explicitly given when an <span title=concept-attribute>attribute</span> is
+created, its <span title=concept-attribute-local-name>local name</span> is
+identical to its <span title=concept-attribute-name>name</span>, and its
 <span title=concept-attribute-namespace>namespace</span> and
 <span title=concept-attribute-namespace-prefix>namespace prefix</span> are
 null.
 
-<p>If an <span title=concept-attribute>attribute</span>'s
-<span title=concept-attribute-namespace-prefix>namespace prefix</span> is
-not null, its
-<span title=concept-attribute-qualified-name>qualified name</span> is
-defined as its
-<span title=concept-attribute-namespace-prefix>namespace prefix</span>,
-followed by a "<code>:</code>" (U+003A), followed by its
-<span title=concept-attribute-local-name>local name</span>. Otherwise, its
-<span title=concept-attribute-qualified-name>qualified name</span> is
-defined as its <span title=concept-attribute-local-name>local name</span>.
+<hr>
 
-<p><span title=concept-attribute>Attributes</span> also have an associated
-<dfn title=concept-attribute-value>value</dfn>, which is always given when
-an <span title=concept-attribute>attribute</span> is created.
+<p>The <dfn title=dom-Attr-name><code>name</code></dfn> attribute must
+return the <span title=concept-attribute-name>name</span>.
+
+<p>The <dfn title=dom-Attr-value><code>value</code></dfn> attribute must
+return the <span title=concept-attribute-value>value</span>.
+
+<p>Setting the <code title=dom-Attr-value>value</code> attribute must set
+<span title=concept-attribute-value>value</span> to the new value.
 
 <hr>
 
@@ -4327,17 +4330,6 @@ return the
 
 <p>The <dfn title=dom-Attr-localName><code>localName</code></dfn> attribute
 must return the <span title=concept-attribute-local-name>local name</span>.
-
-<p>The <dfn title=dom-Attr-name><code>name</code></dfn> attribute must
-return the
-<span title=concept-attribute-qualified-name>qualified name</span>.
-
-<p>The <dfn title=dom-Attr-value><code>value</code></dfn> attribute must
-return the <span title=concept-attribute-value>value</span>.
-
-<p>Setting the <code title=dom-Attr-value>value</code> attribute must set
-<span title=concept-attribute-value>value</span> to the new value.
-
 
 
 <h3>Interface <code>CharacterData</code></h3>
