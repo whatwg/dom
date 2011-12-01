@@ -2300,7 +2300,7 @@ dom-Range-extractContents, dom-Range-cloneContents -->
    <dd><p>Its <span title=concept-element-namespace>namespace</span>,
    <span title=concept-element-namespace-prefix>namespace prefix</span>,
    <span title=concept-element-local-name>local name</span>, and its
-   associated list of <span title=concept-attribute>attributes</span>.
+   <span title=concept-element-attribute>attribute list</span>.
 
    <!--AttrExodus
    <dt><code>Attr</code>
@@ -2368,8 +2368,7 @@ false otherwise:
     <span title=concept-element-namespace-prefix>namespace prefix</span>,
     <span title=concept-element-local-name>local name</span>, and its
     number of <span title=concept-attribute>attributes</span> in its
-    associated list of <span title=concept-attribute>attributes</span>.
-   <!-- XXX def -->
+    <span title=concept-element-attribute>attribute list</span>.
 
    <!--AttrExodus
    <dt><code>Attr</code>
@@ -2387,15 +2386,15 @@ false otherwise:
    <dt>Any other node
    <dd><p>&mdash;
   </dl>
- <li><p>If <var title>node</var> is an <code>Element</code> each
- <span title=concept-attribute>attribute</span> in its associated list of
- <span title=concept-attribute>attributes</span> has an
+ <li><p>If <var title>node</var> is an <code>Element</code>, each
+ <span title=concept-attribute>attribute</span> in its
+ <span title=concept-element-attribute>attribute list</span> has an
  <span title=concept-attribute>attribute</span> with the same
  <span title=concept-attribute-namespace>namespace</span>,
  <span title=concept-attribute-local-name>local name</span>, and
  <span title=concept-attribute-value>value</span> in the
- <span>context object</span>'s associated list of
- <span title=concept-attribute>attributes</span>.
+ <span>context object</span>'s
+ <span title=concept-element-attribute>attribute list</span>.
  <li><p><var title>node</var> has the same number of
  <span title=concept-tree-child>children</span> as the
  <span>context object</span>.
@@ -2429,12 +2428,12 @@ false otherwise:
  <span title=concept-element-namespace-prefix>namespace prefix</span> and
  terminate these steps.
 
- <li><p>If, in <var title>element</var>'s
- <code title=dom-Element-attributes>attributes</code>, there is an
+ <li><p>If, <var title>element</var>
+ <span title=concept-element-attribute-has>has</span> an
  <span title=concept-attribute>attribute</span> whose
  <span title=concept-attribute-namespace-prefix>namespace prefix</span> is
  "<code title>xmlns</code>" and <span title=concept-attribute-value>value</span>
- is <var title>namespace</var> then return that
+ is <var title>namespace</var>, then return that
  <span title=concept-attribute>attribute</span>'s
  <span title=concept-attribute-local-name>local name</span> and terminate these
  steps.
@@ -2460,12 +2459,12 @@ false otherwise:
    these steps.
 
    <li>
-    <p>If, in its <code title=dom-Element-attributes>attributes</code>,
-    there is an <span title=concept-attribute>attribute</span> whose
+    <p>If it <span title=concept-element-attribute-has>has</span> an
+    <span title=concept-attribute>attribute</span> whose
     <span title=concept-attribute-namespace-prefix>namespace prefix</span>
     is "<code title>xmlns</code>" and
     <span title=concept-attribute-local-name>local name</span> is
-    <var title>prefix</var> or whose
+    <var title>prefix</var>, or whose
     <span title=concept-attribute-namespace-prefix>namespace prefix</span> is
     null and <span title=concept-attribute-local-name>local name</span> is
     "<code title>xmlns</code>":
@@ -3766,12 +3765,27 @@ otherwise [createAttribute]- ->.
 <p><code>Element</code> <span title=concept-node>nodes</span> are simply
 known as <dfn title=concept-element>elements</dfn>.</p>
 
-<p><span title=concept-element>Elements</span> have an associated <dfn title=concept-element-namespace>namespace</dfn>, <dfn title=concept-element-namespace-prefix>namespace prefix</dfn>, <dfn title=concept-element-local-name>local name</dfn>.
+<p><span title=concept-element>Elements</span> have an associated
+<dfn title=concept-element-namespace>namespace</dfn>,
+<dfn title=concept-element-namespace-prefix>namespace prefix</dfn>, and
+<dfn title=concept-element-local-name>local name</dfn>. When an
+<span title=concept-element>element</span> is created, its
+<span title=concept-element-local-name>local name</span> is always given.
+Unless explicitly given when an <span title=concept-element>element</span>
+is created, its <span title=concept-element-namespace>namespace</span> and
+<span title=concept-element-namespace-prefix>namespace prefix</span> are
+null.
 
-<p>When an <span title=concept-element>element</span> is created, its <span title=concept-element-local-name>local name</span> is always given. Unless explicitly given when an <span title=concept-element>element</span> is created, its <span title=concept-element-namespace>namespace</span> and <span title=concept-element-namespace-prefix>namespace prefix</span> are null.
-
-<p><span title=concept-element>Elements</span> also have an associated
-list of <span title=concept-attribute>attributes</span>.
+<p><span title=concept-element>Elements</span> also have an ordered
+<dfn title=concept-element-attribute>attribute list</dfn>. Unless
+explicitly given when an <span title=concept-element>element</span> is
+created, its
+<span title=concept-element-attribute>attribute list</span> is empty. An
+<span title=concept-element>element</span>
+<dfn title=concept-element-attribute-has>has</dfn> an
+<span title=concept-attribute>attribute</span> <var title>A</var> if
+<var title>A</var> is in its
+<span title=concept-element-attribute>attribute list</span>.
 
 <p><span title=concept-element>Elements</span> can have a
 <dfn title=concept-id>unique identifier (ID)</dfn> and
@@ -3785,23 +3799,19 @@ only one per <span title=concept-element>element</span>, given by an
 <code title>id</code> <span title=concept-attribute>attribute</span>.
 
 <p>An <span title=concept-element>element</span> has an
-<span title=concept-id>ID</span> if it has an
-<span title=concept-attribute>attribute</span> whose
-<span title=concept-attribute-local-name>local name</span> is
-<code title>id</code>,
-<span title=concept-attribute-namespace>namespace</span> is null, and
+<span title=concept-id>ID</span> if it
+<span title=concept-element-attribute-has>has</span> an
+<span title=concept-named-attribute><code>id</code> attribute</span> whose
 <span title=concept-attribute-value>value</span> is not the empty string.
 The <span title=concept-id>ID</span> is that
 <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-value>value</span>.
 
 <p>An <span title=concept-element>element</span> has
-<span title=concept-class>classes</span> if it has an
-<span title=concept-attribute>attribute</span> whose
-<span title=concept-attribute-local-name>local name</span> is
-<code title>class</code>,
-<span title=concept-attribute-namespace>namespace</span> is null, and
-<span title="split a string on spaces">splitting</span> the
+<span title=concept-class>classes</span> if it
+<span title=concept-element-attribute-has>has</span> a
+<span title=concept-named-attribute><code>class</code> attribute</span>, and
+<span title="split a string on spaces">splitting</span> that
 <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-value>value</span> does not return an empty
 list. The <span title=concept-class>classes</span> are that
@@ -3948,8 +3958,8 @@ the <code title=dom-Element-className>className</code> attribute value.
 
 <p>The <dfn title=dom-Element-attributes><code>attributes</code></dfn>
 attribute must return a <span data-anolis-spec=webidl>read only array</span>
-of the <span>context object</span>'s associated
-<span title=concept-attribute>attributes</span>.
+of the <span>context object</span>'s
+<span title=concept-element-attribute>attribute list</span>.
 The returned <span data-anolis-spec=webidl>read only array</span> must be
 live. I.e. changes to the associated
 <span title=concept-attribute>attributes</span> are reflected.
@@ -3963,10 +3973,10 @@ live. I.e. changes to the associated
  <span>HTML document</span>, let <var title>name</var> be
  <span>converted to ASCII lowercase</span>.
 
- <li><p>Return the <span title=concept-attribute-value>value</span> of the first
- <span title=concept-attribute>attribute</span> in the
+ <li><p>Return the <span title=concept-attribute-value>value</span> of the
+ first <span title=concept-attribute>attribute</span> in the
  <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> whose
+ <span title=concept-element-attribute>attribute list</span> whose
  <span title=concept-attribute-name>name</span> is
  <var title>name</var>, or null otherwise.
 </ol>
@@ -3980,7 +3990,7 @@ method must return the following steps:
   <li><p>Return the <span title=concept-attribute-value>value</span> of the
   <span title=concept-attribute>attribute</span> in the
   <span>context object</span>'s
-  <code title=dom-Element-attributes>attributes</code> whose
+  <span title=concept-element-attribute>attribute list</span> whose
   <span title=concept-attribute-namespace>namespace</span> is
   <var title>namespace</var> and
   <span title=concept-attribute-local-name>local name</span> is
@@ -4023,7 +4033,7 @@ method must run these steps:
  <li><p>Otherwise, <span title=concept-attribute-change>change</span> the
  first <span title=concept-attribute>attribute</span> in the
  <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> whose
+ <span title=concept-element-attribute>attribute list</span> whose
  <span title=concept-attribute-name>name</span> is
  <var title>name</var>, to <var title>value</var>.
 </ol>
@@ -4071,8 +4081,8 @@ method must run these steps:
  "<code title>xmlns</code>", <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
- <li><p>If the <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> does not contain an
+ <li><p>If the <span>context object</span> does not
+ <span title=concept-element-attribute-has>have</span> an
  <span title=concept-attribute>attribute</span> whose
  <span title=concept-attribute-namespace>namespace</span> is
  <var title>namespace</var> and
@@ -4092,14 +4102,8 @@ method must run these steps:
  <span title=concept-attribute>attribute</span> to the
  <span>context object</span>.
 
- <li><p>Otherwise, <span title=concept-attribute-change>change</span> the
- <span title=concept-attribute>attribute</span> in the
- <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> whose
- <span title=concept-attribute-namespace>namespace</span> is
- <var title>namespace</var>, and
- <span title=concept-attribute-local-name>local name</span> is
- <var title>localName</var>, to <var title>value</var>.
+ <li><p>Otherwise, <span title=concept-attribute-change>change</span> that
+ <span title=concept-attribute>attribute</span> to <var title>value</var>.
 </ol>
 
 <p>The
@@ -4113,10 +4117,10 @@ method must run these steps:
  <span>converted to ASCII lowercase</span>.
 
  <li><p><span title=concept-element-attributes-remove>Remove</span> the
- first <span title=concept-attribute>attribute</span> in the
- <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> whose
- <span title=concept-attribute-name>name</span> is <var title>name</var>.
+ first <span title=concept-attribute>attribute</span> from the
+ <span>context object</span> whose
+ <span title=concept-attribute-name>name</span> is <var title>name</var>,
+ if any.
 </ol>
 
 <p>The
@@ -4126,9 +4130,8 @@ method must return the following steps:
   <li><p>If <var title>namespace</var> is the empty string, set it to null.
 
   <li><p><span title=concept-element-attributes-remove>Remove</span> the
-  <span title=concept-attribute>attribute</span> in the
-  <span>context object</span>'s
-  <code title=dom-Element-attributes>attributes</code> whose
+  <span title=concept-attribute>attribute</span> from the
+  <span>context object</span> whose
   <span title=concept-attribute-namespace>namespace</span> is
   <var title>namespace</var> and
   <span title=concept-attribute-local-name>local name</span> is
@@ -4145,8 +4148,8 @@ method must run these steps:
  <span>HTML document</span>, let <var title>name</var> be
  <span>converted to ASCII lowercase</span>.
 
- <li><p>Return true if <span>context object</span>'s
- <code title=dom-Element-attributes>attributes</code> contains an
+ <li><p>Return true if the <span>context object</span>
+ <span title=concept-attribute-has>has</span> an
  <span title=concept-attribute>attribute</span> whose
  <span title=concept-attribute-name>name</span> is
  <var title>name</var>, or false otherwise.
@@ -4158,8 +4161,8 @@ method must return the following steps:
 <ol>
   <li><p>If <var title>namespace</var> is the empty string, set it to null.
 
-  <li><p>Return true if <span>context object</span>'s
-  <code title=dom-Element-attributes>attributes</code> contains an
+  <li><p>Return true if the <span>context object</span>
+  <span title=concept-attribute-has>has</span> an
   <span title=concept-attribute>attribute</span> whose
   <span title=concept-attribute-namespace>namespace</span> is
   <var title>namespace</var> and
@@ -4306,6 +4309,15 @@ identical to its <span title=concept-attribute-name>name</span>, and its
 <span title=concept-attribute-namespace-prefix>namespace prefix</span> are
 null.
 
+<p>An
+<dfn title=concept-named-attribute><code><var title>A</var></code> attribute</dfn>
+is an <span title=concept-attribute>attribute</span> whose
+<span title=concept-attribute-name>name</span> is
+<code><var title>A</var></code> and whose
+<span title=concept-attribute-namespace>namespace</span> and
+<span title=concept-attribute-namespace-prefix>namespace prefix</span> are
+null.
+
 <hr>
 
 <p>To <dfn title=concept-attribute-change>change</dfn> an
@@ -4313,17 +4325,18 @@ null.
 <var title>value</var>, set the <var title>attribute</var>'s
 <span title=concept-attribute-value>value</span> to <var title>value</var>.
 
+<!-- XXX move append/remove to attribute list? -->
 <p>To <dfn title=concept-element-attributes-append>append</dfn> an
 <span title=concept-attribute>attribute</span> <var title>attribute</var> to
 an <span title=concept-element>element</span> <var title>element</var>,
 append the <var title>attribute</var> to the <var title>element</var>'s
-associated list of <span title=concept-attribute>attributes</span>.
+<span title=concept-element-attribute>attribute list</span>.
 
 <p>To <dfn title=concept-element-attributes-remove>remove</dfn> an
 <span title=concept-attribute>attribute</span> <var title>attribute</var>
 from an <span title=concept-element>element</span> <var title>element</var>,
 remove the <var title>attribute</var> from the <var title>element</var>'s
-associated list of <span title=concept-attribute>attributes</span>.
+<span title=concept-element-attribute>attribute list</span>.
 
 <p class=XXX>These definitions will be expanded upon in due course for
 mutations.
