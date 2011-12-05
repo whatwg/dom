@@ -89,8 +89,9 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
    <li><a href="#node-tree"><span class="secno">5.1 </span>Node tree</a>
     <ol>
      <li><a href="#mutation-algorithms"><span class="secno">5.1.1 </span>Mutation algorithms</a></li>
-     <li><a href="#legacy-mutation-methods"><span class="secno">5.1.2 </span>Legacy mutation methods</a></li>
-     <li><a href="#mutation-observers"><span class="secno">5.1.3 </span>Mutation observers</a></ol></li>
+     <li><a href="#mutation-methods"><span class="secno">5.1.2 </span>Mutation methods</a></li>
+     <li><a href="#legacy-mutation-methods"><span class="secno">5.1.3 </span>Legacy mutation methods</a></li>
+     <li><a href="#mutation-observers"><span class="secno">5.1.4 </span>Mutation observers</a></ol></li>
    <li><a href="#interface-node"><span class="secno">5.2 </span>Interface <code>Node</code></a></li>
    <li><a href="#interface-document"><span class="secno">5.3 </span>Interface <code>Document</code></a>
     <ol>
@@ -1512,7 +1513,121 @@ from a <var title="">parent</var>, run these steps:
 </ol>
 
 
-<h4 id="legacy-mutation-methods"><span class="secno">5.1.2 </span>Legacy mutation methods</h4>
+<h4 id="mutation-methods"><span class="secno">5.1.2 </span>Mutation methods</h4>
+
+<p>The <dfn id="mutation-method-macro">mutation method macro</dfn>:
+
+<ol>
+ <li><p>Let <var title="">node</var> be null.
+
+ <li><p>Replace each string in <var title="">nodes</var> with a
+ <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a> whose
+ <span title="cocnept-CD-data">data</span> is the string value.
+
+ <li>
+  <p>If <var title="">nodes</var> contains more than one
+  <a href="#concept-node" title="concept-node">node</a>, set <var title="">node</var> to a new
+  <code><a href="#documentfragment">DocumentFragment</a></code> and
+  <a href="#concept-node-append" title="concept-node-append">append</a> each
+  <a href="#concept-node" title="concept-node">node</a> in <var title="">nodes</var> to it. If
+  this throws an exception, re-throw the exception and terminate these
+  steps.
+
+  <p>Otherwise, set <var title="">node</var> to the single
+  <a href="#concept-node" title="concept-node">node</a> <var title="">nodes</var> contains.
+</ol>
+
+
+<p>The
+<dfn id="dom-rootnode-prepend" title="dom-RootNode-prepend"><code>prepend(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a> before the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-first-child" title="concept-tree-first-child">first child</a>
+</ol>
+
+<p>The
+<dfn id="dom-rootnode-append" title="dom-RootNode-append"><code>append(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-append" title="concept-node-append">Append</a>
+ <var title="">node</var> to the <a href="#context-object">context object</a>.
+</ol>
+
+
+<p>The
+<dfn id="dom-childnode-before" title="dom-ChildNode-before"><code>before(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> before the
+ <a href="#context-object">context object</a>.
+</ol>
+
+<p>The
+<dfn id="dom-childnode-after" title="dom-ChildNode-after"><code>after(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> before the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
+</ol>
+
+<p>The
+<dfn id="dom-childnode-replace" title="dom-ChildNode-replace"><code>replace(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-replace" title="concept-node-replace">Replace</a> the
+ <a href="#context-object">context object</a> with <var title="">node</var> within the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+</ol>
+
+<p>The
+<dfn id="dom-childnode-remove" title="dom-ChildNode-remove"><code>remove()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> the
+ <a href="#context-object">context object</a> from the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+</ol>
+
+
+<h4 id="legacy-mutation-methods"><span class="secno">5.1.3 </span>Legacy mutation methods</h4>
 
 <p>The
 <dfn id="dom-node-insertbefore" title="dom-Node-insertBefore"><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
@@ -1537,7 +1652,7 @@ method must <a href="#concept-node-pre-remove" title="concept-node-pre-remove">p
 <var title="">child</var> from the <a href="#context-object">context object</a>.
 
 
-<h4 id="mutation-observers"><span class="secno">5.1.3 </span>Mutation observers</h4>
+<h4 id="mutation-observers"><span class="secno">5.1.4 </span>Mutation observers</h4>
 
 <p class="XXX">This section will define the replacement for the
 "Mutation Events" feature of the platform. For now it contains the interface
@@ -2686,6 +2801,10 @@ object may be returned as returned by an earlier call.
 
   <a href="#nodeiterator">NodeIterator</a> <a href="#dom-document-createnodeiterator" title="dom-Document-createNodeIterator">createNodeIterator</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a>? <var title="">filter</var>);
   <a href="#treewalker">TreeWalker</a> <a href="#dom-document-createtreewalker" title="dom-Document-createTreeWalker">createTreeWalker</a>(<a href="#node">Node</a> <var title="">root</var>, optional unsigned long <var title="">whatToShow</var>, optional <a href="#nodefilter">NodeFilter</a>? <var title="">filter</var>);
+
+  // NEW (using experimental IDL)
+  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
 };
 
 interface <dfn id="xmldocument">XMLDocument</dfn> : <a href="#document">Document</a> {};</pre>
@@ -3570,6 +3689,9 @@ method must run these steps:
 
 <h3 id="interface-documentfragment"><span class="secno">5.4 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
 <pre class="idl">interface <dfn id="documentfragment">DocumentFragment</dfn> : <a href="#node">Node</a> {
+  // NEW (using experimental IDL)
+  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
 };</pre>
 
 
@@ -3582,6 +3704,12 @@ method must run these steps:
   readonly attribute DOMString <a href="#dom-documenttype-publicid" title="dom-DocumentType-publicId">publicId</a>;
   readonly attribute DOMString <a href="#dom-documenttype-systemid" title="dom-DocumentType-systemId">systemId</a>;<!--
   readonly attribute DOMString internalSubset;-->
+
+  // NEW (using experimental IDL)
+  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p><code><a href="#documenttype">DocumentType</a></code> <a href="#concept-node" title="concept-node">nodes</a> are
@@ -3704,6 +3832,14 @@ otherwise [createAttribute]- ->.
   void setIdAttribute(DOMString name, boolean isId);
   void setIdAttributeNS(DOMString namespace, DOMString localName, boolean isId);
   void setIdAttributeNode(Attr idAttr, boolean isId);-->
+
+  // NEW (using experimental IDL)
+  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p><code><a href="#element">Element</a></code> <a href="#concept-node" title="concept-node">nodes</a> are simply
@@ -4317,6 +4453,12 @@ must return the <a href="#concept-attribute-local-name" title="concept-attribute
   void <a href="#dom-characterdata-insertdata" title="dom-CharacterData-insertData">insertData</a>(unsigned long <var title="">offset</var>, DOMString <var title="">data</var>);
   void <a href="#dom-characterdata-deletedata" title="dom-CharacterData-deleteData">deleteData</a>(unsigned long <var title="">offset</var>, unsigned long <var title="">count</var>);
   void <a href="#dom-characterdata-replacedata" title="dom-CharacterData-replaceData">replaceData</a>(unsigned long <var title="">offset</var>, unsigned long <var title="">count</var>, DOMString <var title="">data</var>);
+
+  // NEW (using experimental IDL)
+  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>(<a href="#node">Node</a> | DOMString... <var title="">nodes</var>);
+  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p class="note"><code><a href="#characterdata">CharacterData</a></code> is an abstract interface and does

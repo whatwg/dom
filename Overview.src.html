@@ -1551,6 +1551,120 @@ from a <var title>parent</var>, run these steps:
 </ol>
 
 
+<h4>Mutation methods</h4>
+
+<p>The <dfn>mutation method macro</dfn>:
+
+<ol>
+ <li><p>Let <var title>node</var> be null.
+
+ <li><p>Replace each string in <var title>nodes</var> with a
+ <code>Text</code> <span title=concept-node>node</span> whose
+ <span title=cocnept-CD-data>data</span> is the string value.
+
+ <li>
+  <p>If <var title>nodes</var> contains more than one
+  <span title=concept-node>node</span>, set <var title>node</var> to a new
+  <code>DocumentFragment</code> and
+  <span title=concept-node-append>append</span> each
+  <span title=concept-node>node</span> in <var title>nodes</var> to it. If
+  this throws an exception, re-throw the exception and terminate these
+  steps.
+
+  <p>Otherwise, set <var title>node</var> to the single
+  <span title=concept-node>node</span> <var title>nodes</var> contains.
+</ol>
+
+
+<p>The
+<dfn title=dom-RootNode-prepend><code>prepend(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <span>mutation method macro</span>.
+
+ <li><p><span title=concept-node-pre-insert>Pre-insert</span>
+ <var title>node</var> into the <span>context object</span> before the
+ <span>context object</span>'s
+ <span title=concept-tree-first-child>first child</span>
+</ol>
+
+<p>The
+<dfn title=dom-RootNode-append><code>append(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <span>mutation method macro</span>.
+
+ <li><p><span title=concept-node-append>Append</span>
+ <var title>node</var> to the <span>context object</span>.
+</ol>
+
+
+<p>The
+<dfn title=dom-ChildNode-before><code>before(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span> does not have a
+ <span title=concept-tree-parent>parent</span>, terminate these steps.
+
+ <li>Run the <span>mutation method macro</span>.
+
+ <li><p><span title=concept-node-pre-insert>Pre-insert</span>
+ <var title>node</var> into the <span>context object</span>'s
+ <span title=concept-tree-parent>parent</span> before the
+ <span>context object</span>.
+</ol>
+
+<p>The
+<dfn title=dom-ChildNode-after><code>after(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span> does not have a
+ <span title=concept-tree-parent>parent</span>, terminate these steps.
+
+ <li>Run the <span>mutation method macro</span>.
+
+ <li><p><span title=concept-node-pre-insert>Pre-insert</span>
+ <var title>node</var> into the <span>context object</span>'s
+ <span title=concept-tree-parent>parent</span> before the
+ <span>context object</span>'s
+ <span title=concept-tree-next-sibling>next sibling</span>.
+</ol>
+
+<p>The
+<dfn title=dom-ChildNode-replace><code>replace(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span> does not have a
+ <span title=concept-tree-parent>parent</span>, terminate these steps.
+
+ <li>Run the <span>mutation method macro</span>.
+
+ <li><p><span title=concept-node-replace>Replace</span> the
+ <span>context object</span> with <var title>node</var> within the
+ <span>context object</span>'s
+ <span title=concept-tree-parent>parent</span>.
+</ol>
+
+<p>The
+<dfn title=dom-ChildNode-remove><code>remove()</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span> does not have a
+ <span title=concept-tree-parent>parent</span>, terminate these steps.
+
+ <li><p><span title=concept-node-remove>Remove</span> the
+ <span>context object</span> from the
+ <span>context object</span>'s
+ <span title=concept-tree-parent>parent</span>.
+</ol>
+
+
 <h4>Legacy mutation methods</h4>
 
 <p>The
@@ -2728,6 +2842,10 @@ object may be returned as returned by an earlier call.
 
   <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
   <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
+
+  // NEW (using experimental IDL)
+  void <span title=dom-RootNode-prepend>prepend</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-RootNode-append>append</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
 };
 
 interface <dfn>XMLDocument</dfn> : <span>Document</span> {};</pre>
@@ -3627,6 +3745,9 @@ method must run these steps:
 
 <h3>Interface <code>DocumentFragment</code></h3>
 <pre class=idl>interface <dfn>DocumentFragment</dfn> : <span>Node</span> {
+  // NEW (using experimental IDL)
+  void <span title=dom-RootNode-prepend>prepend</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-RootNode-append>append</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
 };</pre>
 
 
@@ -3639,6 +3760,12 @@ method must run these steps:
   readonly attribute DOMString <span title=dom-DocumentType-publicId>publicId</span>;
   readonly attribute DOMString <span title=dom-DocumentType-systemId>systemId</span>;<!--
   readonly attribute DOMString internalSubset;-->
+
+  // NEW (using experimental IDL)
+  void <span title=dom-ChildNode-before>before</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-after>after</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-replace>replace</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p><code>DocumentType</code> <span title=concept-node>nodes</span> are
@@ -3761,6 +3888,14 @@ otherwise [createAttribute]- ->.
   void setIdAttribute(DOMString name, boolean isId);
   void setIdAttributeNS(DOMString namespace, DOMString localName, boolean isId);
   void setIdAttributeNode(Attr idAttr, boolean isId);-->
+
+  // NEW (using experimental IDL)
+  void <span title=dom-RootNode-prepend>prepend</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-RootNode-append>append</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-before>before</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-after>after</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-replace>replace</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p><code>Element</code> <span title=concept-node>nodes</span> are simply
@@ -4376,6 +4511,12 @@ must return the <span title=concept-attribute-local-name>local name</span>.
   void <span title=dom-CharacterData-insertData>insertData</span>(unsigned long <var title>offset</var>, DOMString <var title>data</var>);
   void <span title=dom-CharacterData-deleteData>deleteData</span>(unsigned long <var title>offset</var>, unsigned long <var title>count</var>);
   void <span title=dom-CharacterData-replaceData>replaceData</span>(unsigned long <var title>offset</var>, unsigned long <var title>count</var>, DOMString <var title>data</var>);
+
+  // NEW (using experimental IDL)
+  void <span title=dom-ChildNode-before>before</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-after>after</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-replace>replace</span>(<span>Node</span> | DOMString... <var title>nodes</var>);
+  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p class="note"><code>CharacterData</code> is an abstract interface and does
