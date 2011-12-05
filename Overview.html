@@ -51,8 +51,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor-s-draft-1-december-2011">
-  <span class="w3conly">Editor's Draft 1 December 2011</span>
+ <h2 class="no-num no-toc" id="editor-s-draft-5-december-2011">
+  <span class="w3conly">Editor's Draft 5 December 2011</span>
   </h2>
 
  <dl>
@@ -82,7 +82,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-1 December 2011, the editors have made this specification available
+5 December 2011, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -127,21 +127,24 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
    <li><a href="#firing-events"><span class="secno">4.6 </span>Firing events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol class="toc">
-   <li><a href="#nodes-model"><span class="secno">5.1 </span>Nodes model</a></li>
-   <li><a href="#mutations"><span class="secno">5.2 </span>Mutations</a></li>
-   <li><a href="#interface-node"><span class="secno">5.3 </span>Interface <code>Node</code></a></li>
-   <li><a href="#interface-document"><span class="secno">5.4 </span>Interface <code>Document</code></a>
+   <li><a href="#node-tree"><span class="secno">5.1 </span>Node tree</a>
     <ol class="toc">
-     <li><a href="#interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
-   <li><a href="#interface-documentfragment"><span class="secno">5.5 </span>Interface <code>DocumentFragment</code></a></li>
-   <li><a href="#interface-documenttype"><span class="secno">5.6 </span>Interface <code>DocumentType</code></a></li>
-   <li><a href="#interface-element"><span class="secno">5.7 </span>Interface <code>Element</code></a>
+     <li><a href="#mutation-algorithms"><span class="secno">5.1.1 </span>Mutation algorithms</a></li>
+     <li><a href="#legacy-mutation-methods"><span class="secno">5.1.2 </span>Legacy mutation methods</a></li>
+     <li><a href="#mutation-observers"><span class="secno">5.1.3 </span>Mutation observers</a></ol></li>
+   <li><a href="#interface-node"><span class="secno">5.2 </span>Interface <code>Node</code></a></li>
+   <li><a href="#interface-document"><span class="secno">5.3 </span>Interface <code>Document</code></a>
     <ol class="toc">
-     <li><a href="#interface-attr"><span class="secno">5.7.1 </span>Interface <code>Attr</code></a></ol></li>
-   <li><a href="#interface-characterdata"><span class="secno">5.8 </span>Interface <code>CharacterData</code></a></li>
-   <li><a href="#interface-text"><span class="secno">5.9 </span>Interface <code>Text</code></a></li>
-   <li><a href="#interface-processinginstruction"><span class="secno">5.10 </span>Interface <code>ProcessingInstruction</code></a></li>
-   <li><a href="#interface-comment"><span class="secno">5.11 </span>Interface <code>Comment</code></a></ol></li>
+     <li><a href="#interface-domimplementation"><span class="secno">5.3.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
+   <li><a href="#interface-documentfragment"><span class="secno">5.4 </span>Interface <code>DocumentFragment</code></a></li>
+   <li><a href="#interface-documenttype"><span class="secno">5.5 </span>Interface <code>DocumentType</code></a></li>
+   <li><a href="#interface-element"><span class="secno">5.6 </span>Interface <code>Element</code></a>
+    <ol class="toc">
+     <li><a href="#interface-attr"><span class="secno">5.6.1 </span>Interface <code>Attr</code></a></ol></li>
+   <li><a href="#interface-characterdata"><span class="secno">5.7 </span>Interface <code>CharacterData</code></a></li>
+   <li><a href="#interface-text"><span class="secno">5.8 </span>Interface <code>Text</code></a></li>
+   <li><a href="#interface-processinginstruction"><span class="secno">5.9 </span>Interface <code>ProcessingInstruction</code></a></li>
+   <li><a href="#interface-comment"><span class="secno">5.10 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#ranges"><span class="secno">6 </span>Ranges</a>
   <ol class="toc">
    <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></ol></li>
@@ -659,7 +662,7 @@ and actually throw that object as an exception.
   <td><dfn id="dom-domexception-index_size_err" title="dom-DOMException-INDEX_SIZE_ERR"><code>INDEX_SIZE_ERR</code></dfn> (1)
  <tr>
   <td>"<dfn id="hierarchyrequesterror"><code>HierarchyRequestError</code></dfn>"
-  <td>The operation would yield an incorrect nodes model.
+  <td>The operation would yield an incorrect <a href="#node-tree">node tree</a>.
   <td><dfn id="dom-domexception-hierarchy_request_err" title="dom-DOMException-HIERARCHY_REQUEST_ERR"><code>HIERARCHY_REQUEST_ERR</code></dfn> (3)
  <tr>
   <td>"<dfn id="wrongdocumenterror"><code>WrongDocumentError</code></dfn>"
@@ -1204,7 +1207,7 @@ initialized to true".
 
 
 <h2 id="nodes"><span class="secno">5 </span>Nodes</h2>
-<h3 id="nodes-model"><span class="secno">5.1 </span>Nodes model</h3>
+<h3 id="node-tree"><span class="secno">5.1 </span>Node tree</h3>
 
 <p>Objects implementing the <code><a href="#document">Document</a></code>,
 <code><a href="#documentfragment">DocumentFragment</a></code>, <code><a href="#documenttype">DocumentType</a></code>,
@@ -1246,17 +1249,339 @@ and its allowed <a href="#concept-tree-child" title="concept-tree-child">childre
 
 <!--AttrExodus -->
 
-<p class="note">The <a href="#concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</a> and
-<a href="#concept-node-replace" title="concept-node-replace">replace</a> algorithms
-<a href="#concept-throw" title="concept-throw">throw</a> a
-"<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints listed above
-are violated. These algorithms are used by methods that manipulate the
-<a href="#concept-tree" title="concept-tree">tree</a> of
-<a href="#concept-node" title="concept-node">nodes</a>.
+<h4 id="mutation-algorithms"><span class="secno">5.1.1 </span>Mutation algorithms</h4>
+
+<p>To <dfn id="concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</dfn> a
+<var title="">node</var> into a <var title="">parent</var> before a
+<var title="">child</var>, run these steps:
+
+<ol>
+ <li><p>If <var title="">child</var> is not null and its
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
+ <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
+
+ <li><p>If <var title="">node</var> is <var title="">parent</var> or an
+ <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+ <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li><p>If <var title="">parent</var> is not a <code><a href="#document">Document</a></code>,
+ <code><a href="#documentfragment">DocumentFragment</a></code>, or <code><a href="#element">Element</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li>
+  <p>If <var title="">parent</var> is a
+  <a href="#concept-document" title="concept-document">document</a>, run these substeps:
+
+  <ol>
+   <li><p>If <var title="">node</var> is not a <code><a href="#documentfragment">DocumentFragment</a></code>,
+   <code><a href="#documenttype">DocumentType</a></code>, <code><a href="#element">Element</a></code>,
+   <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
+   <a href="#concept-node" title="concept-node">node</a>,
+   <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+   <li>
+    <p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+    <a href="#concept-node" title="concept-node">node</a>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title="">node</var> has more than one
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> or has a <code><a href="#text">Text</a></code>
+     <a href="#concept-node" title="concept-node">node</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a>,
+     <a href="#concept-throw" title="concept-throw">throw</a> a
+     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+     <li><p>If <var title="">node</var> has one
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> and either
+     <var title="">parent</var> has an
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> or <var title="">child</var>
+     is not null and a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
+     <a href="#concept-tree-following" title="concept-tree-following">following</a>
+     <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+    </ol>
+
+   <li><p>If <var title="">node</var> is an
+   <a href="#concept-element" title="concept-element">element</a> and either
+   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
+   <a href="#concept-tree-child" title="concept-tree-child">child</a> or <var title="">child</var>
+   is not null and a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
+   <a href="#concept-tree-following" title="concept-tree-following">following</a>
+   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+   <li><p>If <var title="">node</var> is a
+   <a href="#concept-doctype" title="concept-doctype">doctype</a> and either
+   <var title="">parent</var> has a <a href="#concept-doctype" title="concept-doctype">doctype</a>
+   <a href="#concept-tree-child" title="concept-tree-child">child</a>, an
+   <a href="#concept-element" title="concept-element">element</a> is
+   <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+   <var title="">child</var>, or <var title="">child</var> is null and
+   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
+   <a href="#concept-tree-child" title="concept-tree-child">child</a>,
+   <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+  </ol>
+
+ <li><p>Otherwise if <var title="">parent</var> is a
+ <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code>
+ <a href="#concept-node" title="concept-node">node</a> and <var title="">node</var> is not a
+ <code><a href="#documentfragment">DocumentFragment</a></code>, <code><a href="#element">Element</a></code>, <code><a href="#text">Text</a></code>,
+ <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
+ <var title="">node</var> with <var title="">parent</var>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a>.
+
+ <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a> <var title="">node</var>
+ into <var title="">parent</var> before <var title="">child</var>.
+
+ <li><p>Return <var title="">child</var>.
+ <!-- technically this is post-insert -->
+</ol>
 
 
+<p>To <dfn id="concept-node-insert" title="concept-node-insert">insert</dfn> a <var title="">node</var>
+into a <var title="">parent</var> before a <var title="">child</var>, run these
+steps:
 
-<h3 id="mutations"><span class="secno">5.2 </span>Mutations</h3>
+<ol>
+ <li><p>Let <var title="">count</var> be the number of
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> if
+ it is a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>,
+ or one otherwise.
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+ <var title="">parent</var> and
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
+ <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
+ increase its <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
+ <var title="">count</var>.
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+ <var title="">parent</var> and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+ <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
+ increase its <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
+ <var title="">count</var>.
+
+ <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>, insert its
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> (preserving
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>), before
+ <var title="">child</var> or at the end of <var title="">parent</var> if
+ <var title="">child</var> is null.
+
+ <li><p>Otherwise insert <var title="">node</var> before
+ <var title="">child</var> or at the end of <var title="">parent</var> if
+ <var title="">child</var> is null.
+</ol>
+
+
+<p>To <dfn id="concept-node-append" title="concept-node-append">append</dfn> a <var title="">node</var>
+to a <var title="">parent</var>,
+<a href="#concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</a> <var title="">node</var>
+into <var title="">parent</var> before null.
+
+
+<p>To <dfn id="concept-node-replace" title="concept-node-replace">replace</dfn> a <var title="">child</var>
+with <var title="">node</var> within a <var title="">parent</var>, run these
+steps:
+
+<ol>
+ <li><p>If <var title="">child</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
+ <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
+
+ <li><p>If <var title="">node</var> is <var title="">parent</var> or an
+ <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+ <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li><p>If <var title="">parent</var> is not a <code><a href="#document">Document</a></code>,
+ <code><a href="#documentfragment">DocumentFragment</a></code>, or <code><a href="#element">Element</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li>
+  <p>If <var title="">parent</var> is a
+  <a href="#concept-document" title="concept-document">document</a>, run these substeps:
+
+  <ol>
+   <li><p>If <var title="">node</var> is not a <code><a href="#documentfragment">DocumentFragment</a></code>,
+   <code><a href="#documenttype">DocumentType</a></code>, <code><a href="#element">Element</a></code>,
+   <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
+   <a href="#concept-node" title="concept-node">node</a>,
+   <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+   <li>
+    <p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+    <a href="#concept-node" title="concept-node">node</a>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title="">node</var> has more than one
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> or has a <code><a href="#text">Text</a></code>
+     <a href="#concept-node" title="concept-node">node</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a>,
+     <a href="#concept-throw" title="concept-throw">throw</a> a
+     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+     <li><p>If <var title="">node</var> has one
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> and either
+     <var title="">parent</var> has an
+     <a href="#concept-element" title="concept-element">element</a>
+     <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
+     <var title="">child</var> or a <a href="#concept-doctype" title="concept-doctype">doctype</a>
+     is <a href="#concept-tree-following" title="concept-tree-following">following</a>
+     <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+    </ol>
+
+   <li><p>If <var title="">node</var> is an
+   <a href="#concept-element" title="concept-element">element</a> and either
+   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
+   <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
+   <var title="">child</var> or a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
+   <a href="#concept-tree-following" title="concept-tree-following">following</a>
+   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+   <li><p>If <var title="">node</var> is a
+   <a href="#concept-doctype" title="concept-doctype">doctype</a> and either
+   <var title="">parent</var> has a <a href="#concept-doctype" title="concept-doctype">doctype</a>
+   <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
+   <var title="">child</var>, or an <a href="#concept-element" title="concept-element">element</a>
+   is <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+  </ol>
+
+ <li><p>Otherwise if <var title="">parent</var> is a
+ <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code>
+ <a href="#concept-node" title="concept-node">node</a> and <var title="">node</var> is not a
+ <code><a href="#documentfragment">DocumentFragment</a></code>, <code><a href="#element">Element</a></code>, <code><a href="#text">Text</a></code>,
+ <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
+
+ <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
+ <var title="">node</var> with <var title="">parent</var>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a>.
+
+ <li><p>Let <var title="">reference child</var> be <var title="">child</var>'s
+ <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
+
+ <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> <var title="">child</var>
+ from its <var title="">parent</var>.
+
+ <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a> <var title="">node</var>
+ into <var title="">parent</var> before <var title="">reference child</var>.
+
+ <li><p>Return <var title="">child</var>.
+</ol>
+
+
+<p>To <dfn id="concept-node-pre-remove" title="concept-node-pre-remove">pre-remove</dfn> a
+<var title="">node</var> from a <var title="">parent</var>, run these steps:</p>
+
+<ol>
+ <li><p>If <var title="">child</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
+ <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
+
+ <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> <var title="">child</var>
+ from <var title="">parent</var>.
+
+ <li><p>Return <var title="">child</var>.
+ <!-- technically this is post-remove -->
+</ol>
+
+
+<p>To <dfn id="concept-node-remove" title="concept-node-remove">remove</dfn> a <var title="">node</var>
+from a <var title="">parent</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">index</var> be <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a>.
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
+ <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
+ <var title="">parent</var>, set its
+ <a href="#concept-range-start" title="concept-range-start">start</a> to
+ (<var title="">parent</var>, <var title="">index</var>).
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is a
+ <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
+ <var title="">parent</var>, set its
+ <a href="#concept-range-end" title="concept-range-end">end</a> to
+ (<var title="">parent</var>, <var title="">index</var>).
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+ <var title="">parent</var> and
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
+ <var title="">index</var>, decrease its
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by one.
+
+ <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+ <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+ <var title="">parent</var> and
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+ <var title="">index</var>, decrease its
+ <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by one.
+
+ <li><p>Remove <var title="">node</var> from its <var title="">parent</var>.
+</ol>
+
+
+<h4 id="legacy-mutation-methods"><span class="secno">5.1.2 </span>Legacy mutation methods</h4>
+
+<p>The
+<dfn id="dom-node-insertbefore" title="dom-Node-insertBefore"><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method must <a href="#concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</a>
+<var title="">node</var> into the <a href="#context-object">context object</a> before
+<var title="">child</var>.
+
+<p>The
+<dfn id="dom-node-appendchild" title="dom-Node-appendChild"><code>appendChild(<var>node</var>)</code></dfn>
+method must <a href="#concept-node-append" title="concept-node-append">append</a>
+<var title="">node</var> to the <a href="#context-object">context object</a>.
+
+<p>The
+<dfn id="dom-node-replacechild" title="dom-Node-replaceChild"><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
+method must <a href="#concept-node-replace" title="concept-node-replace">replace</a>
+<var title="">child</var> with <var title="">node</var> within the
+<a href="#context-object">context object</a>.
+
+<p>The
+<dfn id="dom-node-removechild" title="dom-Node-removeChild"><code>removeChild(<var>child</var>)</code></dfn>
+method must <a href="#concept-node-pre-remove" title="concept-node-pre-remove">pre-remove</a>
+<var title="">child</var> from the <a href="#context-object">context object</a>.
+
+
+<h4 id="mutation-observers"><span class="secno">5.1.3 </span>Mutation observers</h4>
 
 <p class="XXX">This section will define the replacement for the
 "Mutation Events" feature of the platform. For now it contains the interface
@@ -1331,7 +1656,7 @@ interface <dfn id="mutationrecord">MutationRecord</dfn> {
 <!-- XXX remove inline comments when this is defined -->
 
 
-<h3 id="interface-node"><span class="secno">5.3 </span>Interface <code><a href="#node">Node</a></code></h3>
+<h3 id="interface-node"><span class="secno">5.2 </span>Interface <code><a href="#node">Node</a></code></h3>
 <pre class="idl">interface <dfn id="node">Node</dfn> : <a href="#eventtarget">EventTarget</a> {
   const unsigned short <a href="#dom-node-element_node" title="dom-Node-ELEMENT_NODE">ELEMENT_NODE</a> = 1;
   const unsigned short <span title="dom-Node-ATTRIBUTE_NODE">ATTRIBUTE_NODE</span> = 2; // historical
@@ -1902,327 +2227,6 @@ instead, and then do as described below, depending on the <a href="#context-obje
  single <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>.
 </dl>
 
-<p>To <dfn id="concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</dfn> a
-<var title="">node</var> into a <var title="">parent</var> before a
-<var title="">child</var>, run these steps:
-
-<ol>
- <li><p>If <var title="">child</var> is not null and its
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
- <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
-
- <li><p>If <var title="">node</var> is <var title="">parent</var> or an
- <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
- <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li><p>If <var title="">parent</var> is not a <code><a href="#document">Document</a></code>,
- <code><a href="#documentfragment">DocumentFragment</a></code>, or <code><a href="#element">Element</a></code>
- <a href="#concept-node" title="concept-node">node</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li>
-  <p>If <var title="">parent</var> is a
-  <a href="#concept-document" title="concept-document">document</a>, run these substeps:
-
-  <ol>
-   <li><p>If <var title="">node</var> is not a <code><a href="#documentfragment">DocumentFragment</a></code>,
-   <code><a href="#documenttype">DocumentType</a></code>, <code><a href="#element">Element</a></code>,
-   <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
-   <a href="#concept-node" title="concept-node">node</a>,
-   <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-   <li>
-    <p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
-    <a href="#concept-node" title="concept-node">node</a>, run these inner substeps:
-
-    <ol>
-     <li><p>If <var title="">node</var> has more than one
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> or has a <code><a href="#text">Text</a></code>
-     <a href="#concept-node" title="concept-node">node</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a>,
-     <a href="#concept-throw" title="concept-throw">throw</a> a
-     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-     <li><p>If <var title="">node</var> has one
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> and either
-     <var title="">parent</var> has an
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> or <var title="">child</var>
-     is not null and a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
-     <a href="#concept-tree-following" title="concept-tree-following">following</a>
-     <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
-     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-    </ol>
-
-   <li><p>If <var title="">node</var> is an
-   <a href="#concept-element" title="concept-element">element</a> and either
-   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> or <var title="">child</var>
-   is not null and a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
-   <a href="#concept-tree-following" title="concept-tree-following">following</a>
-   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-   <li><p>If <var title="">node</var> is a
-   <a href="#concept-doctype" title="concept-doctype">doctype</a> and either
-   <var title="">parent</var> has a <a href="#concept-doctype" title="concept-doctype">doctype</a>
-   <a href="#concept-tree-child" title="concept-tree-child">child</a>, an
-   <a href="#concept-element" title="concept-element">element</a> is
-   <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
-   <var title="">child</var>, or <var title="">child</var> is null and
-   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
-   <a href="#concept-tree-child" title="concept-tree-child">child</a>,
-   <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-  </ol>
-
- <li><p>Otherwise if <var title="">parent</var> is a
- <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code>
- <a href="#concept-node" title="concept-node">node</a> and <var title="">node</var> is not a
- <code><a href="#documentfragment">DocumentFragment</a></code>, <code><a href="#element">Element</a></code>, <code><a href="#text">Text</a></code>,
- <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
- <a href="#concept-node" title="concept-node">node</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
- <var title="">node</var> with <var title="">parent</var>'s
- <a href="#concept-node-document" title="concept-node-document">node document</a>.
-
- <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a> <var title="">node</var>
- into <var title="">parent</var> before <var title="">child</var>.
-
- <li><p>Return <var title="">child</var>.
- <!-- technically this is post-insert -->
-</ol>
-
-<p>To <dfn id="concept-node-insert" title="concept-node-insert">insert</dfn> a <var title="">node</var>
-into a <var title="">parent</var> before a <var title="">child</var>, run these
-steps:
-
-<ol>
- <li><p>Let <var title="">count</var> be the number of
- <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> if
- it is a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>,
- or one otherwise.
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
- <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
- increase its <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
- <var title="">count</var>.
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
- <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
- increase its <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
- <var title="">count</var>.
-
- <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
- <a href="#concept-node" title="concept-node">node</a>, insert its
- <a href="#concept-tree-child" title="concept-tree-child">children</a> (preserving
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>), before
- <var title="">child</var> or at the end of <var title="">parent</var> if
- <var title="">child</var> is null.
-
- <li><p>Otherwise insert <var title="">node</var> before
- <var title="">child</var> or at the end of <var title="">parent</var> if
- <var title="">child</var> is null.
-</ol>
-
-<p>The
-<dfn id="dom-node-insertbefore" title="dom-Node-insertBefore"><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
-method must <a href="#concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</a>
-<var title="">node</var> into the <a href="#context-object">context object</a> before
-<var title="">child</var>.
-
-<p>To <dfn id="concept-node-append" title="concept-node-append">append</dfn> a <var title="">node</var>
-to a <var title="">parent</var>,
-<a href="#concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</a> <var title="">node</var>
-into <var title="">parent</var> before null.
-
-<p>The
-<dfn id="dom-node-appendchild" title="dom-Node-appendChild"><code>appendChild(<var>node</var>)</code></dfn>
-method must <a href="#concept-node-append" title="concept-node-append">append</a>
-<var title="">node</var> to the <a href="#context-object">context object</a>.
-
-<p>To <dfn id="concept-node-replace" title="concept-node-replace">replace</dfn> a <var title="">child</var>
-with <var title="">node</var> within a <var title="">parent</var>, run these
-steps:
-
-<ol>
- <li><p>If <var title="">child</var>'s
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
- <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
-
- <li><p>If <var title="">node</var> is <var title="">parent</var> or an
- <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
- <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li><p>If <var title="">parent</var> is not a <code><a href="#document">Document</a></code>,
- <code><a href="#documentfragment">DocumentFragment</a></code>, or <code><a href="#element">Element</a></code>
- <a href="#concept-node" title="concept-node">node</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li>
-  <p>If <var title="">parent</var> is a
-  <a href="#concept-document" title="concept-document">document</a>, run these substeps:
-
-  <ol>
-   <li><p>If <var title="">node</var> is not a <code><a href="#documentfragment">DocumentFragment</a></code>,
-   <code><a href="#documenttype">DocumentType</a></code>, <code><a href="#element">Element</a></code>,
-   <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
-   <a href="#concept-node" title="concept-node">node</a>,
-   <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-   <li>
-    <p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
-    <a href="#concept-node" title="concept-node">node</a>, run these inner substeps:
-
-    <ol>
-     <li><p>If <var title="">node</var> has more than one
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> or has a <code><a href="#text">Text</a></code>
-     <a href="#concept-node" title="concept-node">node</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a>,
-     <a href="#concept-throw" title="concept-throw">throw</a> a
-     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-     <li><p>If <var title="">node</var> has one
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> and either
-     <var title="">parent</var> has an
-     <a href="#concept-element" title="concept-element">element</a>
-     <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
-     <var title="">child</var> or a <a href="#concept-doctype" title="concept-doctype">doctype</a>
-     is <a href="#concept-tree-following" title="concept-tree-following">following</a>
-     <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
-     "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-    </ol>
-
-   <li><p>If <var title="">node</var> is an
-   <a href="#concept-element" title="concept-element">element</a> and either
-   <var title="">parent</var> has an <a href="#concept-element" title="concept-element">element</a>
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
-   <var title="">child</var> or a <a href="#concept-doctype" title="concept-doctype">doctype</a> is
-   <a href="#concept-tree-following" title="concept-tree-following">following</a>
-   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
-   <li><p>If <var title="">node</var> is a
-   <a href="#concept-doctype" title="concept-doctype">doctype</a> and either
-   <var title="">parent</var> has a <a href="#concept-doctype" title="concept-doctype">doctype</a>
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> that is not
-   <var title="">child</var>, or an <a href="#concept-element" title="concept-element">element</a>
-   is <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
-   <var title="">child</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
-   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-  </ol>
-
- <li><p>Otherwise if <var title="">parent</var> is a
- <code><a href="#documentfragment">DocumentFragment</a></code> or <code><a href="#element">Element</a></code>
- <a href="#concept-node" title="concept-node">node</a> and <var title="">node</var> is not a
- <code><a href="#documentfragment">DocumentFragment</a></code>, <code><a href="#element">Element</a></code>, <code><a href="#text">Text</a></code>,
- <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or <code><a href="#comment">Comment</a></code>
- <a href="#concept-node" title="concept-node">node</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" and terminate these steps.
-
- <li><p><a href="#concept-node-adopt" title="concept-node-adopt">Adopt</a>
- <var title="">node</var> with <var title="">parent</var>'s
- <a href="#concept-node-document" title="concept-node-document">node document</a>.
-
- <li><p>Let <var title="">reference child</var> be <var title="">child</var>'s
- <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
-
- <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> <var title="">child</var>
- from its <var title="">parent</var>.
-
- <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a> <var title="">node</var>
- into <var title="">parent</var> before <var title="">reference child</var>.
-
- <li><p>Return <var title="">child</var>.
-</ol>
-
-<p>The
-<dfn id="dom-node-replacechild" title="dom-Node-replaceChild"><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
-method must <a href="#concept-node-replace" title="concept-node-replace">replace</a>
-<var title="">child</var> with <var title="">node</var> within the
-<a href="#context-object">context object</a>.
-
-<p>To <dfn id="concept-node-pre-remove" title="concept-node-pre-remove">pre-remove</dfn> a
-<var title="">node</var> from a <var title="">parent</var>, run these steps:</p>
-
-<ol>
- <li><p>If <var title="">child</var>'s
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
- <var title="">parent</var>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#notfounderror">NotFoundError</a></code>" exception and terminate these steps.
-
- <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> <var title="">child</var>
- from <var title="">parent</var>.
-
- <li><p>Return <var title="">child</var>.
- <!-- technically this is post-remove -->
-</ol>
-
-<p>To <dfn id="concept-node-remove" title="concept-node-remove">remove</dfn> a <var title="">node</var>
-from a <var title="">parent</var>, run these steps:
-
-<ol>
- <li><p>Let <var title="">index</var> be <var title="">node</var>'s
- <a href="#concept-tree-index" title="concept-tree-index">index</a>.
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
- <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
- <var title="">parent</var>, set its
- <a href="#concept-range-start" title="concept-range-start">start</a> to
- (<var title="">parent</var>, <var title="">index</var>).
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is a
- <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
- <var title="">parent</var>, set its
- <a href="#concept-range-end" title="concept-range-end">end</a> to
- (<var title="">parent</var>, <var title="">index</var>).
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
- <var title="">index</var>, decrease its
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by one.
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
- <var title="">index</var>, decrease its
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by one.
-
- <li><p>Remove <var title="">node</var> from its <var title="">parent</var>.
-</ol>
-
-<p>The
-<dfn id="dom-node-removechild" title="dom-Node-removeChild"><code>removeChild(<var>child</var>)</code></dfn>
-method must <a href="#concept-node-pre-remove" title="concept-node-pre-remove">pre-remove</a>
-<var title="">child</var> from the <a href="#context-object">context object</a>.
-
 <p>The <dfn id="dom-node-normalize" title="dom-Node-normalize"><code>normalize()</code></dfn> method
 must run these steps:</p>
 
@@ -2679,7 +2683,7 @@ object may be returned as returned by an earlier call.
 
 
 
-<h3 id="interface-document"><span class="secno">5.4 </span>Interface <code><a href="#document">Document</a></code></h3>
+<h3 id="interface-document"><span class="secno">5.3 </span>Interface <code><a href="#document">Document</a></code></h3>
 <pre class="idl">interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   readonly attribute <a href="#domimplementation">DOMImplementation</a> <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a>;
   readonly attribute DOMString <a href="#dom-document-url" title="dom-Document-URL">URL</a>;
@@ -3409,7 +3413,7 @@ method is invoked these steps must be run:
 
 
 
-<h4 id="interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
+<h4 id="interface-domimplementation"><span class="secno">5.3.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
 <p>User agents must create a <code><a href="#domimplementation">DOMImplementation</a></code> object whenever
 a <a href="#concept-document" title="concept-document">document</a> is created and associate it
 with that <a href="#concept-document" title="concept-document">document</a>.
@@ -3608,13 +3612,13 @@ method must run these steps:
 
 
 
-<h3 id="interface-documentfragment"><span class="secno">5.5 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
+<h3 id="interface-documentfragment"><span class="secno">5.4 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
 <pre class="idl">interface <dfn id="documentfragment">DocumentFragment</dfn> : <a href="#node">Node</a> {
 };</pre>
 
 
 
-<h3 id="interface-documenttype"><span class="secno">5.6 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
+<h3 id="interface-documenttype"><span class="secno">5.5 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
 <pre class="idl">interface <dfn id="documenttype">DocumentType</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString <a href="#dom-documenttype-name" title="dom-DocumentType-name">name</a>;<!--
   readonly attribute NamedNodeMap entities;
@@ -3703,7 +3707,7 @@ otherwise [createAttribute]- ->.
 -->
 
 
-<h3 id="interface-element"><span class="secno">5.7 </span>Interface <code><a href="#element">Element</a></code></h3>
+<h3 id="interface-element"><span class="secno">5.6 </span>Interface <code><a href="#element">Element</a></code></h3>
 <pre class="idl">interface <dfn id="element">Element</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString? <a href="#dom-element-namespaceuri" title="dom-Element-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-element-prefix" title="dom-Element-prefix">prefix</a>;
@@ -3824,7 +3828,7 @@ using them is conforming or not.
 <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is that
 <a href="#concept-document" title="concept-document">document</a>, if it exists, and null otherwise.
 
-<p class="note">As explained in the <a href="#nodes-model">Nodes model</a> section,
+<p class="note">As explained in the <a href="#node-tree">node tree</a> section,
 there can only be one such <a href="#concept-element" title="concept-element">element</a>.
 
 <p>When an <a href="#concept-element" title="concept-element">element</a> or one of its
@@ -4259,7 +4263,7 @@ attribute must return the number of
 -->
 
 
-<h4 id="interface-attr"><span class="secno">5.7.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
+<h4 id="interface-attr"><span class="secno">5.6.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
 <pre class="idl">interface <dfn id="attr">Attr</dfn> {
   readonly attribute DOMString <a href="#dom-attr-name" title="dom-Attr-name">name</a>;
            attribute DOMString <a href="#dom-attr-value" title="dom-Attr-value">value</a>;
@@ -4348,7 +4352,7 @@ return the
 must return the <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>.
 
 
-<h3 id="interface-characterdata"><span class="secno">5.8 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
+<h3 id="interface-characterdata"><span class="secno">5.7 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
 <pre class="idl">interface <dfn id="characterdata">CharacterData</dfn> : <a href="#node">Node</a> {
   [TreatNullAs=EmptyString] attribute DOMString <a href="#dom-characterdata-data" title="dom-CharacterData-data">data</a>;
   readonly attribute unsigned long <a href="#dom-characterdata-length" title="dom-CharacterData-length">length</a>;
@@ -4536,7 +4540,7 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
 <var title="">count</var>, and data <var title="">data</var>.
 
 
-<h3 id="interface-text"><span class="secno">5.9 </span>Interface <code><a href="#text">Text</a></code></h3>
+<h3 id="interface-text"><span class="secno">5.8 </span>Interface <code><a href="#text">Text</a></code></h3>
 <pre class="idl">interface <dfn id="text">Text</dfn> : <a href="#characterdata">CharacterData</a> {
   <a href="#text">Text</a> <a href="#dom-text-splittext" title="dom-Text-splitText">splitText</a>(unsigned long <var title="">offset</var>);
   readonly attribute DOMString <a href="#dom-text-wholetext" title="dom-Text-wholeText">wholeText</a>;
@@ -4655,7 +4659,7 @@ attribute must return a concatenation of the
 
 
 
-<h3 id="interface-processinginstruction"><span class="secno">5.10 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
+<h3 id="interface-processinginstruction"><span class="secno">5.9 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
 <pre class="idl">interface <dfn id="processinginstruction">ProcessingInstruction</dfn> : <a href="#characterdata">CharacterData</a> {
   readonly attribute DOMString <a href="#dom-processinginstruction-target" title="dom-ProcessingInstruction-target">target</a>;
 };</pre>
@@ -4668,7 +4672,7 @@ attribute must return the <a href="#concept-pi-target" title="concept-PI-target"
 
 
 
-<h3 id="interface-comment"><span class="secno">5.11 </span>Interface <code><a href="#comment">Comment</a></code></h3>
+<h3 id="interface-comment"><span class="secno">5.10 </span>Interface <code><a href="#comment">Comment</a></code></h3>
 <pre class="idl">interface <dfn id="comment">Comment</dfn> : <a href="#characterdata">CharacterData</a> {
 };</pre>
 

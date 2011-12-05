@@ -657,7 +657,7 @@ and actually throw that object as an exception.
   <td><dfn title=dom-DOMException-INDEX_SIZE_ERR><code>INDEX_SIZE_ERR</code></dfn> (1)
  <tr>
   <td>"<dfn><code>HierarchyRequestError</code></dfn>"
-  <td>The operation would yield an incorrect nodes model.
+  <td>The operation would yield an incorrect <a href=#node-tree>node tree</a>.
   <td><dfn title=dom-DOMException-HIERARCHY_REQUEST_ERR><code>HIERARCHY_REQUEST_ERR</code></dfn> (3)
  <tr>
   <td>"<dfn><code>WrongDocumentError</code></dfn>"
@@ -1202,7 +1202,7 @@ initialized to true".
 
 
 <h2>Nodes</h2>
-<h3>Nodes model</h3>
+<h3>Node tree</h3>
 
 <p>Objects implementing the <code>Document</code>,
 <code>DocumentFragment</code>, <code>DocumentType</code>,
@@ -1244,17 +1244,341 @@ and its allowed <span title=concept-tree-child>children</span>:
 
 <!--AttrExodus -->
 
-<p class=note>The <span title=concept-node-pre-insert>pre-insert</span> and
-<span title=concept-node-replace>replace</span> algorithms
-<span title=concept-throw>throw</span> a
-"<code>HierarchyRequestError</code>" if the constraints listed above
-are violated. These algorithms are used by methods that manipulate the
-<span title=concept-tree>tree</span> of
-<span title=concept-node>nodes</span>.
+<h4>Mutation algorithms</h4>
+
+<p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
+<var title>node</var> into a <var title>parent</var> before a
+<var title>child</var>, run these steps:
+
+<ol>
+ <li><p>If <var title>child</var> is not null and its
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, <span title=concept-throw>throw</span> a
+ "<code>NotFoundError</code>" exception and terminate these steps.
+
+ <li><p>If <var title>node</var> is <var title>parent</var> or an
+ <span title=concept-tree-ancestor>ancestor</span> of
+ <var title>parent</var>, <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li><p>If <var title>parent</var> is not a <code>Document</code>,
+ <code>DocumentFragment</code>, or <code>Element</code>
+ <span title=concept-node>node</span>,
+ <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li>
+  <p>If <var title>parent</var> is a
+  <span title=concept-document>document</span>, run these substeps:
+
+  <ol>
+   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
+   <code>DocumentType</code>, <code>Element</code>,
+   <code>ProcessingInstruction</code>, or <code>Comment</code>
+   <span title=concept-node>node</span>,
+   <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+
+   <li>
+    <p>If <var title>node</var> is a <code>DocumentFragment</code>
+    <span title=concept-node>node</span>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title>node</var> has more than one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or has a <code>Text</code>
+     <span title=concept-node>node</span>
+     <span title=concept-tree-child>child</span>,
+     <span title=concept-throw>throw</span> a
+     "<code>HierarchyRequestError</code>" and terminate these steps.
+
+     <li><p>If <var title>node</var> has one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> and either
+     <var title>parent</var> has an
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or <var title>child</var>
+     is not null and a <span title=concept-doctype>doctype</span> is
+     <span title=concept-tree-following>following</span>
+     <var title>child</var>, <span title=concept-throw>throw</span> a
+     "<code>HierarchyRequestError</code>" and terminate these steps.
+    </ol>
+
+   <li><p>If <var title>node</var> is an
+   <span title=concept-element>element</span> and either
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span> or <var title>child</var>
+   is not null and a <span title=concept-doctype>doctype</span> is
+   <span title=concept-tree-following>following</span>
+   <var title>child</var>, <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+
+   <li><p>If <var title>node</var> is a
+   <span title=concept-doctype>doctype</span> and either
+   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
+   <span title=concept-tree-child>child</span>, an
+   <span title=concept-element>element</span> is
+   <span title=concept-tree-preceding>preceding</span>
+   <var title>child</var>, or <var title>child</var> is null and
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span>,
+   <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+  </ol>
+
+ <li><p>Otherwise if <var title>parent</var> is a
+ <code>DocumentFragment</code> or <code>Element</code>
+ <span title=concept-node>node</span> and <var title>node</var> is not a
+ <code>DocumentFragment</code>, <code>Element</code>, <code>Text</code>,
+ <code>ProcessingInstruction</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>,
+ <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li><p><span title=concept-node-adopt>Adopt</span>
+ <var title>node</var> with <var title>parent</var>'s
+ <span title=concept-node-document>node document</span>.
+
+ <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
+ into <var title>parent</var> before <var title>child</var>.
+
+ <li><p>Return <var title>child</var>.
+ <!-- technically this is post-insert -->
+</ol>
 
 
+<p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
+into a <var title>parent</var> before a <var title>child</var>, run these
+steps:
 
-<h3>Mutations</h3>
+<ol>
+ <li><p>Let <var title>count</var> be the number of
+ <span title=concept-tree-child>children</span> of <var title>node</var> if
+ it is a <code>DocumentFragment</code> <span title=concept-node>node</span>,
+ or one otherwise.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>child</var>'s <span title=concept-tree-index>index</span>,
+ increase its <span title=concept-range-start-offset>start offset</span> by
+ <var title>count</var>.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-end-node>end node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-end-offset>end offset</span> is greater than
+ <var title>child</var>'s <span title=concept-tree-index>index</span>,
+ increase its <span title=concept-range-end-offset>end offset</span> by
+ <var title>count</var>.
+
+ <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, insert its
+ <span title=concept-tree-child>children</span> (preserving
+ <span title=concept-tree-order>tree order</span>), before
+ <var title>child</var> or at the end of <var title>parent</var> if
+ <var title>child</var> is null.
+
+ <li><p>Otherwise insert <var title>node</var> before
+ <var title>child</var> or at the end of <var title>parent</var> if
+ <var title>child</var> is null.
+</ol>
+
+
+<p>To <dfn title=concept-node-append>append</dfn> a <var title>node</var>
+to a <var title>parent</var>,
+<span title=concept-node-pre-insert>pre-insert</span> <var title>node</var>
+into <var title>parent</var> before null.
+
+
+<p>To <dfn title=concept-node-replace>replace</dfn> a <var title>child</var>
+with <var title>node</var> within a <var title>parent</var>, run these
+steps:
+
+<ol>
+ <li><p>If <var title>child</var>'s
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, <span title=concept-throw>throw</span> a
+ "<code>NotFoundError</code>" exception and terminate these steps.
+
+ <li><p>If <var title>node</var> is <var title>parent</var> or an
+ <span title=concept-tree-ancestor>ancestor</span> of
+ <var title>parent</var>, <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li><p>If <var title>parent</var> is not a <code>Document</code>,
+ <code>DocumentFragment</code>, or <code>Element</code>
+ <span title=concept-node>node</span>,
+ <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li>
+  <p>If <var title>parent</var> is a
+  <span title=concept-document>document</span>, run these substeps:
+
+  <ol>
+   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
+   <code>DocumentType</code>, <code>Element</code>,
+   <code>ProcessingInstruction</code>, or <code>Comment</code>
+   <span title=concept-node>node</span>,
+   <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+
+   <li>
+    <p>If <var title>node</var> is a <code>DocumentFragment</code>
+    <span title=concept-node>node</span>, run these inner substeps:
+
+    <ol>
+     <li><p>If <var title>node</var> has more than one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> or has a <code>Text</code>
+     <span title=concept-node>node</span>
+     <span title=concept-tree-child>child</span>,
+     <span title=concept-throw>throw</span> a
+     "<code>HierarchyRequestError</code>" and terminate these steps.
+
+     <li><p>If <var title>node</var> has one
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> and either
+     <var title>parent</var> has an
+     <span title=concept-element>element</span>
+     <span title=concept-tree-child>child</span> that is not
+     <var title>child</var> or a <span title=concept-doctype>doctype</span>
+     is <span title=concept-tree-following>following</span>
+     <var title>child</var>, <span title=concept-throw>throw</span> a
+     "<code>HierarchyRequestError</code>" and terminate these steps.
+    </ol>
+
+   <li><p>If <var title>node</var> is an
+   <span title=concept-element>element</span> and either
+   <var title>parent</var> has an <span title=concept-element>element</span>
+   <span title=concept-tree-child>child</span> that is not
+   <var title>child</var> or a <span title=concept-doctype>doctype</span> is
+   <span title=concept-tree-following>following</span>
+   <var title>child</var>, <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+
+   <li><p>If <var title>node</var> is a
+   <span title=concept-doctype>doctype</span> and either
+   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
+   <span title=concept-tree-child>child</span> that is not
+   <var title>child</var>, or an <span title=concept-element>element</span>
+   is <span title=concept-tree-preceding>preceding</span>
+   <var title>child</var>, <span title=concept-throw>throw</span> a
+   "<code>HierarchyRequestError</code>" and terminate these steps.
+  </ol>
+
+ <li><p>Otherwise if <var title>parent</var> is a
+ <code>DocumentFragment</code> or <code>Element</code>
+ <span title=concept-node>node</span> and <var title>node</var> is not a
+ <code>DocumentFragment</code>, <code>Element</code>, <code>Text</code>,
+ <code>ProcessingInstruction</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>,
+ <span title=concept-throw>throw</span> a
+ "<code>HierarchyRequestError</code>" and terminate these steps.
+
+ <li><p><span title=concept-node-adopt>Adopt</span>
+ <var title>node</var> with <var title>parent</var>'s
+ <span title=concept-node-document>node document</span>.
+
+ <li><p>Let <var title>reference child</var> be <var title>child</var>'s
+ <span title=concept-tree-next-sibling>next sibling</span>.
+
+ <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
+ from its <var title>parent</var>.
+
+ <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
+ into <var title>parent</var> before <var title>reference child</var>.
+
+ <li><p>Return <var title>child</var>.
+</ol>
+
+
+<p>To <dfn title=concept-node-pre-remove>pre-remove</dfn> a
+<var title>node</var> from a <var title>parent</var>, run these steps:</p>
+
+<ol>
+ <li><p>If <var title>child</var>'s
+ <span title=concept-tree-parent>parent</span> is not
+ <var title>parent</var>, <span title=concept-throw>throw</span> a
+ "<code>NotFoundError</code>" exception and terminate these steps.
+
+ <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
+ from <var title>parent</var>.
+
+ <li><p>Return <var title>child</var>.
+ <!-- technically this is post-remove -->
+</ol>
+
+
+<p>To <dfn title=concept-node-remove>remove</dfn> a <var title>node</var>
+from a <var title>parent</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title>index</var> be <var title>node</var>'s
+ <span title=concept-tree-index>index</span>.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is a
+ <span title=concept-tree-descendant>descendant</span> of
+ <var title>parent</var>, set its
+ <span title=concept-range-start>start</span> to
+ (<var title>parent</var>, <var title>index</var>).
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-end-node>end node</span> is a
+ <span title=concept-tree-descendant>descendant</span> of
+ <var title>parent</var>, set its
+ <span title=concept-range-end>end</span> to
+ (<var title>parent</var>, <var title>index</var>).
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-start-node>start node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-start-offset>start offset</span> is greater than
+ <var title>index</var>, decrease its
+ <span title=concept-range-start-offset>start offset</span> by one.
+
+ <li><p>For each <span title=concept-range>range</span> whose
+ <span title=concept-range-end-node>end node</span> is
+ <var title>parent</var> and
+ <span title=concept-range-end-offset>end offset</span> is greater than
+ <var title>index</var>, decrease its
+ <span title=concept-range-end-offset>end offset</span> by one.
+
+ <li><p>Remove <var title>node</var> from its <var title>parent</var>.
+</ol>
+
+
+<h4>Legacy mutation methods</h4>
+
+<p>The
+<dfn title=dom-Node-insertBefore><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method must <span title=concept-node-pre-insert>pre-insert</span>
+<var title>node</var> into the <span>context object</span> before
+<var title>child</var>.
+
+<p>The
+<dfn
+title=dom-Node-appendChild><code>appendChild(<var>node</var>)</code></dfn>
+method must <span title=concept-node-append>append</span>
+<var title>node</var> to the <span>context object</span>.
+
+<p>The
+<dfn title=dom-Node-replaceChild><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
+method must <span title=concept-node-replace>replace</span>
+<var title>child</var> with <var title>node</var> within the
+<span>context object</span>.
+
+<p>The
+<dfn
+title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
+method must <span title=concept-node-pre-remove>pre-remove</span>
+<var title>child</var> from the <span>context object</span>.
+
+
+<h4>Mutation observers</h4>
 
 <p class=XXX>This section will define the replacement for the
 "Mutation Events" feature of the platform. For now it contains the interface
@@ -1900,329 +2224,6 @@ instead, and then do as described below, depending on the <span>context object</
  <dd><p>Concatenates <span>contiguous <code>Text</code> nodes</span> into a
  single <code>Text</code> <span title=concept-node>node</span>.
 </dl>
-
-<p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
-<var title>node</var> into a <var title>parent</var> before a
-<var title>child</var>, run these steps:
-
-<ol>
- <li><p>If <var title>child</var> is not null and its
- <span title=concept-tree-parent>parent</span> is not
- <var title>parent</var>, <span title=concept-throw>throw</span> a
- "<code>NotFoundError</code>" exception and terminate these steps.
-
- <li><p>If <var title>node</var> is <var title>parent</var> or an
- <span title=concept-tree-ancestor>ancestor</span> of
- <var title>parent</var>, <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li><p>If <var title>parent</var> is not a <code>Document</code>,
- <code>DocumentFragment</code>, or <code>Element</code>
- <span title=concept-node>node</span>,
- <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li>
-  <p>If <var title>parent</var> is a
-  <span title=concept-document>document</span>, run these substeps:
-
-  <ol>
-   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
-   <code>DocumentType</code>, <code>Element</code>,
-   <code>ProcessingInstruction</code>, or <code>Comment</code>
-   <span title=concept-node>node</span>,
-   <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-
-   <li>
-    <p>If <var title>node</var> is a <code>DocumentFragment</code>
-    <span title=concept-node>node</span>, run these inner substeps:
-
-    <ol>
-     <li><p>If <var title>node</var> has more than one
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> or has a <code>Text</code>
-     <span title=concept-node>node</span>
-     <span title=concept-tree-child>child</span>,
-     <span title=concept-throw>throw</span> a
-     "<code>HierarchyRequestError</code>" and terminate these steps.
-
-     <li><p>If <var title>node</var> has one
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> and either
-     <var title>parent</var> has an
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> or <var title>child</var>
-     is not null and a <span title=concept-doctype>doctype</span> is
-     <span title=concept-tree-following>following</span>
-     <var title>child</var>, <span title=concept-throw>throw</span> a
-     "<code>HierarchyRequestError</code>" and terminate these steps.
-    </ol>
-
-   <li><p>If <var title>node</var> is an
-   <span title=concept-element>element</span> and either
-   <var title>parent</var> has an <span title=concept-element>element</span>
-   <span title=concept-tree-child>child</span> or <var title>child</var>
-   is not null and a <span title=concept-doctype>doctype</span> is
-   <span title=concept-tree-following>following</span>
-   <var title>child</var>, <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-
-   <li><p>If <var title>node</var> is a
-   <span title=concept-doctype>doctype</span> and either
-   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
-   <span title=concept-tree-child>child</span>, an
-   <span title=concept-element>element</span> is
-   <span title=concept-tree-preceding>preceding</span>
-   <var title>child</var>, or <var title>child</var> is null and
-   <var title>parent</var> has an <span title=concept-element>element</span>
-   <span title=concept-tree-child>child</span>,
-   <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-  </ol>
-
- <li><p>Otherwise if <var title>parent</var> is a
- <code>DocumentFragment</code> or <code>Element</code>
- <span title=concept-node>node</span> and <var title>node</var> is not a
- <code>DocumentFragment</code>, <code>Element</code>, <code>Text</code>,
- <code>ProcessingInstruction</code>, or <code>Comment</code>
- <span title=concept-node>node</span>,
- <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li><p><span title=concept-node-adopt>Adopt</span>
- <var title>node</var> with <var title>parent</var>'s
- <span title=concept-node-document>node document</span>.
-
- <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
- into <var title>parent</var> before <var title>child</var>.
-
- <li><p>Return <var title>child</var>.
- <!-- technically this is post-insert -->
-</ol>
-
-<p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
-into a <var title>parent</var> before a <var title>child</var>, run these
-steps:
-
-<ol>
- <li><p>Let <var title>count</var> be the number of
- <span title=concept-tree-child>children</span> of <var title>node</var> if
- it is a <code>DocumentFragment</code> <span title=concept-node>node</span>,
- or one otherwise.
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-start-node>start node</span> is
- <var title>parent</var> and
- <span title=concept-range-start-offset>start offset</span> is greater than
- <var title>child</var>'s <span title=concept-tree-index>index</span>,
- increase its <span title=concept-range-start-offset>start offset</span> by
- <var title>count</var>.
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-end-node>end node</span> is
- <var title>parent</var> and
- <span title=concept-range-end-offset>end offset</span> is greater than
- <var title>child</var>'s <span title=concept-tree-index>index</span>,
- increase its <span title=concept-range-end-offset>end offset</span> by
- <var title>count</var>.
-
- <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
- <span title=concept-node>node</span>, insert its
- <span title=concept-tree-child>children</span> (preserving
- <span title=concept-tree-order>tree order</span>), before
- <var title>child</var> or at the end of <var title>parent</var> if
- <var title>child</var> is null.
-
- <li><p>Otherwise insert <var title>node</var> before
- <var title>child</var> or at the end of <var title>parent</var> if
- <var title>child</var> is null.
-</ol>
-
-<p>The
-<dfn title=dom-Node-insertBefore><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
-method must <span title=concept-node-pre-insert>pre-insert</span>
-<var title>node</var> into the <span>context object</span> before
-<var title>child</var>.
-
-<p>To <dfn title=concept-node-append>append</dfn> a <var title>node</var>
-to a <var title>parent</var>,
-<span title=concept-node-pre-insert>pre-insert</span> <var title>node</var>
-into <var title>parent</var> before null.
-
-<p>The
-<dfn
-title=dom-Node-appendChild><code>appendChild(<var>node</var>)</code></dfn>
-method must <span title=concept-node-append>append</span>
-<var title>node</var> to the <span>context object</span>.
-
-<p>To <dfn title=concept-node-replace>replace</dfn> a <var title>child</var>
-with <var title>node</var> within a <var title>parent</var>, run these
-steps:
-
-<ol>
- <li><p>If <var title>child</var>'s
- <span title=concept-tree-parent>parent</span> is not
- <var title>parent</var>, <span title=concept-throw>throw</span> a
- "<code>NotFoundError</code>" exception and terminate these steps.
-
- <li><p>If <var title>node</var> is <var title>parent</var> or an
- <span title=concept-tree-ancestor>ancestor</span> of
- <var title>parent</var>, <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li><p>If <var title>parent</var> is not a <code>Document</code>,
- <code>DocumentFragment</code>, or <code>Element</code>
- <span title=concept-node>node</span>,
- <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li>
-  <p>If <var title>parent</var> is a
-  <span title=concept-document>document</span>, run these substeps:
-
-  <ol>
-   <li><p>If <var title>node</var> is not a <code>DocumentFragment</code>,
-   <code>DocumentType</code>, <code>Element</code>,
-   <code>ProcessingInstruction</code>, or <code>Comment</code>
-   <span title=concept-node>node</span>,
-   <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-
-   <li>
-    <p>If <var title>node</var> is a <code>DocumentFragment</code>
-    <span title=concept-node>node</span>, run these inner substeps:
-
-    <ol>
-     <li><p>If <var title>node</var> has more than one
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> or has a <code>Text</code>
-     <span title=concept-node>node</span>
-     <span title=concept-tree-child>child</span>,
-     <span title=concept-throw>throw</span> a
-     "<code>HierarchyRequestError</code>" and terminate these steps.
-
-     <li><p>If <var title>node</var> has one
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> and either
-     <var title>parent</var> has an
-     <span title=concept-element>element</span>
-     <span title=concept-tree-child>child</span> that is not
-     <var title>child</var> or a <span title=concept-doctype>doctype</span>
-     is <span title=concept-tree-following>following</span>
-     <var title>child</var>, <span title=concept-throw>throw</span> a
-     "<code>HierarchyRequestError</code>" and terminate these steps.
-    </ol>
-
-   <li><p>If <var title>node</var> is an
-   <span title=concept-element>element</span> and either
-   <var title>parent</var> has an <span title=concept-element>element</span>
-   <span title=concept-tree-child>child</span> that is not
-   <var title>child</var> or a <span title=concept-doctype>doctype</span> is
-   <span title=concept-tree-following>following</span>
-   <var title>child</var>, <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-
-   <li><p>If <var title>node</var> is a
-   <span title=concept-doctype>doctype</span> and either
-   <var title>parent</var> has a <span title=concept-doctype>doctype</span>
-   <span title=concept-tree-child>child</span> that is not
-   <var title>child</var>, or an <span title=concept-element>element</span>
-   is <span title=concept-tree-preceding>preceding</span>
-   <var title>child</var>, <span title=concept-throw>throw</span> a
-   "<code>HierarchyRequestError</code>" and terminate these steps.
-  </ol>
-
- <li><p>Otherwise if <var title>parent</var> is a
- <code>DocumentFragment</code> or <code>Element</code>
- <span title=concept-node>node</span> and <var title>node</var> is not a
- <code>DocumentFragment</code>, <code>Element</code>, <code>Text</code>,
- <code>ProcessingInstruction</code>, or <code>Comment</code>
- <span title=concept-node>node</span>,
- <span title=concept-throw>throw</span> a
- "<code>HierarchyRequestError</code>" and terminate these steps.
-
- <li><p><span title=concept-node-adopt>Adopt</span>
- <var title>node</var> with <var title>parent</var>'s
- <span title=concept-node-document>node document</span>.
-
- <li><p>Let <var title>reference child</var> be <var title>child</var>'s
- <span title=concept-tree-next-sibling>next sibling</span>.
-
- <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
- from its <var title>parent</var>.
-
- <li><p><span title=concept-node-insert>Insert</span> <var title>node</var>
- into <var title>parent</var> before <var title>reference child</var>.
-
- <li><p>Return <var title>child</var>.
-</ol>
-
-<p>The
-<dfn title=dom-Node-replaceChild><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
-method must <span title=concept-node-replace>replace</span>
-<var title>child</var> with <var title>node</var> within the
-<span>context object</span>.
-
-<p>To <dfn title=concept-node-pre-remove>pre-remove</dfn> a
-<var title>node</var> from a <var title>parent</var>, run these steps:</p>
-
-<ol>
- <li><p>If <var title>child</var>'s
- <span title=concept-tree-parent>parent</span> is not
- <var title>parent</var>, <span title=concept-throw>throw</span> a
- "<code>NotFoundError</code>" exception and terminate these steps.
-
- <li><p><span title=concept-node-remove>Remove</span> <var title>child</var>
- from <var title>parent</var>.
-
- <li><p>Return <var title>child</var>.
- <!-- technically this is post-remove -->
-</ol>
-
-<p>To <dfn title=concept-node-remove>remove</dfn> a <var title>node</var>
-from a <var title>parent</var>, run these steps:
-
-<ol>
- <li><p>Let <var title>index</var> be <var title>node</var>'s
- <span title=concept-tree-index>index</span>.
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-start-node>start node</span> is a
- <span title=concept-tree-descendant>descendant</span> of
- <var title>parent</var>, set its
- <span title=concept-range-start>start</span> to
- (<var title>parent</var>, <var title>index</var>).
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-end-node>end node</span> is a
- <span title=concept-tree-descendant>descendant</span> of
- <var title>parent</var>, set its
- <span title=concept-range-end>end</span> to
- (<var title>parent</var>, <var title>index</var>).
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-start-node>start node</span> is
- <var title>parent</var> and
- <span title=concept-range-start-offset>start offset</span> is greater than
- <var title>index</var>, decrease its
- <span title=concept-range-start-offset>start offset</span> by one.
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-end-node>end node</span> is
- <var title>parent</var> and
- <span title=concept-range-end-offset>end offset</span> is greater than
- <var title>index</var>, decrease its
- <span title=concept-range-end-offset>end offset</span> by one.
-
- <li><p>Remove <var title>node</var> from its <var title>parent</var>.
-</ol>
-
-<p>The
-<dfn
-title=dom-Node-removeChild><code>removeChild(<var>child</var>)</code></dfn>
-method must <span title=concept-node-pre-remove>pre-remove</span>
-<var title>child</var> from the <span>context object</span>.
 
 <p>The <dfn title=dom-Node-normalize><code>normalize()</code></dfn> method
 must run these steps:</p>
@@ -3840,7 +3841,7 @@ using them is conforming or not.
 <span title=concept-tree-parent>parent</span> is that
 <span title=concept-document>document</span>, if it exists, and null otherwise.
 
-<p class=note>As explained in the <a href=#nodes-model>Nodes model</a> section,
+<p class=note>As explained in the <a href=#node-tree>node tree</a> section,
 there can only be one such <span title=concept-element>element</span>.
 
 <p>When an <span title=concept-element>element</span> or one of its
