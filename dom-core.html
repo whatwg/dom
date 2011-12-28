@@ -4627,10 +4627,6 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
  <var title="">node</var>, offset <var title="">offset</var>, and count
  <var title="">count</var>.
 
- <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
- <var title="">node</var>, offset <var title="">offset</var>, count
- <var title="">count</var>, and data the empty string.
-
  <li><p>Let <var title="">new node</var> be a new <code><a href="#text">Text</a></code>
  <a href="#concept-node" title="concept-node">node</a>, with the same
  <a href="#concept-node-document" title="concept-node-document">node document</a> as
@@ -4639,6 +4635,43 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
 
  <li><p>Let <var title="">parent</var> be the <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+ <li>
+  <p>If <var title="">parent</var> is not null, run these substeps:
+
+  <ol>
+   <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a>
+   <var title="">new node</var> into <var title="">parent</var> before
+   <var title="">node</var>'s
+   <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
+   <!-- Do this before we replace data, so that the data replacement won't
+   mutate ranges prematurely:
+   https://www.w3.org/Bugs/Public/show_bug.cgi?id=15325 -->
+
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+   <var title="">node</var> and
+   <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
+   <var title="">offset</var>, set its
+   <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> to
+   <var title="">new node</var> and decrease its
+   <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
+   <var title="">offset</var>.
+
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+   <var title="">node</var> and
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+   <var title="">offset</var>, set its
+   <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> to
+   <var title="">new node</var> and decrease its
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
+   <var title="">offset</var>.
+  </ol>
+
+ <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
+ <var title="">node</var>, offset <var title="">offset</var>, count
+ <var title="">count</var>, and data the empty string.
 
  <li>
   <p>If <var title="">parent</var> is null, run these substeps:</p>
@@ -4659,34 +4692,7 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
    <var title="">offset</var>, set its
    <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> to
    <var title="">offset</var>.
-
-   <li><p>Return <var title="">new node</var> and terminate these steps.</li>
   </ol>
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
- <var title="">node</var> and
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
- <var title="">offset</var>, set its
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> to
- <var title="">new node</var> and decrease its
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
- <var title="">offset</var>.
-
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
- <var title="">node</var> and
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
- <var title="">offset</var>, set its
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> to
- <var title="">new node</var> and decrease its
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
- <var title="">offset</var>.
-
- <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a>
- <var title="">new node</var> into <var title="">parent</var> before
- <var title="">node</var>'s
- <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
 
  <li><p>Return <var title="">new node</var>.
 </ol>

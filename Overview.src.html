@@ -4685,10 +4685,6 @@ method must <span title=concept-CD-replace>replace data</span> with node
  <var title>node</var>, offset <var title>offset</var>, and count
  <var title>count</var>.
 
- <li><p><span title=concept-CD-replace>Replace data</span> with node
- <var title>node</var>, offset <var title>offset</var>, count
- <var title>count</var>, and data the empty string.
-
  <li><p>Let <var title>new node</var> be a new <code>Text</code>
  <span title=concept-node>node</span>, with the same
  <span title=concept-node-document>node document</span> as
@@ -4697,6 +4693,43 @@ method must <span title=concept-CD-replace>replace data</span> with node
 
  <li><p>Let <var title>parent</var> be the <var title>node</var>'s
  <span title=concept-tree-parent>parent</span>.
+
+ <li>
+  <p>If <var title>parent</var> is not null, run these substeps:
+
+  <ol>
+   <li><p><span title=concept-node-insert>Insert</span>
+   <var title>new node</var> into <var title>parent</var> before
+   <var title>node</var>'s
+   <span title=concept-tree-next-sibling>next sibling</span>.
+   <!-- Do this before we replace data, so that the data replacement won't
+   mutate ranges prematurely:
+   https://www.w3.org/Bugs/Public/show_bug.cgi?id=15325 -->
+
+   <li><p>For each <span title=concept-range>range</span> whose
+   <span title=concept-range-start-node>start node</span> is
+   <var title>node</var> and
+   <span title=concept-range-start-offset>start offset</span> is greater than
+   <var title>offset</var>, set its
+   <span title=concept-range-start-node>start node</span> to
+   <var title>new node</var> and decrease its
+   <span title=concept-range-start-offset>start offset</span> by
+   <var title>offset</var>.
+
+   <li><p>For each <span title=concept-range>range</span> whose
+   <span title=concept-range-end-node>end node</span> is
+   <var title>node</var> and
+   <span title=concept-range-end-offset>end offset</span> is greater than
+   <var title>offset</var>, set its
+   <span title=concept-range-end-node>end node</span> to
+   <var title>new node</var> and decrease its
+   <span title=concept-range-end-offset>end offset</span> by
+   <var title>offset</var>.
+  </ol>
+
+ <li><p><span title=concept-CD-replace>Replace data</span> with node
+ <var title>node</var>, offset <var title>offset</var>, count
+ <var title>count</var>, and data the empty string.
 
  <li>
   <p>If <var title>parent</var> is null, run these substeps:</p>
@@ -4717,34 +4750,7 @@ method must <span title=concept-CD-replace>replace data</span> with node
    <var title>offset</var>, set its
    <span title=concept-range-end-offset>end offset</span> to
    <var title>offset</var>.
-
-   <li><p>Return <var title>new node</var> and terminate these steps.</li>
   </ol>
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-start-node>start node</span> is
- <var title>node</var> and
- <span title=concept-range-start-offset>start offset</span> is greater than
- <var title>offset</var>, set its
- <span title=concept-range-start-node>start node</span> to
- <var title>new node</var> and decrease its
- <span title=concept-range-start-offset>start offset</span> by
- <var title>offset</var>.
-
- <li><p>For each <span title=concept-range>range</span> whose
- <span title=concept-range-end-node>end node</span> is
- <var title>node</var> and
- <span title=concept-range-end-offset>end offset</span> is greater than
- <var title>offset</var>, set its
- <span title=concept-range-end-node>end node</span> to
- <var title>new node</var> and decrease its
- <span title=concept-range-end-offset>end offset</span> by
- <var title>offset</var>.
-
- <li><p><span title=concept-node-insert>Insert</span>
- <var title>new node</var> into <var title>parent</var> before
- <var title>node</var>'s
- <span title=concept-tree-next-sibling>next sibling</span>.
 
  <li><p>Return <var title>new node</var>.
 </ol>
