@@ -6147,20 +6147,27 @@ to be changed to match them.
  set, <span title=concept-throw>throw</span> an
  "<code>InvalidStateError</code>" exception and terminate these steps.
 
- <li><p>If <span title=concept-range-start-node>start node</span> is a
- <code>Text</code> or <code>Comment</code>
- <span title=concept-node>node</span> and its
- <span title=concept-tree-parent>parent</span> is null,
- <span title=concept-throw>throw</span> an
- "<code>HierarchyRequestError</code>" exception and terminate these
- steps.
- <!-- IE9: Allows it to go through, resulting in the text/comment node having a non-null previousSibling but a null parentNode. (?!)
+ <li><p>If <span title=concept-range-start-node>start node</span> is a Comment
+ node, or a <code>Text</code> <span title=concept-node>node</span> whose <span
+ title=concept-tree-parent>parent</span> is null, <span
+ title=concept-throw>throw</span> an "<code>HierarchyRequestError</code>"
+ exception and terminate these steps.
+ <!--
+ Behavior for Text node with null parent:
+
+ IE9: Allows it to go through, resulting in the text/comment node having a non-null previousSibling but a null parentNode. (?!)
  Firefox 4.0: Throws non-standard exception
  Chrome 12 dev: Throws "HierarchyRequestError"
  Opera 11.00: Doesn't come up, doesn't allow ranges on detached nodes
 
  IE is clearly crazy, and non-standard exceptions are no good, so we go with
- WebKit. -->
+ WebKit.
+
+ For a Comment node, see https://www.w3.org/Bugs/Public/show_bug.cgi?id=15350.
+ IE9, Firefox 12.0a1, and Chrome 17 dev all agree on throwing a
+ HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
+ text node.
+ -->
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -6176,11 +6183,6 @@ to be changed to match them.
  <span>context object</span>'s
  <span title=concept-range-start-offset>start offset</span>, and let
  <var title>reference node</var> be the result.
-
- <li><p>Otherwise, if <span title=concept-range-start-node>start node</span>
- is a <code>Comment</code> <span title=concept-node>node</span>, let
- <var title>reference node</var> be the
- <span title=concept-range-start-node>start node</span>.
 
  <li><p>Otherwise, let <var title>reference node</var> be the
  <span title=concept-tree-child>child</span> of
@@ -6200,11 +6202,6 @@ to be changed to match them.
  <li><p><span title=concept-node-pre-insert>Pre-insert</span>
  <var title>node</var> into <var title>parent</var> before
  <var title>reference node</var>.
- <!-- Mutation rules are enough to handle where the range endpoints are
- supposed to be. WebKit tries to be clever in some cases, apparently to
- ensure that the node is always contained in the range, but no other
- browser does. Plus, you can't guarantee that anyway, since the range start
- might lie in a comment, which isn't split up. -->
 </ol>
 
 <p>The
