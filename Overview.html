@@ -6091,13 +6091,6 @@ method must run these steps:
 <dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var>node</var>)</code></dfn>
 method must run these steps:
 
-<p class="XXX">Browsers disagree on how to handle the case where the range is
-collapsed: do you increment the end offset so the node is now included, or not?
-DOM 2 Range says no, and Gecko follows that, but all other browsers disagree.
-Apparently this traces back to Acid3 at one point requiring the non-standard
-behavior. As of June 2011, smaug is checking with other browsers' implementers
-to see if they're willing to change to match the spec; otherwise the spec needs
-to be changed to match them.
 <ol>
   <!-- IE9 and Opera 11.00 throw "WrongDocumentError" if the documents don't
   match, as is their wont, and as DOM 2 Range requires. But as elsewhere, we
@@ -6163,9 +6156,47 @@ to be changed to match them.
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of
  <var title="">reference node</var>.
 
+ <!-- Browsers disagree on how to handle the case where the range is
+ collapsed: do you increment the end offset so the node is now included, or
+ not?  DOM 2 Range says no, and Firefox 12.0a1 follows that, but IE9, Chrome
+ 17 dev, and Opera Next 12.00 alpha all do increment.  Apparently this
+ traces back to Acid3 at one point requiring the non-standard behavior.
+ Previously the spec matched DOM 2 Range, but it changed to match the
+ majority of browsers.  See
+ https://www.w3.org/Bugs/Public/show_bug.cgi?id=15297.
+
+ We have to be careful here, because if node is a DocumentFragment, we might
+ have inserted any number of nodes, including zero.  One corner case is if
+ we insert an empty DocumentFragment and the range is collapsed in a text
+ node.  In that case, the text node gets split, but browsers disagree on
+ what to do with the range's end.  IE9 leaves it in place; Chrome 17 dev
+ moves it to the parent element, before the reference node; Opera Next 12.00
+ alpha moves it to the beginning of the new text node.  The spec follows
+ WebKit just because it happens to be easier for me to spec.
+
+ The logic for how much to increment the position by is copied from the
+ "insert" algorithm.  Getting the new offset right was surprisingly tricky.
+ -->
+ <li><p>Let <var title="">new offset</var> be the
+ <a href="#concept-tree-index" title="concept-tree-index">index</a> of
+ <var title="">reference node</var>, or <var title="">parent</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> if
+ <var title="">reference node</var> is null.
+
+ <li><p>Add <var title="">node</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> to
+ <var title="">new offset</var>, if <var title="">node</var> is a
+ <code><a href="#documentfragment">DocumentFragment</a></code>.  Otherwise add one to
+ <var title="">new offset</var>.
+
  <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
  <var title="">node</var> into <var title="">parent</var> before
  <var title="">reference node</var>.
+
+ <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> and
+ <a href="#concept-range-end" title="concept-range-end">end</a> are the same, set
+ <a href="#concept-range-end" title="concept-range-end">end</a> to (<var title="">parent</var>,
+ <var title="">new offset</var>).
 </ol>
 
 <p>The
@@ -6242,6 +6273,9 @@ check first thing, which matches everyone but Firefox.
   <var title="">newParent</var>.
 
   <li>Call <code title="dom-Range-selectNode"><a href="#dom-range-selectnode">selectNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
+  <!-- Generally this isn't needed, because insertNode() will already do it,
+  but it makes a difference in at least one corner case (when the original
+  range lies in a single text node). -->
 </ol>
 
 <p>The <dfn id="dom-range-clonerange" title="dom-Range-cloneRange"><code>cloneRange()</code></dfn>
