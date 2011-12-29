@@ -52,8 +52,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor's-draft-28-december-2011">
-  <span class="w3conly">Editor's Draft 28 December 2011</span>
+ <h2 class="no-num no-toc" id="editor's-draft-29-december-2011">
+  <span class="w3conly">Editor's Draft 29 December 2011</span>
   </h2>
 
  <dl>
@@ -83,7 +83,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-28 December 2011, the editors have made this specification available
+29 December 2011, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -5398,6 +5398,11 @@ method must run these steps:
 method must run these steps:
 
 <ol>
+ <li><p>If <a href="#context-object">context object</a>'s or <var title="">sourceRange</var>'s
+ <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set,
+ <a href="#concept-throw" title="concept-throw">throw</a> an
+ "<code><a href="#invalidstateerror">InvalidStateError</a></code>" exception and terminate these steps.
+
  <li>
   <p>If <var>how</var> is not one of
   <ul>
@@ -5406,13 +5411,28 @@ method must run these steps:
    <li><code title="dom-CompareHow-END_TO_END"><a href="#dom-comparehow-end_to_end">END_TO_END</a></code>, and
    <li><code title="dom-CompareHow-END_TO_START"><a href="#dom-comparehow-end_to_start">END_TO_START</a></code>,
   </ul>
-  <p><a href="#concept-throw" title="concept-throw">throw</a> an "<code><a href="#indexsizeerror">IndexSizeError</a></code>"
-  exception and terminate these steps.
+  <p><a href="#concept-throw" title="concept-throw">throw</a> a
+  "<code><a href="#notsupportederror">NotSupportedError</a></code>" exception and terminate these steps.
+ <!--
+ Apparent behaviors from black-box testing:
 
- <li><p>If <a href="#context-object">context object</a>'s or <var title="">sourceRange</var>'s
- <a href="#concept-range-detached" title="concept-range-detached">detached flag</a> is set,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidstateerror">InvalidStateError</a></code>" exception and terminate these steps.
+ IE9: Converts to unsigned short per WebIDL, then throws "Error: Invalid
+ argument." if it's not 0-3.
+
+ Firefox 12.0a1: Converts to unsigned short per WebIDL, then throws
+ NS_ERROR_ILLEGAL_VALUE if it's not 0-3.
+
+ Chrome 17 dev: Converts to unsigned *long* per WebIDL, and treats bad values
+ as 0.  Never throws.
+
+ Opera Next 12.00 alpha: Throws NotSupportedError unless the value is -0, 0, 1,
+ 2, 3, or an integer equal to one of these modulo 2^32.  (In particular, it
+ throws on NaN, Infinity, and -Infinity instead of treating them as 0 per
+ WebIDL.)
+
+ The spec follows IE9/Gecko, except that we throw NotSupportedError (like
+ Opera) instead of a nonstandard exception type.
+ -->
 
  <li><p>If <a href="#context-object">context object</a>'s
  <a href="#concept-range-root" title="concept-range-root">root</a> is not the same as
@@ -5434,9 +5454,9 @@ method must run these steps:
    <dt><code title="dom-CompareHow-START_TO_END"><a href="#dom-comparehow-start_to_end">START_TO_END</a></code>:
    <dd>
     <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
-    <a href="#concept-range-start" title="concept-range-start">start</a>.
-    <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
     <a href="#concept-range-end" title="concept-range-end">end</a>.
+    <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+    <a href="#concept-range-start" title="concept-range-start">start</a>.
 
     <dt><code title="dom-CompareHow-END_TO_END"><a href="#dom-comparehow-end_to_end">END_TO_END</a></code>:
     <dd>
@@ -5448,9 +5468,9 @@ method must run these steps:
     <dt><code title="dom-CompareHow-END_TO_START"><a href="#dom-comparehow-end_to_start">END_TO_START</a></code>:
     <dd>
      <p>Let <var title="">this point</var> be the <a href="#context-object">context object</a>'s
-     <a href="#concept-range-end" title="concept-range-end">end</a>.
-     <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
      <a href="#concept-range-start" title="concept-range-start">start</a>.
+     <p>Let <var title="">other point</var> be <var title="">sourceRange</var>'s
+     <a href="#concept-range-end" title="concept-range-end">end</a>.
    </dl>
 
   <li>
