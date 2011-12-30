@@ -6429,46 +6429,48 @@ must run these steps:
 <p>The
 <dfn title=dom-Range-comparePoint><code>comparePoint(<var>node</var>, <var>offset</var>)</code></dfn>
 method must run these steps:
+<!-- IE9 doesn't support this method at all.  Firefox 12.0a1, Chrome 17 dev,
+and Opera Next 12.00 alpha all do. -->
 
 <ol>
  <li><p>If the <span title=concept-range-detached>detached flag</span> is
  set, <span title=concept-throw>throw</span> an
  "<code>InvalidStateError</code>" exception and terminate these steps.
 
- <li><p>If <var title>node</var> is not an
- <span title=concept-tree-inclusive-descendant>inclusive descendant</span>
- of the <span>context object</span>'s
+ <li><p>If <var title>node</var>'s <span title=concept-tree-root>root</span> is
+ different from the <span>context object</span>'s
  <span title=concept-range-root>root</span>,
- <span title=concept-throw>throw</span> a
- "<code>WrongDocumentError</code>" exception and terminate these
- steps.
+ <span title=concept-throw>throw</span> a "<code>WrongDocumentError</code>"
+ exception and terminate these steps.
+ <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
+ Firefox 12.0a1 and Chrome 17 dev. -->
 
  <li><p>If <var title>node</var> is a
  <span title=concept-doctype>doctype</span>,
  <span title=concept-throw>throw</span> an
  "<code>InvalidNodeTypeError</code>" exception and terminate these
  steps.
+ <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
+ alpha, which don't throw and seem to just ignore the offset instead.  See
+ comment for isPointInRange(). -->
 
  <li><p>If <var title>offset</var> is greater than
  <var title>node</var>'s <span title=concept-node-length>length</span>,
  <span title=concept-throw>throw</span> an
  "<code>IndexSizeError</code>" exception and terminate these steps.
+ <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
+ alpha, which don't throw.  See comment for isPointInRange(). -->
 
- <li><p>Let <var title>boundary</var> be the
- <span title=concept-range-bp>boundary point</span>
- (<var title>node</var>, <var title>offset</var>).
-
- <li><p>If <var title>boundary</var> is
+ <li><p>If (<var title>node</var>, <var title>offset</var>) is
  <span title=concept-range-bp-before>before</span>
  <span title=concept-range-start>start</span>, return &minus;1 and terminate
  these steps.
 
- <li><p>If <var title>boundary</var> is
+ <li><p>If (<var title>node</var>, <var title>offset</var>) is
  <span title=concept-range-bp-after>after</span>
- <span title=concept-range-end>end</span>, return 1 and terminate these
- steps.
+ <span title=concept-range-end>end</span>, return 1 and terminate these steps.
 
- <li><p>Otherwise, return 0.
+ <li><p>Return 0.
 </ol>
 
 <hr>
