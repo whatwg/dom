@@ -983,8 +983,8 @@ these steps must be run:
 <h3>Interface <code>EventTarget</code></h3>
 
 <pre class=idl>interface <dfn>EventTarget</dfn> {
-  void <span title=dom-EventTarget-addEventListener>addEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var>);
-  void <span title=dom-EventTarget-removeEventListener>removeEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var>);
+  void <span title=dom-EventTarget-addEventListener>addEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var> = false);
+  void <span title=dom-EventTarget-removeEventListener>removeEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var> = false);
   boolean <span title=dom-EventTarget-dispatchEvent>dispatchEvent</span>(<span>Event</span> <var title>event</var>);
 };
 
@@ -1009,7 +1009,6 @@ for a specific <span title=concept-event>event</span>. Each
 method is invoked these steps must be run:
 <ol>
  <li><p>If <var title>listener</var> is null terminate these steps.
- <li><p>If <var title>capture</var> is omitted let <var title>capture</var> be false.
  <li><p>Append an <span title=concept-event-listener>event listener</span>
  to the associated list of
  <span title=concept-event-listener>event listeners</span> with <b>type</b>
@@ -1021,7 +1020,6 @@ method is invoked these steps must be run:
 
 <p>When the <dfn title=dom-EventTarget-removeEventListener><code>removeEventListener(<var title>type</var>, <var title>listener</var>, <var title>capture</var>)</code></dfn> method is invoked these steps must be run:
 <ol>
- <li><p>If <var title>capture</var> is omitted let <var title>capture</var> be false.
  <li><p>Remove an <span title=concept-event-listener>event listener</span>
  from the associated list of
  <span title=concept-event-listener>event listeners</span>, whose
@@ -1843,7 +1841,7 @@ interface <dfn>MutationRecord</dfn> {
   <span>Node</span> <span title=dom-Node-removeChild>removeChild</span>(<span>Node</span> <var title>child</var>);
   void <span title=dom-Node-normalize>normalize</span>();
 
-  <span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var>);
+  <span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var> = true);
   boolean <span title=dom-Node-isEqualNode>isEqualNode</span>(<span>Node</span>? <var title>node</var>);
 
   DOMString <span title=dom-Node-lookupPrefix>lookupPrefix</span>(DOMString? <var title>namespace</var>);
@@ -2480,7 +2478,7 @@ dom-Range-extractContents, dom-Range-cloneContents -->
 <dfn title=dom-Node-cloneNode><code>cloneNode(<var title>deep</var>)</code></dfn>
 method must return a <span title=concept-node-clone>clone</span> of the
 <span>context object</span>, with the <i title>clone children flag</i> set
-if <var title>deep</var> is true or omitted.
+if <var title>deep</var> is true.
 
 <p>The
 <dfn title=dom-Node-isEqualNode><code>isEqualNode(<var title>node</var>)</code></dfn>
@@ -2847,15 +2845,21 @@ object may be returned as returned by an earlier call.
   <span>Attr</span> <span title=dom-Document-createAttributeNS>createAttributeNS</span>(DOMString namespace, DOMString qualifiedName);
     If adding this, search for [createAttribute]-->
 
-  <span>Node</span> <span title=dom-Document-importNode>importNode</span>(<span>Node</span> <var title>node</var>, optional boolean <var title>deep</var>);
+  <span>Node</span> <span title=dom-Document-importNode>importNode</span>(<span>Node</span> <var title>node</var>, optional boolean <var title>deep</var> = true);
   <span>Node</span> <span title=dom-Document-adoptNode>adoptNode</span>(<span>Node</span> <var title>node</var>);
 
   <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>eventInterfaceName</var>);
 
   <span>Range</span> <span title=dom-Document-createRange>createRange</span>();
 
-  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
-  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<span>Node</span> <var title>root</var>, optional unsigned long <var title>whatToShow</var>, optional <span>NodeFilter</span>? <var title>filter</var>);
+  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<!--
+  --><span>Node</span> <var title>root</var>, <!--
+  -->optional unsigned long <var title>whatToShow</var> = <span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span>, <!--
+  -->optional <span>NodeFilter</span>? <var title>filter</var> = null);
+  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<!--
+  --><span>Node</span> <var title>root</var>, <!--
+  -->optional unsigned long <var title>whatToShow</var> = <span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span>, <!--
+  -->optional <span>NodeFilter</span>? <var title>filter</var> = null);
 
   // NEW
   void <span title=dom-RootNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
@@ -3370,7 +3374,7 @@ method must run these steps:
  <li><p>Return a <span title=concept-node-clone>clone</span> of
  <var title>node</var>, with <i title>document</i>
  <span>context object</span> and the <i title>clone children flag</i> set if
- <var title>deep</var> is true or omitted.
+ <var title>deep</var> is true.
 </ol>
 
 <p>To <dfn title=concept-node-adopt>adopt</dfn> a <var title>node</var>,
@@ -3477,10 +3481,9 @@ method is invoked these steps must be run:
  the <code title=dom-NodeIterator-referenceNode>referenceNode</code>
  attribute to the <var title>root</var> argument.
  <li><p>Set <span title=concept-traversal-whatToShow>whatToShow</span> to
- the <var title>whatToShow</var> argument, or to
- <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
+ the <var title>whatToShow</var> argument.
  <li><p>Set <span title=concept-traversal-filter>filter</span> to
- <var title>filter</var>, or to null if omitted.
+ <var title>filter</var>.
  <li><p>Return the newly created <code>NodeIterator</code> object.
 </ol>
 
@@ -3494,10 +3497,9 @@ method is invoked these steps must be run:
  the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute to
  the <var title>root</var> argument.
  <li><p>Set <span title=concept-traversal-whatToShow>whatToShow</span> to
- the <var title>whatToShow</var> argument, or to
- <code title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</code> if omitted.
+ the <var title>whatToShow</var> argument.
  <li><p>Set <span title=concept-traversal-filter>filter</span> to
- <var title>filter</var>, or to null if omitted.
+ <var title>filter</var>.
  <li><p>Return the newly created <code>TreeWalker</code> object.
 </ol>
 
