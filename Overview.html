@@ -52,8 +52,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor's-draft-27-january-2012">
-  <span class="w3conly">Editor's Draft 27 January 2012</span>
+ <h2 class="no-num no-toc" id="editor's-draft-6-february-2012">
+  <span class="w3conly">Editor's Draft 6 February 2012</span>
   </h2>
 
  <dl>
@@ -84,7 +84,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-27 January 2012, the editors have made this specification available
+6 February 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -165,13 +165,12 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
    <li><a href="#interface-domstringlist"><span class="secno">9.1 </span>Interface <code>DOMStringList</code></a></li>
    <li><a href="#interface-domtokenlist"><span class="secno">9.2 </span>Interface <code>DOMTokenList</code></a></li>
    <li><a href="#interface-domsettabletokenlist"><span class="secno">9.3 </span>Interface <code>DOMSettableTokenList</code></a></ol></li>
- <li><a href="#dom-features"><span class="secno">10 </span>DOM features</a></li>
- <li><a href="#historical"><span class="secno">11 </span>Historical</a>
+ <li><a href="#historical"><span class="secno">10 </span>Historical</a>
   <ol class="toc">
-   <li><a href="#dom-events"><span class="secno">11.1 </span>DOM Events</a></li>
-   <li><a href="#dom-core"><span class="secno">11.2 </span>DOM Core</a></li>
-   <li><a href="#dom-range"><span class="secno">11.3 </span>DOM Range</a></li>
-   <li><a href="#dom-traversal"><span class="secno">11.4 </span>DOM Traversal</a></ol></li>
+   <li><a href="#dom-events"><span class="secno">10.1 </span>DOM Events</a></li>
+   <li><a href="#dom-core"><span class="secno">10.2 </span>DOM Core</a></li>
+   <li><a href="#dom-range"><span class="secno">10.3 </span>DOM Range</a></li>
+   <li><a href="#dom-traversal"><span class="secno">10.4 </span>DOM Traversal</a></ol></li>
  <li><a class="no-num" href="#references">References</a>
   <ol class="toc">
    <li><a class="no-num" href="#normative-references">Normative references</a></li>
@@ -3519,21 +3518,34 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(DOMString title);
 };</pre>
 
-<dl class="domintro">
- <dt><var title="">hasSupport</var> = <var title="">document</var> . <code title="dom-Document-implementation"><a href="#dom-document-implementation">implementation</a></code> . <code title="dom-DOMImplementation-hasFeature"><a href="#dom-domimplementation-hasfeature">hasFeature</a></code>(
- <var title="">feature</var>, <var title="">version</var> )
-
- <dd>
-  <p>Returns whether the user agent supports the version <var title="">version</var> of <var title="">feature</var>. The empty string means any
-  version.
-</dl>
+<!-- XXX hasFeature does not have a domintro because it is "deprecated" -->
 
 <div class="impl">
 
 <p>The <dfn id="dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature"><code>hasFeature(<var title="">feature</var>, <var title="">version</var>)</code></dfn> method must return
-true if the user agent <a href="#concept-support-domfeatureversion" title="concept-support-DOMfeatureversion">supports</a>
-the (<var title="">feature</var>, <var title="">version</var>) tuple and false
-otherwise.
+true for any of (<var title="">feature</var>, <var title="">version</var>) tuples
+listed below where <var title="">feature</var> is an
+<a href="#ascii-case-insensitive">ASCII case-insensitive</a> and <var title="">version</var> is a
+<a href="#case-sensitive">case-sensitive</a> match, or false otherwise.
+
+<ul>
+ <li>("Core", "2.0")
+ <li>("HTML", "1.0")
+ <li>("HTML", "2.0")
+ <li>("XHTML", "1.0")
+ <li>("XHTML", "2.0")
+ <li>("XML", "1.0")
+ <li>("XML", "2.0")
+</ul>
+
+<!-- Chrome supports Core/1.0; Opera supports x/undefined -->
+
+<p class="XXX"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=15555">Any others?</a>
+
+<p class="note">The
+<code title="dom-DOMImplementation-hasFeature"><a href="#dom-domimplementation-hasfeature">hasFeature()</a></code> is a badly
+designed method (features are notoriously unreliable and imprecise) that is
+now effectively obsolete and only needs to be  supported for deployed content.
 
 </div>
 
@@ -7708,47 +7720,7 @@ attribute must return the underlying string and, on setting must replace the und
 
 
 
-<h2 id="dom-features"><span class="secno">10 </span>DOM features</h2>
-<p class="warning">Authors are strongly discouraged from using
-<a href="#concept-domfeature" title="concept-DOMfeature">DOM features</a>, as they are notoriously
-unreliable and imprecise. Authors are encouraged to rely on explicit feature
-testing or graceful degradation.
-
-<p>A <dfn id="concept-domfeature" title="concept-DOMfeature">DOM feature</dfn> is a unique,
-<a href="#ascii-case-insensitive">ASCII case-insensitive</a> string that represents a certain feature of
-the user agent.
-
-<p>A <dfn id="concept-domfeatureversion" title="concept-DOMfeatureversion">DOM feature version</dfn> is a (<var title="">feature</var>,&nbsp;<var title="">version</var>) tuple, where <var title="">feature</var> is <a href="#concept-domfeature" title="concept-DOMfeature">DOM feature</a>
-and <var title="">version</var> is a <a href="#case-sensitive">case-sensitive</a> string
-representing a version number.
-<!--of the form "<var title>major</var>.<var title>minor</var>".-->
-
-<p>Specifications may define which <a href="#concept-domfeature" title="concept-DOMfeature">DOM
-features</a> a user agent is to <dfn id="concept-support-domfeature" title="concept-support-DOMfeature">support</dfn>, as well as an associated list of
-one or more <a href="#case-sensitive">case-sensitive</a> strings representing version numbers, and under which circumstances, when necessary for compatibility (i.e. because of historical use). Specifications must not introduce new <a href="#concept-domfeature" title="concept-DOMfeature">DOM
-features</a> or new versions for existing features.
-
-<div class="impl">
-
-<p>A user agent must <dfn id="concept-support-domfeatureversion" title="concept-support-DOMfeatureversion">support</dfn>
-a <a href="#concept-domfeatureversion" title="concept-DOMfeatureversion">DOM feature version</a> (<var title="">feature</var>,&nbsp;<var title="">version</var>) if it <a href="#concept-support-domfeature" title="concept-support-DOMfeature">supports</a> a <a href="#concept-domfeature" title="concept-DOMfeature">DOM feature</a> that is a <a href="#ascii-case-insensitive">ASCII
-case-insensitive</a> match for <var title="">feature</var> and <var title="">version</var> is in the associated list of versions.
-
-<p>A user agent must <a href="#concept-support-domfeatureversion" title="concept-support-DOMfeatureversion">support</a> the (<var title="">feature</var>,&nbsp;"") tuple if it <a href="#concept-support-domfeature" title="concept-support-DOMfeature">supports</a> a <a href="#concept-domfeature" title="concept-DOMfeature">DOM feature</a> that is a <a href="#ascii-case-insensitive">ASCII
-case-insensitive</a> match for <var title="">feature</var>.
-
-<p>For historical reasons, user agents must <a href="#concept-support-domfeatureversion" title="concept-support-DOMfeatureversion">support</a> the
-"XML" <a href="#concept-domfeature" title="concept-DOMfeature">DOM feature</a> with the versions "1.0"
-and "2.0" associated with it, and the "Core" <a href="#concept-domfeature" title="concept-DOMfeature">DOM
-feature</a> with the version "2.0" associated with it.
-
-<!-- Chrome supports Core/1.0; Opera supports x/undefined -->
-
-</div>
-
-
-
-<h2 id="historical"><span class="secno">11 </span>Historical</h2>
+<h2 id="historical"><span class="secno">10 </span>Historical</h2>
 
 <!-- XXX we should probably just nuke this section in due course. No need to keep old dreams alive. -->
 
@@ -7757,7 +7729,7 @@ significant revision of various DOM specifications. This section attempts to
 enumerate the changes.
 
 
-<h3 id="dom-events"><span class="secno">11.1 </span>DOM Events</h3>
+<h3 id="dom-events"><span class="secno">10.1 </span>DOM Events</h3>
 
 <p>These are the changes made to the features described in the
 "DOM Event Architecture" and "Basic Event Interfaces" chapters of
@@ -7780,7 +7752,7 @@ a separate specification.
 </ul>
 
 
-<h3 id="dom-core"><span class="secno">11.2 </span>DOM Core</h3>
+<h3 id="dom-core"><span class="secno">10.2 </span>DOM Core</h3>
 
 <p>These are the changes made to the features described in
 <cite>DOM Level 3 Core</cite>.
@@ -7909,7 +7881,7 @@ this specification will not support them.
   </ul>
 </dl>
 
-<h3 id="dom-range"><span class="secno">11.3 </span>DOM Range</h3>
+<h3 id="dom-range"><span class="secno">10.3 </span>DOM Range</h3>
 
 <p>These are the changes made to the features described in the
 "Document Object Model Range" chapter of
@@ -7925,7 +7897,7 @@ this specification will not support them.
 <p class="XXX">Probably incomplete.
 
 
-<h3 id="dom-traversal"><span class="secno">11.4 </span>DOM Traversal</h3>
+<h3 id="dom-traversal"><span class="secno">10.4 </span>DOM Traversal</h3>
 
 <p>These are the changes made to the features described in the
 "Document Object Model Traversal" chapter of
