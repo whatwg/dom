@@ -1372,14 +1372,23 @@ steps:
  increase its <span title=concept-range-end-offset>end offset</span> by
  <var title>count</var>.
 
- <li><p>If <var title>node</var> is a <code>DocumentFragment</code>
- <span title=concept-node>node</span>, insert its
- <span title=concept-tree-child>children</span> (preserving
- <span title=concept-tree-order>tree order</span>), before
- <var title>child</var> or at the end of <var title>parent</var> if
- <var title>child</var> is null.
+ <li><p>Let <var title>addedNodes</var> be an ordered list of <span title=concept-node>nodes</span>.
 
- <li><p>Otherwise insert <var title>node</var> before
+ <li><p>If <var title="">node</var> is a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, append its
+ <span title=concept-tree-child>children</span> to <var title>addedNodes</var>
+ (preserving <span title=concept-tree-order>tree order</span>);
+ otherwise, append <var title>node</var> to <var title>addedNodes</var>.
+
+ <li><p><span title=concept-mutation-dispatch-childlist>Dispatch</span> a
+ "<code>childList</code>" mutation with <b>target</b> set to <var title="">parent</var>,
+ <b>addedNodes</b> set to <var title>addedNodes</var>,
+ <b>nextSibling</b> set to <var title>child</var>, and <b>previousSibling</b> set to
+ <var title>child</var>'s <span title=concept-tree-previous-sibling>previous sibling</span>
+ or to <var title>parent</var>'s <span title=concept-tree-last-child>last child</span>
+ if <var title>child</var> is null.
+
+ <li><p>Insert all nodes in <var title>addedNodes</var> before
  <var title>child</var> or at the end of <var title>parent</var> if
  <var title>child</var> is null.
 </ol>
@@ -1567,6 +1576,21 @@ from a <var title>parent</var>, run these steps:
  <var title>index</var>, decrease its
  <span title=concept-range-end-offset>end offset</span> by one.
 
+ <li><p><span title=concept-mutation-dispatch-childlist>Dispatch</span> a
+ "<code>childList</code>" mutation with <b>target</b> set to <var title>parent</var>,
+ <b>removedNodes</b> set to a <code>NodeList</code> containing only <var title>node</var>,
+ <b>nextSibling</b> set to <var title>node</var>'s
+ <span title=concept-tree-next-sibling>next sibling</span>,
+ and <b>previousSibling</b> set to <var title>node</var>'s
+ <span title=concept-tree-previous-sibling>previous sibling</span>.
+
+ <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var>
+ of <var title>node</var>, if <var title>ancestor</var> has any
+ <span title=registered-observer>registered observers</span> with the <code>subtree</code>
+ option set, <span title=concept-add-transient-observer>add</span>
+ an identical <span>transient observer</span> to <var title>node</var> for
+ each such subtree <span title=registered-observer>registration</span> on <var title>ancestor</var>.
+
  <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 </ol>
 
@@ -1717,74 +1741,258 @@ method must return the result of
 
 <h4>Mutation observers</h4>
 
-<p class=XXX>This section will define the replacement for the
-"Mutation Events" feature of the platform. For now it contains the interface
-being implemented by vendors.
-
 <pre class="idl">[Constructor(<span>MutationCallback</span> callback)]
 interface <dfn>MutationObserver</dfn> {
-  void observe(<span>Node</span> target, <span>MutationObserverInit</span> options);
-  void disconnect();
+  void <span title=dom-MutationObserver-observe>observe</span>(<span>Node</span> target, <span>MutationObserverInit</span> options);
+  void <span title=dom-MutationObserver-disconnect>disconnect</span>();
 };
 
 callback <dfn>MutationCallback</dfn> = void (<span>MutationRecord</span>[] mutations, <span>MutationObserver</span> observer);
 
 dictionary <dfn>MutationObserverInit</dfn> {
-  // Mutation types
-  boolean childList;     // If true, mutations affecting node’s childNodes are included.
-  boolean attributes;    // If true, mutations affecting element’s attributes are included.
-  boolean characterData; // If true, mutations affecting the value of CharacterData nodes are included.
-  // [Note: If none of the known mutation types is specified, an Error is thrown]
-
-  // Subtree observation
-  boolean subtree;  // If true, the observed set of nodes for this registration should include
-                    // descendants of MutationTarget (behavior described below).
-
-  // Old values
-  boolean attributeOldValue;
-  // If true, MutationRecords describing changes to attributes should
-  // contain the value of the attribute before the change. If true
-  // without attribute: true specified, an Error is thrown.
-
-  boolean characterDataOldValue;
-  // If true, MutationRecords describing changes to
-  // CharacterData nodes should contain the value
-  // of the node before the change. If true without
-  // characterData: true, an Error is thrown.
-
-  // Filtering
-  DOMString[] attributeFilter;
-  // If provided, only changes to attributes with localName equaling
-  // one of the provided strings will be delivered. If provided without
-  // attribute: true, an Error is thrown.
+  boolean <span title=dom-MutationObserverInit-childlist>childList</span>;
+  boolean <span title=dom-MutationObserverInit-attributes>attributes</span>;
+  boolean <span title=dom-MutationObserverInit-characterdata>characterData</span>;
+  boolean <span title=dom-MutationObserverInit-subtree>subtree</span>;
+  boolean <span title=dom-MutationObserverInit-attributeoldvalue>attributeOldValue</span>;
+  boolean <span title=dom-MutationObserverInit-characterdataoldvalue>characterDataOldValue</span>;
+  DOMString[] <span title=dom-MutationObserverInit-attributefilter>attributeFilter</span>;
 };
 
 interface <dfn>MutationRecord</dfn> {
-  // Mutation type: one of 'childList', 'attributes', or 'characterData'
-  readonly attribute DOMString type;
-
-  // For childList and attributes, target is the owner node affected.
-  // For CharacterData, target is the node affected.
-  readonly attribute <span>Node</span> target;
-
-  // For type == 'childList', Sequence of added and removed nodes in this operation.
-  readonly attribute <span>NodeList</span> addedNodes;
-  readonly attribute <span>NodeList</span> removedNodes;
-
-  // For type == 'childList', The siblings in childNodes immediately preceding following the first
-  // and last nodes added and/or removed.
-  readonly attribute <span>Node</span> previousSibling;
-  readonly attribute <span>Node</span> nextSibling;
-
-  // For type == 'attribute', the name and namespaceURI of the attribute affected
-  readonly attribute DOMString attributeName;
-  readonly attribute DOMString attributeNamespace;
-
-  // For type == 'attribute' or 'characterData', if requested, the value immediately
-  // preceding the mutation.
-  readonly attribute DOMString oldValue;
+  readonly attribute DOMString <span title=dom-MutationRecord-type>type</span>;
+  readonly attribute <span>Node</span> <span title=dom-MutationRecord-target>target</span>;
+  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
+  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
+  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-previousSibling>previousSibling</span>;
+  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-nextSibling>nextSibling</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-attributeName>attributeName</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-attributeNamespace>attributeNamespace</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-oldValue>oldValue</span>;
 };</pre>
-<!-- XXX remove inline comments when this is defined -->
+
+<p>When the constructor of the <code>MutationObserver</code> interface is invoked
+with callback <var title>callback</var> and options <var title>options</var>, run these steps:
+
+<ol>
+  <li><p>If <var title>callback</var> is null, <span title=concept-throw>throw</span> a "<code>NotFoundError</code>" and terminate these steps.
+  <li><p>Return a <code>MutationObserver</code> <span title=mutation-observer-associated-callback>associated</span> with the callback.
+</ol>
+
+Besides the properties listed in the IDL for <code>MutationObserver</code>, it has three internal properties:
+<ul>
+  <li><p>An <dfn title=mutation-observer-associated-callback>associated callback</dfn>.
+  <li><p>A list of <span title=concept-node>nodes</span> on which it is <span title=registered-observer>registered</span>.
+  <li><p>A queue of <code>MutationRecord</code>s which are <dfn title=mutation-observer-pending>pending</dfn> delivery.
+</ul>
+
+<hr>
+
+<p>A <dfn title=registered-observer>registered observer</dfn> consists of an <b>observer</b> (an instance of <code>MutationObserver</code>),
+a set of <b>options</b> (an instance of <code>MutationObserverInit</code>), and a <b>transient</b> variable (whose default value is false).
+Each <code>Node</code> has a list of registered observers. A <dfn>transient observer</dfn> is a <span title=registered-observer>registered observer</span>
+whose <b>transient</b> variable is set to true.
+<!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
+
+<hr>
+
+<p>When the <dfn title=dom-MutationObserver-observe><code>observe(<var title>target</var>, <var title>options</var>)</code></dfn>
+method is called, these steps must be run:
+
+<ol>
+  <li><p>If <var title>target</var> is not a <span title=concept-node>node</span>,
+  <span title=concept-throw>throw</span> a "<code>NotFoundError</code>" and terminate these steps.
+
+  <li><p>If <var title>options</var> is null, or is not an instance of <code>MutationObserverInit</code>,
+  <span title=concept-throw>throw</span> a "<code>TypeMismatchError</code>" and terminate these steps.
+
+  <li><p>Run these substeps, treating <var title>options</var> as the <span>context object</span>:
+  <ol>
+    <li><p>If neither <code>childList</code>, <code>attributes</code>, nor <code>characterData</code> is true,
+    <span title=concept-throw>throw</span> a "<code>SyntaxError</code>" and terminate these steps.
+
+    <li><p>If <code>attributeOldValue</code> is true and <code>attributes</code> is not true,
+    <span title=concept-throw>throw</span> a "<code>SyntaxError</code>" and terminate these steps.
+
+    <li><p>If <code>attributeFilter</code> is a non-empty array and <code>attributes</code> is not true,
+    <span title=concept-throw>throw</span> a "<code>SyntaxError</code>" and terminate these steps.
+
+    <li><p>If <code>characterDataOldValue</code> is true and <code>characterData</code> is not true,
+    <span title=concept-throw>throw</span> a "<code>SyntaxError</code>" and terminate these steps.
+  </ol>
+
+  <li><p>If <var title>target</var>'s registration list already includes a registration associated with
+  the <span>context object</span>, replace that registrations's options with <var title>options</var>.
+
+  <li><p>Otherwise, add a new <span title=registered-observer>registration</span> to <var title>target</var>'s registered observer list with the
+  <span>context object</span> as the <var title>observer</var> and <var title>options</var> as the options,
+  and add <var title>target</var> to <var title>observer</var>'s list of nodes on which it is registered.
+</ol>
+
+<p>When the <dfn title=dom-MutationObserver-disconnect><code>disconnect</code></dfn> method is called, for each
+<span title=concept-node>node</span> <var title>node</var> in the <span>context object</span>'s list of
+<span title=concept-node>nodes</span>, remove any <span title=registered-observer>registration</span> on <var title>node</var> for which
+the <span>context object</span> is the <b>observer</b>.
+
+<h4>Mutation observation algorithms</h4>
+
+To <dfn title=concept-mutation-dispatch-attributes>dispatch</dfn> an "<code>attributes</code>" MutationRecord
+with target <var title>target</var>, attributeName <var title>name</var>, and oldValue <var title>oldValue</var>,
+run these steps:
+
+<ol>
+<li><p>Create a new MutationRecord <var title>record</var> with type initialized to "<code>attributes</code>", target initialized to <var title>target</var>,
+and attributeName initialized to <var title>name</var>.
+
+<li><p>Create a copy of this record named <var title>recordWithOldValue</var> and initialize its oldValue to <var title>oldValue</var>.
+
+<li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+
+<var title>target</var>'s registered observer list, run these substeps:
+  <ol>
+    <li><p>If <var title>options</var> does not have the <code>attributes</code> option set, terminate these substeps (and run them for the next observer).
+
+    <li><p>If <var title>options</var> has a non-empty <code>attributeFilter</code> array, and <var title>name</var> is not in that array, terminate these substeps
+    (and run them for the next observer).
+
+    <li><p>If <var title>options</var> has the <code>attributeOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
+    queue of pending mutations.
+
+    <li><p>Otherwise, append <var title>record</var> to the observer's queue of pending mutations.
+    </ol>
+     <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
+     <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+     registered observer list, run these substeps:
+    <ol>
+
+    <li><p>If <var title>options</var> does not have the <code>subtree</code> option set, terminate these substeps (and run them for the next observer).
+
+    <li><p>If <var title>options</var> does not have the <code>attributes</code> option set, terminate these substeps (and run them for the next observer).
+
+    <li><p>If <var title>options</var> has a non-empty <code>attributeFilter</code> array, and <var title>name</var> is not in that array, terminate these substeps
+    (and run them for the next observer).
+
+    <li><p>If <var title>options</var> has the <code>attributeOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
+    queue of pending mutations.
+
+    <li><p>Otherwise, append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+  </ol>
+</ol>
+
+To <dfn title=concept-mutation-dispatch-characterData>dispatch</dfn> a "<code>characterData</code>" MutationRecord
+with target <var title>target</var> and oldValue <var title>oldValue</var>, run these steps:
+
+<ol>
+ <li><p>Create a new MutationRecord <var title>record</var> with type initialized to "<code>characterData</code>" and target initialized to <var title>target</var>.
+
+ <li><p>Create a copy of this record named <var title>recordWithOldValue</var> and initialize its oldValue to <var title>oldValue</var>.
+
+ <li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+ <var title>target</var>'s registered observer list, run these substeps:
+   <ol>
+    <li><p>If <var title>options</var> does not have the <code>characterData</code> option set, terminate these substeps (and run them for the next observer).
+
+    <li><p>If <var title>options</var> has the <code>characterDataOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
+    queue of pending mutations.
+
+    <li><p>Otherwise, append <var title>record</var> to the observer's queue of pending mutations.
+   </ol>
+
+ <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
+ <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+ registered observer list, run these substeps:
+ <ol>
+  <li><p>If <var title>options</var> does not have the <code>subtree</code> option set, terminate these substeps (and run them for the next observer).
+
+  <li><p>If <var title>options</var> does not have the <code>characterData</code> option set, terminate these substeps (and run them for the next observer).
+
+  <li><p>If <var title>options</var> has the <code>characterDataOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
+    queue of pending mutations.
+
+  <li><p>Otherwise, append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+ </ol>
+</ol>
+
+To <dfn title=concept-mutation-dispatch-childList>dispatch</dfn> a "<code>childList</code>" MutationRecord
+with target <var title>target</var>, addedNodes <var title>addedNodes</var>, removedNodes <var title>removedNodes</var>, previousSibling <var title>previousSibling</var>,
+and nextSibling <var title>nextSibling</var>, run these steps:
+
+<ol>
+ <li><p>Create a new MutationRecord <var title>record</var> with type initialized to "<code>childList</code>", target initialized to <var title>target</var>,
+ addedNodes initialized to <var title>addedNodes</var>, removedNodes initialized to <var title>removedNodes</var>,
+ previousSibling initialized to <var title>previousSibling</var>, and nextSibling initialized to.
+
+ <li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+ <var title>target</var>'s registered observer list, run these substeps:
+ <ol>
+  <li><p>If <var title>options</var> does not have the <code>childList</code> option set, terminate these substeps (and run them for the next observer).
+
+  <li><p>Append <var title>record</var> to the observer's queue of pending mutations.
+ </ol>
+
+ <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
+ <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+ registered observer list, run these substeps:
+ <ol>
+  <li><p>If <var title>options</var> does not have the <code>subtree</code> option set, terminate these substeps (and run them for the next observer).
+
+  <li><p>If <var title>options</var> does not have the <code>childList</code> option set, terminate these substeps (and run them for the next observer).
+
+  <li><p>Append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+ </ol>
+</ol>
+
+To <dfn title=concept-add-transient-observer>add a transient observer</dfn> <var title>observer</var> with options <var title>options</var>
+to a <span title=concept-node>node</span> <var title>node</var>, create a new <span title=registered-observer>registration</span> with <b>observer</b> set to
+<var title>observer</var>, <b>options</b> set to <var title>options</var>, and <b>transient</b> set to true and append it to <var title>node</var>'s
+list of <span title=registered-observer>registered observers</span>.
+
+<h4>MutationRecord attributes</h4>
+
+<p>The <dfn title=dom-MutationRecord-type><code>type</code></dfn> attribute must return
+a string representing the type of the mutation, which must be one of the following:
+<ul>
+  <li>"<dfn title=dom-MutationRecord-type-attributes><code>attributes</code></dfn>"
+  <li>"<dfn title=dom-MutationRecord-type-childList><code>childList</code></dfn>"
+  <li>"<dfn title=dom-MutationRecord-type-characterData><code>characterData</code></dfn>"
+</ul>
+
+<p>The <dfn title=dom-MutationRecord-target><code>target</code></dfn> attribute must
+return the node this mutation affected, which differs depending on the <span title=mutation-record-type>type</span>.
+For childList mutations, it must be the node whose children changed.
+For attributes mutations, it must be the element whose attributes changed.
+For characterData mutations, it must be the <code>CharacterData</code> node whose value changed.
+
+<p>The <dfn title=dom-MutationRecord-addedNodes><code>addedNodes</code></dfn> attribute must return
+the list of nodes added in this mutation, if it was a childList mutation. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-removedNodes><code>removedNodes</code></dfn> attribute must return
+the list of nodes removed in this mutation, if it was a childList mutation. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-previousSibling><code>previousSibling</code></dfn> attribute must return
+the node which was the <span title=concept-tree-previous-sibling>previous sibling</span> of the first element of addedNodes when the mutation occurred, if addedNodes is non-empty,
+or the node which was the <span title=concept-tree-previous-sibling>previous sibling</span> of the first element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-nextSibling><code>nextSibling</code></dfn> attribute must return
+the node which was the <span title=concept-tree-next-sibling>next sibling</span> of the last item in addedNodes when the mutation occurred, if addedNodes is non-empty,
+or the node which was the <span title=concept-tree-next-sibling>next sibling</span> of the last element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-attributeName><code>attributeName</code></dfn> attribute must return
+the <code title=dom-attr-name>name</code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-attributeNamespace><code>attributeNamespace</code></dfn> attribute must return
+the <code title=dom-attr-namespaceuri>namespaceURI</code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+
+<p>The <dfn title=dom-MutationRecord-oldValue><code>oldValue</code></dfn> attribute varies in behavior
+based on the <span title=dom-MutationRecord-type>type</span> of mutation:
+
+<ul>
+  <li><p>If type is "<code>childList</code>", it must return null.
+  <li><p>If type is "<code>attributes</code>" and the registered observation had the attributeOldValue option set, must return
+  the <span title=dom-attr-value>value</span> of the <span title=attr>attribute</span> just before the mutation was made.
+  <li><p>If type is "<code>characterData</code>" and the registered observation had the characterDataOldValue option set, must return the value of
+  the <span title=dom-MutationRecord-target>target</span>'s <span title=dom-characterdata-data>data</span> attribute just before the mutation was made.
+</ul>
 
 
 <h3>Interface <code>Node</code></h3>
@@ -3386,7 +3594,7 @@ with an <var title>ownerDocument</var>, run these steps:
  <span>affected by a base URL change</span>.
 
  <li><p>If <var title>node</var>'s
- <span title=concept-tree-parent>parent</span> is not null, remove
+ <span title=concept-tree-parent>parent</span> is not null, <span title=concept-node-remove>remove</span>
  <var title>node</var> from its
  <span title=concept-tree-parent>parent</span>.
 
@@ -4130,24 +4338,29 @@ method must run these steps:
  <var title>name</var>, <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" and terminate these steps.
 
- <li><p>If the <span>context object</span> does not have an
+ <li><p>Let <var title>attribute</var> be the
+ first <span title=concept-attribute>attribute</span> in the
+ <span>context object</span>'s <span title=concept-element-attribute>attribute list</span>
+ whose <span title=concept-attribute-name>name</span> is
+ <var title>name</var>, or null if there is no such
+ <span title=concept-attribute>attribute</span>.
+
+ <li><p>If <var title>attribute</var> is null, create an
  <span title=concept-attribute>attribute</span> whose
- <span title=concept-attribute-name>name</span> is
- <var title>name</var>, create an
- <span title=concept-attribute>attribute</span>, whose
  <span title=concept-attribute-name>name</span> is
  <var title>name</var> and
  <span title=concept-attribute-value>value</span> is <var title>value</var>,
  and then <span title=concept-element-attributes-append>append</span> this
  <span title=concept-attribute>attribute</span> to the
- <span>context object</span>.
+ <span>context object</span> and terminate these steps.
 
- <li><p>Otherwise, <span title=concept-attribute-change>change</span> the
- first <span title=concept-attribute>attribute</span> in the
- <span>context object</span>'s
- <span title=concept-element-attribute>attribute list</span> whose
- <span title=concept-attribute-name>name</span> is
- <var title>name</var>, to <var title>value</var>.
+ <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an "<code>attributes</code>"
+ <code>MutationRecord</code> with <b>target</b> set to the <span>context object</span>,
+ <b>attributeName</b> set to <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
+ <b>attributeNamespace</b> set to <var title>attribute</var>'s <span title=dom-attr-namespaceuri>namespaceURI</span>,
+ and <b>oldValue</b> set to <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+
+ <li><p>Set <var title>attribute</var>'s <span title=concept-attribute-value>value</span> to <var title>value</var>.
 </ol>
 
 <p>The
@@ -4193,14 +4406,18 @@ method must run these steps:
  "<code title>xmlns</code>", <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception and terminate these steps.
 
- <li><p>If the <span>context object</span> does not
- <span title=concept-element-attribute-has>have</span> an
+ <li><p>Let <var title>attribute</var> be the
+ first <span title=concept-attribute>attribute</span> in the
+ <span>context object</span>'s
+ <span title=concept-element-attribute>attribute list</span>
+ whose <span title=concept-attribute-namespace>namespace</span> is
+ <var title>namespace</var> and whose
+ <span title=concept-attribute-local-name>local name</span>
+ is <var title>localName</var>, or null if there is no such
+ <span title=concept-attribute>attribute</span>.
+
+ <li><p>If <var title="">attribute</var> is null, create an
  <span title=concept-attribute>attribute</span> whose
- <span title=concept-attribute-namespace>namespace</span> is
- <var title>namespace</var> and
- <span title=concept-attribute-local-name>local name</span> is
- <var title>localName</var>, create an
- <span title=concept-attribute>attribute</span>, whose
  <span title=concept-attribute-name>name</span> is
  <var title>name</var>,
  <span title=concept-attribute-namespace>namespace</span> is
@@ -4212,10 +4429,17 @@ method must run these steps:
  is <var title>value</var>, and then
  <span title=concept-element-attributes-append>append</span> this
  <span title=concept-attribute>attribute</span> to the
- <span>context object</span>.
+ <span>context object</span> and terminate these steps.
 
- <li><p>Otherwise, <span title=concept-attribute-change>change</span> that
- <span title=concept-attribute>attribute</span> to <var title>value</var>.
+ <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
+ "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
+ set to the <span>context object</span>, <b>attributeName</b> set to
+ <var title>name</var>, <b>attributeNamespace</b> set to
+ <var title>namespace</var>, and <b>oldValue</b> set to
+ <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+
+ <li><p>Set <var title>attribute</var>'s
+ <span title=concept-attribute-value>value</span> to <var title>value</var>.
 </ol>
 
 <p>The
@@ -4432,26 +4656,42 @@ null.
 
 <hr>
 
-<p>To <dfn title=concept-attribute-change>change</dfn> an
-<span title=concept-attribute>attribute</span> <var title>attribute</var> to
-<var title>value</var>, set the <var title>attribute</var>'s
-<span title=concept-attribute-value>value</span> to <var title>value</var>.
-
 <!-- XXX move append/remove to attribute list? -->
 <p>To <dfn title=concept-element-attributes-append>append</dfn> an
 <span title=concept-attribute>attribute</span> <var title>attribute</var> to
 an <span title=concept-element>element</span> <var title>element</var>,
-append the <var title>attribute</var> to the <var title>element</var>'s
-<span title=concept-element-attribute>attribute list</span>.
+run these steps:
+
+<ol>
+ <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
+ "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
+ set to <var title>element</var>, <b>attributeName</b> set to
+ <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
+ <b>attributeNamespace</b> set to <var title>attribute</var>'s
+ <span title=dom-attr-namespaceuri>namespaceURI</span>,
+ and <b>oldValue</b> set to null.
+
+ <li><p>Append the <var title>attribute</var> to the <var title="">element</var>'s
+ <span title=concept-element-attribute>attribute list</span>.
+</ol>
 
 <p>To <dfn title=concept-element-attributes-remove>remove</dfn> an
 <span title=concept-attribute>attribute</span> <var title>attribute</var>
 from an <span title=concept-element>element</span> <var title>element</var>,
-remove the <var title>attribute</var> from the <var title>element</var>'s
-<span title=concept-element-attribute>attribute list</span>.
+run these steps:
 
-<p class=XXX>These definitions will be expanded upon in due course for
-mutations.
+<ol>
+ <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
+ "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
+ set to <var title>element</var>, <b>attributeName</b> set to
+ <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
+ <b>attributeNamespace</b> set to <var title>attribute</var>'s
+ <span title=dom-attr-namespaceuri>namespaceURI</span>, and <b>oldValue</b>
+ set to <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+
+ <li><p>Remove the <var title>attribute</var> from the <var title>element</var>'s
+ <span title=concept-element-attribute>attribute list</span>.
+</ol>
 
 <hr>
 
@@ -4519,6 +4759,11 @@ called <dfn title=concept-CD-data>data</dfn>.
  <li><p>If <var title>offset</var> plus <var title>count</var> is greater
  than <var title>length</var> let <var title>count</var> be
  <var title>length</var> minus <var title>offset</var>.
+
+ <li><p><span title=concept-mutation-dispatch-characterData>Dispatch</span>
+ a "<code>characterData</code>" <code>MutationRecord</code> with <b>target</b>
+ set to <var title>node</var> and <b>oldValue</b> set to
+ <var title>node</var>'s <span title=concept-CD-data>data</span>.
 
  <li><p>Insert <var title>data</var> into <var title>node</var>'s
  <span title=concept-CD-data>data</span> after <var title>offset</var>
@@ -8013,6 +8258,7 @@ throw when invoked from a <code>NodeFilter</code> to align with user agents.
 
 <p>Thanks to
 
+Adam Klein,
 Adrian Bateman,
 Brandon Slade,
 Cameron McCormack,
