@@ -1757,18 +1757,6 @@ dictionary <dfn>MutationObserverInit</dfn> {
   boolean <span title=dom-MutationObserverInit-attributeoldvalue>attributeOldValue</span>;
   boolean <span title=dom-MutationObserverInit-characterdataoldvalue>characterDataOldValue</span>;
   DOMString[] <span title=dom-MutationObserverInit-attributefilter>attributeFilter</span>;
-};
-
-interface <dfn>MutationRecord</dfn> {
-  readonly attribute DOMString <span title=dom-MutationRecord-type>type</span>;
-  readonly attribute <span>Node</span> <span title=dom-MutationRecord-target>target</span>;
-  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
-  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
-  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-previousSibling>previousSibling</span>;
-  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-nextSibling>nextSibling</span>;
-  readonly attribute DOMString? <span title=dom-MutationRecord-attributeName>attributeName</span>;
-  readonly attribute DOMString? <span title=dom-MutationRecord-attributeNamespace>attributeNamespace</span>;
-  readonly attribute DOMString? <span title=dom-MutationRecord-oldValue>oldValue</span>;
 };</pre>
 
 <p>The
@@ -1985,52 +1973,95 @@ to a <span title=concept-node>node</span> <var title>node</var>, create a new <s
 <var title>observer</var>, <b>options</b> set to <var title>options</var>, and <b>transient</b> set to true and append it to <var title>node</var>'s
 list of <span title="registered observer">registered observers</span>.
 
-<h4>MutationRecord attributes</h4>
 
-<p>The <dfn title=dom-MutationRecord-type><code>type</code></dfn> attribute must return
-a string representing the type of the mutation, which must be one of the following:
-<ul>
-  <li>"<dfn title=dom-MutationRecord-type-attributes><code>attributes</code></dfn>"
-  <li>"<dfn title=dom-MutationRecord-type-childList><code>childList</code></dfn>"
-  <li>"<dfn title=dom-MutationRecord-type-characterData><code>characterData</code></dfn>"
-</ul>
+<h4>Interface <code>MutationRecord</code></h4>
 
-<p>The <dfn title=dom-MutationRecord-target><code>target</code></dfn> attribute must
-return the node this mutation affected, which differs depending on the <span title=mutation-record-type>type</span>.
-For childList mutations, it must be the node whose children changed.
-For attributes mutations, it must be the element whose attributes changed.
-For characterData mutations, it must be the <code>CharacterData</code> node whose value changed.
+<pre class=idl>interface <dfn>MutationRecord</dfn> {
+  readonly attribute DOMString <span title=dom-MutationRecord-type>type</span>;
+  readonly attribute <span>Node</span> <span title=dom-MutationRecord-target>target</span>;
+  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
+  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
+  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-previousSibling>previousSibling</span>;
+  readonly attribute <span>Node</span>? <span title=dom-MutationRecord-nextSibling>nextSibling</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-attributeName>attributeName</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-attributeNamespace>attributeNamespace</span>;
+  readonly attribute DOMString? <span title=dom-MutationRecord-oldValue>oldValue</span>;
+};</pre>
 
-<p>The <dfn title=dom-MutationRecord-addedNodes><code>addedNodes</code></dfn> attribute must return
-the list of nodes added in this mutation, if it was a childList mutation. Otherwise it must return null.
+<dl class=domintro>
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-type>type</span></code>
+ <dd><p>Returns "<code title>attributes</code>" if it was an
+ <span title=concept-attribute>attribute</span> mutation.
+ "<code title>characterData</code>" if it was a mutation to a
+ <code>CharacterData</code> <span title=concept-node>node</span>. And
+ "<code title>childList</code>" if it was a mutation to the
+ <span title=concept-tree>tree</span> of
+ <span title=concept-node>nodes</span>.
 
-<p>The <dfn title=dom-MutationRecord-removedNodes><code>removedNodes</code></dfn> attribute must return
-the list of nodes removed in this mutation, if it was a childList mutation. Otherwise it must return null.
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-target>target</span></code>
+ <dd><p>Returns the <span title=concept-node>node</span> the mutation
+ affected, depending on the <code title=dom-MutationRecord-type>type</code>.
+ For "<code title>attributes</code>", it is the
+ <span title=concept-element>element</span> whose
+ <span title=concept-attribute>attribute</span> changed. For
+ "<code title>characterData</code>", it is the <code>CharacterData</code>
+ <span title=concept-node>node</span>. For "<code title>childList</code>",
+ it is the  <span title=concept-node>node</span> whose
+ <span title=concept-tree-child>children</span> changed.
 
-<p>The <dfn title=dom-MutationRecord-previousSibling><code>previousSibling</code></dfn> attribute must return
-the node which was the <span title=concept-tree-previous-sibling>previous sibling</span> of the first element of addedNodes when the mutation occurred, if addedNodes is non-empty,
-or the node which was the <span title=concept-tree-previous-sibling>previous sibling</span> of the first element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-addedNodes>addedNodes</span></code>
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-removedNodes>removedNodes</span></code>
+ <dd><p>Return the <span title=concept-node>nodes</span> added and removed
+ respectively, or null otherwise.
 
-<p>The <dfn title=dom-MutationRecord-nextSibling><code>nextSibling</code></dfn> attribute must return
-the node which was the <span title=concept-tree-next-sibling>next sibling</span> of the last item in addedNodes when the mutation occurred, if addedNodes is non-empty,
-or the node which was the <span title=concept-tree-next-sibling>next sibling</span> of the last element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-previousSibling>previousSibling</span></code>
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-nextSibling>nextSibling</span></code>
+ <dd><p>Return the <span title=concept-tree-previous-sibling>previous</span>
+ and <span title=concept-tree-next-sibling>next sibling</span> respectively
+ of the added and/or removed <span title=concept-node>nodes</span>, or null
+ otherwise..
 
-<p>The <dfn title=dom-MutationRecord-attributeName><code>attributeName</code></dfn> attribute must return
-the <code title=dom-attr-name>name</code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-attributeName>attributeName</span></code>
+ <dd><p>Returns the <span title=concept-attribute-name>name</span> of the
+ changed <span title=concept-attribute>attribute</span>, or null otherwise.
 
-<p>The <dfn title=dom-MutationRecord-attributeNamespace><code>attributeNamespace</code></dfn> attribute must return
-the <code title=dom-attr-namespaceuri>namespaceURI</code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-attributeNamespace>attributeNamespace</span></code>
+ <dd><p>Returns the <span title=concept-attribute-namespace>namespace</span> of the
+ changed <span title=concept-attribute>attribute</span>, or null otherwise.
 
-<p>The <dfn title=dom-MutationRecord-oldValue><code>oldValue</code></dfn> attribute varies in behavior
-based on the <span title=dom-MutationRecord-type>type</span> of mutation:
+ <dt><code><var title>record</var> . <span title=dom-MutationRecord-oldValue>oldValue</span></code>
+ <dd><p>The return value depends on
+ <code title=dom-MutationRecord-type>type</code>. For
+ "<code title>attributes</code>", it is the
+ <span title=concept-attribute-value>value</span> of the
+ changed <span title=concept-attribute>attribute</span> before the change.
+ For "<code title>characterData</code>", it is the
+ <span title=concept-CD-data>data</span> of the changed
+ <span title=concept-node>node</span> before the change. For
+ "<code title>childList</code>", it is null.
+</dl>
 
-<ul>
-  <li><p>If type is "<code>childList</code>", it must return null.
-  <li><p>If type is "<code>attributes</code>" and the registered observation had the attributeOldValue option set, must return
-  the <span title=dom-attr-value>value</span> of the <span title=attr>attribute</span> just before the mutation was made.
-  <li><p>If type is "<code>characterData</code>" and the registered observation had the characterDataOldValue option set, must return the value of
-  the <span title=dom-MutationRecord-target>target</span>'s <span title=dom-characterdata-data>data</span> attribute just before the mutation was made.
-</ul>
+<p>The <dfn title=dom-MutationRecord-type><code>type</code></dfn> attribute
+must return the value it was initialized to.
+
+<p class=note>The <code title=dom-MutationRecord-type>type</code> attribute
+will only be set to one of "<code title>attributes</code>",
+"<code title>childList</code>", or "<code title>characterData</code>".
+
+<p>The <dfn title=dom-MutationRecord-target><code>target</code></dfn>
+attribute must return the value it was initialized to.
+
+<p>The
+<dfn title=dom-MutationRecord-addedNodes><code>addedNodes</code></dfn>,
+<dfn title=dom-MutationRecord-removedNodes><code>removedNodes</code></dfn>,
+<dfn title=dom-MutationRecord-previousSibling><code>previousSibling</code></dfn>,
+<dfn title=dom-MutationRecord-nextSibling><code>nextSibling</code></dfn>,
+<dfn title=dom-MutationRecord-attributeName><code>attributeName</code></dfn>,
+<dfn title=dom-MutationRecord-attributeNamespace><code>attributeNamespace</code></dfn>, and
+<dfn title=dom-MutationRecord-oldValue><code>oldValue</code></dfn>
+attributes must return the values they were initialized to. Unless stated
+otherwise, when a <code>MutationRecord</code> object is created, they must
+be initialized to null.
 
 
 <h3>Interface <code>Node</code></h3>

@@ -136,7 +136,7 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
      <li><a href="#legacy-mutation-methods"><span class="secno">5.1.3 </span>Legacy mutation methods</a></li>
      <li><a href="#mutation-observers"><span class="secno">5.1.4 </span>Mutation observers</a></li>
      <li><a href="#mutation-observation-algorithms"><span class="secno">5.1.5 </span>Mutation observation algorithms</a></li>
-     <li><a href="#mutationrecord-attributes"><span class="secno">5.1.6 </span>MutationRecord attributes</a></ol></li>
+     <li><a href="#interface-mutationrecord"><span class="secno">5.1.6 </span>Interface <code>MutationRecord</code></a></ol></li>
    <li><a href="#interface-node"><span class="secno">5.2 </span>Interface <code>Node</code></a></li>
    <li><a href="#interface-document"><span class="secno">5.3 </span>Interface <code>Document</code></a>
     <ol class="toc">
@@ -1762,18 +1762,6 @@ dictionary <dfn id="mutationobserverinit">MutationObserverInit</dfn> {
   boolean <span title="dom-MutationObserverInit-attributeoldvalue">attributeOldValue</span>;
   boolean <span title="dom-MutationObserverInit-characterdataoldvalue">characterDataOldValue</span>;
   DOMString[] <span title="dom-MutationObserverInit-attributefilter">attributeFilter</span>;
-};
-
-interface <dfn id="mutationrecord">MutationRecord</dfn> {
-  readonly attribute DOMString <a href="#dom-mutationrecord-type" title="dom-MutationRecord-type">type</a>;
-  readonly attribute <a href="#node">Node</a> <a href="#dom-mutationrecord-target" title="dom-MutationRecord-target">target</a>;
-  readonly attribute <a href="#nodelist">NodeList</a>? <a href="#dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes">addedNodes</a>;
-  readonly attribute <a href="#nodelist">NodeList</a>? <a href="#dom-mutationrecord-removednodes" title="dom-MutationRecord-removedNodes">removedNodes</a>;
-  readonly attribute <a href="#node">Node</a>? <a href="#dom-mutationrecord-previoussibling" title="dom-MutationRecord-previousSibling">previousSibling</a>;
-  readonly attribute <a href="#node">Node</a>? <a href="#dom-mutationrecord-nextsibling" title="dom-MutationRecord-nextSibling">nextSibling</a>;
-  readonly attribute DOMString? <a href="#dom-mutationrecord-attributename" title="dom-MutationRecord-attributeName">attributeName</a>;
-  readonly attribute DOMString? <a href="#dom-mutationrecord-attributenamespace" title="dom-MutationRecord-attributeNamespace">attributeNamespace</a>;
-  readonly attribute DOMString? <a href="#dom-mutationrecord-oldvalue" title="dom-MutationRecord-oldValue">oldValue</a>;
 };</pre>
 
 <p>The
@@ -1990,52 +1978,95 @@ to a <a href="#concept-node" title="concept-node">node</a> <var title="">node</v
 <var title="">observer</var>, <b>options</b> set to <var title="">options</var>, and <b>transient</b> set to true and append it to <var title="">node</var>'s
 list of <a href="#registered-observer" title="registered observer">registered observers</a>.
 
-<h4 id="mutationrecord-attributes"><span class="secno">5.1.6 </span>MutationRecord attributes</h4>
 
-<p>The <dfn id="dom-mutationrecord-type" title="dom-MutationRecord-type"><code>type</code></dfn> attribute must return
-a string representing the type of the mutation, which must be one of the following:
-<ul>
-  <li>"<dfn id="dom-mutationrecord-type-attributes" title="dom-MutationRecord-type-attributes"><code>attributes</code></dfn>"
-  <li>"<dfn id="dom-mutationrecord-type-childlist" title="dom-MutationRecord-type-childList"><code>childList</code></dfn>"
-  <li>"<dfn id="dom-mutationrecord-type-characterdata" title="dom-MutationRecord-type-characterData"><code>characterData</code></dfn>"
-</ul>
+<h4 id="interface-mutationrecord"><span class="secno">5.1.6 </span>Interface <code><a href="#mutationrecord">MutationRecord</a></code></h4>
 
-<p>The <dfn id="dom-mutationrecord-target" title="dom-MutationRecord-target"><code>target</code></dfn> attribute must
-return the node this mutation affected, which differs depending on the <span title="mutation-record-type">type</span>.
-For childList mutations, it must be the node whose children changed.
-For attributes mutations, it must be the element whose attributes changed.
-For characterData mutations, it must be the <code><a href="#characterdata">CharacterData</a></code> node whose value changed.
+<pre class="idl">interface <dfn id="mutationrecord">MutationRecord</dfn> {
+  readonly attribute DOMString <a href="#dom-mutationrecord-type" title="dom-MutationRecord-type">type</a>;
+  readonly attribute <a href="#node">Node</a> <a href="#dom-mutationrecord-target" title="dom-MutationRecord-target">target</a>;
+  readonly attribute <a href="#nodelist">NodeList</a>? <a href="#dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes">addedNodes</a>;
+  readonly attribute <a href="#nodelist">NodeList</a>? <a href="#dom-mutationrecord-removednodes" title="dom-MutationRecord-removedNodes">removedNodes</a>;
+  readonly attribute <a href="#node">Node</a>? <a href="#dom-mutationrecord-previoussibling" title="dom-MutationRecord-previousSibling">previousSibling</a>;
+  readonly attribute <a href="#node">Node</a>? <a href="#dom-mutationrecord-nextsibling" title="dom-MutationRecord-nextSibling">nextSibling</a>;
+  readonly attribute DOMString? <a href="#dom-mutationrecord-attributename" title="dom-MutationRecord-attributeName">attributeName</a>;
+  readonly attribute DOMString? <a href="#dom-mutationrecord-attributenamespace" title="dom-MutationRecord-attributeNamespace">attributeNamespace</a>;
+  readonly attribute DOMString? <a href="#dom-mutationrecord-oldvalue" title="dom-MutationRecord-oldValue">oldValue</a>;
+};</pre>
 
-<p>The <dfn id="dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes"><code>addedNodes</code></dfn> attribute must return
-the list of nodes added in this mutation, if it was a childList mutation. Otherwise it must return null.
+<dl class="domintro">
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-type" title="dom-MutationRecord-type">type</a></code>
+ <dd><p>Returns "<code title="">attributes</code>" if it was an
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> mutation.
+ "<code title="">characterData</code>" if it was a mutation to a
+ <code><a href="#characterdata">CharacterData</a></code> <a href="#concept-node" title="concept-node">node</a>. And
+ "<code title="">childList</code>" if it was a mutation to the
+ <a href="#concept-tree" title="concept-tree">tree</a> of
+ <a href="#concept-node" title="concept-node">nodes</a>.
 
-<p>The <dfn id="dom-mutationrecord-removednodes" title="dom-MutationRecord-removedNodes"><code>removedNodes</code></dfn> attribute must return
-the list of nodes removed in this mutation, if it was a childList mutation. Otherwise it must return null.
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-target" title="dom-MutationRecord-target">target</a></code>
+ <dd><p>Returns the <a href="#concept-node" title="concept-node">node</a> the mutation
+ affected, depending on the <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code>.
+ For "<code title="">attributes</code>", it is the
+ <a href="#concept-element" title="concept-element">element</a> whose
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> changed. For
+ "<code title="">characterData</code>", it is the <code><a href="#characterdata">CharacterData</a></code>
+ <a href="#concept-node" title="concept-node">node</a>. For "<code title="">childList</code>",
+ it is the  <a href="#concept-node" title="concept-node">node</a> whose
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> changed.
 
-<p>The <dfn id="dom-mutationrecord-previoussibling" title="dom-MutationRecord-previousSibling"><code>previousSibling</code></dfn> attribute must return
-the node which was the <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a> of the first element of addedNodes when the mutation occurred, if addedNodes is non-empty,
-or the node which was the <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a> of the first element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes">addedNodes</a></code>
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-removednodes" title="dom-MutationRecord-removedNodes">removedNodes</a></code>
+ <dd><p>Return the <a href="#concept-node" title="concept-node">nodes</a> added and removed
+ respectively, or null otherwise.
 
-<p>The <dfn id="dom-mutationrecord-nextsibling" title="dom-MutationRecord-nextSibling"><code>nextSibling</code></dfn> attribute must return
-the node which was the <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a> of the last item in addedNodes when the mutation occurred, if addedNodes is non-empty,
-or the node which was the <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a> of the last element of removedNodes, if removedNodes is non-empty. Otherwise it must return null.
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-previoussibling" title="dom-MutationRecord-previousSibling">previousSibling</a></code>
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-nextsibling" title="dom-MutationRecord-nextSibling">nextSibling</a></code>
+ <dd><p>Return the <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous</a>
+ and <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a> respectively
+ of the added and/or removed <a href="#concept-node" title="concept-node">nodes</a>, or null
+ otherwise..
 
-<p>The <dfn id="dom-mutationrecord-attributename" title="dom-MutationRecord-attributeName"><code>attributeName</code></dfn> attribute must return
-the <code title="dom-attr-name"><a href="#dom-attr-name">name</a></code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-attributename" title="dom-MutationRecord-attributeName">attributeName</a></code>
+ <dd><p>Returns the <a href="#concept-attribute-name" title="concept-attribute-name">name</a> of the
+ changed <a href="#concept-attribute" title="concept-attribute">attribute</a>, or null otherwise.
 
-<p>The <dfn id="dom-mutationrecord-attributenamespace" title="dom-MutationRecord-attributeNamespace"><code>attributeNamespace</code></dfn> attribute must return
-the <code title="dom-attr-namespaceuri"><a href="#dom-attr-namespaceuri">namespaceURI</a></code> of the modified attribute if this is an "<code>attributes</code>" mutation. Otherwise it must return null.
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-attributenamespace" title="dom-MutationRecord-attributeNamespace">attributeNamespace</a></code>
+ <dd><p>Returns the <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> of the
+ changed <a href="#concept-attribute" title="concept-attribute">attribute</a>, or null otherwise.
 
-<p>The <dfn id="dom-mutationrecord-oldvalue" title="dom-MutationRecord-oldValue"><code>oldValue</code></dfn> attribute varies in behavior
-based on the <a href="#dom-mutationrecord-type" title="dom-MutationRecord-type">type</a> of mutation:
+ <dt><code><var title="">record</var> . <a href="#dom-mutationrecord-oldvalue" title="dom-MutationRecord-oldValue">oldValue</a></code>
+ <dd><p>The return value depends on
+ <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code>. For
+ "<code title="">attributes</code>", it is the
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a> of the
+ changed <a href="#concept-attribute" title="concept-attribute">attribute</a> before the change.
+ For "<code title="">characterData</code>", it is the
+ <a href="#concept-cd-data" title="concept-CD-data">data</a> of the changed
+ <a href="#concept-node" title="concept-node">node</a> before the change. For
+ "<code title="">childList</code>", it is null.
+</dl>
 
-<ul>
-  <li><p>If type is "<code>childList</code>", it must return null.
-  <li><p>If type is "<code>attributes</code>" and the registered observation had the attributeOldValue option set, must return
-  the <a href="#dom-attr-value" title="dom-attr-value">value</a> of the <a href="#attr" title="attr">attribute</a> just before the mutation was made.
-  <li><p>If type is "<code><a href="#characterdata">characterData</a></code>" and the registered observation had the characterDataOldValue option set, must return the value of
-  the <a href="#dom-mutationrecord-target" title="dom-MutationRecord-target">target</a>'s <a href="#dom-characterdata-data" title="dom-characterdata-data">data</a> attribute just before the mutation was made.
-</ul>
+<p>The <dfn id="dom-mutationrecord-type" title="dom-MutationRecord-type"><code>type</code></dfn> attribute
+must return the value it was initialized to.
+
+<p class="note">The <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> attribute
+will only be set to one of "<code title="">attributes</code>",
+"<code title="">childList</code>", or "<code title="">characterData</code>".
+
+<p>The <dfn id="dom-mutationrecord-target" title="dom-MutationRecord-target"><code>target</code></dfn>
+attribute must return the value it was initialized to.
+
+<p>The
+<dfn id="dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes"><code>addedNodes</code></dfn>,
+<dfn id="dom-mutationrecord-removednodes" title="dom-MutationRecord-removedNodes"><code>removedNodes</code></dfn>,
+<dfn id="dom-mutationrecord-previoussibling" title="dom-MutationRecord-previousSibling"><code>previousSibling</code></dfn>,
+<dfn id="dom-mutationrecord-nextsibling" title="dom-MutationRecord-nextSibling"><code>nextSibling</code></dfn>,
+<dfn id="dom-mutationrecord-attributename" title="dom-MutationRecord-attributeName"><code>attributeName</code></dfn>,
+<dfn id="dom-mutationrecord-attributenamespace" title="dom-MutationRecord-attributeNamespace"><code>attributeNamespace</code></dfn>, and
+<dfn id="dom-mutationrecord-oldvalue" title="dom-MutationRecord-oldValue"><code>oldValue</code></dfn>
+attributes must return the values they were initialized to. Unless stated
+otherwise, when a <code><a href="#mutationrecord">MutationRecord</a></code> object is created, they must
+be initialized to null.
 
 
 <h3 id="interface-node"><span class="secno">5.2 </span>Interface <code><a href="#node">Node</a></code></h3>
