@@ -1586,10 +1586,10 @@ from a <var title>parent</var>, run these steps:
 
  <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var>
  of <var title>node</var>, if <var title>ancestor</var> has any
- <span title=registered-observer>registered observers</span> with the <code>subtree</code>
+ <span title="registered observer">registered observers</span> with the <code>subtree</code>
  option set, <span title=concept-add-transient-observer>add</span>
  an identical <span>transient observer</span> to <var title>node</var> for
- each such subtree <span title=registered-observer>registration</span> on <var title>ancestor</var>.
+ each such subtree <span title="registered observer">registration</span> on <var title>ancestor</var>.
 
  <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 </ol>
@@ -1777,19 +1777,25 @@ constructor must return a new <code>MutationObserver</code> object
 <span title=mutation-observer-associated-callback>associated</span> with
 <var>callback</var>.
 
-<p>Besides the properties listed in the IDL for <code>MutationObserver</code>, it has three internal properties:
+<p>Each <code>MutationObserver</code> object has these associated concepts:
 <ul>
-  <li><p>An <dfn title=mutation-observer-associated-callback>associated callback</dfn>.
-  <li><p>A list of <span title=concept-node>nodes</span> on which it is <span title=registered-observer>registered</span>.
-  <li><p>A queue of <code>MutationRecord</code>s which are <dfn title=mutation-observer-pending>pending</dfn> delivery.
+ <li><p>An <dfn title=mutation-observer-associated-callback>associated callback</dfn>.
+ <li><p>A list of <span title=concept-node>nodes</span> on which it is <span title="registered observer">registered</span>.
+ <li><p>A queue of <code>MutationRecord</code> objects which are <dfn title=mutation-observer-pending>pending</dfn> delivery.
 </ul>
 
 <hr>
 
-<p>A <dfn title=registered-observer>registered observer</dfn> consists of an <b>observer</b> (an instance of <code>MutationObserver</code>),
-a set of <b>options</b> (an instance of <code>MutationObserverInit</code>), and a <b>transient</b> variable (whose default value is false).
-Each <code>Node</code> has a list of registered observers. A <dfn>transient observer</dfn> is a <span title=registered-observer>registered observer</span>
-whose <b>transient</b> variable is set to true.
+<p>Each <span title=concept-node>node</span> has an associated list of
+<span title="registered observer">registered observers</span>.
+<!-- XXX also mention this in the <code>Node</code> section non-normatively? -->
+
+<p>A <dfn>registered observer</dfn> consists of an <b>observer</b> (a
+<code>MutationObserver</code> object), a set of <b>options</b> (a
+<code>MutationObserverInit</code> dictionary), and a <b>transient</b>
+variable (whose default value is false). A <dfn>transient observer</dfn> is
+a <span>registered observer</span> whose <b>transient</b> variable is set to
+true.
 <!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
 
 <hr>
@@ -1817,7 +1823,7 @@ method must run these steps:
   <li><p>If <var title>target</var>'s registration list already includes a registration associated with
   the <span>context object</span>, replace that registrations's options with <var title>options</var>.
 
-  <li><p>Otherwise, add a new <span title=registered-observer>registration</span> to <var title>target</var>'s registered observer list with the
+  <li><p>Otherwise, add a new <span title="registered observer">registration</span> to <var title>target</var>'s registered observer list with the
   <span>context object</span> as the <var title>observer</var> and <var title>options</var> as the options,
   and add <var title>target</var> to <var title>observer</var>'s list of nodes on which it is registered.
 </ol>
@@ -1827,7 +1833,7 @@ method must run these steps:
 method must, for each <span title=concept-node>node</span>
 <var title>node</var> in the <span>context object</span>'s list of
 <span title=concept-node>nodes</span>, remove any
-<span title=registered-observer>registration</span> on <var title>node</var>
+<span title="registered observer">registration</span> on <var title>node</var>
 for which the <span>context object</span> is the <b>observer</b>.
 
 
@@ -1843,7 +1849,7 @@ and attributeName initialized to <var title>name</var>.
 
 <li><p>Create a copy of this record named <var title>recordWithOldValue</var> and initialize its oldValue to <var title>oldValue</var>.
 
-<li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+<li><p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
 
 <var title>target</var>'s registered observer list, run these substeps:
   <ol>
@@ -1858,7 +1864,7 @@ and attributeName initialized to <var title>name</var>.
     <li><p>Otherwise, append <var title>record</var> to the observer's queue of pending mutations.
     </ol>
      <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
-     <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+     <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
      registered observer list, run these substeps:
     <ol>
 
@@ -1884,7 +1890,7 @@ with target <var title>target</var> and oldValue <var title>oldValue</var>, run 
 
  <li><p>Create a copy of this record named <var title>recordWithOldValue</var> and initialize its oldValue to <var title>oldValue</var>.
 
- <li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+ <li><p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
  <var title>target</var>'s registered observer list, run these substeps:
    <ol>
     <li><p>If <var title>options</var> does not have the <code>characterData</code> option set, terminate these substeps (and run them for the next observer).
@@ -1896,7 +1902,7 @@ with target <var title>target</var> and oldValue <var title>oldValue</var>, run 
    </ol>
 
  <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
- <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+ <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
  registered observer list, run these substeps:
  <ol>
   <li><p>If <var title>options</var> does not have the <code>subtree</code> option set, terminate these substeps (and run them for the next observer).
@@ -1919,7 +1925,7 @@ and nextSibling <var title>nextSibling</var>, run these steps:
  addedNodes initialized to <var title>addedNodes</var>, removedNodes initialized to <var title>removedNodes</var>,
  previousSibling initialized to <var title>previousSibling</var>, and nextSibling initialized to.
 
- <li><p>For each <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
+ <li><p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
  <var title>target</var>'s registered observer list, run these substeps:
  <ol>
   <li><p>If <var title>options</var> does not have the <code>childList</code> option set, terminate these substeps (and run them for the next observer).
@@ -1928,7 +1934,7 @@ and nextSibling <var title>nextSibling</var>, run these steps:
  </ol>
 
  <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
- <span title=registered-observer>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
+ <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
  registered observer list, run these substeps:
  <ol>
   <li><p>If <var title>options</var> does not have the <code>subtree</code> option set, terminate these substeps (and run them for the next observer).
@@ -1940,9 +1946,9 @@ and nextSibling <var title>nextSibling</var>, run these steps:
 </ol>
 
 To <dfn title=concept-add-transient-observer>add a transient observer</dfn> <var title>observer</var> with options <var title>options</var>
-to a <span title=concept-node>node</span> <var title>node</var>, create a new <span title=registered-observer>registration</span> with <b>observer</b> set to
+to a <span title=concept-node>node</span> <var title>node</var>, create a new <span title="registered observer">registration</span> with <b>observer</b> set to
 <var title>observer</var>, <b>options</b> set to <var title>options</var>, and <b>transient</b> set to true and append it to <var title>node</var>'s
-list of <span title=registered-observer>registered observers</span>.
+list of <span title="registered observer">registered observers</span>.
 
 <h4>MutationRecord attributes</h4>
 
