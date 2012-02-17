@@ -1391,8 +1391,8 @@ steps:
  (preserving <span title=concept-tree-order>tree order</span>);
  otherwise, append <var title>node</var> to <var title>addedNodes</var>.
 
- <li><p><span title=concept-mutation-dispatch-childlist>Dispatch</span> a
- "<code>childList</code>" mutation with <b>target</b> set to <var title="">parent</var>,
+ <li><p><span title=concept-MO-queue-childlist>Queue a "<code>childList</code>" record</span>
+ with <b>target</b> set to <var title="">parent</var>,
  <b>addedNodes</b> set to <var title>addedNodes</var>,
  <b>nextSibling</b> set to <var title>child</var>, and <b>previousSibling</b> set to
  <var title>child</var>'s <span title=concept-tree-previous-sibling>previous sibling</span>
@@ -1587,8 +1587,8 @@ from a <var title>parent</var>, run these steps:
  <var title>index</var>, decrease its
  <span title=concept-range-end-offset>end offset</span> by one.
 
- <li><p><span title=concept-mutation-dispatch-childlist>Dispatch</span> a
- "<code>childList</code>" mutation with <b>target</b> set to <var title>parent</var>,
+ <li><p><span title=concept-MO-queue-childlist>Queue a "<code>childList</code>" record</span>
+ with <b>target</b> set to <var title>parent</var>,
  <b>removedNodes</b> set to a <code>NodeList</code> containing only <var title>node</var>,
  <b>nextSibling</b> set to <var title>node</var>'s
  <span title=concept-tree-next-sibling>next sibling</span>,
@@ -1854,8 +1854,8 @@ for which the <span>context object</span> is the <b>observer</b>.
 
 <h4>Mutation observation algorithms</h4>
 
-<p>To <dfn title=concept-mutation-dispatch-attributes>dispatch</dfn> an
-"<code>attributes</code>" <code>MutationRecord</code>
+<p>To
+<dfn title=concept-MO-queue-attributes>queue an "<code>attributes</code>" record</dfn>
 with target <var title>target</var>, attributeName <var title>name</var>, and oldValue <var title>oldValue</var>,
 run these steps:
 
@@ -1908,8 +1908,8 @@ run these steps:
   </ol>
 </ol>
 
-<p>To <dfn title=concept-mutation-dispatch-characterData>dispatch</dfn> a
-"<code title>characterData</code>" <code>MutationRecord</code>
+<p>To
+<dfn title=concept-MO-queue-characterData>queue a "<code>characterData</code>" record</dfn>
 with target <var title>target</var> and oldValue <var title>oldValue</var>, run these steps:
 
 <ol>
@@ -1949,7 +1949,8 @@ with target <var title>target</var> and oldValue <var title>oldValue</var>, run 
   </ol>
 </ol>
 
-<p>To <dfn title=concept-mutation-dispatch-childList>dispatch</dfn> a "<code>childList</code>" <code>MutationRecord</code>
+<p>To
+<dfn title=concept-MO-queue-childList>queue a "<code>childList</code>" record</dfn>
 with target <var title>target</var>, addedNodes <var title>addedNodes</var>, removedNodes <var title>removedNodes</var>, previousSibling <var title>previousSibling</var>,
 and nextSibling <var title>nextSibling</var>, run these steps:
 
@@ -4442,11 +4443,11 @@ method must run these steps:
  <span title=concept-attribute>attribute</span> to the
  <span>context object</span> and terminate these steps.
 
- <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an "<code>attributes</code>"
- <code>MutationRecord</code> with <b>target</b> set to the <span>context object</span>,
- <b>attributeName</b> set to <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
- <b>attributeNamespace</b> set to <var title>attribute</var>'s <span title=dom-attr-namespaceuri>namespaceURI</span>,
- and <b>oldValue</b> set to <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+ <li><p><span title=concept-MO-queue-attributes>Queue an "<code>attributes</code>" record</span>
+ with <b>target</b> set to the <span>context object</span>,
+ <b>attributeName</b> set to <var title>attribute</var>'s <span title=concept-attribute-name>name</span>,
+ <b>attributeNamespace</b> set to <var title>attribute</var>'s <span title=concept-attribute-namespace>namespace</span>,
+ and <b>oldValue</b> set to <var title>attribute</var>'s <span title=concept-attribute-value>value</span>.
 
  <li><p>Set <var title>attribute</var>'s <span title=concept-attribute-value>value</span> to <var title>value</var>.
 </ol>
@@ -4519,12 +4520,11 @@ method must run these steps:
  <span title=concept-attribute>attribute</span> to the
  <span>context object</span> and terminate these steps.
 
- <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
- "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
- set to the <span>context object</span>, <b>attributeName</b> set to
- <var title>name</var>, <b>attributeNamespace</b> set to
- <var title>namespace</var>, and <b>oldValue</b> set to
- <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+ <li><p><span title=concept-MO-queue-attributes>Queue</span> an "<code>attributes</code>" record</span>
+ with <b>target</b> set to the <span>context object</span>,
+ <b>attributeName</b> set to <var title>name</var>,
+ <b>attributeNamespace</b> set to <var title>namespace</var>, and
+ <b>oldValue</b> set to <var title>attribute</var>'s <span title=concept-attribute-value>value</span>.
 
  <li><p>Set <var title>attribute</var>'s
  <span title=concept-attribute-value>value</span> to <var title>value</var>.
@@ -4751,12 +4751,11 @@ an <span title=concept-element>element</span> <var title>element</var>,
 run these steps:
 
 <ol>
- <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
- "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
- set to <var title>element</var>, <b>attributeName</b> set to
- <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
+ <li><p><span title=concept-MO-queue-attributes>Queue an "<code>attributes</code>" record</span>
+ with <b>target</b> set to <var title>element</var>,
+ <b>attributeName</b> set to <var title>attribute</var>'s <span title=concept-attribute-name>name</span>,
  <b>attributeNamespace</b> set to <var title>attribute</var>'s
- <span title=dom-attr-namespaceuri>namespaceURI</span>,
+ <span title=concept-attribute-namespace>namespace</span>,
  and <b>oldValue</b> set to null.
 
  <li><p>Append the <var title>attribute</var> to the <var title="">element</var>'s
@@ -4769,13 +4768,12 @@ from an <span title=concept-element>element</span> <var title>element</var>,
 run these steps:
 
 <ol>
- <li><p><span title=concept-mutation-dispatch-attributes>Dispatch</span> an
- "<code>attributes</code>" <code>MutationRecord</code> with <b>target</b>
- set to <var title>element</var>, <b>attributeName</b> set to
- <var title>attribute</var>'s <span title=dom-attr-localname>localName</span>,
+ <li><p><span title=concept-MO-queue-attributes>Queue an "<code>attributes</code>" record</span>
+ with <b>target</b> set to <var title>element</var>,
+ <b>attributeName</b> set to <var title>attribute</var>'s <span title=concept-attribute-name>name</span>,
  <b>attributeNamespace</b> set to <var title>attribute</var>'s
- <span title=dom-attr-namespaceuri>namespaceURI</span>, and <b>oldValue</b>
- set to <var title>attribute</var>'s <span title=dom-attr-value>value</span>.
+ <span title=concept-attribute-namespace>namespace</span>, and <b>oldValue</b>
+ set to <var title>attribute</var>'s <span title=concept-attribute-value>value</span>.
 
  <li><p>Remove the <var title>attribute</var> from the <var title>element</var>'s
  <span title=concept-element-attribute>attribute list</span>.
@@ -4848,9 +4846,8 @@ called <dfn title=concept-CD-data>data</dfn>.
  than <var title>length</var> let <var title>count</var> be
  <var title>length</var> minus <var title>offset</var>.
 
- <li><p><span title=concept-mutation-dispatch-characterData>Dispatch</span>
- a "<code>characterData</code>" <code>MutationRecord</code> with <b>target</b>
- set to <var title>node</var> and <b>oldValue</b> set to
+ <li><p><span title=concept-MO-queue-characterData>Queue a "<code>characterData</code>" record</span>
+ with <b>target</b> set to <var title>node</var> and <b>oldValue</b> set to
  <var title>node</var>'s <span title=concept-CD-data>data</span>.
 
  <li><p>Insert <var title>data</var> into <var title>node</var>'s
