@@ -632,7 +632,8 @@ these steps must be run:
  <li><p>Set its <span data-anolis-spec=webidl>message</span> to a
  user agent-defined value.
 
- <li><p>If its <span data-anolis-spec=webidl>type</span> is in the first column of the table below and has a corresponding legacy
+ <li><p>If its <span data-anolis-spec=webidl>type</span> is in the first
+ column of the <span>error types table</span> and has a corresponding legacy
  <code title=dom-DOMException-code>code</code> exception field value in the
  third column, set its <code title=dom-DOMException-code>code</code>
  exception field to that value.
@@ -647,6 +648,42 @@ user agent would construct a <code>DOMException</code> exception whose
 "<code>TimeoutError</code>" and
 <code title=dom-DOMException-code>code</code> exception field value is 23,
 and actually throw that object as an exception.
+
+
+<h3>Interface <code>DOMError</code></h3>
+
+<p class=note>This interface is intended for other specifications that want
+to introduce error handling through other means than exceptions. As with
+exceptions, the <span>error types table</span> is used.
+
+<pre class=idl>interface <dfn>DOMError</dfn> {
+  readonly attribute DOMString <span title=dom-DOMError-name>name</span>;
+};</pre>
+
+<p>The <dfn title=dom-DOMError-name><code>name</code></dfn> attribute must
+return the value it was initialized to.
+
+<p>A
+<dfn title=concept-DOMError><var title>type</var> <code>DOMError</code></dfn>
+means a <code>DOMError</code> object whose
+<code title=dom-DOMError-name>name</code> attribute is initialized to
+<var title>type</var>.
+
+<p class=example>A specification could say that an <code title>error</code>
+attribute must return a
+<span title=concept-DOMError>"<code>SyntaxError</code>" <code>DOMError</code></span>.
+
+
+<h3>Error types</h3>
+
+<p>The <dfn>error types table</dfn> below lists all the allowed error types,
+a description, and legacy <code title=dom-DOMException-code>code</code>
+exception field values (when the error type is used for
+<span title=concept-throw>throwing</span> an exception).
+
+<p class=note>If your specification requires an error type not listed here,
+please file a bug as indicated at the top of this specification and it will
+be addressed shortly. Thanks!
 
 <table id=error-types>
  <thead>
@@ -745,31 +782,6 @@ and actually throw that object as an exception.
   <td><dfn title=dom-DOMException-DATA_CLONE_ERR><code>DATA_CLONE_ERR</code></dfn> (25)
 </table>
 
-<!-- XXX Should we have central bookkeeping of exceptions someplace? -->
-
-
-<h3>Interface <code>DOMError</code></h3>
-
-<p class=note>This interface is intended for other specifications that want
-to introduce error handling through other means than exceptions. It is
-expected that the exception types are reused.
-
-<pre class=idl>interface <dfn>DOMError</dfn> {
-  readonly attribute DOMString <span title=dom-DOMError-name>name</span>;
-};</pre>
-
-<p>The <dfn title=dom-DOMError-name><code>name</code></dfn> attribute must
-return the value it was initialized to.
-
-<p>A
-<dfn title=concept-DOMError><var title>type</var> <code>DOMError</code></dfn>
-means a <code>DOMError</code> object whose
-<code title=dom-DOMError-name>name</code> attribute is initialized to
-<var title>type</var>.
-
-<p class=example>A specification could say that an <code title>error</code>
-attribute must return a
-<span title=concept-DOMError>"<code>SyntaxError</code>" <code>DOMError</code></span>.
 
 
 <h2>Events</h2>
@@ -8328,6 +8340,7 @@ throw when invoked from a <code>NodeFilter</code> to align with user agents.
 
 Adam Klein,
 Adrian Bateman,
+Arun Ranganathan,
 Brandon Slade,
 Cameron McCormack,
 Dethe Elza,

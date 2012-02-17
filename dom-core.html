@@ -76,7 +76,8 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
  <li><a href="#errors"><span class="secno">3 </span>Errors</a>
   <ol>
    <li><a href="#exception-domexception"><span class="secno">3.1 </span>Exception <code>DOMException</code></a></li>
-   <li><a href="#interface-domerror"><span class="secno">3.2 </span>Interface <code>DOMError</code></a></ol></li>
+   <li><a href="#interface-domerror"><span class="secno">3.2 </span>Interface <code>DOMError</code></a></li>
+   <li><a href="#error-types-0"><span class="secno">3.3 </span>Error types</a></ol></li>
  <li><a href="#events"><span class="secno">4 </span>Events</a>
   <ol>
    <li><a href="#interface-event"><span class="secno">4.1 </span>Interface <code>Event</code></a></li>
@@ -594,7 +595,8 @@ these steps must be run:
  <li><p>Set its <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-exception-message">message</a> to a
  user agent-defined value.
 
- <li><p>If its <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-exception-type">type</a> is in the first column of the table below and has a corresponding legacy
+ <li><p>If its <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-exception-type">type</a> is in the first
+ column of the <a href="#error-types-table">error types table</a> and has a corresponding legacy
  <code title="dom-DOMException-code"><a href="#dom-domexception-code">code</a></code> exception field value in the
  third column, set its <code title="dom-DOMException-code"><a href="#dom-domexception-code">code</a></code>
  exception field to that value.
@@ -609,6 +611,42 @@ user agent would construct a <code><a href="#domexception">DOMException</a></cod
 "<code><a href="#timeouterror">TimeoutError</a></code>" and
 <code title="dom-DOMException-code"><a href="#dom-domexception-code">code</a></code> exception field value is 23,
 and actually throw that object as an exception.
+
+
+<h3 id="interface-domerror"><span class="secno">3.2 </span>Interface <code><a href="#domerror">DOMError</a></code></h3>
+
+<p class="note">This interface is intended for other specifications that want
+to introduce error handling through other means than exceptions. As with
+exceptions, the <a href="#error-types-table">error types table</a> is used.
+
+<pre class="idl">interface <dfn id="domerror">DOMError</dfn> {
+  readonly attribute DOMString <a href="#dom-domerror-name" title="dom-DOMError-name">name</a>;
+};</pre>
+
+<p>The <dfn id="dom-domerror-name" title="dom-DOMError-name"><code>name</code></dfn> attribute must
+return the value it was initialized to.
+
+<p>A
+<dfn id="concept-domerror" title="concept-DOMError"><var title="">type</var> <code>DOMError</code></dfn>
+means a <code><a href="#domerror">DOMError</a></code> object whose
+<code title="dom-DOMError-name"><a href="#dom-domerror-name">name</a></code> attribute is initialized to
+<var title="">type</var>.
+
+<p class="example">A specification could say that an <code title="">error</code>
+attribute must return a
+<a href="#concept-domerror" title="concept-DOMError">"<code>SyntaxError</code>" <code>DOMError</code></a>.
+
+
+<h3 id="error-types-0"><span class="secno">3.3 </span>Error types</h3>
+
+<p>The <dfn id="error-types-table">error types table</dfn> below lists all the allowed error types,
+a description, and legacy <code title="dom-DOMException-code"><a href="#dom-domexception-code">code</a></code>
+exception field values (when the error type is used for
+<a href="#concept-throw" title="concept-throw">throwing</a> an exception).
+
+<p class="note">If your specification requires an error type not listed here,
+please file a bug as indicated at the top of this specification and it will
+be addressed shortly. Thanks!
 
 <table id="error-types">
  <thead>
@@ -707,31 +745,6 @@ and actually throw that object as an exception.
   <td><dfn id="dom-domexception-data_clone_err" title="dom-DOMException-DATA_CLONE_ERR"><code>DATA_CLONE_ERR</code></dfn> (25)
 </table>
 
-<!-- XXX Should we have central bookkeeping of exceptions someplace? -->
-
-
-<h3 id="interface-domerror"><span class="secno">3.2 </span>Interface <code><a href="#domerror">DOMError</a></code></h3>
-
-<p class="note">This interface is intended for other specifications that want
-to introduce error handling through other means than exceptions. It is
-expected that the exception types are reused.
-
-<pre class="idl">interface <dfn id="domerror">DOMError</dfn> {
-  readonly attribute DOMString <a href="#dom-domerror-name" title="dom-DOMError-name">name</a>;
-};</pre>
-
-<p>The <dfn id="dom-domerror-name" title="dom-DOMError-name"><code>name</code></dfn> attribute must
-return the value it was initialized to.
-
-<p>A
-<dfn id="concept-domerror" title="concept-DOMError"><var title="">type</var> <code>DOMError</code></dfn>
-means a <code><a href="#domerror">DOMError</a></code> object whose
-<code title="dom-DOMError-name"><a href="#dom-domerror-name">name</a></code> attribute is initialized to
-<var title="">type</var>.
-
-<p class="example">A specification could say that an <code title="">error</code>
-attribute must return a
-<a href="#concept-domerror" title="concept-DOMError">"<code>SyntaxError</code>" <code>DOMError</code></a>.
 
 
 <h2 id="events"><span class="secno">4 </span>Events</h2>
@@ -8254,6 +8267,7 @@ throw when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to a
 
 Adam Klein,
 Adrian Bateman,
+Arun Ranganathan,
 Brandon Slade,
 Cameron McCormack,
 Dethe Elza,
