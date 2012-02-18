@@ -1774,15 +1774,15 @@ dictionary <dfn>MutationObserverInit</dfn> {
 
 <p>The
 <dfn title=dom-MutationObserver><code>MutationObserver(<var>callback</var>)</code></dfn>
-constructor must return a new <code>MutationObserver</code> object
-<span title=mutation-observer-associated-callback>associated</span> with
-<var>callback</var>.
+constructor must return a new <code>MutationObserver</code> object with
+<span title=concept-MO-callback>callback</span> <var>callback</var>.
 
 <p>Each <code>MutationObserver</code> object has these associated concepts:
 <ul>
- <li><p>An <dfn title=mutation-observer-associated-callback>associated callback</dfn>.
- <li><p>A list of <span title=concept-node>nodes</span> on which it is <span title="registered observer">registered</span>.
- <li><p>A queue of <code>MutationRecord</code> objects which are <dfn title=mutation-observer-pending>pending</dfn> delivery.
+ <li><p>A <dfn title=concept-MO-callback>callback</dfn>. Set on creation.
+ <li><p>A list of <span title=concept-node>nodes</span> on which it is a <span>registered observer</span>'s <b>observer</b>. Initially empty.
+ <li><p>A <dfn title=concept-MO-queue>record queue</dfn> (list of
+ <code>MutationRecord</code> objects). Initially empty.
 </ul>
 
 <hr>
@@ -1860,51 +1860,60 @@ with target <var title>target</var>, attributeName <var title>name</var>, and ol
 run these steps:
 
 <ol>
- <li><p>Create a new <code>MutationRecord</code> <var title>record</var> with
+ <li><p>Let <var title>record</var> be a new <code>MutationRecord</code>
+ object with its
  <code title=dom-MutationRecord-type>type</code> set to "<code>attributes</code>",
  <code title=dom-MutationRecord-target>target</code> set to <var title>target</var>,
  and <code title=dom-MutationRecord-attributeName>attributeName</code> set to <var title>name</var>.
 
- <li><p>Create a copy of <var title>record</var> named <var title>recordWithOldValue</var> and set its
- <code title=dom-MutationRecord-oldValue>oldValue</code> to <var title>oldValue</var>.
+ <li><p>Let <var title>recordWithOldValue</var> be a copy of <var title>record</var> with its
+ <code title=dom-MutationRecord-oldValue>oldValue</code> set to <var title>oldValue</var>.
 
  <li>
-  <p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
-  <var title>target</var>'s registered observer list, run these substeps:
+  <p>For each <span>registered observer</span> <var title>observer</var>
+  (with <var title>observer</var>'s <b>options</b> as <var title>options</var>)
+  in <var title>target</var>'s list of <span title="registered observer">registered observers</span>,
+  run these substeps:
   <ol>
-   <li><p>If <var title>options</var> does not have the
-   <code title=dom-MutationObserverInit-attributes>attributes</code> option set,
+   <li><p>If <var title>options</var>'s
+   <code title=dom-MutationObserverInit-attributes>attributes</code> is not true,
    terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has a non-empty
-   <code title=dom-MutationObserverInit-attributeFilter>attributeFilter</code> array,
-   and <var title>name</var> is not in that array, terminate these substeps
+   <li><p>If <var title>options</var>'s
+   <code title=dom-MutationObserverInit-attributeFilter>attributeFilter</code> is non-empty,
+   and <var title>name</var> is not in it, terminate these substeps
    (and run them for the <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has the
-   <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> option set,
-   append <var title>recordWithOldValue</var> to the observer's queue of pending mutations.
+   <li><p>If <var title>options</var>'s
+   <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> is true,
+   append <var title>recordWithOldValue</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
 
-   <li><p>Otherwise, append <var title>record</var> to the observer's queue of pending mutations.
+   <li><p>Otherwise, append <var title>record</var> to
+   <var title>observer</var>'s <b>observer</b>
+   <span title=concept-MO-queue>record queue</span>.
   </ol>
 
  <li>
-  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
-  <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
-  registered observer list, run these substeps:
+  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of <var title>target</var>, and for each
+  <span>registered observer</span> <var title>observer</var> (with <var title>observer</var>'s <b>options</b> as <var title>options</var>) in <var title>ancestor</var>'s
+  list of <span title="registered observer">registered observers</span>, run these substeps:
 
   <ol>
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-subtree>subtree</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-subtree>subtree</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-attributes>attributes</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-attributes>attributes</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has a non-empty <code title=dom-MutationObserverInit-attributeFilter>attributeFilter</code> array, and <var title>name</var> is not in that array, terminate these substeps
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-attributeFilter>attributeFilter</code> is non-empty, and <var title>name</var> is not in it, terminate these substeps
    (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has the <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
-   queue of pending mutations.
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> is true,
+   append <var title>recordWithOldValue</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
 
-   <li><p>Otherwise, append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+   <li><p>Otherwise, append <var title>record</var> to
+   <var title>observer</var>'s <b>observer</b>
+   <span title=concept-MO-queue>record queue</span>.
   </ol>
 </ol>
 
@@ -1913,39 +1922,45 @@ run these steps:
 with target <var title>target</var> and oldValue <var title>oldValue</var>, run these steps:
 
 <ol>
- <li><p>Create a new <code>MutationRecord</code> <var title>record</var> with
+ <li><p>Let <var title>record</var> be a new <code>MutationRecord</code> object with its
  <code title=dom-MutationRecord-type>type</code> set to "<code>characterData</code>"
  and <code title=dom-MutationRecord-target>target</code> set to <var title>target</var>.
 
- <li><p>Create a copy of <var title>record</var> named <var title>recordWithOldValue</var>
- and set its <code title=dom-MutationRecord-oldValue>oldValue</code> to <var title>oldValue</var>.
+ <li><p>Let <var title>recordWithOldValue</var> be a copy of <var title>record</var>
+ with its <code title=dom-MutationRecord-oldValue>oldValue</code> set to <var title>oldValue</var>.
 
  <li>
-  <p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
-  <var title>target</var>'s registered observer list, run these substeps:
+  <p>For each <span>registered observer</span> <var title>observer</var> (with <var title>observer</var>'s <b>options</b> as <var title>options</var>) in
+  <var title>target</var>'s list of <span title="registered observer">registered observers</span>, run these substeps:
   <ol>
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-characterData>characterData</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-characterData>characterData</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has the <code title=dom-MutationObserverInit-characterDataOldValue>characterDataOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
-   queue of pending mutations.
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-characterDataOldValue>characterDataOldValue</code> is true,
+   append <var title>recordWithOldValue</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
 
-   <li><p>Otherwise, append <var title>record</var> to the observer's queue of pending mutations.
+   <li><p>Otherwise, append <var title>record</var> to
+   <var title>observer</var>'s <b>observer</b>
+   <span title=concept-MO-queue>record queue</span>.
   </ol>
 
  <li>
-  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
+  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of <var title>target</var>, and for each
   <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
-  registered observer list, run these substeps:
+  list of <span title="registered observer">registered observers</span>, run these substeps:
 
   <ol>
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-subtree>subtree</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-subtree>subtree</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-characterData>characterData</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-characterData>characterData</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> has the <code title=dom-MutationObserverInit-characterDataOldValue>characterDataOldValue</code> option set, append <var title>recordWithOldValue</var> to the observer's
-    queue of pending mutations.
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-characterDataOldValue>characterDataOldValue</code> is true,
+   append <var title>recordWithOldValue</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
 
-   <li><p>Otherwise, append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+   <li><p>Otherwise, append <var title>record</var> to
+   <var title>observer</var>'s <b>observer</b>
+   <span title=concept-MO-queue>record queue</span>.
   </ol>
 </ol>
 
@@ -1955,34 +1970,36 @@ with target <var title>target</var>, addedNodes <var title>addedNodes</var>, rem
 and nextSibling <var title>nextSibling</var>, run these steps:
 
 <ol>
- <li><p>Create a new <code>MutationRecord</code> <var title>record</var> with
+ <li><p>Let <var title>record</var> be a new <code>MutationRecord</code> object with its
  <code title=dom-MutationRecord-type>type</code> set to "<code>childList</code>",
  <code title=dom-MutationRecord-target>target</code> set to <var title>target</var>,
  <code title=dom-MutationRecord-addedNodes>addedNodes</code> set to <var title>addedNodes</var>,
  <code title=dom-MutationRecord-removedNodes>removedNodes</code> set to <var title>removedNodes</var>,
- <code title=dom-MutationRecord-previousSibling>previousSibling</code> set to <var title>previousSibling</var>,
- and <code title=dom-MutationRecord-nextSibling>nextSibling</code> set to <var title>nextSibling</var>.
+ <code title=dom-MutationRecord-previousSibling>previousSibling</code> set to <var title>previousSibling</var>, and
+ <code title=dom-MutationRecord-nextSibling>nextSibling</code> set to <var title>nextSibling</var>.
 
  <li>
-  <p>For each <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in
-  <var title>target</var>'s registered observer list, run these substeps:
+  <p>For each <span>registered observer</span> <var title>observer</var> (with <var title>observer</var>'s <b>options</b> as <var title>options</var>) in
+  <var title>target</var>'s list of <span title="registered observer">registered observers</span>, run these substeps:
 
   <ol>
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-childList>childList</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-childList>childList</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>Append <var title>record</var> to the observer's queue of pending mutations.
+   <li><p>Append <var title>record</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
   </ol>
 
  <li>
-  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of target, and for each
-  <span>registered observer</span> <var title>observer</var> (with options <var title>options</var>) in <var title>ancestor</var>'s
-  registered observer list, run these substeps:
+  <p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var> of <var title>target</var>, and for each
+  <span>registered observer</span> <var title>observer</var> (with <var title>observer</var>'s <b>options</b> as <var title>options</var>) in <var title>ancestor</var>'s
+  list of <span title="registered observer">registered observers</span>, run these substeps:
   <ol>
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-subtree>subtree</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-subtree>subtree</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>If <var title>options</var> does not have the <code title=dom-MutationObserverInit-childList>childList</code> option set, terminate these substeps (and run them for the next <span>registered observer</span>).
+   <li><p>If <var title>options</var>'s <code title=dom-MutationObserverInit-childList>childList</code> is not true, terminate these substeps (and run them for the next <span>registered observer</span>).
 
-   <li><p>Append <var title>record</var> to the observer's queue of <span title=mutation-observer-pending>pending</span> mutations.
+   <li><p>Append <var title>record</var> to <var title>observer</var>'s
+   <b>observer</b> <span title=concept-MO-queue>record queue</span>.
   </ol>
 </ol>
 
