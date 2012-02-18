@@ -1560,12 +1560,11 @@ from a <var title="">parent</var>, run these steps:
 
  <li><p>For each <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> <var title="">ancestor</var>
  of <var title="">node</var>, if <var title="">ancestor</var> has any
- <a href="#registered-observer" title="registered observer">registered observers</a> with the
- <code title="dom-MutationObserverInit-subtree">subtree</code>
- option set, <a href="#concept-add-transient-observer" title="concept-add-transient-observer">add</a>
+ <a href="#registered-observer" title="registered observer">registered observers</a> whose
+ <b>options</b>'s <code title="dom-MutationObserverInit-subtree">subtree</code>
+ is true, <a href="#add-a-transient-observer" title="add a transient observer">add</a>
  an identical <a href="#transient-observer">transient observer</a> to <var title="">node</var> for
- each such subtree <a href="#registered-observer">registered observer</a> on <var title="">ancestor</var>.
- <!-- XXX such subtree? -->
+ each such <a href="#registered-observer">registered observer</a> on <var title="">ancestor</var>.
 
  <li><p>Remove <var title="">node</var> from its <var title="">parent</var>.
 </ol>
@@ -1715,6 +1714,24 @@ method must return the result of
 
 <h4 id="mutation-observers"><span class="secno">5.1.4 </span>Mutation observers</h4>
 
+<p>Each <a href="#concept-node" title="concept-node">node</a> has an associated list of
+<a href="#registered-observer" title="registered observer">registered observers</a>.
+<!-- XXX also mention this in the <code>Node</code> section non-normatively? -->
+
+<p>A <dfn id="registered-observer">registered observer</dfn> consists of an <b>observer</b> (a
+<code><a href="#mutationobserver">MutationObserver</a></code> object), a set of <b>options</b> (a
+<code><a href="#mutationobserverinit">MutationObserverInit</a></code> dictionary), and a <b>transient</b>
+variable (whose default value is false). A <dfn id="transient-observer">transient observer</dfn> is
+a <a href="#registered-observer">registered observer</a> whose <b>transient</b> variable is set to
+true.
+<!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
+
+<p>To <dfn id="add-a-transient-observer">add a transient observer</dfn> <var title="">observer</var> with options <var title="">options</var>
+to a <a href="#concept-node" title="concept-node">node</a> <var title="">node</var>, create a new <a href="#transient-observer">transient observer</a> with <b>observer</b> set to
+<var title="">observer</var> and <b>options</b> set to <var title="">options</var> and append it to <var title="">node</var>'s
+list of <a href="#registered-observer" title="registered observer">registered observers</a>.
+
+
 <pre class="idl">[<a href="#dom-mutationobserver" title="dom-MutationObserver">Constructor</a>(<a href="#mutationcallback">MutationCallback</a> <var>callback</var>)]
 interface <dfn id="mutationobserver">MutationObserver</dfn> {
   void <a href="#dom-mutationobserver-observe" title="dom-MutationObserver-observe">observe</a>(<a href="#node">Node</a> <var>target</var>, <a href="#mutationobserverinit">MutationObserverInit</a> <var>options</var>);
@@ -1745,22 +1762,6 @@ constructor must return a new <code><a href="#mutationobserver">MutationObserver
  <li><p>A <dfn id="concept-mo-queue" title="concept-MO-queue">record queue</dfn> (list of
  <code><a href="#mutationrecord">MutationRecord</a></code> objects). Initially empty.
 </ul>
-
-<hr>
-
-<p>Each <a href="#concept-node" title="concept-node">node</a> has an associated list of
-<a href="#registered-observer" title="registered observer">registered observers</a>.
-<!-- XXX also mention this in the <code>Node</code> section non-normatively? -->
-
-<p>A <dfn id="registered-observer">registered observer</dfn> consists of an <b>observer</b> (a
-<code><a href="#mutationobserver">MutationObserver</a></code> object), a set of <b>options</b> (a
-<code><a href="#mutationobserverinit">MutationObserverInit</a></code> dictionary), and a <b>transient</b>
-variable (whose default value is false). A <dfn id="transient-observer">transient observer</dfn> is
-a <a href="#registered-observer">registered observer</a> whose <b>transient</b> variable is set to
-true.
-<!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
-
-<hr>
 
 <p>The
 <dfn id="dom-mutationobserver-observe" title="dom-MutationObserver-observe"><code>observe(<var title="">target</var>, <var title="">options</var>)</code></dfn>
@@ -1963,11 +1964,6 @@ and nextSibling <var title="">nextSibling</var>, run these steps:
    <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
   </ol>
 </ol>
-
-<p>To <dfn id="concept-add-transient-observer" title="concept-add-transient-observer">add a transient observer</dfn> <var title="">observer</var> with options <var title="">options</var>
-to a <a href="#concept-node" title="concept-node">node</a> <var title="">node</var>, create a new <a href="#registered-observer">registered observer</a> with <b>observer</b> set to
-<var title="">observer</var>, <b>options</b> set to <var title="">options</var>, and <b>transient</b> set to true and append it to <var title="">node</var>'s
-list of <a href="#registered-observer" title="registered observer">registered observers</a>.
 
 
 <h4 id="interface-mutationrecord"><span class="secno">5.1.6 </span>Interface <code><a href="#mutationrecord">MutationRecord</a></code></h4>
