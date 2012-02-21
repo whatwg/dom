@@ -232,8 +232,8 @@ Everything else in this specification is normative.
 NOT",--> "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
 "OPTIONAL" in the normative parts of this document are to be
 interpreted as described in RFC2119. For readability, these words do
-not appear in all uppercase letters in this specification. <span
-data-anolis-ref>RFC2119</span>
+not appear in all uppercase letters in this specification.
+<span data-anolis-ref>RFC2119</span>
 
 <p>Requirements phrased in the imperative as part of algorithms
 (such as "strip any leading space characters" or "return false and
@@ -1062,73 +1062,72 @@ steps:</p>
 <ol>
  <li><p>Let <var title>event</var> be the
  <span title=concept-event>event</span> that is dispatched.
+
  <li><p>Set <var title>event</var>'s <span>dispatch flag</span>.
+
  <li><p>Initialize <var title>event</var>'s
  <code title=dom-Event-target>target</code> attribute to the object on which
  <var title>event</var> is dispatched.
- <li>
-  <dl class="switch">
-   <dt>If <var title>event</var>'s
-   <code title=dom-Event-target>target</code> attribute value is
-   <span title=concept-tree-participate>participating</span> in a
-   <span title=concept-tree>tree</span>
-   <dd>
-    <ol>
-     <li><p>Let <var title>event path</var> be a static ordered list of all
-     <span title=concept-tree-ancestor>ancestors</span> of
-     <var title>event</var>'s <code title=dom-Event-target>target</code>
-     attribute value in <span title=concept-tree-order>tree order</span>.
-     <li><p>Initialize <var title>event</var>'s
-     <code title=dom-Event-eventPhase>eventPhase</code> attribute to
-     <code title=dom-Event-CAPTURING_PHASE>CAPTURING_PHASE</code>.
-     <li><p>For each object in the <var title>event path</var>
-     <span title=concept-event-listener-invoke>invoke</span> its
-     <span title=concept-event-listener>event listeners</span> with event
-     <var title>event</var>, as long as <var title>event</var>'s
-     <span>stop propagation flag</span> is unset.
-     <li><p>Initialize <var title>event</var>'s
-     <code title=dom-Event-eventPhase>eventPhase</code> attribute to
-     <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
-     <li><p><span title=concept-event-listener-invoke>Invoke</span> the
-     <span title=concept-event-listener>event listeners</span> of
-     <var title>event</var>'s
-     <code title=dom-Event-target>target</code> attribute value with
-     <var title>event</var>, if <var title>event</var>'s
-     <span>stop propagation flag</span> is unset.
-     <li>
-      <p>If <var title>event</var>'s
-      <code title=dom-Event-bubbles>bubbles</code> attribute is true run
-      these substeps:</p>
-      <ol>
-       <li><p>Reverse the order of <var title>event path</var>.
-       <li><p>Initialize <var title>event</var>'s
-       <code title=dom-Event-eventPhase>eventPhase</code> attribute to
-       <code title=dom-Event-BUBBLING_PHASE>BUBBLING_PHASE</code>.
-       <li><p>For each object in the <var title>event path</var>
-       <span title=concept-event-listener-invoke>invoke</span> its
-       <span title=concept-event-listener>event listeners</span>, with event
-       <var title>event</var> as long as <var title>event</var>'s
-       <span>stop propagation flag</span> is unset.
-      </ol>
-    </ol>
-   </dd>
-   <dt>Otherwise
-   <dd><p><span title=concept-event-listener-invoke>Invoke</span> the
-   <span title=concept-event-listener>event listeners</span> of
-   <var title>event</var>'s <code title=dom-Event-target>target</code>
-   attribute value, with event <var title>event</var>.
-  </dl>
-  <!-- XXX This could be flattened by just letting "event path" be empty for
-           objects not participating in a tree. -->
- </li>
- <li><p>Unset <var title>event</var>'s <span>dispatch flag</span>.
+
+ <li><p>If <var title>event</var>'s
+ <code title=dom-Event-target>target</code> attribute value is
+ <span title=concept-tree-participate>participating</span> in a
+ <span title=concept-tree>tree</span>, let <var title>event path</var> be a
+ static ordered list of all its
+ <span title=concept-tree-ancestor>ancestors</span> in
+ <span title=concept-tree-order>tree order</span>, or let
+ <var title>event path</var> be the empty list otherwise.
+
+ <li><p>Initialize <var title>event</var>'s
+ <code title=dom-Event-eventPhase>eventPhase</code> attribute to
+ <code title=dom-Event-CAPTURING_PHASE>CAPTURING_PHASE</code>.
+
+ <li><p>For each object in the <var title>event path</var>
+ <span title=concept-event-listener-invoke>invoke</span> its
+ <span title=concept-event-listener>event listeners</span> with event
+ <var title>event</var>, as long as <var title>event</var>'s
+ <span>stop propagation flag</span> is unset.
+
  <li><p>Initialize <var title>event</var>'s
  <code title=dom-Event-eventPhase>eventPhase</code> attribute to
  <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
+
+ <li><p><span title=concept-event-listener-invoke>Invoke</span> the
+ <span title=concept-event-listener>event listeners</span> of
+ <var title>event</var>'s <code title=dom-Event-target>target</code>
+ attribute value with <var title>event</var>, if <var title>event</var>'s
+ <span>stop propagation flag</span> is unset.
+
+ <li>
+  <p>If <var title>event</var>'s
+  <code title=dom-Event-bubbles>bubbles</code> attribute value is true, run
+  these substeps:
+
+  <ol>
+   <li><p>Reverse the order of <var title>event path</var>.
+
+   <li><p>Initialize <var title>event</var>'s
+   <code title=dom-Event-eventPhase>eventPhase</code> attribute to
+   <code title=dom-Event-BUBBLING_PHASE>BUBBLING_PHASE</code>.
+
+   <li><p>For each object in the <var title>event path</var>
+   <span title=concept-event-listener-invoke>invoke</span> its
+   <span title=concept-event-listener>event listeners</span>, with event
+   <var title>event</var> as long as <var title>event</var>'s
+   <span>stop propagation flag</span> is unset.
+  </ol>
+
+ <li><p>Unset <var title>event</var>'s <span>dispatch flag</span>.
+
+ <li><p>Initialize <var title>event</var>'s
+ <code title=dom-Event-eventPhase>eventPhase</code> attribute to
+ <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
+
  <li><p>Initialize <var title>event</var>'s
  <code title=dom-Event-currentTarget>currentTarget</code> to null.
+
  <li><p>Return false if <var title>event</var>'s <span>canceled flag</span>
- is set and true otherwise.
+ is set, or true otherwise.
 </ol>
 
 
