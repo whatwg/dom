@@ -786,6 +786,75 @@ be addressed shortly. Thanks!
 
 <h2>Events</h2>
 
+<h3>Introduction</h3>
+
+<p>Throughout the web platform <span title=concept-event>events</span> are
+<span title=concept-event-dispatch>dispatched</span> on objects to signal an
+occurrence, such as network activity or user interaction. Objects on which
+<span title=concept-event>events</span> are
+<span title=concept-event-dispatch>dispatched</span> implement the
+<code>EventTarget</code> interface and can therefore add
+<span title=concept-event-listener>event listeners</span> to observe
+<span title=concept-event>events</span>:
+
+<pre><code>obj.addEventListener("load", imgFetched)
+
+function imgFetched() {
+  // great success
+  &hellip;
+}</code></pre>
+
+<p><span title=concept-event-listener>Event listeners</span> can be removed
+by utilizing the
+<code title=dom-EventTarget-removeEventListener>removeEventListener()</code>
+method, passing the same arguments.
+
+<p><span title=concept-event>Events</span> are objects too and implement the
+<code>Event</code> interface (or a derived interface), but do not implement
+the <code>EventTarget</code> interface and can therefore not be
+<span title=concept-event-dispatch>dispatched</span> on themselves.
+<span title=concept-event-listener>Event listeners</span> key off the
+<span title=concept-event>event</span>'s
+<code title=dom-Event-type>type</code> attribute value
+("<code title>load</code>" in the above example). The
+<span title=concept-event>event</span>'s
+<code title=dom-Event-target>target</code> attribute value returns the
+object on which the <span title=concept-event>event</span> was
+<span title=concept-event-dispatch>dispatched</span> (<var title>obj</var>
+above).
+
+<p>Now while typically <span title=concept-event>events</span> are
+<span title=concept-event-dispatch>dispatched</span> by the user agent as
+the result of user interaction or the completion of some task, applications
+can <span title=concept-event-dispatch>dispatch</span>
+<span title=concept-event>events</span> themselves, commonly known as
+synthetic events:
+
+<pre><code>// add an appropriate event listener
+obj.addEventListener("cat", function(e) { process(e.detail) })
+
+// create and dispatch the event
+var event = new CustomEvent("cat", {"detail":{"hazcheeseburger":true}})
+obj.dispatchEvent(event)</code></pre>
+
+<p>Apart from signaling <span title=concept-event>events</span> are
+sometimes also used to let an application control what happens next in an
+operation. For instance as part of form submission an
+<span title=concept-event>event</span> whose
+<code title=dom-Event-type>type</code> attribute value is
+"<code title>submit</code>" is
+<span title=concept-event-dispatch>dispatched</span>. If this
+<span title=concept-event>event</span>'s
+<code title=dom-Event-preventDefault>preventDefault()</code> method is
+invoked, form submission will be terminated. Applications who wish to make
+use of this functionality through <span title=concept-event>events</span>
+<span title=concept-event-dispatch>dispatched</span> by the application
+(synthetic events) can make use of the return value of the
+<code title=dom-EventTarget-dispatchEvent>dispatchEvent()</code> method.
+
+<p class=XXX>Events and trees&hellip;
+
+
 <h3>Interface <code>Event</code></h3>
 
 <pre class="idl">[Constructor(DOMString <var title>type</var>, optional <span>EventInit</span> <var title>eventInitDict</var>)]
@@ -1124,7 +1193,7 @@ steps:</p>
  <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
 
  <li><p>Initialize <var title>event</var>'s
- <code title=dom-Event-currentTarget>currentTarget</code> to null.
+ <code title=dom-Event-currentTarget>currentTarget</code> attribute to null.
 
  <li><p>Return false if <var title>event</var>'s <span>canceled flag</span>
  is set, or true otherwise.
@@ -1142,8 +1211,8 @@ event run these steps:</p>
  <span title=concept-event-listener>event listeners</span> associated with
  the object for which these steps are run.
  <li><p>Initialize <var title>event</var>'s
- <code title=dom-Event-currentTarget>currentTarget</code> to the object for
- which these steps are run.
+ <code title=dom-Event-currentTarget>currentTarget</code> attribute to the
+ object for which these steps are run.
  <li>
   <p>Then run these substeps for each
   <span title=concept-event-listener>event listener</span> in

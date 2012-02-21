@@ -80,12 +80,13 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
    <li><a href="#error-types-0"><span class="secno">3.3 </span>Error types</a></ol></li>
  <li><a href="#events"><span class="secno">4 </span>Events</a>
   <ol>
-   <li><a href="#interface-event"><span class="secno">4.1 </span>Interface <code>Event</code></a></li>
-   <li><a href="#interface-customevent"><span class="secno">4.2 </span>Interface <code>CustomEvent</code></a></li>
-   <li><a href="#constructing-events"><span class="secno">4.3 </span>Constructing events</a></li>
-   <li><a href="#interface-eventtarget"><span class="secno">4.4 </span>Interface <code>EventTarget</code></a></li>
-   <li><a href="#dispatching-events"><span class="secno">4.5 </span>Dispatching events</a></li>
-   <li><a href="#firing-events"><span class="secno">4.6 </span>Firing events</a></ol></li>
+   <li><a href="#introduction"><span class="secno">4.1 </span>Introduction</a></li>
+   <li><a href="#interface-event"><span class="secno">4.2 </span>Interface <code>Event</code></a></li>
+   <li><a href="#interface-customevent"><span class="secno">4.3 </span>Interface <code>CustomEvent</code></a></li>
+   <li><a href="#constructing-events"><span class="secno">4.4 </span>Constructing events</a></li>
+   <li><a href="#interface-eventtarget"><span class="secno">4.5 </span>Interface <code>EventTarget</code></a></li>
+   <li><a href="#dispatching-events"><span class="secno">4.6 </span>Dispatching events</a></li>
+   <li><a href="#firing-events"><span class="secno">4.7 </span>Firing events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol>
    <li><a href="#node-tree"><span class="secno">5.1 </span>Node tree</a>
@@ -750,7 +751,76 @@ be addressed shortly. Thanks!
 
 <h2 id="events"><span class="secno">4 </span>Events</h2>
 
-<h3 id="interface-event"><span class="secno">4.1 </span>Interface <code><a href="#event">Event</a></code></h3>
+<h3 id="introduction"><span class="secno">4.1 </span>Introduction</h3>
+
+<p>Throughout the web platform <a href="#concept-event" title="concept-event">events</a> are
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> on objects to signal an
+occurrence, such as network activity or user interaction. Objects on which
+<a href="#concept-event" title="concept-event">events</a> are
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> implement the
+<code><a href="#eventtarget">EventTarget</a></code> interface and can therefore add
+<a href="#concept-event-listener" title="concept-event-listener">event listeners</a> to observe
+<a href="#concept-event" title="concept-event">events</a>:
+
+<pre><code>obj.addEventListener("load", imgFetched)
+
+function imgFetched() {
+  // great success
+  &hellip;
+}</code></pre>
+
+<p><a href="#concept-event-listener" title="concept-event-listener">Event listeners</a> can be removed
+by utilizing the
+<code title="dom-EventTarget-removeEventListener"><a href="#dom-eventtarget-removeeventlistener">removeEventListener()</a></code>
+method, passing the same arguments.
+
+<p><a href="#concept-event" title="concept-event">Events</a> are objects too and implement the
+<code><a href="#event">Event</a></code> interface (or a derived interface), but do not implement
+the <code><a href="#eventtarget">EventTarget</a></code> interface and can therefore not be
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> on themselves.
+<a href="#concept-event-listener" title="concept-event-listener">Event listeners</a> key off the
+<a href="#concept-event" title="concept-event">event</a>'s
+<code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute value
+("<code title="">load</code>" in the above example). The
+<a href="#concept-event" title="concept-event">event</a>'s
+<code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value returns the
+object on which the <a href="#concept-event" title="concept-event">event</a> was
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> (<var title="">obj</var>
+above).
+
+<p>Now while typically <a href="#concept-event" title="concept-event">events</a> are
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> by the user agent as
+the result of user interaction or the completion of some task, applications
+can <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatch</a>
+<a href="#concept-event" title="concept-event">events</a> themselves, commonly known as
+synthetic events:
+
+<pre><code>// add an appropriate event listener
+obj.addEventListener("cat", function(e) { process(e.detail) })
+
+// create and dispatch the event
+var event = new CustomEvent("cat", {"detail":{"hazcheeseburger":true}})
+obj.dispatchEvent(event)</code></pre>
+
+<p>Apart from signaling <a href="#concept-event" title="concept-event">events</a> are
+sometimes also used to let an application control what happens next in an
+operation. For instance as part of form submission an
+<a href="#concept-event" title="concept-event">event</a> whose
+<code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute value is
+"<code title="">submit</code>" is
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a>. If this
+<a href="#concept-event" title="concept-event">event</a>'s
+<code title="dom-Event-preventDefault"><a href="#dom-event-preventdefault">preventDefault()</a></code> method is
+invoked, form submission will be terminated. Applications who wish to make
+use of this functionality through <a href="#concept-event" title="concept-event">events</a>
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> by the application
+(synthetic events) can make use of the return value of the
+<code title="dom-EventTarget-dispatchEvent"><a href="#dom-eventtarget-dispatchevent">dispatchEvent()</a></code> method.
+
+<p class="XXX">Events and trees&hellip;
+
+
+<h3 id="interface-event"><span class="secno">4.2 </span>Interface <code><a href="#event">Event</a></code></h3>
 
 <pre class="idl">[Constructor(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="event">Event</dfn> {
@@ -907,7 +977,7 @@ method is invoked these steps must be run:</p>
 it has to be supported for legacy content.
 
 
-<h3 id="interface-customevent"><span class="secno">4.2 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
+<h3 id="interface-customevent"><span class="secno">4.3 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
 <pre class="idl">[Constructor(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
@@ -928,7 +998,7 @@ must return the value it was initialized to. When an
 initialized to null.
 
 
-<h3 id="constructing-events"><span class="secno">4.3 </span>Constructing events</h3>
+<h3 id="constructing-events"><span class="secno">4.4 </span>Constructing events</h3>
 
 <p>When a constructor of the <code><a href="#event">Event</a></code> interface, or of an
 interface that inherits from the <code><a href="#event">Event</a></code> interface, is invoked,
@@ -955,7 +1025,7 @@ these steps must be run:
 </ol>
 
 
-<h3 id="interface-eventtarget"><span class="secno">4.4 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
+<h3 id="interface-eventtarget"><span class="secno">4.5 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
 <pre class="idl">interface <dfn id="eventtarget">EventTarget</dfn> {
   void <a href="#dom-eventtarget-addeventlistener" title="dom-EventTarget-addEventListener">addEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">listener</var>, optional boolean <var title="">capture</var> = false);
@@ -1016,7 +1086,7 @@ method is invoked these steps must be run:
 </ol>
 
 
-<h3 id="dispatching-events"><span class="secno">4.5 </span>Dispatching events</h3>
+<h3 id="dispatching-events"><span class="secno">4.6 </span>Dispatching events</h3>
 
 <p>To <dfn id="concept-event-dispatch" title="concept-event-dispatch">dispatch</dfn> an
 <a href="#concept-event" title="concept-event">event</a> on a given object run these
@@ -1088,7 +1158,7 @@ steps:</p>
  <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
 
  <li><p>Initialize <var title="">event</var>'s
- <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> to null.
+ <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> attribute to null.
 
  <li><p>Return false if <var title="">event</var>'s <a href="#canceled-flag">canceled flag</a>
  is set, or true otherwise.
@@ -1106,8 +1176,8 @@ event run these steps:</p>
  <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> associated with
  the object for which these steps are run.
  <li><p>Initialize <var title="">event</var>'s
- <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> to the object for
- which these steps are run.
+ <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> attribute to the
+ object for which these steps are run.
  <li>
   <p>Then run these substeps for each
   <a href="#concept-event-listener" title="concept-event-listener">event listener</a> in
@@ -1146,7 +1216,7 @@ event run these steps:</p>
 </ol>
 
 
-<h3 id="firing-events"><span class="secno">4.6 </span>Firing events</h3>
+<h3 id="firing-events"><span class="secno">4.7 </span>Firing events</h3>
 
 <p>To
 <dfn id="concept-event-fire" title="concept-event-fire">fire an event named <var title="">e</var></dfn>
