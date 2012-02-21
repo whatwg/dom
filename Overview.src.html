@@ -799,7 +799,7 @@ occurrence, such as network activity or user interaction. Objects on which
 
 <pre><code>obj.addEventListener("load", imgFetched)
 
-function imgFetched() {
+function imgFetched(ev) {
   // great success
   &hellip;
 }</code></pre>
@@ -810,9 +810,10 @@ by utilizing the
 method, passing the same arguments.
 
 <p><span title=concept-event>Events</span> are objects too and implement the
-<code>Event</code> interface (or a derived interface), but do not implement
-the <code>EventTarget</code> interface and can therefore not be
-<span title=concept-event-dispatch>dispatched</span> on themselves.
+<code>Event</code> interface (or a derived interface). In the example above
+<var title>ev</var> is the <span title=concept-event>event</span>. It is
+passed as argument to
+<span title=concept-event-listener>event listener</span>'s <b>callback</b>.
 <span title=concept-event-listener>Event listeners</span> key off the
 <span title=concept-event>event</span>'s
 <code title=dom-Event-type>type</code> attribute value
@@ -837,7 +838,7 @@ obj.addEventListener("cat", function(e) { process(e.detail) })
 var event = new CustomEvent("cat", {"detail":{"hazcheeseburger":true}})
 obj.dispatchEvent(event)</code></pre>
 
-<p>Apart from signaling <span title=concept-event>events</span> are
+<p>Apart from signaling, <span title=concept-event>events</span> are
 sometimes also used to let an application control what happens next in an
 operation. For instance as part of form submission an
 <span title=concept-event>event</span> whose
@@ -1063,8 +1064,8 @@ these steps must be run:
 <h3>Interface <code>EventTarget</code></h3>
 
 <pre class=idl>interface <dfn>EventTarget</dfn> {
-  void <span title=dom-EventTarget-addEventListener>addEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var> = false);
-  void <span title=dom-EventTarget-removeEventListener>removeEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>listener</var>, optional boolean <var title>capture</var> = false);
+  void <span title=dom-EventTarget-addEventListener>addEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>callback</var>, optional boolean <var title>capture</var> = false);
+  void <span title=dom-EventTarget-removeEventListener>removeEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>callback</var>, optional boolean <var title>capture</var> = false);
   boolean <span title=dom-EventTarget-dispatchEvent>dispatchEvent</span>(<span>Event</span> <var title>event</var>);
 };
 
@@ -1082,28 +1083,28 @@ occurred. Each <code>EventTarget</code> has an associated list of
 for a specific <span title=concept-event>event</span>. Each
 <span title=concept-event-listener>event listener</span> consists of a
 <b>type</b> (of the <span title=concept-event>event</span>),
-<b>listener</b>, and <b>capture</b> variable.
+<b>callback</b>, and <b>capture</b> variable.
 
 <p>When the
-<dfn title=dom-EventTarget-addEventListener><code>addEventListener(<var title>type</var>, <var title>listener</var>, <var title>capture</var>)</code></dfn>
+<dfn title=dom-EventTarget-addEventListener><code>addEventListener(<var title>type</var>, <var title>callback</var>, <var title>capture</var>)</code></dfn>
 method is invoked these steps must be run:
 <ol>
- <li><p>If <var title>listener</var> is null terminate these steps.
+ <li><p>If <var title>callback</var> is null terminate these steps.
  <li><p>Append an <span title=concept-event-listener>event listener</span>
  to the associated list of
  <span title=concept-event-listener>event listeners</span> with <b>type</b>
- set to <var title>type</var>, <b>listener</b> set to <var title>listener</var>, and
+ set to <var title>type</var>, <b>callback</b> set to <var title>callback</var>, and
  <b>capture</b> set to <var title>capture</var>, unless there
  already is an <span title=concept-event-listener>event listener</span> in
- that list with the same <b>type</b>, <b>listener</b>, and <b>capture</b>.
+ that list with the same <b>type</b>, <b>callback</b>, and <b>capture</b>.
 </ol>
 
-<p>When the <dfn title=dom-EventTarget-removeEventListener><code>removeEventListener(<var title>type</var>, <var title>listener</var>, <var title>capture</var>)</code></dfn> method is invoked these steps must be run:
+<p>When the <dfn title=dom-EventTarget-removeEventListener><code>removeEventListener(<var title>type</var>, <var title>callback</var>, <var title>capture</var>)</code></dfn> method is invoked these steps must be run:
 <ol>
  <li><p>Remove an <span title=concept-event-listener>event listener</span>
  from the associated list of
  <span title=concept-event-listener>event listeners</span>, whose
- <b>type</b> is <var title>name</var>, <b>listener</b> is <var title>listener</var>, and
+ <b>type</b> is <var title>name</var>, <b>callback</b> is <var title>callback</var>, and
  <b>capture</b> is <var title>capture</var>.</p>
 </ol>
 
@@ -1239,12 +1240,12 @@ event run these steps:</p>
    <var title>listener</var>'s <b>capture</b> is true, terminate these
    substeps (and run them for the next
    <span title=concept-event-listener>event listener</span>).
-   <li><p>If <var title>listener</var>'s <b>listener</b> is a
+   <li><p>If <var title>listener</var>'s <b>callback</b> is a
    Function<!-- WebIDL uses <span class=estype> --> object, its
    <span data-anolis-spec=webidl>callback this value</span> is the
    <var title>event</var>'s
    <code title=dom-Event-currentTarget>currentTarget</code> attribute value.
-   <li><p>Call <var title>listener</var>'s <b>listener</b>, with the event
+   <li><p>Call <var title>listener</var>'s <b>callback</b>, with the event
    passed to this algorithm as the first argument.
   </ol>
  </li>
