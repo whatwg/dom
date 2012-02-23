@@ -912,6 +912,76 @@ something has occurred. E.g. that an image has completed downloading. It is
 represented by the <code><a href="#event">Event</a></code> interface or an interface that
 inherits from the <code><a href="#event">Event</a></code> interface.</p>
 
+<dl class="domintro">
+ <dt><code><var title="">event</var> . <a href="#dom-event-type" title="dom-Event-type">type</a></code>
+ <dd><p>Returns the type of <var title="">event</var>, e.g.
+ "<code title="">click</code>", "<code title="">hashchange</code>", or
+ "<code title="">submit</code>".
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-target" title="dom-Event-target">target</a></code>
+ <dd><p>Returns the object <var title="">event</var> is
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> upon.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-currenttarget" title="dom-Event-currentTarget">currentTarget</a></code>
+ <dd><p>Returns the object whose
+ <a href="#concept-event-listener" title="concept-event-listener">event listener</a>'s <b>callback</b>
+ is invoked.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-eventphase" title="dom-Event-eventPhase">eventPhase</a></code>
+ <dd><p>Returns the <a href="#concept-event" title="concept-event">event</a>'s phase, which is
+ one of <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>,
+ <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>, and
+ <code title="dom-Event-BUBBLING_PHASE"><a href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-stoppropagation" title="dom-Event-stopPropagation">stopPropagation</a>()</code>
+ <dd><p>When <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> in a
+ <a href="#concept-tree" title="concept-tree">tree</a>, invoking this method prevents
+ <var title="">event</var> from reaching any other objects than the current.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-stopimmediatepropagation" title="dom-Event-stopImmediatePropagation">stopImmediatePropagation</a>()</code>
+ <dd><p>Invoking this method prevents <var title="">event</var> from reaching
+ any <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> registered
+ after the current one and when
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> in a
+ <a href="#concept-tree" title="concept-tree">tree</a> also prevents
+ <var title="">event</var> from reaching any other objects.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-bubbles" title="dom-Event-bubbles">bubbles</a></code>
+ <dd><p>Returns true if <var title="">event</var>'s goes through its <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value's <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a> in reverse <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, or false otherwise.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-cancelable" title="dom-Event-cancelable">cancelable</a></code>
+ <dd><p>Returns true or false depending on how <var title="">event</var> was
+ initialized. Its return value does not always carry meaning, but true can
+ indicate that part of the operation during which <var title="">event</var> was
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a>, can be canceled by
+ invoking the <code title="dom-Event-preventDefault"><a href="#dom-event-preventdefault">preventDefault()</a></code>
+ method.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-preventdefault" title="dom-Event-preventDefault">preventDefault</a>()</code>
+ <dd><p>If invoked when the
+ <code title="dom-Event-cancelable"><a href="#dom-event-cancelable">cancelable</a></code> attribute value is true,
+ signals to the operation that caused <var title="">event</var> to be
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> that it needs to be
+ canceled.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-defaultprevented" title="dom-Event-defaultPrevented">defaultPrevented</a></code>
+ <dd><p>Returns true if
+ <code title="dom-Event-preventDefault"><a href="#dom-event-preventdefault">preventDefault()</a></code> was invoked
+ while the <code title="dom-Event-cancelable"><a href="#dom-event-cancelable">cancelable</a></code> attribute
+ value is true, or false otherwise.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-istrusted" title="dom-Event-isTrusted">isTrusted</a></code>
+ <dd><p>Returns true if <var title="">event</var> was
+ <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> by the user agent, or
+ false otherwise.
+
+ <dt><code><var title="">event</var> . <a href="#dom-event-timestamp" title="dom-Event-timeStamp">timeStamp</a></code>
+ <dd><p>Returns the creation time of <var title="">event</var> in the number of
+ milliseconds that passed since 00:00:00 UTC on 1 January 1970.
+
+ <!-- initEvent is dead -->
+</dl>
+
 <p>The <dfn id="dom-event-type" title="dom-Event-type"><code>type</code></dfn> attribute must
 return the value it was initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attribute must be
@@ -922,12 +992,6 @@ initialized to the empty string.
 attributes must return the values they were initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attributes must be
 initialized to null.
-
-<p class="note">The <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> and
-<code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> attributes are
-initialized to different values while
-<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatching</a> the
-<a href="#concept-event" title="concept-event">event</a>.
 
 <p>The <dfn id="dom-event-eventphase" title="dom-Event-eventPhase"><code>eventPhase</code></dfn>
 attribute must return the value it was initialized to, which must be one of
@@ -2231,15 +2295,9 @@ and nextSibling <var title="">nextSibling</var>, run these steps:
  "<code title="">childList</code>", it is null.
 </dl>
 
-<p>The <dfn id="dom-mutationrecord-type" title="dom-MutationRecord-type"><code>type</code></dfn> attribute
-must return the value it was initialized to.
-
-<p class="note">The <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> attribute
-will only be set to one of "<code title="">attributes</code>",
-"<code title="">childList</code>", or "<code title="">characterData</code>".
-
-<p>The <dfn id="dom-mutationrecord-target" title="dom-MutationRecord-target"><code>target</code></dfn>
-attribute must return the value it was initialized to.
+<p>The <dfn id="dom-mutationrecord-type" title="dom-MutationRecord-type"><code>type</code></dfn> and
+<dfn id="dom-mutationrecord-target" title="dom-MutationRecord-target"><code>target</code></dfn>
+attributes must return the values they were initialized to.
 
 <p>The
 <dfn id="dom-mutationrecord-addednodes" title="dom-MutationRecord-addedNodes"><code>addedNodes</code></dfn>,
