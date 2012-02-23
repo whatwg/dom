@@ -13,8 +13,8 @@
 
 <div class="head">
 <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="free-editor's-draft-22-february-2012">
-  <span class="now3c">Free Editor's Draft 22 February 2012</span>
+ <h2 class="no-num no-toc" id="free-editor's-draft-23-february-2012">
+  <span class="now3c">Free Editor's Draft 23 February 2012</span>
  </h2>
 
  <dl>
@@ -42,7 +42,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-22 February 2012, the editors have made this specification available
+23 February 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -818,7 +818,60 @@ use of this functionality through <a href="#concept-event" title="concept-event"
 (synthetic events) can make use of the return value of the
 <code title="dom-EventTarget-dispatchEvent"><a href="#dom-eventtarget-dispatchevent">dispatchEvent()</a></code> method.
 
-<p class="XXX">Events and trees&hellip;
+<p>When an <a href="#concept-event" title="concept-event">event</a> is
+<a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a> on an object that
+<a href="#concept-tree-participate" title="concept-tree-participate">participates</a> in a
+<a href="#concept-tree" title="concept-tree">tree</a> (e.g. an
+<a href="#concept-element" title="concept-element">element</a>), it can reach
+<a href="#concept-event-listener" title="concept-event-listener">event listeners</a> on that object's
+<a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a> too. First all object's
+<a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a>
+<a href="#concept-event-listener" title="concept-event-listener">event listeners</a> whose
+<b>capture</b> variable is set to true are invoked, in
+<a href="#concept-tree-order" title="concept-tree-order">tree order</a>. Second, object's own
+<a href="#concept-event-listener" title="concept-event-listener">event listeners</a> are invoked. And
+finally, and only if <a href="#concept-event" title="concept-event">event</a>'s
+<a href="#dom-event-bubbles" title="dom-Event-bubbles">bubbles</a> attribute value is true,
+object's  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a>
+<a href="#concept-event-listener" title="concept-event-listener">event listeners</a> are invoked again,
+but in reverse <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+
+<p>Lets look at an example on how <a href="#concept-event" title="concept-event">events</a>
+work in a <a href="#concept-tree" title="concept-tree">tree</a>.
+
+<pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;Boring example&lt;/title&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;p&gt;Hello &lt;span id=x&gt;world&lt;/span&gt;!&lt;/p&gt;
+  &lt;script&gt;
+   function test(e) {
+     debug(e.target, e.currentTarget, e.currentPhase)
+   }
+   document.addEventListener("hey", test, true)
+   document.body.addEventListener("hey", test)
+   var ev = new Event("hey", {bubbles:true})
+   document.getElementById("x").dispatchEvent(ev)
+  &lt;/script&gt;
+ &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<p>The <code title="">debug</code> function will be invoked twice. Each time
+the <a href="#concept-event" title="concept-event">events</a>'s
+<code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute value will be the
+<code title="">span</code> <a href="#concept-element" title="concept-element">element</a>. The
+first time <code title="dom-Event-target"><a href="#dom-event-target">currentTarget</a></code> attribute's
+value will be the <a href="#concept-document" title="concept-document">document</a>, the second
+time the <code title="">body</code> <a href="#concept-element" title="concept-element">element</a>.
+<code title="dom-Event-currentPhase">currentPhase</code> attribute's value
+switches from <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>
+to <code title="dom-Event-BUBBLING_PHASE"><a href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. If an
+<a href="#concept-event-listener" title="concept-event-listener">event listener</a> was registered for
+the <code title="">span</code> <a href="#concept-element" title="concept-element">element</a>,
+<code title="dom-Event-currentPhase">currentPhase</code> attribute's value
+would be <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
 
 
 <h3 id="interface-event"><span class="secno">4.2 </span>Interface <code><a href="#event">Event</a></code></h3>

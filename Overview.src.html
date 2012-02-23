@@ -853,7 +853,60 @@ use of this functionality through <span title=concept-event>events</span>
 (synthetic events) can make use of the return value of the
 <code title=dom-EventTarget-dispatchEvent>dispatchEvent()</code> method.
 
-<p class=XXX>Events and trees&hellip;
+<p>When an <span title=concept-event>event</span> is
+<span title=concept-event-dispatch>dispatched</span> on an object that
+<span title=concept-tree-participate>participates</span> in a
+<span title=concept-tree>tree</span> (e.g. an
+<span title=concept-element>element</span>), it can reach
+<span title=concept-event-listener>event listeners</span> on that object's
+<span title=concept-tree-ancestor>ancestors</span> too. First all object's
+<span title=concept-tree-ancestor>ancestor</span>
+<span title=concept-event-listener>event listeners</span> whose
+<b>capture</b> variable is set to true are invoked, in
+<span title=concept-tree-order>tree order</span>. Second, object's own
+<span title=concept-event-listener>event listeners</span> are invoked. And
+finally, and only if <span title=concept-event>event</span>'s
+<span title=dom-Event-bubbles>bubbles</span> attribute value is true,
+object's  <span title=concept-tree-ancestor>ancestor</span>
+<span title=concept-event-listener>event listeners</span> are invoked again,
+but in reverse <span title=concept-tree-order>tree order</span>.
+
+<p>Lets look at an example on how <span title=concept-event>events</span>
+work in a <span title=concept-tree>tree</span>.
+
+<pre><code>&lt;!doctype html>
+&lt;html>
+ &lt;head>
+  &lt;title>Boring example&lt;/title>
+ &lt;/head>
+ &lt;body>
+  &lt;p>Hello &lt;span id=x>world&lt;/span>!&lt;/p>
+  &lt;script>
+   function test(e) {
+     debug(e.target, e.currentTarget, e.currentPhase)
+   }
+   document.addEventListener("hey", test, true)
+   document.body.addEventListener("hey", test)
+   var ev = new Event("hey", {bubbles:true})
+   document.getElementById("x").dispatchEvent(ev)
+  &lt;/script>
+ &lt;/body>
+&lt;/html></code></pre>
+
+<p>The <code title>debug</code> function will be invoked twice. Each time
+the <span title=concept-event>events</span>'s
+<code title=dom-Event-target>target</code> attribute value will be the
+<code title>span</code> <span title=concept-element>element</span>. The
+first time <code title=dom-Event-target>currentTarget</code> attribute's
+value will be the <span title=concept-document>document</span>, the second
+time the <code title>body</code> <span title=concept-element>element</span>.
+<code title=dom-Event-currentPhase>currentPhase</code> attribute's value
+switches from <code title=dom-Event-CAPTURING_PHASE>CAPTURING_PHASE</code>
+to <code title=dom-Event-BUBBLING_PHASE>BUBBLING_PHASE</code>. If an
+<span title=concept-event-listener>event listener</span> was registered for
+the <code title>span</code> <span title=concept-element>element</span>,
+<code title=dom-Event-currentPhase>currentPhase</code> attribute's value
+would be <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
 
 
 <h3>Interface <code>Event</code></h3>
