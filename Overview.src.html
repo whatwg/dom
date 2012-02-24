@@ -790,11 +790,9 @@ be addressed shortly. Thanks!
 <h3>Introduction</h3>
 
 <p>Throughout the web platform <span title=concept-event>events</span> are
-<span title=concept-event-dispatch>dispatched</span> on objects to signal an
-occurrence, such as network activity or user interaction. Objects on which
-<span title=concept-event>events</span> are
-<span title=concept-event-dispatch>dispatched</span> implement the
-<code>EventTarget</code> interface and can therefore add
+<span title=concept-event-dispatch>dispatched</span> to objects to signal an
+occurrence, such as network activity or user interaction. These objects
+implement the <code>EventTarget</code> interface and can therefore add
 <span title=concept-event-listener>event listeners</span> to observe
 <span title=concept-event>events</span>:
 
@@ -822,7 +820,7 @@ passed as argument to
 ("<code title>load</code>" in the above example). The
 <span title=concept-event>event</span>'s
 <code title=dom-Event-target>target</code> attribute value returns the
-object on which the <span title=concept-event>event</span> was
+object to which the <span title=concept-event>event</span> was
 <span title=concept-event-dispatch>dispatched</span> (<var title>obj</var>
 above).
 
@@ -853,7 +851,7 @@ invoked, form submission will be terminated. Applications who wish to make
 use of this functionality through <span title=concept-event>events</span>
 <span title=concept-event-dispatch>dispatched</span> by the application
 (synthetic events) can make use of the return value of the
-<code title=dom-EventTarget-dispatchEvent>dispatchEvent()</code> method.
+<code title=dom-EventTarget-dispatchEvent>dispatchEvent()</code> method:
 
 <pre><code>if(obj.dispatchEvent(event)) {
   // event was not canceled, time for some magic
@@ -861,7 +859,7 @@ use of this functionality through <span title=concept-event>events</span>
 }</code></pre>
 
 <p>When an <span title=concept-event>event</span> is
-<span title=concept-event-dispatch>dispatched</span> on an object that
+<span title=concept-event-dispatch>dispatched</span> to an object that
 <span title=concept-tree-participate>participates</span> in a
 <span title=concept-tree>tree</span> (e.g. an
 <span title=concept-element>element</span>), it can reach
@@ -876,10 +874,10 @@ finally, and only if <span title=concept-event>event</span>'s
 <span title=dom-Event-bubbles>bubbles</span> attribute value is true,
 object's  <span title=concept-tree-ancestor>ancestor</span>
 <span title=concept-event-listener>event listeners</span> are invoked again,
-but in reverse <span title=concept-tree-order>tree order</span>.
+but now in reverse <span title=concept-tree-order>tree order</span>.
 
 <p>Lets look at an example on how <span title=concept-event>events</span>
-work in a <span title=concept-tree>tree</span>.
+work in a <span title=concept-tree>tree</span>:
 
 <pre><code>&lt;!doctype html>
 &lt;html>
@@ -913,7 +911,7 @@ to <code title=dom-Event-BUBBLING_PHASE>BUBBLING_PHASE</code>. If an
 <span title=concept-event-listener>event listener</span> was registered for
 the <code title>span</code> <span title=concept-element>element</span>,
 <code title=dom-Event-eventPhase>eventPhase</code> attribute's value
-would be <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
+would have been <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
 
 
 <h3>Interface <code>Event</code></h3>
@@ -969,7 +967,7 @@ inherits from the <code>Event</code> interface.</p>
 
  <dt><code><var title>event</var> . <span title=dom-Event-target>target</span></code>
  <dd><p>Returns the object <var title>event</var> is
- <span title=concept-event-dispatch>dispatched</span> upon.
+ <span title=concept-event-dispatch>dispatched</span> to.
 
  <dt><code><var title>event</var> . <span title=dom-Event-currentTarget>currentTarget</span></code>
  <dd><p>Returns the object whose
@@ -1048,7 +1046,7 @@ the following:</p>
 <dl>
  <dt><dfn title=dom-Event-CAPTURING_PHASE><code>CAPTURING_PHASE</code></dfn> (numeric value 1)</dt>
  <dd><p>When an <span title=concept-event>event</span> is
- <span title=concept-event-dispatch>dispatched</span> on an object that
+ <span title=concept-event-dispatch>dispatched</span> to an object that
  <span title=concept-tree-participate>participates</span> in a
  <span title=concept-tree>tree</span> it will be in this phase before it
  reaches its <code title=dom-Event-target>target</code> attribute value.
@@ -1058,7 +1056,7 @@ the following:</p>
  phase on its <code title=dom-Event-target>target</code> attribute value.
  <dt><dfn title=dom-Event-BUBBLING_PHASE><code>BUBBLING_PHASE</code></dfn> (numeric value 3)
  <dd><p>When an <span title=concept-event>event</span> is
- <span title=concept-event-dispatch>dispatched</span> on an object that
+ <span title=concept-event-dispatch>dispatched</span> to an object that
  <span title=concept-tree-participate>participates</span> in a
  <span title=concept-tree>tree</span> it will be in this phase after it
  reaches its <code title=dom-Event-target>target</code> attribute value.
@@ -1216,7 +1214,7 @@ callback interface <dfn>EventListener</dfn> {
   void <span title=dom-EventListener-handleEvent>handleEvent</span>(<span>Event</span> <var title>event</var>);
 };</pre>
 
-<p><code>EventTarget</code> is an object upon which an
+<p><code>EventTarget</code> is an object to which an
 <span title=concept-event>event</span> is
 <span title=concept-event-dispatch>dispatched</span> when something has
 occurred. Each <code>EventTarget</code> has an associated list of
@@ -1238,9 +1236,8 @@ for a specific <span title=concept-event>event</span>. Each
   <b>callback</b> that will be invoked when the
   <span title=concept-event>event</span> is
   <span title=concept-event-dispatch>dispatched</span>. When set to true,
-  the
-  <var title>capture</var> argument ensures <b>callback</b> is only invoked
-  when the <span title=concept-event>event</span>'s
+  the <var title>capture</var> argument ensures <b>callback</b> is only
+  invoked when the <span title=concept-event>event</span>'s
   <code title=dom-Event-eventPhase>eventPhase</code> attribute value is
   <code title=dom-Event-CAPTURING_PHASE>CAPTURING_PHASE</code>.
 
@@ -1260,7 +1257,7 @@ for a specific <span title=concept-event>event</span>. Each
 
  <dt><code><var title>target</var> . <span title=dom-EventTarget-dispatchEvent>dispatchEvent</span>(<var title>event</var>)</code>
  <dd><p><span title=concept-event-dispatch>Dispatches</span> a synthetic
- event <var title>event</var> on <var title>target</var> and returns true
+ event <var title>event</var> to <var title>target</var> and returns true
  if either <var title>event</var>'s
  <code title=dom-Event-cancelable>cancelable</code> attribute value is false
  or it's <code title=dom-Event-preventDefault>preventDefault()</code> method
@@ -1307,8 +1304,7 @@ method is invoked these steps must be run:
 <h3>Dispatching events</h3>
 
 <p>To <dfn title=concept-event-dispatch>dispatch</dfn> an
-<span title=concept-event>event</span> on a given object run these
-steps:</p>
+<span title=concept-event>event</span> to a given object run these steps:
 <!-- other specifications turn this into a requirement  -->
 
 <ol>
@@ -1318,7 +1314,7 @@ steps:</p>
  <li><p>Set <var title>event</var>'s <span>dispatch flag</span>.
 
  <li><p>Initialize <var title>event</var>'s
- <code title=dom-Event-target>target</code> attribute to the object on which
+ <code title=dom-Event-target>target</code> attribute to the object to which
  <var title>event</var> is dispatched.
 
  <li><p>If <var title>event</var>'s
@@ -1443,8 +1439,7 @@ means that an <span title=concept-event>event</span> using the
 <code title=dom-Event-type>type</code> attribute initialized to
 <var title>e</var>, and its <code title=dom-Event-isTrusted>isTrusted</code>
 attribute initialized to true, is to be
-<span title=concept-event-dispatch>dispatched</span> at the given
-object.</p>
+<span title=concept-event-dispatch>dispatched</span> to the given object.
 
 <p class=note>Fire is short for initializing and
 <span title=concept-event-dispatch>dispatching</span> an
