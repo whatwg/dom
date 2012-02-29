@@ -2038,21 +2038,38 @@ method must return the result of
 <p>Each <i title>scripting environment</i> has an associated list of
 <code>MutationObserver</code> objects which is initially empty. To
 <dfn title=concept-MO-invoke>invoke</dfn> <code>MutationObserver</code>
-objects, for each <code>MutationObserver</code> object in the
-<i title>scripting environment</i>'s list of <code>MutationObserver</code>
 objects, run these steps:
 
 <ol>
- <li><p>Let <var title>queue</var> be a copy of its
- <span title=concept-MO-queue>record queue</span>.
+ <li>
+  <p>For each <code>MutationObserver</code> object <var title>mo</var>
+  in the <i title>scripting environment</i>'s list of
+  <code>MutationObserver</code> objects, run these substeps:
 
- <li><p>If <var title>queue</var> is empty, terminate these steps. (And
- run them for the next <code>MutationObserver</code> object.)
+  <ol>
+   <li><p>Let <var title>queue</var> be a copy of <var title>mo</var>'s
+   <span title=concept-MO-queue>record queue</span>.
 
- <li><p>Empty its <span title=concept-MO-queue>record queue</span>.
+   <li><p>If <var title>queue</var> is empty, terminate these substeps. (And
+   run them for the next <code>MutationObserver</code> object.)
 
- <li><p>Invoke its <span title=concept-MO-callback>callback</span> with
- <var title>queue</var> as first argument and itself as second argument.
+   <li><p>Empty <var title>mo</var>'s
+   <span title=concept-MO-queue>record queue</span>.
+
+   <li><p>Remove all
+   <span title="transient observer">transient observers</span> whose
+   <b>observer</b> is <var title>mo</var>.
+
+   <li><p>Invoke <var title>mo</var>'s
+   <span title=concept-MO-callback>callback</span> with
+   <var title>queue</var> as first argument and <var title>mo</var> (itself)
+   as second argument.
+  </ol>
+
+ <li><p>If any <code>MutationObserver</code> object in the
+ <i title>scripting environment</i>'s list of <code>MutationObserver</code>
+ objects has a non-empty <span title=concept-MO-queue>record queue</span>
+ at this point, run these steps again.
 </ol>
 
 <p class=note>The DOM standard does not define the
@@ -2074,7 +2091,6 @@ how this concept integrates as well as when
 variable (whose default value is false). A <dfn>transient observer</dfn> is
 a <span>registered observer</span> whose <b>transient</b> variable is set to
 true.
-<!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
 
 <p>To <dfn>add a transient observer</dfn> <var title>observer</var> with options <var title>options</var>
 to a <span title=concept-node>node</span> <var title>node</var>, create a new <span>transient observer</span> with <b>observer</b> set to

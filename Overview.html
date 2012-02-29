@@ -2047,21 +2047,38 @@ method must return the result of
 <p>Each <i title="">scripting environment</i> has an associated list of
 <code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty. To
 <dfn id="concept-mo-invoke" title="concept-MO-invoke">invoke</dfn> <code><a href="#mutationobserver">MutationObserver</a></code>
-objects, for each <code><a href="#mutationobserver">MutationObserver</a></code> object in the
-<i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
 objects, run these steps:
 
 <ol>
- <li><p>Let <var title="">queue</var> be a copy of its
- <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+ <li>
+  <p>For each <code><a href="#mutationobserver">MutationObserver</a></code> object <var title="">mo</var>
+  in the <i title="">scripting environment</i>'s list of
+  <code><a href="#mutationobserver">MutationObserver</a></code> objects, run these substeps:
 
- <li><p>If <var title="">queue</var> is empty, terminate these steps. (And
- run them for the next <code><a href="#mutationobserver">MutationObserver</a></code> object.)
+  <ol>
+   <li><p>Let <var title="">queue</var> be a copy of <var title="">mo</var>'s
+   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
 
- <li><p>Empty its <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+   <li><p>If <var title="">queue</var> is empty, terminate these substeps. (And
+   run them for the next <code><a href="#mutationobserver">MutationObserver</a></code> object.)
 
- <li><p>Invoke its <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> with
- <var title="">queue</var> as first argument and itself as second argument.
+   <li><p>Empty <var title="">mo</var>'s
+   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+
+   <li><p>Remove all
+   <a href="#transient-observer" title="transient observer">transient observers</a> whose
+   <b>observer</b> is <var title="">mo</var>.
+
+   <li><p>Invoke <var title="">mo</var>'s
+   <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> with
+   <var title="">queue</var> as first argument and <var title="">mo</var> (itself)
+   as second argument.
+  </ol>
+
+ <li><p>If any <code><a href="#mutationobserver">MutationObserver</a></code> object in the
+ <i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
+ objects has a non-empty <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>
+ at this point, run these steps again.
 </ol>
 
 <p class="note">The DOM standard does not define the
@@ -2083,7 +2100,6 @@ how this concept integrates as well as when
 variable (whose default value is false). A <dfn id="transient-observer">transient observer</dfn> is
 a <a href="#registered-observer">registered observer</a> whose <b>transient</b> variable is set to
 true.
-<!-- XXX Need a cross-reference from the microtask processing model explaining when to remove transient observers -->
 
 <p>To <dfn id="add-a-transient-observer">add a transient observer</dfn> <var title="">observer</var> with options <var title="">options</var>
 to a <a href="#concept-node" title="concept-node">node</a> <var title="">node</var>, create a new <a href="#transient-observer">transient observer</a> with <b>observer</b> set to
