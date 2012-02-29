@@ -66,7 +66,8 @@
   <dt class=dontpublish>Participate:</dt>
   <dd class=dontpublish>Send feedback to
   <a href="mailto:www-dom@w3.org?subject=%5Bdom%5D%20">www-dom@w3.org</a> (<a href="http://lists.w3.org/Archives/Public/www-dom/">archives</a>) or
-  <a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM">file a bug</a> (<a href="https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---">open bugs</a>)
+  <a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM">file a bug</a>
+  (<a href="https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---">open bugs</a>)
   <dd class=dontpublish><a href="http://wiki.whatwg.org/wiki/IRC">IRC: #whatwg on Freenode</a>
 
   <dt class=now3c>Version History:
@@ -2034,6 +2035,35 @@ method must return the result of
 
 <h4>Mutation observers</h4>
 
+<p>Each <i title>scripting environment</i> has an associated list of
+<code>MutationObserver</code> objects which is initially empty. To
+<dfn title=concept-MO-invoke>invoke</dfn> <code>MutationObserver</code>
+objects, for each <code>MutationObserver</code> object in the
+<i title>scripting environment</i>'s list of <code>MutationObserver</code>
+objects, run these steps:
+
+<ol>
+ <li><p>Let <var title>queue</var> be a copy of its
+ <span title=concept-MO-queue>record queue</span>.
+
+ <li><p>If <var title>queue</var> is empty, terminate these steps. (And
+ run them for the next <code>MutationObserver</code> object.)
+
+ <li><p>Empty its <span title=concept-MO-queue>record queue</span>.
+
+ <li><p>Invoke its <span title=concept-MO-callback>callback</span> with
+ <var title>queue</var> as first argument and itself as second argument.
+</ol>
+
+<p class=note>The DOM standard does not define the
+<i title>scripting environment</i> nor its scope. A standard such as HTML
+that does define a <span data-anolis-spec=html>task queue</span> will define
+how this concept integrates as well as when
+<span title=concept-MO-invoke>invoke</span> is invoked.
+<span data-anolis-ref class=informative>HTML</span>
+
+<hr>
+
 <p>Each <span title=concept-node>node</span> has an associated list of
 <span title="registered observer">registered observers</span>.
 <!-- XXX also mention this in the <code>Node</code> section non-normatively? -->
@@ -2153,8 +2183,10 @@ to  the <span title=concept-tree>tree</span> of
 
 <p>The
 <dfn title=dom-MutationObserver><code>MutationObserver(<var>callback</var>)</code></dfn>
-constructor must return a new <code>MutationObserver</code> object with
-<span title=concept-MO-callback>callback</span> <var>callback</var>.
+constructor must create a new <code>MutationObserver</code> object with
+<span title=concept-MO-callback>callback</span> set to <var>callback</var>,
+return it, and append it object to the <i title>scripting environment</i>'s
+list of <code>MutationObserver</code> objects.
 
 <p>The
 <dfn title=dom-MutationObserver-observe><code>observe(<var title>target</var>, <var title>options</var>)</code></dfn>
