@@ -1650,8 +1650,8 @@ and its allowed <a href="#concept-tree-child" title="concept-tree-child">childre
 
 
 <p>To <dfn id="concept-node-insert" title="concept-node-insert">insert</dfn> a <var title="">node</var>
-into a <var title="">parent</var> before a <var title="">child</var>, run these
-steps:
+into a <var title="">parent</var> before a <var title="">child</var>, optionally
+with a <i title="">suppress observers flag</i>, run these steps:
 
 <ol>
  <li><p>Let <var title="">count</var> be the number of
@@ -1675,32 +1675,35 @@ steps:
  increase its <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
  <var title="">count</var>.
 
- <li><p>Let <var title="">addedNodes</var> be an ordered list of
- <a href="#concept-node" title="concept-node">nodes</a>.
+ <li><p>Let <var title="">nodes</var> be <var title="">node</var>'s
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> if <var title="">node</var> is
+ a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, or a
+ list containing solely <var title="">node</var> otherwise.
+
+ <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a> and
+ <i title="">suppress observers flag</i> is unset,
+ <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
+ with target <var title="">node</var>, removedNodes <var title="">nodes</var>,
+ nextSibling null, and previousSibling null.
 
  <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
  <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-node-remove" title="concept-node-remove">remove</a> its
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> with the
+ <i title="">suppress observers flag</i> set.
+
+ <li><p>If <i title="">suppress observers flag</i> is unset,
  <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
- with target <var title="">node</var>, removedNodes <var title="">node</var>'s
- <a href="#concept-tree-child" title="concept-tree-child">children</a>, nextSibling null, and previousSibling null.
-
- <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
- <a href="#concept-node" title="concept-node">node</a>, add its
- <a href="#concept-tree-child" title="concept-tree-child">children</a> to
- <var title="">addedNodes</var> (preserving
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>), or add
- <var title="">node</var> to <var title="">addedNodes</var> otherwise.
-
- <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">Queue a "<code>childList</code>" record</a>
  with target <var title="">parent</var>, addedNodes
- <var title="">addedNodes</var>, nextSibling <var title="">child</var>, and
+ <var title="">nodes</var>, nextSibling <var title="">child</var>, and
  previousSibling <var title="">child</var>'s
  <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a>
  or <var title="">parent</var>'s
  <a href="#concept-tree-last-child" title="concept-tree-last-child">last child</a> if
  <var title="">child</var> is null.
 
- <li><p>Insert all nodes in <var title="">addedNodes</var> before
+ <li><p>Insert all nodes in <var title="">nodes</var> before
  <var title="">child</var> or at the end of <var title="">parent</var> if
  <var title="">child</var> is null.
 </ol>
@@ -1805,11 +1808,31 @@ steps:
  <var title="">node</var> with <var title="">parent</var>'s
  <a href="#concept-node-document" title="concept-node-document">node document</a>.
 
+ <li><p>Let <var title="">nodes</var> be <var title="">node</var>'s
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> if <var title="">node</var> is
+ a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, or a
+ list containing solely <var title="">node</var> otherwise.
+
+ <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
+ with target <var title="">node</var>, removedNodes <var title="">nodes</var>,
+ nextSibling null, and previousSibling null.
+
+ <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
+ with target <var title="">parent</var>, addedNodes
+ <var title="">nodes</var>, removedNodes a list solely containing
+ <var title="">child</var>, nextSibling <var title="">reference child</var>, and
+ previousSibling <var title="">child</var>'s
+ <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a>.
+
  <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> <var title="">child</var>
- from its <var title="">parent</var>.
+ from its <var title="">parent</var> with the
+ <i title="">suppress observers flag</i> set.
 
  <li><p><a href="#concept-node-insert" title="concept-node-insert">Insert</a> <var title="">node</var>
- into <var title="">parent</var> before <var title="">reference child</var>.
+ into <var title="">parent</var> before <var title="">reference child</var> with
+ the <i title="">suppress observers flag</i>.
 
  <li><p>Return <var title="">child</var>.
 </ol>
@@ -1823,13 +1846,31 @@ steps:
  <var title="">node</var> with <var title="">parent</var>'s
  <a href="#concept-node-document" title="concept-node-document">node document</a>.
 
+ <li><p>Let <var title="">nodes</var> be <var title="">node</var>'s
+ <a href="#concept-tree-child" title="concept-tree-child">children</a> if <var title="">node</var> is
+ a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, or a
+ list containing solely <var title="">node</var> otherwise.
+
+ <li><p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
+ with target <var title="">node</var>, removedNodes <var title="">nodes</var>,
+ nextSibling null, and previousSibling null.
+
+ <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
+ with target <var title="">parent</var>, addedNodes
+ <var title="">nodes</var>, removedNodes <var title="">parent</var>'s
+ <a href="#concept-tree-child" title="concept-tree-child">children</a>, nextSibling null, and
+ previousSibling null.
+
  <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> all
  <var title="">parent</var>'s <a href="#concept-tree-child" title="concept-tree-child">children</a>,
- in <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+ with the <i title="">suppress observers flag</i> set.
 
  <li><p>If <var title="">node</var> is not null,
- <a href="#concept-node-append" title="concept-node-append">append</a> <var title="">node</var> to
- <var title="">parent</var>.
+ <a href="#concept-node-insert" title="concept-node-insert">insert</a> <var title="">node</var> into
+ <var title="">parent</var> before null with the
+ <i title="">suppress observers flag</i> set.
 </ol>
 
 <p class="note">This algorithm does not make any checks with regards to the
@@ -1854,7 +1895,8 @@ steps:
 
 
 <p>To <dfn id="concept-node-remove" title="concept-node-remove">remove</dfn> a <var title="">node</var>
-from a <var title="">parent</var>, run these steps:
+from a <var title="">parent</var>, optionally with
+<i title="">suppress observers flag</i> set, run these steps:
 
 <ol>
  <li><p>Let <var title="">index</var> be <var title="">node</var>'s
@@ -1888,7 +1930,8 @@ from a <var title="">parent</var>, run these steps:
  <var title="">index</var>, decrease its
  <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by one.
 
- <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">Queue a "<code>childList</code>" record</a>
+ <li><p>If <i title="">suppress observers flag</i> is unset,
+ <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
  with target <var title="">parent</var>, removedNodes a list solely containing
  <var title="">node</var>, nextSibling <var title="">node</var>'s
  <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>,
