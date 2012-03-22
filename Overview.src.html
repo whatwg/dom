@@ -1911,13 +1911,18 @@ from a <var title>parent</var>, optionally with
  and previousSibling <var title>node</var>'s
  <span title=concept-tree-previous-sibling>previous sibling</span>.
 
- <li><p>For each <span title=concept-tree-ancestor>ancestor</span> <var title>ancestor</var>
- of <var title>node</var>, if <var title>ancestor</var> has any
+ <li><p>For each <span title=concept-tree-ancestor>ancestor</span>
+ <var title>ancestor</var> of <var title>node</var>, if
+ <var title>ancestor</var> has any
  <span title="registered observer">registered observers</span> whose
- <b>options</b>'s <code title=dom-MutationObserverInit-subtree>subtree</code>
- is true, <span title="add a transient observer">add</span>
- an identical <span>transient observer</span> to <var title>node</var> for
- each such <span>registered observer</span> on <var title>ancestor</var>.
+ <b>options</b>'s
+ <code title=dom-MutationObserverInit-subtree>subtree</code> attribute value
+ is true, then for each such <span>registered observer</span>,
+ append a <span>transient registered observer</span> whose <b>observer</b>
+ and <b>options</b> are identical to the <span>registered observer</span> to
+ <var title>node</var>'s list of
+ <span title="registered observer">registered observers</span>.
+ <!-- XXX what about order? -->
 
  <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 </ol>
@@ -2092,8 +2097,8 @@ objects, run these steps:
    <span title=concept-MO-queue>record queue</span>.
 
    <li><p>Remove all
-   <span title="transient observer">transient observers</span> whose
-   <b>observer</b> is <var title>mo</var>.
+   <span title="transient registered observer">transient registered observers</span>
+   whose <b>observer</b> is <var title>mo</var>.
 
    <li><p>Invoke <var title>mo</var>'s
    <span title=concept-MO-callback>callback</span> with
@@ -2122,16 +2127,10 @@ artificial  boundary is made to prevent a dependency from DOM on HTML.
 <!-- XXX also mention this in the <code>Node</code> section non-normatively? -->
 
 <p>A <dfn>registered observer</dfn> consists of an <b>observer</b> (a
-<code>MutationObserver</code> object), a set of <b>options</b> (a
-<code>MutationObserverInit</code> dictionary), and a <b>transient</b>
-variable (whose default value is false). A <dfn>transient observer</dfn> is
-a <span>registered observer</span> whose <b>transient</b> variable is set to
-true.
-
-<p>To <dfn>add a transient observer</dfn> <var title>observer</var> with options <var title>options</var>
-to a <span title=concept-node>node</span> <var title>node</var>, create a new <span>transient observer</span> with <b>observer</b> set to
-<var title>observer</var> and <b>options</b> set to <var title>options</var> and append it to <var title>node</var>'s
-list of <span title="registered observer">registered observers</span>.
+<code>MutationObserver</code> object) and <b>options</b> (a
+<code>MutationObserverInit</code> dictionary). A
+<dfn>transient registered observer</dfn> is a specific type of
+<span>registered observer</span>.
 
 
 <pre class="idl">[<span title=dom-MutationObserver>Constructor</span>(<span>MutationCallback</span> <var>callback</var>)]
