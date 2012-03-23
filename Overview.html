@@ -52,8 +52,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor's-draft-22-march-2012">
-  <span class="w3conly">Editor's Draft 22 March 2012</span>
+ <h2 class="no-num no-toc" id="editor's-draft-23-march-2012">
+  <span class="w3conly">Editor's Draft 23 March 2012</span>
   </h2>
 
  <dl>
@@ -86,7 +86,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-22 March 2012, the editors have made this specification available
+23 March 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -3584,10 +3584,10 @@ for a <a href="#concept-node" title="concept-node">node</a> <var title="">root</
 
   <p>If <var title="">root</var>'s
   <a href="#concept-node-document" title="concept-node-document">node document</a> is in
-  <a href="#concept-quirks-mode" title="concept-quirks-mode">quirks mode</a>, then the comparisons
-  for the <a href="#concept-class" title="concept-class">classes</a> must be done in an
-  <a href="#ascii-case-insensitive">ASCII case-insensitive</a> manner, otherwise, the comparisons
-  must be done in a <a href="#case-sensitive">case-sensitive</a> manner.
+  <a href="#concept-document-quirks" title="concept-document-quirks">quirks mode</a>, then the
+  comparisons for the <a href="#concept-class" title="concept-class">classes</a> must be done
+  in an <a href="#ascii-case-insensitive">ASCII case-insensitive</a> manner, or in a
+  <a href="#case-sensitive">case-sensitive</a> manner otherwise.
 </ol>
 <p>When invoked with the same argument, the same <code><a href="#htmlcollection">HTMLCollection</a></code>
 object may be returned as returned by an earlier call.
@@ -3670,20 +3670,26 @@ known as <dfn id="concept-document" title="concept-document">documents</dfn>.
 behavior of certain APIs.
 
 <p>A <a href="#concept-document" title="concept-document">document</a> is always set to one of
-three modes: <dfn id="concept-no-quirks-mode" title="concept-no-quirks-mode">no-quirks mode</dfn>, the
-default; <dfn id="concept-quirks-mode" title="concept-quirks-mode">quirks mode</dfn>, used typically
-for legacy documents; and
-<dfn id="concept-limited-quirks-mode" title="concept-limited-quirks-mode">limited-quirks mode</dfn>, also known
-as "almost standards" mode. Unless
+three modes: <dfn id="concept-document-no-quirks" title="concept-document-no-quirks">no-quirks mode</dfn>, the
+default; <dfn id="concept-document-quirks" title="concept-document-quirks">quirks mode</dfn>, used
+typically for legacy documents; and
+<dfn id="concept-document-limited-quirks" title="concept-document-limited-quirks">limited-quirks mode</dfn>. Unless
 <a href="#other-applicable-specifications">other applicable specifications</a> define otherwise, a
 <a href="#concept-document" title="concept-document">document</a> must be in
-<a href="#concept-no-quirks-mode" title="concept-no-quirks-mode">no-quirks mode</a>.
+<a href="#concept-document-no-quirks" title="concept-document-no-quirks">no-quirks mode</a>.
 
 <p class="note">The mode is only ever changed from the default if the
 <a href="#concept-document" title="concept-document">document</a> is created by the
 <a class="external" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#html-parser">HTML parser</a>, based on the presence,
 absence, or value of the DOCTYPE string.
 <a class="informative" href="#refsHTML">[HTML]</a>
+
+<p class="note"><a href="#concept-document-no-quirks" title="concept-document-no-quirks">No-quirks mode</a>
+was originally known as "standards mode" and
+<a href="#concept-document-limited-quirks" title="concept-document-limited-quirks">limited-quirks mode</a> was
+once known as "almost standards mode". They have been renamed because their
+details are now defined by standards. (And because Ian Hickson vetoed their
+original names on the basis that they are nonsensical.)
 
 <hr>
 
@@ -3699,10 +3705,10 @@ absence, or value of the DOCTYPE string.
  <dd>
   <p>Returns the string "<code title="">CSS1Compat</code>" if
   <var title="">document</var> is in
-  <a href="#concept-no-quirks-mode" title="concept-no-quirks-mode">no-quirks mode</a> or
-  <a href="#concept-limited-quirks-mode" title="concept-limited-quirks-mode">limited-quirks mode</a>, and
+  <a href="#concept-document-no-quirks" title="concept-document-no-quirks">no-quirks mode</a> or
+  <a href="#concept-document-limited-quirks" title="concept-document-limited-quirks">limited-quirks mode</a>, and
   "<code title="">BackCompat</code>", if <var title="">document</var> is in
-  <a href="#concept-quirks-mode" title="concept-quirks-mode">quirks mode</a>.
+  <a href="#concept-document-quirks" title="concept-document-quirks">quirks mode</a>.
 
  <dt><var title="">document</var> . <code title="dom-Document-characterSet"><a href="#dom-document-characterset">characterSet</a></code>
  <dd><p>Returns the <a href="#concept-document-encoding" title="concept-document-encoding">encoding</a>.
@@ -3721,11 +3727,11 @@ associated with the <a href="#concept-document" title="concept-document">documen
 <dfn id="dom-document-documenturi" title="dom-Document-documentURI"><code>documentURI</code></dfn>
 attributes must return the <a href="#concept-document-url" title="concept-document-url">URL</a>.
 
-<p>The <dfn id="dom-document-compatmode" title="dom-Document-compatMode"><code>compatMode</code></dfn> IDL
-attribute must return the literal string "<code title="">CSS1Compat</code>"
-unless the <a href="#context-object">context object</a> is in
-<a href="#concept-quirks-mode" title="concept-quirks-mode">quirks mode</a>, in which case it must
-instead return the literal string "<code title="">BackCompat</code>".
+<p>The <dfn id="dom-document-compatmode" title="dom-Document-compatMode"><code>compatMode</code></dfn>
+attribute must return "<code title="">BackCompat</code>" if the
+<a href="#context-object">context object</a> is in
+<a href="#concept-document-quirks" title="concept-document-quirks">quirks mode</a>, or
+"<code title="">CSS1Compat</code>" otherwise.
 
 <p>The <dfn id="dom-document-characterset" title="dom-Document-characterSet"><code>characterSet</code></dfn>
 attribute must return the <a href="#preferred-mime-name">preferred MIME name</a> of the
