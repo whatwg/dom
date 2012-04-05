@@ -2139,9 +2139,10 @@ artificial  boundary is made to prevent a dependency from DOM on HTML.
 interface <dfn>MutationObserver</dfn> {
   void <span title=dom-MutationObserver-observe>observe</span>(<span>Node</span> <var>target</var>, <span>MutationObserverInit</span> <var>options</var>);
   void <span title=dom-MutationObserver-disconnect>disconnect</span>();
+  sequence&lt;<span>MutationRecord</span>> <span title=dom-MutationObserver-takeRecords>takeRecords</span>();
 };
 
-callback <dfn>MutationCallback</dfn> = void (<span>MutationRecord</span>[] <var>mutations</var>, <span>MutationObserver</span> <var>observer</var>);
+callback <dfn>MutationCallback</dfn> = void (sequence&lt;<span>MutationRecord</span>> <var>mutations</var>, <span>MutationObserver</span> <var>observer</var>);
 
 dictionary <dfn>MutationObserverInit</dfn> {
   boolean <span title=dom-MutationObserverInit-childList>childList</span>;
@@ -2154,7 +2155,7 @@ dictionary <dfn>MutationObserverInit</dfn> {
 };</pre>
 
 <p>A <code>MutationObserver</code> object can be used to observe mutations
-to  the <span title=concept-tree>tree</span> of
+to the <span title=concept-tree>tree</span> of
 <span title=concept-node>nodes</span>.
 
 <p>Each <code>MutationObserver</code> object has these associated concepts:
@@ -2391,6 +2392,10 @@ removedNodes <var title>removedNodes</var>, previousSibling
  Until the <code title=dom-MutationObserver-observe>observe()</code> method
  is used again, <var title>observer</var>'s
  <span title=concept-MO-callback>callback</span> will not be invoked.
+
+ <dt><code><var title>observer</var> . <span title=dom-MutationObserver-takeRecords>takeRecords</span>()</code>
+ <dd><p>Empties the <span title=concept-MO-queue>record queue</span> and
+ returns what was in there.
 </dl>
 
 <p>The
@@ -2450,6 +2455,12 @@ method must, for each <span title=concept-node>node</span>
 <span>registered observer</span> on <var title>node</var>
 for which the <span>context object</span> is the <b>observer</b>, and also
 empty <span>context object</span>'s
+<span title=concept-MO-queue>record queue</span>.
+
+<p>The
+<dfn title=dom-MutationObserver-takeRecords><code>takeRecords()</code></dfn>
+method must return a copy of the
+<span title=concept-MO-queue>record queue</span> and then empty the
 <span title=concept-MO-queue>record queue</span>.
 
 

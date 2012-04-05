@@ -13,8 +13,8 @@
 
 <div class="head">
 <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="free-editor's-draft-3-april-2012">
-  <span class="now3c">Free Editor's Draft 3 April 2012</span>
+ <h2 class="no-num no-toc" id="free-editor's-draft-5-april-2012">
+  <span class="now3c">Free Editor's Draft 5 April 2012</span>
  </h2>
 
  <dl>
@@ -44,7 +44,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-3 April 2012, the editors have made this specification available
+5 April 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2099,9 +2099,10 @@ artificial  boundary is made to prevent a dependency from DOM on HTML.
 interface <dfn id="mutationobserver">MutationObserver</dfn> {
   void <a href="#dom-mutationobserver-observe" title="dom-MutationObserver-observe">observe</a>(<a href="#node">Node</a> <var>target</var>, <a href="#mutationobserverinit">MutationObserverInit</a> <var>options</var>);
   void <a href="#dom-mutationobserver-disconnect" title="dom-MutationObserver-disconnect">disconnect</a>();
+  sequence&lt;<a href="#mutationrecord">MutationRecord</a>&gt; <a href="#dom-mutationobserver-takerecords" title="dom-MutationObserver-takeRecords">takeRecords</a>();
 };
 
-callback <dfn id="mutationcallback">MutationCallback</dfn> = void (<a href="#mutationrecord">MutationRecord</a>[] <var>mutations</var>, <a href="#mutationobserver">MutationObserver</a> <var>observer</var>);
+callback <dfn id="mutationcallback">MutationCallback</dfn> = void (sequence&lt;<a href="#mutationrecord">MutationRecord</a>&gt; <var>mutations</var>, <a href="#mutationobserver">MutationObserver</a> <var>observer</var>);
 
 dictionary <dfn id="mutationobserverinit">MutationObserverInit</dfn> {
   boolean <span title="dom-MutationObserverInit-childList">childList</span>;
@@ -2114,7 +2115,7 @@ dictionary <dfn id="mutationobserverinit">MutationObserverInit</dfn> {
 };</pre>
 
 <p>A <code><a href="#mutationobserver">MutationObserver</a></code> object can be used to observe mutations
-to  the <a href="#concept-tree" title="concept-tree">tree</a> of
+to the <a href="#concept-tree" title="concept-tree">tree</a> of
 <a href="#concept-node" title="concept-node">nodes</a>.
 
 <p>Each <code><a href="#mutationobserver">MutationObserver</a></code> object has these associated concepts:
@@ -2351,6 +2352,10 @@ removedNodes <var title="">removedNodes</var>, previousSibling
  Until the <code title="dom-MutationObserver-observe"><a href="#dom-mutationobserver-observe">observe()</a></code> method
  is used again, <var title="">observer</var>'s
  <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> will not be invoked.
+
+ <dt><code><var title="">observer</var> . <a href="#dom-mutationobserver-takerecords" title="dom-MutationObserver-takeRecords">takeRecords</a>()</code>
+ <dd><p>Empties the <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a> and
+ returns what was in there.
 </dl>
 
 <p>The
@@ -2410,6 +2415,12 @@ method must, for each <a href="#concept-node" title="concept-node">node</a>
 <a href="#registered-observer">registered observer</a> on <var title="">node</var>
 for which the <a href="#context-object">context object</a> is the <b>observer</b>, and also
 empty <a href="#context-object">context object</a>'s
+<a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+
+<p>The
+<dfn id="dom-mutationobserver-takerecords" title="dom-MutationObserver-takeRecords"><code>takeRecords()</code></dfn>
+method must return a copy of the
+<a href="#concept-mo-queue" title="concept-MO-queue">record queue</a> and then empty the
 <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
 
 
