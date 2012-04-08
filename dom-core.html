@@ -13,8 +13,8 @@
 
 <div class="head">
 <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="free-editor's-draft-6-april-2012">
-  <span class="now3c">Free Editor's Draft 6 April 2012</span>
+ <h2 class="no-num no-toc" id="free-editor's-draft-8-april-2012">
+  <span class="now3c">Free Editor's Draft 8 April 2012</span>
  </h2>
 
  <dl>
@@ -44,7 +44,7 @@
 <p class="dontpublish copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-6 April 2012, the editors have made this specification available
+8 April 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -1408,15 +1408,25 @@ initialized to true".
 
 <h3 id="introduction-to-the-dom"><span class="secno">5.1 </span>Introduction to "The DOM"</h3>
 
-<p>The API to access and manipulate markup-based resources, such as HTML and
-XML, on the web platform is the <a href="#concept-tree" title="concept-tree">tree</a> of
-<a href="#concept-node" title="concept-node">nodes</a>, commonly referred to as "The DOM".
-And although typically a <a href="#concept-document" title="concept-document">document</a> ends
-up being the <a href="#concept-tree-root" title="concept-tree-root">root</a> of such a
-<a href="#concept-tree" title="concept-tree">tree</a>, it is a "document" only in the
-broadest sense.
+<p>In its original sense, "The DOM"&mdash;the Document Object Model&mdash;is an API for
+accessing and manipulating documents (in particular, HTML and XML
+documents). In this specification, the term "document" is used for any
+markup-based resource, ranging from short static documents to long essays or
+reports with rich multimedia, as well as to fully-fledged interactive
+applications.
 
-<p>To illustrate, lets see how this HTML gets represented:
+<p>The Document Object Model presents those documents as a
+<a href="#concept-tree" title="concept-tree">tree</a> of
+<a href="#concept-node" title="concept-node">nodes</a> of various types. Some of those
+<a href="#concept-node" title="concept-node">nodes</a> can have
+<a href="#concept-tree-child" title="concept-tree-child">child</a>
+<a href="#concept-node" title="concept-node">nodes</a>, while others are leaves. These
+restrictions are explained in <a href="#node-tree">the <cite>Node tree</cite>
+section</a>, and the descriptions of the distinct types of
+<a href="#concept-node" title="concept-node">nodes</a> comprise the remaining sections in
+this chapter.
+
+<p>To illustrate, consider this HTML document:
 
 <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html class=e&gt;
@@ -1424,18 +1434,45 @@ broadest sense.
  &lt;body&gt;Why yes.&lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-<ul class="domTree"><li class="t10">DOCTYPE: <code>html</code><li class="t1"><code>HTML</code> <span class="t2"><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span><ul><li class="t1"><code>HEAD</code><ul><li class="t1"><code>TITLE</code><ul><li class="t3"><code>#text</code>: <span>Aliens?</span></ul></ul><li class="t3"><code>#text</code>: <span>
- </span><li class="t1"><code>BODY</code><ul><li class="t3"><code>#text</code>: <span>Why yes.
-</span></ul></ul></ul>
+<p>It is represented as follows:
+
+<ul class="domTree">
+ <li>
+  <a href="#concept-document" title="concept-document">Document</a>
+  <ul>
+   <li class="t10"><a href="#concept-doctype" title="concept-doctype">Doctype:</a> <code>html</code></li>
+   <li class="t1"><a href="#concept-element" title="concept-element">Element:</a> <code>html</code> <span class="t2"><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
+    <ul>
+     <li class="t1">
+      <a href="#concept-element" title="concept-element">Element:</a> <code>head</code>
+      <ul>
+       <li class="t1">
+        <a href="#concept-element" title="concept-element">Element:</a> <code>title</code>
+        <ul>
+         <li class="t3"><code><a href="#text">Text</a></code>: <span>Aliens?</span></li>
+        </ul>
+       </li>
+      </ul>
+     </li>
+     <li class="t3"><code><a href="#text">Text</a></code>: <span>&#9166;&#9251;</span></li>
+     <li class="t1">
+      <a href="#concept-element" title="concept-element">Element:</a> <code>body</code>
+      <ul>
+       <li class="t3"><code><a href="#text">Text</a></code>: <span>Why yes.&#9166;</span></li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
 
 <!--
 http://software.hixie.ch/utilities/js/live-dom-viewer/?%3C!DOCTYPE%20html%3E%0D%0A%3Chtml%20class%3De%3E%0D%0A%20%3Chead%3E%3Ctitle%3EAliens%3F%3C%2Ftitle%3E%3C%2Fhead%3E%0D%0A%20%3Cbody%3EWhy%20yes.%3C%2Fbody%3E%0D%0A%3C%2Fhtml%3E
 -->
 
-<p>The <a href="#concept-tree-root" title="concept-tree-root">root</a>
-<a href="#concept-document" title="concept-document">document</a> is omitted for brevity and
-thanks to the magic that is
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#html-parser" title="HTML parser">HTML parsing</a> not all
+<p>Note that, due to the magic that is
+<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#html-parser" title="HTML parser">HTML parsing</a>, not all
 <a href="#space-character" title="space character">space characters</a> were turned into
 <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>, but the general
 concept is clear. Markup goes in, a <a href="#concept-tree" title="concept-tree">tree</a> of
