@@ -3696,7 +3696,7 @@ object may be returned as returned by an earlier call.
   <span>Node</span> <span title=dom-Document-importNode>importNode</span>(<span>Node</span> <var title>node</var>, optional boolean <var title>deep</var> = true);
   <span>Node</span> <span title=dom-Document-adoptNode>adoptNode</span>(<span>Node</span> <var title>node</var>);
 
-  <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>eventInterfaceName</var>);
+  <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>interface</var>);
 
   <span>Range</span> <span title=dom-Document-createRange>createRange</span>();
 
@@ -4270,44 +4270,48 @@ method must run these steps:
 
 <hr>
 
-<dl class=domintro>
- <dt><var title>event</var> = <var title>document</var> . <code title=dom-Document-createEvent>createEvent(<var>eventInterfaceName</var>)</code>
- <dd>
-  <p>Returns an <span title=concept-event>event</span> using an interface
-  for which the interface name is a case-insensitive match for
-  <var title>eventInterfaceName</var>.
-  <!-- No need to mention "htmlevents" et al here. -->
-</dl>
-
-<p>When the <dfn title=dom-Document-createEvent><code>createEvent(<var>eventInterfaceName</var>)</code></dfn> methed is invoked these steps must be run:
+<!-- no "domintro" because better to use constructors -->
+<p>The
+<dfn title=dom-Document-createEvent><code>createEvent(<var title>interface</var>)</code></dfn>
+methed must run these steps:
 
 <ol>
+ <li><p>Let <var title>event</var> be null.
+
  <li>
-  <p>If <var title>eventInterfaceName</var> is an
-  <span>ASCII case-insensitive</span> match for any of the strings in the first
-  column in the following table, let <var title>eventInterfaceName</var> be the
-  string in the second column on the same row as the matching string:</p>
+  <p>If <var title>interface</var> is an
+  <span>ASCII case-insensitive</span> match for any of the strings in the
+  first column in the following table, let <var title>event</var> be the
+  interface in the second column on the same row as the matching string:
+
   <table>
-  <thead>
-   <tr><th>Input interface <th>Replacement interface
-  <tbody>
-   <tr><td>"<code title>events</code>"<td>"<code title>event</code>"
-   <tr><td>"<code title>htmlevents</code>"<td>"<code title>event</code>"
-   <tr><td>"<code title>mouseevents</code>"<td>"<code title>mouseevent</code>"
-   <tr><td>"<code title>mutationevents</code>"<td>"<code title>mutationevent</code>"
-   <tr><td>"<code title>uievents</code>"<td>"<code title>uievent</code>"
+   <thead>
+    <tr><th>String<th>Interface
+   <tbody>
+    <tr><td>"<code title>event</code>"<td rowspan=3><code>Event</code>
+    <tr><td>"<code title>events</code>"
+    <tr><td>"<code title>htmlevents</code>"
+    <tr><td>"<code title>mouseevent</code>"<td rowspan=2><code>MouseEvent</code>
+    <tr><td>"<code title>mouseevents</code>"
+    <!--
+    <tr><td>"<code title>mutationevent</code>"<td rowspan=2><code>MutationEvent</code>
+    <tr><td>"<code title>mutationevents</code>"
+    -->
+    <tr><td>"<code title>uievent</code>"<td rowspan=2><code>UIEvent</code>
+    <tr><td>"<code title>uievents</code>"
   </table>
 
- <li><p>If <var title>eventInterfaceName</var> is <em>not</em> an
- <span>ASCII case-insensitive</span> match for "<code title>event</code>" or
- for the name of an interface that inherits from the <code>Event</code>
- interface and is supported by the user agent,
- <span title=concept-throw>throw</span> a
- "<code>NotSupportedError</code>" and terminate these steps.
+ <li>
+  <p>If <var title>event</var> is null or an interface that is not
+  supported, <span title=concept-throw>throw</span> a
+  "<code>NotSupportedError</code>" and terminate these steps.
+
+  <p class=note>In practice all user agents will support the
+  <code>MouseEvent</code> and <code>UIEvent</code> interface, but this
+  specification is not going to require that to avoid a needless dependency.
 
  <li><p>Create an <span title=concept-event>event</span> implementing the
- interface whose name <var title>eventInterfaceName</var> is an
- <span>ASCII case-insensitive</span> match for and return it.
+ <var title>event</var> interface and return it.
 </ol>
 
 <p class="note">This method is pretty much obsolete as

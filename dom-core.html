@@ -13,8 +13,8 @@
 
 <div class="head">
 <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="free-editor's-draft-15-may-2012">
-  <span class="now3c">Free Editor's Draft 15 May 2012</span>
+ <h2 class="no-num no-toc" id="free-editor's-draft-1-june-2012">
+  <span class="now3c">Free Editor's Draft 1 June 2012</span>
  </h2>
 
  <dl>
@@ -44,7 +44,7 @@
 <p class="now3c copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-15 May 2012, the editors have made this specification available
+1 June 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -3654,7 +3654,7 @@ object may be returned as returned by an earlier call.
   <a href="#node">Node</a> <a href="#dom-document-importnode" title="dom-Document-importNode">importNode</a>(<a href="#node">Node</a> <var title="">node</var>, optional boolean <var title="">deep</var> = true);
   <a href="#node">Node</a> <a href="#dom-document-adoptnode" title="dom-Document-adoptNode">adoptNode</a>(<a href="#node">Node</a> <var title="">node</var>);
 
-  <a href="#event">Event</a> <a href="#dom-document-createevent" title="dom-Document-createEvent">createEvent</a>(DOMString <var title="">eventInterfaceName</var>);
+  <a href="#event">Event</a> <a href="#dom-document-createevent" title="dom-Document-createEvent">createEvent</a>(DOMString <var title="">interface</var>);
 
   <a href="#range">Range</a> <a href="#dom-document-createrange" title="dom-Document-createRange">createRange</a>();
 
@@ -4226,44 +4226,48 @@ method must run these steps:
 
 <hr>
 
-<dl class="domintro">
- <dt><var title="">event</var> = <var title="">document</var> . <code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent(<var>eventInterfaceName</var>)</a></code>
- <dd>
-  <p>Returns an <a href="#concept-event" title="concept-event">event</a> using an interface
-  for which the interface name is a case-insensitive match for
-  <var title="">eventInterfaceName</var>.
-  <!-- No need to mention "htmlevents" et al here. -->
-</dl>
-
-<p>When the <dfn id="dom-document-createevent" title="dom-Document-createEvent"><code>createEvent(<var>eventInterfaceName</var>)</code></dfn> methed is invoked these steps must be run:
+<!-- no "domintro" because better to use constructors -->
+<p>The
+<dfn id="dom-document-createevent" title="dom-Document-createEvent"><code>createEvent(<var title="">interface</var>)</code></dfn>
+methed must run these steps:
 
 <ol>
+ <li><p>Let <var title="">event</var> be null.
+
  <li>
-  <p>If <var title="">eventInterfaceName</var> is an
-  <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for any of the strings in the first
-  column in the following table, let <var title="">eventInterfaceName</var> be the
-  string in the second column on the same row as the matching string:</p>
+  <p>If <var title="">interface</var> is an
+  <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for any of the strings in the
+  first column in the following table, let <var title="">event</var> be the
+  interface in the second column on the same row as the matching string:
+
   <table>
-  <thead>
-   <tr><th>Input interface <th>Replacement interface
-  <tbody>
-   <tr><td>"<code title="">events</code>"<td>"<code title="">event</code>"
-   <tr><td>"<code title="">htmlevents</code>"<td>"<code title="">event</code>"
-   <tr><td>"<code title="">mouseevents</code>"<td>"<code title="">mouseevent</code>"
-   <tr><td>"<code title="">mutationevents</code>"<td>"<code title="">mutationevent</code>"
-   <tr><td>"<code title="">uievents</code>"<td>"<code title="">uievent</code>"
+   <thead>
+    <tr><th>String<th>Interface
+   <tbody>
+    <tr><td>"<code title="">event</code>"<td rowspan="3"><code><a href="#event">Event</a></code>
+    <tr><td>"<code title="">events</code>"
+    <tr><td>"<code title="">htmlevents</code>"
+    <tr><td>"<code title="">mouseevent</code>"<td rowspan="2"><code>MouseEvent</code>
+    <tr><td>"<code title="">mouseevents</code>"
+    <!--
+    <tr><td>"<code title>mutationevent</code>"<td rowspan=2><code>MutationEvent</code>
+    <tr><td>"<code title>mutationevents</code>"
+    -->
+    <tr><td>"<code title="">uievent</code>"<td rowspan="2"><code>UIEvent</code>
+    <tr><td>"<code title="">uievents</code>"
   </table>
 
- <li><p>If <var title="">eventInterfaceName</var> is <em>not</em> an
- <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for "<code title="">event</code>" or
- for the name of an interface that inherits from the <code><a href="#event">Event</a></code>
- interface and is supported by the user agent,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#notsupportederror">NotSupportedError</a></code>" and terminate these steps.
+ <li>
+  <p>If <var title="">event</var> is null or an interface that is not
+  supported, <a href="#concept-throw" title="concept-throw">throw</a> a
+  "<code><a href="#notsupportederror">NotSupportedError</a></code>" and terminate these steps.
+
+  <p class="note">In practice all user agents will support the
+  <code>MouseEvent</code> and <code>UIEvent</code> interface, but this
+  specification is not going to require that to avoid a needless dependency.
 
  <li><p>Create an <a href="#concept-event" title="concept-event">event</a> implementing the
- interface whose name <var title="">eventInterfaceName</var> is an
- <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for and return it.
+ <var title="">event</var> interface and return it.
 </ol>
 
 <p class="note">This method is pretty much obsolete as
