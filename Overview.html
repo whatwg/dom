@@ -52,8 +52,8 @@
 <!--end-logo-->
 </div>
  <h1>DOM4</h1>
- <h2 class="no-num no-toc" id="editor's-draft-7-july-2012">
-  <span class="w3conly">Editor's Draft 7 July 2012</span>
+ <h2 class="no-num no-toc" id="editor's-draft-31-august-2012">
+  <span class="w3conly">Editor's Draft 31 August 2012</span>
   </h2>
 
  <dl>
@@ -2669,15 +2669,6 @@ be initialized to null.
   readonly attribute <a href="#node">Node</a>? <a href="#dom-node-previoussibling" title="dom-Node-previousSibling">previousSibling</a>;
   readonly attribute <a href="#node">Node</a>? <a href="#dom-node-nextsibling" title="dom-Node-nextSibling">nextSibling</a>;
 
-  const unsigned short <a href="#dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED">DOCUMENT_POSITION_DISCONNECTED</a> = 0x01;
-  const unsigned short <a href="#dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING">DOCUMENT_POSITION_PRECEDING</a> = 0x02;
-  const unsigned short <a href="#dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING">DOCUMENT_POSITION_FOLLOWING</a> = 0x04;
-  const unsigned short <a href="#dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS">DOCUMENT_POSITION_CONTAINS</a> = 0x08;
-  const unsigned short <a href="#dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY">DOCUMENT_POSITION_CONTAINED_BY</a> = 0x10;
-  const unsigned short <span title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC">DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</span> = 0x20; // historical
-  unsigned short <a href="#dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition">compareDocumentPosition</a>(<a href="#node">Node</a> <var title="">other</var>);
-  boolean <a href="#dom-node-contains" title="dom-Node-contains">contains</a>(<a href="#node">Node</a>? <var title="">other</var>);
-
            attribute DOMString? <a href="#dom-node-nodevalue" title="dom-Node-nodeValue">nodeValue</a>;
            attribute DOMString? <a href="#dom-node-textcontent" title="dom-Node-textContent">textContent</a>;
   <a href="#node">Node</a> <a href="#dom-node-insertbefore" title="dom-Node-insertBefore">insertBefore</a>(<a href="#node">Node</a> <var title="">node</var>, <a href="#node">Node</a>? <var title="">child</var>);
@@ -2689,9 +2680,18 @@ be initialized to null.
   <!-- IE10 Developer Preview and Chrome 18 dev default the parameter to false.
   Firefox 13.0a1 and Opera Next 12.00 alpha make it required.  But for
   importNode() we default to true, and true seems more useful, so for now we
-  require true. -->
-  <a href="#node">Node</a> <a href="#dom-node-clonenode" title="dom-Node-cloneNode">cloneNode</a>(optional boolean <var title="">deep</var> = true);
+  require true.
+  --><a href="#node">Node</a> <a href="#dom-node-clonenode" title="dom-Node-cloneNode">cloneNode</a>(optional boolean <var title="">deep</var> = true);
   boolean <a href="#dom-node-isequalnode" title="dom-Node-isEqualNode">isEqualNode</a>(<a href="#node">Node</a>? <var title="">node</var>);
+
+  const unsigned short <a href="#dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED">DOCUMENT_POSITION_DISCONNECTED</a> = 0x01;
+  const unsigned short <a href="#dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING">DOCUMENT_POSITION_PRECEDING</a> = 0x02;
+  const unsigned short <a href="#dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING">DOCUMENT_POSITION_FOLLOWING</a> = 0x04;
+  const unsigned short <a href="#dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS">DOCUMENT_POSITION_CONTAINS</a> = 0x08;
+  const unsigned short <a href="#dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY">DOCUMENT_POSITION_CONTAINED_BY</a> = 0x10;
+  const unsigned short <span title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC">DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</span> = 0x20; // historical
+  unsigned short <a href="#dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition">compareDocumentPosition</a>(<a href="#node">Node</a> <var title="">other</var>);
+  boolean <a href="#dom-node-contains" title="dom-Node-contains">contains</a>(<a href="#node">Node</a>? <var title="">other</var>);
 
   DOMString <a href="#dom-node-lookupprefix" title="dom-Node-lookupPrefix">lookupPrefix</a>(DOMString? <var title="">namespace</var>);
   DOMString <a href="#dom-node-lookupnamespaceuri" title="dom-Node-lookupNamespaceURI">lookupNamespaceURI</a>(DOMString? <var title="">prefix</var>);
@@ -2911,7 +2911,7 @@ otherwise.
  <dt><code><var title="">node</var> . <a href="#dom-node-parentelement" title="dom-Node-parentElement">parentElement</a></code>
  <dd><p>Returns the <a href="#parent-element">parent element</a>.
 
- <dt><code><var title="">node</var> . <a href="#dom-node-haschildnodes" title="dom-Node-hasChildNodes">hasChildNodes</a></code>
+ <dt><code><var title="">node</var> . <a href="#dom-node-haschildnodes" title="dom-Node-hasChildNodes">hasChildNodes()</a></code>
  <dd><p>Returns whether <var title="">node</var> has
  <a href="#concept-tree-child" title="concept-tree-child">children</a>.
 
@@ -2999,110 +2999,7 @@ attribute must return the
 
 <hr>
 
-<dl class="domintro">
- <dt><code><var title="">node</var> . <a href="#dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition">compareDocumentPosition</a>(<var title="">other</var>)</code>
- <dd>
-  <p>Returns a bitmask indicating the position of <var title="">other</var>
-  relative to <var title="">node</var>. These are the bits that can be set:
-
-  <dl>
-   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED">DOCUMENT_POSITION_DISCONNECTED</a></code> (1)
-   <dd>Set when <var title="">node</var> and <var>other</var> are not in the
-   same <a href="#concept-document" title="concept-document">document</a>.
-
-   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING">DOCUMENT_POSITION_PRECEDING</a></code> (2)
-   <dd>Set when <var title="">other</var> is
-   <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
-   <var title="">node</var>.
-
-   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING">DOCUMENT_POSITION_FOLLOWING</a></code> (4)
-   <dd>Set when <var title="">other</var> is
-   <a href="#concept-tree-following" title="concept-tree-following">following</a>
-   <var title="">node</var>.
-
-   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS">DOCUMENT_POSITION_CONTAINS</a></code> (8)
-   <dd>Set when <var title="">other</var> is an
-   <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
-   <var title="">node</var>.
-
-   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY">DOCUMENT_POSITION_CONTAINED_BY</a></code> (16, 10 in hexadecimal)
-   <dd>Set when <var title="">other</var> is a
-   <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
-   <var title="">node</var>.
-  </dl>
-
- <dt><code><var title="">node</var> . <a href="#dom-node-contains" title="dom-Node-contains">contains</a>(<var title="">other</var>)</code>
- <dd><p>Returns true if <var title="">other</var> is an
- <a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a>
- of <var title="">node</var>, or false otherwise.
-</dl>
-
-<p>These are the constants
-<code title="dom-Node-compareDocumentPosition"><a href="#dom-node-comparedocumentposition">compareDocumentPosition()</a></code>
-returns as mask:
-
-<ul class="brief">
- <li><dfn id="dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><code>DOCUMENT_POSITION_DISCONNECTED</code></dfn> (1);
-
- <li><dfn id="dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING"><code>DOCUMENT_POSITION_PRECEDING</code></dfn> (2);
-
- <li><dfn id="dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><code>DOCUMENT_POSITION_FOLLOWING</code></dfn> (4);
-
- <li><dfn id="dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS"><code>DOCUMENT_POSITION_CONTAINS</code></dfn> (8);
-
- <li><dfn id="dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal).
-</ul>
-
-<p>The <dfn id="dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition"><code>compareDocumentPosition(<var>other</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title="">reference</var> be the <a href="#context-object">context object</a>.
- <li><p>If <var title="">other</var> and <var title="">reference</var> are the
- same object, return zero and terminate these steps.
-
- <li><p>If <var title="">other</var> and <var title="">reference</var> are not
- in the same <a href="#concept-tree" title="concept-tree">tree</a>, return
- <code title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><a href="#dom-node-document_position_disconnected">DOCUMENT_POSITION_DISCONNECTED</a></code>
- and terminate these steps.
- <!-- original spec also increments by implementation_specific ... -->
-
- <li><p>If <var title="">other</var> is an
- <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
- <var title="">reference</var>, return the result of adding
- <code title="dom-Node-DOCUMENT_POSITION_CONTAINS"><a href="#dom-node-document_position_contains">DOCUMENT_POSITION_CONTAINS</a></code>
- to
- <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code>
- and terminate these steps.
-
- <li><p>If <var title="">other</var> is a
- <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
- <var title="">reference</var>, return the result of adding
- <code title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><a href="#dom-node-document_position_contained_by">DOCUMENT_POSITION_CONTAINED_BY</a></code>
- to
- <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>
- and terminate these steps.
-
- <li><p>If <var title="">other</var> is
- <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
- <var title="">reference</var> return
- <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code>
- and terminate these steps.
-
- <li><p>Return
- <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>.
-</ol>
-
-<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
-     from Node -->
-
-<p>The
-<dfn id="dom-node-contains" title="dom-Node-contains"><code>contains(<var title="">other</var>)</code></dfn>
-method must return true if <var title="">other</var> is an
-<a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a> of
-the <a href="#context-object">context object</a>, or false otherwise.
-
-<hr>
+<!-- TODO: domintro -->
 
 <p>The <dfn id="dom-node-nodevalue" title="dom-Node-nodeValue"><code>nodeValue</code></dfn> attribute
 must return the following, depending on the <a href="#context-object">context object</a>:
@@ -3420,6 +3317,113 @@ false otherwise:
 </div>
 
 <hr>
+
+<dl class="domintro">
+ <dt><code><var title="">node</var> . <a href="#dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition">compareDocumentPosition</a>(<var title="">other</var>)</code>
+ <dd>
+  <p>Returns a bitmask indicating the position of <var title="">other</var>
+  relative to <var title="">node</var>. These are the bits that can be set:
+
+  <dl>
+   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED">DOCUMENT_POSITION_DISCONNECTED</a></code> (1)
+   <dd>Set when <var title="">node</var> and <var>other</var> are not in the
+   same <a href="#concept-document" title="concept-document">document</a>.
+
+   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING">DOCUMENT_POSITION_PRECEDING</a></code> (2)
+   <dd>Set when <var title="">other</var> is
+   <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+   <var title="">node</var>.
+
+   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING">DOCUMENT_POSITION_FOLLOWING</a></code> (4)
+   <dd>Set when <var title="">other</var> is
+   <a href="#concept-tree-following" title="concept-tree-following">following</a>
+   <var title="">node</var>.
+
+   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS">DOCUMENT_POSITION_CONTAINS</a></code> (8)
+   <dd>Set when <var title="">other</var> is an
+   <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+   <var title="">node</var>.
+
+   <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY">DOCUMENT_POSITION_CONTAINED_BY</a></code> (16, 10 in hexadecimal)
+   <dd>Set when <var title="">other</var> is a
+   <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
+   <var title="">node</var>.
+  </dl>
+
+ <dt><code><var title="">node</var> . <a href="#dom-node-contains" title="dom-Node-contains">contains</a>(<var title="">other</var>)</code>
+ <dd><p>Returns true if <var title="">other</var> is an
+ <a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a>
+ of <var title="">node</var>, or false otherwise.
+</dl>
+
+<p>These are the constants
+<code title="dom-Node-compareDocumentPosition"><a href="#dom-node-comparedocumentposition">compareDocumentPosition()</a></code>
+returns as mask:
+
+<ul class="brief">
+ <li><dfn id="dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><code>DOCUMENT_POSITION_DISCONNECTED</code></dfn> (1);
+
+ <li><dfn id="dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING"><code>DOCUMENT_POSITION_PRECEDING</code></dfn> (2);
+
+ <li><dfn id="dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><code>DOCUMENT_POSITION_FOLLOWING</code></dfn> (4);
+
+ <li><dfn id="dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS"><code>DOCUMENT_POSITION_CONTAINS</code></dfn> (8);
+
+ <li><dfn id="dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal).
+</ul>
+
+<p>The <dfn id="dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition"><code>compareDocumentPosition(<var>other</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title="">reference</var> be the <a href="#context-object">context object</a>.
+ <li><p>If <var title="">other</var> and <var title="">reference</var> are the
+ same object, return zero and terminate these steps.
+
+ <li><p>If <var title="">other</var> and <var title="">reference</var> are not
+ in the same <a href="#concept-tree" title="concept-tree">tree</a>, return
+ <code title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><a href="#dom-node-document_position_disconnected">DOCUMENT_POSITION_DISCONNECTED</a></code>
+ and terminate these steps.
+ <!-- original spec also increments by implementation_specific ... -->
+
+ <li><p>If <var title="">other</var> is an
+ <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
+ <var title="">reference</var>, return the result of adding
+ <code title="dom-Node-DOCUMENT_POSITION_CONTAINS"><a href="#dom-node-document_position_contains">DOCUMENT_POSITION_CONTAINS</a></code>
+ to
+ <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code>
+ and terminate these steps.
+
+ <li><p>If <var title="">other</var> is a
+ <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
+ <var title="">reference</var>, return the result of adding
+ <code title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><a href="#dom-node-document_position_contained_by">DOCUMENT_POSITION_CONTAINED_BY</a></code>
+ to
+ <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>
+ and terminate these steps.
+
+ <li><p>If <var title="">other</var> is
+ <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+ <var title="">reference</var> return
+ <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code>
+ and terminate these steps.
+
+ <li><p>Return
+ <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>.
+</ol>
+
+<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
+     from Node -->
+
+<p>The
+<dfn id="dom-node-contains" title="dom-Node-contains"><code>contains(<var title="">other</var>)</code></dfn>
+method must return true if <var title="">other</var> is an
+<a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a> of
+the <a href="#context-object">context object</a>, or false otherwise.
+
+<hr>
+
+<!-- TODO: domintro -->
 
 <!--
  XXX apparently these algorithms might not be quite correct
@@ -8889,7 +8893,7 @@ throw when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to a
 <dd>(Non-normative) <cite><a href="http://www.w3.org/TR/ElementTraversal/">Element Traversal Specification</a></cite>, Doug Schepers. W3C.
 
 <dt id="refsHTML">[HTML]
-<dd>(Non-normative) <cite><a href="http://www.whatwg.org/C">HTML</a></cite>, Ian Hickson. WHATWG.
+<dd>(Non-normative) <cite><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/">HTML</a></cite>, Ian Hickson. WHATWG.
 
 <dt id="refsIANACHARSET">[IANACHARSET]
 <dd><cite><a href="http://www.iana.org/assignments/character-sets">Character Sets</a></cite>. IANA.

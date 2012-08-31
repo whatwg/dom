@@ -2669,15 +2669,6 @@ be initialized to null.
   readonly attribute <span>Node</span>? <span title=dom-Node-previousSibling>previousSibling</span>;
   readonly attribute <span>Node</span>? <span title=dom-Node-nextSibling>nextSibling</span>;
 
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</span> = 0x01;
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</span> = 0x02;
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</span> = 0x04;
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</span> = 0x08;
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</span> = 0x10;
-  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC>DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</span> = 0x20; // historical
-  unsigned short <span title=dom-Node-compareDocumentPosition>compareDocumentPosition</span>(<span>Node</span> <var title>other</var>);
-  boolean <span title=dom-Node-contains>contains</span>(<span>Node</span>? <var title>other</var>);
-
            attribute DOMString? <span title=dom-Node-nodeValue>nodeValue</span>;
            attribute DOMString? <span title=dom-Node-textContent>textContent</span>;
   <span>Node</span> <span title=dom-Node-insertBefore>insertBefore</span>(<span>Node</span> <var title>node</var>, <span>Node</span>? <var title>child</var>);
@@ -2689,9 +2680,18 @@ be initialized to null.
   <!-- IE10 Developer Preview and Chrome 18 dev default the parameter to false.
   Firefox 13.0a1 and Opera Next 12.00 alpha make it required.  But for
   importNode() we default to true, and true seems more useful, so for now we
-  require true. -->
-  <span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var> = true);
+  require true.
+  --><span>Node</span> <span title=dom-Node-cloneNode>cloneNode</span>(optional boolean <var title>deep</var> = true);
   boolean <span title=dom-Node-isEqualNode>isEqualNode</span>(<span>Node</span>? <var title>node</var>);
+
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</span> = 0x01;
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</span> = 0x02;
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</span> = 0x04;
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</span> = 0x08;
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</span> = 0x10;
+  const unsigned short <span title=dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC>DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</span> = 0x20; // historical
+  unsigned short <span title=dom-Node-compareDocumentPosition>compareDocumentPosition</span>(<span>Node</span> <var title>other</var>);
+  boolean <span title=dom-Node-contains>contains</span>(<span>Node</span>? <var title>other</var>);
 
   DOMString <span title=dom-Node-lookupPrefix>lookupPrefix</span>(DOMString? <var title>namespace</var>);
   DOMString <span title=dom-Node-lookupNamespaceURI>lookupNamespaceURI</span>(DOMString? <var title>prefix</var>);
@@ -2911,7 +2911,7 @@ otherwise.
  <dt><code><var title>node</var> . <span title=dom-Node-parentElement>parentElement</span></code>
  <dd><p>Returns the <span>parent element</span>.
 
- <dt><code><var title>node</var> . <span title=dom-Node-hasChildNodes>hasChildNodes</span></code>
+ <dt><code><var title>node</var> . <span title=dom-Node-hasChildNodes>hasChildNodes()</span></code>
  <dd><p>Returns whether <var title>node</var> has
  <span title=concept-tree-child>children</span>.
 
@@ -2999,111 +2999,7 @@ attribute must return the
 
 <hr>
 
-<dl class=domintro>
- <dt><code><var title>node</var> . <span title=dom-Node-compareDocumentPosition>compareDocumentPosition</span>(<var title>other</var>)</code>
- <dd>
-  <p>Returns a bitmask indicating the position of <var title>other</var>
-  relative to <var title>node</var>. These are the bits that can be set:
-
-  <dl>
-   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</span></code> (1)
-   <dd>Set when <var title>node</var> and <var>other</var> are not in the
-   same <span title=concept-document>document</span>.
-
-   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</span></code> (2)
-   <dd>Set when <var title>other</var> is
-   <span title=concept-tree-preceding>preceding</span>
-   <var title>node</var>.
-
-   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</span></code> (4)
-   <dd>Set when <var title>other</var> is
-   <span title=concept-tree-following>following</span>
-   <var title>node</var>.
-
-   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</span></code> (8)
-   <dd>Set when <var title>other</var> is an
-   <span title=concept-tree-ancestor>ancestor</span> of
-   <var title>node</var>.
-
-   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</span></code> (16, 10 in hexadecimal)
-   <dd>Set when <var title>other</var> is a
-   <span title=concept-tree-descendant>descendant</span> of
-   <var title>node</var>.
-  </dl>
-
- <dt><code><var title>node</var> . <span title=dom-Node-contains>contains</span>(<var title>other</var>)</code>
- <dd><p>Returns true if <var title>other</var> is an
- <span title=concept-tree-inclusive-descendant>inclusive descendant</span>
- of <var title>node</var>, or false otherwise.
-</dl>
-
-<p>These are the constants
-<code title=dom-Node-compareDocumentPosition>compareDocumentPosition()</code>
-returns as mask:
-
-<ul class="brief">
- <li><dfn title=dom-Node-DOCUMENT_POSITION_DISCONNECTED><code>DOCUMENT_POSITION_DISCONNECTED</code></dfn> (1);
-
- <li><dfn title=dom-Node-DOCUMENT_POSITION_PRECEDING><code>DOCUMENT_POSITION_PRECEDING</code></dfn> (2);
-
- <li><dfn title=dom-Node-DOCUMENT_POSITION_FOLLOWING><code>DOCUMENT_POSITION_FOLLOWING</code></dfn> (4);
-
- <li><dfn title=dom-Node-DOCUMENT_POSITION_CONTAINS><code>DOCUMENT_POSITION_CONTAINS</code></dfn> (8);
-
- <li><dfn title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal).
-</ul>
-
-<p>The <dfn
-title=dom-Node-compareDocumentPosition><code>compareDocumentPosition(<var>other</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title>reference</var> be the <span>context object</span>.
- <li><p>If <var title>other</var> and <var title>reference</var> are the
- same object, return zero and terminate these steps.
-
- <li><p>If <var title>other</var> and <var title>reference</var> are not
- in the same <span title=concept-tree>tree</span>, return
- <code title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</code>
- and terminate these steps.
- <!-- original spec also increments by implementation_specific ... -->
-
- <li><p>If <var title>other</var> is an
- <span title=concept-tree-ancestor>ancestor</span> of
- <var title>reference</var>, return the result of adding
- <code title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</code>
- to
- <code title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</code>
- and terminate these steps.
-
- <li><p>If <var title>other</var> is a
- <span title=concept-tree-descendant>descendant</span> of
- <var title>reference</var>, return the result of adding
- <code title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</code>
- to
- <code title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</code>
- and terminate these steps.
-
- <li><p>If <var title>other</var> is
- <span title=concept-tree-preceding>preceding</span>
- <var title>reference</var> return
- <code title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</code>
- and terminate these steps.
-
- <li><p>Return
- <code title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</code>.
-</ol>
-
-<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
-     from Node -->
-
-<p>The
-<dfn title=dom-Node-contains><code>contains(<var title>other</var>)</code></dfn>
-method must return true if <var title>other</var> is an
-<span title=concept-tree-inclusive-descendant>inclusive descendant</span> of
-the <span>context object</span>, or false otherwise.
-
-<hr>
+<!-- TODO: domintro -->
 
 <p>The <dfn title=dom-Node-nodeValue><code>nodeValue</code></dfn> attribute
 must return the following, depending on the <span>context object</span>:
@@ -3421,6 +3317,114 @@ false otherwise:
 </div>
 
 <hr>
+
+<dl class=domintro>
+ <dt><code><var title>node</var> . <span title=dom-Node-compareDocumentPosition>compareDocumentPosition</span>(<var title>other</var>)</code>
+ <dd>
+  <p>Returns a bitmask indicating the position of <var title>other</var>
+  relative to <var title>node</var>. These are the bits that can be set:
+
+  <dl>
+   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</span></code> (1)
+   <dd>Set when <var title>node</var> and <var>other</var> are not in the
+   same <span title=concept-document>document</span>.
+
+   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</span></code> (2)
+   <dd>Set when <var title>other</var> is
+   <span title=concept-tree-preceding>preceding</span>
+   <var title>node</var>.
+
+   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</span></code> (4)
+   <dd>Set when <var title>other</var> is
+   <span title=concept-tree-following>following</span>
+   <var title>node</var>.
+
+   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</span></code> (8)
+   <dd>Set when <var title>other</var> is an
+   <span title=concept-tree-ancestor>ancestor</span> of
+   <var title>node</var>.
+
+   <dt><code><span>Node</span> . <span title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</span></code> (16, 10 in hexadecimal)
+   <dd>Set when <var title>other</var> is a
+   <span title=concept-tree-descendant>descendant</span> of
+   <var title>node</var>.
+  </dl>
+
+ <dt><code><var title>node</var> . <span title=dom-Node-contains>contains</span>(<var title>other</var>)</code>
+ <dd><p>Returns true if <var title>other</var> is an
+ <span title=concept-tree-inclusive-descendant>inclusive descendant</span>
+ of <var title>node</var>, or false otherwise.
+</dl>
+
+<p>These are the constants
+<code title=dom-Node-compareDocumentPosition>compareDocumentPosition()</code>
+returns as mask:
+
+<ul class="brief">
+ <li><dfn title=dom-Node-DOCUMENT_POSITION_DISCONNECTED><code>DOCUMENT_POSITION_DISCONNECTED</code></dfn> (1);
+
+ <li><dfn title=dom-Node-DOCUMENT_POSITION_PRECEDING><code>DOCUMENT_POSITION_PRECEDING</code></dfn> (2);
+
+ <li><dfn title=dom-Node-DOCUMENT_POSITION_FOLLOWING><code>DOCUMENT_POSITION_FOLLOWING</code></dfn> (4);
+
+ <li><dfn title=dom-Node-DOCUMENT_POSITION_CONTAINS><code>DOCUMENT_POSITION_CONTAINS</code></dfn> (8);
+
+ <li><dfn title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal).
+</ul>
+
+<p>The <dfn
+title=dom-Node-compareDocumentPosition><code>compareDocumentPosition(<var>other</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var title>reference</var> be the <span>context object</span>.
+ <li><p>If <var title>other</var> and <var title>reference</var> are the
+ same object, return zero and terminate these steps.
+
+ <li><p>If <var title>other</var> and <var title>reference</var> are not
+ in the same <span title=concept-tree>tree</span>, return
+ <code title=dom-Node-DOCUMENT_POSITION_DISCONNECTED>DOCUMENT_POSITION_DISCONNECTED</code>
+ and terminate these steps.
+ <!-- original spec also increments by implementation_specific ... -->
+
+ <li><p>If <var title>other</var> is an
+ <span title=concept-tree-ancestor>ancestor</span> of
+ <var title>reference</var>, return the result of adding
+ <code title=dom-Node-DOCUMENT_POSITION_CONTAINS>DOCUMENT_POSITION_CONTAINS</code>
+ to
+ <code title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</code>
+ and terminate these steps.
+
+ <li><p>If <var title>other</var> is a
+ <span title=concept-tree-descendant>descendant</span> of
+ <var title>reference</var>, return the result of adding
+ <code title=dom-Node-DOCUMENT_POSITION_CONTAINED_BY>DOCUMENT_POSITION_CONTAINED_BY</code>
+ to
+ <code title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</code>
+ and terminate these steps.
+
+ <li><p>If <var title>other</var> is
+ <span title=concept-tree-preceding>preceding</span>
+ <var title>reference</var> return
+ <code title=dom-Node-DOCUMENT_POSITION_PRECEDING>DOCUMENT_POSITION_PRECEDING</code>
+ and terminate these steps.
+
+ <li><p>Return
+ <code title=dom-Node-DOCUMENT_POSITION_FOLLOWING>DOCUMENT_POSITION_FOLLOWING</code>.
+</ol>
+
+<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
+     from Node -->
+
+<p>The
+<dfn title=dom-Node-contains><code>contains(<var title>other</var>)</code></dfn>
+method must return true if <var title>other</var> is an
+<span title=concept-tree-inclusive-descendant>inclusive descendant</span> of
+the <span>context object</span>, or false otherwise.
+
+<hr>
+
+<!-- TODO: domintro -->
 
 <!--
  XXX apparently these algorithms might not be quite correct
