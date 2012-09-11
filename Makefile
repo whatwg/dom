@@ -1,6 +1,6 @@
 ANOLIS = anolis
 
-all: Overview.html dom-core.html data/xrefs/dom/dom.json
+all: dom-core.html data/xrefs/dom/dom.json
 
 Overview.html: Overview.src.html data Makefile
 	$(ANOLIS) --output-encoding=ascii --omit-optional-tags --quote-attr-values \
@@ -9,12 +9,6 @@ Overview.html: Overview.src.html data Makefile
 
 data/xrefs/dom/dom.json: Overview.src.html Makefile
 	$(ANOLIS) --dump-xrefs=$@ $< /tmp/spec
-
-publish:: Overview.src.html data Makefile
-	$(ANOLIS) --output-encoding=ascii --omit-optional-tags --quote-attr-values \
-	--w3c-compat --enable=xspecxref --enable=refs --w3c-shortname="dom" \
-	--filter=".dontpublish, .now3c" --pubdate="$(PUBDATE)" --w3c-status=WD \
-	$< Overview.html
 
 dom-core.html: Overview.src.html data Makefile
 	$(ANOLIS) --output-encoding=ascii --omit-optional-tags --quote-attr-values \
