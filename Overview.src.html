@@ -4315,7 +4315,7 @@ with that <span title=concept-document>document</span>.
 <pre class=idl>interface <dfn>DOMImplementation</dfn> {
   <span>DocumentType</span> <span title=dom-DOMImplementation-createDocumentType>createDocumentType</span>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
   <span>XMLDocument</span> <span title=dom-DOMImplementation-createDocument>createDocument</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>, <span>DocumentType</span>? <var title>doctype</var>);
-  <span>Document</span> <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>(DOMString title);
+  <span>Document</span> <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>(optional DOMString <var title>title</var>);
 
   boolean <span title=dom-DOMImplementation-hasFeature>hasFeature</span>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 };</pre>
@@ -4358,15 +4358,13 @@ with that <span title=concept-document>document</span>.
   invoked with the same arguments.
 
 
- <dt><var title>doc</var> = <var title>document</var> . <code
- title=dom-Document-implementation>implementation</code> . <code
- title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</code>(
- <var title>title</var> )
+ <dt><code><var title>doc</var> = <var title>document</var> . <span title=dom-Document-implementation>implementation</span> . <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>([<var title>title</var>])</code>
 
  <dd>
   <p>Returns a <span title=concept-document>document</span>, with a basic
   <span title=concept-tree>tree</span> already constructed including a
-  <code title>title</code> element.
+  <code title>title</code> element, unless the <var title>title</var>
+  argument is omitted.
 
  <!-- hasFeature is obsolete -->
 </dl>
@@ -4475,15 +4473,21 @@ method must run these steps:
  namespace</span>, and  <span title=concept-node-append>append</span>
  it to the <code title>html</code> element created in the previous step.
 
- <li><p>Create a <code title>title</code> element in the <span>HTML
- namespace</span>, and  <span title=concept-node-append>append</span>
- it to the <code title>head</code> element created in the previous step.
+ <li>
+  <p>If the <var title>title</var> argument is not omitted:
 
- <li><p>Create a <code>Text</code> <span title=concept-node>node</span>, set
- its <span title=concept-CD-data>data</span> to <var title>title</var>
- (which could be the empty string), and
- <span title=concept-node-append>append</span> it to the
- <code title>title</code> element created in the previous step.
+  <ol>
+   <li><p>Create a <code title>title</code> element in the
+   <span>HTML namespace</span>, and
+   <span title=concept-node-append>append</span> it to the
+   <code title>head</code> element created in the previous step.
+
+   <li><p>Create a <code>Text</code> <span title=concept-node>node</span>,
+   set its <span title=concept-CD-data>data</span> to <var title>title</var>
+   (which could be the empty string), and
+   <span title=concept-node-append>append</span> it to the
+   <code title>title</code> element created in the previous step.
+  </ol>
 
  <li><p>Create a <code title>body</code> element in the
  <span>HTML namespace</span>, and

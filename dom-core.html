@@ -4371,7 +4371,7 @@ with that <a href="#concept-document" title="concept-document">document</a>.
 <pre class="idl">interface <dfn id="domimplementation">DOMImplementation</dfn> {
   <a href="#documenttype">DocumentType</a> <a href="#dom-domimplementation-createdocumenttype" title="dom-DOMImplementation-createDocumentType">createDocumentType</a>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
   <a href="#xmldocument">XMLDocument</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>, <a href="#documenttype">DocumentType</a>? <var title="">doctype</var>);
-  <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(DOMString title);
+  <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(optional DOMString <var title="">title</var>);
 
   boolean <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 };</pre>
@@ -4408,13 +4408,13 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   invoked with the same arguments.
 
 
- <dt><var title="">doc</var> = <var title="">document</var> . <code title="dom-Document-implementation"><a href="#dom-document-implementation">implementation</a></code> . <code title="dom-DOMImplementation-createHTMLDocument"><a href="#dom-domimplementation-createhtmldocument">createHTMLDocument</a></code>(
- <var title="">title</var> )
+ <dt><code><var title="">doc</var> = <var title="">document</var> . <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a> . <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>([<var title="">title</var>])</code>
 
  <dd>
   <p>Returns a <a href="#concept-document" title="concept-document">document</a>, with a basic
   <a href="#concept-tree" title="concept-tree">tree</a> already constructed including a
-  <code title="">title</code> element.
+  <code title="">title</code> element, unless the <var title="">title</var>
+  argument is omitted.
 
  <!-- hasFeature is obsolete -->
 </dl>
@@ -4522,15 +4522,21 @@ method must run these steps:
  namespace</a>, and  <a href="#concept-node-append" title="concept-node-append">append</a>
  it to the <code title="">html</code> element created in the previous step.
 
- <li><p>Create a <code title="">title</code> element in the <a href="#html-namespace">HTML
- namespace</a>, and  <a href="#concept-node-append" title="concept-node-append">append</a>
- it to the <code title="">head</code> element created in the previous step.
+ <li>
+  <p>If the <var title="">title</var> argument is not omitted:
 
- <li><p>Create a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>, set
- its <a href="#concept-cd-data" title="concept-CD-data">data</a> to <var title="">title</var>
- (which could be the empty string), and
- <a href="#concept-node-append" title="concept-node-append">append</a> it to the
- <code title="">title</code> element created in the previous step.
+  <ol>
+   <li><p>Create a <code title="">title</code> element in the
+   <a href="#html-namespace">HTML namespace</a>, and
+   <a href="#concept-node-append" title="concept-node-append">append</a> it to the
+   <code title="">head</code> element created in the previous step.
+
+   <li><p>Create a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
+   set its <a href="#concept-cd-data" title="concept-CD-data">data</a> to <var title="">title</var>
+   (which could be the empty string), and
+   <a href="#concept-node-append" title="concept-node-append">append</a> it to the
+   <code title="">title</code> element created in the previous step.
+  </ol>
 
  <li><p>Create a <code title="">body</code> element in the
  <a href="#html-namespace">HTML namespace</a>, and
