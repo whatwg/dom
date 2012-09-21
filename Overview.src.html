@@ -8386,11 +8386,11 @@ ordinarily be treated in a case-insensitive manner.
 
 <pre class="idl">interface <dfn>DOMTokenList</dfn> {
   readonly attribute unsigned long <span title="dom-DOMTokenList-length">length</span>;
-  getter DOMString? <span title="dom-DOMTokenList-item">item</span>(unsigned long index);
-  boolean <span title="dom-DOMTokenList-contains">contains</span>(DOMString token);
-  void <span title="dom-DOMTokenList-add">add</span>(DOMString token);
-  void <span title="dom-DOMTokenList-remove">remove</span>(DOMString token);
-  boolean <span title="dom-DOMTokenList-toggle">toggle</span>(DOMString token);
+  getter DOMString? <span title="dom-DOMTokenList-item">item</span>(unsigned long <var title>index</var>);
+  boolean <span title="dom-DOMTokenList-contains">contains</span>(DOMString <var title>token</var>);
+  void <span title="dom-DOMTokenList-add">add</span>(DOMString... <var title>tokens</var>);
+  void <span title="dom-DOMTokenList-remove">remove</span>(DOMString... <var title>tokens</var>);
+  boolean <span title="dom-DOMTokenList-toggle">toggle</span>(DOMString <var title>token</var>);
   <span title="dom-DOMTokenList-toString">stringifier</span> DOMString ();
 };</pre>
 
@@ -8410,17 +8410,21 @@ ordinarily be treated in a case-insensitive manner.
   <p>Throws a "<code>SyntaxError</code>" exception if <var title>token</var> is empty.
   <p>Throws an "<code>InvalidCharacterError</code>" exception if <var title>token</var> contains any spaces.
 
- <dt><var title>tokenlist</var> . <code title="dom-DOMTokenList-add">add</code>(<var title>token</var>)
+ <dt><code><var title>tokenlist</var> . <span title=dom-DOMTokenList-add>add</span>(<var title>tokens</var>&hellip;)</code>
  <dd>
-  <p>Adds <var title>token</var>, unless it is already present.
-  <p>Throws a "<code>SyntaxError</code>" exception if <var title>token</var> is empty.
-  <p>Throws an "<code>InvalidCharacterError</code>" exception if <var title>token</var> contains any spaces.
+  <p>Adds all arguments passed, except those already present.
+  <p>Throws a "<code>SyntaxError</code>" exception if one if the arguments
+  is the empty string.
+  <p>Throws an "<code>InvalidCharacterError</code>" exception if one of the
+  arguments contains any <span title="space character">spaces</span>.
 
- <dt><var title>tokenlist</var> . <code title="dom-DOMTokenList-remove">remove</code>(<var title>token</var>)
+ <dt><code><var title>tokenlist</var> . <code title=dom-DOMTokenList-remove>remove</code>(<var title>tokens</var>&hellip;)</code>
  <dd>
-  <p>Removes <var title>token</var> if it is present.
-  <p>Throws a "<code>SyntaxError</code>" exception if <var title>token</var> is empty.
-  <p>Throws an "<code>InvalidCharacterError</code>" exception if <var title>token</var> contains any spaces.
+  <p>Removes arguments passed, if they are present.
+  <p>Throws a "<code>SyntaxError</code>" exception if one if the arguments
+  is the empty string.
+  <p>Throws an "<code>InvalidCharacterError</code>" exception if one of the
+  arguments contains any <span title="space character">spaces</span>.
 
  <dt><var title>hastoken</var> = <var title>tokenlist</var> . <code title="dom-DOMTokenList-toggle">toggle</code>(<var title>token</var>)
  <dd>
@@ -8497,54 +8501,55 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn title="dom-DOMTokenList-add"><code>add(<var title>token</var>)</code></dfn>
+<dfn title=dom-DOMTokenList-add><code>add(<var title>tokens</var>&hellip;)</code></dfn>
 method must run these steps:
 
 <ol>
- <li>If <var title>token</var> is the empty string, then
- <span title=concept-throw>throw</span> a
- "<code>SyntaxError</code>" exception and terminate these steps.
+ <li>If one of the tokens in <var title>tokens</var> is the empty string,
+ <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
+ exception and terminate these steps.
 
- <li>If <var title>token</var> contains any
+ <li>If one of the tokens in <var title>tokens</var> contains any
  <span title="space character">space characters</span>, then
  <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these
- steps.
+ "<code>InvalidCharacterError</code>" exception and terminate these steps.
 
  <li><span title="split a string on spaces">Split</span> the
  <span title=concept-tokenlist-underlying-string>underlying string</span> on
  spaces to get the list of tokens.
 
- <li>If <var title>token</var> is a <span>case-sensitive</span> match for one of
- the tokens in the list found in the previous step, then terminate these steps.
+ <li>Remove each token in <var title>tokens</var> that is a
+ <span>case-sensitive</span> match for one of the tokens in the list found
+ in the previous step. If <var title>tokens</var> is now empty, then
+ terminate these steps.
 
  <li>If the
- <span title=concept-tokenlist-underlying-string>underlying string</span> is not
- the empty string and the last character of that string is not a
+ <span title=concept-tokenlist-underlying-string>underlying string</span> is
+ not the empty string and the last character of that string is not a
  <span>space character</span>, then append a U+0020 SPACE character to that
  string.
 
- <li>Append <var title>token</var> to the
- <span title=concept-tokenlist-underlying-string>underlying string</span>.
+ <li>Append all tokens in <var title>tokens</var> to the
+ <span title=concept-tokenlist-underlying-string>underlying string</span>
+ separated from each other by a U+0020 SPACE character, in list order.
 </ol>
 
 <p>The
-<dfn title="dom-DOMTokenList-remove"><code>remove(<var title>token</var>)</code></dfn>
+<dfn title="dom-DOMTokenList-remove"><code>remove(<var title>tokens</var>&hellip;)</code></dfn>
 method must run these steps:
 
 <ol>
- <li>If <var title>token</var> is the empty string, then
- <span title=concept-throw>throw</span> a
- "<code>SyntaxError</code>" exception and terminate these steps.
+ <li>If one of the tokens in <var title>tokens</var> is the empty string,
+ <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
+ exception and terminate these steps.
 
- <li>If <var title>token</var> contains any
+ <li>If one of the tokens in <var title>tokens</var> contains any
  <span title="space character">space characters</span>, then
  <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these
- steps.
+ "<code>InvalidCharacterError</code>" exception and terminate these steps.
 
- <li><span title="remove a token from a string">Remove</span>
- <var title>token</var> from  the
+ <li><span title="remove a token from a string">Remove</span> each token in
+ <var title>tokens</var> from  the
  <span title=concept-tokenlist-underlying-string>underlying string</span>.
 </ol>
 
