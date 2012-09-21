@@ -8,13 +8,13 @@
 
 <div class="head">
  <h1>DOM</h1>
- <h2 class="no-num no-toc" id="living-standard-—-last-updated-12-september-2012">Living Standard — Last Updated 12 September 2012</h2>
+ <h2 class="no-num no-toc" id="living-standard-—-last-updated-21-september-2012">Living Standard — Last Updated 21 September 2012</h2>
 
  <dl>
   <dt>This Version:
-  <dd class="now3c"><a href="http://dom.spec.whatwg.org/">http://dom.spec.whatwg.org/</a>
+  <dd><a href="http://dom.spec.whatwg.org/">http://dom.spec.whatwg.org/</a>
 
-  <dt class="dontpublish">Participate:</dt>
+  <dt>Participate:</dt>
   <dd class="dontpublish">Send feedback to
   <a href="mailto:www-dom@w3.org?subject=%5Bdom%5D%20">www-dom@w3.org</a> (<a href="http://lists.w3.org/Archives/Public/www-dom/">archives</a>) or
   <a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM">file a bug</a>
@@ -39,7 +39,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-12 September 2012, the editors have made this specification available
+21 September 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -1536,8 +1536,8 @@ and its allowed <a href="#concept-tree-child" title="concept-tree-child">childre
 
 <h4 id="mutation-algorithms"><span class="secno">5.2.1 </span>Mutation algorithms</h4>
 
-<p>At certain points in the algorithms below it is said that
-<dfn id="nodes-are-inserted">nodes are inserted</dfn> or <dfn id="nodes-are-removed">nodes are removed</dfn>. These are
+<p>At certain points in the algorithms below it is said that a
+<dfn id="node-is-inserted">node is inserted</dfn> or a <dfn id="node-is-removed">node is removed</dfn>. These are
 hooks for <a href="#other-applicable-specifications">other applicable specifications</a> to process the
 <a href="#concept-node" title="concept-node">nodes</a> that have been inserted or removed
 further and ensures that when multiple <a href="#concept-node" title="concept-node">nodes</a>
@@ -1713,12 +1713,14 @@ with a <i title="">suppress observers flag</i>, run these steps:
  <a href="#concept-tree-last-child" title="concept-tree-last-child">last child</a> if
  <var title="">child</var> is null.
 
- <li><p>Insert all nodes in <var title="">nodes</var> before
- <var title="">child</var> or at the end of <var title="">parent</var> if
- <var title="">child</var> is null.
+ <li><p>Insert all <a href="#concept-node" title="concept-node">nodes</a> in
+ <var title="">nodes</var> before <var title="">child</var> or at the end of
+ <var title="">parent</var> if <var title="">child</var> is null.
 
- <li><p>If <i title="">suppress observers flag</i> is unset,
- <a href="#nodes-are-inserted">nodes are inserted</a>.
+ <li><p>If <i title="">suppress observers flag</i> is unset, for each
+ <a href="#concept-node" title="concept-node">node</a> in <var title="">nodes</var>, in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a> run
+ <a href="#node-is-inserted">node is inserted</a>.
 </ol>
 
 
@@ -1844,8 +1846,11 @@ steps:
  previousSibling <var title="">child</var>'s
  <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a>.
 
- <li><p>At this point <a href="#nodes-are-removed">nodes are removed</a> and
- <a href="#nodes-are-inserted">nodes are inserted</a>.
+ <li><p>Run <a href="#node-is-removed">node is removed</a> for <var title="">child</var>, and
+ then for each <a href="#concept-node" title="concept-node">node</a> in
+ <var title="">nodes</var>, in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, run
+ <a href="#node-is-inserted">node is inserted</a>.
 
  <li><p>Return <var title="">child</var>.
 </ol>
@@ -1880,8 +1885,12 @@ steps:
  <a href="#concept-tree-child" title="concept-tree-child">children</a>, nextSibling null, and
  previousSibling null.
 
- <li><p>At this point <a href="#nodes-are-removed">nodes are removed</a> and
- <a href="#nodes-are-inserted">nodes are inserted</a>.
+ <li><p>Run <a href="#node-is-removed">node is removed</a> for each
+ <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">parent</var>, in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, and then
+ for each <a href="#concept-node" title="concept-node">node</a> in <var title="">nodes</var>, in
+ <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, run
+ <a href="#node-is-inserted">node is inserted</a>.
 </ol>
 
 <p class="note">This algorithm does not make any checks with regards to the
@@ -1964,8 +1973,8 @@ from a <var title="">parent</var>, optionally with
 
  <li><p>Remove <var title="">node</var> from its <var title="">parent</var>.
 
- <li><p>If <i title="">suppress observers flag</i> is unset,
- <a href="#nodes-are-removed">nodes are removed</a>.
+ <li><p>If <i title="">suppress observers flag</i> is unset, run
+ <a href="#node-is-removed">node is removed</a> for <var title="">node</var>.
 </ol>
 
 
@@ -8928,5 +8937,5 @@ Björn Höhrmann, Doug Schepers, Gavin Nicol, Joe Kesselman, Jonathan Robie,
 Lauren Wood, Mike Champion, Peter Sharpe, Philippe Le Hégaret, Robin Berjon,
 Steve Byrne, Tom Pixley, and Vidur Apparao.
 
-<script class="dontpublish" id="head" src="http://www.whatwg.org/specs/web-apps/current-work/dfn.js"></script>
+<script id="head" src="http://www.whatwg.org/specs/web-apps/current-work/dfn.js"></script>
 <!-- vim: set expandtab shiftwidth=1 tabstop=1 textwidth=76 -->
