@@ -8408,7 +8408,7 @@ ordinarily be treated in a case-insensitive manner.
   boolean <a href="#dom-domtokenlist-contains" title="dom-DOMTokenList-contains">contains</a>(DOMString <var title="">token</var>);
   void <a href="#dom-domtokenlist-add" title="dom-DOMTokenList-add">add</a>(DOMString... <var title="">tokens</var>);
   void <a href="#dom-domtokenlist-remove" title="dom-DOMTokenList-remove">remove</a>(DOMString... <var title="">tokens</var>);
-  boolean <a href="#dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle">toggle</a>(DOMString <var title="">token</var>);
+  boolean <a href="#dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle">toggle</a>(DOMString <var title="">token</var>, optional boolean <var title="">enable</var>);
   <a href="#dom-domtokenlist-stringifier" title="dom-DOMTokenList-stringifier">stringifier</a>;
 };</pre>
 
@@ -8444,12 +8444,13 @@ ordinarily be treated in a case-insensitive manner.
   <p>Throws an "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception if one of the
   arguments contains any <a href="#space-character" title="space character">spaces</a>.
 
- <dt><var title="">hastoken</var> = <var title="">tokenlist</var> . <code title="dom-DOMTokenList-toggle"><a href="#dom-domtokenlist-toggle">toggle</a></code>(<var title="">token</var>)
+ <dt><code><var title="">tokenlist</var> . <a href="#dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle">toggle</a>(<var title="">token</var> [, <var title="">enable</var>])</code>
  <dd>
-  <p>Adds <var title="">token</var> if it is not present, or removes
-  it if it is. Returns true if <var title="">token</var> is now
-  present (it was added); returns false if it is not (it was
-  removed).
+  <p>Adds <var title="">token</var> if it is not present and
+  <var title="">enable</var> is not false, or removes
+  <var title="">token</var> if it is present and <var title="">enable</var> is not
+  true. Returns true if <var title="">token</var> is now present, or false
+  otherwise.
   <p>Throws a "<code><a href="#syntaxerror">SyntaxError</a></code>" exception if <var title="">token</var> is empty.
   <p>Throws an "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception if <var title="">token</var> contains any spaces.
 </dl>
@@ -8572,41 +8573,50 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn id="dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle"><code>toggle(<var title="">token</var>)</code></dfn>
+<dfn id="dom-domtokenlist-toggle" title="dom-DOMTokenList-toggle"><code>toggle(<var title="">token</var>, <var title="">enable</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li>If <var title="">token</var> is the empty string, then
+ <li><p>If <var title="">token</var> is the empty string, then
  <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#syntaxerror">SyntaxError</a></code>"
  exception and terminate these steps.
 
- <li>If <var title="">token</var> contains any
+ <li><p>If <var title="">token</var> contains any
  <a href="#space-character" title="space character">space characters</a>, then
  <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception and terminate these
  steps.
 
- <li><a href="#split-a-string-on-spaces" title="split a string on spaces">Split</a> the
+ <li><p>Let <var title="">tokens</var> be the result of
+ <a href="#split-a-string-on-spaces" title="split a string on spaces">splitting</a> the
  <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> on
- spaces to get the list of tokens.
+ <a href="#space-character" title="space character">space characters</a>.
 
- <li>If <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match for one of
- the tokens in the list found in the previous step, then
+ <li><p>If <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match for
+ one of <var title="">tokens</var> and <var title="">enable</var> is not true
+ (either false or omitted), then
  <a href="#remove-a-token-from-a-string" title="remove a token from a string">remove</a>
- <var title="">token</var> from  the
+ <var title="">token</var> from the
  <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>,
- return false and terminate these steps.
+ return false, and terminate these steps.
 
- <li>If the
+ <li><p>If <var title="">token</var> is a <a href="#case-sensitive">case-sensitive</a> match for
+ one of <var title="">tokens</var> and <var title="">enable</var> is true
+ (neither false nor omitted), return true, and terminate these steps.
+
+ <li><p>If <var title="">enable</var> is false (neither true nor omitted),
+ return false, and terminate these steps.
+
+ <li><p>If the
  <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a> is
  not the empty string and the last character of that string is not a
  <a href="#space-character">space character</a>, then append a U+0020 SPACE character to that
  string.
 
- <li>Append the value of <var title="">token</var> to the
+ <li><p>Append the value of <var title="">token</var> to the
  <a href="#concept-tokenlist-underlying-string" title="concept-tokenlist-underlying-string">underlying string</a>.
 
- <li>Return true.
+ <li><p>Return true.
 </ol>
 
 <p><code><a href="#domtokenlist">DOMTokenList</a></code> objects must
@@ -8933,6 +8943,7 @@ Manish Tripathi,
 Ojan Vafai,
 Olli Pettay,
 Rick Waldron,
+Robbert Broersma,
 Rune Halvorsen,
 Ryosuke Niwa,
 Seo Sanghyeon,
