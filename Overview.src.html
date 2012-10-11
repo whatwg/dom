@@ -1630,8 +1630,8 @@ with a <i title>suppress observers flag</i>, run these steps:
   <p>If <var title>node</var> is a <code>DocumentFragment</code>
   <span title=concept-node>node</span>,
   <span title=concept-MO-queue-childList>queue a "<code>childList</code>" record</span>
-  with target <var title>node</var>, addedNodes null, removedNodes
-  <var title>nodes</var>, nextSibling null, and previousSibling null.
+  with target <var title>node</var>, and
+  removedNodes <var title>nodes</var>.
 
   <p class=note>This step does intentionally not pay attention to the
   <i title>suppress observers flag</i>.
@@ -1645,7 +1645,7 @@ with a <i title>suppress observers flag</i>, run these steps:
  <li><p>If <i title>suppress observers flag</i> is unset,
  <span title=concept-MO-queue-childList>queue a "<code>childList</code>" record</span>
  with target <var title>parent</var>, addedNodes <var title>nodes</var>,
- removedNodes null, nextSibling <var title>child</var>, and previousSibling
+ nextSibling <var title>child</var>, and previousSibling
  <var title>child</var>'s
  <span title=concept-tree-previous-sibling>previous sibling</span>
  or <var title>parent</var>'s
@@ -1819,10 +1819,9 @@ steps:
  <var title>node</var> otherwise.
 
  <li><p><span title=concept-MO-queue-childList>queue a "<code>childList</code>" record</span>
- with target <var title>parent</var>, addedNodes
- <var title>nodes</var>, removedNodes <var title>parent</var>'s
- <span title=concept-tree-child>children</span>, nextSibling null, and
- previousSibling null.
+ with target <var title>parent</var>, addedNodes <var title>nodes</var>, and
+ removedNodes <var title>parent</var>'s
+ <span title=concept-tree-child>children</span>.
 
  <li><p>Run <span>node is removed</span> for each
  <span title=concept-tree-child>child</span> of <var title>parent</var>, in
@@ -1891,7 +1890,7 @@ from a <var title>parent</var>, optionally with
 
  <li><p>If <i title>suppress observers flag</i> is unset,
  <span title=concept-MO-queue-childList>queue a "<code>childList</code>" record</span>
- with target <var title>parent</var>, addedNodes null,
+ with target <var title>parent</var>,
  removedNodes a list solely containing <var title>node</var>,
  nextSibling <var title>node</var>'s
  <span title=concept-tree-next-sibling>next sibling</span>,
@@ -2277,9 +2276,9 @@ with target <var title>target</var> and oldValue <var title>oldValue</var>, run 
 <p>To
 <dfn title=concept-MO-queue-childList>queue a "<code>childList</code>" record</dfn>
 with target <var title>target</var>, addedNodes <var title>addedNodes</var>,
-removedNodes <var title>removedNodes</var>, previousSibling
-<var title>previousSibling</var>, and nextSibling
-<var title>nextSibling</var>, run these steps:
+removedNodes <var title>removedNodes</var>,
+previousSibling <var title>previousSibling</var>, and
+nextSibling <var title>nextSibling</var>, run these steps:
 
 <ol>
  <li><p>Let <var title>record</var> be a new <code>MutationRecord</code> object with its
@@ -2460,8 +2459,8 @@ method must return a copy of the
 <pre class=idl>interface <dfn>MutationRecord</dfn> {
   readonly attribute DOMString <span title=dom-MutationRecord-type>type</span>;
   readonly attribute <span>Node</span> <span title=dom-MutationRecord-target>target</span>;
-  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
-  readonly attribute <span>NodeList</span>? <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
+  readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
+  readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
   readonly attribute <span>Node</span>? <span title=dom-MutationRecord-previousSibling>previousSibling</span>;
   readonly attribute <span>Node</span>? <span title=dom-MutationRecord-nextSibling>nextSibling</span>;
   readonly attribute DOMString? <span title=dom-MutationRecord-attributeName>attributeName</span>;
@@ -2493,7 +2492,7 @@ method must return a copy of the
  <dt><code><var title>record</var> . <span title=dom-MutationRecord-addedNodes>addedNodes</span></code>
  <dt><code><var title>record</var> . <span title=dom-MutationRecord-removedNodes>removedNodes</span></code>
  <dd><p>Return the <span title=concept-node>nodes</span> added and removed
- respectively, or null otherwise.
+ respectively.
 
  <dt><code><var title>record</var> . <span title=dom-MutationRecord-previousSibling>previousSibling</span></code>
  <dt><code><var title>record</var> . <span title=dom-MutationRecord-nextSibling>nextSibling</span></code>
@@ -2528,8 +2527,13 @@ method must return a copy of the
 attributes must return the values they were initialized to.
 
 <p>The
-<dfn title=dom-MutationRecord-addedNodes><code>addedNodes</code></dfn>,
-<dfn title=dom-MutationRecord-removedNodes><code>removedNodes</code></dfn>,
+<dfn title=dom-MutationRecord-addedNodes><code>addedNodes</code></dfn> and
+<dfn title=dom-MutationRecord-removedNodes><code>removedNodes</code></dfn>
+attributes must be return the values they were initialized to. Unless stated
+otherwise, when a <code>MutationRecord</code> object is created, they must
+both be initialized to an empty <code>NodeList</code>.
+
+<p>The
 <dfn title=dom-MutationRecord-previousSibling><code>previousSibling</code></dfn>,
 <dfn title=dom-MutationRecord-nextSibling><code>nextSibling</code></dfn>,
 <dfn title=dom-MutationRecord-attributeName><code>attributeName</code></dfn>,
