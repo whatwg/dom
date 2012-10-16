@@ -8,7 +8,7 @@
 
 <div class="head">
  <h1>DOM</h1>
- <h2 class="no-num no-toc" id="living-standard-—-last-updated-12-october-2012">Living Standard — Last Updated 12 October 2012</h2>
+ <h2 class="no-num no-toc" id="living-standard-—-last-updated-16-october-2012">Living Standard — Last Updated 16 October 2012</h2>
 
  <dl>
   <dt>This Version:
@@ -39,7 +39,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-12 October 2012, the editors have made this specification available
+16 October 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -4442,7 +4442,23 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   <code title="">title</code> element, unless the <var title="">title</var>
   argument is omitted.
 
- <!-- hasFeature is obsolete -->
+ <dt><code><var title="">document</var> .
+ <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a> .
+ <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(
+ <var title="">feature</var>, <var title="">version</var>)</code>
+
+ <dd>
+  <p>If <var title="">feature</var> is an
+  <a href="http://www.w3.org/TR/SVG/feature.html">SVG feature</a> string,
+  returns whether that feature is supported.  If <var title="">feature</var> is
+  not the empty string, only returns true if the feature is supported as
+  defined in the given version of the SVG specification (e.g.,
+  "<code title="">1.1</code>").
+
+  <p>If <var title="">feature</var> is not an SVG feature, but rather some other
+  string like "<code title="">HTML</code>" or
+  "<code title="">flibbertigibbet</code>", always returns true.  Thus, this method
+  is only useful for testing SVG features.
 </dl>
 
 <div class="impl">
@@ -4572,30 +4588,47 @@ method must run these steps:
  <li><p>Return <var title="">doc</var>.
 </ol>
 
-<p>The <dfn id="dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature"><code>hasFeature(<var title="">feature</var>, <var title="">version</var>)</code></dfn> method must return
-true for any of (<var title="">feature</var>, <var title="">version</var>) tuples
-listed below where <var title="">feature</var> is an
-<a href="#ascii-case-insensitive">ASCII case-insensitive</a> and <var title="">version</var> is a
-<a href="#case-sensitive">case-sensitive</a> match, or false otherwise.
+<p>The <dfn id="dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature"><code>hasFeature(<var title="">feature</var>, <var title="">version</var>)</code></dfn> method must run
+these steps:
 
-<ul>
- <li>("Core", "2.0")
- <li>("HTML", "1.0")
- <li>("HTML", "2.0")
- <li>("XHTML", "1.0")
- <li>("XHTML", "2.0")
- <li>("XML", "1.0")
- <li>("XML", "2.0")
-</ul>
+<ol>
+ <li><p>If <var title="">feature</var> begins with an
+ <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for one of the strings
+ "<code title="">http://www.w3.org/TR/SVG</code>",
+ "<code title="">org.w3c.dom.svg</code>", or "<code title="">org.w3c.svg</code>":
 
-<!-- Chrome supports Core/1.0; Opera supports x/undefined -->
+ <ol>
+  <li><p>If <var title="">version</var> is the empty string:
+  
+  <ol>
+   <li><p>Return true if there is some SVG specification that defines a feature
+   that is an <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for
+   <var title="">feature</var>, and the user agent meets all the requirements of
+   that specification for that feature.  Otherwise, return false.
+  </ol>
 
-<p class="XXX"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=15555">Any others?</a>
+  <li><p>Return true if <var title="">version</var> is the version identifier for
+  a known SVG specification, and that specification defines a feature that is
+  an <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for <var title="">feature</var>,
+  and the user agent meets all the requirements of that specification for that
+  feature.  Otherwise, return false.
 
-<p class="note">The
-<code title="dom-DOMImplementation-hasFeature"><a href="#dom-domimplementation-hasfeature">hasFeature()</a></code> is a badly
-designed method (features are notoriously unreliable and imprecise) that is
-now effectively obsolete and only needs to be  supported for deployed content.
+  <p class="XXX">What happens if a feature is only defined in 1.1 but the version
+  string passed is 1.0?  Most UAs return true in this case too, but do we want
+  to spec that?
+ </ol>
+
+ <li><p>Return true.
+</ol>
+
+<p class="note"><code title="dom-DOMImplementation-hasFeature"><a href="#dom-domimplementation-hasfeature">hasFeature()</a></code>
+originally would report whether the user agent claimed to support a given DOM
+feature, but experience proved it was not nearly as reliable or granular as
+simply checking whether the desired interfaces, attributes, or methods existed.
+As such, it should no longer be used, but continues to exist (and simply
+returns true) so that old pages don't stop working.  SVG features are a
+separate mechanism that reused the existing method, so they continue to work as
+a special case.
 
 </div>
 
