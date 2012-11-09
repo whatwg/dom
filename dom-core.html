@@ -96,22 +96,25 @@ documents.
     <ol>
      <li><a href="#mutation-algorithms"><span class="secno">5.2.1 </span>Mutation algorithms</a></li>
      <li><a href="#mutation-methods"><span class="secno">5.2.2 </span>Mutation methods</a></li>
-     <li><a href="#legacy-mutation-methods"><span class="secno">5.2.3 </span>Legacy mutation methods</a></li>
-     <li><a href="#mutation-observers"><span class="secno">5.2.4 </span>Mutation observers</a></li>
-     <li><a href="#interface-mutationrecord"><span class="secno">5.2.5 </span>Interface <code>MutationRecord</code></a></ol></li>
-   <li><a href="#interface-node"><span class="secno">5.3 </span>Interface <code>Node</code></a></li>
-   <li><a href="#interface-document"><span class="secno">5.4 </span>Interface <code>Document</code></a>
+     <li><a href="#legacy-mutation-methods"><span class="secno">5.2.3 </span>Legacy mutation methods</a></ol></li>
+   <li><a href="#mutation-observers"><span class="secno">5.3 </span>Mutation observers</a>
     <ol>
-     <li><a href="#interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
-   <li><a href="#interface-documentfragment"><span class="secno">5.5 </span>Interface <code>DocumentFragment</code></a></li>
-   <li><a href="#interface-documenttype"><span class="secno">5.6 </span>Interface <code>DocumentType</code></a></li>
-   <li><a href="#interface-element"><span class="secno">5.7 </span>Interface <code>Element</code></a>
+     <li><a href="#interface-mutationobserver"><span class="secno">5.3.1 </span>Interface <code>MutationObserver</code></a></li>
+     <li><a href="#queuing-a-mutation-record"><span class="secno">5.3.2 </span>Queuing a mutation record</a></li>
+     <li><a href="#interface-mutationrecord"><span class="secno">5.3.3 </span>Interface <code>MutationRecord</code></a></ol></li>
+   <li><a href="#interface-node"><span class="secno">5.4 </span>Interface <code>Node</code></a></li>
+   <li><a href="#interface-document"><span class="secno">5.5 </span>Interface <code>Document</code></a>
     <ol>
-     <li><a href="#interface-attr"><span class="secno">5.7.1 </span>Interface <code>Attr</code></a></ol></li>
-   <li><a href="#interface-characterdata"><span class="secno">5.8 </span>Interface <code>CharacterData</code></a></li>
-   <li><a href="#interface-text"><span class="secno">5.9 </span>Interface <code>Text</code></a></li>
-   <li><a href="#interface-processinginstruction"><span class="secno">5.10 </span>Interface <code>ProcessingInstruction</code></a></li>
-   <li><a href="#interface-comment"><span class="secno">5.11 </span>Interface <code>Comment</code></a></ol></li>
+     <li><a href="#interface-domimplementation"><span class="secno">5.5.1 </span>Interface <code>DOMImplementation</code></a></ol></li>
+   <li><a href="#interface-documentfragment"><span class="secno">5.6 </span>Interface <code>DocumentFragment</code></a></li>
+   <li><a href="#interface-documenttype"><span class="secno">5.7 </span>Interface <code>DocumentType</code></a></li>
+   <li><a href="#interface-element"><span class="secno">5.8 </span>Interface <code>Element</code></a>
+    <ol>
+     <li><a href="#interface-attr"><span class="secno">5.8.1 </span>Interface <code>Attr</code></a></ol></li>
+   <li><a href="#interface-characterdata"><span class="secno">5.9 </span>Interface <code>CharacterData</code></a></li>
+   <li><a href="#interface-text"><span class="secno">5.10 </span>Interface <code>Text</code></a></li>
+   <li><a href="#interface-processinginstruction"><span class="secno">5.11 </span>Interface <code>ProcessingInstruction</code></a></li>
+   <li><a href="#interface-comment"><span class="secno">5.12 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#ranges"><span class="secno">6 </span>Ranges</a>
   <ol>
    <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></ol></li>
@@ -2118,7 +2121,7 @@ method must return the result of
 <var title="">child</var> from the <a href="#context-object">context object</a>.
 
 
-<h4 id="mutation-observers"><span class="secno">5.2.4 </span>Mutation observers</h4>
+<h3 id="mutation-observers"><span class="secno">5.3 </span>Mutation observers</h3>
 
 <p>Each <i title="">scripting environment</i> has an associated list of
 <code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty. To
@@ -2178,6 +2181,8 @@ artificial  boundary is made to prevent a dependency from DOM on HTML.
 <a href="#registered-observer">registered observer</a>.
 
 
+<h4 id="interface-mutationobserver"><span class="secno">5.3.1 </span>Interface <code><a href="#mutationobserver">MutationObserver</a></code></h4>
+
 <pre class="idl">[<a href="#dom-mutationobserver" title="dom-MutationObserver">Constructor</a>(<a href="#mutationcallback">MutationCallback</a> <var>callback</var>)]
 interface <dfn id="mutationobserver">MutationObserver</dfn> {
   void <a href="#dom-mutationobserver-observe" title="dom-MutationObserver-observe">observe</a>(<a href="#node">Node</a> <var>target</var>, <a href="#mutationobserverinit">MutationObserverInit</a> <var>options</var>);
@@ -2208,105 +2213,6 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
  <li><p>A list of <code><a href="#mutationrecord">MutationRecord</a></code> objects called the
  <dfn id="concept-mo-queue" title="concept-MO-queue">record queue</dfn> that is initially empty.
 </ul>
-
-<p>To <dfn id="queue-a-mutation-record">queue a mutation record</dfn> of <var title="">type</var> for
-<var title="">target</var> with one or more of (depends on
-<var title="">type</var>) name <var title="">name</var>, namespace
-<var title="">namespace</var>, oldValue <var title="">oldValue</var>, addedNodes
-<var title="">addedNodes</var>, removedNodes <var title="">removedNodes</var>,
-previousSibling <var title="">previousSibling</var>, and nextSibling
-<var title="">nextSibling</var>, run these steps:
-
-<ol>
- <li><p>Let <var title="">record</var> be a new <code><a href="#mutationrecord">MutationRecord</a></code>
- object with its <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> set to
- <var title="">type</var> and
- <code title="dom-MutationRecord-target"><a href="#dom-mutationrecord-target">target</a></code> set to
- <var title="">target</var>.
-
- <li><p>If <var title="">name</var> and <var title="">namespace</var> are given,
- set <var title="">record</var>'s
- <code title="dom-MutationRecord-attributeName"><a href="#dom-mutationrecord-attributename">attributeName</a></code> to
- <var title="">name</var>, and <var title="">record</var>'s
- <code title="dom-MutationRecord-attributeNamespace"><a href="#dom-mutationrecord-attributenamespace">attributeNamespace</a></code>
- to <var title="">namespace</var>.
-
- <li><p>If <var title="">addedNodes</var>, <var title="">removedNodes</var>,
- <var title="">previousSibling</var>, and <var title="">nextSibling</var> are
- given, set <var title="">record</var>'s
- <code title="dom-MutationRecord-addedNodes"><a href="#dom-mutationrecord-addednodes">addedNodes</a></code> to
- <var title="">addedNodes</var>, <var title="">record</var>'s
- <code title="dom-MutationRecord-removedNodes"><a href="#dom-mutationrecord-removednodes">removedNodes</a></code> to
- <var title="">removedNodes</var>, <var title="">record</var>'s
- <code title="dom-MutationRecord-previousSibling"><a href="#dom-mutationrecord-previoussibling">previousSibling</a></code> to
- <var title="">previousSibling</var>, and <var title="">record</var>'s
- <code title="dom-MutationRecord-nextSibling"><a href="#dom-mutationrecord-nextsibling">nextSibling</a></code> to
- <var title="">nextSibling</var>.
-
- <li><p>Let <var title="">interested observers</var> be an initially empty set
- of <code><a href="#mutationobserver">MutationObserver</a></code> objects optionally paired with a string.
-
- <li><p>Let <var title="">nodes</var> be the
- <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestors</a> of
- <var title="">target</var>.
-
- <li>
-  <p>Then, for each <var title="">node</var> in <var title="">nodes</var>, and
-  then for each <var title="">registered observer</var> (with
-  <var title="">registered observer</var>'s <b title="">options</b> as
-  <var title="">options</var>) in <var title="">node</var>'s list of
-  <a href="#registered-observer" title="registered observer">registered observers</a>:
-
-  <ol>
-   <li><p>If <var title="">node</var> is not <var title="">target</var> and
-   <var title="">options</var>'s <code title="">subtree</code> is false, continue.
-
-   <li><p>If <var title="">type</var> is "<code title="">attributes</code>" and
-   <var title="">options</var>'s <code title="">attributes</code> is false,
-   continue.
-
-   <li><p>If <var title="">type</var> is "<code title="">attributes</code>",
-   <var title="">options</var>'s <code title="">attributeFilter</code> is
-   non-empty, and either <var title="">options</var>'s
-   <code title="">attributeFilter</code> not contain <var title="">name</var> or
-   <var title="">namespace</var> is non-null, continue.
-
-   <li><p>If <var title="">type</var> is "<code title="">characterData</code>" and
-   <var title="">options</var>'s <code title="">characterData</code> is false,
-   continue.
-
-   <li><p>If <var title="">type</var> is "<code title="">childList</code>" and
-   <var title="">options</var>'s <code title="">childList</code> is false,
-   continue.
-
-   <li><p>If <var title="">registered observer</var>'s <b title="">observer</b> is
-   not in <var title="">interested observers</var>, append
-   <var title="">registered observer</var>'s <b title="">observer</b> to
-   <var title="">interested observers</var>.
-
-   <li><p>If either <var title="">type</var> is "<code title="">attributes</code>"
-   and <var title="">options</var>'s <code>attributeOldValue</code> is true, or
-   <var title="">type</var> is "<code title="">characterData</code>" and
-   <var title="">options</var>'s <code>characterDataOldValue</code> is true,
-   set the paired string of
-   <var title="">registered observer</var>'s <b title="">observer</b> in
-   <var title="">interested observers</var> to <var title="">oldValue</var>.
-  </ol>
-
- <li>
-  <p>Then, for each <var title="">observer</var> in
-  <var title="">interested observers</var>:
-
-  <ol>
-   <li><p>If <var title="">observer</var> has a paired string,
-   set <var title="">record</var>'s <code title="">oldValue</code> to
-   <var title="">observer</var>'s paired string.
-
-   <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
-   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-  </ol>
-</ol>
-
 
 <dl class="domintro">
  <dt><code>var <var title="">observer</var> = new <a href="#dom-mutationobserver" title="dom-MutationObserver">MutationObserver</a>(<var title="">callback</var>)</code>
@@ -2448,7 +2354,108 @@ method must return a copy of the
 <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
 
 
-<h4 id="interface-mutationrecord"><span class="secno">5.2.5 </span>Interface <code><a href="#mutationrecord">MutationRecord</a></code></h4>
+<h4 id="queuing-a-mutation-record"><span class="secno">5.3.2 </span>Queuing a mutation record</h4>
+
+<p>To <dfn id="queue-a-mutation-record">queue a mutation record</dfn> of <var title="">type</var> for
+<var title="">target</var> with one or more of (depends on
+<var title="">type</var>) name <var title="">name</var>, namespace
+<var title="">namespace</var>, oldValue <var title="">oldValue</var>, addedNodes
+<var title="">addedNodes</var>, removedNodes <var title="">removedNodes</var>,
+previousSibling <var title="">previousSibling</var>, and nextSibling
+<var title="">nextSibling</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">record</var> be a new <code><a href="#mutationrecord">MutationRecord</a></code>
+ object with its <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> set to
+ <var title="">type</var> and
+ <code title="dom-MutationRecord-target"><a href="#dom-mutationrecord-target">target</a></code> set to
+ <var title="">target</var>.
+
+ <li><p>If <var title="">name</var> and <var title="">namespace</var> are given,
+ set <var title="">record</var>'s
+ <code title="dom-MutationRecord-attributeName"><a href="#dom-mutationrecord-attributename">attributeName</a></code> to
+ <var title="">name</var>, and <var title="">record</var>'s
+ <code title="dom-MutationRecord-attributeNamespace"><a href="#dom-mutationrecord-attributenamespace">attributeNamespace</a></code>
+ to <var title="">namespace</var>.
+
+ <li><p>If <var title="">addedNodes</var>, <var title="">removedNodes</var>,
+ <var title="">previousSibling</var>, and <var title="">nextSibling</var> are
+ given, set <var title="">record</var>'s
+ <code title="dom-MutationRecord-addedNodes"><a href="#dom-mutationrecord-addednodes">addedNodes</a></code> to
+ <var title="">addedNodes</var>, <var title="">record</var>'s
+ <code title="dom-MutationRecord-removedNodes"><a href="#dom-mutationrecord-removednodes">removedNodes</a></code> to
+ <var title="">removedNodes</var>, <var title="">record</var>'s
+ <code title="dom-MutationRecord-previousSibling"><a href="#dom-mutationrecord-previoussibling">previousSibling</a></code> to
+ <var title="">previousSibling</var>, and <var title="">record</var>'s
+ <code title="dom-MutationRecord-nextSibling"><a href="#dom-mutationrecord-nextsibling">nextSibling</a></code> to
+ <var title="">nextSibling</var>.
+
+ <li><p>Let <var title="">interested observers</var> be an initially empty set
+ of <code><a href="#mutationobserver">MutationObserver</a></code> objects optionally paired with a string.
+
+ <li><p>Let <var title="">nodes</var> be the
+ <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestors</a> of
+ <var title="">target</var>.
+
+ <li>
+  <p>Then, for each <var title="">node</var> in <var title="">nodes</var>, and
+  then for each <var title="">registered observer</var> (with
+  <var title="">registered observer</var>'s <b title="">options</b> as
+  <var title="">options</var>) in <var title="">node</var>'s list of
+  <a href="#registered-observer" title="registered observer">registered observers</a>:
+
+  <ol>
+   <li><p>If <var title="">node</var> is not <var title="">target</var> and
+   <var title="">options</var>'s <code title="">subtree</code> is false, continue.
+
+   <li><p>If <var title="">type</var> is "<code title="">attributes</code>" and
+   <var title="">options</var>'s <code title="">attributes</code> is false,
+   continue.
+
+   <li><p>If <var title="">type</var> is "<code title="">attributes</code>",
+   <var title="">options</var>'s <code title="">attributeFilter</code> is
+   non-empty, and either <var title="">options</var>'s
+   <code title="">attributeFilter</code> not contain <var title="">name</var> or
+   <var title="">namespace</var> is non-null, continue.
+
+   <li><p>If <var title="">type</var> is "<code title="">characterData</code>" and
+   <var title="">options</var>'s <code title="">characterData</code> is false,
+   continue.
+
+   <li><p>If <var title="">type</var> is "<code title="">childList</code>" and
+   <var title="">options</var>'s <code title="">childList</code> is false,
+   continue.
+
+   <li><p>If <var title="">registered observer</var>'s <b title="">observer</b> is
+   not in <var title="">interested observers</var>, append
+   <var title="">registered observer</var>'s <b title="">observer</b> to
+   <var title="">interested observers</var>.
+
+   <li><p>If either <var title="">type</var> is "<code title="">attributes</code>"
+   and <var title="">options</var>'s <code>attributeOldValue</code> is true, or
+   <var title="">type</var> is "<code title="">characterData</code>" and
+   <var title="">options</var>'s <code>characterDataOldValue</code> is true,
+   set the paired string of
+   <var title="">registered observer</var>'s <b title="">observer</b> in
+   <var title="">interested observers</var> to <var title="">oldValue</var>.
+  </ol>
+
+ <li>
+  <p>Then, for each <var title="">observer</var> in
+  <var title="">interested observers</var>:
+
+  <ol>
+   <li><p>If <var title="">observer</var> has a paired string,
+   set <var title="">record</var>'s <code title="">oldValue</code> to
+   <var title="">observer</var>'s paired string.
+
+   <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
+   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+  </ol>
+</ol>
+
+
+<h4 id="interface-mutationrecord"><span class="secno">5.3.3 </span>Interface <code><a href="#mutationrecord">MutationRecord</a></code></h4>
 
 <pre class="idl">interface <dfn id="mutationrecord">MutationRecord</dfn> {
   readonly attribute DOMString <a href="#dom-mutationrecord-type" title="dom-MutationRecord-type">type</a>;
@@ -2538,7 +2545,7 @@ otherwise, when a <code><a href="#mutationrecord">MutationRecord</a></code> obje
 be initialized to null.
 
 
-<h3 id="interface-node"><span class="secno">5.3 </span>Interface <code><a href="#node">Node</a></code></h3>
+<h3 id="interface-node"><span class="secno">5.4 </span>Interface <code><a href="#node">Node</a></code></h3>
 <pre class="idl">interface <dfn id="node">Node</dfn> : <a href="#eventtarget">EventTarget</a> {
   const unsigned short <a href="#dom-node-element_node" title="dom-Node-ELEMENT_NODE">ELEMENT_NODE</a> = 1;
   const unsigned short <span title="dom-Node-ATTRIBUTE_NODE">ATTRIBUTE_NODE</span> = 2; // historical
@@ -3611,7 +3618,7 @@ object may be returned as returned by an earlier call.
 
 
 
-<h3 id="interface-document"><span class="secno">5.4 </span>Interface <code><a href="#document">Document</a></code></h3>
+<h3 id="interface-document"><span class="secno">5.5 </span>Interface <code><a href="#document">Document</a></code></h3>
 <pre class="idl">[<a href="#dom-document" title="dom-Document">Constructor</a>]
 interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   readonly attribute <a href="#domimplementation">DOMImplementation</a> <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a>;
@@ -4324,7 +4331,7 @@ method must run these steps:
 
 
 
-<h4 id="interface-domimplementation"><span class="secno">5.4.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
+<h4 id="interface-domimplementation"><span class="secno">5.5.1 </span>Interface <code><a href="#domimplementation">DOMImplementation</a></code></h4>
 <p>User agents must create a <code><a href="#domimplementation">DOMImplementation</a></code> object whenever
 a <a href="#concept-document" title="concept-document">document</a> is created and associate it
 with that <a href="#concept-document" title="concept-document">document</a>.
@@ -4568,7 +4575,7 @@ a special case.
 </div>
 
 
-<h3 id="interface-documentfragment"><span class="secno">5.5 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
+<h3 id="interface-documentfragment"><span class="secno">5.6 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
 <pre class="idl">interface <dfn id="documentfragment">DocumentFragment</dfn> : <a href="#node">Node</a> {
   // NEW
   void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
@@ -4577,7 +4584,7 @@ a special case.
 
 
 
-<h3 id="interface-documenttype"><span class="secno">5.6 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
+<h3 id="interface-documenttype"><span class="secno">5.7 </span>Interface <code><a href="#documenttype">DocumentType</a></code></h3>
 <pre class="idl">interface <dfn id="documenttype">DocumentType</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString <a href="#dom-documenttype-name" title="dom-DocumentType-name">name</a>;
   readonly attribute DOMString <a href="#dom-documenttype-publicid" title="dom-DocumentType-publicId">publicId</a>;
@@ -4669,7 +4676,7 @@ otherwise [createAttribute]- ->.
 -->
 
 
-<h3 id="interface-element"><span class="secno">5.7 </span>Interface <code><a href="#element">Element</a></code></h3>
+<h3 id="interface-element"><span class="secno">5.8 </span>Interface <code><a href="#element">Element</a></code></h3>
 <pre class="idl">interface <dfn id="element">Element</dfn> : <a href="#node">Node</a> {
   readonly attribute DOMString? <a href="#dom-element-namespaceuri" title="dom-Element-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-element-prefix" title="dom-Element-prefix">prefix</a>;
@@ -5241,7 +5248,7 @@ attribute must return the number of
 -->
 
 
-<h4 id="interface-attr"><span class="secno">5.7.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
+<h4 id="interface-attr"><span class="secno">5.8.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
 <pre class="idl">interface <dfn id="attr">Attr</dfn> {
   readonly attribute DOMString <a href="#dom-attr-name" title="dom-Attr-name">name</a>;
            attribute DOMString <a href="#dom-attr-value" title="dom-Attr-value">value</a>;
@@ -5346,7 +5353,7 @@ return the
 must return the <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>.
 
 
-<h3 id="interface-characterdata"><span class="secno">5.8 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
+<h3 id="interface-characterdata"><span class="secno">5.9 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
 <pre class="idl">interface <dfn id="characterdata">CharacterData</dfn> : <a href="#node">Node</a> {
   [TreatNullAs=EmptyString] attribute DOMString <a href="#dom-characterdata-data" title="dom-CharacterData-data">data</a>;
   readonly attribute unsigned long <a href="#dom-characterdata-length" title="dom-CharacterData-length">length</a>;
@@ -5544,7 +5551,7 @@ method must <a href="#concept-cd-replace" title="concept-CD-replace">replace dat
 <var title="">count</var>, and data <var title="">data</var>.
 
 
-<h3 id="interface-text"><span class="secno">5.9 </span>Interface <code><a href="#text">Text</a></code></h3>
+<h3 id="interface-text"><span class="secno">5.10 </span>Interface <code><a href="#text">Text</a></code></h3>
 <pre class="idl">interface <dfn id="text">Text</dfn> : <a href="#characterdata">CharacterData</a> {
   <a href="#text">Text</a> <a href="#dom-text-splittext" title="dom-Text-splitText">splitText</a>(unsigned long <var title="">offset</var>);
   readonly attribute DOMString <a href="#dom-text-wholetext" title="dom-Text-wholeText">wholeText</a>;
@@ -5664,7 +5671,7 @@ attribute must return a concatenation of the
 
 
 
-<h3 id="interface-processinginstruction"><span class="secno">5.10 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
+<h3 id="interface-processinginstruction"><span class="secno">5.11 </span>Interface <code><a href="#processinginstruction">ProcessingInstruction</a></code></h3>
 <pre class="idl">interface <dfn id="processinginstruction">ProcessingInstruction</dfn> : <a href="#characterdata">CharacterData</a> {
   readonly attribute DOMString <a href="#dom-processinginstruction-target" title="dom-ProcessingInstruction-target">target</a>;
 };</pre>
@@ -5677,7 +5684,7 @@ attribute must return the <a href="#concept-pi-target" title="concept-PI-target"
 
 
 
-<h3 id="interface-comment"><span class="secno">5.11 </span>Interface <code><a href="#comment">Comment</a></code></h3>
+<h3 id="interface-comment"><span class="secno">5.12 </span>Interface <code><a href="#comment">Comment</a></code></h3>
 <pre class="idl">interface <dfn id="comment">Comment</dfn> : <a href="#characterdata">CharacterData</a> {
 };</pre>
 

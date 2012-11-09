@@ -2059,7 +2059,7 @@ method must return the result of
 <var title>child</var> from the <span>context object</span>.
 
 
-<h4>Mutation observers</h4>
+<h3>Mutation observers</h3>
 
 <p>Each <i title>scripting environment</i> has an associated list of
 <code>MutationObserver</code> objects which is initially empty. To
@@ -2119,6 +2119,8 @@ artificial  boundary is made to prevent a dependency from DOM on HTML.
 <span>registered observer</span>.
 
 
+<h4>Interface <code>MutationObserver</code></h4>
+
 <pre class="idl">[<span title=dom-MutationObserver>Constructor</span>(<span>MutationCallback</span> <var>callback</var>)]
 interface <dfn>MutationObserver</dfn> {
   void <span title=dom-MutationObserver-observe>observe</span>(<span>Node</span> <var>target</var>, <span>MutationObserverInit</span> <var>options</var>);
@@ -2149,105 +2151,6 @@ to the <span title=concept-tree>tree</span> of
  <li><p>A list of <code>MutationRecord</code> objects called the
  <dfn title=concept-MO-queue>record queue</dfn> that is initially empty.
 </ul>
-
-<p>To <dfn>queue a mutation record</dfn> of <var title>type</var> for
-<var title>target</var> with one or more of (depends on
-<var title>type</var>) name <var title>name</var>, namespace
-<var title>namespace</var>, oldValue <var title>oldValue</var>, addedNodes
-<var title>addedNodes</var>, removedNodes <var title>removedNodes</var>,
-previousSibling <var title>previousSibling</var>, and nextSibling
-<var title>nextSibling</var>, run these steps:
-
-<ol>
- <li><p>Let <var title>record</var> be a new <code>MutationRecord</code>
- object with its <code title=dom-MutationRecord-type>type</code> set to
- <var title>type</var> and
- <code title=dom-MutationRecord-target>target</code> set to
- <var title>target</var>.
-
- <li><p>If <var title>name</var> and <var title>namespace</var> are given,
- set <var title>record</var>'s
- <code title=dom-MutationRecord-attributeName>attributeName</code> to
- <var title>name</var>, and <var title>record</var>'s
- <code title=dom-MutationRecord-attributeNamespace>attributeNamespace</code>
- to <var title>namespace</var>.
-
- <li><p>If <var title>addedNodes</var>, <var title>removedNodes</var>,
- <var title>previousSibling</var>, and <var title>nextSibling</var> are
- given, set <var title>record</var>'s
- <code title=dom-MutationRecord-addedNodes>addedNodes</code> to
- <var title>addedNodes</var>, <var title>record</var>'s
- <code title=dom-MutationRecord-removedNodes>removedNodes</code> to
- <var title>removedNodes</var>, <var title>record</var>'s
- <code title=dom-MutationRecord-previousSibling>previousSibling</code> to
- <var title>previousSibling</var>, and <var title>record</var>'s
- <code title=dom-MutationRecord-nextSibling>nextSibling</code> to
- <var title>nextSibling</var>.
-
- <li><p>Let <var title>interested observers</var> be an initially empty set
- of <code>MutationObserver</code> objects optionally paired with a string.
-
- <li><p>Let <var title>nodes</var> be the
- <span title=concept-tree-inclusive-ancestor>inclusive ancestors</span> of
- <var title>target</var>.
-
- <li>
-  <p>Then, for each <var title>node</var> in <var title>nodes</var>, and
-  then for each <var title>registered observer</var> (with
-  <var title>registered observer</var>'s <b title>options</b> as
-  <var title>options</var>) in <var title>node</var>'s list of
-  <span title="registered observer">registered observers</span>:
-
-  <ol>
-   <li><p>If <var title>node</var> is not <var title>target</var> and
-   <var title>options</var>'s <code title>subtree</code> is false, continue.
-
-   <li><p>If <var title>type</var> is "<code title>attributes</code>" and
-   <var title>options</var>'s <code title>attributes</code> is false,
-   continue.
-
-   <li><p>If <var title>type</var> is "<code title>attributes</code>",
-   <var title>options</var>'s <code title>attributeFilter</code> is
-   non-empty, and either <var title>options</var>'s
-   <code title>attributeFilter</code> not contain <var title>name</var> or
-   <var title>namespace</var> is non-null, continue.
-
-   <li><p>If <var title>type</var> is "<code title>characterData</code>" and
-   <var title>options</var>'s <code title>characterData</code> is false,
-   continue.
-
-   <li><p>If <var title>type</var> is "<code title>childList</code>" and
-   <var title>options</var>'s <code title>childList</code> is false,
-   continue.
-
-   <li><p>If <var title>registered observer</var>'s <b title>observer</b> is
-   not in <var title>interested observers</var>, append
-   <var title>registered observer</var>'s <b title>observer</b> to
-   <var title>interested observers</var>.
-
-   <li><p>If either <var title>type</var> is "<code title>attributes</code>"
-   and <var title>options</var>'s <code>attributeOldValue</code> is true, or
-   <var title>type</var> is "<code title>characterData</code>" and
-   <var title>options</var>'s <code>characterDataOldValue</code> is true,
-   set the paired string of
-   <var title>registered observer</var>'s <b title>observer</b> in
-   <var title>interested observers</var> to <var title>oldValue</var>.
-  </ol>
-
- <li>
-  <p>Then, for each <var title>observer</var> in
-  <var title>interested observers</var>:
-
-  <ol>
-   <li><p>If <var title>observer</var> has a paired string,
-   set <var title>record</var>'s <code title>oldValue</code> to
-   <var title>observer</var>'s paired string.
-
-   <li><p>Append <var title>record</var> to <var title>observer</var>'s
-   <span title=concept-MO-queue>record queue</span>.
-  </ol>
-</ol>
-
 
 <dl class=domintro>
  <dt><code>var <var title>observer</var> = new <span title=dom-MutationObserver>MutationObserver</span>(<var title>callback</var>)</code>
@@ -2387,6 +2290,107 @@ empty <span>context object</span>'s
 method must return a copy of the
 <span title=concept-MO-queue>record queue</span> and then empty the
 <span title=concept-MO-queue>record queue</span>.
+
+
+<h4>Queuing a mutation record</h4>
+
+<p>To <dfn>queue a mutation record</dfn> of <var title>type</var> for
+<var title>target</var> with one or more of (depends on
+<var title>type</var>) name <var title>name</var>, namespace
+<var title>namespace</var>, oldValue <var title>oldValue</var>, addedNodes
+<var title>addedNodes</var>, removedNodes <var title>removedNodes</var>,
+previousSibling <var title>previousSibling</var>, and nextSibling
+<var title>nextSibling</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title>record</var> be a new <code>MutationRecord</code>
+ object with its <code title=dom-MutationRecord-type>type</code> set to
+ <var title>type</var> and
+ <code title=dom-MutationRecord-target>target</code> set to
+ <var title>target</var>.
+
+ <li><p>If <var title>name</var> and <var title>namespace</var> are given,
+ set <var title>record</var>'s
+ <code title=dom-MutationRecord-attributeName>attributeName</code> to
+ <var title>name</var>, and <var title>record</var>'s
+ <code title=dom-MutationRecord-attributeNamespace>attributeNamespace</code>
+ to <var title>namespace</var>.
+
+ <li><p>If <var title>addedNodes</var>, <var title>removedNodes</var>,
+ <var title>previousSibling</var>, and <var title>nextSibling</var> are
+ given, set <var title>record</var>'s
+ <code title=dom-MutationRecord-addedNodes>addedNodes</code> to
+ <var title>addedNodes</var>, <var title>record</var>'s
+ <code title=dom-MutationRecord-removedNodes>removedNodes</code> to
+ <var title>removedNodes</var>, <var title>record</var>'s
+ <code title=dom-MutationRecord-previousSibling>previousSibling</code> to
+ <var title>previousSibling</var>, and <var title>record</var>'s
+ <code title=dom-MutationRecord-nextSibling>nextSibling</code> to
+ <var title>nextSibling</var>.
+
+ <li><p>Let <var title>interested observers</var> be an initially empty set
+ of <code>MutationObserver</code> objects optionally paired with a string.
+
+ <li><p>Let <var title>nodes</var> be the
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestors</span> of
+ <var title>target</var>.
+
+ <li>
+  <p>Then, for each <var title>node</var> in <var title>nodes</var>, and
+  then for each <var title>registered observer</var> (with
+  <var title>registered observer</var>'s <b title>options</b> as
+  <var title>options</var>) in <var title>node</var>'s list of
+  <span title="registered observer">registered observers</span>:
+
+  <ol>
+   <li><p>If <var title>node</var> is not <var title>target</var> and
+   <var title>options</var>'s <code title>subtree</code> is false, continue.
+
+   <li><p>If <var title>type</var> is "<code title>attributes</code>" and
+   <var title>options</var>'s <code title>attributes</code> is false,
+   continue.
+
+   <li><p>If <var title>type</var> is "<code title>attributes</code>",
+   <var title>options</var>'s <code title>attributeFilter</code> is
+   non-empty, and either <var title>options</var>'s
+   <code title>attributeFilter</code> not contain <var title>name</var> or
+   <var title>namespace</var> is non-null, continue.
+
+   <li><p>If <var title>type</var> is "<code title>characterData</code>" and
+   <var title>options</var>'s <code title>characterData</code> is false,
+   continue.
+
+   <li><p>If <var title>type</var> is "<code title>childList</code>" and
+   <var title>options</var>'s <code title>childList</code> is false,
+   continue.
+
+   <li><p>If <var title>registered observer</var>'s <b title>observer</b> is
+   not in <var title>interested observers</var>, append
+   <var title>registered observer</var>'s <b title>observer</b> to
+   <var title>interested observers</var>.
+
+   <li><p>If either <var title>type</var> is "<code title>attributes</code>"
+   and <var title>options</var>'s <code>attributeOldValue</code> is true, or
+   <var title>type</var> is "<code title>characterData</code>" and
+   <var title>options</var>'s <code>characterDataOldValue</code> is true,
+   set the paired string of
+   <var title>registered observer</var>'s <b title>observer</b> in
+   <var title>interested observers</var> to <var title>oldValue</var>.
+  </ol>
+
+ <li>
+  <p>Then, for each <var title>observer</var> in
+  <var title>interested observers</var>:
+
+  <ol>
+   <li><p>If <var title>observer</var> has a paired string,
+   set <var title>record</var>'s <code title>oldValue</code> to
+   <var title>observer</var>'s paired string.
+
+   <li><p>Append <var title>record</var> to <var title>observer</var>'s
+   <span title=concept-MO-queue>record queue</span>.
+  </ol>
+</ol>
 
 
 <h4>Interface <code>MutationRecord</code></h4>
