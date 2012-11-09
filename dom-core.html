@@ -8,7 +8,7 @@
 
 <div class="head">
  <h1>DOM</h1>
- <h2 class="no-num no-toc" id="living-standard-—-last-updated-23-october-2012">Living Standard — Last Updated 23 October 2012</h2>
+ <h2 class="no-num no-toc" id="living-standard-—-last-updated-9-november-2012">Living Standard — Last Updated 9 November 2012</h2>
 
  <dl>
   <dt>This Version:
@@ -34,12 +34,12 @@
     &lt;<a href="mailto:ms2ger@gmail.com">ms2ger@gmail.com</a>&gt;
  </dl>
 
-<script async="" src="//dvcs.w3.org/hg/quirks-mode/raw-file/tip/file-bug.js"></script>
+<script async="" src="//resources.whatwg.org/file-bug.js"></script>
 
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-23 October 2012, the editors have made this specification available
+9 November 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -1693,10 +1693,9 @@ with a <i title="">suppress observers flag</i>, run these steps:
 
  <li>
   <p>If <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
-  <a href="#concept-node" title="concept-node">node</a>,
-  <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
-  with target <var title="">node</var>, and
-  removedNodes <var title="">nodes</var>.
+  <a href="#concept-node" title="concept-node">node</a>, <a href="#queue-a-mutation-record">queue a mutation record</a>
+  of "<code>childList</code>" for <var title="">node</var> with removedNodes
+  <var title="">nodes</var>.
 
   <p class="note">This step does intentionally not pay attention to the
   <i title="">suppress observers flag</i>.
@@ -1708,8 +1707,8 @@ with a <i title="">suppress observers flag</i>, run these steps:
  <i title="">suppress observers flag</i> set.
 
  <li><p>If <i title="">suppress observers flag</i> is unset,
- <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
- with target <var title="">parent</var>, addedNodes <var title="">nodes</var>,
+ <a href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ <var title="">parent</var> with addedNodes <var title="">nodes</var>,
  nextSibling <var title="">child</var>, and previousSibling
  <var title="">child</var>'s
  <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a>
@@ -1843,8 +1842,8 @@ steps:
  a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, or a
  list containing solely <var title="">node</var> otherwise.
 
- <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
- with target <var title="">parent</var>, addedNodes
+ <li><p><a href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ target <var title="">parent</var> with addedNodes
  <var title="">nodes</var>, removedNodes a list solely containing
  <var title="">child</var>, nextSibling <var title="">reference child</var>, and
  previousSibling <var title="">child</var>'s
@@ -1883,8 +1882,8 @@ steps:
  <a href="#concept-node" title="concept-node">node</a>, or a list containing
  <var title="">node</var> otherwise.
 
- <li><p><a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
- with target <var title="">parent</var>, addedNodes <var title="">nodes</var>, and
+ <li><p><a href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ <var title="">parent</var> with addedNodes <var title="">nodes</var> and
  removedNodes <var title="">parent</var>'s
  <a href="#concept-tree-child" title="concept-tree-child">children</a>.
 
@@ -1954,10 +1953,9 @@ from a <var title="">parent</var>, optionally with
  <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by one.
 
  <li><p>If <i title="">suppress observers flag</i> is unset,
- <a href="#concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</a>
- with target <var title="">parent</var>,
- removedNodes a list solely containing <var title="">node</var>,
- nextSibling <var title="">node</var>'s
+ <a href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ <var title="">parent</var> with removedNodes a list solely containing
+ <var title="">node</var>, nextSibling <var title="">node</var>'s
  <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>,
  and previousSibling <var title="">node</var>'s
  <a href="#concept-tree-previous-sibling" title="concept-tree-previous-sibling">previous sibling</a>.
@@ -2193,12 +2191,12 @@ interface <dfn id="mutationobserver">MutationObserver</dfn> {
 callback <dfn id="mutationcallback">MutationCallback</dfn> = void (sequence&lt;<a href="#mutationrecord">MutationRecord</a>&gt; <var>mutations</var>, <a href="#mutationobserver">MutationObserver</a> <var>observer</var>);
 
 dictionary <dfn id="mutationobserverinit">MutationObserverInit</dfn> {
-  boolean <span title="dom-MutationObserverInit-childList">childList</span>;
-  boolean <span title="dom-MutationObserverInit-attributes">attributes</span>;
-  boolean <span title="dom-MutationObserverInit-characterData">characterData</span>;
-  boolean <span title="dom-MutationObserverInit-subtree">subtree</span>;
-  boolean <span title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</span>;
-  boolean <span title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</span>;
+  boolean <span title="dom-MutationObserverInit-childList">childList</span> = false;
+  boolean <span title="dom-MutationObserverInit-attributes">attributes</span> = false;
+  boolean <span title="dom-MutationObserverInit-characterData">characterData</span> = false;
+  boolean <span title="dom-MutationObserverInit-subtree">subtree</span> = false;
+  boolean <span title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</span> = false;
+  boolean <span title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</span> = false;
   sequence&lt;DOMString&gt; <span title="dom-MutationObserverInit-attributeFilter">attributeFilter</span>;
 };</pre>
 
@@ -2214,168 +2212,104 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
  <dfn id="concept-mo-queue" title="concept-MO-queue">record queue</dfn> that is initially empty.
 </ul>
 
-<p>To
-<dfn id="concept-mo-queue-attributes" title="concept-MO-queue-attributes">queue an "<code>attributes</code>" record</dfn>
-with target <var title="">target</var>, name <var title="">name</var>, namespace
-<var title="">namespace</var>, and oldValue <var title="">oldValue</var>,
-run these steps:
+<p>To <dfn id="queue-a-mutation-record">queue a mutation record</dfn> of <var title="">type</var> for
+<var title="">target</var> with one or more of (depends on
+<var title="">type</var>) name <var title="">name</var>, namespace
+<var title="">namespace</var>, oldValue <var title="">oldValue</var>, addedNodes
+<var title="">addedNodes</var>, removedNodes <var title="">removedNodes</var>,
+previousSibling <var title="">previousSibling</var>, and nextSibling
+<var title="">nextSibling</var>, run these steps:
 
 <ol>
  <li><p>Let <var title="">record</var> be a new <code><a href="#mutationrecord">MutationRecord</a></code>
  object with its <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> set to
- "<code>attributes</code>",
+ <var title="">type</var> and
  <code title="dom-MutationRecord-target"><a href="#dom-mutationrecord-target">target</a></code> set to
- <var title="">target</var>,
- <code title="dom-MutationRecord-attributeName"><a href="#dom-mutationrecord-attributename">attributeName</a></code> set to
- <var title="">name</var>, and
+ <var title="">target</var>.
+
+ <li><p>If <var title="">name</var> and <var title="">namespace</var> are given,
+ set <var title="">record</var>'s
+ <code title="dom-MutationRecord-attributeName"><a href="#dom-mutationrecord-attributename">attributeName</a></code> to
+ <var title="">name</var>, and <var title="">record</var>'s
  <code title="dom-MutationRecord-attributeNamespace"><a href="#dom-mutationrecord-attributenamespace">attributeNamespace</a></code>
- set to <var title="">namespace</var>.
+ to <var title="">namespace</var>.
 
- <li><p>Let <var title="">recordWithOldValue</var> be a copy of
- <var title="">record</var> with its
- <code title="dom-MutationRecord-oldValue"><a href="#dom-mutationrecord-oldvalue">oldValue</a></code> set to
- <var title="">oldValue</var>.
+ <li><p>If <var title="">addedNodes</var>, <var title="">removedNodes</var>,
+ <var title="">previousSibling</var>, and <var title="">nextSibling</var> are
+ given, set <var title="">record</var>'s
+ <code title="dom-MutationRecord-addedNodes"><a href="#dom-mutationrecord-addednodes">addedNodes</a></code> to
+ <var title="">addedNodes</var>, <var title="">record</var>'s
+ <code title="dom-MutationRecord-removedNodes"><a href="#dom-mutationrecord-removednodes">removedNodes</a></code> to
+ <var title="">removedNodes</var>, <var title="">record</var>'s
+ <code title="dom-MutationRecord-previousSibling"><a href="#dom-mutationrecord-previoussibling">previousSibling</a></code> to
+ <var title="">previousSibling</var>, and <var title="">record</var>'s
+ <code title="dom-MutationRecord-nextSibling"><a href="#dom-mutationrecord-nextsibling">nextSibling</a></code> to
+ <var title="">nextSibling</var>.
+
+ <li><p>Let <var title="">interested observers</var> be an initially empty set
+ of <code><a href="#mutationobserver">MutationObserver</a></code> objects optionally paired with a string.
+
+ <li><p>Let <var title="">nodes</var> be the
+ <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestors</a> of
+ <var title="">target</var>.
 
  <li>
-  <p>For each <a href="#registered-observer">registered observer</a> <var title="">observer</var>
-  (with <var title="">observer</var>'s <b>options</b> as <var title="">options</var>)
-  in <var title="">target</var>'s list of
-  <a href="#registered-observer" title="registered observer">registered observers</a>,
-  run these substeps:
+  <p>Then, for each <var title="">node</var> in <var title="">nodes</var>, and
+  then for each <var title="">registered observer</var> (with
+  <var title="">registered observer</var>'s <b title="">options</b> as
+  <var title="">options</var>) in <var title="">node</var>'s list of
+  <a href="#registered-observer" title="registered observer">registered observers</a>:
+
   <ol>
-   <li><p>If <var title="">options</var>'s
-   <code title="dom-MutationObserverInit-attributes">attributes</code> is not true,
-   terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
+   <li><p>If <var title="">node</var> is not <var title="">target</var> and
+   <var title="">options</var>'s <code title="">subtree</code> is false, continue.
 
-   <li><p>If <var title="">options</var>'s
-   <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code>
-   is non-empty, and either does not contain <var title="">name</var> or
-   <var title="">namespace</var> is non-null, terminate these substeps
-   (and run them for the <a href="#registered-observer">registered observer</a>).
+   <li><p>If <var title="">type</var> is "<code title="">attributes</code>" and
+   <var title="">options</var>'s <code title="">attributes</code> is false,
+   continue.
 
-   <li><p>If <var title="">options</var>'s
-   <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is true,
-   append <var title="">recordWithOldValue</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+   <li><p>If <var title="">type</var> is "<code title="">attributes</code>",
+   <var title="">options</var>'s <code title="">attributeFilter</code> is
+   non-empty, and either <var title="">options</var>'s
+   <code title="">attributeFilter</code> not contain <var title="">name</var> or
+   <var title="">namespace</var> is non-null, continue.
 
-   <li><p>Otherwise, append <var title="">record</var> to
-   <var title="">observer</var>'s <b>observer</b>
-   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+   <li><p>If <var title="">type</var> is "<code title="">characterData</code>" and
+   <var title="">options</var>'s <code title="">characterData</code> is false,
+   continue.
+
+   <li><p>If <var title="">type</var> is "<code title="">childList</code>" and
+   <var title="">options</var>'s <code title="">childList</code> is false,
+   continue.
+
+   <li><p>If <var title="">registered observer</var>'s <b title="">observer</b> is
+   not in <var title="">interested observers</var>, append
+   <var title="">registered observer</var>'s <b title="">observer</b> to
+   <var title="">interested observers</var>.
+
+   <li><p>If either <var title="">type</var> is "<code title="">attributes</code>"
+   and <var title="">options</var>'s <code>attributeOldValue</code> is true, or
+   <var title="">type</var> is "<code title="">characterData</code>" and
+   <var title="">options</var>'s <code>characterDataOldValue</code> is true,
+   set the paired string of
+   <var title="">registered observer</var>'s <b title="">observer</b> in
+   <var title="">interested observers</var> to <var title="">oldValue</var>.
   </ol>
 
  <li>
-  <p>For each <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> <var title="">ancestor</var> of <var title="">target</var>, and for each
-  <a href="#registered-observer">registered observer</a> <var title="">observer</var> (with <var title="">observer</var>'s <b>options</b> as <var title="">options</var>) in <var title="">ancestor</var>'s
-  list of <a href="#registered-observer" title="registered observer">registered observers</a>, run these substeps:
+  <p>Then, for each <var title="">observer</var> in
+  <var title="">interested observers</var>:
 
   <ol>
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-subtree">subtree</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-attributes">attributes</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s
-   <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code>
-   is non-empty, and either does not contain <var title="">name</var> or
-   <var title="">namespace</var> is non-null, terminate these substeps
-   (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is true,
-   append <var title="">recordWithOldValue</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-
-   <li><p>Otherwise, append <var title="">record</var> to
-   <var title="">observer</var>'s <b>observer</b>
-   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-  </ol>
-</ol>
-
-<p>To
-<dfn id="concept-mo-queue-characterdata" title="concept-MO-queue-characterData">queue a "<code>characterData</code>" record</dfn>
-with target <var title="">target</var> and oldValue <var title="">oldValue</var>, run these steps:
-
-<ol>
- <li><p>Let <var title="">record</var> be a new <code><a href="#mutationrecord">MutationRecord</a></code> object with its
- <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> set to "<code><a href="#characterdata">characterData</a></code>"
- and <code title="dom-MutationRecord-target"><a href="#dom-mutationrecord-target">target</a></code> set to <var title="">target</var>.
-
- <li><p>Let <var title="">recordWithOldValue</var> be a copy of <var title="">record</var>
- with its <code title="dom-MutationRecord-oldValue"><a href="#dom-mutationrecord-oldvalue">oldValue</a></code> set to <var title="">oldValue</var>.
-
- <li>
-  <p>For each <a href="#registered-observer">registered observer</a> <var title="">observer</var> (with <var title="">observer</var>'s <b>options</b> as <var title="">options</var>) in
-  <var title="">target</var>'s list of <a href="#registered-observer" title="registered observer">registered observers</a>, run these substeps:
-  <ol>
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-characterData">characterData</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code> is true,
-   append <var title="">recordWithOldValue</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-
-   <li><p>Otherwise, append <var title="">record</var> to
-   <var title="">observer</var>'s <b>observer</b>
-   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-  </ol>
-
- <li>
-  <p>For each <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> <var title="">ancestor</var> of <var title="">target</var>, and for each
-  <a href="#registered-observer">registered observer</a> <var title="">observer</var> (with options <var title="">options</var>) in <var title="">ancestor</var>'s
-  list of <a href="#registered-observer" title="registered observer">registered observers</a>, run these substeps:
-
-  <ol>
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-subtree">subtree</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-characterData">characterData</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code> is true,
-   append <var title="">recordWithOldValue</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-
-   <li><p>Otherwise, append <var title="">record</var> to
-   <var title="">observer</var>'s <b>observer</b>
-   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-  </ol>
-</ol>
-
-<p>To
-<dfn id="concept-mo-queue-childlist" title="concept-MO-queue-childList">queue a "<code>childList</code>" record</dfn>
-with target <var title="">target</var>, addedNodes <var title="">addedNodes</var>,
-removedNodes <var title="">removedNodes</var>,
-previousSibling <var title="">previousSibling</var>, and
-nextSibling <var title="">nextSibling</var>, run these steps:
-
-<ol>
- <li><p>Let <var title="">record</var> be a new <code><a href="#mutationrecord">MutationRecord</a></code> object with its
- <code title="dom-MutationRecord-type"><a href="#dom-mutationrecord-type">type</a></code> set to "<code>childList</code>",
- <code title="dom-MutationRecord-target"><a href="#dom-mutationrecord-target">target</a></code> set to <var title="">target</var>,
- <code title="dom-MutationRecord-addedNodes"><a href="#dom-mutationrecord-addednodes">addedNodes</a></code> set to <var title="">addedNodes</var>,
- <code title="dom-MutationRecord-removedNodes"><a href="#dom-mutationrecord-removednodes">removedNodes</a></code> set to <var title="">removedNodes</var>,
- <code title="dom-MutationRecord-previousSibling"><a href="#dom-mutationrecord-previoussibling">previousSibling</a></code> set to <var title="">previousSibling</var>, and
- <code title="dom-MutationRecord-nextSibling"><a href="#dom-mutationrecord-nextsibling">nextSibling</a></code> set to <var title="">nextSibling</var>.
-
- <li>
-  <p>For each <a href="#registered-observer">registered observer</a> <var title="">observer</var> (with <var title="">observer</var>'s <b>options</b> as <var title="">options</var>) in
-  <var title="">target</var>'s list of <a href="#registered-observer" title="registered observer">registered observers</a>, run these substeps:
-
-  <ol>
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-childList">childList</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
+   <li><p>If <var title="">observer</var> has a paired string,
+   set <var title="">record</var>'s <code title="">oldValue</code> to
+   <var title="">observer</var>'s paired string.
 
    <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
-  </ol>
-
- <li>
-  <p>For each <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> <var title="">ancestor</var> of <var title="">target</var>, and for each
-  <a href="#registered-observer">registered observer</a> <var title="">observer</var> (with <var title="">observer</var>'s <b>options</b> as <var title="">options</var>) in <var title="">ancestor</var>'s
-  list of <a href="#registered-observer" title="registered observer">registered observers</a>, run these substeps:
-  <ol>
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-subtree">subtree</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>If <var title="">options</var>'s <code title="dom-MutationObserverInit-childList">childList</code> is not true, terminate these substeps (and run them for the next <a href="#registered-observer">registered observer</a>).
-
-   <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
-   <b>observer</b> <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
+   <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
   </ol>
 </ol>
+
 
 <dl class="domintro">
  <dt><code>var <var title="">observer</var> = new <a href="#dom-mutationobserver" title="dom-MutationObserver">MutationObserver</a>(<var title="">callback</var>)</code>
@@ -5052,8 +4986,8 @@ method must run these steps:
  <a href="#concept-attribute" title="concept-attribute">attribute</a> to the
  <a href="#context-object">context object</a> and terminate these steps.
 
- <li><p><a href="#concept-mo-queue-attributes" title="concept-MO-queue-attributes">Queue an "<code>attributes</code>" record</a>
- with target <a href="#context-object">context object</a>, name <var title="">attribute</var>'s
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <a href="#context-object">context object</a> with name <var title="">attribute</var>'s
  <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
  <var title="">attribute</var>'s
  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>,
@@ -5131,8 +5065,8 @@ method must run these steps:
  <a href="#concept-attribute" title="concept-attribute">attribute</a> to the
  <a href="#context-object">context object</a> and terminate these steps.
 
- <li><p><a href="#concept-mo-queue-attributes" title="concept-MO-queue-attributes">Queue an "<code>attributes</code>" record</a>
- with target <a href="#context-object">context object</a>, name
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <a href="#context-object">context object</a> with name
  <var title="">localName</var>, namespace <var title="">namespace</var>, and
  oldValue <var title="">attribute</var>'s
  <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
@@ -5360,8 +5294,8 @@ an <a href="#concept-element" title="concept-element">element</a> <var title="">
 run these steps:
 
 <ol>
- <li><p><a href="#concept-mo-queue-attributes" title="concept-MO-queue-attributes">Queue an "<code>attributes</code>" record</a>
- with target <var title="">element</var>, name <var title="">attribute</var>'s
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <var title="">element</var> with name <var title="">attribute</var>'s
  <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
  <var title="">attribute</var>'s
  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
@@ -5377,8 +5311,8 @@ from an <a href="#concept-element" title="concept-element">element</a> <var titl
 run these steps:
 
 <ol>
- <li><p><a href="#concept-mo-queue-attributes" title="concept-MO-queue-attributes">Queue an "<code>attributes</code>" record</a>
- with target <var title="">element</var>, name <var title="">attribute</var>'s
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <var title="">element</var> with name <var title="">attribute</var>'s
  <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
  <var title="">attribute</var>'s
  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
@@ -5457,8 +5391,8 @@ called <dfn id="concept-cd-data" title="concept-CD-data">data</dfn>.
  than <var title="">length</var> let <var title="">count</var> be
  <var title="">length</var> minus <var title="">offset</var>.
 
- <li><p><a href="#concept-mo-queue-characterdata" title="concept-MO-queue-characterData">Queue a "<code>characterData</code>" record</a>
- with target <var title="">node</var> and oldValue <var title="">node</var>'s
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code><a href="#characterdata">characterData</a></code>"
+ for <var title="">node</var> with oldValue <var title="">node</var>'s
  <a href="#concept-cd-data" title="concept-CD-data">data</a>.
 
  <li><p>Insert <var title="">data</var> into <var title="">node</var>'s
