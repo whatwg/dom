@@ -2614,7 +2614,7 @@ reference to the <a href="#concept-node" title="concept-node">node</a>.
   const unsigned short <a href="#dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING">DOCUMENT_POSITION_FOLLOWING</a> = 0x04;
   const unsigned short <a href="#dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS">DOCUMENT_POSITION_CONTAINS</a> = 0x08;
   const unsigned short <a href="#dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY">DOCUMENT_POSITION_CONTAINED_BY</a> = 0x10;
-  const unsigned short <span title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC">DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</span> = 0x20; // historical
+  const unsigned short <a href="#dom-node-document_position_implementation_specific" title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC">DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</a> = 0x20;
   unsigned short <a href="#dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition">compareDocumentPosition</a>(<a href="#node">Node</a> <var title="">other</var>);
   boolean <a href="#dom-node-contains" title="dom-Node-contains">contains</a>(<a href="#node">Node</a>? <var title="">other</var>);
 
@@ -3287,15 +3287,12 @@ returns as mask:
 
 <ul class="brief">
  <li><dfn id="dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><code>DOCUMENT_POSITION_DISCONNECTED</code></dfn> (1);
-
  <li><dfn id="dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING"><code>DOCUMENT_POSITION_PRECEDING</code></dfn> (2);
-
  <li><dfn id="dom-node-document_position_following" title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><code>DOCUMENT_POSITION_FOLLOWING</code></dfn> (4);
-
  <li><dfn id="dom-node-document_position_contains" title="dom-Node-DOCUMENT_POSITION_CONTAINS"><code>DOCUMENT_POSITION_CONTAINS</code></dfn> (8);
-
- <li><dfn id="dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal).
-</ul>
+ <li><dfn id="dom-node-document_position_contained_by" title="dom-Node-DOCUMENT_POSITION_CONTAINED_BY"><code>DOCUMENT_POSITION_CONTAINED_BY</code></dfn> (16, 10 in hexadecimal);
+ <li><dfn id="dom-node-document_position_implementation_specific" title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC"><code>DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</code> (32, 20 in hexadecimal).
+</dfn></ul>
 
 <p>The <dfn id="dom-node-comparedocumentposition" title="dom-Node-compareDocumentPosition"><code>compareDocumentPosition(<var>other</var>)</code></dfn>
 method must run these steps:
@@ -3305,11 +3302,23 @@ method must run these steps:
  <li><p>If <var title="">other</var> and <var title="">reference</var> are the
  same object, return zero and terminate these steps.
 
- <li><p>If <var title="">other</var> and <var title="">reference</var> are not
- in the same <a href="#concept-tree" title="concept-tree">tree</a>, return
- <code title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><a href="#dom-node-document_position_disconnected">DOCUMENT_POSITION_DISCONNECTED</a></code>
- and terminate these steps.
- <!-- original spec also increments by implementation_specific ... -->
+ <li>
+  <p>If <var title="">other</var> and <var title="">reference</var> are not
+  in the same <a href="#concept-tree" title="concept-tree">tree</a>, return the result of
+  adding
+  <code title="dom-Node-DOCUMENT_POSITION_DISCONNECTED"><a href="#dom-node-document_position_disconnected">DOCUMENT_POSITION_DISCONNECTED</a></code>,
+  <code title="dom-Node-DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC"><a href="#dom-node-document_position_implementation_specific">DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</a></code>,
+  and either
+  <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code> or
+  <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>,
+  with the constraint that this is to be consistent, together and terminate
+  these steps.
+
+  <p class="note">Whether to return
+  <code title="dom-Node-DOCUMENT_POSITION_PRECEDING"><a href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code> or
+  <code title="dom-Node-DOCUMENT_POSITION_FOLLOWING"><a href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>
+  is typically implemented via pointer comparison. In JavaScript
+  implementations <code title="">Math.random()</code> can be used.
 
  <li><p>If <var title="">other</var> is an
  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of
