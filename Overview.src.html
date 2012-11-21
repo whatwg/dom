@@ -152,9 +152,10 @@ required for conforming IDL fragments, as described in the Web IDL
 specification. <span data-anolis-ref>WEBIDL</span>
 
 <p>Some of the terms used in this specification are defined in
-<cite>Encoding</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
+<cite>Encoding</cite>, <cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
 <cite>Namespaces in XML</cite>.
 <span data-anolis-ref>ENCODING</span>
+<span data-anolis-ref>SELECTORS</span>
 <span data-anolis-ref>WEBIDL</span>
 <span data-anolis-ref>XML</span>
 <span data-anolis-ref>XMLNS</span>
@@ -1871,6 +1872,329 @@ from a <var title>parent</var>, optionally with
 </ol>
 
 
+<h4>Selector algorithms</h4>
+
+<h5>Finding elements</h5>
+
+<p>To <dfn>find one element by selector</dfn>, run these steps:</p>
+<ol>
+ <li><p>Let <var>reference nodes</var> be the result of running
+ <span>determine contextual reference nodes</span>.
+
+ <li><p>Let <var>parsed selector</var> be the result of running <span>parse
+ a selector</span> with <var>selectors</var> and <var>reference nodes</var>
+ as the input.
+
+ <li><p>Let <var title>search tree</var> be the <span title=concept-tree>tree</span>
+ of all <code>Element</code> nodes that are descendants of the <span>context object</span>.
+
+ <li><p>For each element within <var title>search tree</var>, in <span title=concept-tree-order>tree order</span>,
+ run these substeps:
+  <ol>
+   <li><p>Let <var title>match</var> be the result of <span title="evaluate a selector">evaluating
+   a selector</span> against the <code>Element</code> node using <var>parsed
+   selector</var> as the selector and <var>reference nodes</var> as the
+   <span data-anolis-spec=selectors>contextual reference element set</span>.
+
+   <li><p>If <var title>match</var> is true, return the <code>Element</code> and
+   terminate these steps.
+  </ol>
+ <li><p>Return null.
+</ol>
+
+
+<p>To <dfn>find all elements by selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>reference nodes</var> be the result of running
+ <span>determine contextual reference nodes</span>.
+
+ <li><p>Let <var>parsed selector</var> be the result of running <span>parse
+ a selector</span> with <var>selectors</var> and <var>reference nodes</var>
+ as the input.
+
+ <li><p>Let <var title>search tree</var> be the <span title=concept-tree>tree</span>
+ of all <code>Element</code> nodes that are descendants of the <span>context object</span>.
+ 
+ <li><p>Let <var title>result</var> be an empty <span title=concept-collection-static>static</span> <code>NodeList</code>.
+
+ <li><p>For each element within <var title>search tree</var>, in <span title=concept-tree-order>tree order</span>,
+ run these substeps:
+  <ol>
+   <li><p>Let <var title>match</var> be the result of <span title="evaluate a selector">evaluating
+   a selector</span> against the <code>Element</code> node using <var>parsed
+   selector</var> as the selector and <var>reference nodes</var> as the
+   <span data-anolis-spec=selectors>contextual reference element set</span>.
+
+    <li><p>If <var title>match</var> is true, add the <code>Element</code> to <var title>result</var>.
+  </ol>
+ <li><p>Return <var title>result</var>.
+</ol>
+
+<p>To <dfn>find one element by relative selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Set the <span>scope flag</span>.</p></li>
+
+ <li><p>Let <var>reference nodes</var> be the result of running
+ <span>determine contextual reference nodes</span> using <var>refNodes</var>
+ as the input, if provided.</p></li>
+
+ <li><p>Let <var>parsed selector</var> be the result of running <span>parse
+ a relative selector</span> with <var>selectors</var> and <var>reference nodes</var>
+ as the input.</p></li>
+
+ <li><p>Let <var title>search tree</var> be the <span title=concept-tree>tree</span>
+ of all <code>Element</code> nodes that in the same <span title=concept-tree>tree</span> as the
+ <span>context object</span>.
+
+ <li><p>For each element within <var title>search tree</var>, in <span title=concept-tree-order>tree order</span>,
+ run these substeps:
+  <ol>
+   <li><p>Let <var title>match</var> be the result of <span title="evaluate a selector">evaluating
+   a selector</span> against the <code>Element</code> node using <var>parsed
+   selector</var> as the selector and <var>reference nodes</var> as the
+   <span data-anolis-spec=selectors>contextual reference element set</span>.
+
+   <li><p>If <var title>match</var> is true, return the <code>Element</code> and
+   terminate these steps.
+  </ol>
+ <li><p>Return null.
+</ol>
+
+<p>To <dfn>find all elements by relative selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Set the <span>scope flag</span>.</p></li>
+
+ <li><p>Let <var>reference nodes</var> be the result of running
+ <span>determine contextual reference nodes</span> using <var>refNodes</var>
+ as the input, if provided.</p></li>
+
+ <li><p>Let <var>parsed selector</var> be the result of running <span>parse
+ a relative selector</span> with <var>selectors</var> and <var>reference nodes</var>
+ as the input.</p></li>
+
+ <li><p>Let <var title>search tree</var> be the <span title=concept-tree>tree</span>
+ of all <code>Element</code> nodes that in the same <span title=concept-tree>tree</span> as the
+ <span>context object</span>.
+
+ <li><p>Let <var title>result</var> be an empty <span title=concept-collection-static>static</span> <code>NodeList</code>.
+
+ <li><p>For each element within <var title>search tree</var>, in <span title=concept-tree-order>tree order</span>,
+ run these substeps:
+  <ol>
+   <li><p>Let <var title>match</var> be the result of <span title="evaluate a selector">evaluating
+   a selector</span> against the <code>Element</code> node using <var>parsed
+   selector</var> as the selector and <var>reference nodes</var> as the
+   <span data-anolis-spec=selectors>contextual reference element set</span>.
+
+   <li><p>If <var title>match</var> is true, add the <code>Element</code> to <var title>result</var>.
+  </ol>
+  <li><p>Return <var title>result</var>.
+</ol>
+
+
+<h5>Matching elements</h5>
+
+<p>To <dfn>check if an element matches</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Unset the <span>scope flag</span>.</p></li>
+
+ <li><p>Let <var>reference nodes</var> be the result of running
+ <span>determine contextual reference nodes</span> using <var>refNodes</var>
+ as the input, if provided.</p></li>
+
+ <li><p>Let <var>parsed selector</var> be the result of running <span>parse
+ a relative selector</span> with <var>selectors</var> and <var>reference nodes</var>
+ as the input.</p></li>
+
+ <li><p>Return the result of <span title="evaluate a selector">evaluating
+ a selector</span> against the <code>Element</code> node using <var>parsed
+ selector</var> as the selector and <var>reference nodes</var> as the
+ <span data-anolis-spec=selectors>contextual reference element set</span>.
+</ol>
+
+
+<h5>Processing selectors</h5>
+
+<p>The <dfn>scope flag</dfn> is set when finding elements. It is unset
+when matching elements. This flag is used to determine whether <code>:scope</code> is always included
+when there are reference nodes, or only when required due to a selector beginning with a combinator.</p>
+
+<p>To <dfn>parse a selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>selectors</var> be the <span>selector string</span> input to this algorithm.</p></li>
+
+ <li><p>Let <var>result</var> be the group of selectors returned as a result of parsing the
+ <var>selectors</var> according to the grammar for <code>dom_selectors_group</code>.</p></li>
+
+ <li><p>If <var>result</var> is <span data-anolis-spec=selectors title="invalid selector|invalid">invalid</span>,
+ <span title=concept-throw>throw</span> a <code>SyntaxError</code> exception and abort this algorithm.</p></li>
+
+ <li>Return <var>result</var>.</li>
+</ol>
+
+<p>To <dfn>parse a relative selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>selectors</var> be the <span>relative selector string</span> input to this algorithm.</p></li>
+
+ <li><p>Let <var>selectors group</var> be the group of selectors returned as a result of parsing the
+ <var>selectors</var> according to the grammar for <code>dom_relative_selectors_group</code>.</p></li>
+
+ <li><p>If <var>selectors group</var> is <span data-anolis-spec=selectors title="invalid selector|invalid">invalid</span>,
+ <span title=concept-throw>throw</span> a <code>SyntaxError</code> exception and abort this algorithm.</p></li>
+
+ <li><p>Let <var>result</var> be an initially empty group of selectors.</p></li>
+
+ <li><p>For each <var>relative selector</var> in <var>selectors group</var>:</p>
+  <ol>
+   <li><p>If the <var>relative selector</var> begins with a combinator, then prepend the simple
+   selector "<code>:scope</code>" to the <var>relative selector</var>.</p></li>
+
+   <li><p>Otherwise, if the <var>reference nodes</var> is an empty collection, do nothing.</p></li>
+
+   <li><p>Otherwise, if any compound selector within <var>relative selector</var>
+   includes a functional pseudo-class that accepts a selector as its parameter, and
+   which contains the "<code>:scope</code>" pseudo-class anywhere within it, then do
+   nothing.</p></li>
+
+   <li><p>Otherwise, if the <var>relative selector</var> includes :scope within any
+   compound or simple selector, then do nothing.</p></li>
+
+   <li><p>Otherwise, if the <span>scope flag</span> is set, prepend the simple
+   selector "<code>:scope</code>" and a descendant combinator ('<code> </code>')
+   to the <var>relative selector</var>.</p></li>
+
+   <li><p>Add <var>relative selector</var> to <var>result</var>.</p></li>
+  </ol>
+ </li>
+
+ <li>Return <var>result</var>.</li>
+</ol>
+
+<p>To <dfn>evaluate a selector</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var title="">element</var> be the element being evaluated.</p></li>
+ <li><p>Let <var>selector group</var> be the selector input into this algotihm.</p></li>
+ <li><p>Let <var>reference nodes</var> be the reference nodes input into this algorithm.</p></li>
+ <li><p>For the purpose of evaluating the <code>:scope</code> pseudo-class, the <span data-anolis-spec=selectors>contextual
+ reference element set</span> contains all <code>Element</code> nodes
+ contained within <var>reference nodes</var>.</p></li>
+ <li><p>If any selector in <var>selector group</var> matches <var title="">element</var>, return true.
+ Otherwise, return false.</p></li>
+</ol>
+
+<p>Selectors are evaluated against a given element in the context of the entire <span title=concept-tree>tree</span> in which the
+element is located.</p>
+
+<p>If the user agent also supports some level of CSS, the implementation should
+support the same set of selectors in both these APIs and CSS.</p>
+
+
+<h5>Processing reference nodes</h5>
+
+<p>To <dfn>determine contextual reference nodes</dfn>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>input</var> be the value that is being processed, if provided.</li>
+
+ <li><p>Let <var>result</var> be an initially empty collection of <code>Element</code>
+ nodes.</p></li>
+
+ <li><p>If the <var>input</var> was provided, then:</p>
+  <ol>
+   <li><p>If <var>input</var> is an <code>Element</code> node, then append that
+   <code>Element</code> to the <var>result</var> collection.</p></li>
+
+   <li><p>If <var>input</var> is a sequence of <code>Node</code> objects,
+   then iterate through the sequence and append each <code>Element</code>
+   node contained within it to the <var>result</var> collection.</p></li>
+
+   <li><p>If <var>input</var> is <code>null</code>, then do nothing.</p>
+   <p class="note">This leaves the result collection empty.</p></li>
+  </ol>
+ </li>
+
+ <li><p>Otherwise, if <var>input</var> was omitted, then:</p>
+  <ol>
+   <li><p>If the <span>context object</span> is an <code>Element</code> node, then append that
+   <code>Element</code> to the <var>result</var> collection.</p></li>
+
+   <li><p>If the <span>context object</span> is a <code>Document</code> node, then append that
+   that document's <span>document element</span> to the <var>result</var> collection.</p></li>
+  </ol>
+ </li>
+
+ <li><p>Return <var>result</var>.</p></li>
+</ol>
+
+<p class="note">The result may still be an empty collection at the end of
+that process.</p>
+
+<p class="note">If the refNodes parameter was passed a sequence containing objects
+other than <code>Node</code> objects, then a <code>TypeError</code> will be
+thrown <span data-anolis-ref>WEBIDL</span>.
+
+
+<h5>Resolving namespaces</h5>
+
+<p>There are no namespace prefixes <span data-anolis-spec=selectors>declared</span>
+in scope and there is no mechanism for declaring them for use with selectors in this API.
+
+<p class=note>Authors can use an empty namespace prefix (e.g. <code>|div</code>),
+representing no namespace, or an asterisk (e.g. <code>*|div</code>),
+representing any namespace in selectors because they do not rely on any
+namespace declaration mechanism.
+
+<h5>Selector grammar</h5>
+<p class="XXX">This really needs to move into Selectors 4.</p>
+
+<p>A <dfn>selector string</dfn> is a list of one or more
+<span data-anolis-spec=selectors title="complex selector">complex selectors</span> that may
+be surrounded by whitespace and matches the <code>dom_selectors_group</code> production.
+
+<p>A <dfn>relative selector string</dfn> is a list of one or more <span title="relative selector">relative selectors</span>
+that matches the <code>dom_relative_selectors_group</code> production.
+
+<p>A <dfn>relative selector</dfn> is a
+<span data-anolis-spec=selectors title="complex selector">complex selectors</span> that may be preceded by a
+combinator, and matches the <code>dom_relative_selector</code> production. Implementations must not allow a
+<span>relative selector</span> to begin with a descendant combinator (a space).</p>
+
+<pre>
+dom_selectors_group
+  : S* [ selectors_group ] S*
+  ;
+
+dom_relative_selectors_group
+  : S* [ dom_relative_selector [ COMMA S* dom_relative_selector ]* ] S*
+  ;
+
+dom_relative_selector
+  /* Note that this cannot begin with a descendant combinator */
+  : [ combinator ]? selector
+  ;
+</pre>
+
+<p>The productions for <code>selectors_group</code>, <code>combinator</code> and <code>selector</code>
+are defined in Selectors 4. These groups of selectors should not use <span title="need-to-resolve">namespace
+prefixes that need to be resolved</span>.</p>
+
+<p class="note">Implementers are advised that if <code>null</code> or <code>undefined</code> are passed as
+the value of the <var>selectors</var> parameter, they are to be handled as defined in <span data-anolis-ref>WEBIDL</span>.
+Authors are advised to avoid passing these values.</p>
+
+<p class="note">Authors are advised that while the use of pseudo-elements in selectors is permitted, they
+will not match any elements in the document, and thus would not result in any elements being returned.
+Therefore, authors are advised to avoid the use of pseudo-elements in selectors that are passed to the
+methods defined in this specification.</p>
+
+
 <h4>Interface <code>ParentNode</code></h4>
 
 <p>The <dfn>mutation method macro</dfn>:
@@ -1904,6 +2228,11 @@ interface <dfn>ParentNode</dfn> {
 
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+
+  <span>Element</span>?  <span title=dom-ParentNode-querySelector>querySelector</span>(DOMString <var title>selectors</var>);
+  <span>NodeList</span>  <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(DOMString <var title>selectors</var>);
+  <span>Element</span>?  <span title=dom-ParentNode-find>find</span>(DOMString <var title>selectors</var>, optional (<span>Element</span> or sequence&lt;<span>Node</span>&gt;)? <var title>refNodes</var>);
+  <span>NodeList</span>  <span title=dom-ParentNode-findAll>findAll</span>(DOMString <var title>selectors</var>, optional (<span>Element</span> or sequence&lt;<span>Node</span>&gt;)? <var title>refNodes</var>);
 };
 <span>Document</span> implements <span>ParentNode</span>;
 <span>DocumentFragment</span> implements <span>ParentNode</span>;
@@ -1947,6 +2276,24 @@ interface <dfn>ParentNode</dfn> {
   "<code>HierarchyRequestError</code>" if the constraints of the
   <span title=concept-node-tree>node tree</span> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title>element</var> = <var title>node</var> . <span title=dom-ParentNode-find>find</span>(<var title>selectors</var> [, <var title>refNodes</var>])</code>
+ <dd>
+  <p>Returns the first element matching the given <span>selector string</span>,
+  <var>selectors</var>, where the "<code>:scope</code>" pseudo-class matches
+  the provided <var title>refNodes</var>, if any.
+
+  <p><span title=concept-throw>Throws</span> a "<code>SyntaxError</code>"
+  if the <var title>selectors</var> are invalid.
+
+ <dt><code><var title>collection</var> = <var title>node</var> . <span title=dom-ParentNode-findAll>findAll</span>(<var title>selectors</var> [, <var title>refNodes</var>])</code>
+ <dd>
+  <p>Returns all elements matching the given <span>selector string</span>,
+  <var>selectors</var>, where the "<code>:scope</code>" pseudo-class matches
+  the provided <var title>refNodes</var>, if any.
+
+  <p><span title=concept-throw>Throws</span> a "<code>SyntaxError</code>"
+  if the <var title>selectors</var> are invalid.
 </dl>
 
 <p>The <dfn title=dom-ParentNode-children><code>children</code></dfn>
@@ -1997,6 +2344,18 @@ method must run these steps:
  <var title>node</var> to the <span>context object</span>.
 </ol>
 
+<p>The <dfn title=dom-ParentNode-querySelector><code>querySelector(<var>selector</var>)</code></dfn> method must
+<span>find one element by selector</span>.</p>
+
+<p>The <dfn title=dom-ParentNode-querySelectorAll><code>querySelectorAll(<var>selector</var>)</code></dfn> method
+must <span>find all elements by selector</span>.</p>
+
+
+<p>The <dfn title=dom-ParentNode-find><code>find(<var>selector</var>, <var>refNodes</var>)</code></dfn> method
+must <span>find one element by relative selector</span>.</p>
+
+<p>The <dfn title=dom-ParentNode-findAll><code>findAll(<var>selector</var>, <var>refNodes</var>)</code></dfn>
+method must <span>find all elements by relative selector</span>.</p>
 
 <h4>Interface <code>ChildNode</code></h4>
 
@@ -4853,6 +5212,10 @@ otherwise [createAttribute]- ->.
   <span>HTMLCollection</span> <span title=dom-Element-getElementsByTagName>getElementsByTagName</span>(DOMString <var title>localName</var>);
   <span>HTMLCollection</span> <span title=dom-Element-getElementsByTagNameNS>getElementsByTagNameNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
   <span>HTMLCollection</span> <span title=dom-Element-getElementsByClassName>getElementsByClassName</span>(DOMString <var title>classNames</var>);
+  <!-- No refNodes parameter for find and findAll on Element nodes. -->
+  <span>Element</span>?  <span title=dom-Element-find>find</span>(DOMString <var title>selectors</var>);
+  <span>NodeList</span>  <span title=dom-Element-findAll>findAll</span>(DOMString <var title>selectors</var>);
+  boolean   <span title=dom-Element-matches>matches</span>(DOMString <var title>selectors</var>, optional (<span>Element</span> or sequence&lt;<span>Node</span>&gt;)? <var title>refNodes</var>);
 };</pre>
 
 <p><code>Element</code> <span title=concept-node>nodes</span> are simply
@@ -5420,6 +5783,44 @@ method must return the
 <span title=concept-getElementsByClassName>list of elements with class names <var title>classNames</var></span>
 for the <span>context object</span>.
 
+<dl class=domintro>
+ <dt><code><var title>element</var> = <var title>element</var> . <span title=dom-Element-find>find</span>(<var title>selectors</var>)</code>
+ <dd>
+  <p>Returns the first element matching the given <span>relative selector string</span>,
+  <var>selectors</var>, where the "<code>:scope</code>" pseudo-class matches the
+  <span>context object</span>.
+
+  <p><span title=concept-throw>Throws</span> a "<code>SyntaxError</code>"
+  if the <var title>selectors</var> are invalid.
+
+ <dt><code><var title>collection</var> = <var title>element</var> . <span title=dom-Element-findAll>findAll</span>(<var title>selectors</var>)</code>
+ <dd>
+  <p>Returns all elements matching the given <span>relative selector string</span>,
+  <var>selectors</var>, where the "<code>:scope</code>" pseudo-class matches the
+  <span>context object</span>.
+
+  <p><span title=concept-throw>Throws</span> a "<code>SyntaxError</code>"
+  if the <var title>selectors</var> are invalid.
+
+ <dt><code><var title>element</var> . <span title=dom-Element-matches>matches</span>(<var title>selectors</var> [, <var title>refNodes</var>])</code>
+ <dd>
+  <p>Returns true if this <var title>element</var> matches the given <span>relative selector string</span>,
+  <var>selectors</var>, where the "<code>:scope</code>" pseudo-class matches either
+  the provided <var>refNodes</var>, if any, or otherwise the <span>context object</span>; and false otherwise.
+
+  <p><span title=concept-throw>Throws</span> a "<code>SyntaxError</code>"
+  if the <var title>selectors</var> are invalid.
+
+</dl>
+
+<p>The <dfn title=dom-Element-find><code>find(<var>selector</var>)</code></dfn> method
+must <span>find one element by relative selector</span>.
+
+<p>The <dfn title=dom-Element-findAll><code>findAll(<var>selector</var>)</code></dfn>
+method must <span>find all elements by relative selector</span>.
+
+<p>The <dfn title=dom-Element-matches><code>matches(<var>selector</var>, <var>refNodes</var>)</code></dfn>
+method must <span>check if an element matches</span>.
 
 <h4>Interface <code>Attr</code></h4>
 <pre class=idl>interface <dfn>Attr</dfn> {
