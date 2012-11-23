@@ -1198,9 +1198,20 @@ method is invoked these steps must be run:
 
 <h3>Dispatching events</h3>
 
+<p>Specifications may define
+<dfn title=concept-event-redispatch>redispatching steps</dfn> to make it
+possible to <span title=concept-event-dispatch>dispatch</span> across
+distinct <span title=concept-tree>trees</span>. The
+<span title=concept-event-redispatch>redispatching steps</span> are passed a
+copy of the <span title=concept-event>event</span> that is dispatched and
+are only invoked if the
+<span title=concept-event-redispatch>redispatching steps</span> algorithm is
+passed to the <span title=concept-event-dispatch>dispatch</span> algorithm.
+
 <p>To <dfn title=concept-event-dispatch>dispatch</dfn> an
-<span title=concept-event>event</span> to a given object run these steps:
-<!-- other specifications turn this into a requirement  -->
+<span title=concept-event>event</span> to a given object, optionally with
+<span title=concept-event-redispatch>redispatching steps</span>, run these
+steps:
 
 <ol>
  <li><p>Let <var title>event</var> be the
@@ -1231,15 +1242,22 @@ method is invoked these steps must be run:
  <var title>event</var>, as long as <var title>event</var>'s
  <span>stop propagation flag</span> is unset.
 
- <li><p>Initialize <var title>event</var>'s
- <code title=dom-Event-eventPhase>eventPhase</code> attribute to
- <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
+ <li>
+  <p>If the <span title=concept-event-redispatch>redispatching steps</span>
+  are given, run them with a copy of <var title>event</var> and then go to
+  the next step. Otherwise run these substeps first:
 
- <li><p><span title=concept-event-listener-invoke>Invoke</span> the
- <span title=concept-event-listener>event listeners</span> of
- <var title>event</var>'s <code title=dom-Event-target>target</code>
- attribute value with <var title>event</var>, if <var title>event</var>'s
- <span>stop propagation flag</span> is unset.
+  <ol>
+   <li><p>Initialize <var title>event</var>'s
+   <code title=dom-Event-eventPhase>eventPhase</code> attribute to
+   <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
+
+   <li><p><span title=concept-event-listener-invoke>Invoke</span> the
+   <span title=concept-event-listener>event listeners</span> of
+   <var title>event</var>'s <code title=dom-Event-target>target</code>
+   attribute value with <var title>event</var>, if <var title>event</var>'s
+   <span>stop propagation flag</span> is unset.
+  </ol>
 
  <li>
   <p>If <var title>event</var>'s
