@@ -5800,14 +5800,7 @@ attribute must return the <span title=concept-PI-target>target</span>.
 
 
 <h2>Ranges</h2>
-<!--
- TODO
-
- * setStart, setEnd, extractContents need to be concepts
- * ProcessingInstruction inheriting from CharacterData should allow for
-   simplifications
- * make sure all methods do not call other methods but use concepts
--->
+<!-- XXX do not call other methods but use concepts -->
 
 
 <h3>Interface <code>Range</code></h3>
@@ -5987,8 +5980,8 @@ in a <span title=concept-range>range</span> if it is an
   possibly some of the contents of the
   <span title=concept-range-start-node>start node</span> and
   <span title=concept-range-end-node>end node</span> if those are
-  <code>Text</code> or <code>Comment</code>
-  <span title=concept-node>nodes</span>.
+  <code>Text</code>, <code>ProcessingInstruction</code>, or
+  <code>Comment</code> <span title=concept-node>nodes</span>.
 
   <li><p>The <span title=concept-node>nodes</span> that are contained in a
   <span title=concept-range>range</span> will generally not be contiguous,
@@ -6510,8 +6503,8 @@ method must run these steps:
 
  <li><p>If <var title>original start node</var> and
  <var title>original end node</var> are the same, and they are a
- <code>Text</code> or <code>Comment</code>
- <span title=concept-node>node</span>,
+ <code>Text</code>, <code>ProcessingInstruction</code>, or
+ <code>Comment</code> <span title=concept-node>node</span>,
  <span title=concept-CD-replace>replace data</span> with node
  <var title>original start node</var>, offset
  <var title>original start offset</var>, count
@@ -6560,8 +6553,9 @@ method must run these steps:
     <var title>original end node</var>, and we could not reach this point.
   </ol>
 
- <li><p>If <var title>original start node</var> is a <code>Text</code> or
- <code>Comment</code> <span title=concept-node>node</span>,
+ <li><p>If <var title>original start node</var> is a <code>Text</code>,
+ <code>ProcessingInstruction</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>,
  <span title=concept-CD-replace>replace data</span> with node
  <var title>original start node</var>, offset
  <var title>original start offset</var>, count
@@ -6573,8 +6567,9 @@ method must run these steps:
  in <span title=concept-tree-order>tree order</span>, remove <var title>node</var> from its <span title=concept-tree-parent>parent</span>.
  <!-- XXX use concept-node-remove? -->
 
- <li><p>If <var title>original end node</var> is a <code>Text</code> or
- <code>Comment</code> <span title=concept-node>node</span>,
+ <li><p>If <var title>original end node</var> is a <code>Text</code>,
+ <code>ProcessingInstruction</code>, or <code>Comment</code>
+ <span title=concept-node>node</span>,
  <span title=concept-CD-replace>replace data</span> with node
  <var title>original end node</var>, offset 0, count
  <var title>original end offset</var>)</code>, and data the empty string.
@@ -6620,8 +6615,9 @@ must run these steps:
 
  <li>
   <p>If <var title>original start node</var> equals
-  <var title>original end node</var>, and they are a <code>Text</code> or
-  <code>Comment</code> <span title=concept-node>node</span>:
+  <var title>original end node</var>, and they are a <code>Text</code>,
+  <code>ProcessingInstruction</code>, or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <ol>
    <li><p>Let <var title>clone</var> be a
@@ -6749,8 +6745,8 @@ must run these steps:
 
  <li>
   <p>If <var title>first partially contained child</var> is a
-  <code>Text</code> or <code>Comment</code>
-  <span title=concept-node>node</span>:
+  <code>Text</code>, <code>ProcessingInstruction</code>, or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <p class=note>In this case, the first partially contained child is the
   original start node.
@@ -6822,8 +6818,8 @@ must run these steps:
 
  <li>
   <p>If <var title>last partially contained child</var> is a
-  <code>Text</code> or <code>Comment</code>
-  <span title=concept-node>node</span>:
+  <code>Text</code>, <code>ProcessingInstruction</code>, or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <p class=note>In this case, the last partially contained child is the
   original end node.
@@ -6918,8 +6914,9 @@ method must run these steps:
 
  <li>
   <p>If <var title>original start node</var> equals
-  <var title>original end node</var>, and they are a <code>Text</code> or
-  <code>Comment</code> <span title=concept-node>node</span>:
+  <var title>original end node</var>, and they are a <code>Text</code>,
+  <code>ProcessingInstruction</code>, or <code>Comment</code>
+  <span title=concept-node>node</span>:
 
   <ol>
    <li><p>Let <var title>clone</var> be a
@@ -7001,8 +6998,8 @@ method must run these steps:
 
  <li>
   <p>If <var title>first partially contained child</var> is a
-  <code>Text</code> or <code>Comment</code>
-  <span title=concept-node>node</span>:
+  <code>Text</code>, <code>ProcessingInstruction</code>, or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <p class=note>In this case, the first partially contained child is the
   original start node.
@@ -7075,8 +7072,8 @@ method must run these steps:
 
  <li>
   <p>If <var title>last partially contained child</var> is a
-  <code>Text</code> or <code>Comment</code>
-  <span title=concept-node>node</span>:
+  <code>Text</code>, <code>ProcessingInstruction</code>, or
+  <code>Comment</code> <span title=concept-node>node</span>:
 
   <p class=note>In this case, the last partially contained child is the
   original end node.
@@ -7147,12 +7144,13 @@ method must run these steps:
  set, <span title=concept-throw>throw</span> an
  "<code>InvalidStateError</code>" exception and terminate these steps.
 
- <li><p>If <span title=concept-range-start-node>start node</span> is a
- <code>Comment</code> node, or a <code>Text</code> <span
- title=concept-node>node</span> whose <span
- title=concept-tree-parent>parent</span> is null, <span
- title=concept-throw>throw</span> an "<code>HierarchyRequestError</code>"
- exception and terminate these steps.
+ <li><p>If <span title=concept-range-start-node>start node</span> is either
+ a <code>ProcessingInstruction</code> or <code>Comment</code>
+ <span title=concept-node>node</span>, or a <code>Text</code>
+ <span title=concept-node>node</span> whose
+ <span title=concept-tree-parent>parent</span> is null,
+ <span title=concept-throw>throw</span> an
+ "<code>HierarchyRequestError</code>" exception and terminate these steps.
  <!--
  Behavior for Text node with null parent:
 
