@@ -1956,7 +1956,7 @@ from a <var title>parent</var>, optionally with
 </ol>
 
 
-<h4>Mutation methods</h4>
+<h4>Interface <code>RootNode</code></h4>
 
 <p>The <dfn>mutation method macro</dfn>:
 
@@ -1980,6 +1980,14 @@ from a <var title>parent</var>, optionally with
   <span title=concept-node>node</span> <var title>nodes</var> contains.
 </ol>
 
+<pre class=idl>[NoInterfaceObject]
+interface <dfn>RootNode</dfn> {
+  void <span title=dom-RootNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+  void <span title=dom-RootNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+};
+<span>Document</span> implements <span>RootNode</span>;
+<span>DocumentFragment</span> implements <span>RootNode</span>;
+<span>Element</span> implementas <span>RootNode</span>;</pre>
 
 <p>The
 <dfn title=dom-RootNode-prepend><code>prepend(<var>nodes</var>)</code></dfn>
@@ -2005,6 +2013,19 @@ method must run these steps:
  <var title>node</var> to the <span>context object</span>.
 </ol>
 
+
+<h4>Interface <code>ChildNode</code></h4>
+
+<pre class=idl>[NoInterfaceObject]
+interface <dfn>ChildNode</dfn> {
+  void <span title=dom-ChildNode-before>before</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+  void <span title=dom-ChildNode-after>after</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+  void <span title=dom-ChildNode-replace>replace</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+  void <span title=dom-ChildNode-remove>remove</span>();
+};
+<span>DocumentType</span> implements <span>ChildNode</span>;
+<span>Element</span> implements <span>ChildNode</span>;
+<span>CharacterData</span> implementas <span>ChildNode</span>;</pre>
 
 <p>The
 <dfn title=dom-ChildNode-before><code>before(<var>nodes</var>)</code></dfn>
@@ -3696,10 +3717,6 @@ interface <dfn>Document</dfn> : <span>Node</span> {
   --><span>Node</span> <var title>root</var>, <!--
   -->optional unsigned long <var title>whatToShow</var> = 0xFFFFFFFF, <!--
   -->optional <span>NodeFilter</span>? <var title>filter</var> = null);
-
-  // NEW
-  void <span title=dom-RootNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-RootNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 };
 
 interface <dfn>XMLDocument</dfn> : <span>Document</span> {};</pre>
@@ -4620,9 +4637,6 @@ a special case.
 
 <h3>Interface <code>DocumentFragment</code></h3>
 <pre class=idl>interface <dfn>DocumentFragment</dfn> : <span>Node</span> {
-  // NEW
-  void <span title=dom-RootNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-RootNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 };</pre>
 
 
@@ -4633,12 +4647,6 @@ a special case.
   readonly attribute DOMString <span title=dom-DocumentType-publicId>publicId</span>;
   readonly attribute DOMString <span title=dom-DocumentType-systemId>systemId</span>;<!--
   readonly attribute DOMString internalSubset;-->
-
-  // NEW
-  void <span title=dom-ChildNode-before>before</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-after>after</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-replace>replace</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p><code>DocumentType</code> <span title=concept-node>nodes</span> are
@@ -4755,14 +4763,6 @@ otherwise [createAttribute]- ->.
   readonly attribute <span>Element</span>? <span title=dom-Element-previousElementSibling>previousElementSibling</span>;
   readonly attribute <span>Element</span>? <span title=dom-Element-nextElementSibling>nextElementSibling</span>;
   readonly attribute unsigned long <span title=dom-Element-childElementCount>childElementCount</span>;<!-- XXX remove??-->
-
-  // NEW
-  void <span title=dom-RootNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-RootNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-before>before</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-after>after</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-replace>replace</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p><code>Element</code> <span title=concept-node>nodes</span> are simply
@@ -5407,12 +5407,6 @@ must return the <span title=concept-attribute-local-name>local name</span>.
   void <span title=dom-CharacterData-insertData>insertData</span>(unsigned long <var title>offset</var>, DOMString <var title>data</var>);
   void <span title=dom-CharacterData-deleteData>deleteData</span>(unsigned long <var title>offset</var>, unsigned long <var title>count</var>);
   void <span title=dom-CharacterData-replaceData>replaceData</span>(unsigned long <var title>offset</var>, unsigned long <var title>count</var>, DOMString <var title>data</var>);
-
-  // NEW
-  void <span title=dom-ChildNode-before>before</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-after>after</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-replace>replace</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-remove>remove</span>();
 };</pre>
 
 <p class="note"><code>CharacterData</code> is an abstract interface and does

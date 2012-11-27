@@ -97,7 +97,8 @@ documents.
    <li><a href="#node-tree"><span class="secno">5.2 </span>Node tree</a>
     <ol>
      <li><a href="#mutation-algorithms"><span class="secno">5.2.1 </span>Mutation algorithms</a></li>
-     <li><a href="#mutation-methods"><span class="secno">5.2.2 </span>Mutation methods</a></ol></li>
+     <li><a href="#interface-rootnode"><span class="secno">5.2.2 </span>Interface <code>RootNode</code></a></li>
+     <li><a href="#interface-childnode"><span class="secno">5.2.3 </span>Interface <code>ChildNode</code></a></ol></li>
    <li><a href="#mutation-observers"><span class="secno">5.3 </span>Mutation observers</a>
     <ol>
      <li><a href="#interface-mutationobserver"><span class="secno">5.3.1 </span>Interface <code>MutationObserver</code></a></li>
@@ -2020,7 +2021,7 @@ from a <var title="">parent</var>, optionally with
 </ol>
 
 
-<h4 id="mutation-methods"><span class="secno">5.2.2 </span>Mutation methods</h4>
+<h4 id="interface-rootnode"><span class="secno">5.2.2 </span>Interface <code><a href="#rootnode">RootNode</a></code></h4>
 
 <p>The <dfn id="mutation-method-macro">mutation method macro</dfn>:
 
@@ -2044,6 +2045,14 @@ from a <var title="">parent</var>, optionally with
   <a href="#concept-node" title="concept-node">node</a> <var title="">nodes</var> contains.
 </ol>
 
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="rootnode">RootNode</dfn> {
+  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+};
+<a href="#document">Document</a> implements <a href="#rootnode">RootNode</a>;
+<a href="#documentfragment">DocumentFragment</a> implements <a href="#rootnode">RootNode</a>;
+<a href="#element">Element</a> implementas <a href="#rootnode">RootNode</a>;</pre>
 
 <p>The
 <dfn id="dom-rootnode-prepend" title="dom-RootNode-prepend"><code>prepend(<var>nodes</var>)</code></dfn>
@@ -2069,6 +2078,19 @@ method must run these steps:
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
 
+
+<h4 id="interface-childnode"><span class="secno">5.2.3 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="childnode">ChildNode</dfn> {
+  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
+};
+<a href="#documenttype">DocumentType</a> implements <a href="#childnode">ChildNode</a>;
+<a href="#element">Element</a> implements <a href="#childnode">ChildNode</a>;
+<a href="#characterdata">CharacterData</a> implementas <a href="#childnode">ChildNode</a>;</pre>
 
 <p>The
 <dfn id="dom-childnode-before" title="dom-ChildNode-before"><code>before(<var>nodes</var>)</code></dfn>
@@ -3757,10 +3779,6 @@ interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   --><a href="#node">Node</a> <var title="">root</var>, <!--
   -->optional unsigned long <var title="">whatToShow</var> = 0xFFFFFFFF, <!--
   -->optional <a href="#nodefilter">NodeFilter</a>? <var title="">filter</var> = null);
-
-  // NEW
-  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
 };
 
 interface <dfn id="xmldocument">XMLDocument</dfn> : <a href="#document">Document</a> {};</pre>
@@ -4671,9 +4689,6 @@ a special case.
 
 <h3 id="interface-documentfragment"><span class="secno">5.6 </span>Interface <code><a href="#documentfragment">DocumentFragment</a></code></h3>
 <pre class="idl">interface <dfn id="documentfragment">DocumentFragment</dfn> : <a href="#node">Node</a> {
-  // NEW
-  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
 };</pre>
 
 
@@ -4684,12 +4699,6 @@ a special case.
   readonly attribute DOMString <a href="#dom-documenttype-publicid" title="dom-DocumentType-publicId">publicId</a>;
   readonly attribute DOMString <a href="#dom-documenttype-systemid" title="dom-DocumentType-systemId">systemId</a>;<!--
   readonly attribute DOMString internalSubset;-->
-
-  // NEW
-  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p><code><a href="#documenttype">DocumentType</a></code> <a href="#concept-node" title="concept-node">nodes</a> are
@@ -4806,14 +4815,6 @@ otherwise [createAttribute]- ->.
   readonly attribute <a href="#element">Element</a>? <a href="#dom-element-previouselementsibling" title="dom-Element-previousElementSibling">previousElementSibling</a>;
   readonly attribute <a href="#element">Element</a>? <a href="#dom-element-nextelementsibling" title="dom-Element-nextElementSibling">nextElementSibling</a>;
   readonly attribute unsigned long <a href="#dom-element-childelementcount" title="dom-Element-childElementCount">childElementCount</a>;<!-- XXX remove??-->
-
-  // NEW
-  void <a href="#dom-rootnode-prepend" title="dom-RootNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-rootnode-append" title="dom-RootNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p><code><a href="#element">Element</a></code> <a href="#concept-node" title="concept-node">nodes</a> are simply
@@ -5456,12 +5457,6 @@ must return the <a href="#concept-attribute-local-name" title="concept-attribute
   void <a href="#dom-characterdata-insertdata" title="dom-CharacterData-insertData">insertData</a>(unsigned long <var title="">offset</var>, DOMString <var title="">data</var>);
   void <a href="#dom-characterdata-deletedata" title="dom-CharacterData-deleteData">deleteData</a>(unsigned long <var title="">offset</var>, unsigned long <var title="">count</var>);
   void <a href="#dom-characterdata-replacedata" title="dom-CharacterData-replaceData">replaceData</a>(unsigned long <var title="">offset</var>, unsigned long <var title="">count</var>, DOMString <var title="">data</var>);
-
-  // NEW
-  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
-  void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };</pre>
 
 <p class="note"><code><a href="#characterdata">CharacterData</a></code> is an abstract interface and does
