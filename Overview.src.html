@@ -1742,6 +1742,10 @@ into <var title>parent</var> before null.
 with <var title>node</var> within a <var title>parent</var>, run these
 steps:
 
+<!-- Step 1-5 could be shared with concept-node-pre-insert, although step 3
+     in pre-insert is a superset (which is fine). Step 6.1.1 could also be
+     shared. -->
+
 <ol>
  <li><p>If <var title>parent</var> is not a <code>Document</code>,
  <code>DocumentFragment</code>, or <code>Element</code>
@@ -5960,9 +5964,7 @@ as returned by the following algorithm:
 <p>Each <span title=concept-range>range</span> has two associated
 <span title=concept-range-bp>boundary points</span> — a
 <dfn title=concept-range-start>start</dfn> and
-<dfn title=concept-range-end>end</dfn> — an associated
-<dfn title=concept-range-detached>detached flag</dfn>, which is initially
-unset.
+<dfn title=concept-range-end>end</dfn>.
 
 <p>For convenience, <dfn title=concept-range-start-node>start node</dfn> is
 <span title=concept-range-start>start</span>'s
@@ -5980,8 +5982,7 @@ unset.
 <p>The <dfn title=concept-range-root>root</dfn> of a
 <span title=concept-range>range</span> is the
 <span title=concept-tree-root>root</span> of its
-<span title=concept-range-start-node>start node</span>, or null if its
-<span title=concept-range-detached>detached flag</span> is set.
+<span title=concept-range-start-node>start node</span>.
 <!-- start and end have an identical root -->
 
 <p>A <span title=concept-node>node</span> <var title>node</var> is
@@ -6116,45 +6117,30 @@ in a <span title=concept-range>range</span> if it is an
 </dl>
 
 <p>The <dfn title=dom-Range-startContainer><code>startContainer</code></dfn>
-attribute must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set, and return
-the <span title=concept-range-start-node>start node</span> otherwise.
+attribute must return the
+<span title=concept-range-start-node>start node</span>.
 
 <p>The <dfn title=dom-Range-startOffset><code>startOffset</code></dfn>
-attribute must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set, and return
-the <span title=concept-range-start-offset>start offset</span> otherwise.
+attribute must return the
+<span title=concept-range-start-offset>start offset</span>.
 
 <p>The <dfn title=dom-Range-endContainer><code>endContainer</code></dfn>
-attribute must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set, and return
-the <span title=concept-range-end-node>end node</span> otherwise.
+attribute must return the
+<span title=concept-range-end-node>end node</span>.
 
 <p>The <dfn title=dom-Range-endOffset><code>endOffset</code></dfn>
-attribute must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set, and return
-the <span title=concept-range-end-offset>end offset</span> otherwise.
+attribute must return the
+<span title=concept-range-end-offset>end offset</span>.
 
 <p>The <dfn title=dom-Range-collapsed><code>collapsed</code></dfn> attribute
-must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set, return true
-if <span title=concept-range-start>start</span> is the same as
-<span title=concept-range-end>end</span>, and return false otherwise.
+must return true if <span title=concept-range-start>start</span> is the same
+as <span title=concept-range-end>end</span>, and false otherwise.
 
 <p>The
 <dfn title=dom-Range-commonAncestorContainer><code>commonAncestorContainer</code></dfn>
 attribute must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>container</var> be
  <span title=concept-range-start-node>start node</span>.
 
@@ -6175,11 +6161,6 @@ attribute must run these steps:
 (<var title>node</var>, <var title>offset</var>), run these steps:
 
 <ol>
- <li><p>If <var title>range</var>'s
- <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <var title>node</var> is a
  <span title=concept-doctype>doctype</span>,
  <span title=concept-throw>throw</span> an
@@ -6249,10 +6230,6 @@ method must <span title=concept-range-bp-set>set the end</span> of the
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>parent</var> be <var title>node</var>'s
  <span title=concept-tree-parent>parent</span>.
 
@@ -6273,10 +6250,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>parent</var> be <var title>node</var>'s
  <span title=concept-tree-parent>parent</span>.
 
@@ -6297,10 +6270,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>parent</var> be <var title>node</var>'s
  <span title=concept-tree-parent>parent</span>.
 
@@ -6321,10 +6290,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>parent</var> be <var title>node</var>'s
  <span title=concept-tree-parent>parent</span>.
 
@@ -6343,19 +6308,11 @@ method must run these steps:
 
 <p>The
 <dfn title=dom-Range-collapse><code>collapse(<var>toStart</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
- <li><p>If <var title>toStart</var> is true, set
- <span title=concept-range-end>end</span> to
- <span title=concept-range-start>start</span>. Otherwise, set
- <span title=concept-range-start>start</span> to
- <span title=concept-range-end>end</span>.
-</ol>
+method must if <var title>toStart</var> is true, set
+<span title=concept-range-end>end</span> to
+<span title=concept-range-start>start</span>, and set
+<span title=concept-range-start>start</span> to
+<span title=concept-range-end>end</span> otherwise.
 
 
 <p>The
@@ -6363,10 +6320,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>parent</var> be <var title>refNode</var>'s
  <span title=concept-tree-parent>parent</span>.
 
@@ -6391,10 +6344,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <var title>refNode</var> is a
  <span title=concept-doctype>doctype</span>,
  <span title=concept-throw>throw</span> an
@@ -6419,11 +6368,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If <span>context object</span>'s or <var title>sourceRange</var>'s
- <span title=concept-range-detached>detached flag</span> is set,
- <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li>
   <p>If <var>how</var> is not one of
   <ul>
@@ -6514,10 +6458,6 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <span title=concept-range-start>start</span> equals
  <span title=concept-range-end>end</span>, terminate these steps.
  <!-- This might actually make no difference, but it's not immediately
@@ -6617,10 +6557,6 @@ title=dom-Range-extractContents><code>extractContents()</code></dfn> method
 must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>frag</var> be a new <code>DocumentFragment</code>
  whose <span title=concept-node-document>node document</span> is the same as
  the <span title=concept-node-document>node document</span> of the
@@ -6916,10 +6852,6 @@ must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>frag</var> be a new <code>DocumentFragment</code>
  whose <span title=concept-node-document>node document</span> is the same as
  the <span title=concept-node-document>node document</span> of the
@@ -7173,10 +7105,6 @@ method must run these steps:
   position, and other browsers disagree, so the spec follows the majority.
   -->
 
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <span title=concept-range-start-node>start node</span> is either
  a <code>ProcessingInstruction</code> or <code>Comment</code>
  <span title=concept-node>node</span>, or a <code>Text</code>
@@ -7290,10 +7218,6 @@ check first thing, which matches everyone but Firefox.
 -->
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If a non-<code>Text</code> <span title=concept-node>node</span> is
  <span>partially contained</span> in the <span>context object</span>,
  <span title=concept-throw>throw</span> an
@@ -7357,22 +7281,14 @@ check first thing, which matches everyone but Firefox.
 </ol>
 
 <p>The <dfn title=dom-Range-cloneRange><code>cloneRange()</code></dfn>
-method must <span title=concept-throw>throw</span> an
-"<code>InvalidStateError</code>" exception if the
-<span title=concept-range-detached>detached flag</span> is set. Otherwise,
-it must return a new <span title=concept-range>range</span> with the same
-<span title=concept-range-start>start</span> and
+method must return a new <span title=concept-range>range</span> with the
+same <span title=concept-range-start>start</span> and
 <span title=concept-range-end>end</span> as the <span>context object</span>.
 
 <p>The <dfn title=dom-Range-detach><code>detach()</code></dfn> method must
-run these steps:
-<ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
- <li><p>Set the <span title=concept-range-detached>detached flag</span>.
-</ol>
+do nothing. <span class=note>Its functionality (disabling a
+<code>Range</code> object) was removed, but the method itself is preserved
+for compatibility.
 
 <hr>
 
@@ -7395,10 +7311,6 @@ must run these steps:
 11.50 don't support the method. -->
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <var title>node</var>'s <span title=concept-tree-root>root</span> is
  different from the <span>context object</span>'s <span
  title=concept-range-root>root</span>, return false and terminate these steps.
@@ -7445,10 +7357,6 @@ method must run these steps:
 and Opera Next 12.00 alpha all do. -->
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>If <var title>node</var>'s <span title=concept-tree-root>root</span> is
  different from the <span>context object</span>'s
  <span title=concept-range-root>root</span>,
@@ -7494,13 +7402,6 @@ method must run these steps:
 Firefox 12.0a1. -->
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
- <!-- Oddly, neither Chrome 17 dev nor Opera Next 12.00 alpha consistently
- throws here.  This is inconsistent with all other Range methods, so I
- mandate it anyway despite no implementation doing it. -->
-
  <li><p>If <var title>node</var>'s <span title=concept-tree-root>root</span>
  is different from the <span>context object</span>'s
  <span title=concept-range-root>root</span>, return false and terminate
@@ -7539,10 +7440,6 @@ Firefox 12.0a1. -->
 steps:
 
 <ol>
- <li><p>If the <span title=concept-range-detached>detached flag</span> is
- set, <span title=concept-throw>throw</span> an
- "<code>InvalidStateError</code>" exception and terminate these steps.
-
  <li><p>Let <var title>s</var> be the empty string.
 
  <li><p>If <span title=concept-range-start-node>start node</span> equals
