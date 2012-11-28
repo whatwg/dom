@@ -10,7 +10,7 @@
 
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
  <h1>DOM</h1>
- <h2 class="no-num no-toc" id="living-standard-—-last-updated-27-november-2012">Living Standard — Last Updated 27 November 2012</h2>
+ <h2 class="no-num no-toc" id="living-standard-—-last-updated-28-november-2012">Living Standard — Last Updated 28 November 2012</h2>
 
  <dl>
   <dt>This Version:
@@ -42,7 +42,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-27 November 2012, the editors have made this specification available
+28 November 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -88,9 +88,10 @@ documents.
    <li><a href="#interface-event"><span class="secno">4.2 </span>Interface <code>Event</code></a></li>
    <li><a href="#interface-customevent"><span class="secno">4.3 </span>Interface <code>CustomEvent</code></a></li>
    <li><a href="#constructing-events"><span class="secno">4.4 </span>Constructing events</a></li>
-   <li><a href="#interface-eventtarget"><span class="secno">4.5 </span>Interface <code>EventTarget</code></a></li>
-   <li><a href="#dispatching-events"><span class="secno">4.6 </span>Dispatching events</a></li>
-   <li><a href="#firing-events"><span class="secno">4.7 </span>Firing events</a></ol></li>
+   <li><a href="#defining-event-interfaces"><span class="secno">4.5 </span>Defining event interfaces</a></li>
+   <li><a href="#interface-eventtarget"><span class="secno">4.6 </span>Interface <code>EventTarget</code></a></li>
+   <li><a href="#dispatching-events"><span class="secno">4.7 </span>Dispatching events</a></li>
+   <li><a href="#firing-events"><span class="secno">4.8 </span>Firing events</a></ol></li>
  <li><a href="#nodes"><span class="secno">5 </span>Nodes</a>
   <ol>
    <li><a href="#introduction-to-the-dom"><span class="secno">5.1 </span>Introduction to "The DOM"</a></li>
@@ -1072,8 +1073,9 @@ initialized to the number of milliseconds that has passed since
 
 <hr>
 
-<p>When the <dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
-method is invoked these steps must be run:</p>
+<p>To <dfn id="concept-event-initialize" title="concept-event-initialize">initialize</dfn> an
+<var title="">event</var>, with <var title="">type</var>,
+<var title="">bubbles</var>, and <var title="">cancelable</var>, run these steps:
 
 <ol>
  <li><p>Set the <a href="#initialized-flag">initialized flag</a>.
@@ -1085,13 +1087,19 @@ method is invoked these steps must be run:</p>
  to false.
  <li><p>Set the <code title="dom-Event-target"><a href="#dom-event-target">target</a></code> attribute to
  null.
- <li><p>Set the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to the
- <var title="">type</var> argument.
+ <li><p>Set the <code title="dom-Event-type"><a href="#dom-event-type">type</a></code> attribute to
+ <var title="">type</var>.
  <li><p>Set the <code title="dom-Event-bubbles"><a href="#dom-event-bubbles">bubbles</a></code> attribute to
- the <var title="">bubbles</var> argument.
+ <var title="">bubbles</var>.
  <li><p>Set the <code title="dom-Event-cancelable"><a href="#dom-event-cancelable">cancelable</a></code> attribute
- to the <var title="">cancelable</var> argument.
+ to <var title="">cancelable</var>.
 </ol>
+
+<p>The
+<dfn id="dom-event-initevent" title="dom-Event-initEvent"><code>initEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>)</code></dfn>
+method must <a href="#concept-event-initialize" title="concept-event-initialize">initialize</a> the
+<a href="#context-object">context object</a> with <var title="">type</var>,
+<var title="">bubbles</var>, and <var title="">cancelable</var>.
 
 <p class="note">As <a href="#concept-event" title="concept-event">events</a> have constructors
 <code title="dom-Event-initEvent"><a href="#dom-event-initevent">initEvent()</a></code> is superfluous. However,
@@ -1103,6 +1111,8 @@ it has to be supported for legacy content.
 <pre class="idl">[Constructor(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
   readonly attribute any <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;
+
+  void <a href="#dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent">initCustomEvent</a>(DOMString <var title="">type</var>, boolean <var title="">bubbles</var>, boolean <var title="">cancelable</var>, any <var title="">details</var>);
 };
 
 dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit">EventInit</a> {
@@ -1122,12 +1132,22 @@ dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit
  <dt><code><var title="">event</var> . <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a></code>
  <dd><p>Returns any custom data <var title="">event</var> was created with.
  Typically used for synthetic events.
+
+ <!-- initCustomEvent is dead -->
 </dl>
 
 <p>The <dfn id="dom-customevent-detail" title="dom-CustomEvent-detail"><code>detail</code></dfn> attribute
 must return the value it was initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attribute must be
 initialized to null.
+
+<p>The
+<dfn id="dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent"><code>initCustomEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>, <var title="">details</var>)</code></dfn>
+method must <a href="#concept-event-initialize" title="concept-event-initialize">initialize</a> the
+<a href="#context-object">context object</a> with <var title="">type</var>,
+<var title="">bubbles</var>, and <var title="">cancelable</var>, and then set its
+<code title="dom-CustomEvent-details">details</code> attribute to
+<var title="">details</var>.
 
 
 <h3 id="constructing-events"><span class="secno">4.4 </span>Constructing events</h3>
@@ -1157,7 +1177,20 @@ these steps must be run:
 </ol>
 
 
-<h3 id="interface-eventtarget"><span class="secno">4.5 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
+<h3 id="defining-event-interfaces"><span class="secno">4.5 </span>Defining event interfaces</h3>
+
+<p>In general, when defining a new interface that inherits from
+<code><a href="#event">Event</a></code> please always ask feedback from the WHATWG or the
+W3C WebApps WG community.
+
+<p>The <code><a href="#customevent">CustomEvent</a></code> interface can be used as starting point.
+However, do not introduce any <code title="">init<var>*</var>Event()</code>
+methods as they are redundant with constructors. Interfaces that inherit
+from the <code><a href="#event">Event</a></code> interface that have such a method only have it
+for historical reasons.
+
+
+<h3 id="interface-eventtarget"><span class="secno">4.6 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
 <pre class="idl">interface <dfn id="eventtarget">EventTarget</dfn> {
   void <a href="#dom-eventtarget-addeventlistener" title="dom-EventTarget-addEventListener">addEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">callback</var>, optional boolean <var title="">capture</var> = false);
@@ -1261,7 +1294,7 @@ method is invoked these steps must be run:
 </ol>
 
 
-<h3 id="dispatching-events"><span class="secno">4.6 </span>Dispatching events</h3>
+<h3 id="dispatching-events"><span class="secno">4.7 </span>Dispatching events</h3>
 
 <p>Specifications may define
 <dfn id="concept-event-redispatch" title="concept-event-redispatch">redispatching steps</dfn> to make it
@@ -1408,7 +1441,7 @@ event run these steps:</p>
 </ol>
 
 
-<h3 id="firing-events"><span class="secno">4.7 </span>Firing events</h3>
+<h3 id="firing-events"><span class="secno">4.8 </span>Firing events</h3>
 
 <p>To
 <dfn id="concept-event-fire" title="concept-event-fire">fire an event named <var title="">e</var></dfn>

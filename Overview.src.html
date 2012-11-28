@@ -1007,8 +1007,9 @@ initialized to the number of milliseconds that has passed since
 
 <hr>
 
-<p>When the <dfn title=dom-Event-initEvent><code>initEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>)</code></dfn>
-method is invoked these steps must be run:</p>
+<p>To <dfn title=concept-event-initialize>initialize</dfn> an
+<var title>event</var>, with <var title>type</var>,
+<var title>bubbles</var>, and <var title>cancelable</var>, run these steps:
 
 <ol>
  <li><p>Set the <span>initialized flag</span>.
@@ -1020,13 +1021,19 @@ method is invoked these steps must be run:</p>
  to false.
  <li><p>Set the <code title=dom-Event-target>target</code> attribute to
  null.
- <li><p>Set the <code title=dom-Event-type>type</code> attribute to the
- <var title>type</var> argument.
+ <li><p>Set the <code title=dom-Event-type>type</code> attribute to
+ <var title>type</var>.
  <li><p>Set the <code title=dom-Event-bubbles>bubbles</code> attribute to
- the <var title>bubbles</var> argument.
+ <var title>bubbles</var>.
  <li><p>Set the <code title=dom-Event-cancelable>cancelable</code> attribute
- to the <var title>cancelable</var> argument.
+ to <var title>cancelable</var>.
 </ol>
+
+<p>The
+<dfn title=dom-Event-initEvent><code>initEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>)</code></dfn>
+method must <span title=concept-event-initialize>initialize</span> the
+<span>context object</span> with <var title>type</var>,
+<var title>bubbles</var>, and <var title>cancelable</var>.
 
 <p class=note>As <span title=concept-event>events</span> have constructors
 <code title=dom-Event-initEvent>initEvent()</code> is superfluous. However,
@@ -1038,6 +1045,8 @@ it has to be supported for legacy content.
 <pre class=idl>[Constructor(DOMString <var title>type</var>, optional <span>CustomEventInit</span> <var title>eventInitDict</var>)]
 interface <dfn>CustomEvent</dfn> : <span>Event</span> {
   readonly attribute any <span title=dom-CustomEvent-detail>detail</span>;
+
+  void <span title=dom-CustomEvent-initCustomEvent>initCustomEvent</span>(DOMString <var title>type</var>, boolean <var title>bubbles</var>, boolean <var title>cancelable</var>, any <var title>details</var>);
 };
 
 dictionary <dfn>CustomEventInit</dfn> : <span>EventInit</span> {
@@ -1057,12 +1066,22 @@ dictionary <dfn>CustomEventInit</dfn> : <span>EventInit</span> {
  <dt><code><var title>event</var> . <span title=dom-CustomEvent-detail>detail</span></code>
  <dd><p>Returns any custom data <var title>event</var> was created with.
  Typically used for synthetic events.
+
+ <!-- initCustomEvent is dead -->
 </dl>
 
 <p>The <dfn title=dom-CustomEvent-detail><code>detail</code></dfn> attribute
 must return the value it was initialized to. When an
 <span title=concept-event>event</span> is created the attribute must be
 initialized to null.
+
+<p>The
+<dfn title=dom-CustomEvent-initCustomEvent><code>initCustomEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>, <var title>details</var>)</code></dfn>
+method must <span title=concept-event-initialize>initialize</span> the
+<span>context object</span> with <var title>type</var>,
+<var title>bubbles</var>, and <var title>cancelable</var>, and then set its
+<code title=dom-CustomEvent-details>details</code> attribute to
+<var title>details</var>.
 
 
 <h3>Constructing events</h3>
@@ -1090,6 +1109,19 @@ these steps must be run:
 
  <li><p>Return the <span title=concept-event>event</span>.
 </ol>
+
+
+<h3>Defining event interfaces</h3>
+
+<p>In general, when defining a new interface that inherits from
+<code>Event</code> please always ask feedback from the WHATWG or the
+W3C WebApps WG community.
+
+<p>The <code>CustomEvent</code> interface can be used as starting point.
+However, do not introduce any <code title>init<var>*</var>Event()</code>
+methods as they are redundant with constructors. Interfaces that inherit
+from the <code>Event</code> interface that have such a method only have it
+for historical reasons.
 
 
 <h3>Interface <code>EventTarget</code></h3>
