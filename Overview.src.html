@@ -296,179 +296,75 @@ of <span title=concept-tree-preceding>preceding</span>
 <var title>pattern</var>'s length leaves the two strings as matches of each
 other.
 
-<p>The <dfn title="space character">space characters</dfn>, for the
-purposes of this specification, are U+0020 SPACE, U+0009 CHARACTER
-TABULATION (tab), U+000A LINE FEED (LF), U+000C FORM FEED (FF), and
-U+000D CARRIAGE RETURN (CR).
 
+<h3>Ordered sets</h3>
 
-<h3>Common microsyntaxes</h3>
-<h4>Common parser idioms</h4>
-<p>Some of the micro-parsers described below follow the pattern of having an
-<var title>input</var> variable that holds the string being parsed, and having a
-<var title>position</var> variable pointing at the next character to parse in
-<var title>input</var>.
-
-<p>For parsers based on this pattern, a step that requires the user agent to
-<dfn>collect a sequence of characters</dfn> means that the following algorithm
-must be run, with <var title>characters</var> being the set of characters that
-can be collected:
+<p>The <dfn title=concept-set-parser>set parser</dfn> takes a string
+<var title>input</var> and then runs these steps:
 
 <ol>
- <li><p>Let <var title>input</var> and <var title>position</var> be the same
- variables as those of the same name in the algorithm that invoked these steps.
-
- <li><p>Let <var title>result</var> be the empty string.
-
- <li><p>While <var title>position</var> does not point past the end of
- <var title>input</var> and the character at <var title>position</var> is one of
- the <var title>characters</var>, append that character to the end of
- <var title>result</var> and advance <var title>position</var> to the next
- character in <var title>input</var>.
-
- <li><p>Return <var title>result</var>.
-</ol>
-
-<p>The step <dfn>skip whitespace</dfn> means that the user agent
-must <span>collect a sequence of characters</span> that are <span
-title="space character">space characters</span>. The collected
-characters are not used.
-
-<h4>Space-separated tokens</h4>
-
-<p>A <dfn>set of space-separated tokens</dfn> is a string containing
-zero or more words (known as tokens) separated by one or more <span
-title="space character">space characters</span>, where words consist
-of any string of one or more characters, none of which are <span
-title="space character">space characters</span>.
-
-<p>A string containing a <span>set of space-separated tokens</span>
-may have leading or trailing <span title="space character">space
-characters</span>.
-
-<p>An <dfn>unordered set of unique space-separated tokens</dfn> is a
-<span>set of space-separated tokens</span> where none of the tokens
-are duplicated.
-
-<p>An <dfn>ordered set of unique space-separated tokens</dfn> is a
-<span>set of space-separated tokens</span> where none of the tokens
-are duplicated but where the order of the tokens is meaningful.
-
-<p><span title="set of space-separated tokens">Sets of
-space-separated tokens</span> sometimes have a defined set of
-allowed values. When a set of allowed values is defined, the tokens
-must all be from that list of allowed values; other values are
-non-conforming. If no such set of allowed values is provided, then
-all values are conforming.
-
-<p class="note">How tokens in a <span>set of space-separated
-tokens</span> are to be compared (e.g. case-sensitively or not) is
-defined on a per-set basis.
-
-<div class="impl">
-
-<p>When a user agent has to <dfn>split a string on spaces</dfn>, it
-must use the following algorithm:
-
-<ol>
- <li><p>Let <var title>input</var> be the string being parsed.
-
  <li><p>Let <var title>position</var> be a pointer into <var title>input</var>,
  initially pointing at the start of the string.
 
  <li><p>Let <var title>tokens</var> be a list of tokens, initially empty.
 
- <li><p><span>Skip whitespace</span>.
+ <li><p><span>Skip ASCII whitespace</span>.
 
  <li><p>While <var title>position</var> is not past the end of
  <var title>input</var>:
 
   <ol>
-   <li><p><span>Collect a sequence of characters</span> that are not
-   <span title="space character">space characters</span>.
+   <li><p><span>Collect a code point sequence</span> of code points that are
+   not <span data-anolis-spec=encoding>ASCII whitespace</span>.
 
-   <li><p>Add the string collected in the previous step to
-   <var title>tokens</var>.
+   <li><p>If the collected string is not in <var title>tokens</var>, add the
+   collected string to <var title>tokens</var>.
 
-   <li><p><span>Skip whitespace</span>.
+   <li><p><span>Skip ASCII whitespace</span>.
   </ol>
 
  <li><p>Return <var title>tokens</var>.
 </ol>
 
-<p>When a user agent has to <dfn>remove a token from a string</dfn>,
-it must use the following algorithm:
+<p>To <dfn>collect a code point sequence</dfn> of
+<var title>code points</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>input</var> be the string being modified.
+ <li><p>Let <var title>input</var> and <var title>position</var> be the same
+ variables as those of the same name in the algorithm that invoked these
+ steps.
 
- <li><p>Let <var title>token</var> be the token being removed. It will not
- contain any <span title="space character">space characters</span>.
+ <li><p>Let <var title>result</var> be the empty string.
 
- <li><p>Let <var title>output</var> be the output string, initially empty.
+ <li><p>While <var title>position</var> does not point past the end of
+ <var title>input</var> and the character at <var title>position</var> is
+ one of the <var title>code points</var>, append that code point to the end
+ of <var title>result</var> and advance <var title>position</var> to the
+ next code point in <var title>input</var>.
 
- <li><p>Let <var title>position</var> be a pointer into <var title>input</var>,
- initially pointing at the start of the string.
-
- <li><p><i title>Loop</i>: If <var title>position</var> is beyond the end of
- <var title>input</var>, terminate these steps.
-
- <li>
-  <p>If the character at <var title>position</var> is a <span>space
-  character</span>:
-
-  <ol>
-   <li><p>Append the character at <var title>position</var> to the end of <var
-   title>output</var>.
-
-   <li><p>Advance <var title>position</var> so it points at the next character
-   in <var title>input</var>.
-
-   <li><p>Return to the step labeled <i title>loop</i>.
-  </ol>
-
- <li><p>Otherwise, the character at <var title>position</var> is the first
- character of a token. <span>Collect a sequence of characters</span> that are
- not <span title="space character">space characters</span>, and let that be <var
- title>s</var>.
-
- <li>
-  <p>If <var title>s</var> is exactly equal to <var title>token</var>, then:
-
-  <ol>
-   <li><p><span>Skip whitespace</span> (in <var title>input</var>).
-
-   <li><p>Remove any <span title="space character">space characters</span>
-   currently at the end of <var title>output</var>.
-
-   <li><p>If <var title>position</var> is not past the end of <var
-   title>input</var>, and <var title>output</var> is not the empty string,
-   append a single U+0020 SPACE character at the end of <var title>output</var>.
-  </ol>
-
- <li><p>Otherwise, append <var title>s</var> to the end of <var
- title>output</var>.
-
- <li><p>Return to the step labeled <i title>loop</i>.
+ <li><p>Return <var title>result</var>.
 </ol>
 
-<p class="note">This causes any occurrences of the token to be
-removed from the string, and any spaces that were surrounding the
-token to be collapsed to a single space, except at the start and end
-of the string, where such spaces are removed.
+<p>To <dfn>skip ASCII whitespace</dfn> means to
+<span>collect a code point sequence</span> of
+<span data-anolis-spec=encoding>ASCII whitespace</span> and discard the
+return value.
 
-</div>
+<p>The <dfn title=concept-set-serializer>set serializer</dfn> takes a
+<var title>set</var> and returns the concatenation of the strings in
+<var title>set</var>, separated from each other by U+0020.
 
 
 <h3>Namespaces</h3>
-<p>The <dfn>HTML namespace</dfn> is <code
-title>http://www.w3.org/1999/xhtml</code>.
+<p>The <dfn>HTML namespace</dfn> is
+<code title>http://www.w3.org/1999/xhtml</code>.
 
-<p>The <dfn>XML namespace</dfn> is <code
-title>http://www.w3.org/XML/1998/namespace</code>.
+<p>The <dfn>XML namespace</dfn> is
+<code title>http://www.w3.org/XML/1998/namespace</code>.
 
-<p>The <dfn>XMLNS namespace</dfn> is <code
-title>http://www.w3.org/2000/xmlns/</code>.
+<p>The <dfn>XMLNS namespace</dfn> is
+<code title>http://www.w3.org/2000/xmlns/</code>.
+
 
 
 <h2>Errors</h2>
@@ -1466,7 +1362,7 @@ http://software.hixie.ch/utilities/js/live-dom-viewer/?%3C!DOCTYPE%20html%3E%0D%
 
 <p>Note that, due to the magic that is
 <span title="HTML parser" data-anolis-spec=html>HTML parsing</span>, not all
-<span title="space character">space characters</span> were turned into
+<span data-anolis-spec=encoding>ASCII whitespace</span> were turned into
 <code>Text</code> <span title=concept-node>nodes</span>, but the general
 concept is clear. Markup goes in, a <span title=concept-tree>tree</span> of
 <span title=concept-node>nodes</span> comes out.
@@ -3813,9 +3709,9 @@ for a <span title=concept-node>node</span> <var title>root</var> is the
 <code>HTMLCollection</code> returned by the following algorithm:
 <ol>
  <li>
-  <p>Let <var title>classes</var> be the set of tokens found by
-  <span title="split a string on spaces">splitting</span>
-  <var title>classNames</var> on spaces. (Duplicates are ignored.)
+  <p>Let <var title>classes</var> be the result of running the
+  <span title=concept-set-parser>set parser</span> on
+  <var title>classNames</var>.
 
  <li>
   <p>If <var title>classes</var> is the empty set, return an empty
@@ -4977,13 +4873,13 @@ The <span title=concept-id>ID</span> is that
 <span title=concept-class>classes</span> if it
 <span title=concept-element-attribute-has>has</span> a
 <span title=concept-named-attribute><code>class</code> attribute</span>, and
-<span title="split a string on spaces">splitting</span> that
+<span title=concept-set-parser>parsing</span> that
 <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-value>value</span> does not return an empty
-list. The <span title=concept-class>classes</span> are that
+set. The <span title=concept-class>classes</span> are that
 <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-value>value</span>
-<span title="split a string on spaces">split on spaces</span>.
+<span title=concept-set-parser>parsed</span>.
 
 <p class=note>While this specification defines user agent processing
 requirements for <code title>id</code> and <code title>class</code>
@@ -5116,9 +5012,8 @@ attribute must <span title=concept-reflect>reflect</span> the
 "<code title>class</code>" content attribute.
 
 <p>The <dfn title=dom-Element-classList><code>classList</code></dfn>
-attribute must return a <code>DOMTokenList</code> whose
-<span title=concept-tokenlist-underlying-string>underlying string</span> is
-the <code title=dom-Element-className>className</code> attribute value.
+attribute must return a <code>DOMTokenList</code> whose associated attribute
+is the "<code title>class</code>" content attribute.
 
 <hr>
 
@@ -8434,13 +8329,6 @@ and false otherwise.
 
 
 <h3>Interface <code>DOMTokenList</code></h3>
-<p>The <code>DOMTokenList</code> interface represents an interface to an
-<dfn title=concept-tokenlist-underlying-string>underlying string</dfn> that
-consists of a <span>set of space-separated tokens</span>.
-
-<p class="note"><code>DOMTokenList</code> objects are always
-<span>case-sensitive</span>, even when the underlying string might
-ordinarily be treated in a case-insensitive manner.
 
 <pre class="idl">interface <dfn>DOMTokenList</dfn> {
   readonly attribute unsigned long <span title="dom-DOMTokenList-length">length</span>;
@@ -8452,21 +8340,34 @@ ordinarily be treated in a case-insensitive manner.
   <span title="dom-DOMTokenList-stringifier">stringifier</span>;
 };</pre>
 
+<p>A <code>DOMTokenList</code> object has an associated list of unique tokens, which is initially empty.
+
+<p>A <code>DOMTokenList</code> object also has an associated
+<span title=concept-attribute>attribute</span>.
+
+<p>A <code>DOMTokenList</code> object's
+<dfn title=concept-DTL-update>update steps</dfn> are to set the associated
+<span title=concept-attribute>attribute</span>'s
+<span title=concept-attribute-value>value</span> to the result of the
+<span title=concept-set-serializer>set serializer</span> of the associated
+list of tokens.
+
 <dl class="domintro">
- <dt><var title>tokenlist</var> . <code title="dom-DOMTokenList-length">length</code>
- <dd>
-  <p>Returns the number of tokens in the string.
+ <dt><code><var title>tokenlist</var> . <span title="dom-DOMTokenList-length">length</span></code>
+ <dd><p>Returns the number of tokens.
 
- <dt><var title>element</var> = <var title>tokenlist</var> . <code title="dom-DOMTokenList-item">item</code>(<var title>index</var>)
- <dt><var title>tokenlist</var>[<var title>index</var>]
- <dd>
-  <p>Returns the token with index <var title>index</var>. The tokens are returned in the order they are found in the underlying string.
+ <dt><code><var title>tokenlist</var> . <span title="dom-DOMTokenList-item">item</span>(<var title>index</var>)</code>
+ <dt><code><var title>tokenlist</var>[<var title>index</var>]</code>
+ <dd><p>Returns the token with index <var title>index</var>.
 
- <dt><var title>hastoken</var> = <var title>tokenlist</var> . <code title="dom-DOMTokenList-contains">contains</code>(<var title>token</var>)
+ <dt><code><var title>tokenlist</var> . <span title="dom-DOMTokenList-contains">contains</span>(<var title>token</var>)</code>
  <dd>
-  <p>Returns true if the <var title>token</var> is present; false otherwise.
-  <p>Throws a "<code>SyntaxError</code>" exception if <var title>token</var> is empty.
-  <p>Throws an "<code>InvalidCharacterError</code>" exception if <var title>token</var> contains any spaces.
+  <p>Returns true if <var title>token</var> is present, and false otherwise.
+  <p>Throws a "<code>SyntaxError</code>" exception if <var title>token</var>
+  is the empty string.
+  <p>Throws an "<code>InvalidCharacterError</code>" exception if
+  <var title>token</var> contains any
+  <span data-anolis-spec=encoding>ASCII whitespace</span>.
 
  <dt><code><var title>tokenlist</var> . <span title=dom-DOMTokenList-add>add</span>(<var title>tokens</var>&hellip;)</code>
  <dd>
@@ -8474,15 +8375,17 @@ ordinarily be treated in a case-insensitive manner.
   <p>Throws a "<code>SyntaxError</code>" exception if one if the arguments
   is the empty string.
   <p>Throws an "<code>InvalidCharacterError</code>" exception if one of the
-  arguments contains any <span title="space character">spaces</span>.
+  arguments contains any
+  <span data-anolis-spec=encoding>ASCII whitespace</span>.
 
- <dt><code><var title>tokenlist</var> . <code title=dom-DOMTokenList-remove>remove</code>(<var title>tokens</var>&hellip;)</code>
+ <dt><code><var title>tokenlist</var> . <span title=dom-DOMTokenList-remove>remove</span>(<var title>tokens</var>&hellip;)</code>
  <dd>
   <p>Removes arguments passed, if they are present.
   <p>Throws a "<code>SyntaxError</code>" exception if one if the arguments
   is the empty string.
   <p>Throws an "<code>InvalidCharacterError</code>" exception if one of the
-  arguments contains any <span title="space character">spaces</span>.
+  arguments contains any
+  <span data-anolis-spec=encoding>ASCII whitespace</span>.
 
  <dt><code><var title>tokenlist</var> . <span title="dom-DOMTokenList-toggle">toggle</span>(<var title>token</var> [, <var title>force</var>])</code>
  <dd>
@@ -8501,18 +8404,12 @@ ordinarily be treated in a case-insensitive manner.
 <div class="impl">
 
 <p>The <dfn title="dom-DOMTokenList-length"><code>length</code></dfn>
-attribute must return the number of tokens that result from
-<span title="split a string on spaces">splitting</span> the
-<span title=concept-tokenlist-underlying-string>underlying string</span> on
-spaces.
+attribute must return the number of tokens in the list of tokens.
 
 <p>The object's
 <span data-anolis-spec=webidl>supported property indices</span> are the
-numbers in the range zero to the
-<code title="dom-DOMTokenList-length">length</code> attribute value minus 1,
-unless the
-<code title="dom-DOMTokenList-length">length</code> attribute value is zero,
-in which case there are no
+numbers in the range zero to the number of tokens in the list of tokens
+minus one, unless the list of tokens is empty, in which case there are no
 <span data-anolis-spec=webidl>supported property indices</span>.
 
 <p>The
@@ -8520,45 +8417,27 @@ in which case there are no
 method must run these steps:
 
 <ol>
- <li>If <var title>index</var> is equal to or greater than the
- <code title=dom-DOMTokenList-length>length</code> attribute value,
- return null and terminate these steps.
+ <li><p>If <var title>index</var> is equal to or greater than the number of
+ tokens in the list of tokens, return null and terminate these steps.
 
- <li><span title="split a string on spaces">Split</span> the
- <span title=concept-tokenlist-underlying-string>underlying string</span> on
- spaces, preserving the order of the tokens as found in the
- <span title=concept-tokenlist-underlying-string>underlying string</span>,
- to get the list of tokens.
-
- <li>Return the <var title>index</var>th item in this list.
+ <li><p>Return the <var title>index</var>th token in the list of tokens.
 </ol>
-
-<p class="example">For example, if the string is "<code title>a b a c</code>"
-then there are four tokens: the token with index 0 is "<code title>a</code>",
-the token with index 1 is "<code title>b</code>", the token with index 2 is
-"<code title>a</code>", and the token with index 3 is "<code title>c</code>".
 
 <p>The
 <dfn title="dom-DOMTokenList-contains"><code>contains(<var title>token</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li>If <var title>token</var> is the empty string, then
- <span title=concept-throw>throw</span> a
- "<code>SyntaxError</code>" exception and terminate these steps.
+ <li><p>If <var title>token</var> is the empty string, then
+ <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
+ exception.
 
- <li>If <var title>token</var> contains any
- <span title="space character">space characters</span>, then
- <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these
- steps.
+ <li><p>If <var title>token</var> contains any
+ <span data-anolis-spec=encoding>ASCII whitespace</span>, then
+ <span title=concept-throw>throw</span>
+ an "<code>InvalidCharacterError</code>" exception.
 
- <li><span title="split a string on spaces">Split</span> the
- <span title=concept-tokenlist-underlying-string>underlying string</span> on
- spaces to get the list of tokens.
-
- <li>Return true if <var title>token</var> is a <span>case-sensitive</span>
- match for one of the tokens in the list found in the previous step, and
+ <li><p>Return true if <var title>token</var> is in the list of tokens, and
  false otherwise.
 </ol>
 
@@ -8567,33 +8446,20 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li>If one of the tokens in <var title>tokens</var> is the empty string,
+ <li><p>If one of <var title>tokens</var> is the empty string,
  <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
- exception and terminate these steps.
+ exception.
 
- <li>If one of the tokens in <var title>tokens</var> contains any
- <span title="space character">space characters</span>, then
+ <li><p>If one of <var title>tokens</var> contains any
+ <span data-anolis-spec=encoding>ASCII whitespace</span>, then
  <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these steps.
+ "<code>InvalidCharacterError</code>" exception.
 
- <li><span title="split a string on spaces">Split</span> the
- <span title=concept-tokenlist-underlying-string>underlying string</span> on
- spaces to get the list of tokens.
+ <li><p>For each <var title>token</var> in <var title>tokens</var>, in given
+ order, that is not in the list of tokens, append <var title>token</var> to
+ the list of tokens.
 
- <li>Remove each token in <var title>tokens</var> that is a
- <span>case-sensitive</span> match for one of the tokens in the list found
- in the previous step. If <var title>tokens</var> is now empty, then
- terminate these steps.
-
- <li>If the
- <span title=concept-tokenlist-underlying-string>underlying string</span> is
- not the empty string and the last character of that string is not a
- <span>space character</span>, then append a U+0020 SPACE character to that
- string.
-
- <li>Append all tokens in <var title>tokens</var> to the
- <span title=concept-tokenlist-underlying-string>underlying string</span>
- separated from each other by a U+0020 SPACE character, in list order.
+ <li><p>Run the <span title=concept-DTL-update>update steps</span>.
 </ol>
 
 <p>The
@@ -8601,18 +8467,19 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li>If one of the tokens in <var title>tokens</var> is the empty string,
+ <li><p>If one of <var title>tokens</var> is the empty string,
  <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
- exception and terminate these steps.
+ exception.
 
- <li>If one of the tokens in <var title>tokens</var> contains any
- <span title="space character">space characters</span>, then
+ <li><p>If one of <var title>tokens</var> contains any
+ <span data-anolis-spec=encoding>ASCII whitespace</span>, then
  <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these steps.
+ "<code>InvalidCharacterError</code>" exception.
 
- <li><span title="remove a token from a string">Remove</span> each token in
- <var title>tokens</var> from  the
- <span title=concept-tokenlist-underlying-string>underlying string</span>.
+ <li><p>For each <var title>token</var> in <var title>tokens</var>, remove
+ <var title>token</var> from the list of tokens.
+
+ <li><p>Run the <span title=concept-DTL-update>update steps</span>.
 </ol>
 
 <p>The
@@ -8620,83 +8487,65 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>If <var title>token</var> is the empty string, then
+ <li><p>If <var title>token</var> is the empty string,
  <span title=concept-throw>throw</span> a "<code>SyntaxError</code>"
- exception and terminate these steps.
+ exception.
 
  <li><p>If <var title>token</var> contains any
- <span title="space character">space characters</span>, then
+ <span data-anolis-spec=encoding>ASCII whitespace</span>,
  <span title=concept-throw>throw</span> an
- "<code>InvalidCharacterError</code>" exception and terminate these
- steps.
+ "<code>InvalidCharacterError</code>" exception.
 
- <li><p>Let <var title>tokens</var> be the result of
- <span title="split a string on spaces">splitting</span> the
- <span title=concept-tokenlist-underlying-string>underlying string</span> on
- <span title="space character">space characters</span>.
+ <li><p>If <var title>token</var> is in the list of tokens and
+ <var title>force</var> is not true (either false or omitted), then remove
+ <var title>token</var> from the list of tokens, run the
+ <span title=concept-DTL-update>update steps</span>, and return false.
 
- <li><p>If <var title>token</var> is a <span>case-sensitive</span> match for
- one of <var title>tokens</var> and <var title>force</var> is not true
- (either false or omitted), then
- <span title="remove a token from a string">remove</span>
- <var title>token</var> from the
- <span title=concept-tokenlist-underlying-string>underlying string</span>,
- return false, and terminate these steps.
-
- <li><p>If <var title>token</var> is a <span>case-sensitive</span> match for
- one of <var title>tokens</var> and <var title>force</var> is true
- (neither false nor omitted), return true, and terminate these steps.
+ <li><p>If <var title>token</var> is in the list of tokens and
+ <var title>force</var> is true (neither false nor omitted), return true.
 
  <li><p>If <var title>force</var> is false (neither true nor omitted),
- return false, and terminate these steps.
+ return false.
 
- <li><p>If the
- <span title=concept-tokenlist-underlying-string>underlying string</span> is
- not the empty string and the last character of that string is not a
- <span>space character</span>, then append a U+0020 SPACE character to that
- string.
-
- <li><p>Append the value of <var title>token</var> to the
- <span title=concept-tokenlist-underlying-string>underlying string</span>.
-
- <li><p>Return true.
+ <li><p>Append <var title>token</var> to the list of tokens, run the
+ <span title=concept-DTL-update>update steps</span>, and return true.
 </ol>
 
-<p><code>DOMTokenList</code> objects must
-<dfn title="dom-DOMTokenList-stringifier">stringify</dfn> to the
-<span title=concept-tokenlist-underlying-string>underlying string</span>.
+<p>The <dfn title="dom-DOMTokenList-stringifier">stringifier</dfn> must
+return the result of the
+<span title=concept-set-serializer>set serializer</span> for the associated
+list of tokens.
 
 </div>
 
 
 <h3>Interface <code>DOMSettableTokenList</code></h3>
 
-<p>The <code>DOMSettableTokenList</code> interface is the same as the
-<code>DOMTokenList</code> interface, except that it allows the
-underlying string to be directly changed.
-
 <pre class="idl">interface <dfn>DOMSettableTokenList</dfn> : <span>DOMTokenList</span> {
             attribute DOMString <span title="dom-DOMSettableTokenList-value">value</span>;
 };</pre>
 
+<p>A <code>DOMSettableTokenList</code> object is equivalent to a
+<span>DOMTokenList</span> object without an associated
+<span title=concept-attribute>attribute</span>.
+
 <dl class="domintro">
- <dt><var title>tokenlist</var> . <code title="dom-DOMSettableTokenList-value">value</code>
+ <dt><code><var title>tokenlist</var> . <span title="dom-DOMSettableTokenList-value">value</span></code>
  <dd>
-  <p>Returns the underlying string.
-  <p>Can be set, to change the underlying string.
+  <p>Returns the associated set as string.
+  <p>Can be set, to change the associated set via a string.
 </dl>
 
 <div class="impl">
 
-<p>An object implementing the <code>DOMSettableTokenList</code>
-interface must act as defined for the <code>DOMTokenList</code>
-interface, except for the <code
-title="dom-DOMSettableTokenList-value">value</code> attribute defined
-here.
+<p>The <dfn title="dom-DOMSettableTokenList-value"><code>value</code></dfn>
+attribute must return the result of the
+<span title=concept-set-serializer>set serializer</span> for the associated
+list of tokens.
 
-<p>The <dfn
-title="dom-DOMSettableTokenList-value"><code>value</code></dfn>
-attribute must return the underlying string and, on setting must replace the underlying string with the new value.
+<p>Setting the <code title=dom-DOMSettableTokenList-value>value</code>
+attribute must run the <span title=concept-set-parser>set parser</span> for
+the given value and set the associated list of tokens to the result.
 
 </div>
 
