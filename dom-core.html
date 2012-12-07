@@ -4889,6 +4889,77 @@ created, its
 <var title="">A</var> is in its
 <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
 
+<p><a href="#other-applicable-specifications" title="Other applicable specifications">Applicable specifications</a>
+and this specification (can) use the hooks an <dfn id="attribute-is-set">attribute is set</dfn>,
+an <dfn id="attribute-is-changed">attribute is changed</dfn>, an <dfn id="attribute-is-added">attribute is added</dfn>, and
+an <dfn id="attribute-is-removed">attribute is removed</dfn>, for further processing of the
+<a href="#concept-attribute" title="concept-attribute">attribute</a>'s
+<a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
+
+<p>To <dfn id="concept-element-attributes-change" title="concept-element-attributes-change">change</dfn> an
+<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var>
+from an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>
+to <var title="">value</var>, run these steps:
+
+<ol>
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <var title="">element</var> with name <var title="">attribute</var>'s
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
+ <var title="">attribute</var>'s
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
+ <var title="">attribute</var>'s
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
+
+ <li><p>Set <var title="">attribute</var>'s
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a> to <var title="">value</var>.
+
+ <li><p>An <a href="#attribute-is-set">attribute is set</a> and an
+ <a href="#attribute-is-changed">attribute is changed</a>.
+</ol>
+
+<p>To <dfn id="concept-element-attributes-append" title="concept-element-attributes-append">append</dfn> an
+<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var> to
+an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>,
+run these steps:
+
+<ol>
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <var title="">element</var> with name <var title="">attribute</var>'s
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
+ <var title="">attribute</var>'s
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
+ null.
+
+ <li><p>Append the <var title="">attribute</var> to the <var title="">element</var>'s
+ <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
+
+ <li><p>An <a href="#attribute-is-set">attribute is set</a> and an
+ <a href="#attribute-is-added">attribute is added</a>.
+</ol>
+
+<p>To <dfn id="concept-element-attributes-remove" title="concept-element-attributes-remove">remove</dfn> an
+<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var>
+from an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>,
+run these steps:
+
+<ol>
+ <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
+ for <var title="">element</var> with name <var title="">attribute</var>'s
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
+ <var title="">attribute</var>'s
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
+ <var title="">attribute</var>'s
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
+
+ <li><p>Remove the <var title="">attribute</var> from the
+ <var title="">element</var>'s
+ <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
+
+ <li><p>An <a href="#attribute-is-removed">attribute is removed</a>.
+</ol>
+
+<hr>
+
 <p><a href="#concept-element" title="concept-element">Elements</a> can have a
 <dfn id="concept-id" title="concept-id">unique identifier (ID)</dfn> and
 <dfn id="concept-class" title="concept-class">classes</dfn> associated with them.
@@ -5027,15 +5098,13 @@ particular content attribute. This means that on getting, these
 steps must be run:
 
 <ol>
-  <li>Let <var title="">value</var> be the result of invoking
-  <code title="dom-Element-getAttributeNS"><a href="#dom-element-getattributens">getAttributeNS()</a></code> with null
-  as first argument and the name of the content attribute as second
-  argument.
+ <li><p>Let <var title="">value</var> be the result of invoking
+ <code title="dom-Element-getAttributeNS"><a href="#dom-element-getattributens">getAttributeNS()</a></code> with null as
+ first argument and the name of the content attribute as second argument.
 
-  <li>If <var title="">value</var> is null, return the empty string and
-  terminate these steps.
+ <li><p>If <var title="">value</var> is null, return the empty string.
 
-  <li>Return <var title="">value</var>.
+ <li><p>Return <var title="">value</var>.
 </ol>
 
 <p>On setting, the
@@ -5318,7 +5387,8 @@ for the <a href="#context-object">context object</a>.
 };</pre>
 
 <p><code><a href="#attr">Attr</a></code> objects are simply known as
-<dfn id="concept-attribute" title="concept-attribute">attributes</dfn>.
+<dfn id="concept-attribute" title="concept-attribute">attributes</dfn>. They are sometimes referred
+to as <em>content attributes</em> to avoid confusion with IDL attributes.
 
 <p><a href="#concept-attribute" title="concept-attribute">Attributes</a> have a
 <dfn id="concept-attribute-name" title="concept-attribute-name">name</dfn> and
@@ -5347,63 +5417,6 @@ is an <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
 <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> and
 <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a> are
 null.
-
-<hr>
-
-<!-- XXX move change/append/remove to attribute list? -->
-<p>To <dfn id="concept-element-attributes-change" title="concept-element-attributes-change">change</dfn> an
-<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var>
-from an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>
-to <var title="">value</var>, run these steps:
-
-<ol>
- <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
- for <var title="">element</var> with name <var title="">attribute</var>'s
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
- <var title="">attribute</var>'s
- <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
- <var title="">attribute</var>'s
- <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
-
- <li><p>Set <var title="">attribute</var>'s
- <a href="#concept-attribute-value" title="concept-attribute-value">value</a> to <var title="">value</var>.
-</ol>
-
-<p>To <dfn id="concept-element-attributes-append" title="concept-element-attributes-append">append</dfn> an
-<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var> to
-an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>,
-run these steps:
-
-<ol>
- <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
- for <var title="">element</var> with name <var title="">attribute</var>'s
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
- <var title="">attribute</var>'s
- <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
- null.
-
- <li><p>Append the <var title="">attribute</var> to the <var title="">element</var>'s
- <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
-</ol>
-
-<p>To <dfn id="concept-element-attributes-remove" title="concept-element-attributes-remove">remove</dfn> an
-<a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var>
-from an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>,
-run these steps:
-
-<ol>
- <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
- for <var title="">element</var> with name <var title="">attribute</var>'s
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, namespace
- <var title="">attribute</var>'s
- <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>, and oldValue
- <var title="">attribute</var>'s
- <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
-
- <li><p>Remove the <var title="">attribute</var> from the
- <var title="">element</var>'s
- <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
-</ol>
 
 <hr>
 
