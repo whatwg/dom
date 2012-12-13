@@ -10,7 +10,7 @@
 
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
  <h1>DOM</h1>
- <h2 class="no-num no-toc" id="living-standard-—-last-updated-7-december-2012">Living Standard — Last Updated 7 December 2012</h2>
+ <h2 class="no-num no-toc" id="living-standard-—-last-updated-13-december-2012">Living Standard — Last Updated 13 December 2012</h2>
 
  <dl>
   <dt>This Version:
@@ -42,7 +42,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-7 December 2012, the editors have made this specification available
+13 December 2012, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -4896,6 +4896,66 @@ an <dfn id="attribute-is-removed">attribute is removed</dfn>, for further proces
 <a href="#concept-attribute" title="concept-attribute">attribute</a>'s
 <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
 
+<p>To <dfn id="concept-element-attributes-get" title="concept-element-attributes-get">get an attribute</dfn> for
+an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>
+using a <var title="">local name</var> and optionally a
+<var title="">namespace</var>, run these steps:
+
+<ol>
+ <li><p>If <var title="">namespace</var> is not given, set it to null.
+
+ <li><p>Return the <a href="#concept-attribute-value" title="concept-attribute-value">value</a> of the
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> in <var title="">element</var>'s
+ <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a> whose
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
+ <var title="">namespace</var> and
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
+ <var title="">localName</var>, if it has one, and null otherwise.
+</ol>
+
+<p>To <dfn id="concept-element-attributes-set" title="concept-element-attributes-set">set an attribute</dfn> for
+an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>
+using a <var title="">local name</var> and <var title="">value</var>, and
+optionally a <var title="">name</var>, <var title="">prefix</var>, and
+<var title="">namespace</var>, run these steps:
+
+<ol>
+ <li><p>If <var title="">name</var> is not given, set it to
+ <var title="">local name</var>.
+
+ <li><p>If <var title="">prefix</var> is not given, set it to null.
+
+ <li><p>If <var title="">namespace</var> is not given, set it to null.
+
+ <li><p>Let <var title="">attribute</var> be the
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> in
+ <var title="">element</var>'s
+ <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>
+ whose <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
+ <var title="">namespace</var> and whose
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>
+ is <var title="">local name</var>, or null if there is no such
+ <a href="#concept-attribute" title="concept-attribute">attribute</a>.
+
+ <li><p>If <var title="">attribute</var> is null, create an
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
+ <var title="">local name</var>,
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a> is <var title="">value</var>,
+ <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is <var title="">name</var>,
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
+ <var title="">namespace</var>, and
+ <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a> is
+ <var title="">prefix</var>, and then
+ <a href="#concept-element-attributes-append" title="concept-element-attributes-append">append</a> this
+ <a href="#concept-attribute" title="concept-attribute">attribute</a> to <var title="">element</var>
+ and terminate these steps.
+
+ <li><p><a href="#concept-element-attributes-append" title="concept-element-attributes-append">Change</a>
+ <var title="">attribute</var> from <var title="">element</var> to
+ <var title="">value</var>.
+</ol>
+
 <p>To <dfn id="concept-element-attributes-change" title="concept-element-attributes-change">change</dfn> an
 <a href="#concept-attribute" title="concept-attribute">attribute</a> <var title="">attribute</var>
 from an <a href="#concept-element" title="concept-element">element</a> <var title="">element</var>
@@ -5118,19 +5178,19 @@ particular content attribute. This means that on getting, these
 steps must be run:
 
 <ol>
- <li><p>Let <var title="">value</var> be the result of invoking
- <code title="dom-Element-getAttributeNS"><a href="#dom-element-getattributens">getAttributeNS()</a></code> with null as
- first argument and the name of the content attribute as second argument.
+ <li><p><a href="#concept-element-attributes-get" title="concept-element-attributes-get">Get an attribute</a>
+ for the <a href="#context-object">context object</a> using content attribute's name and let
+ <var title="">value</var> be the result.
 
  <li><p>If <var title="">value</var> is null, return the empty string.
 
  <li><p>Return <var title="">value</var>.
 </ol>
 
-<p>On setting, the
-<code title="dom-Element-setAttributeNS"><a href="#dom-element-setattributens">setAttributeNS()</a></code> must be
-invoked with null as first argument, the name of the content attribute as
-second argument, and the new value as third argument.
+<p>On setting,
+<a href="#concept-element-attributes-set" title="concept-element-attributes-set">set an attribute</a> for the
+<a href="#context-object">context object</a> using the name of the attribute and the given
+value.
 
 <p>The <dfn id="dom-element-id" title="dom-Element-id"><code>id</code></dfn> attribute must
 <a href="#concept-reflect" title="concept-reflect">reflect</a> the "<code title="">id</code>"
@@ -5180,14 +5240,10 @@ method must return the following steps:
 <ol>
   <li><p>If <var title="">namespace</var> is the empty string, set it to null.
 
-  <li><p>Return the <a href="#concept-attribute-value" title="concept-attribute-value">value</a> of the
-  <a href="#concept-attribute" title="concept-attribute">attribute</a> in the
-  <a href="#context-object">context object</a>'s
-  <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a> whose
-  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
-  <var title="">namespace</var> and
-  <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
-  <var title="">localName</var>, if it has one, and null otherwise.
+  <li><p>Return
+  <a href="#concept-element-attributes-get" title="concept-element-attributes-get">getting an attribute</a> for
+  the <a href="#context-object">context object</a> using <var title="">localName</var> and
+  <var title="">namespace</var>.
 </ol>
 
 <p>The
@@ -5215,7 +5271,7 @@ method must run these steps:
 
  <li><p>If <var title="">attribute</var> is null, create an
  <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
- <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
  <var title="">name</var> and
  <a href="#concept-attribute-value" title="concept-attribute-value">value</a> is <var title="">value</var>,
  and then <a href="#concept-element-attributes-append" title="concept-element-attributes-append">append</a> this
@@ -5270,34 +5326,11 @@ method must run these steps:
  "<code title="">xmlns</code>", <a href="#concept-throw" title="concept-throw">throw</a> a
  "<code><a href="#namespaceerror">NamespaceError</a></code>" exception and terminate these steps.
 
- <li><p>Let <var title="">attribute</var> be the
- first <a href="#concept-attribute" title="concept-attribute">attribute</a> in the
- <a href="#context-object">context object</a>'s
- <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>
- whose <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
- <var title="">namespace</var> and whose
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>
- is <var title="">localName</var>, or null if there is no such
- <a href="#concept-attribute" title="concept-attribute">attribute</a>.
-
- <li><p>If <var title="">attribute</var> is null, create an
- <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
- <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is
- <var title="">name</var>,
- <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
- <var title="">namespace</var>,
- <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a> is
- <var title="">prefix</var>,
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
- <var title="">localName</var>, and <a href="#concept-attribute-value" title="concept-attribute-value">value</a>
- is <var title="">value</var>, and then
- <a href="#concept-element-attributes-append" title="concept-element-attributes-append">append</a> this
- <a href="#concept-attribute" title="concept-attribute">attribute</a> to the
- <a href="#context-object">context object</a> and terminate these steps.
-
- <li><p><a href="#concept-element-attributes-append" title="concept-element-attributes-append">Change</a>
- <var title="">attribute</var> from <a href="#context-object">context object</a> to
- <var title="">value</var>.
+ <li><p><a href="#concept-element-attributes-set" title="concept-element-attributes-set">Set an attribute</a>
+ for the <a href="#context-object">context object</a> using
+ <var title="">localName</var>, <var title="">value</var>, and also
+ <var title="">name</var>, <var title="">prefix</var>, and
+ <var title="">namespace</var>.
 </ol>
 
 <p>The
@@ -5399,12 +5432,12 @@ for the <a href="#context-object">context object</a>.
 
 <h4 id="interface-attr"><span class="secno">5.8.1 </span>Interface <code><a href="#attr">Attr</a></code></h4>
 <pre class="idl">interface <dfn id="attr">Attr</dfn> {
-  readonly attribute DOMString <a href="#dom-attr-name" title="dom-Attr-name">name</a>;
+  readonly attribute DOMString <a href="#dom-attr-localname" title="dom-Attr-localName">localName</a>;
            attribute DOMString <a href="#dom-attr-value" title="dom-Attr-value">value</a>;
 
+  readonly attribute DOMString <a href="#dom-attr-name" title="dom-Attr-name">name</a>;
   readonly attribute DOMString? <a href="#dom-attr-namespaceuri" title="dom-Attr-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-attr-prefix" title="dom-Attr-prefix">prefix</a>;
-  readonly attribute DOMString <a href="#dom-attr-localname" title="dom-Attr-localName">localName</a>;
 };</pre>
 
 <p><code><a href="#attr">Attr</a></code> objects are simply known as
@@ -5412,21 +5445,22 @@ for the <a href="#context-object">context object</a>.
 to as <em>content attributes</em> to avoid confusion with IDL attributes.
 
 <p><a href="#concept-attribute" title="concept-attribute">Attributes</a> have a
-<dfn id="concept-attribute-name" title="concept-attribute-name">name</dfn> and
+<dfn id="concept-attribute-local-name" title="concept-attribute-local-name">local name</dfn> and
 <dfn id="concept-attribute-value" title="concept-attribute-value">value</dfn>.
 
 <p>For legacy reasons, <a href="#concept-attribute" title="concept-attribute">attributes</a> also
-have an associated <dfn id="concept-attribute-namespace" title="concept-attribute-namespace">namespace</dfn>,
+have an associated <dfn id="concept-attribute-name" title="concept-attribute-name">name</dfn>,
+<dfn id="concept-attribute-namespace" title="concept-attribute-namespace">namespace</dfn>,
 <dfn id="concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</dfn>, and
-<dfn id="concept-attribute-local-name" title="concept-attribute-local-name">local name</dfn>.
+.
 
 <p>When an <a href="#concept-attribute" title="concept-attribute">attribute</a> is created, its
-<a href="#concept-attribute-name" title="concept-attribute-name">name</a> and
+<a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> and
 <a href="#concept-attribute-value" title="concept-attribute-value">value</a> are always given. Unless
 explicitly given when an <a href="#concept-attribute" title="concept-attribute">attribute</a> is
-created, its <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
-identical to its <a href="#concept-attribute-name" title="concept-attribute-name">name</a>, and its
-<a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> and
+created, its <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is
+identical to its <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>,
+and its <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> and
 <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a> are
 null.
 
@@ -5441,8 +5475,8 @@ null.
 
 <hr>
 
-<p>The <dfn id="dom-attr-name" title="dom-Attr-name"><code>name</code></dfn> attribute must
-return the <a href="#concept-attribute-name" title="concept-attribute-name">name</a>.
+<p>The <dfn id="dom-attr-localname" title="dom-Attr-localName"><code>localName</code></dfn> attribute
+must return the <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>.
 
 <p>The <dfn id="dom-attr-value" title="dom-Attr-value"><code>value</code></dfn> attribute must
 return the <a href="#concept-attribute-value" title="concept-attribute-value">value</a>.
@@ -5452,6 +5486,9 @@ return the <a href="#concept-attribute-value" title="concept-attribute-value">va
 
 <hr>
 
+<p>The <dfn id="dom-attr-name" title="dom-Attr-name"><code>name</code></dfn> attribute must
+return the <a href="#concept-attribute-name" title="concept-attribute-name">name</a>.
+
 <p>The <dfn id="dom-attr-namespaceuri" title="dom-Attr-namespaceURI"><code>namespaceURI</code></dfn>
 attribute must return the
 <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>.
@@ -5459,9 +5496,6 @@ attribute must return the
 <p>The <dfn id="dom-attr-prefix" title="dom-Attr-prefix"><code>prefix</code></dfn> attribute must
 return the
 <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a>.
-
-<p>The <dfn id="dom-attr-localname" title="dom-Attr-localName"><code>localName</code></dfn> attribute
-must return the <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>.
 
 
 <h3 id="interface-characterdata"><span class="secno">5.9 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
@@ -8397,14 +8431,12 @@ and false otherwise.
  <a href="#concept-attribute" title="concept-attribute">attribute</a> (when the object is a
  <code><a href="#domsettabletokenlist">DOMSettableTokenList</a></code>), terminate these steps.
 
- <li><p>Invoke associated <a href="#concept-element" title="concept-element">element</a>'s
- <code title="dom-Element-setAttributeNS"><a href="#dom-element-setattributens">setAttributeNS()</a></code> with
- the empty string as first argument, associated
- <a href="#concept-attribute" title="concept-attribute">attribute</a>'s
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> as second
- argument, and the result of running the
- <a href="#concept-set-serializer" title="concept-set-serializer">set serializer</a> for the
- associated list of tokens as final argument.
+ <li><p><a href="#concept-element-attributes-set" title="concept-element-attributes-set">Set an attribute</a>
+ for the associated <a href="#concept-element" title="concept-element">element</a> using
+ associated <a href="#concept-attribute" title="concept-attribute">attribute</a>'s
+ <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> and the result
+ of running the <a href="#concept-set-serializer" title="concept-set-serializer">set serializer</a> for
+ the associated list of tokens.
 </ol>
 
 <dl class="domintro">
