@@ -8,7 +8,7 @@
      [data-anolis-spec]::after { content:"[" attr(data-anolis-spec) "]"; font-size:.6em; vertical-align:super; text-transform:uppercase }
    }
   </style>
-  <link rel=stylesheet href=//www.whatwg.org/style/specification>
+  <link rel=stylesheet href=http://www.whatwg.org/style/specification>
   <link rel=icon href=//resources.whatwg.org/logo-dom.svg>
  </head>
  <body>
@@ -1309,25 +1309,25 @@ applications.
  <li>
   <span title=concept-document>Document</span>
   <ul>
-   <li class="t10"><span title=concept-doctype>Doctype:</span> <code>html</code></li>
-   <li class="t1"><span title=concept-element>Element:</span> <code>html</code> <span class="t2"><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
+   <li class="t10"><span title=concept-doctype>Doctype</span>: <code>html</code></li>
+   <li class="t1"><span title=concept-element>Element</span>: <code>html</code> <span class="t2" title><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
     <ul>
      <li class="t1">
-      <span title=concept-element>Element:</span> <code>head</code>
+      <span title=concept-element>Element</span>: <code>head</code>
       <ul>
        <li class="t1">
-        <span title=concept-element>Element:</span> <code>title</code>
+        <span title=concept-element>Element</span>: <code>title</code>
         <ul>
-         <li class="t3"><code>Text</code>: <span>Aliens?</span></li>
+         <li class="t3"><code>Text</code>: <span title>Aliens?</span></li>
         </ul>
        </li>
       </ul>
      </li>
-     <li class="t3"><code>Text</code>: <span>⏎␣</span></li>
+     <li class="t3"><code>Text</code>: <span title>⏎␣</span></li>
      <li class="t1">
-      <span title=concept-element>Element:</span> <code>body</code>
+      <span title=concept-element>Element</span>: <code title>body</code>
       <ul>
-       <li class="t3"><code>Text</code>: <span>Why yes.⏎</span></li>
+       <li class="t3"><code>Text</code>: <span title>Why yes.⏎</span></li>
       </ul>
      </li>
     </ul>
@@ -5791,6 +5791,69 @@ attribute must return the <span title=concept-PI-target>target</span>.
 
 <h2>Ranges</h2>
 <!-- XXX do not call other methods but use concepts -->
+
+<h3>Introduction to "DOM Ranges"</h3>
+
+<p>A <code>Range</code> object (<span title=concept-range>range</span>)
+represents a sequence of content within a
+<span title=concept-node-tree>node tree</span>. Each
+<span title=concept-range>range</span> has a
+<span title=concept-range-start>start</span> and an
+<span title=concept-range-end>end</span> which are
+<span title=concept-range-bp>boundary points</span>. A
+<span title=concept-range-bp>boundary point</span> is a tuple consisting of
+a <span title=concept-node>node</span> and a non-negative numeric
+<span title=concept-range-bp-offset>offset</span>. So in other words, a
+<span title=concept-range>range</span> represents a piece of content within
+a <span title=concept-node-tree>node tree</span> between two
+<span title=concept-range-bp>boundary points</span>.
+
+<p><span title=concept-range>Ranges</span> are frequently used in editing
+for selecting and copying content.
+
+<ul class="domTree">
+ <li class="t1"><span title=concept-element>Element</span>: <code>p</code>
+  <ul>
+   <li class="t1"><span title=concept-element>Element</span>: <code>img</code> <span class="t2" title><code class="attribute name">src</code>="<code class="attribute value">insanity-wolf</code>"</span> <span class="t2" title><code class="attribute name">alt</code>="<code class="attribute value">Little-endian BOM; decode as big-endian!</code>"</span>
+   <li class="t3"><code>Text</code>: <span title>&nbsp;CSS 2.1 syndata is&nbsp;</span>
+   <li class="t1"><span title=concept-element>Element</span>: <code>em</code>
+    <ul>
+     <li class="t3"><code>Text</code>: <span title>awesome</span>
+    </ul>
+   <li class="t3"><code>Text</code>: <span title>!</span>
+  </ul>
+</ul>
+<!-- http://w3cmemes.tumblr.com/post/35332222321/css-2-1-syndata-is-awesome -->
+
+<p>In the <span title=concept-node-tree>node tree</span> above a
+<span title=concept-range>range</span> can be used to represent the sequence
+“syndata is awes”. Assuming <var title>p</var> is assigned to the
+<code>p</code> <span title=concept-element>element</span>, and
+<var title>em</var> to the <code>em</code>
+<span title=concept-element>element</span>, this would be done as follows:
+
+<pre><code>var range = document.createRange(),
+    firstText = p.childNodes[1],
+    secondText = em.firstChild
+range.setStart(firstText, 9) // do not forget the leading space
+range.setEnd(secondText, 4)
+// range now stringifies to the aforementioned quote</code></pre>
+
+<p><span title=concept-range>Ranges</span> are affected by mutations to the
+<span title=concept-node-tree>node tree</span>. Such mutations will not
+invalidate a <span title=concept-range>range</span> and will try to ensure
+that the <span title=concept-range>range</span> still represents the same
+piece of content. Necessarily, a <span title=concept-range>range</span>
+might itself be modified as part of the mutation to the
+<span title=concept-node-tree>node tree</span> when e.g. part of the content
+it represents is mutated.
+
+<p class=note>See the <span title=concept-node-insert>insert</span> and
+<span title=concept-node-remove>remove</span> algorithms, the
+<code title=concept-node-normalize>normalize()</code> method, and the
+<span title=concept-CD-replace>replace data</span> and
+<span title=concept-Text-split>split</span> algorithms for the hairy
+details.
 
 
 <h3>Interface <code>Range</code></h3>

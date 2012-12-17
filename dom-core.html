@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en-US"><head>
   <meta charset="UTF-8">
   <title>DOM Standard</title>
-  <link href="//www.whatwg.org/style/specification" rel="stylesheet">
+  <link href="http://www.whatwg.org/style/specification" rel="stylesheet">
   <link href="//resources.whatwg.org/logo-dom.svg" rel="icon">
  </head>
  <body>
@@ -118,7 +118,8 @@ documents.
    <li><a href="#interface-comment"><span class="secno">5.12 </span>Interface <code>Comment</code></a></ol></li>
  <li><a href="#ranges"><span class="secno">6 </span>Ranges</a>
   <ol>
-   <li><a href="#interface-range"><span class="secno">6.1 </span>Interface <code>Range</code></a></ol></li>
+   <li><a href="#introduction-to-dom-ranges"><span class="secno">6.1 </span>Introduction to "DOM Ranges"</a></li>
+   <li><a href="#interface-range"><span class="secno">6.2 </span>Interface <code>Range</code></a></ol></li>
  <li><a href="#traversal"><span class="secno">7 </span>Traversal</a>
   <ol>
    <li><a href="#interface-nodeiterator"><span class="secno">7.1 </span>Interface <code>NodeIterator</code></a></li>
@@ -1381,25 +1382,25 @@ applications.
  <li>
   <a href="#concept-document" title="concept-document">Document</a>
   <ul>
-   <li class="t10"><a href="#concept-doctype" title="concept-doctype">Doctype:</a> <code>html</code></li>
-   <li class="t1"><a href="#concept-element" title="concept-element">Element:</a> <code>html</code> <span class="t2"><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
+   <li class="t10"><a href="#concept-doctype" title="concept-doctype">Doctype</a>: <code>html</code></li>
+   <li class="t1"><a href="#concept-element" title="concept-element">Element</a>: <code>html</code> <span class="t2" title=""><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
     <ul>
      <li class="t1">
-      <a href="#concept-element" title="concept-element">Element:</a> <code>head</code>
+      <a href="#concept-element" title="concept-element">Element</a>: <code>head</code>
       <ul>
        <li class="t1">
-        <a href="#concept-element" title="concept-element">Element:</a> <code>title</code>
+        <a href="#concept-element" title="concept-element">Element</a>: <code>title</code>
         <ul>
-         <li class="t3"><code><a href="#text">Text</a></code>: <span>Aliens?</span></li>
+         <li class="t3"><code><a href="#text">Text</a></code>: <span title="">Aliens?</span></li>
         </ul>
        </li>
       </ul>
      </li>
-     <li class="t3"><code><a href="#text">Text</a></code>: <span>⏎␣</span></li>
+     <li class="t3"><code><a href="#text">Text</a></code>: <span title="">⏎␣</span></li>
      <li class="t1">
-      <a href="#concept-element" title="concept-element">Element:</a> <code>body</code>
+      <a href="#concept-element" title="concept-element">Element</a>: <code title="">body</code>
       <ul>
-       <li class="t3"><code><a href="#text">Text</a></code>: <span>Why yes.⏎</span></li>
+       <li class="t3"><code><a href="#text">Text</a></code>: <span title="">Why yes.⏎</span></li>
       </ul>
      </li>
     </ul>
@@ -5849,8 +5850,71 @@ attribute must return the <a href="#concept-pi-target" title="concept-PI-target"
 <h2 id="ranges"><span class="secno">6 </span>Ranges</h2>
 <!-- XXX do not call other methods but use concepts -->
 
+<h3 id="introduction-to-dom-ranges"><span class="secno">6.1 </span>Introduction to "DOM Ranges"</h3>
 
-<h3 id="interface-range"><span class="secno">6.1 </span>Interface <code><a href="#range">Range</a></code></h3>
+<p>A <code><a href="#range">Range</a></code> object (<a href="#concept-range" title="concept-range">range</a>)
+represents a sequence of content within a
+<a href="#concept-node-tree" title="concept-node-tree">node tree</a>. Each
+<a href="#concept-range" title="concept-range">range</a> has a
+<a href="#concept-range-start" title="concept-range-start">start</a> and an
+<a href="#concept-range-end" title="concept-range-end">end</a> which are
+<a href="#concept-range-bp" title="concept-range-bp">boundary points</a>. A
+<a href="#concept-range-bp" title="concept-range-bp">boundary point</a> is a tuple consisting of
+a <a href="#concept-node" title="concept-node">node</a> and a non-negative numeric
+<a href="#concept-range-bp-offset" title="concept-range-bp-offset">offset</a>. So in other words, a
+<a href="#concept-range" title="concept-range">range</a> represents a piece of content within
+a <a href="#concept-node-tree" title="concept-node-tree">node tree</a> between two
+<a href="#concept-range-bp" title="concept-range-bp">boundary points</a>.
+
+<p><a href="#concept-range" title="concept-range">Ranges</a> are frequently used in editing
+for selecting and copying content.
+
+<ul class="domTree">
+ <li class="t1"><a href="#concept-element" title="concept-element">Element</a>: <code>p</code>
+  <ul>
+   <li class="t1"><a href="#concept-element" title="concept-element">Element</a>: <code>img</code> <span class="t2" title=""><code class="attribute name">src</code>="<code class="attribute value">insanity-wolf</code>"</span> <span class="t2" title=""><code class="attribute name">alt</code>="<code class="attribute value">Little-endian BOM; decode as big-endian!</code>"</span>
+   <li class="t3"><code><a href="#text">Text</a></code>: <span title=""> CSS 2.1 syndata is </span>
+   <li class="t1"><a href="#concept-element" title="concept-element">Element</a>: <code>em</code>
+    <ul>
+     <li class="t3"><code><a href="#text">Text</a></code>: <span title="">awesome</span>
+    </ul>
+   <li class="t3"><code><a href="#text">Text</a></code>: <span title="">!</span>
+  </ul>
+</ul>
+<!-- http://w3cmemes.tumblr.com/post/35332222321/css-2-1-syndata-is-awesome -->
+
+<p>In the <a href="#concept-node-tree" title="concept-node-tree">node tree</a> above a
+<a href="#concept-range" title="concept-range">range</a> can be used to represent the sequence
+“syndata is awes”. Assuming <var title="">p</var> is assigned to the
+<code>p</code> <a href="#concept-element" title="concept-element">element</a>, and
+<var title="">em</var> to the <code>em</code>
+<a href="#concept-element" title="concept-element">element</a>, this would be done as follows:
+
+<pre><code>var range = document.createRange(),
+    firstText = p.childNodes[1],
+    secondText = em.firstChild
+range.setStart(firstText, 9) // do not forget the leading space
+range.setEnd(secondText, 4)
+// range now stringifies to the aforementioned quote</code></pre>
+
+<p><a href="#concept-range" title="concept-range">Ranges</a> are affected by mutations to the
+<a href="#concept-node-tree" title="concept-node-tree">node tree</a>. Such mutations will not
+invalidate a <a href="#concept-range" title="concept-range">range</a> and will try to ensure
+that the <a href="#concept-range" title="concept-range">range</a> still represents the same
+piece of content. Necessarily, a <a href="#concept-range" title="concept-range">range</a>
+might itself be modified as part of the mutation to the
+<a href="#concept-node-tree" title="concept-node-tree">node tree</a> when e.g. part of the content
+it represents is mutated.
+
+<p class="note">See the <a href="#concept-node-insert" title="concept-node-insert">insert</a> and
+<a href="#concept-node-remove" title="concept-node-remove">remove</a> algorithms, the
+<code title="concept-node-normalize">normalize()</code> method, and the
+<a href="#concept-cd-replace" title="concept-CD-replace">replace data</a> and
+<a href="#concept-text-split" title="concept-Text-split">split</a> algorithms for the hairy
+details.
+
+
+<h3 id="interface-range"><span class="secno">6.2 </span>Interface <code><a href="#range">Range</a></code></h3>
 <pre class="idl">interface <dfn id="range">Range</dfn> {
   readonly attribute <a href="#node">Node</a> <a href="#dom-range-startcontainer" title="dom-Range-startContainer">startContainer</a>;
   readonly attribute unsigned long <a href="#dom-range-startoffset" title="dom-Range-startOffset">startOffset</a>;
