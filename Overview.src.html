@@ -7802,15 +7802,22 @@ method must run these steps:
  <li><p>Return null.
 </ol>
 
-<p>To <dfn title=concept-traverse-children>traverse children</dfn> of type
-<var title>type</var> run these steps:
+<p>To <dfn title=concept-traverse-children>traverse children</dfn> of
+<var title>type</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>node</var> and <var title>current</var> be the value
+ <li><p>Let <var title>node</var> be the value
  of the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute.
 
+ <li><p>Set <var title>node</var> to <var title>node</var>'s
+ <span title=concept-tree-first-child>first child</span> if
+ <var title>type</var> is first, and to <var title>node</var>'s
+ <span title=concept-tree-last-child>last child</span> if
+ <var title>type</var> is last.
+
  <li>
-  <p>While <var title>node</var> is not null, run these substeps:
+  <p><dfn title=concept-traverse-children-main>Main</dfn>:
+  While <var title>node</var> is not null, run these substeps:
 
   <ol>
    <li><p><span title=concept-node-filter>Filter</span>
@@ -7820,54 +7827,52 @@ method must run these steps:
    <li><p>If <var title>result</var> is
    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
    the <code title=dom-TreeWalker-currentNode>currentNode</code>
-   attribute to <var title>node</var>, return <var title>node</var>, and
-   terminate these steps.
+   attribute to <var title>node</var> and return <var title>node</var>.
 
    <li>
     <p>If <var title>result</var> is
-    <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code> and
-    <var title>node</var> has a <span title=concept-tree-child>child</span>,
-    then set <var title>node</var> as follows and run these substeps again:
-
-    <dl class=switch>
-     <dt>If type is first
-     <dd><p>Set it to the
-     <span title=concept-tree-first-child>first child</span>
-     <dt>If type is last
-     <dd><p>Set it to the
-     <span title=concept-tree-last-child>last child</span>
-    </dl>
-
-   <li>
-    <p>While <var title>node</var> is not null, run these inner substeps:
+    <code title=dom-NodeFilter-FILTER_SKIP>FILTER_SKIP</code>, run these
+    subsubsteps:
 
     <ol>
-     <li>
-      <dl class=switch>
-       <dt>If type is first
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-next-sibling>next sibling</span> of
-       <var title>node</var>.
-       <dt>If type is last
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-previous-sibling>previous sibling</span> of
-       <var title>node</var>.
-      </dl>
+     <li><p>Let <var title>child</var> be <var title>node</var>'s
+     <span title=concept-tree-first-child>first child</span> if
+     <var title>type</var> is first, and to <var title>node</var>'s
+     <span title=concept-tree-last-child>last child</span> if
+     <var title>type</var> is last.
+
+     <li><p>If <var title>child</var> is not null, set <var title>node</var>
+     to <var title>child</var> and goto
+     <span title=concept-traverse-children-main>Main</span>.
+    </ol>
+
+   <li>
+    <p>While <var title>node</var> is not null, run these subsubsteps:
+
+    <ol>
+     <li><p>Let <var title>sibling</var> be <var title>node</var>'s
+     <span title=concept-tree-first-child>first child</span> if
+     <var title>type</var> is first, and to <var title>node</var>'s
+     <span title=concept-tree-last-child>last child</span> if
+     <var title>type</var> is last.
 
      <li><p>If <var title>sibling</var> is not null, set
-     <var title>node</var> to it and terminate these inner substeps.
+     <var title>node</var> to <var title>sibling</var> and goto
+     <span title=concept-traverse-children-main>Main</span>.
 
-     <!-- bring it on jgraham -->
+     <li><p>Let <var title>parent</var> be <var title>node</var>'s
+     <span title=concept-tree-parent>parent</span>.
 
-     <li>
-      <p>If <var title>node</var> has a
-      <span title=concept-tree-parent>parent</span> that is not
-      <span title=concept-traversal-root>root</span> or
-      <var title>current</var> then set <var title>node</var> to it.
+     <li><p>If <var title>parent</var> is null, <var title>parent</var> is
+     <span title=concept-traversal-root>root</span>, or
+     <var title>parent</var> is
+     <code title=dom-TreeWalker-currentNode>currentNode</code> attribute's
+     value, return null.
 
-      <p>Otherwise, return null and terminate these steps.
+     <li><p>Otherwise, set <var title>node</var> to <var title>parent</var>.
     </ol>
   </ol>
+ <li><p>Return null.
 </ol>
 
 <p>The <dfn title=dom-TreeWalker-firstChild><code>firstChild()</code></dfn>
