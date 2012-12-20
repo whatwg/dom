@@ -7823,7 +7823,7 @@ method must run these steps:
  <li><p>Return null.
 </ol>
 
-<p>To <dfn title=concept-traverse-children>traverse children</dfn> of
+<p>To <dfn title=concept-traverse-children>traverse children</dfn> of type
 <var title>type</var>, run these steps:
 
 <ol>
@@ -7832,7 +7832,7 @@ method must run these steps:
 
  <li><p>Set <var title>node</var> to <var title>node</var>'s
  <span title=concept-tree-first-child>first child</span> if
- <var title>type</var> is first, and to <var title>node</var>'s
+ <var title>type</var> is first, and <var title>node</var>'s
  <span title=concept-tree-last-child>last child</span> if
  <var title>type</var> is last.
 
@@ -7858,7 +7858,7 @@ method must run these steps:
     <ol>
      <li><p>Let <var title>child</var> be <var title>node</var>'s
      <span title=concept-tree-first-child>first child</span> if
-     <var title>type</var> is first, and to <var title>node</var>'s
+     <var title>type</var> is first, and <var title>node</var>'s
      <span title=concept-tree-last-child>last child</span> if
      <var title>type</var> is last.
 
@@ -7872,9 +7872,9 @@ method must run these steps:
 
     <ol>
      <li><p>Let <var title>sibling</var> be <var title>node</var>'s
-     <span title=concept-tree-previous-sibling>previous sibling</span> if
-     <var title>type</var> is first, and to <var title>node</var>'s
      <span title=concept-tree-next-sibling>next sibling</span> if
+     <var title>type</var> is first, and <var title>node</var>'s
+     <span title=concept-tree-previous-sibling>previous sibling</span> if
      <var title>type</var> is last.
 
      <li><p>If <var title>sibling</var> is not null, set
@@ -7912,27 +7912,20 @@ of type last.
  <code title=dom-TreeWalker-currentNode>currentNode</code> attribute.
 
  <li><p>If <var title>node</var> is
- <span title=concept-traversal-root>root</span> return null and terminate
- these steps.
+ <span title=concept-traversal-root>root</span>, return null.
 
  <li>
   <p>Run these substeps:
 
   <ol>
-   <li>
-    <dl class=switch>
-     <dt>If type is next
-     <dd><p>Let <var title>sibling</var> be the
-     <span title=concept-tree-next-sibling>next sibling</span> of
-     <var title>node</var>.
-     <dt>If type is previous
-     <dd><p>Let <var title>sibling</var> be the
-     <span title=concept-tree-previous-sibling>previous sibling</span> of
-     <var title>node</var>.
-    </dl>
+   <li><p>Let <var title>sibling</var> be <var title>node</var>'s
+   <span title=concept-tree-next-sibling>next sibling</span> if
+   <var title>type</var> is next, and <var title>node</var>'s
+   <span title=concept-tree-previous-sibling>previous sibling</span> if
+   <var title>type</var> is previous.
 
    <li>
-    <p>While <var title>sibling</var> is not null run these inner substeps:
+    <p>While <var title>sibling</var> is not null, run these subsubsteps:
 
     <ol>
      <li><p>Set <var title>node</var> to <var title>sibling</var>.
@@ -7944,50 +7937,34 @@ of type last.
      <li><p>If <var title>result</var> is
      <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
      the <code title=dom-TreeWalker-currentNode>currentNode</code>
-     attribute to <var title>node</var>, return <var title>node</var>, and
-     terminate these steps.
+     attribute to <var title>node</var> and return <var title>node</var>.
 
-     <li>
-      <dl class=switch>
-       <dt>If type is next
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-first-child>first child</span> of
-       <var title>node</var>.
-       <dt>If type is previous
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-last-child>last child</span> of
-       <var title>node</var>.
-      </dl>
+     <li><p>Set <var title>sibling</var> to <var title>node</var>'s
+     <span title=concept-tree-first-child>first child</span> if
+     <var title>type</var> is next, and <var title>node</var>'s
+     <span title=concept-tree-last-child>last child</span> if
+     <var title>type</var> is previous.
 
-     <li>
-      <p>If <var title>result</var> is
-      <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> or
-      <var title>sibling</var> is null, then set <var title>sibling</var> as
-      follows:
-
-      <dl class=switch>
-       <dt>If type is next
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-next-sibling>next sibling</span> of
-       <var title>node</var>.
-       <dt>If type is previous
-       <dd><p>Let <var title>sibling</var> be the
-       <span title=concept-tree-previous-sibling>previous sibling</span> of
-       <var title>node</var>.
-      </dl>
+     <li><p>If <var title>result</var> is
+     <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> or
+     <var title>sibling</var> is null, then set <var title>sibling</var> to
+     <var title>node</var>'s
+     <span title=concept-tree-next-sibling>next sibling</span> if
+     <var title>type</var> is next, and <var title>node</var>'s
+     <span title=concept-tree-previous-sibling>previous sibling</span> if
+     <var title>type</var> is previous.
     </ol>
 
    <li><p>Set <var title>node</var> to its
    <span title=concept-tree-parent>parent</span>.
 
    <li><p>If <var title>node</var> is null or is
-   <span title=concept-traversal-root>root</span> return null and terminate
-   these steps.
+   <span title=concept-traversal-root>root</span>, return null.
 
    <li><p><span title=concept-node-filter>Filter</span>
    <var title>node</var> and if the return value is
    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then
-   return null and terminate these steps.
+   return null.
    <!-- XXX WTF? -->
 
    <li><p>Run these substeps again.
@@ -8014,7 +7991,7 @@ method must run these steps:
 
  <li>
   <p>While <var title>node</var> is not
-  <span title=concept-traversal-root>root</span> run these substeps:
+  <span title=concept-traversal-root>root</span>, run these substeps:
 
   <ol>
    <li><p>Let <var title>sibling</var> be the
@@ -8022,7 +7999,7 @@ method must run these steps:
    <var title>node</var>.
 
    <li>
-    <p>While <var title>sibling</var> is not null run these inner substeps:
+    <p>While <var title>sibling</var> is not null, run these subsubsteps:
 
     <ol>
      <li><p>Set <var title>node</var> to <var title>sibling</var>.
@@ -8031,33 +8008,23 @@ method must run these steps:
      <var title>node</var> and let <var title>result</var> be the return
      value.
 
-     <li>
-      <p>While <var title>result</var> is not
-      <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> and
-      <var title>node</var> has a
-      <span title=concept-tree-child>child</span>, run these innermost
-      substeps:
-
-      <ol>
-       <li><p>Set <var title>node</var> to its
-       <span title=concept-tree-last-child>last child</span>.
-
-       <li><p><span title=concept-node-filter>Filter</span>
-       <var title>node</var> and set <var title>result</var> to the return
-       value.
-      </ol>
+     <li><p>While <var title>result</var> is not
+     <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> and
+     <var title>node</var> has a
+     <span title=concept-tree-child>child</span>, set <var title>node</var>
+     to its <span title=concept-tree-last-child>last child</span> and then
+     <span title=concept-node-filter>filter</span> <var title>node</var> and
+     set <var title>result</var> to the return value.
 
      <li><p>If <var title>result</var> is
      <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
      the <code title=dom-TreeWalker-currentNode>currentNode</code>
-     attribute to <var title>node</var>, return <var title>node</var>, and
-     terminate these steps.
+     attribute to <var title>node</var> and return <var title>node</var>.
     </ol>
 
    <li><p>If <var title>node</var> is
-   <span title=concept-traversal-root>root</span> or has no
-   <span title=concept-tree-parent>parent</span>, return null and terminate
-   these steps.
+   <span title=concept-traversal-root>root</span> or <var title>node</var>'s
+   <span title=concept-tree-parent>parent</span> is null, return null.
 
    <li><p>Set <var title>node</var> to its
    <span title=concept-tree-parent>parent</span>.
@@ -8066,9 +8033,10 @@ method must run these steps:
    <var title>node</var> and if the return value is
    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
    the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute
-   to <var title>node</var>, return <var title>node</var>, and terminate
-   these steps.
+   to <var title>node</var> and return <var title>node</var>.
   </ol>
+
+ <li><p>Return null.
 </ol>
 
 <p>The <dfn title=dom-TreeWalker-nextNode><code>nextNode()</code></dfn>
@@ -8087,23 +8055,22 @@ method must run these steps:
   <ol>
    <li>
     <p>While <var title>result</var> is not
-    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code> and
+    <code title=dom-NodeFilter-FILTER_REJECT>FILTER_REJECT</code> and
     <var title>node</var> has a <span title=concept-tree-child>child</span>,
-    run these inner substeps:
+    run these subsubsteps:
 
     <ol>
      <li><p>Set <var title>node</var> to its
-     <span title=concept-tree-first-child>first child</span>
+     <span title=concept-tree-first-child>first child</span>.
 
      <li><p><span title=concept-node-filter>Filter</span>
-     <var title>node</var> and let <var title>result</var> be the return
+     <var title>node</var> and set <var title>result</var> to the return
      value.
 
      <li><p>If <var title>result</var> is
      <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
      the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute
-     to <var title>node</var>, return <var title>node</var>, and terminate
-     these steps.
+     to <var title>node</var> and return <var title>node</var>.
     </ol>
 
    <li>
@@ -8114,15 +8081,19 @@ method must run these steps:
     <span title=concept-traversal-root>root</span>, set
     <var title>node</var> to the first such
     <span title=concept-node>node</span>.
-    <p>Otherwise, run these substeps again (skipping the next step).
-    <!-- Implemented as iterating over parent/nextSibling in Gecko -->
+    <p>Otherwise, return null.
+    <!-- Implemented as iterating over parent/nextSibling -->
 
    <li><p><span title=concept-node-filter>Filter</span>
-   <var title>node</var> and if the return value is
+   <var title>node</var> and set <var title>result</var> to the return
+   value.
+
+   <li><p>If <var title>result</var> is
    <code title=dom-NodeFilter-FILTER_ACCEPT>FILTER_ACCEPT</code>, then set
    the <code title=dom-TreeWalker-currentNode>currentNode</code> attribute
-   to <var title>node</var>, return <var title>node</var>, and terminate
-   these steps.
+   to <var title>node</var> and return <var title>node</var>.
+
+   <li><p>Run these substeps again.
   </ol>
 </ol>
 
@@ -8868,8 +8839,8 @@ attributes have been added to <code>NodeIterator</code> objects to align
 with user agents.
 
 <p><code title=dom-NodeIterator-nextNode>nextNode()</code> and
-<code title=dom-NodeIterator-previousNode>previousNode()</code> node now
-throw when invoked from a <code>NodeFilter</code> to align with user agents.
+<code title=dom-NodeIterator-previousNode>previousNode()</code> now throw
+when invoked from a <code>NodeFilter</code> to align with user agents.
 
 
 <h2 class=no-num>References</h2>
@@ -8916,6 +8887,7 @@ Seo Sanghyeon,
 Shiki Okasaka,
 Stig Halvorsen,
 Tab Atkins,
+Timo Tijhof,
 Travis Leithead, and
 Zack Weinberg
 
