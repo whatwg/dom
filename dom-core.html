@@ -137,7 +137,7 @@ documents.
   <ol>
    <li><a href="#dom-events"><span class="secno">10.1 </span>DOM Events</a></li>
    <li><a href="#dom-core"><span class="secno">10.2 </span>DOM Core</a></li>
-   <li><a href="#dom-range"><span class="secno">10.3 </span>DOM Range</a></li>
+   <li><a href="#dom-ranges"><span class="secno">10.3 </span>DOM Ranges</a></li>
    <li><a href="#dom-traversal"><span class="secno">10.4 </span>DOM Traversal</a></ol></li>
  <li><a class="no-num" href="#references">References</a></li>
  <li><a class="no-num" href="#acknowledgments">Acknowledgments</a></ol>
@@ -4483,22 +4483,17 @@ method must run these steps:
  <var title="">event</var> interface and return it.
 </ol>
 
-<p class="note">This method is pretty much obsolete as
-<a href="#concept-event" title="concept-event">events</a> have constructors these days, but
-needs to be supported for legacy content. Tough.
+<p class="note"><a href="#concept-event" title="concept-event">Event</a> constructors can be used instead.
 
 <hr>
-
-<dl class="domintro">
- <dt><var title="">event</var> = <var title="">document</var> . <code title="dom-Document-createRange"><a href="#dom-document-createrange">createRange()</a></code>
- <dd><p>Returns a new <a href="#concept-range" title="concept-range">range</a>.
-</dl>
 
 <p>The <dfn id="dom-document-createrange" title="dom-Document-createRange"><code>createRange()</code></dfn>
 method must return a new <a href="#concept-range" title="concept-range">range</a> with
 (<a href="#context-object">context object</a>, 0) as its
 <a href="#concept-range-start" title="concept-range-start">start</a> and
 <a href="#concept-range-end" title="concept-range-end">end</a>.
+
+<p class="note">The <code title="dom-Range"><a href="#dom-range">Range()</a></code> constructor can be used instead.
 
 <hr>
 
@@ -6023,7 +6018,7 @@ for selecting and copying content.
 <var title="">em</var> to the <code>em</code>
 <a href="#concept-element" title="concept-element">element</a>, this would be done as follows:
 
-<pre><code>var range = document.createRange(),
+<pre><code>var range = new Range(),
     firstText = p.childNodes[1],
     secondText = em.firstChild
 range.setStart(firstText, 9) // do not forget the leading space
@@ -6055,7 +6050,8 @@ details.
 
 
 <h3 id="interface-range"><span class="secno">6.2 </span>Interface <code><a href="#range">Range</a></code></h3>
-<pre class="idl">interface <dfn id="range">Range</dfn> {
+<pre class="idl">[<a href="#dom-range" title="dom-Range">Constructor</a>]
+interface <dfn id="range">Range</dfn> {
   readonly attribute <a href="#node">Node</a> <a href="#dom-range-startcontainer" title="dom-Range-startContainer">startContainer</a>;
   readonly attribute unsigned long <a href="#dom-range-startoffset" title="dom-Range-startOffset">startOffset</a>;
   readonly attribute <a href="#node">Node</a> <a href="#dom-range-endcontainer" title="dom-Range-endContainer">endContainer</a>;
@@ -6098,9 +6094,6 @@ details.
 
 <p><code><a href="#range">Range</a></code> objects are simply known as
 <dfn id="concept-range" title="concept-range">ranges</dfn>.
-
-<p class="note"><a href="#concept-range" title="concept-range">Ranges</a> can be created using
-the <code title="dom-Document-createRange"><a href="#dom-document-createrange">createRange()</a></code> method.
 
 <p>A <dfn id="concept-range-bp" title="concept-range-bp">boundary point</dfn> is a
 (<a href="#concept-node" title="concept-node">node</a>,
@@ -6296,6 +6289,19 @@ in a <a href="#concept-range" title="concept-range">range</a> if it is an
   if it lies between those two.
  </ul>
 </div>
+
+<hr>
+
+<dl class="domintro">
+ <dt><code><var title="">range</var> = new <a href="#dom-range" title="dom-Range">Range</a>()</code>
+ <dd><p>Returns a new <a href="#concept-range" title="concept-range">range</a>.
+</dl>
+
+<p>The <dfn id="dom-range" title="dom-Range"><code>Range()</code></dfn> constructor must return a new 
+<a href="#concept-range" title="concept-range">range</a> with 
+(global object's associated <a href="#concept-document" title="concept-document">document</a>, 0) as its
+<a href="#concept-range-start" title="concept-range-start">start</a> and
+<a href="#concept-range-end" title="concept-range-end">end</a>.
 
 <hr>
 
@@ -8909,7 +8915,7 @@ some of these features should be reintroduced.
   </ul>
 </dl>
 
-<h3 id="dom-range"><span class="secno">10.3 </span>DOM Range</h3>
+<h3 id="dom-ranges"><span class="secno">10.3 </span>DOM Ranges</h3>
 
 <p>These are the changes made to the features described in the
 "Document Object Model Range" chapter of
