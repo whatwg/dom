@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-21-february-2013">Living Standard — Last Updated 21 February 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-22-february-2013">Living Standard — Last Updated 22 February 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-21 February 2013, the editors have made this specification available
+22 February 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -805,8 +805,8 @@ interface <dfn id="event">Event</dfn> {
 };
 
 dictionary <dfn id="eventinit">EventInit</dfn> {
-  boolean <span title="dom-EventInit-bubbles">bubbles</span>;
-  boolean <span title="dom-EventInit-cancelable">cancelable</span>;
+  boolean <span title="dom-EventInit-bubbles">bubbles</span> = false;
+  boolean <span title="dom-EventInit-cancelable">cancelable</span> = false;
 };</pre>
 
 <p>An <dfn id="concept-event" title="concept-event">event</dfn> allows for signaling that
@@ -956,7 +956,9 @@ method must set both the <a href="#stop-propagation-flag">stop propagation flag<
 <dfn id="dom-event-cancelable" title="dom-Event-cancelable"><code>cancelable</code></dfn> attributes
 must return the values they were initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created, they must be initialized
-to false.
+to false. <span class="note">The <code><a href="#eventinit">EventInit</a></code> dictionary is not sufficient due to
+the existence of the legacy
+<code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code>.</span>
 
 <p>The
 <dfn id="dom-event-preventdefault" title="dom-Event-preventDefault"><code>preventDefault()</code></dfn>
@@ -1029,7 +1031,7 @@ interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
 };
 
 dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit">EventInit</a> {
-  any <span title="dom-CustomEventInit-detail">detail</span>;
+  any <span title="dom-CustomEventInit-detail">detail</span> = null;
 };</pre>
 
 <p><a href="#concept-event" title="concept-event">Events</a> using the
@@ -1052,7 +1054,9 @@ dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit
 <p>The <dfn id="dom-customevent-detail" title="dom-CustomEvent-detail"><code>detail</code></dfn> attribute
 must return the value it was initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attribute must be
-initialized to null.
+initialized to null. <span class="note">The <code><a href="#customeventinit">CustomEventInit</a></code> dictionary is not
+sufficient due to the existence of the legacy
+<code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code>.</span>
 
 <p>The
 <dfn id="dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent"><code>initCustomEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>, <var title="">details</var>)</code></dfn>
@@ -4442,7 +4446,6 @@ method must run these steps:
 
 <hr>
 
-<!-- no "domintro" because better to use constructors -->
 <p>The
 <dfn id="dom-document-createevent" title="dom-Document-createEvent"><code>createEvent(<var title="">interface</var>)</code></dfn>
 method must run these steps:
@@ -4458,32 +4461,26 @@ method must run these steps:
 
   <table>
    <thead>
-    <tr><th>String<th>Interface
+    <tr><th>String<th>Interface<td>Notes
    <tbody>
+    <tr><td>"<code title="">customevent</code>"<td><code><a href="#customevent">CustomEvent</a></code><td rowspan="4">
     <tr><td>"<code title="">event</code>"<td rowspan="3"><code><a href="#event">Event</a></code>
     <tr><td>"<code title="">events</code>"
     <tr><td>"<code title="">htmlevents</code>"
-    <tr><td>"<code title="">mouseevent</code>"<td rowspan="2"><code>MouseEvent</code>
+    <tr><td>"<code title="">mouseevent</code>"<td rowspan="2"><code>MouseEvent</code><td rowspan="4"><a href="#refsUIEVENTS">[UIEVENTS]</a>
     <tr><td>"<code title="">mouseevents</code>"
-    <!--
-    <tr><td>"<code title>mutationevent</code>"<td rowspan=2><code>MutationEvent</code>
-    <tr><td>"<code title>mutationevents</code>"
-    -->
     <tr><td>"<code title="">uievent</code>"<td rowspan="2"><code>UIEvent</code>
     <tr><td>"<code title="">uievents</code>"
   </table>
+  <!-- XXX WebKit's architecture is broken here and both browsers support more than DOM.
+       http://trac.webkit.org/browser/trunk/Source/WebCore/dom/EventNames.in
+       http://mxr.mozilla.org/mozilla-central/source/content/events/src/nsEventDispatcher.cpp#819 -->
 
- <li>
-  <p>If <var title="">event</var> is null or an interface that is not
-  supported, <a href="#concept-throw" title="concept-throw">throw</a> a
-  "<code><a href="#notsupportederror">NotSupportedError</a></code>" and terminate these steps.
+ <li><p>If <var title="">event</var> is null, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#notsupportederror">NotSupportedError</a></code>".
 
-  <p class="note">In practice all user agents will support the
-  <code>MouseEvent</code> and <code>UIEvent</code> interface, but this
-  specification is not going to require that to avoid a needless dependency.
-
- <li><p>Create an <a href="#concept-event" title="concept-event">event</a> implementing the
- <var title="">event</var> interface and return it.
+ <li><p>Return a new <a href="#concept-event" title="concept-event">event</a> implementing the
+ <var title="">event</var> interface.
 </ol>
 
 <p class="note"><a href="#concept-event" title="concept-event">Event</a> constructors can be used instead.
@@ -8771,7 +8768,7 @@ enumerate the changes.
 "Mutation Name Event Types" chapters of <cite>DOM Level 3 Events</cite>. The
 other chapters are defined by the <cite>UI Events</cite> specification.
 <a class="informative" href="#refsDOM3EVENTS">[DOM3EVENTS]</a>
-<a class="informative" href="#refsUIEVENTS">[UIEVENTS]</a>
+<a href="#refsUIEVENTS">[UIEVENTS]</a>
 
 <ul class="brief">
  <li>Events have constructors now.
@@ -9003,7 +9000,7 @@ when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to align w
 <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, Scott Bradner. IETF.
 
 <dt id="refsUIEVENTS">[UIEVENTS]
-<dd>(Non-normative) <cite><a href="https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm">UI Events</a></cite>, Gary Kacmarcik and Travis Leithead. W3C.
+<dd><cite><a href="https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm">UI Events</a></cite>, Gary Kacmarcik and Travis Leithead. W3C.
 
 <dt id="refsURL">[URL]
 <dd><cite><a href="http://url.spec.whatwg.org/">URL Standard</a></cite>, Anne van Kesteren. WHATWG.
