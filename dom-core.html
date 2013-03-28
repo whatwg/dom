@@ -766,8 +766,9 @@ is <i title="">pending</i>.
     <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">result</var> and
     the <i title="">synchronous flag</i> set.
 
-    <p class="note">The <i title="">synchronous flag</i> is ignored if <var title="">result</var>
-    is a <a href="#concept-future" title="concept-future">future</a>.
+    <p class="note">The <i title="">synchronous flag</i> will be ignored if
+    <var title="">result</var> is a <a href="#concept-future" title="concept-future">future</a> or has a
+    non-throwing <code title="">then</code> method.
   </ol>
 
  <li><p>Discard <var title="">handler</var>.
@@ -786,6 +787,10 @@ is <i title="">pending</i>.
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
+ <!--
+ <li><p>If the <span>resolved flag</span> is set, terminate these steps.
+      can never happen -->
+
  <li><p>Let <var title="">future</var> be its associated
  <a href="#concept-future" title="concept-future">future</a>.
 
@@ -814,6 +819,9 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
+ <li><p>If the <a href="#resolved-flag">resolved flag</a> is set, terminate these steps.
+ <!-- can happen via anonymous callbacks -->
+
  <li><p>Let <var title="">future</var> be its associated
  <a href="#concept-future" title="concept-future">future</a>.
 
@@ -842,9 +850,12 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
+ <li><p>If the <a href="#resolved-flag">resolved flag</a> is set, terminate these steps.
+ <!-- can happen via anonymous callbacks -->
+
  <li>
   <p>If <var title="">value</var> is a <a href="#concept-future" title="concept-future">future</a>, run these
-  substeps:
+  substeps and then terminate these steps:
   <!-- JS branding? -->
 
   <ol>
@@ -862,13 +873,42 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
    <li><p><a href="#concept-future-append" title="concept-future-append">Append</a> <var title="">accept</var> and
    <var title="">reject</var> to <var title="">value</var>.
-
   </ol>
 
-  <p class="note">The <i title="">synchronous flag</i> is ignored here as the
-  <a href="#concept-future" title="concept-future">future</a> could have changed
-  <a href="#concept-future-state" title="concept-future-state">state</a> in the same
-  <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#concept-task" title="concept-task">task</a>.
+ <li>
+  <p>Let <var title="">then</var> be null.
+
+  <p class="note">Starting here the algorithm is described in terms of the JavaScript
+  specification. (Or ECMAScript, if you feel that is a more suitable name.)
+
+ <li><p>If <var title="">value</var> is a JavaScript Object, set <var title="">then</var> to
+ the result of calling the JavaScript <code title="">[[Get]]</code> internal method of
+ <var title="">value</var> with property name <code title="">then</code>.
+
+ <li><p>If calling the <code title="">[[Get]]</code> internal method threw an exception, run
+ <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the thrown exception and the
+ <i title="">synchronous flag</i> if set, and then terminate these steps.
+
+ <li>
+  <p>If JavaScript IsCallable <var title="">then</var>, then run these substeps:
+
+  <ol>
+   <li><p>Let <var title="">accept</var> be a JavaScript <code title="">Function</code> Object
+   which when called invokes <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> with the
+   first argument passed and with <code title="">undefined</code> if no arguments are passed.
+
+   <li><p>Let <var title="">reject</var> be a JavaScript <code title="">Function</code> Object
+   which when called invokes <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the
+   first argument passed and with <code title="">undefined</code> if no arguments are passed.
+
+   <li><p>Call the JavaScript <code title="">[[Call]]</code> internal method of
+   <var title="">then</var> with <b title="">this</b> value <var title="">value</var> and
+   <var title="">accept</var> and <var title="">reject</var> as arguments.
+
+   <li><p>If calling the <code title="">[[Call]]</code> internal method threw an exception,
+   run <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the thrown exception and the
+   <i title="">synchronous flag</i> if set.
+  </ol>
 
  <li><p>Otherwise, run <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> with
  <var title="">value</var> and the <i title="">synchronous flag</i> if set.
