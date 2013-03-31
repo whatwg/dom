@@ -705,68 +705,6 @@ is <i title>pending</i>.
 <span title=concept-resolver>resolver</span>'s <span>resolved flag</span> is unset.
 
 <p>A <span title=concept-resolver>resolver</span>'s
-<dfn title=concept-resolver-accept>accept</dfn> algorithm takes a <var title>value</var>
-and optionally a <i title>synchronous flag</i>, and runs these steps:
-
-<ol>
- <li><p>If the <span>resolved flag</span> is set, terminate these steps.
-      can never happen -->
-
- <li><p>Let <var title>future</var> be its associated
- <span title=concept-future>future</span>.
-
- <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
- <i title>accepted</i>.
-
- <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
- <var title>value</var>.
-
- <li><p>If the <i title>synchronous flag</i> is set,
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span> with
- <var title>value</var>.
-
- <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
- <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span> with
- <var title>value</var>.
-
- <li><p>Set the <span>resolved flag</span>.
-</ol>
-
-<p>A <span title=concept-resolver>resolver</span>'s
-<dfn title=concept-resolver-reject>reject</dfn> algorithm takes a <var title>value</var>
-and optionally a <i title>synchronous flag</i>, and runs these steps:
-
-<ol>
- <li><p>If the <span>resolved flag</span> is set, terminate these steps.
- <!-- can happen via anonymous callbacks -->
-
- <li><p>Let <var title>future</var> be its associated
- <span title=concept-future>future</span>.
-
- <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
- <i title>rejected</i>.
-
- <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
- <var title>value</var>.
-
- <li><p>If the <i title>synchronous flag</i> is set,
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-handlers>reject handlers</span> with
- <var title>value</var>.
-
- <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
- <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-handlers>reject handlers</span> with
- <var title>value</var>.
-
- <li><p>Set the <span>resolved flag</span>.
-</ol>
-
-<p>A <span title=concept-resolver>resolver</span>'s
 <dfn title=concept-resolver-resolve>resolve</dfn> algorithm takes a <var title>value</var>
 and optionally a <i title>synchronous flag</i>, and runs these steps:
 
@@ -811,11 +749,12 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
  <i title>synchronous flag</i> if set, and then terminate these steps.
 
  <li>
-  <p>If JavaScript IsCallable <var title>then</var>, then run these substeps:
+  <p>If JavaScript IsCallable <var title>then</var>, run these substeps and then terminate
+  these steps:
 
   <ol>
    <li><p>Let <var title>accept</var> be a JavaScript <code title>Function</code> Object
-   which when called invokes <span title=concept-resolver-accept>accept</span> with the
+   which when called invokes <span title=concept-resolver-resolve>resolve</span> with the
    first argument passed and with <code title>undefined</code> if no arguments are passed.
 
    <li><p>Let <var title>reject</var> be a JavaScript <code title>Function</code> Object
@@ -831,8 +770,58 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
    <i title>synchronous flag</i> if set.
   </ol>
 
- <li><p>Otherwise, run <span title=concept-resolver-accept>accept</span> with
- <var title>value</var> and the <i title>synchronous flag</i> if set.
+ <li><p>Let <var title>future</var> be the <span>context object</span>'s associated
+ <span title=concept-future>future</span>.
+
+ <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
+ <i title>accepted</i>.
+
+ <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
+ <var title>value</var>.
+
+ <li><p>Set the <span>resolved flag</span>.
+
+ <li><p>If the <i title>synchronous flag</i> is set,
+ <span title=concept-future-process>process</span> <var title>future</var>'s
+ <span title=concept-future-accept-handlers>accept handlers</span> with
+ <var title>value</var>.
+
+ <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
+ <span data-anolis-spec=html>queue a task</span> to
+ <span title=concept-future-process>process</span> <var title>future</var>'s
+ <span title=concept-future-accept-handlers>accept handlers</span> with
+ <var title>value</var>.
+</ol>
+
+<p>A <span title=concept-resolver>resolver</span>'s
+<dfn title=concept-resolver-reject>reject</dfn> algorithm takes a <var title>value</var>
+and optionally a <i title>synchronous flag</i>, and runs these steps:
+
+<ol>
+ <li><p>If the <span>resolved flag</span> is set, terminate these steps.
+ <!-- can happen via anonymous callbacks -->
+
+ <li><p>Let <var title>future</var> be its associated
+ <span title=concept-future>future</span>.
+
+ <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
+ <i title>rejected</i>.
+
+ <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
+ <var title>value</var>.
+
+ <li><p>Set the <span>resolved flag</span>.
+
+ <li><p>If the <i title>synchronous flag</i> is set,
+ <span title=concept-future-process>process</span> <var title>future</var>'s
+ <span title=concept-future-reject-handlers>reject handlers</span> with
+ <var title>value</var>.
+
+ <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
+ <span data-anolis-spec=html>queue a task</span> to
+ <span title=concept-future-process>process</span> <var title>future</var>'s
+ <span title=concept-future-reject-handlers>reject handlers</span> with
+ <var title>value</var>.
 </ol>
 
 <p>Unless stated otherwise, the <span data-anolis-spec=html>task source</span> used by
@@ -844,9 +833,8 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 <h3>Futures API</h3>
 
 <pre class=idl>interface <dfn>FutureResolver</dfn> {
-  void <span title=dom-FutureResolver-accept>accept</span>(optional any <var title>value</var>);
   void <span title=dom-FutureResolver-resolve>resolve</span>(optional any <var title>value</var>);
-  void <span title=dom-FutureResolver-reject>reject</span>(optional any <var title>error</var>);
+  void <span title=dom-FutureResolver-reject>reject</span>(optional any <var title>value</var>);
 
   readonly attribute boolean <span title=dom-FutureResolver-isResolved>isResolved</span>;
 };
@@ -863,38 +851,13 @@ interface <dfn>Future</dfn> {
 
 <p>A <code>FutureResolver</code> object is a <span title=concept-resolver>resolver</span>.
 
-<p>The <dfn title=dom-FutureResolver-accept><code>accept(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, throw an
- "<code title>AlreadyResolved</code>" exception.
-
- <li><p>Run <span>context object</span>'s
- <span title=concept-resolver-accept>accept</span> with <var title>value</var>.
-</ol>
-
 <p>The <dfn title=dom-FutureResolver-resolve><code>resolve(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, throw an
- "<code title>AlreadyResolved</code>" exception.
-
- <li><p>Run <span>context object</span>'s
- <span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
-</ol>
+method must run <span>context object</span>'s
+<span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
 
 <p>The <dfn title=dom-FutureResolver-reject><code>reject(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, throw an
- "<code title>AlreadyResolved</code>" exception.
-
- <li><p>Run <span>context object</span>'s
- <span title=concept-resolver-reject>reject</span> with <var title>value</var>.
-</ol>
+method must run <span>context object</span>'s
+<span title=concept-resolver-reject>reject</span> with <var title>value</var>.
 
 <p>The <dfn title=dom-FutureResolver-isResolved><code>isResolved</code></dfn> attribute
 must return true if <span>context object</span>'s <span>resolved flag</span> is set and

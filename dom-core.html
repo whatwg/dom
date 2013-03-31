@@ -783,37 +783,6 @@ is <i title="">pending</i>.
 <a href="#concept-resolver" title="concept-resolver">resolver</a>'s <a href="#resolved-flag">resolved flag</a> is unset.
 
 <p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<dfn id="concept-resolver-reject" title="concept-resolver-reject">reject</dfn> algorithm takes a <var title="">value</var>
-and optionally a <i title="">synchronous flag</i>, and runs these steps:
-
-<ol>
- <li><p>If the <a href="#resolved-flag">resolved flag</a> is set, terminate these steps.
- <!-- can happen via anonymous callbacks -->
-
- <li><p>Let <var title="">future</var> be its associated
- <a href="#concept-future" title="concept-future">future</a>.
-
- <li><p>Set <var title="">future</var>'s <a href="#concept-future-state" title="concept-future-state">state</a> to
- <i title="">rejected</i>.
-
- <li><p>Set <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> to
- <var title="">value</var>.
-
- <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
-
- <li><p>If the <i title="">synchronous flag</i> is set,
- <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
- <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
- <var title="">value</var>.
-
- <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
- <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
- <var title="">value</var>.
-</ol>
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
 <dfn id="concept-resolver-resolve" title="concept-resolver-resolve">resolve</dfn> algorithm takes a <var title="">value</var>
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
@@ -902,6 +871,37 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
  <var title="">value</var>.
 </ol>
 
+<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
+<dfn id="concept-resolver-reject" title="concept-resolver-reject">reject</dfn> algorithm takes a <var title="">value</var>
+and optionally a <i title="">synchronous flag</i>, and runs these steps:
+
+<ol>
+ <li><p>If the <a href="#resolved-flag">resolved flag</a> is set, terminate these steps.
+ <!-- can happen via anonymous callbacks -->
+
+ <li><p>Let <var title="">future</var> be its associated
+ <a href="#concept-future" title="concept-future">future</a>.
+
+ <li><p>Set <var title="">future</var>'s <a href="#concept-future-state" title="concept-future-state">state</a> to
+ <i title="">rejected</i>.
+
+ <li><p>Set <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> to
+ <var title="">value</var>.
+
+ <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
+
+ <li><p>If the <i title="">synchronous flag</i> is set,
+ <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
+ <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
+ <var title="">value</var>.
+
+ <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
+ <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
+ <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
+ <var title="">value</var>.
+</ol>
+
 <p>Unless stated otherwise, the <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#task-source">task source</a> used by
 <a href="#concept-future" title="concept-future">futures</a> and their
 <a href="#concept-resolver" title="concept-resolver">resolvers</a> is the
@@ -930,26 +930,12 @@ interface <dfn id="future">Future</dfn> {
 <p>A <code><a href="#futureresolver">FutureResolver</a></code> object is a <a href="#concept-resolver" title="concept-resolver">resolver</a>.
 
 <p>The <dfn id="dom-futureresolver-resolve" title="dom-FutureResolver-resolve"><code>resolve(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, throw an
- "<code title="">AlreadyResolved</code>" exception.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
-</ol>
+method must run <a href="#context-object">context object</a>'s
+<a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
 
 <p>The <dfn id="dom-futureresolver-reject" title="dom-FutureResolver-reject"><code>reject(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, throw an
- "<code title="">AlreadyResolved</code>" exception.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">value</var>.
-</ol>
+method must run <a href="#context-object">context object</a>'s
+<a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">value</var>.
 
 <p>The <dfn id="dom-futureresolver-isresolved" title="dom-FutureResolver-isResolved"><code>isResolved</code></dfn> attribute
 must return true if <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set and
