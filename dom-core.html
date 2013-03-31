@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-28-march-2013">Living Standard — Last Updated 28 March 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-31-march-2013">Living Standard — Last Updated 31 March 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-28 March 2013, the editors have made this specification available
+31 March 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -783,38 +783,6 @@ is <i title="">pending</i>.
 <a href="#concept-resolver" title="concept-resolver">resolver</a>'s <a href="#resolved-flag">resolved flag</a> is unset.
 
 <p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<dfn id="concept-resolver-accept" title="concept-resolver-accept">accept</dfn> algorithm takes a <var title="">value</var>
-and optionally a <i title="">synchronous flag</i>, and runs these steps:
-
-<ol>
- <!--
- <li><p>If the <span>resolved flag</span> is set, terminate these steps.
-      can never happen -->
-
- <li><p>Let <var title="">future</var> be its associated
- <a href="#concept-future" title="concept-future">future</a>.
-
- <li><p>Set <var title="">future</var>'s <a href="#concept-future-state" title="concept-future-state">state</a> to
- <i title="">accepted</i>.
-
- <li><p>Set <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> to
- <var title="">value</var>.
-
- <li><p>If the <i title="">synchronous flag</i> is set,
- <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
- <a href="#concept-future-accept-handlers" title="concept-future-accept-handlers">accept handlers</a> with
- <var title="">value</var>.
-
- <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
- <a href="#concept-future-accept-handlers" title="concept-future-accept-handlers">accept handlers</a> with
- <var title="">value</var>.
-
- <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
-</ol>
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
 <dfn id="concept-resolver-reject" title="concept-resolver-reject">reject</dfn> algorithm takes a <var title="">value</var>
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
@@ -831,6 +799,8 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
  <li><p>Set <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> to
  <var title="">value</var>.
 
+ <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
+
  <li><p>If the <i title="">synchronous flag</i> is set,
  <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
  <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
@@ -841,8 +811,6 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
  <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
  <a href="#concept-future-reject-handlers" title="concept-future-reject-handlers">reject handlers</a> with
  <var title="">value</var>.
-
- <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
 </ol>
 
 <p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
@@ -890,11 +858,12 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
  <i title="">synchronous flag</i> if set, and then terminate these steps.
 
  <li>
-  <p>If JavaScript IsCallable <var title="">then</var>, then run these substeps:
+  <p>If JavaScript IsCallable <var title="">then</var>, run these substeps and then terminate
+  these steps:
 
   <ol>
    <li><p>Let <var title="">accept</var> be a JavaScript <code title="">Function</code> Object
-   which when called invokes <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> with the
+   which when called invokes <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with the
    first argument passed and with <code title="">undefined</code> if no arguments are passed.
 
    <li><p>Let <var title="">reject</var> be a JavaScript <code title="">Function</code> Object
@@ -910,8 +879,27 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
    <i title="">synchronous flag</i> if set.
   </ol>
 
- <li><p>Otherwise, run <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> with
- <var title="">value</var> and the <i title="">synchronous flag</i> if set.
+ <li><p>Let <var title="">future</var> be the <a href="#context-object">context object</a>'s associated
+ <a href="#concept-future" title="concept-future">future</a>.
+
+ <li><p>Set <var title="">future</var>'s <a href="#concept-future-state" title="concept-future-state">state</a> to
+ <i title="">accepted</i>.
+
+ <li><p>Set <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> to
+ <var title="">value</var>.
+
+ <li><p>Set the <a href="#resolved-flag">resolved flag</a>.
+
+ <li><p>If the <i title="">synchronous flag</i> is set,
+ <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
+ <a href="#concept-future-accept-handlers" title="concept-future-accept-handlers">accept handlers</a> with
+ <var title="">value</var>.
+
+ <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
+ <a href="#concept-future-process" title="concept-future-process">process</a> <var title="">future</var>'s
+ <a href="#concept-future-accept-handlers" title="concept-future-accept-handlers">accept handlers</a> with
+ <var title="">value</var>.
 </ol>
 
 <p>Unless stated otherwise, the <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#task-source">task source</a> used by
@@ -923,9 +911,8 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 <h3 id="futures-api"><span class="secno">4.3 </span>Futures API</h3>
 
 <pre class="idl">interface <dfn id="futureresolver">FutureResolver</dfn> {
-  void <a href="#dom-futureresolver-accept" title="dom-FutureResolver-accept">accept</a>(optional any <var title="">value</var>);
   void <a href="#dom-futureresolver-resolve" title="dom-FutureResolver-resolve">resolve</a>(optional any <var title="">value</var>);
-  void <a href="#dom-futureresolver-reject" title="dom-FutureResolver-reject">reject</a>(optional any <var title="">error</var>);
+  void <a href="#dom-futureresolver-reject" title="dom-FutureResolver-reject">reject</a>(optional any <var title="">value</var>);
 
   readonly attribute boolean <a href="#dom-futureresolver-isresolved" title="dom-FutureResolver-isResolved">isResolved</a>;
 };
@@ -941,17 +928,6 @@ interface <dfn id="future">Future</dfn> {
 };</pre>
 
 <p>A <code><a href="#futureresolver">FutureResolver</a></code> object is a <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
-<p>The <dfn id="dom-futureresolver-accept" title="dom-FutureResolver-accept"><code>accept(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, throw an
- "<code title="">AlreadyResolved</code>" exception.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> with <var title="">value</var>.
-</ol>
 
 <p>The <dfn id="dom-futureresolver-resolve" title="dom-FutureResolver-resolve"><code>resolve(<var>value</var>)</code></dfn>
 method must run these steps:
