@@ -590,9 +590,8 @@ result of an operation.
 an operation that is ongoing, has yet to start, or has completed.
 
 <p>A <span title=concept-future>future</span> has associated
-<dfn title=concept-future-accept-handlers>accept handlers</dfn> and
-<dfn title=concept-future-reject-handlers>reject handlers</dfn> (both are lists of
-<span title=concept-future-handler>future handlers</span>), an associated
+<dfn title=concept-future-accept-callbacks>accept callbacks</dfn> and
+<dfn title=concept-future-reject-callbacks>reject callbacks</dfn>, an associated
 <dfn title=concept-future-state>state</dfn>, and an associated
 <dfn title=concept-future-result>result</dfn>. Unless stated otherwise, a
 <span title=concept-future>future</span>'s <span title=concept-future-state>state</span>
@@ -602,100 +601,72 @@ is <i title>pending</i>.
 <span title=concept-resolver>resolver</span>.
 
 <p>To <dfn title=concept-future-append>append</dfn> an
-<var title>acceptHandler</var> and a <var title>rejectHandler</var> to a
+<var title>acceptCallback</var> and a <var title>rejectCallback</var> to a
 <var title>future</var>, run these steps:
 
 <ol>
- <li><p>Append <var title>acceptHandler</var> to <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span>.
+ <li><p>Append <var title>acceptCallback</var> to <var title>future</var>'s
+ <span title=concept-future-accept-callbacks>accept callbacks</span>.
 
- <li><p>Append <var title>rejectHandler</var> to <var title>future</var>'
- <span title=concept-future-reject-handlers>reject handlers</span>.
+ <li><p>Append <var title>rejectCallback</var> to <var title>future</var>'
+ <span title=concept-future-reject-callbacks>reject callbacks</span>.
 
  <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
  <i title>accepted</i>, <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>future</var>'s <span title=concept-future-result>result</span>.
 
  <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
  <i title>rejected</i>, <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-handlers>reject handlers</span> with
+ <span title=concept-future-reject-callbacks>reject callbacks</span> with
  <var title>future</var>'s <span title=concept-future-result>result</span>.
 </ol>
 
-<p>A <dfn title=concept-future-handler>future handler</dfn> is tuple consisting of a
-<dfn title=concept-future-handler-type>type</dfn>, a
-<dfn title=concept-future-handler-callback>callback</dfn>, and a
-<dfn title=concept-future-handler-resolver>resolver</dfn> (a
-<span title=concept-resolver>resolver</span>). Unless stated otherwise, a
-<span title=concept-future-handler>future handler</span>'s
-<span title=concept-future-handler-type>type</span>,
-<span title=concept-future-handler-callback>callback</span>, and
-<span title=concept-future-handler-resolver>resolver</span> are null.
-
-<p>To <dfn title=concept-future-process>process</dfn> a <var title>future</var>'s
-<span title=concept-future-handler>future handlers</span> with a given
-<var title>value</var>, run these steps for each <var title>handler</var>:
+<p>A <dfn title=concept-future-callback>future callback</dfn> for a
+<span title=concept-resolver>resolver</span> <var title>resolver</var> and algorithm
+<var title>algorithm</var> is a JavaScript <code title>Function</code> Object which when
+called runs these steps:
 
 <ol>
- <li>
-  <p>If <var title>handler</var>'s
-  <span title=concept-future-handler-callback>callback</span> is null, run these substeps:
+ <li><p>Let <var title>value</var> be the first argument that is passed, and
+ <code title>undefined</code> otherwise.
 
-  <ol>
-   <li><p>If <var title>handler</var>'s
-   <span title=concept-future-handler-type>type</span> is <i title>resolve</i>, run
-   <var title>handler</var>'s
-   <span title=concept-future-handler-resolver>resolver</span>'s
-   <span title=concept-resolver-resolve>resolve</span> with <var title>value</var> and the
-   <i title>synchronous flag</i> set.
-
-   <li><p>Otherwise, <var title>handler</var>'s
-   <span title=concept-future-handler-type>type</span> is <i title>reject</i>, run
-   <var title>handler</var>'s
-   <span title=concept-future-handler-resolver>resolver</span>'s
-   <span title=concept-resolver-reject>reject</span> with <var title>value</var> and the
-   <i title>synchronous flag</i> set.
-  </ol>
-
- <li>
-  <p>Otherwise, run these substeps:
-
-  <ol>
-   <li><p>Set <var title>handler</var>'s
-   <span title=concept-future-handler-callback>callback</span>'s
-   <span data-anolis-spec=webidl>callback this value</span> to <var title>future</var>.
-
-   <li><p>Let <var title>result</var> be the result of invoking <var title>handler</var>'s
-   <span title=concept-future-handler-callback>callback</span> with <var title>value</var>
-   as argument.
-
-   <li><p>If invoking <var title>handler</var>'s
-   <span title=concept-future-handler-callback>callback</span> threw an exception and
-   <var title>handler</var>'s <span title=concept-future-handler-resolver>resolver</span>
-   is not null, run <var title>handler</var>'s
-   <span title=concept-future-handler-resolver>resolver</span>'s
-   <span title=concept-resolver-reject>reject</span> with the thrown exception as
-   argument and the <i title>synchronous flag</i> set.
-
-   <li>
-    <p>Otherwise, if <var title>handler</var>'s
-    <span title=concept-future-handler-resolver>resolver</span> is not null, run
-    <var title>handler</var>'s
-    <span title=concept-future-handler-resolver>resolver</span>'s
-    <span title=concept-resolver-resolve>resolve</span> with <var title>result</var> and
-    the <i title>synchronous flag</i> set.
-
-    <p class=note>The <i title>synchronous flag</i> will be ignored if
-    <var title>result</var> is a <span title=concept-future>future</span> or has a
-    non-throwing <code title>then</code> method.
-  </ol>
-
- <li><p>Discard <var title>handler</var>.
+ <li><p>Run <var title>resolver</var>'s <var title>algorithm</var> with
+ <var title>value</var> and the <i title>synchronous flag</i> set.
 </ol>
 
+<p>A <dfn title=concept-future-wrapper-callback>future wrapper callback</dfn> for a
+<span title=concept-resolver>resolver</span> <var title>resolver</var> and callback
+<var title>callback</var> is a JavaScript <code title>Function</code> Object which when
+called runs these steps:
+
+<ol>
+ <li><p>Let <var title>value</var> be the first argument that is passed, and
+ <code title>undefined</code> otherwise.
+
+ <li><p>Set <var title>callback</var>'s
+ <span data-anolis-spec=webidl>callback this value</span> to <var title>resolver</var>'s
+ associated <span title=concept-future>future</span>.
+
+ <li><p>Let <var title>result</var> be the result of invoking <var title>callback</var>
+ with <var title>value</var> as argument.
+
+ <li><p>If invoking <var title>callback</var> threw an exception, run
+ <var title>resolver</var>'s <span title=concept-resolver-reject>reject</span> with the
+ thrown exception as argument and the <i title>synchronous flag</i> set.
+
+ <li><p>Otherwise, run <var title>resolver</var>'s
+ <span title=concept-resolver-resolve>resolve</span> with <var title>result</var> and the
+ <i title>synchronous flag</i> set.
+</ol>
+
+<p>To <dfn title=concept-future-process>process</dfn> a <var title>future</var>'s
+<span title=concept-future-accept-callbacks>accept callbacks</span> or
+<span title=concept-future-reject-callbacks>reject callbacks</span> with a given
+<var title>value</var>, call each callback with <var title>value</var> as argument and
+then discard it.
 
 <p>A <dfn title=concept-resolver>resolver</dfn> is in control of a
 <span title=concept-future>future</span>'s <span title=concept-future-state>state</span>.
@@ -715,8 +686,8 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
  <li>
   <p>Let <var title>then</var> be null.
 
-  <p class=note>Starting here parts of the algorithm are described in terms of the
-  JavaScript specification. (Or ECMAScript, if you feel that is a more suitable name.)
+  <p class=note>Starting here the algorithm is described in terms of the JavaScript
+  specification. (Or ECMAScript, if you feel that is a more suitable name.)
 
  <li><p>If <var title>value</var> is a JavaScript Object, set <var title>then</var> to
  the result of calling the JavaScript <code title>[[Get]]</code> internal method of
@@ -727,17 +698,19 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
  <i title>synchronous flag</i> if set, and then terminate these steps.
 
  <li>
-  <p>If JavaScript IsCallable <var title>then</var>, run these substeps and then terminate
-  these steps:
+  <p>If JavaScript IsCallable(<var title>then</var>) is true, run these substeps and then
+  terminate these steps:
 
   <ol>
-   <li><p>Let <var title>accept</var> be a JavaScript <code title>Function</code> Object
-   which when called invokes <span title=concept-resolver-resolve>resolve</span> with the
-   first argument passed and with <code title>undefined</code> if no arguments are passed.
+   <li><p>Let <var title>accept</var> be a
+   <span title=concept-future-callback>future callback</span> for the
+   <span>context object</span> and its <span title=concept-resolver-resolve>resolve</span>
+   algorithm.
 
-   <li><p>Let <var title>reject</var> be a JavaScript <code title>Function</code> Object
-   which when called invokes <span title=concept-resolver-reject>reject</span> with the
-   first argument passed and with <code title>undefined</code> if no arguments are passed.
+   <li><p>Let <var title>reject</var> be a
+   <span title=concept-future-callback>future callback</span> for the
+   <span>context object</span> and its <span title=concept-resolver-reject>reject</span>
+   algorithm.
 
    <li><p>Call the JavaScript <code title>[[Call]]</code> internal method of
    <var title>then</var> with <b title>this</b> value <var title>value</var> and
@@ -761,13 +734,13 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 
  <li><p>If the <i title>synchronous flag</i> is set,
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>value</var>.
 
  <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
  <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-handlers>accept handlers</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>value</var>.
 </ol>
 
@@ -792,13 +765,13 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 
  <li><p>If the <i title>synchronous flag</i> is set,
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-handlers>reject handlers</span> with
+ <span title=concept-future-reject-callbacks>reject callbacks</span> with
  <var title>value</var>.
 
  <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
  <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-handlers>reject handlers</span> with
+ <span title=concept-future-reject-callbacks>reject callbacks</span> with
  <var title>value</var>.
 </ol>
 
@@ -873,19 +846,19 @@ method must run these steps:
  <li><p>Let <var title>r</var> be <var title>f</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>accept</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-type>type</span> is <i title>resolve</i>,
- <span title=concept-future-handler-callback>callback</span> is
- <var title>acceptCallback</var>, and
- <span title=concept-future-handler-resolver>resolver</span> is <var title>r</var>.
+ <li><p>Let <var title>accept</var> be a
+ <span title=concept-future-wrapper-callback>future wrapper callback</span> for
+ <var title>r</var> and <var title>acceptCallback</span> if
+ <var title>acceptCallback</span> is not null and a
+ <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
+ <span title=concept-resolver-resolve>resolve</span> algorithm otherwise.
 
- <li><p>Let <var title>reject</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-type>type</span> is <i title>reject</i>,
- <span title=concept-future-handler-callback>callback</span> is
- <var title>rejectCallback</var>, and
- <span title=concept-future-handler-resolver>resolver</span> is <var title>r</var>.
+ <li><p>Let <var title>reject</var> be a
+ <span title=concept-future-wrapper-callback>future wrapper callback</span> for
+ <var title>r</var> and <var title>rejectCallback</span> if
+ <var title>rejectCallback</span> is not null and a
+ <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
+ <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
  <li><p><span title=concept-future-append>Append</span> <var title>accept</var> and
  <var title>reject</var> to the <span>context object</span>.
@@ -903,16 +876,15 @@ method must run these steps:
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>accept</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-type>type</span> is <i title>resolve</i> and
- <span title=concept-future-handler-resolver>resolver</span> is <var title>r</var>.
+ <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
+ <span title=concept-resolver-resolve>resolve</span> algorithm.
 
- <li><p>Let <var title>reject</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-type>type</span> is <i title>reject</i>,
- <span title=concept-future-handler-callback>callback</span> is
- <var title>rejectCallback</var>, and
- <span title=concept-future-handler-resolver>resolver</span> is <var title>r</var>.
+ <li><p>Let <var title>reject</var> be a
+ <span title=concept-future-wrapper-callback>future wrapper callback</span> for
+ <var title>r</var> and <var title>rejectCallback</span> if
+ <var title>rejectCallback</span> is not null and a
+ <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
+ <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
  <li><p><span title=concept-future-append>Append</span> <var title>accept</var> and
  <var title>reject</var> to the <span>context object</span>.
@@ -922,22 +894,9 @@ method must run these steps:
 
 <p>The
 <dfn title=dom-Future-done><code>done(<var>acceptCallback</var>, <var>rejectCallback</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title>accept</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-callback>callback</span> is
- <var title>acceptCallback</var>.
-
- <li><p>Let <var title>reject</var> be a new
- <span title=concept-future-handler>future handler</span> whose
- <span title=concept-future-handler-callback>callback</span> is
- <var title>rejectCallback</var>.
-
- <li><p><span title=concept-future-append>Append</span> <var title>accept</var> and
- <var title>reject</var> to the <span>context object</span>.
-</ol>
+method must <span title=concept-future-append>append</span>
+<var title>acceptCallback</var> and <var title>rejectCallback</var> to the
+<span>context object</span>.
 
 
 
