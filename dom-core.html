@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-2-april-2013">Living Standard — Last Updated 2 April 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-3-april-2013">Living Standard — Last Updated 3 April 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-2 April 2013, the editors have made this specification available
+3 April 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -873,9 +873,12 @@ callback <dfn id="anycallback">AnyCallback</dfn> = any (optional any <var title=
 
 [<a href="#dom-future" title="dom-Future">Constructor</a>(<a href="#futureinit">FutureInit</a> <var title="">init</var>)]
 interface <dfn id="future">Future</dfn> {
+  static <a href="#future">Future</a> <a href="#dom-future-any" title="dom-Future-any">any</a>(<span class="XXX">...</span> <var title="">futures</var>);
+  static <a href="#future">Future</a> <a href="#dom-future-when" title="dom-Future-when">when</a>(<span class="XXX">...</span> <var title="">futures</var>);
+
   <a href="#future">Future</a> <a href="#dom-future-then" title="dom-Future-then">then</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">acceptCallback</var> = null, optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
   <a href="#future">Future</a> <a href="#dom-future-catch" title="dom-Future-catch">catch</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
-  void done(optional <a href="#anycallback">AnyCallback</a>? <var title="">acceptCallback</var> = null, optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
+  void <a href="#dom-future-done" title="dom-Future-done">done</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">acceptCallback</var> = null, optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
 };</pre>
 
 <p>A <code><a href="#futureresolver">FutureResolver</a></code> object is a <a href="#concept-resolver" title="concept-resolver">resolver</a>.
@@ -926,19 +929,19 @@ method must run these steps:
 
  <li><p>Let <var title="">accept</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
- <var title="">r</var> and <var title="">acceptCallback if
- <var title="">acceptCallback is not null and a
+ <var title="">r</var> and <var title="">acceptCallback</var> if
+ <var title="">acceptCallback</var> is not null and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">r</var> and its
  <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> algorithm otherwise.
 
- </var></var><li><p>Let <var title="">reject</var> be a
+ <li><p>Let <var title="">reject</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
- <var title="">r</var> and <var title="">rejectCallback if
- <var title="">rejectCallback is not null and a
+ <var title="">r</var> and <var title="">rejectCallback</var> if
+ <var title="">rejectCallback</var> is not null and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">r</var> and its
  <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
 
- </var></var><li><p><a href="#concept-future-append" title="concept-future-append">Append</a> <var title="">accept</var> and
+ <li><p><a href="#concept-future-append" title="concept-future-append">Append</a> <var title="">accept</var> and
  <var title="">reject</var> to the <a href="#context-object">context object</a>.
 
  <li><p>Return <var title="">f</var>.
@@ -959,12 +962,12 @@ method must run these steps:
 
  <li><p>Let <var title="">reject</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
- <var title="">r</var> and <var title="">rejectCallback if
- <var title="">rejectCallback is not null and a
+ <var title="">r</var> and <var title="">rejectCallback</var> if
+ <var title="">rejectCallback</var> is not null and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">r</var> and its
  <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
 
- </var></var><li><p><a href="#concept-future-append" title="concept-future-append">Append</a> <var title="">accept</var> and
+ <li><p><a href="#concept-future-append" title="concept-future-append">Append</a> <var title="">accept</var> and
  <var title="">reject</var> to the <a href="#context-object">context object</a>.
 
  <li><p>Return <var title="">f</var>.
@@ -975,6 +978,22 @@ method must run these steps:
 method must <a href="#concept-future-append" title="concept-future-append">append</a>
 <var title="">acceptCallback</var> and <var title="">rejectCallback</var> to the
 <a href="#context-object">context object</a>.
+
+<p class="note">The <code title="dom-Future-done"><a href="#dom-future-done">done()</a></code> method as useful at the end of
+a chain of <a href="#concept-future" title="concept-future">futures</a> as exceptions thrown by the callbacks
+will reach <code>window.onerror</code>.
+
+
+<p>The static <dfn id="dom-future-any" title="dom-Future-any"><code>any(<var>futures</var>)</code></dfn> method
+must run these steps:
+
+<ol class="XXX"></ol>
+
+
+<p>The static <dfn id="dom-future-when" title="dom-Future-when"><code>when(<var>futures</var>)</code></dfn>
+method must run these steps:
+
+<ol class="XXX"></ol>
 
 
 
