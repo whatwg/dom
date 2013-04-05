@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-4-april-2013">Living Standard — Last Updated 4 April 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-5-april-2013">Living Standard — Last Updated 5 April 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-4 April 2013, the editors have made this specification available
+5 April 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -659,7 +659,46 @@ Thanks!
 <p><a href="#concept-future" title="concept-future">Futures</a> provide a convenient way to get access to the
 result of an operation.
 
-<p class="XXX">…<!-- help! -->
+<p><a href="#concept-future" title="concept-future">Futures</a> can be returned by platform APIs, but can
+also be used in conjunction with an existing API to make it easier to work with.
+
+<div class="example">
+
+<p>This example demonstrates creating a <code title="">fetchJSON(<var>url</var>)</code>
+function that returns a <code><a href="#future">Future</a></code> that is responsible for fetching a
+<a class="external" data-anolis-spec="url" href="http://url.spec.whatwg.org/#url">URL</a> and parsing the response as JSON.
+
+<pre>function fetchJSON(url) {
+  return new Future(function(resolver) {
+    var xhr = new XMLHttpRequest()
+    xhr.open("GET", url)
+    xhr.responseType = "json"
+    xhr.send()
+    xhr.onload = function() {
+      if(xhr.response)
+        resolver.resolve(xhr.response)
+      resolve.reject(new DOMError("JSONError"))
+    }
+    xhr.onloadend = function() { resolver.reject(new DOMError("NetworkError")) }
+  })
+}</pre>
+
+<p>This can be used to create more idiomatic code:
+
+<pre>fetchJSON("/user/posts").done(showPosts, showFailcat)</pre>
+
+<p>Using static methods <a href="#concept-future" title="concept-future">futures</a> can be combined to
+create new <span title="concept-futures">futures</span>, which allows for operating on the
+results of several asynchronous requests at once:
+
+<pre>Future.when(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).done(
+  function(mario, luigi) { … },
+  function() { showFailcat }
+)</pre>
+
+<p>Enjoy!
+
+</div>
 
 
 <h3 id="futures-model"><span class="secno">4.2 </span>Futures Model</h3>
@@ -1003,7 +1042,6 @@ must run these steps:
 
 <ol class="XXX"></ol>
 
-
 <p>The static <dfn id="dom-future-some" title="dom-Future-some"><code>some(<var>futures</var>)</code></dfn>
 method must run these steps:
 
@@ -1014,8 +1052,9 @@ method must run these steps:
 
 <ol class="XXX"></ol>
 
-<p>The static <dfn id="dom-future-isthenable" title="dom-Future-isThenable"><code>isThenable(<var>futures</var>)</code></dfn>
-method must run these steps:
+<p>The static
+<dfn id="dom-future-isthenable" title="dom-Future-isThenable"><code>isThenable(<var>futures</var>)</code></dfn> method
+must run these steps:
 
 <ol class="XXX"></ol>
 

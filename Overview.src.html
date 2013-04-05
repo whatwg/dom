@@ -581,7 +581,46 @@ Thanks!
 <p><span title=concept-future>Futures</span> provide a convenient way to get access to the
 result of an operation.
 
-<p class=XXX>&hellip;<!-- help! -->
+<p><span title=concept-future>Futures</span> can be returned by platform APIs, but can
+also be used in conjunction with an existing API to make it easier to work with.
+
+<div class=example>
+
+<p>This example demonstrates creating a <code title>fetchJSON(<var>url</var>)</code>
+function that returns a <code>Future</code> that is responsible for fetching a
+<span data-anolis-spec=url>URL</span> and parsing the response as JSON.
+
+<pre>function fetchJSON(url) {
+  return new Future(function(resolver) {
+    var xhr = new XMLHttpRequest()
+    xhr.open("GET", url)
+    xhr.responseType = "json"
+    xhr.send()
+    xhr.onload = function() {
+      if(xhr.response)
+        resolver.resolve(xhr.response)
+      resolve.reject(new DOMError("JSONError"))
+    }
+    xhr.onloadend = function() { resolver.reject(new DOMError("NetworkError")) }
+  })
+}</pre>
+
+<p>This can be used to create more idiomatic code:
+
+<pre>fetchJSON("/user/posts").done(showPosts, showFailcat)</pre>
+
+<p>Using static methods <span title=concept-future>futures</span> can be combined to
+create new <span title=concept-futures>futures</span>, which allows for operating on the
+results of several asynchronous requests at once:
+
+<pre>Future.when(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).done(
+  function(mario, luigi) { &hellip; },
+  function() { showFailcat }
+)</pre>
+
+<p>Enjoy!
+
+</div>
 
 
 <h3>Futures Model</h3>
@@ -925,7 +964,6 @@ must run these steps:
 
 <ol class=XXX></ol>
 
-
 <p>The static <dfn title=dom-Future-some><code>some(<var>futures</var>)</code></dfn>
 method must run these steps:
 
@@ -936,8 +974,9 @@ method must run these steps:
 
 <ol class=XXX></ol>
 
-<p>The static <dfn title=dom-Future-isThenable><code>isThenable(<var>futures</var>)</code></dfn>
-method must run these steps:
+<p>The static
+<dfn title=dom-Future-isThenable><code>isThenable(<var>futures</var>)</code></dfn> method
+must run these steps:
 
 <ol class=XXX></ol>
 
