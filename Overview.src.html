@@ -63,11 +63,7 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 
 
 <h2 class="no-num no-toc">Abstract</h2>
-<p>DOM defines the event and document model the Web platform uses. The
-DOM is a language- and platform neutral interface that allows programs and
-scripts to dynamically access and update the content and structure of
-documents.
-
+<p>DOM defines a platform-neutral model for events, futures, and document nodes.
 
 
 <h2 class="no-num no-toc">Table of Contents</h2>
@@ -389,7 +385,7 @@ return value.
   const unsigned short <span title=dom-DOMException-NAMESPACE_ERR>NAMESPACE_ERR</span> = 14;
   const unsigned short <span title=dom-DOMException-INVALID_ACCESS_ERR>INVALID_ACCESS_ERR</span> = 15;
   const unsigned short <span title=dom-DOMException-VALIDATION_ERR>VALIDATION_ERR</span> = 16; // historical
-  const unsigned short <span title=dom-DOMException-TYPE_MISMATCH_ERR>TYPE_MISMATCH_ERR</span> = 17; // historical; use TypeError instead
+  const unsigned short <span title=dom-DOMException-TYPE_MISMATCH_ERR>TYPE_MISMATCH_ERR</span> = 17; // historical; use JavaScript's TypeError instead
   const unsigned short <span title=dom-DOMException-SECURITY_ERR>SECURITY_ERR</span> = 18;
   const unsigned short <span title=dom-DOMException-NETWORK_ERR>NETWORK_ERR</span> = 19;
   const unsigned short <span title=dom-DOMException-ABORT_ERR>ABORT_ERR</span> = 20;
@@ -857,6 +853,20 @@ interface <dfn>Future</dfn> {
 
 <p>A <code>FutureResolver</code> object is a <span title=concept-resolver>resolver</span>.
 
+<dl class=domintro>
+ <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-accept>accept</span>(<var title>value</var>)</code>
+ <dd><p>Runs <var title>resolver</var>'s
+ <span title=concept-resolver-accept>accept</span>.
+
+ <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-resolve>resolve</span>(<var title>value</var>)</code>
+ <dd><p>Runs <var title>resolver</var>'s
+ <span title=concept-resolver-resolve>resolve</span>.
+
+ <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-reject>reject</span>(<var title>value</var>)</code>
+ <dd><p>Runs <var title>resolver</var>'s
+ <span title=concept-resolver-reject>reject</span>.
+</dl>
+
 <p>The <dfn title=dom-FutureResolver-accept><code>accept(<var>value</var>)</code></dfn>
 method must run <span>context object</span>'s
 <span title=concept-resolver-accept>accept</span> with <var title>value</var>.
@@ -870,6 +880,48 @@ method must run <span>context object</span>'s
 <span title=concept-resolver-reject>reject</span> with <var title>value</var>.
 
 <p>A <code>Future</code> object is a <span title=concept-future>future</span>.
+
+<dl class=domintro>
+ <dt><code><var title>future</var> = new <span title=dom-Future>Future</span>(<var title>init</var>)</code>
+ <dd><p>Creates a new <span title=concept-future>future</span>. The <var title>init</var>
+ callback is passed the associated <span title=concept-resolver>resolver</span>. If the
+ callback throws an exception, the <span title=concept-future>future</span>'s associated
+ <span title=concept-resolver>resolver</span>'s
+ <span title=concept-resolver-reject>reject</span> is run with the thrown exception.
+
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>resolveCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dd>
+  <p>Appends callbacks to <var title>future</var> of which one will be invoked with
+  <var title>future</var>'s <span title=concept-future-result>result</span> at some point
+  after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
+  either <i title>accepted</i> or <i title>rejected</i>.
+
+  <p>If <var title>resolveCallback</var> or <var title>rejectCallback</var> is null a
+  callback will be appended that when invoked runs <var title>newFuture</var>'s associated
+  <span title=concept-resolver>resolver</span>'s
+  <span title=concept-resolve>resolve</span> or <span title=concept-reject>reject</span>
+  algorithm respectively, with <var title>future</var>'s
+  <span title=concept-future-result>result</span>.
+
+  <p>If they are not null when invoked their return value is passed to
+  <var title>newFuture</var>'s associated <span title=concept-resolver>resolver</span>'s
+  <span title=concept-resolve>resolve</span> algorithm. If a callback throws an exception,
+  that exception is passed to <var title>newFuture</var>'s associated
+  <span title=concept-resolver>resolver</span>'s
+  <span title=concept-reject>reject</span> algorithm.
+
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-catch>catch</span>([<var title>rejectCallback</var> = null])</code>
+ <dd><p>Identical to invoking <code><var title>future</var>.<span title=dom-Future-then>then</span>(null, <var title>rejectCallback</var>)</code>.
+
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-done>done</span>([<var title>resolveCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dd>
+  <p>Appends callbacks to <var title>future</var> of which one will be invoked with
+  <var title>future</var>'s <span title=concept-future-result>result</span> at some point
+  after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
+  either <i title>accepted</i> or <i title>rejected</i>.
+
+  <p>Exceptions raised will reach <code title>window.onerror</code>.
+</dl>
 
 <p>The <dfn title=dom-Future><code>Future(<var>init</var>)</code></dfn> constructor must
 run these steps:
@@ -962,7 +1014,7 @@ will reach <code title>window.onerror</code>.
 <dl class=domintro>
  <dt><code><span>Future</span>.<span title=dom-Future-any>any</span>(<var>values</var>)</code>
  <dd><p>Returns a <span title=concept-future>future</span> that is <i title>accepted</i>
- or <i title>rejected</i> when any of <var>values</var> is either <i title>accepted</i>
+ or <i title>rejected</i> when any of <var>values</var> is either <i title>accepted</i> or
  <i title>rejected</i>.
 
  <dt><code><span>Future</span>.<span title=dom-Future-every>every</span>(<var>values</var>)</code>
