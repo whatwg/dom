@@ -928,20 +928,20 @@ method must run <span>context object</span>'s
 run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Set <var title>init</var>'s
- <span data-anolis-spec=webidl>callback this value</span> to <var title>f</var>.
+ <span data-anolis-spec=webidl>callback this value</span> to <var title>future</var>.
 
- <li><p>Invoke <var title>init</var> with <var title>r</var> passed as parameter.
+ <li><p>Invoke <var title>init</var> with <var title>resolver</var> passed as parameter.
 
- <li><p>If <var title>init</var> threw an exception, run <var title>r</var>'s
+ <li><p>If <var title>init</var> threw an exception, run <var title>resolver</var>'s
  <span title=concept-resolver-reject>reject</span> with the thrown exception as argument.
 
- <li><p>Return <var title>f</var>.
+ <li><p>Return <var title>future</var>.
 </ol>
 
 <p>The
@@ -949,55 +949,55 @@ run these steps:
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>resolve</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
- <var title>r</var> and <var title>resolveCallback</var> if
+ <var title>resolver</var> and <var title>resolveCallback</var> if
  <var title>resolveCallback</var> is not null and a
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-resolve>resolve</span> algorithm otherwise.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-resolve>resolve</span> algorithm otherwise.
 
  <li><p>Let <var title>reject</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
- <var title>r</var> and <var title>rejectCallback</var> if
+ <var title>resolver</var> and <var title>rejectCallback</var> if
  <var title>rejectCallback</var> is not null and a
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-reject>reject</span> algorithm otherwise.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
  <li><p><span title=concept-future-append>Append</span> <var title>resolve</var> and
  <var title>reject</var> to the <span>context object</span>.
 
- <li><p>Return <var title>f</var>.
+ <li><p>Return <var title>future</var>.
 </ol>
 
 <p>The <dfn title=dom-Future-catch><code>catch(<var>rejectCallback</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>resolve</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-resolve>resolve</span> algorithm.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
  <li><p>Let <var title>reject</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
- <var title>r</var> and <var title>rejectCallback</var> if
+ <var title>resolver</var> and <var title>rejectCallback</var> if
  <var title>rejectCallback</var> is not null and a
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-reject>reject</span> algorithm otherwise.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
  <li><p><span title=concept-future-append>Append</span> <var title>resolve</var> and
  <var title>reject</var> to the <span>context object</span>.
 
- <li><p>Return <var title>f</var>.
+ <li><p>Return <var title>future</var>.
 </ol>
 
 <p>The
@@ -1029,130 +1029,159 @@ will reach <code title>window.onerror</code>.
  are <i title>rejected</i>.
 </dl>
 
-<p>To <dfn title=concept-future-apply>apply</dfn> a <var title>resolveCallback</var> and
-<var title>rejectCallback</var> to a list of <var title>values</var>, run these steps
-for each <var title>value</var> in <var title>values</var>, in order given:
+
+<p>To <dfn title=concept-future-resolve-wrap>resolve wrap</dfn> a <var title>value</var>,
+run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
- <span title=concept-resolver>resolver</span>.
+ <li><p>Run <var title>future</var>'s associated
+ <span title=concept-resolver>resolver</span>'s
+ <span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
 
- <li><p>Run <var title>r</var>'s <span title=concept-resolver-resolve>resolve</span> with
- <var title>value</var>.
-
- <li><p><span title=concept-future-append>Append</span> <var title>resolveCallback</var>
- and <var title>rejectCallback</var> to <var title>f</var>.
-</ol>
+ <li><p>Return <var title>future</var>.
+<ol>
 
 <p>The static <dfn title=dom-Future-any><code>any(<var>values</var>)</code></dfn> method
 must run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>resolve</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-resolve>resolve</span> algorithm.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
  <li><p>Let <var title>reject</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-reject>reject</span> algorithm.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-reject>reject</span> algorithm.
 
- <li>
-  <p>If <var>values</var> is the empty list, invoke <var title>r</var>'s
-  <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
+ <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
+ <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
 
-  <p>Otherwise, <span title=concept-future-apply>apply</span> <var title>resolve</var> and
-  <var title>reject</var> to <var title>values</var>.
+ <li><p>Otherwise, for each <var title>value</var> in <var title>values</var>, in given order,
+ <span title=concept-future-append>append</span> <var title>resolveCallback</var> and
+ <var title>rejectCallback</var> to the result of
+ <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
 
- <li><p>Return <var title>f</var>.
+ <li><p>Return <var title>future</var>.
 </ol>
 
 <p>The static <dfn title=dom-Future-every><code>every(<var>values</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>arguments</var> be an empty list.
+ <li><p>Let <var title>index</var> be zero.
 
- <li>
-  <p>Let <var title>resolve</var> be a JavaScript <code title>Function</code> Object which
-  when called runs these steps:
+ <li><p>Let <var title>countdown</var> be the number of <var title>values</var>.
 
-  <ol>
-   <li><p>Let <var title>argument</var> be the first argument that is passed, and
-   <code title>undefined</code> otherwise.
-
-   <li><p>Append <var title>argument</var> to <var title>arguments</var>.
-
-   <li><p>If the number of <var title>arguments</var> equals the number of
-   <var title>values</var>, run <var title>r</var>'s
-   <span title=concept-resolver-resolve>resolve</span> with <var title>arguments</var> and
-   the <i title>synchronous flag</i> set.
-  </ol>
+ <li><p>Let <var title>arguments</var> be a JavaScript <code title>Array</code> array
+ object whose length is <var title>countdown</var>.
 
  <li><p>Let <var title>reject</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-reject>reject</span> algorithm.
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-reject>reject</span> algorithm.
+
+ <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
+ <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
 
  <li>
-  <p>If <var>values</var> is the empty list, invoke <var title>r</var>'s
-  <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
+  <p>Otherwise, for each <var title>value</var> in <var title>values</var>, in given order,
+  run these substeps:
 
-  <p>Otherwise, <span title=concept-future-apply>apply</span> <var title>resolve</var> and
-  <var title>reject</var> to <var title>values</var>.
+  <ol>
+   <li>
+    <p>Let <var title>resolve</var> be a JavaScript <code title>Function</code> Object
+    which when called runs these steps:
 
- <li><p>Return <var title>f</var>.
+    <ol>
+     <li><p>Let <var title>argument</var> be the first argument that is passed, and
+     <code title>undefined</code> otherwise.
+
+     <li><p>Insert <var title>argument</var> into <var title>arguments</var> at index
+     <var title>index</var>.
+
+     <li><p>Decrease <var title>countdown</var> by one.
+
+     <li><p>If <var title>countdown</var> is zero, run <var title>resolver</var>'s
+     <span title=concept-resolver-resolve>resolve</span> with <var title>arguments</var>
+     and the <i title>synchronous flag</i> set.
+    </ol>
+
+   <li><p>Increase <var title>index</var> by one.
+
+   <li><p><span title=concept-future-append>Append</span> <var title>resolveCallback</var>
+   and <var title>rejectCallback</var> to the result of
+   <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
+  </ol>
+
+ <li><p>Return <var title>future</var>.
 </ol>
 
 <p>The static <dfn title=dom-Future-some><code>some(<var>values</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>f</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
 
- <li><p>Let <var title>r</var> be <var title>f</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>resolve</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>r</var> and its
- <span title=concept-resolver-resolve>resolve</span> algorithm.
+ <li><p>Let <var title>index</var> be zero.
 
- <li><p>Let <var title>arguments</var> be an empty list.
+ <li><p>Let <var title>countdown</var> be the number of <var title>values</var>.
+
+ <li><p>Let <var title>arguments</var> be a JavaScript <code title>Array</code> array
+ object whose length is <var title>countdown</var>.
+
+ <li><p>Let <var title>resolve</var> be a new
+ <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-resolve>resolve</span> algorithm.
+
+ <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
+ <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
 
  <li>
-  <p>Let <var title>reject</var> be a JavaScript <code title>Function</code> Object which
-  when called runs these steps:
+  <p>Otherwise, for each <var title>value</var> in <var title>values</var>, in given order,
+  run these substeps:
 
   <ol>
-   <li><p>Let <var title>argument</var> be the first argument that is passed, and
-   <code title>undefined</code> otherwise.
 
-   <li><p>Append <var title>argument</var> to <var title>arguments</var>.
+   <li>
+    <p>Let <var title>reject</var> be a JavaScript <code title>Function</code> Object
+    which when called runs these steps:
 
-   <li><p>If the number of <var title>arguments</var> equals the number of
-   <var title>values</var>, run <var title>r</var>'s
-   <span title=concept-resolver-reject>reject</span> with <var title>arguments</var> and
-   the <i title>synchronous flag</i> set.
+    <ol>
+     <li><p>Let <var title>argument</var> be the first argument that is passed, and
+     <code title>undefined</code> otherwise.
+
+     <li><p>Insert <var title>argument</var> into <var title>arguments</var> at index
+     <var title>index</var>.
+
+     <li><p>Decrease <var title>countdown</var> by one.
+
+     <li><p>If <var title>countdown</var> is zero, run <var title>resolver</var>'s
+     <span title=concept-resolver-reject>reject</span> with <var title>arguments</var> and
+     the <i title>synchronous flag</i> set.
+    </ol>
+
+   <li><p>Increase <var title>index</var> by one.
+
+   <li><p><span title=concept-future-append>Append</span> <var title>resolveCallback</var>
+   and <var title>rejectCallback</var> to the result of
+   <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
   </ol>
 
- <li>
-  <p>If <var>values</var> is the empty list, invoke <var title>r</var>'s
-  <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
-
-  <p>Otherwise, <span title=concept-future-apply>apply</span> <var title>resolve</var> and
-  <var title>reject</var> to <var title>values</var>.
-
- <li><p>Return <var title>f</var>.
+ <li><p>Return <var title>future</var>.
 </ol>
 
 
