@@ -921,6 +921,10 @@ callback <dfn id="anycallback">AnyCallback</dfn> = any (optional any <var title=
 
 [<a href="#dom-future" title="dom-Future">Constructor</a>(<a href="#futureinit">FutureInit</a> <var title="">init</var>)]
 interface <dfn id="future">Future</dfn> {
+  static <a href="#future">Future</a> <a href="#dom-future-accept" title="dom-Future-accept">accept</a>(any <var title="">value</var>);
+  static <a href="#future">Future</a> <a href="#dom-future-resolve" title="dom-Future-resolve">resolve</a>(any <var title="">value</var>); // same as <a href="#dom-future-any" title="dom-Future-any">any(<var>value</var>)</a>
+  static <a href="#future">Future</a> <a href="#dom-future-reject" title="dom-Future-reject">reject</a>(any <var title="">value</var>);
+
   static <a href="#future">Future</a> <a href="#dom-future-any" title="dom-Future-any">_any</a>(any... <var title="">values</var>); // exposed as "any" in JavaScript, without "_"
   static <a href="#future">Future</a> <a href="#dom-future-every" title="dom-Future-every">every</a>(any... <var title="">values</var>);
   static <a href="#future">Future</a> <a href="#dom-future-some" title="dom-Future-some">some</a>(any... <var title="">values</var>);
@@ -1091,6 +1095,41 @@ will reach <code title="">window.onerror</code>.
 <hr>
 
 <dl class="domintro">
+ <dt><code><a href="#future">Future</a>.<a href="#dom-future-accept" title="dom-Future-accept">accept</a>(<var>value</var>)</code>
+ <dd><p>Returns a <a href="#concept-future" title="concept-future">future</a> that is <i title="">accepted</i>
+ with <a href="#concept-future-result" title="concept-future-result">result</a> <var title="">value</var>.
+
+ <dt><code><a href="#future">Future</a>.<a href="#dom-future-resolve" title="dom-Future-resolve">resolve</a>(<var>value</var>)</code>
+ <dd><p>Returns a <a href="#concept-future" title="concept-future">future</a> that depends upon
+ <var title="">value</var>.
+
+ <dt><code><a href="#future">Future</a>.<a href="#dom-future-reject" title="dom-Future-reject">reject</a>(<var>value</var>)</code>
+ <dd><p>Returns a <a href="#concept-future" title="concept-future">future</a> that is <i title="">rejected</i>
+ with <a href="#concept-future-result" title="concept-future-result">result</a> <var title="">value</var>.
+</dl>
+
+<p>To <dfn id="concept-future-resolve-wrap" title="concept-future-resolve-wrap">resolve wrap</dfn> a <var title="">value</var>,
+return a new <a href="#concept-future" title="concept-future">future</a> whose associated
+<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
+<a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> is run with <var title="">value</var>.
+
+<p>The static <dfn id="dom-future-accept" title="dom-Future-accept"><code>accept(<var>value</var>)</code></dfn>
+method must return a new <a href="#concept-future" title="concept-future">future</a> whose associated
+<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
+<a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> is run with <var title="">value</var>.
+
+<p>The static <dfn id="dom-future-resolve" title="dom-Future-resolve"><code>resolve(<var>value</var>)</code></dfn>
+method must return <var title="">value</var>
+<a href="#concept-future-resolve-wrap" title="concept-future-resolve-wrap">resolve wrapped</a>.
+
+<p>The static <dfn id="dom-future-reject" title="dom-Future-reject"><code>reject(<var>value</var>)</code></dfn>
+method must return a new <a href="#concept-future" title="concept-future">future</a> whose associated
+<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
+<a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> is run with <var title="">value</var>.
+
+<hr>
+
+<dl class="domintro">
  <dt><code><a href="#future">Future</a>.<a href="#dom-future-any" title="dom-Future-any">any</a>(<var>values</var>)</code>
  <dd><p>Returns a <a href="#concept-future" title="concept-future">future</a> that is <i title="">accepted</i>
  or <i title="">rejected</i> when any of <var>values</var> is either <i title="">accepted</i> or
@@ -1106,20 +1145,6 @@ will reach <code title="">window.onerror</code>.
  or <i title="">rejected</i> when one of <var>values</var> is <i title="">accepted</i> or all
  are <i title="">rejected</i>.
 </dl>
-
-
-<p>To <dfn id="concept-future-resolve-wrap" title="concept-future-resolve-wrap">resolve wrap</dfn> a <var title="">value</var>,
-run these steps:
-
-<ol>
- <li><p>Let <var title="">future</var> be a new <a href="#concept-future" title="concept-future">future</a>.
-
- <li><p>Run <var title="">future</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
-
- <li><p>Return <var title="">future</var>.
-</ol>
 
 <p>The static <dfn id="dom-future-any" title="dom-Future-any"><code>any(<var>values</var>)</code></dfn> method
 must run these steps:
