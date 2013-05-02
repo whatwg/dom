@@ -626,7 +626,7 @@ results of several asynchronous requests at once:
 an operation that is ongoing, has yet to start, or has completed.
 
 <p>A <span title=concept-future>future</span> has associated
-<dfn title=concept-future-resolve-callbacks>resolve callbacks</dfn> and
+<dfn title=concept-future-accept-callbacks>accept callbacks</dfn> and
 <dfn title=concept-future-reject-callbacks>reject callbacks</dfn>, an associated
 <dfn title=concept-future-state>state</dfn>, and an associated
 <dfn title=concept-future-result>result</dfn>. Unless stated otherwise, a
@@ -637,12 +637,12 @@ is <i title>pending</i>.
 <span title=concept-resolver>resolver</span>.
 
 <p>To <dfn title=concept-future-append>append</dfn> an
-<var title>resolveCallback</var> and a <var title>rejectCallback</var> to a
+<var title>acceptCallback</var> and a <var title>rejectCallback</var> to a
 <var title>future</var>, run these steps:
 
 <ol>
- <li><p>Append <var title>resolveCallback</var> to <var title>future</var>'s
- <span title=concept-future-resolve-callbacks>resolve callbacks</span>.
+ <li><p>Append <var title>acceptCallback</var> to <var title>future</var>'s
+ <span title=concept-future-accept-callbacks>accept callbacks</span>.
 
  <li><p>Append <var title>rejectCallback</var> to <var title>future</var>'
  <span title=concept-future-reject-callbacks>reject callbacks</span>.
@@ -650,7 +650,7 @@ is <i title>pending</i>.
  <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
  <i title>accepted</i>, <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-resolve-callbacks>resolve callbacks</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>future</var>'s <span title=concept-future-result>result</span>.
 
  <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
@@ -699,7 +699,7 @@ called runs these steps:
 </ol>
 
 <p>To <dfn title=concept-future-process>process</dfn> a <var title>future</var>'s
-<span title=concept-future-resolve-callbacks>resolve callbacks</span> or
+<span title=concept-future-accept-callbacks>accept callbacks</span> or
 <span title=concept-future-reject-callbacks>reject callbacks</span> with a given
 <var title>value</var>, call each callback with <var title>value</var> as argument and
 then discard it.
@@ -732,13 +732,13 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 
  <li><p>If the <i title>synchronous flag</i> is set,
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-resolve-callbacks>resolve callbacks</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>value</var>.
 
  <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
  <span data-anolis-spec=html>queue a task</span> to
  <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-resolve-callbacks>resolve callbacks</span> with
+ <span title=concept-future-accept-callbacks>accept callbacks</span> with
  <var title>value</var>.
 </ol>
 
@@ -851,9 +851,9 @@ interface <dfn>Future</dfn> {
   static <span>Future</span> <span title=dom-Future-every>every</span>(any... <var title>values</var>);
   static <span>Future</span> <span title=dom-Future-some>some</span>(any... <var title>values</var>);
 
-  <span>Future</span> <span title=dom-Future-then>then</span>(optional <span>AnyCallback</span>? <var title>resolveCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
+  <span>Future</span> <span title=dom-Future-then>then</span>(optional <span>AnyCallback</span>? <var title>acceptCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
   <span>Future</span> <span title=dom-Future-catch>catch</span>(optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
-  void <span title=dom-Future-done>done</span>(optional <span>AnyCallback</span>? <var title>resolveCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
+  void <span title=dom-Future-done>done</span>(optional <span>AnyCallback</span>? <var title>acceptCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
 };</pre>
 
 <p>A <code>FutureResolver</code> object is a <span title=concept-resolver>resolver</span>.
@@ -894,14 +894,14 @@ method must run <span>context object</span>'s
  <span title=concept-resolver>resolver</span>'s
  <span title=concept-resolver-reject>reject</span> is run with the thrown exception.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>resolveCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>acceptCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
  <dd>
   <p>Appends callbacks to <var title>future</var> of which one will be invoked with
   <var title>future</var>'s <span title=concept-future-result>result</span> at some point
   after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
   either <i title>accepted</i> or <i title>rejected</i>.
 
-  <p>If <var title>resolveCallback</var> or <var title>rejectCallback</var> is null a
+  <p>If <var title>acceptCallback</var> or <var title>rejectCallback</var> is null a
   callback will be appended that when invoked runs <var title>newFuture</var>'s associated
   <span title=concept-resolver>resolver</span>'s
   <span title=concept-resolve>resolve</span> or <span title=concept-reject>reject</span>
@@ -918,7 +918,7 @@ method must run <span>context object</span>'s
  <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-catch>catch</span>([<var title>rejectCallback</var> = null])</code>
  <dd><p>Identical to invoking <code><var title>future</var>.<span title=dom-Future-then>then</span>(null, <var title>rejectCallback</var>)</code>.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-done>done</span>([<var title>resolveCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-done>done</span>([<var title>acceptCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
  <dd>
   <p>Appends callbacks to <var title>future</var> of which one will be invoked with
   <var title>future</var>'s <span title=concept-future-result>result</span> at some point
@@ -949,7 +949,7 @@ run these steps:
 </ol>
 
 <p>The
-<dfn title=dom-Future-then><code>then(<var>resolveCallback</var>, <var>rejectCallback</var>)</code></dfn>
+<dfn title=dom-Future-then><code>then(<var>acceptCallback</var>, <var>rejectCallback</var>)</code></dfn>
 method must run these steps:
 
 <ol>
@@ -960,8 +960,8 @@ method must run these steps:
 
  <li><p>Let <var title>resolve</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
- <var title>resolver</var> and <var title>resolveCallback</var> if
- <var title>resolveCallback</var> is not null and a
+ <var title>resolver</var> and <var title>acceptCallback</var> if
+ <var title>acceptCallback</var> is not null and a
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-resolve>resolve</span> algorithm otherwise.
 
@@ -1005,9 +1005,9 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn title=dom-Future-done><code>done(<var>resolveCallback</var>, <var>rejectCallback</var>)</code></dfn>
+<dfn title=dom-Future-done><code>done(<var>acceptCallback</var>, <var>rejectCallback</var>)</code></dfn>
 method must <span title=concept-future-append>append</span>
-<var title>resolveCallback</var> and <var title>rejectCallback</var> to the
+<var title>acceptCallback</var> and <var title>rejectCallback</var> to the
 <span>context object</span>.
 
 <p class=note>The <code title=dom-Future-done>done()</code> method is useful at the end of
@@ -1077,7 +1077,7 @@ must run these steps:
  <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>resolveCallback</var> be a new
+ <li><p>Let <var title>acceptCallback</var> be a new
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
@@ -1089,7 +1089,7 @@ must run these steps:
  <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
 
  <li><p>Otherwise, for each <var title>value</var> in <var title>values</var>, in given order,
- <span title=concept-future-append>append</span> <var title>resolveCallback</var> and
+ <span title=concept-future-append>append</span> <var title>acceptCallback</var> and
  <var title>rejectCallback</var> to the result of
  <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
 
@@ -1125,7 +1125,7 @@ method must run these steps:
 
   <ol>
    <li>
-    <p>Let <var title>resolveCallback</var> be a JavaScript <code title>Function</code> Object
+    <p>Let <var title>acceptCallback</var> be a JavaScript <code title>Function</code> Object
     which when called runs these steps:
 
     <ol>
@@ -1144,7 +1144,7 @@ method must run these steps:
 
    <li><p>Increase <var title>index</var> by one.
 
-   <li><p><span title=concept-future-append>Append</span> <var title>resolveCallback</var>
+   <li><p><span title=concept-future-append>Append</span> <var title>acceptCallback</var>
    and <var title>rejectCallback</var> to the result of
    <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
   </ol>
@@ -1168,7 +1168,7 @@ method must run these steps:
  <li><p>Let <var title>arguments</var> be a JavaScript <code title>Array</code> array
  object whose length is <var title>countdown</var>.
 
- <li><p>Let <var title>resolveCallback</var> be a new
+ <li><p>Let <var title>acceptCallback</var> be a new
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
@@ -1201,7 +1201,7 @@ method must run these steps:
 
    <li><p>Increase <var title>index</var> by one.
 
-   <li><p><span title=concept-future-append>Append</span> <var title>resolveCallback</var>
+   <li><p><span title=concept-future-append>Append</span> <var title>acceptCallback</var>
    and <var title>rejectCallback</var> to the result of
    <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
   </ol>
