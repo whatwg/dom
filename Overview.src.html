@@ -851,9 +851,9 @@ interface <dfn>Future</dfn> {
   static <span>Future</span> <span title=dom-Future-every>every</span>(any... <var title>values</var>);
   static <span>Future</span> <span title=dom-Future-some>some</span>(any... <var title>values</var>);
 
-  <span>Future</span> <span title=dom-Future-then>then</span>(optional <span>AnyCallback</span>? <var title>acceptCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
-  <span>Future</span> <span title=dom-Future-catch>catch</span>(optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
-  void <span title=dom-Future-done>done</span>(optional <span>AnyCallback</span>? <var title>acceptCallback</var> = null, optional <span>AnyCallback</span>? <var title>rejectCallback</var> = null);
+  <span>Future</span> <span title=dom-Future-then>then</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>acceptCallback</var>, [TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
+  <span>Future</span> <span title=dom-Future-catch>catch</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
+  void <span title=dom-Future-done>done</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>acceptCallback</var>, [TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
 };</pre>
 
 <p>A <code>FutureResolver</code> object is a <span title=concept-resolver>resolver</span>.
@@ -894,31 +894,31 @@ method must run <span>context object</span>'s
  <span title=concept-resolver>resolver</span>'s
  <span title=concept-resolver-reject>reject</span> is run with the thrown exception.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>acceptCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>acceptCallback</var> [, <var title>rejectCallback</var>]])</code>
  <dd>
   <p>Appends callbacks to <var title>future</var> of which one will be invoked with
   <var title>future</var>'s <span title=concept-future-result>result</span> at some point
   after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
   either <i title>accepted</i> or <i title>rejected</i>.
 
-  <p>If <var title>acceptCallback</var> or <var title>rejectCallback</var> is null a
+  <p>If <var title>acceptCallback</var> or <var title>rejectCallback</var> is omitted or undefined, a
   callback will be appended that when invoked runs <var title>newFuture</var>'s associated
   <span title=concept-resolver>resolver</span>'s
   <span title=concept-resolve>resolve</span> or <span title=concept-reject>reject</span>
   algorithm respectively, with <var title>future</var>'s
   <span title=concept-future-result>result</span>.
 
-  <p>If they are not null when invoked their return value is passed to
+  <p>If they are not omitted or undefined, when invoked their return value is passed to
   <var title>newFuture</var>'s associated <span title=concept-resolver>resolver</span>'s
   <span title=concept-resolve>resolve</span> algorithm. If a callback throws an exception,
   that exception is passed to <var title>newFuture</var>'s associated
   <span title=concept-resolver>resolver</span>'s
   <span title=concept-reject>reject</span> algorithm.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-catch>catch</span>([<var title>rejectCallback</var> = null])</code>
- <dd><p>Identical to invoking <code><var title>future</var>.<span title=dom-Future-then>then</span>(null, <var title>rejectCallback</var>)</code>.
+ <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-catch>catch</span>([<var title>rejectCallback</var>])</code>
+ <dd><p>Identical to invoking <code><var title>future</var>.<span title=dom-Future-then>then</span>(undefined, <var title>rejectCallback</var>)</code>.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-done>done</span>([<var title>acceptCallback</var> = null [, <var title>rejectCallback</var> = null]])</code>
+ <dt><code><var title>future</var>.<span title=dom-Future-done>done</span>([<var title>acceptCallback</var> [, <var title>rejectCallback</var>]])</code>
  <dd>
   <p>Appends callbacks to <var title>future</var> of which one will be invoked with
   <var title>future</var>'s <span title=concept-future-result>result</span> at some point
@@ -961,14 +961,14 @@ method must run these steps:
  <li><p>Let <var title>acceptWrapper</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
  <var title>resolver</var> and <var title>acceptCallback</var> if
- <var title>acceptCallback</var> is not null and a
+ <var title>acceptCallback</var> is not omitted and a
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-accept>accept</span> algorithm otherwise.
 
  <li><p>Let <var title>rejectWrapper</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
  <var title>resolver</var> and <var title>rejectCallback</var> if
- <var title>rejectCallback</var> is not null and a
+ <var title>rejectCallback</var> is not omitted and a
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
@@ -994,7 +994,7 @@ method must run these steps:
  <li><p>Let <var title>rejectWrapper</var> be a
  <span title=concept-future-wrapper-callback>future wrapper callback</span> for
  <var title>resolver</var> and <var title>rejectCallback</var> if
- <var title>rejectCallback</var> is not null and a
+ <var title>rejectCallback</var> is not omitted and a
  <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 

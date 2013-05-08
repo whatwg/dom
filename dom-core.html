@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-2-may-2013">Living Standard — Last Updated 2 May 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-8-may-2013">Living Standard — Last Updated 8 May 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-2 May 2013, the editors have made this specification available
+8 May 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -929,9 +929,9 @@ interface <dfn id="future">Future</dfn> {
   static <a href="#future">Future</a> <a href="#dom-future-every" title="dom-Future-every">every</a>(any... <var title="">values</var>);
   static <a href="#future">Future</a> <a href="#dom-future-some" title="dom-Future-some">some</a>(any... <var title="">values</var>);
 
-  <a href="#future">Future</a> <a href="#dom-future-then" title="dom-Future-then">then</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">acceptCallback</var> = null, optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
-  <a href="#future">Future</a> <a href="#dom-future-catch" title="dom-Future-catch">catch</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
-  void <a href="#dom-future-done" title="dom-Future-done">done</a>(optional <a href="#anycallback">AnyCallback</a>? <var title="">acceptCallback</var> = null, optional <a href="#anycallback">AnyCallback</a>? <var title="">rejectCallback</var> = null);
+  <a href="#future">Future</a> <a href="#dom-future-then" title="dom-Future-then">then</a>([TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">acceptCallback</var>, [TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">rejectCallback</var>);
+  <a href="#future">Future</a> <a href="#dom-future-catch" title="dom-Future-catch">catch</a>([TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">rejectCallback</var>);
+  void <a href="#dom-future-done" title="dom-Future-done">done</a>([TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">acceptCallback</var>, [TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">rejectCallback</var>);
 };</pre>
 
 <p>A <code><a href="#futureresolver">FutureResolver</a></code> object is a <a href="#concept-resolver" title="concept-resolver">resolver</a>.
@@ -972,31 +972,31 @@ method must run <a href="#context-object">context object</a>'s
  <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
  <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> is run with the thrown exception.
 
- <dt><code><var title="">newFuture</var> = <var title="">future</var>.<a href="#dom-future-then" title="dom-Future-then">then</a>([<var title="">acceptCallback</var> = null [, <var title="">rejectCallback</var> = null]])</code>
+ <dt><code><var title="">newFuture</var> = <var title="">future</var>.<a href="#dom-future-then" title="dom-Future-then">then</a>([<var title="">acceptCallback</var> [, <var title="">rejectCallback</var>]])</code>
  <dd>
   <p>Appends callbacks to <var title="">future</var> of which one will be invoked with
   <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> at some point
   after <var title="">future</var>'s <a href="#concept-future-state" title="concept-future-state">state</a> is set to
   either <i title="">accepted</i> or <i title="">rejected</i>.
 
-  <p>If <var title="">acceptCallback</var> or <var title="">rejectCallback</var> is null a
+  <p>If <var title="">acceptCallback</var> or <var title="">rejectCallback</var> is omitted or undefined, a
   callback will be appended that when invoked runs <var title="">newFuture</var>'s associated
   <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
   <span title="concept-resolve">resolve</span> or <span title="concept-reject">reject</span>
   algorithm respectively, with <var title="">future</var>'s
   <a href="#concept-future-result" title="concept-future-result">result</a>.
 
-  <p>If they are not null when invoked their return value is passed to
+  <p>If they are not omitted or undefined, when invoked their return value is passed to
   <var title="">newFuture</var>'s associated <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
   <span title="concept-resolve">resolve</span> algorithm. If a callback throws an exception,
   that exception is passed to <var title="">newFuture</var>'s associated
   <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
   <span title="concept-reject">reject</span> algorithm.
 
- <dt><code><var title="">newFuture</var> = <var title="">future</var>.<a href="#dom-future-catch" title="dom-Future-catch">catch</a>([<var title="">rejectCallback</var> = null])</code>
- <dd><p>Identical to invoking <code><var title="">future</var>.<a href="#dom-future-then" title="dom-Future-then">then</a>(null, <var title="">rejectCallback</var>)</code>.
+ <dt><code><var title="">newFuture</var> = <var title="">future</var>.<a href="#dom-future-catch" title="dom-Future-catch">catch</a>([<var title="">rejectCallback</var>])</code>
+ <dd><p>Identical to invoking <code><var title="">future</var>.<a href="#dom-future-then" title="dom-Future-then">then</a>(undefined, <var title="">rejectCallback</var>)</code>.
 
- <dt><code><var title="">newFuture</var> = <var title="">future</var>.<a href="#dom-future-done" title="dom-Future-done">done</a>([<var title="">acceptCallback</var> = null [, <var title="">rejectCallback</var> = null]])</code>
+ <dt><code><var title="">future</var>.<a href="#dom-future-done" title="dom-Future-done">done</a>([<var title="">acceptCallback</var> [, <var title="">rejectCallback</var>]])</code>
  <dd>
   <p>Appends callbacks to <var title="">future</var> of which one will be invoked with
   <var title="">future</var>'s <a href="#concept-future-result" title="concept-future-result">result</a> at some point
@@ -1039,14 +1039,14 @@ method must run these steps:
  <li><p>Let <var title="">acceptWrapper</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
  <var title="">resolver</var> and <var title="">acceptCallback</var> if
- <var title="">acceptCallback</var> is not null and a
+ <var title="">acceptCallback</var> is not omitted and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">resolver</var>
  and its <a href="#concept-resolver-accept" title="concept-resolver-accept">accept</a> algorithm otherwise.
 
  <li><p>Let <var title="">rejectWrapper</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
  <var title="">resolver</var> and <var title="">rejectCallback</var> if
- <var title="">rejectCallback</var> is not null and a
+ <var title="">rejectCallback</var> is not omitted and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">resolver</var>
  and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
 
@@ -1072,7 +1072,7 @@ method must run these steps:
  <li><p>Let <var title="">rejectWrapper</var> be a
  <a href="#concept-future-wrapper-callback" title="concept-future-wrapper-callback">future wrapper callback</a> for
  <var title="">resolver</var> and <var title="">rejectCallback</var> if
- <var title="">rejectCallback</var> is not null and a
+ <var title="">rejectCallback</var> is not omitted and a
  <a href="#concept-future-callback" title="concept-future-callback">future callback</a> for <var title="">resolver</var>
  and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
 
