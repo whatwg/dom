@@ -63,7 +63,7 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 
 
 <h2 class="no-num no-toc">Abstract</h2>
-<p>DOM defines a platform-neutral model for events, futures, and document nodes.
+<p>DOM defines a platform-neutral model for events, promises, and document nodes.
 
 
 <h2 class="no-num no-toc">Table of Contents</h2>
@@ -579,20 +579,22 @@ Thanks!
 
 
 
-<h2>Futures</h2>
+<h2>Promises</h2>
 
-<h3>Introduction to the <code title>Future</code></h3>
+<p class=note id=futures>This feature used to be called futures.
 
-<p><span title=concept-future>Futures</span> provide a convenient way to get access to the
+<h3>I <code title>Promise</code> you an introduction</h3>
+
+<p><span title=concept-promise>Promises</span> provide a convenient way to get access to the
 result of an operation.
 
-<p><span title=concept-future>Futures</span> can be returned by platform APIs, but can
+<p><span title=concept-promise>Promises</span> can be returned by platform APIs, but can
 also be used in conjunction with an existing API to make it easier to work with.
 
 <div class=example>
 
 <p>This example demonstrates creating a <code title>fetchJSON(<var>url</var>)</code>
-function that returns a <code>Future</code> that is responsible for fetching a
+function that returns a <code>Promise</code> that is responsible for fetching a
 <span data-anolis-spec=url>URL</span> and parsing the response as JSON.
 
 <pre>function fetchJSON(url) {
@@ -613,13 +615,13 @@ function that returns a <code>Future</code> that is responsible for fetching a
 
 <p>This can be used to create more idiomatic code:
 
-<pre>fetchJSON("/user/posts").done(showPosts, showFailcat)</pre>
+<pre>fetchJSON("/user/posts").then(showPosts, showFailcat)</pre>
 
-<p>Using static methods <span title=concept-future>futures</span> can be combined to
-create new <span title=concept-future>futures</span>, which allows for operating on the
+<p>Using static methods <span title=concept-promise>promises</span> can be combined to
+create new <span title=concept-promise>promises</span>, which allows for operating on the
 results of several asynchronous requests at once:
 
-<pre>Future.every(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).done(
+<pre>Promise.every(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).then(
   function(mario, luigi) { &hellip; },
   showFailcat
 )</pre>
@@ -629,47 +631,47 @@ results of several asynchronous requests at once:
 </div>
 
 
-<h3>Futures Model</h3>
+<h3>Promises Model</h3>
 
-<p>A <dfn title=concept-future>future</dfn> provides asynchronous access to the result of
+<p>A <dfn title=concept-promise>promise</dfn> provides asynchronous access to the result of
 an operation that is ongoing, has yet to start, or has completed.
 
-<p>A <span title=concept-future>future</span> has associated
-<dfn title=concept-future-accept-callbacks>accept callbacks</dfn> and
-<dfn title=concept-future-reject-callbacks>reject callbacks</dfn>, an associated
-<dfn title=concept-future-state>state</dfn>, and an associated
-<dfn title=concept-future-result>result</dfn>. Unless stated otherwise, a
-<span title=concept-future>future</span>'s <span title=concept-future-state>state</span>
+<p>A <span title=concept-promise>promise</span> has associated
+<dfn title=concept-promise-fulfill-callbacks>fulfill callbacks</dfn> and
+<dfn title=concept-promise-reject-callbacks>reject callbacks</dfn>, an associated
+<dfn title=concept-promise-state>state</dfn>, and an associated
+<dfn title=concept-promise-result>result</dfn>. Unless stated otherwise, a
+<span title=concept-promise>promise</span>'s <span title=concept-promise-state>state</span>
 is <i title>pending</i>.
 
-<p>A <span title=concept-future>future</span> also has an associated
+<p>A <span title=concept-promise>promise</span> also has an associated
 <span title=concept-resolver>resolver</span>.
 
-<p>To <dfn title=concept-future-append>append</dfn> an
-<var title>acceptCallback</var> and a <var title>rejectCallback</var> to a
-<var title>future</var>, run these steps:
+<p>To <dfn title=concept-promise-append>append</dfn> an
+<var title>fulfillCallback</var> and a <var title>rejectCallback</var> to a
+<var title>promise</var>, run these steps:
 
 <ol>
- <li><p>Append <var title>acceptCallback</var> to <var title>future</var>'s
- <span title=concept-future-accept-callbacks>accept callbacks</span>.
+ <li><p>Append <var title>fulfillCallback</var> to <var title>promise</var>'s
+ <span title=concept-promise-fulfill-callbacks>fulfill callbacks</span>.
 
- <li><p>Append <var title>rejectCallback</var> to <var title>future</var>'
- <span title=concept-future-reject-callbacks>reject callbacks</span>.
+ <li><p>Append <var title>rejectCallback</var> to <var title>promise</var>'
+ <span title=concept-promise-reject-callbacks>reject callbacks</span>.
 
- <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
- <i title>accepted</i>, <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-callbacks>accept callbacks</span> with
- <var title>future</var>'s <span title=concept-future-result>result</span>.
+ <li><p>If <var title>promise</var>'s <span title=concept-promise-state>state</span> is
+ <i title>fulfilled</i>, <span data-anolis-spec=html>queue a task</span> to
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-fulfill-callbacks>fulfill callbacks</span> with
+ <var title>promise</var>'s <span title=concept-promise-result>result</span>.
 
- <li><p>If <var title>future</var>'s <span title=concept-future-state>state</span> is
+ <li><p>If <var title>promise</var>'s <span title=concept-promise-state>state</span> is
  <i title>rejected</i>, <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-callbacks>reject callbacks</span> with
- <var title>future</var>'s <span title=concept-future-result>result</span>.
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-reject-callbacks>reject callbacks</span> with
+ <var title>promise</var>'s <span title=concept-promise-result>result</span>.
 </ol>
 
-<p>A <dfn title=concept-future-callback>future callback</dfn> for a
+<p>A <dfn title=concept-promise-callback>promise callback</dfn> for a
 <span title=concept-resolver>resolver</span> <var title>resolver</var> and algorithm
 <var title>algorithm</var> is a JavaScript <code title>Function</code> Object which when
 called runs these steps:
@@ -682,7 +684,7 @@ called runs these steps:
  <var title>value</var> and the <i title>synchronous flag</i> set.
 </ol>
 
-<p>A <dfn title=concept-future-wrapper-callback>future wrapper callback</dfn> for a
+<p>A <dfn title=concept-promise-wrapper-callback>promise wrapper callback</dfn> for a
 <span title=concept-resolver>resolver</span> <var title>resolver</var> and callback
 <var title>callback</var> is a JavaScript <code title>Function</code> Object which when
 called runs these steps:
@@ -693,7 +695,7 @@ called runs these steps:
 
  <li><p>Set <var title>callback</var>'s
  <span data-anolis-spec=webidl>callback this value</span> to <var title>resolver</var>'s
- associated <span title=concept-future>future</span>.
+ associated <span title=concept-promise>promise</span>.
 
  <li><p>Let <var title>value</var> be the result of invoking <var title>callback</var>
  with <var title>argument</var> as argument.
@@ -707,47 +709,47 @@ called runs these steps:
  <i title>synchronous flag</i> set.
 </ol>
 
-<p>To <dfn title=concept-future-process>process</dfn> a <var title>future</var>'s
-<span title=concept-future-accept-callbacks>accept callbacks</span> or
-<span title=concept-future-reject-callbacks>reject callbacks</span> with a given
+<p>To <dfn title=concept-promise-process>process</dfn> a <var title>promise</var>'s
+<span title=concept-promise-fulfill-callbacks>fulfill callbacks</span> or
+<span title=concept-promise-reject-callbacks>reject callbacks</span> with a given
 <var title>value</var>, call each callback with <var title>value</var> as argument and
 then discard it.
 
 <p>A <dfn title=concept-resolver>resolver</dfn> is in control of a
-<span title=concept-future>future</span>'s <span title=concept-future-state>state</span>.
+<span title=concept-promise>promise</span>'s <span title=concept-promise-state>state</span>.
 
 <p>A <span title=concept-resolver>resolver</span> has an associated
 <dfn>resolved flag</dfn>. Unless stated otherwise a
 <span title=concept-resolver>resolver</span>'s <span>resolved flag</span> is unset.
 
 <p>A <span title=concept-resolver>resolver</span>'s
-<dfn title=concept-resolver-accept>accept</dfn> algorithm takes a <var title>value</var>
+<dfn title=concept-resolver-fulfill>fulfill</dfn> algorithm takes a <var title>value</var>
 and optionally a <i title>synchronous flag</i>, and runs these steps:
 
 <ol>
  <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
  these steps.
 
- <li><p>Let <var title>future</var> be the <span>context object</span>'s associated
- <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be the <span>context object</span>'s associated
+ <span title=concept-promise>promise</span>.
 
- <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
- <i title>accepted</i>.
+ <li><p>Set <var title>promise</var>'s <span title=concept-promise-state>state</span> to
+ <i title>fulfilled</i>.
 
- <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
+ <li><p>Set <var title>promise</var>'s <span title=concept-promise-result>result</span> to
  <var title>value</var>.
 
  <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
 
  <li><p>If the <i title>synchronous flag</i> is set,
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-callbacks>accept callbacks</span> with
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-fulfill-callbacks>fulfill callbacks</span> with
  <var title>value</var>.
 
  <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
  <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-accept-callbacks>accept callbacks</span> with
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-fulfill-callbacks>fulfill callbacks</span> with
  <var title>value</var>.
 </ol>
 
@@ -778,19 +780,19 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
   terminate these steps:
 
   <ol>
-   <li><p>Let <var title>acceptCallback</var> be a
-   <span title=concept-future-callback>future callback</span> for the
+   <li><p>Let <var title>fulfillCallback</var> be a
+   <span title=concept-promise-callback>promise callback</span> for the
    <span>context object</span> and its <span title=concept-resolver-resolve>resolve</span>
    algorithm.
 
    <li><p>Let <var title>rejectCallback</var> be a
-   <span title=concept-future-callback>future callback</span> for the
+   <span title=concept-promise-callback>promise callback</span> for the
    <span>context object</span> and its <span title=concept-resolver-reject>reject</span>
    algorithm.
 
    <li><p>Call the JavaScript <code title>[[Call]]</code> internal method of
    <var title>then</var> with <b title>this</b> value <var title>value</var> and
-   <var title>acceptCallback</var> and <var title>rejectCallback</var> as arguments.
+   <var title>fulfillCallback</var> and <var title>rejectCallback</var> as arguments.
 
    <li><p>If calling the <code title>[[Call]]</code> internal method threw an exception,
    run <span>context object</span>'s <span title=concept-resolver-reject>reject</span>
@@ -798,7 +800,7 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
   </ol>
 
  <li><p>Run <span>context object</span>'s
- <span title=concept-resolver-accept>accept</span> with <var title>value</var> and the
+ <span title=concept-resolver-fulfill>fulfill</span> with <var title>value</var> and the
  <i title>synchronous flag</i> if set.
 </ol>
 
@@ -810,112 +812,111 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
  <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
  these steps.
 
- <li><p>Let <var title>future</var> be the <span>context object</span>'s associated
- <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be the <span>context object</span>'s associated
+ <span title=concept-promise>promise</span>.
 
- <li><p>Set <var title>future</var>'s <span title=concept-future-state>state</span> to
+ <li><p>Set <var title>promise</var>'s <span title=concept-promise-state>state</span> to
  <i title>rejected</i>.
 
- <li><p>Set <var title>future</var>'s <span title=concept-future-result>result</span> to
+ <li><p>Set <var title>promise</var>'s <span title=concept-promise-result>result</span> to
  <var title>value</var>.
 
  <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
 
  <li><p>If the <i title>synchronous flag</i> is set,
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-callbacks>reject callbacks</span> with
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-reject-callbacks>reject callbacks</span> with
  <var title>value</var>.
 
  <li><p>Otherwise, the <i title>synchronous flag</i> is unset,
  <span data-anolis-spec=html>queue a task</span> to
- <span title=concept-future-process>process</span> <var title>future</var>'s
- <span title=concept-future-reject-callbacks>reject callbacks</span> with
+ <span title=concept-promise-process>process</span> <var title>promise</var>'s
+ <span title=concept-promise-reject-callbacks>reject callbacks</span> with
  <var title>value</var>.
 </ol>
 
 <p>Unless stated otherwise, the <span data-anolis-spec=html>task source</span> used by
-<span title=concept-future>futures</span> and their
+<span title=concept-promise>promises</span> and their
 <span title=concept-resolver>resolvers</span> is the
 <span data-anolis-spec=html>DOM manipulation task source</span>.
 
 
-<h3>Futures API</h3>
+<h3>Promises API</h3>
 
-<pre class=idl>interface <dfn>FutureResolver</dfn> {
-  void <span title=dom-FutureResolver-accept>accept</span>(optional any <var title>value</var>);
-  void <span title=dom-FutureResolver-resolve>resolve</span>(optional any <var title>value</var>);
-  void <span title=dom-FutureResolver-reject>reject</span>(optional any <var title>value</var>);
+<pre class=idl>interface <dfn>PromiseResolver</dfn> {
+  void <span title=dom-PromiseResolver-fulfill>fulfill</span>(optional any <var title>value</var>);
+  void <span title=dom-PromiseResolver-resolve>resolve</span>(optional any <var title>value</var>);
+  void <span title=dom-PromiseResolver-reject>reject</span>(optional any <var title>value</var>);
 };
 
-callback <dfn>FutureInit</dfn> = void (<span>FutureResolver</span> <var title>resolver</var>);
+callback <dfn>PromiseInit</dfn> = void (<span>PromiseResolver</span> <var title>resolver</var>);
 callback <dfn>AnyCallback</dfn> = any (optional any <var title>value</var>);
 
-[<span title=dom-Future>Constructor</span>(<span>FutureInit</span> <var title>init</var>)]
-interface <dfn>Future</dfn> {
-  static <span>Future</span> <span title=dom-Future-accept>accept</span>(any <var title>value</var>);
-  static <span>Future</span> <span title=dom-Future-resolve>resolve</span>(any <var title>value</var>); // same as <span title=dom-Future-any>any(<var>value</var>)</span>
-  static <span>Future</span> <span title=dom-Future-reject>reject</span>(any <var title>value</var>);
+[<span title=dom-Promise>Constructor</span>(<span>PromiseInit</span> <var title>init</var>)]
+interface <dfn>Promise</dfn> {
+  static <span>Promise</span> <span title=dom-Promise-fulfill>fulfill</span>(any <var title>value</var>);
+  static <span>Promise</span> <span title=dom-Promise-resolve>resolve</span>(any <var title>value</var>); // same as <span title=dom-Promise-any>any(<var>value</var>)</span>
+  static <span>Promise</span> <span title=dom-Promise-reject>reject</span>(any <var title>value</var>);
 
-  static <span>Future</span> <span title=dom-Future-any>_any</span>(any... <var title>values</var>); // exposed as "any" in JavaScript, without "_"
-  static <span>Future</span> <span title=dom-Future-every>every</span>(any... <var title>values</var>);
-  static <span>Future</span> <span title=dom-Future-some>some</span>(any... <var title>values</var>);
+  static <span>Promise</span> <span title=dom-Promise-any>_any</span>(any... <var title>values</var>); // exposed as "any" in JavaScript, without "_"
+  static <span>Promise</span> <span title=dom-Promise-every>every</span>(any... <var title>values</var>);
+  static <span>Promise</span> <span title=dom-Promise-some>some</span>(any... <var title>values</var>);
 
-  <span>Future</span> <span title=dom-Future-then>then</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>acceptCallback</var>, [TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
-  <span>Future</span> <span title=dom-Future-catch>catch</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
-  void <span title=dom-Future-done>done</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>acceptCallback</var>, [TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
+  <span>Promise</span> <span title=dom-Promise-then>then</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>fulfillCallback</var>, [TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
+  <span>Promise</span> <span title=dom-Promise-catch>catch</span>([TreatUndefinedAs=Missing] optional <span>AnyCallback</span> <var title>rejectCallback</var>);
 };</pre>
 
-<p>A <code>FutureResolver</code> object is a <span title=concept-resolver>resolver</span>.
+<p>A <code>PromiseResolver</code> object is a <span title=concept-resolver>resolver</span>.
 
 <dl class=domintro>
- <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-accept>accept</span>(<var title>value</var>)</code>
+ <dt><code><var title>resolver</var> . <span title=dom-PromiseResolver-fulfill>fulfill</span>(<var title>value</var>)</code>
  <dd><p>Runs <var title>resolver</var>'s
- <span title=concept-resolver-accept>accept</span>.
+ <span title=concept-resolver-fulfill>fulfill</span>.
 
- <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-resolve>resolve</span>(<var title>value</var>)</code>
+ <dt><code><var title>resolver</var> . <span title=dom-PromiseResolver-resolve>resolve</span>(<var title>value</var>)</code>
  <dd><p>Runs <var title>resolver</var>'s
  <span title=concept-resolver-resolve>resolve</span>.
 
- <dt><code><var title>resolver</var> . <span title=dom-FutureResolver-reject>reject</span>(<var title>value</var>)</code>
+ <dt><code><var title>resolver</var> . <span title=dom-PromiseResolver-reject>reject</span>(<var title>value</var>)</code>
  <dd><p>Runs <var title>resolver</var>'s
  <span title=concept-resolver-reject>reject</span>.
 </dl>
 
-<p>The <dfn title=dom-FutureResolver-accept><code>accept(<var>value</var>)</code></dfn>
+<p>The <dfn title=dom-PromiseResolver-fulfill><code>fulfill(<var>value</var>)</code></dfn>
 method must run <span>context object</span>'s
-<span title=concept-resolver-accept>accept</span> with <var title>value</var>.
+<span title=concept-resolver-fulfill>fulfill</span> with <var title>value</var>.
 
-<p>The <dfn title=dom-FutureResolver-resolve><code>resolve(<var>value</var>)</code></dfn>
+<p>The <dfn title=dom-PromiseResolver-resolve><code>resolve(<var>value</var>)</code></dfn>
 method must run <span>context object</span>'s
 <span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
 
-<p>The <dfn title=dom-FutureResolver-reject><code>reject(<var>value</var>)</code></dfn>
+<p>The <dfn title=dom-PromiseResolver-reject><code>reject(<var>value</var>)</code></dfn>
 method must run <span>context object</span>'s
 <span title=concept-resolver-reject>reject</span> with <var title>value</var>.
 
-<p>A <code>Future</code> object is a <span title=concept-future>future</span>.
+<p>A <code>Promise</code> object is a <span title=concept-promise>promise</span>.
 
 <dl class=domintro>
- <dt><code><var title>future</var> = new <span title=dom-Future>Future</span>(<var title>init</var>)</code>
- <dd><p>Creates a new <span title=concept-future>future</span>. The <var title>init</var>
+ <dt><code><var title>promise</var> = new <span title=dom-Promise>Promise</span>(<var title>init</var>)</code>
+ <dd><p>Creates a new <span title=concept-promise>promise</span>. The <var title>init</var>
  callback is passed the associated <span title=concept-resolver>resolver</span>. If the
- callback throws an exception, the <span title=concept-future>future</span>'s associated
+ callback throws an exception, the <span title=concept-promise>promise</span>'s associated
  <span title=concept-resolver>resolver</span>'s
  <span title=concept-resolver-reject>reject</span> is run with the thrown exception.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-then>then</span>([<var title>acceptCallback</var> [, <var title>rejectCallback</var>]])</code>
+ <dt><code><var title>newFuture</var> = <var title>promise</var>.<span title=dom-Promise-then>then</span>([<var title>fulfillCallback</var> [, <var title>rejectCallback</var>]])</code>
  <dd>
-  <p>Appends callbacks to <var title>future</var> of which one will be invoked with
-  <var title>future</var>'s <span title=concept-future-result>result</span> at some point
-  after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
-  either <i title>accepted</i> or <i title>rejected</i>.
+  <p>Appends callbacks to <var title>promise</var> of which one will be invoked with
+  <var title>promise</var>'s <span title=concept-promise-result>result</span> at some point
+  after <var title>promise</var>'s <span title=concept-promise-state>state</span> is set to
+  either <i title>fulfilled</i> or <i title>rejected</i>.
 
-  <p>If <var title>acceptCallback</var> or <var title>rejectCallback</var> is omitted or undefined, a
+  <p>If <var title>fulfillCallback</var> or <var title>rejectCallback</var> is omitted or undefined, a
   callback will be appended that when invoked runs <var title>newFuture</var>'s associated
   <span title=concept-resolver>resolver</span>'s
   <span title=concept-resolve>resolve</span> or <span title=concept-reject>reject</span>
-  algorithm respectively, with <var title>future</var>'s
-  <span title=concept-future-result>result</span>.
+  algorithm respectively, with <var title>promise</var>'s
+  <span title=concept-promise-result>result</span>.
 
   <p>If they are not omitted or undefined, when invoked their return value is passed to
   <var title>newFuture</var>'s associated <span title=concept-resolver>resolver</span>'s
@@ -924,194 +925,175 @@ method must run <span>context object</span>'s
   <span title=concept-resolver>resolver</span>'s
   <span title=concept-reject>reject</span> algorithm.
 
- <dt><code><var title>newFuture</var> = <var title>future</var>.<span title=dom-Future-catch>catch</span>([<var title>rejectCallback</var>])</code>
- <dd><p>Identical to invoking <code><var title>future</var>.<span title=dom-Future-then>then</span>(undefined, <var title>rejectCallback</var>)</code>.
-
- <dt><code><var title>future</var>.<span title=dom-Future-done>done</span>([<var title>acceptCallback</var> [, <var title>rejectCallback</var>]])</code>
- <dd>
-  <p>Appends callbacks to <var title>future</var> of which one will be invoked with
-  <var title>future</var>'s <span title=concept-future-result>result</span> at some point
-  after <var title>future</var>'s <span title=concept-future-state>state</span> is set to
-  either <i title>accepted</i> or <i title>rejected</i>.
-
-  <p>Exceptions raised will reach <code title>window.onerror</code>.
+ <dt><code><var title>newFuture</var> = <var title>promise</var>.<span title=dom-Promise-catch>catch</span>([<var title>rejectCallback</var>])</code>
+ <dd><p>Identical to invoking <code><var title>promise</var>.<span title=dom-Promise-then>then</span>(undefined, <var title>rejectCallback</var>)</code>.
 </dl>
 
-<p>The <dfn title=dom-Future><code>Future(<var>init</var>)</code></dfn> constructor must
+<p>The <dfn title=dom-Promise><code>Promise(<var>init</var>)</code></dfn> constructor must
 run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Set <var title>init</var>'s
- <span data-anolis-spec=webidl>callback this value</span> to <var title>future</var>.
+ <span data-anolis-spec=webidl>callback this value</span> to <var title>promise</var>.
 
  <li><p>Invoke <var title>init</var> with <var title>resolver</var> passed as parameter.
 
  <li><p>If <var title>init</var> threw an exception, run <var title>resolver</var>'s
  <span title=concept-resolver-reject>reject</span> with the thrown exception as argument.
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
 
 <p>The
-<dfn title=dom-Future-then><code>then(<var>acceptCallback</var>, <var>rejectCallback</var>)</code></dfn>
+<dfn title=dom-Promise-then><code>then(<var>fulfillCallback</var>, <var>rejectCallback</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>acceptWrapper</var> be a
- <span title=concept-future-wrapper-callback>future wrapper callback</span> for
- <var title>resolver</var> and <var title>acceptCallback</var> if
- <var title>acceptCallback</var> is not omitted and a
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
- and its <span title=concept-resolver-accept>accept</span> algorithm otherwise.
+ <li><p>Let <var title>fulfillWrapper</var> be a
+ <span title=concept-promise-wrapper-callback>promise wrapper callback</span> for
+ <var title>resolver</var> and <var title>fulfillCallback</var> if
+ <var title>fulfillCallback</var> is not omitted and a
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-fulfill>fulfill</span> algorithm otherwise.
 
  <li><p>Let <var title>rejectWrapper</var> be a
- <span title=concept-future-wrapper-callback>future wrapper callback</span> for
+ <span title=concept-promise-wrapper-callback>promise wrapper callback</span> for
  <var title>resolver</var> and <var title>rejectCallback</var> if
  <var title>rejectCallback</var> is not omitted and a
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
- <li><p><span title=concept-future-append>Append</span> <var title>acceptWrapper</var> and
+ <li><p><span title=concept-promise-append>Append</span> <var title>fulfillWrapper</var> and
  <var title>rejectWrapper</var> to the <span>context object</span>.
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
 
-<p>The <dfn title=dom-Future-catch><code>catch(<var>rejectCallback</var>)</code></dfn>
+<p>The <dfn title=dom-Promise-catch><code>catch(<var>rejectCallback</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>acceptCallback</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
- and its <span title=concept-resolver-accept>accept</span> algorithm.
+ <li><p>Let <var title>fulfillCallback</var> be a new
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
+ and its <span title=concept-resolver-fulfill>fulfill</span> algorithm.
 
  <li><p>Let <var title>rejectWrapper</var> be a
- <span title=concept-future-wrapper-callback>future wrapper callback</span> for
+ <span title=concept-promise-wrapper-callback>promise wrapper callback</span> for
  <var title>resolver</var> and <var title>rejectCallback</var> if
  <var title>rejectCallback</var> is not omitted and a
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm otherwise.
 
- <li><p><span title=concept-future-append>Append</span> <var title>acceptCallback</var> and
+ <li><p><span title=concept-promise-append>Append</span> <var title>fulfillCallback</var> and
  <var title>rejectWrapper</var> to the <span>context object</span>.
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
-
-<p>The
-<dfn title=dom-Future-done><code>done(<var>acceptCallback</var>, <var>rejectCallback</var>)</code></dfn>
-method must <span title=concept-future-append>append</span>
-<var title>acceptCallback</var> and <var title>rejectCallback</var> to the
-<span>context object</span>.
-
-<p class=note>The <code title=dom-Future-done>done()</code> method is useful at the end of
-a chain of <span title=concept-future>futures</span> as exceptions thrown by its callbacks
-will reach <code title>window.onerror</code>.
 
 <hr>
 
 <dl class=domintro>
- <dt><code><span>Future</span>.<span title=dom-Future-accept>accept</span>(<var>value</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that is <i title>accepted</i>
- with <span title=concept-future-result>result</span> <var title>value</var>.
+ <dt><code><span>Promise</span>.<span title=dom-Promise-fulfill>fulfill</span>(<var>value</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that is <i title>fulfilled</i>
+ with <span title=concept-promise-result>result</span> <var title>value</var>.
 
- <dt><code><span>Future</span>.<span title=dom-Future-resolve>resolve</span>(<var>value</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that depends upon
+ <dt><code><span>Promise</span>.<span title=dom-Promise-resolve>resolve</span>(<var>value</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that depends upon
  <var title>value</var>.
 
- <dt><code><span>Future</span>.<span title=dom-Future-reject>reject</span>(<var>value</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that is <i title>rejected</i>
- with <span title=concept-future-result>result</span> <var title>value</var>.
+ <dt><code><span>Promise</span>.<span title=dom-Promise-reject>reject</span>(<var>value</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that is <i title>rejected</i>
+ with <span title=concept-promise-result>result</span> <var title>value</var>.
 </dl>
 
-<p>To <dfn title=concept-future-resolve-wrap>resolve wrap</dfn> a <var title>value</var>,
-return a new <span title=concept-future>future</span> whose associated
+<p>To <dfn title=concept-promise-resolve-wrap>resolve wrap</dfn> a <var title>value</var>,
+return a new <span title=concept-promise>promise</span> whose associated
 <span title=concept-resolver>resolver</span>'s
 <span title=concept-resolver-resolve>resolve</span> is run with <var title>value</var>.
 
-<p>The static <dfn title=dom-Future-accept><code>accept(<var>value</var>)</code></dfn>
-method must return a new <span title=concept-future>future</span> whose associated
+<p>The static <dfn title=dom-Promise-fulfill><code>fulfill(<var>value</var>)</code></dfn>
+method must return a new <span title=concept-promise>promise</span> whose associated
 <span title=concept-resolver>resolver</span>'s
-<span title=concept-resolver-accept>accept</span> is run with <var title>value</var>.
+<span title=concept-resolver-fulfill>fulfill</span> is run with <var title>value</var>.
 
-<p>The static <dfn title=dom-Future-resolve><code>resolve(<var>value</var>)</code></dfn>
+<p>The static <dfn title=dom-Promise-resolve><code>resolve(<var>value</var>)</code></dfn>
 method must return <var title>value</var>
-<span title=concept-future-resolve-wrap>resolve wrapped</span>.
+<span title=concept-promise-resolve-wrap>resolve wrapped</span>.
 
-<p>The static <dfn title=dom-Future-reject><code>reject(<var>value</var>)</code></dfn>
-method must return a new <span title=concept-future>future</span> whose associated
+<p>The static <dfn title=dom-Promise-reject><code>reject(<var>value</var>)</code></dfn>
+method must return a new <span title=concept-promise>promise</span> whose associated
 <span title=concept-resolver>resolver</span>'s
 <span title=concept-resolver-reject>reject</span> is run with <var title>value</var>.
 
 <hr>
 
 <dl class=domintro>
- <dt><code><span>Future</span>.<span title=dom-Future-any>any</span>(<var>values</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that is <i title>accepted</i>
- or <i title>rejected</i> when any of <var>values</var> is either <i title>accepted</i> or
+ <dt><code><span>Promise</span>.<span title=dom-Promise-any>any</span>(<var>values</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that is <i title>fulfilled</i>
+ or <i title>rejected</i> when any of <var>values</var> is either <i title>fulfilled</i> or
  <i title>rejected</i>.
 
- <dt><code><span>Future</span>.<span title=dom-Future-every>every</span>(<var>values</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that is <i title>accepted</i>
- or <i title>rejected</i> when all <var>values</var> are <i title>accepted</i> or any is
+ <dt><code><span>Promise</span>.<span title=dom-Promise-every>every</span>(<var>values</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that is <i title>fulfilled</i>
+ or <i title>rejected</i> when all <var>values</var> are <i title>fulfilled</i> or any is
  <i title>rejected</i>.
 
- <dt><code><span>Future</span>.<span title=dom-Future-some>some</span>(<var>values</var>)</code>
- <dd><p>Returns a <span title=concept-future>future</span> that is <i title>accepted</i>
- or <i title>rejected</i> when one of <var>values</var> is <i title>accepted</i> or all
+ <dt><code><span>Promise</span>.<span title=dom-Promise-some>some</span>(<var>values</var>)</code>
+ <dd><p>Returns a <span title=concept-promise>promise</span> that is <i title>fulfilled</i>
+ or <i title>rejected</i> when one of <var>values</var> is <i title>fulfilled</i> or all
  are <i title>rejected</i>.
 </dl>
 
-<p>The static <dfn title=dom-Future-any><code>any(<var>values</var>)</code></dfn> method
+<p>The static <dfn title=dom-Promise-any><code>any(<var>values</var>)</code></dfn> method
 must run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
- <li><p>Let <var title>acceptCallback</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <li><p>Let <var title>fulfillCallback</var> be a new
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
  <li><p>Let <var title>rejectCallback</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm.
 
  <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
  <span title=concept-resolver-resolve>resolve</span> with <code title>undefined</code>.
 
  <li><p>Otherwise, for each <var title>value</var> in <var title>values</var>, in given order,
- <span title=concept-future-append>append</span> <var title>acceptCallback</var> and
+ <span title=concept-promise-append>append</span> <var title>fulfillCallback</var> and
  <var title>rejectCallback</var> to the result of
- <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
+ <span title=concept-promise-resolve-wrap>resolve wrapping</span> <var title>value</var>.
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
 
-<p>The static <dfn title=dom-Future-every><code>every(<var>values</var>)</code></dfn>
+<p>The static <dfn title=dom-Promise-every><code>every(<var>values</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>index</var> be zero.
@@ -1122,7 +1104,7 @@ method must run these steps:
  object whose length is <var title>countdown</var>.
 
  <li><p>Let <var title>rejectCallback</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-reject>reject</span> algorithm.
 
  <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
@@ -1134,7 +1116,7 @@ method must run these steps:
 
   <ol>
    <li>
-    <p>Let <var title>acceptCallback</var> be a JavaScript <code title>Function</code> Object
+    <p>Let <var title>fulfillCallback</var> be a JavaScript <code title>Function</code> Object
     which when called runs these steps:
 
     <ol>
@@ -1153,21 +1135,21 @@ method must run these steps:
 
    <li><p>Increase <var title>index</var> by one.
 
-   <li><p><span title=concept-future-append>Append</span> <var title>acceptCallback</var>
+   <li><p><span title=concept-promise-append>Append</span> <var title>fulfillCallback</var>
    and <var title>rejectCallback</var> to the result of
-   <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
+   <span title=concept-promise-resolve-wrap>resolve wrapping</span> <var title>value</var>.
   </ol>
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
 
-<p>The static <dfn title=dom-Future-some><code>some(<var>values</var>)</code></dfn>
+<p>The static <dfn title=dom-Promise-some><code>some(<var>values</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>future</var> be a new <span title=concept-future>future</span>.
+ <li><p>Let <var title>promise</var> be a new <span title=concept-promise>promise</span>.
 
- <li><p>Let <var title>resolver</var> be <var title>future</var>'s associated
+ <li><p>Let <var title>resolver</var> be <var title>promise</var>'s associated
  <span title=concept-resolver>resolver</span>.
 
  <li><p>Let <var title>index</var> be zero.
@@ -1177,8 +1159,8 @@ method must run these steps:
  <li><p>Let <var title>arguments</var> be a JavaScript <code title>Array</code> array
  object whose length is <var title>countdown</var>.
 
- <li><p>Let <var title>acceptCallback</var> be a new
- <span title=concept-future-callback>future callback</span> for <var title>resolver</var>
+ <li><p>Let <var title>fulfillCallback</var> be a new
+ <span title=concept-promise-callback>promise callback</span> for <var title>resolver</var>
  and its <span title=concept-resolver-resolve>resolve</span> algorithm.
 
  <li><p>If <var>values</var> is the empty list, invoke <var title>resolver</var>'s
@@ -1210,12 +1192,12 @@ method must run these steps:
 
    <li><p>Increase <var title>index</var> by one.
 
-   <li><p><span title=concept-future-append>Append</span> <var title>acceptCallback</var>
+   <li><p><span title=concept-promise-append>Append</span> <var title>fulfillCallback</var>
    and <var title>rejectCallback</var> to the result of
-   <span title=concept-future-resolve-wrap>resolve wrapping</span> <var title>value</var>.
+   <span title=concept-promise-resolve-wrap>resolve wrapping</span> <var title>value</var>.
   </ol>
 
- <li><p>Return <var title>future</var>.
+ <li><p>Return <var title>promise</var>.
 </ol>
 
 
