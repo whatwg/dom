@@ -727,9 +727,6 @@ then discard it.
 and optionally a <i title>synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
- these steps.
-
  <li><p>Let <var title>promise</var> be the <span>context object</span>'s associated
  <span title=concept-promise>promise</span>.
 
@@ -738,8 +735,6 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 
  <li><p>Set <var title>promise</var>'s <span title=concept-promise-result>result</span> to
  <var title>value</var>.
-
- <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
 
  <li><p>If the <i title>synchronous flag</i> is set,
  <span title=concept-promise-process>process</span> <var title>promise</var>'s
@@ -758,9 +753,6 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 and optionally a <i title>synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
- these steps.
-
  <li>
   <p>Let <var title>then</var> be null.
 
@@ -809,9 +801,6 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 and optionally a <i title>synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
- these steps.
-
  <li><p>Let <var title>promise</var> be the <span>context object</span>'s associated
  <span title=concept-promise>promise</span>.
 
@@ -820,8 +809,6 @@ and optionally a <i title>synchronous flag</i>, and runs these steps:
 
  <li><p>Set <var title>promise</var>'s <span title=concept-promise-result>result</span> to
  <var title>value</var>.
-
- <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
 
  <li><p>If the <i title>synchronous flag</i> is set,
  <span title=concept-promise-process>process</span> <var title>promise</var>'s
@@ -883,16 +870,43 @@ interface <dfn>Promise</dfn> {
 </dl>
 
 <p>The <dfn title=dom-PromiseResolver-fulfill><code>fulfill(<var>value</var>)</code></dfn>
-method must run <span>context object</span>'s
-<span title=concept-resolver-fulfill>fulfill</span> with <var title>value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
+ these steps.
+
+ <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
+
+ <li><p>Run <span>context object</span>'s
+ <span title=concept-resolver-fulfill>fulfill</span> with <var title>value</var>.
+</ol>
 
 <p>The <dfn title=dom-PromiseResolver-resolve><code>resolve(<var>value</var>)</code></dfn>
-method must run <span>context object</span>'s
-<span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
+ these steps.
+
+ <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
+
+ <li><p>Run <span>context object</span>'s
+ <span title=concept-resolver-resolve>resolve</span> with <var title>value</var>.
+</ol>
 
 <p>The <dfn title=dom-PromiseResolver-reject><code>reject(<var>value</var>)</code></dfn>
-method must run <span>context object</span>'s
-<span title=concept-resolver-reject>reject</span> with <var title>value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <span>context object</span>'s <span>resolved flag</span> is set, terminate
+ these steps.
+
+ <li><p>Set the <span>context object</span>'s <span>resolved flag</span>.
+
+ <li><p>Run <span>context object</span>'s
+ <span title=concept-resolver-reject>reject</span> with <var title>value</var>.
+</ol>
 
 <p>A <code>Promise</code> object is a <span title=concept-promise>promise</span>.
 
@@ -943,7 +957,8 @@ run these steps:
 
  <li><p>Invoke <var title>init</var> with <var title>resolver</var> passed as parameter.
 
- <li><p>If <var title>init</var> threw an exception, run <var title>resolver</var>'s
+ <li><p>If <var title>init</var> threw an exception and <var title>resolver</var>'s
+ <span>resolved flag</span> is unset, run <var title>resolver</var>'s
  <span title=concept-resolver-reject>reject</span> with the thrown exception as argument.
 
  <li><p>Return <var title>promise</var>.

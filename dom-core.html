@@ -805,9 +805,6 @@ then discard it.
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
  <li><p>Let <var title="">promise</var> be the <a href="#context-object">context object</a>'s associated
  <a href="#concept-promise" title="concept-promise">promise</a>.
 
@@ -816,8 +813,6 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
  <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a> to
  <var title="">value</var>.
-
- <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
 
  <li><p>If the <i title="">synchronous flag</i> is set,
  <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
@@ -836,9 +831,6 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
  <li>
   <p>Let <var title="">then</var> be null.
 
@@ -887,9 +879,6 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
 <ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
  <li><p>Let <var title="">promise</var> be the <a href="#context-object">context object</a>'s associated
  <a href="#concept-promise" title="concept-promise">promise</a>.
 
@@ -898,8 +887,6 @@ and optionally a <i title="">synchronous flag</i>, and runs these steps:
 
  <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a> to
  <var title="">value</var>.
-
- <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
 
  <li><p>If the <i title="">synchronous flag</i> is set,
  <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
@@ -961,16 +948,43 @@ interface <dfn id="promise">Promise</dfn> {
 </dl>
 
 <p>The <dfn id="dom-promiseresolver-fulfill" title="dom-PromiseResolver-fulfill"><code>fulfill(<var>value</var>)</code></dfn>
-method must run <a href="#context-object">context object</a>'s
-<a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> with <var title="">value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
+ these steps.
+
+ <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
+
+ <li><p>Run <a href="#context-object">context object</a>'s
+ <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> with <var title="">value</var>.
+</ol>
 
 <p>The <dfn id="dom-promiseresolver-resolve" title="dom-PromiseResolver-resolve"><code>resolve(<var>value</var>)</code></dfn>
-method must run <a href="#context-object">context object</a>'s
-<a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
+ these steps.
+
+ <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
+
+ <li><p>Run <a href="#context-object">context object</a>'s
+ <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
+</ol>
 
 <p>The <dfn id="dom-promiseresolver-reject" title="dom-PromiseResolver-reject"><code>reject(<var>value</var>)</code></dfn>
-method must run <a href="#context-object">context object</a>'s
-<a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">value</var>.
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
+ these steps.
+
+ <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
+
+ <li><p>Run <a href="#context-object">context object</a>'s
+ <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">value</var>.
+</ol>
 
 <p>A <code><a href="#promise">Promise</a></code> object is a <a href="#concept-promise" title="concept-promise">promise</a>.
 
@@ -1021,7 +1035,8 @@ run these steps:
 
  <li><p>Invoke <var title="">init</var> with <var title="">resolver</var> passed as parameter.
 
- <li><p>If <var title="">init</var> threw an exception, run <var title="">resolver</var>'s
+ <li><p>If <var title="">init</var> threw an exception and <var title="">resolver</var>'s
+ <a href="#resolved-flag">resolved flag</a> is unset, run <var title="">resolver</var>'s
  <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the thrown exception as argument.
 
  <li><p>Return <var title="">promise</var>.
