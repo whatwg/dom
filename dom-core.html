@@ -3893,7 +3893,10 @@ must run these steps:</p>
 
 <p>Specifications may define
 <dfn id="concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</dfn> for all or some
-<a href="#concept-node" title="concept-node">nodes</a>.
+<a href="#concept-node" title="concept-node">nodes</a>. The algorithm is passed <var title="">copy</var>,
+<var title="">node</var>, <var title="">document</var>, and optionally a
+<i title="">clone children flag</i>, as indicated in the
+<a href="#concept-node-clone" title="concept-node-clone">clone</a> algorithm.
 
 <p class="note">HTML defines
 <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a> for
@@ -3903,27 +3906,30 @@ for its <code title="">script</code> elements, but does not call this out at
 the moment.
 
 <p>To <dfn id="concept-node-clone" title="concept-node-clone">clone</dfn> a <var title="">node</var>,
-optionally with a <i title="">document</i> <var title="">ownerDocument</var> and a
-<i title="">clone children flag</i>, run these steps:
+optionally with a <var title="">document</var> and a <i title="">clone children flag</i>, run
+these steps:
 <!-- This algorithm is used by dom-Node-cloneNode, dom-Document-importNode,
 dom-Range-extractContents, dom-Range-cloneContents -->
 
 <ol>
- <li><p>If <i title="">document</i> is not given let
- <var title="">ownerDocument</var> be <var title="">node</var>'s
- <a href="#concept-node-document" title="concept-node-document">node document</a>.
+ <li><p>If <var title="">document</var> is not given, let <var title="">document</var> be
+ <var title="">node</var>'s <a href="#concept-node-document" title="concept-node-document">node document</a>.
+
  <li><p>Let <var title="">copy</var> be a <a href="#concept-node" title="concept-node">node</a>
  that implements the same interfaces as <var title="">node</var>.
+
  <li>
   <p>If <var title="">copy</var> is a
-  <a href="#concept-document" title="concept-document">document</a> set its
+  <a href="#concept-document" title="concept-document">document</a>, set its
   <a href="#concept-node-document" title="concept-node-document">node document</a> and
-  <var title="">ownerDocument</var> to <var title="">copy</var>.
+  <var title="">document</var> to <var title="">copy</var>.
   <p>Otherwise, set <var title="">copy</var>'s
   <a href="#concept-node-document" title="concept-node-document">node document</a> to
-  <var title="">ownerDocument</var>.
+  <var title="">document</var>.
+
  <li>
-  <p>Copy the following, depending on the type of <var title="">node</var>:
+  <p>Copy the following from <var title="">node</var> to <var title="">copy</var>, depending on
+  the type of <var title="">node</var>:
   <dl class="switch">
    <dt><code><a href="#element">Element</a></code>
    <dd><p>Its <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a>,
@@ -3954,13 +3960,14 @@ dom-Range-extractContents, dom-Range-cloneContents -->
   </dl>
 
  <li><p>Run any <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a>
- defined for <var title="">node</var> in
- <a href="#other-applicable-specifications">other applicable specifications</a>.
+ defined for <var title="">node</var> in <a href="#other-applicable-specifications">other applicable specifications</a> and
+ pass <var title="">copy</var>, <var title="">node</var>, <var title="">document</var> and the
+ <i title="">clone children flag</i> if set, as parameters.
 
  <li><p>If the <i title="">clone children flag</i> is set,
  <a href="#concept-node-clone" title="concept-node-clone">clone</a> all the
  <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> and
- append them to <var title="">copy</var>, with <var title="">ownerDocument</var>
+ append them to <var title="">copy</var>, with <var title="">document</var>
  as specified and the <i title="">clone children flag</i> being set.
 
  <li><p>Return <var title="">copy</var>.
@@ -5059,9 +5066,8 @@ method must run these steps:
  "<code><a href="#notsupportederror">NotSupportedError</a></code>" exception and terminate these steps.
 
  <li><p>Return a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
- <var title="">node</var>, with <i title="">document</i>
- <a href="#context-object">context object</a> and the <i title="">clone children flag</i> set if
- <var title="">deep</var> is true.
+ <var title="">node</var>, with <a href="#context-object">context object</a> and the
+ <i title="">clone children flag</i> set if <var title="">deep</var> is true.
 </ol>
 
 <p>To <dfn id="concept-node-adopt" title="concept-node-adopt">adopt</dfn> a <var title="">node</var> into
