@@ -6723,15 +6723,15 @@ interface <dfn id="range">Range</dfn> {
   readonly attribute boolean <a href="#dom-range-collapsed" title="dom-Range-collapsed">collapsed</a>;
   readonly attribute <a href="#node">Node</a> <a href="#dom-range-commonancestorcontainer" title="dom-Range-commonAncestorContainer">commonAncestorContainer</a>;
 
-  void <a href="#dom-range-setstart" title="dom-Range-setStart">setStart</a>(<a href="#node">Node</a> <var title="">refNode</var>, unsigned long <var title="">offset</var>);
-  void <a href="#dom-range-setend" title="dom-Range-setEnd">setEnd</a>(<a href="#node">Node</a> <var title="">refNode</var>, unsigned long <var title="">offset</var>);
-  void <a href="#dom-range-setstartbefore" title="dom-Range-setStartBefore">setStartBefore</a>(<a href="#node">Node</a> <var title="">refNode</var>);
-  void <a href="#dom-range-setstartafter" title="dom-Range-setStartAfter">setStartAfter</a>(<a href="#node">Node</a> <var title="">refNode</var>);
-  void <a href="#dom-range-setendbefore" title="dom-Range-setEndBefore">setEndBefore</a>(<a href="#node">Node</a> <var title="">refNode</var>);
-  void <a href="#dom-range-setendafter" title="dom-Range-setEndAfter">setEndAfter</a>(<a href="#node">Node</a> <var title="">refNode</var>);
+  void <a href="#dom-range-setstart" title="dom-Range-setStart">setStart</a>(<a href="#node">Node</a> <var title="">node</var>, unsigned long <var title="">offset</var>);
+  void <a href="#dom-range-setend" title="dom-Range-setEnd">setEnd</a>(<a href="#node">Node</a> <var title="">node</var>, unsigned long <var title="">offset</var>);
+  void <a href="#dom-range-setstartbefore" title="dom-Range-setStartBefore">setStartBefore</a>(<a href="#node">Node</a> <var title="">node</var>);
+  void <a href="#dom-range-setstartafter" title="dom-Range-setStartAfter">setStartAfter</a>(<a href="#node">Node</a> <var title="">node</var>);
+  void <a href="#dom-range-setendbefore" title="dom-Range-setEndBefore">setEndBefore</a>(<a href="#node">Node</a> <var title="">node</var>);
+  void <a href="#dom-range-setendafter" title="dom-Range-setEndAfter">setEndAfter</a>(<a href="#node">Node</a> <var title="">node</var>);
   void <a href="#dom-range-collapse" title="dom-Range-collapse">collapse</a>(optional boolean <var title="">toStart</var> = false);
-  void <a href="#dom-range-selectnode" title="dom-Range-selectNode">selectNode</a>(<a href="#node">Node</a> <var title="">refNode</var>);
-  void <a href="#dom-range-selectnodecontents" title="dom-Range-selectNodeContents">selectNodeContents</a>(<a href="#node">Node</a> <var title="">refNode</var>);
+  void <a href="#dom-range-selectnode" title="dom-Range-selectNode">selectNode</a>(<a href="#node">Node</a> <var title="">node</var>);
+  void <a href="#dom-range-selectnodecontents" title="dom-Range-selectNodeContents">selectNodeContents</a>(<a href="#node">Node</a> <var title="">node</var>);
 
   const unsigned short <dfn id="dom-comparehow-start_to_start" title="dom-CompareHow-START_TO_START">START_TO_START</dfn> = 0;
   const unsigned short <dfn id="dom-comparehow-start_to_end" title="dom-CompareHow-START_TO_END">START_TO_END</dfn> = 1;
@@ -7103,7 +7103,7 @@ method must <a href="#concept-range-bp-set" title="concept-range-bp-set">set the
 (<var title="">node</var>, <var title="">offset</var>).
 
 <p>The
-<dfn id="dom-range-setend" title="dom-Range-setEnd"><code>setEnd(<var>refNode</var>, <var>offset</var>)</code></dfn>
+<dfn id="dom-range-setend" title="dom-Range-setEnd"><code>setEnd(<var>node</var>, <var>offset</var>)</code></dfn>
 method must <a href="#concept-range-bp-set" title="concept-range-bp-set">set the end</a> of the
 <a href="#context-object">context object</a> to
 <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
@@ -7200,11 +7200,11 @@ method must if <var title="">toStart</var> is true, set
 
 
 <p>The
-<dfn id="dom-range-selectnode" title="dom-Range-selectNode"><code>selectNode(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-selectnode" title="dom-Range-selectNode"><code>selectNode(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>Let <var title="">parent</var> be <var title="">refNode</var>'s
+ <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <li><p>If <var title="">parent</var> is null,
@@ -7212,7 +7212,7 @@ method must run these steps:
  "<code><a href="#invalidnodetypeerror">InvalidNodeTypeError</a></code>" and terminate these steps.
 
  <li><p>Let <var title="">index</var> be the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">refNode</var>.
+ <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">node</var>.
 
  <li><p>Set <a href="#concept-range-start" title="concept-range-start">start</a> to the
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
@@ -7224,25 +7224,25 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn id="dom-range-selectnodecontents" title="dom-Range-selectNodeContents"><code>selectNodeContents(<var>refNode</var>)</code></dfn>
+<dfn id="dom-range-selectnodecontents" title="dom-Range-selectNodeContents"><code>selectNodeContents(<var>node</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>If <var title="">refNode</var> is a
+ <li><p>If <var title="">node</var> is a
  <a href="#concept-doctype" title="concept-doctype">doctype</a>,
  <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#invalidnodetypeerror">InvalidNodeTypeError</a></code>" and terminate these steps.
 
  <li><p>Let <var title="">length</var> be the
- <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">refNode</var>.
+ <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">node</var>.
 
  <li><p>Set <a href="#concept-range-start" title="concept-range-start">start</a> to the
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
- (<var title="">refNode</var>, 0).
+ (<var title="">node</var>, 0).
 
  <li><p>Set <a href="#concept-range-end" title="concept-range-end">end</a> to the
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
- (<var title="">refNode</var>, <var title="">length</var>).
+ (<var title="">node</var>, <var title="">length</var>).
 </ol>
 
 <hr>
