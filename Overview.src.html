@@ -9051,15 +9051,6 @@ this interface, which return other objects for historical reasons.
  <dd>
   <p>Returns the first <span title=concept-element>element</span> with <span title="concept-id">ID</span> or name <var title>name</var>
   from the collection.
-  <p>Only <code title>a</code>, <code title>applet</code>,
-  <code title>area</code>, <code title>embed</code>,
-  <code title>form</code>, <code title>frame</code>,
-  <code title>frameset</code>, <code title>iframe</code>,
-  <code title>img</code>, and <code title>object</code>
-  <span title=concept-element>element</span> in the
-  <span>HTML namespace</span> can have a name for the purpose of this
-  method; their name is given by the value of their
-  <code title>name</code> attribute.
 </dl>
 
 <div class=impl>
@@ -9098,22 +9089,31 @@ values from the list returned by these steps:
    <span title=concept-attribute-value>value</span> to <var title>result</var>.
 
    <li><p>If <var title>element</var> has an
-   <span title=concept-ID>ID</span> which is not in <var title>result</var>,
-   append <var title>element</var>'s <span title=concept-ID>ID</span> to
-   <var title>result</var>.
+   <span title=concept-ID>ID</span> which is neither the empty string nor is
+   in <var title>result</var>, append <var title>element</var>'s
+   <span title=concept-ID>ID</span> to <var title>result</var>.
   </ol>
  <li><p>Return <var title>result</var>.
 </ol>
 
 <p>The
 <dfn title=dom-HTMLCollection-namedItem><code>namedItem(<var title>key</var>)</code></dfn>
-method must return the first <span title=concept-element>element</span> in
-the <span title=concept-collection>collection</span> that either
-<span title=concept-element-attribute-has>has</span> a
-<span title=concept-named-attribute><code title>name</code> attribute</span>
-whose <span title=concept-attribute-value>value</span> is
-<var title>key</var> or has an <span title=concept-id>ID</span> which is
-<var title>key</var>, or null otherwise.
+method must run these steps:
+<ol>
+ <li>If <var title>key</var> is the empty string, return null.</li>
+ <li>
+  <p>Return the first <span title=concept-element>element</span> in the
+  <span title=concept-collection>collection</span> for which at least one of
+  the following is true:
+  <ul>
+   <li>it <span title=concept-element-attribute-has>has</span> a
+   <span title=concept-named-attribute><code title>name</code> attribute</span>
+   whose <span title=concept-attribute-value>value</span> is
+   <var title>key</var>;
+   <li>it has an <span title=concept-id>ID</span> which is
+   <var title>key</var>.
+  </ul>
+  <p>or null if there is no such <span title=concept-element>element</span>.
 
 </div>
 
