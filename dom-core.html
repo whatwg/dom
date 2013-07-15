@@ -1,7 +1,6 @@
 <!DOCTYPE html><html lang="en-US"><head>
   <meta charset="UTF-8">
   <title>DOM Standard</title>
-  
   <link href="http://www.whatwg.org/style/specification" rel="stylesheet">
   <link href="//resources.whatwg.org/logo-dom.svg" rel="icon">
  </head>
@@ -12,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-10-july-2013">Living Standard — Last Updated 10 July 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-15-july-2013">Living Standard — Last Updated 15 July 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -46,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-10 July 2013, the editors have made this specification available
+15 July 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -9602,14 +9601,24 @@ some of these features should be reintroduced.
 "Document Object Model Range" chapter of
 <cite>DOM Level 2 Traversal and Range</cite>.
 
-<p><dfn id="rangeexception"><code>RangeException</code></dfn> has been removed.
+<ul>
+ <li><p><dfn id="rangeexception"><code>RangeException</code></dfn> has been removed.
 
-<p><code><a href="#range">Range</a></code> objects can now be moved between
-<a href="#concept-document" title="concept-document">documents</a> and used on
-<a href="#concept-node" title="concept-node">nodes</a> that are not
-<a href="#in-a-document">in a document</a>.
+ <li><p><code><a href="#range">Range</a></code> objects can now be moved between
+ <a href="#concept-document" title="concept-document">documents</a> and used on
+ <a href="#concept-node" title="concept-node">nodes</a> that are not <a href="#in-a-document">in a document</a>.
 
-<p class="XXX">Probably incomplete.
+ <li><p>A wild <code title="dom-Range"><a href="#dom-range">Range()</a></code> constructor appeared.
+
+ <li><p>New methods <code tilte="dom-Range-comparePoint">comparePoint()</code>,
+ <code title="dom-Range-intersectsNode"><a href="#dom-range-intersectsnode">intersectsNode()</a></code>, and
+ <code title="dom-Range-isPointInRange"><a href="#dom-range-ispointinrange">isPointInRange()</a></code> have been added.
+
+ <li><p><code title="dom-Range-detach"><a href="#dom-range-detach">detach()</a></code> is now a no-op.
+
+ <li><p><dfn id="dom-range-tostring" title="dom-Range-toString"><code>toString()</code></dfn> is now defined through
+ IDL.
+</ul>
 
 
 <h3 id="dom-traversal"><span class="secno">11.4 </span>DOM Traversal</h3>
@@ -9618,38 +9627,27 @@ some of these features should be reintroduced.
 "Document Object Model Traversal" chapter of
 <cite>DOM Level 2 Traversal and Range</cite>.
 
-<p>Differences with respect to
-<code title="dom-Document-createNodeIterator"><a href="#dom-document-createnodeiterator">createNodeIterator()</a></code> and
-<code title="dom-Document-createTreeWalker"><a href="#dom-document-createtreewalker">createTreeWalker()</a></code>:</p>
-
 <ul>
- <li><p>In the previous edition of DOM Traversal both these methods accepted
- a fourth argument named <var title="">entityReferenceExpansion</var> that has
- been dropped as the DOM never actually exposed entity references in
- practice.
+ <li><p><code title="dom-Document-createNodeIterator"><a href="#dom-document-createnodeiterator">createNodeIterator()</a></code> and
+ <code title="dom-Document-createTreeWalker"><a href="#dom-document-createtreewalker">createTreeWalker()</a></code> now have optional
+ arguments and lack a fourth argument which is no longer relevant given entity references
+ never made it into the DOM.
 
- <li><p>In the previous edition of DOM Traversal both these methods threw a
- "<code><a href="#notsupportederror">NotSupportedError</a></code>" when the <var title="">root</var> was
- null. Now this will throw a language-binding specific exception.
+ <li><p>The <code title="">expandEntityReferences</code> attribute has been removed from the
+ <code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> interfaces for the aforementioned
+ reason.
 
- <li><p>In the previous edition of DOM Traversal both these methods did not
- have optional arguments. That was changed for convenience.
+ <li><p>The <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> and
+ <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
+ attributes have been added to <code><a href="#nodeiterator">NodeIterator</a></code> objects to align with proprietary
+ extensions of implementations.
+
+ <li><p><code title="dom-NodeIterator-nextNode"><a href="#dom-nodeiterator-nextnode">nextNode()</a></code> and
+ <code title="dom-NodeIterator-previousNode"><a href="#dom-nodeiterator-previousnode">previousNode()</a></code> now throw
+ when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to align with user agents.
+
+ <li><p><code title="dom-NodeIterator-detach"><a href="#dom-nodeiterator-detach">detach()</a></code> is now a no-op.
 </ul>
-
-<p><code title="dom-NodeFilter-acceptNode">acceptNode()</code> and its
-constants have been changed to use unsigned short, rather than just short.
-
-<p>The <code title="">expandEntityReferences</code> attribute has been removed
-from the <code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> interfaces.
-
-<p>The <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> and
-<code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-attributes have been added to <code><a href="#nodeiterator">NodeIterator</a></code> objects to align
-with user agents.
-
-<p><code title="dom-NodeIterator-nextNode"><a href="#dom-nodeiterator-nextnode">nextNode()</a></code> and
-<code title="dom-NodeIterator-previousNode"><a href="#dom-nodeiterator-previousnode">previousNode()</a></code> now throw
-when invoked from a <code><a href="#nodefilter">NodeFilter</a></code> to align with user agents.
 
 
 <h2 class="no-num" id="references">References</h2>
