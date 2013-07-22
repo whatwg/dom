@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-19-july-2013">Living Standard — Last Updated 19 July 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-22-july-2013">Living Standard — Last Updated 22 July 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-19 July 2013, the editors have made this specification available
+22 July 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -1827,10 +1827,16 @@ concept.
   <b>callback</b> that will be invoked when the
   <a href="#concept-event" title="concept-event">event</a> is
   <a href="#concept-event-dispatch" title="concept-event-dispatch">dispatched</a>. When set to true,
-  the <var title="">capture</var> argument ensures <b>callback</b> is only
-  invoked when the <a href="#concept-event" title="concept-event">event</a>'s
+  the <var title="">capture</var> argument prevents <b>callback</b> from being invoked when
+  the <a href="#concept-event" title="concept-event">event</a>'s
   <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute value is
-  <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>.
+  <code title="dom-Event-BUBBLING_PHASE"><a href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. When false, <b>callback</b>
+  will not be invoked when <a href="#concept-event" title="concept-event">event</a>'s
+  <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute value is
+  <code title="dom-Event-CAPTURING_PHASE"><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. Either way,
+  <b>callback</b> will be invoked when <a href="#concept-event" title="concept-event">event</a>'s
+  <code title="dom-Event-eventPhase"><a href="#dom-event-eventphase">eventPhase</a></code> attribute value is
+  <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target">AT_TARGET</a></code>.
 
   <p>The <a href="#concept-event-listener" title="concept-event-listener">event listener</a> is
   appended to <var title="">target</var>'s list of
@@ -1979,7 +1985,7 @@ event run these steps:</p>
  <li><p>Let <var title="">event</var> be the
  <a href="#concept-event" title="concept-event">event</a> for which the
  <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> are invoked.
- <li><p>Let <var title="">listeners</var> be a static list of the
+ <li><p>Let <var title="">listeners</var> be a copy of the
  <a href="#concept-event-listener" title="concept-event-listener">event listeners</a> associated with
  the object for which these steps are run.
  <li><p>Initialize <var title="">event</var>'s
@@ -2012,8 +2018,8 @@ event run these steps:</p>
    substeps (and run them for the next
    <a href="#concept-event-listener" title="concept-event-listener">event listener</a>).
    <li><p>If <var title="">listener</var>'s <b>callback</b> is a
-   Function<!-- WebIDL uses <span class=estype> --> object, its
-   <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-callback-this-value">callback this value</a> is the
+   Function<!-- WebIDL uses <span class=estype> --> object, set its
+   <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-callback-this-value">callback this value</a> to
    <var title="">event</var>'s
    <code title="dom-Event-currentTarget"><a href="#dom-event-currenttarget">currentTarget</a></code> attribute value.
    <li><p>Call <var title="">listener</var>'s <b>callback</b>, with the event
@@ -9764,6 +9770,7 @@ Mounir Lamouri,
 Michael™ Smith,
 Ojan Vafai,
 Olli Pettay,
+Ondra Zara,
 Rafael Weinstein,
 Rick Waldron,
 Robbert Broersma,
