@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-25-july-2013">Living Standard — Last Updated 25 July 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-1-august-2013">Living Standard — Last Updated 1 August 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-25 July 2013, the editors have made this specification available
+1 August 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2629,10 +2629,10 @@ from a <var title="">parent</var>, optionally with
  <a href="#registered-observer" title="registered observer">registered observers</a> whose
  <b>options</b>'s
  <code title="dom-MutationObserverInit-subtree">subtree</code> is true, then
- for each such <a href="#registered-observer">registered observer</a>, append a
+ for each such <a href="#registered-observer">registered observer</a> <var title="">registered</var>, append a
  <a href="#transient-registered-observer">transient registered observer</a> whose <b>observer</b> and
- <b>options</b> are identical to the <a href="#registered-observer">registered observer</a> to
- <var title="">node</var>'s list of
+ <b>options</b> are identical to those of <var title="">registered</var> and <b>source</b>
+ which is <var title="">registered</var> to <var title="">node</var>'s list of
  <a href="#registered-observer" title="registered observer">registered observers</a>.
 
  <li><p>Remove <var title="">node</var> from its <var title="">parent</var>.
@@ -2967,6 +2967,7 @@ how this concept integrates with the rest of the platform as well as when
 <code><a href="#mutationobserver">MutationObserver</a></code> object) and <b>options</b> (a
 <code><a href="#mutationobserverinit">MutationObserverInit</a></code> dictionary). A
 <dfn id="transient-registered-observer">transient registered observer</dfn> is a specific type of
+<a href="#registered-observer">registered observer</a> that has a <b>source</b> which is a
 <a href="#registered-observer">registered observer</a>.
 
 
@@ -3113,15 +3114,18 @@ method must run these steps:
   </ol>
 
  <li>
-  <p>For each <a href="#registered-observer">registered observer</a> in <var title="">target</var>'s list of
+  <p>For each <a href="#registered-observer">registered observer</a> <var title="">registered</var> in
+  <var title="">target</var>'s list of
   <a href="#registered-observer" title="registered observer">registered observers</a> whose <b>observer</b> is
   the <a href="#context-object">context object</a>:
 
   <ol>
-   <li><p>If the <a href="#registered-observer">registered observer</a> is a
-   <a href="#transient-registered-observer">transient registered observer</a>, remove it.
+   <li><p>Remove all
+   <a href="#transient-registered-observer" title="transient registered observer">transient registered observers</a> whose
+   <b>source</b> is <var title="">registered</var>.
 
-   <li><p>Otherwise, replace its <b>options</b> with <var title="">options</var>.
+   <li><p>Replace <var title="">registered</var>'s <b>options</b> with
+   <var title="">options</var>.
   </ol>
 
  <li><p>Otherwise, add a new <a href="#registered-observer">registered observer</a> to
@@ -9036,6 +9040,9 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 <p>An <code><a href="#htmlcollection">HTMLCollection</a></code> object is a
 <a href="#concept-collection" title="concept-collection">collection</a> of
 <a href="#concept-element" title="concept-element">elements</a>.
+
+<p class="note"><code><a href="#htmlcollection">HTMLCollection</a></code> is considered a terrible
+interface. We advise against copying or using it for new interfaces.
 
 <p class="note">This interface is called <code><a href="#htmlcollection">HTMLCollection</a></code> for
 historical reasons. The
