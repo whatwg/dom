@@ -3178,8 +3178,8 @@ previousSibling <var title>previousSibling</var>, and nextSibling
 <pre class=idl>interface <dfn>MutationRecord</dfn> {
   readonly attribute DOMString <span title=dom-MutationRecord-type>type</span>;
   readonly attribute <span>Node</span> <span title=dom-MutationRecord-target>target</span>;
-  readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
-  readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
+  [SameObject] readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-addedNodes>addedNodes</span>;
+  [SameObject] readonly attribute <span>NodeList</span> <span title=dom-MutationRecord-removedNodes>removedNodes</span>;
   readonly attribute <span>Node</span>? <span title=dom-MutationRecord-previousSibling>previousSibling</span>;
   readonly attribute <span>Node</span>? <span title=dom-MutationRecord-nextSibling>nextSibling</span>;
   readonly attribute DOMString? <span title=dom-MutationRecord-attributeName>attributeName</span>;
@@ -3305,7 +3305,7 @@ reference to the <span title=concept-node>node</span>.
   readonly attribute <span>Node</span>? <span title=dom-Node-parentNode>parentNode</span>;
   readonly attribute <span>Element</span>? <span title=dom-Node-parentElement>parentElement</span>;
   boolean <span title=dom-Node-hasChildNodes>hasChildNodes</span>();
-  readonly attribute <span>NodeList</span> <span title=dom-Node-childNodes>childNodes</span>;
+  [SameObject] readonly attribute <span>NodeList</span> <span title=dom-Node-childNodes>childNodes</span>;
   readonly attribute <span>Node</span>? <span title=dom-Node-firstChild>firstChild</span>;
   readonly attribute <span>Node</span>? <span title=dom-Node-lastChild>lastChild</span>;
   readonly attribute <span>Node</span>? <span title=dom-Node-previousSibling>previousSibling</span>;
@@ -3610,8 +3610,7 @@ method must return true if the <span>context object</span> has
 <p>The <dfn title=dom-Node-childNodes><code>childNodes</code></dfn>
 attribute must return a <code>NodeList</code> rooted at the
 <span>context object</span> matching only
-<span title=concept-tree-child>children</span>. The same object must be returned each
-time.
+<span title=concept-tree-child>children</span>.
 
 <p>The <dfn title=dom-Node-firstChild><code>firstChild</code></dfn>
 attribute must return the
@@ -4424,7 +4423,7 @@ object may be returned as returned by an earlier call.
 <h3>Interface <code>Document</code></h3>
 <pre class=idl>[<span title=dom-Document>Constructor</span>]
 interface <dfn>Document</dfn> : <span>Node</span> {
-  readonly attribute <span>DOMImplementation</span> <span title=dom-Document-implementation>implementation</span>;
+  [SameObject] readonly attribute <span>DOMImplementation</span> <span title=dom-Document-implementation>implementation</span>;
   readonly attribute DOMString <span title=dom-Document-URL>URL</span>;
   readonly attribute DOMString <span title=dom-Document-documentURI>documentURI</span>;
   readonly attribute DOMString <span title=dom-Document-compatMode>compatMode</span>;
@@ -4438,12 +4437,12 @@ interface <dfn>Document</dfn> : <span>Node</span> {
   <span>HTMLCollection</span> <span title=dom-Document-getElementsByClassName>getElementsByClassName</span>(DOMString <var title>classNames</var>);
   <span>Element</span>? <span title=dom-Document-getElementById>getElementById</span>(DOMString <var title>elementId</var>);
 
-  <span>Element</span> <span title=dom-Document-createElement>createElement</span>(DOMString <var title>localName</var>);
-  <span>Element</span> <span title=dom-Document-createElementNS>createElementNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>);
-  <span>DocumentFragment</span> <span title=dom-Document-createDocumentFragment>createDocumentFragment</span>();
-  <span>Text</span> <span title=dom-Document-createTextNode>createTextNode</span>(DOMString <var title>data</var>);
-  <span>Comment</span> <span title=dom-Document-createComment>createComment</span>(DOMString <var title>data</var>);
-  <span>ProcessingInstruction</span> <span title=dom-Document-createProcessingInstruction>createProcessingInstruction</span>(DOMString <var title>target</var>, DOMString <var title>data</var>);<!--
+  [NewObject] <span>Element</span> <span title=dom-Document-createElement>createElement</span>(DOMString <var title>localName</var>);
+  [NewObject] <span>Element</span> <span title=dom-Document-createElementNS>createElementNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>);
+  [NewObject] <span>DocumentFragment</span> <span title=dom-Document-createDocumentFragment>createDocumentFragment</span>();
+  [NewObject] <span>Text</span> <span title=dom-Document-createTextNode>createTextNode</span>(DOMString <var title>data</var>);
+  [NewObject] <span>Comment</span> <span title=dom-Document-createComment>createComment</span>(DOMString <var title>data</var>);
+  [NewObject] <span>ProcessingInstruction</span> <span title=dom-Document-createProcessingInstruction>createProcessingInstruction</span>(DOMString <var title>target</var>, DOMString <var title>data</var>);<!--
   CDATASection createCDATASection(DOMString data);
   EntityReference createEntityReference(DOMString name);
   <span>Attr</span> <span title=dom-Document-createAttribute>createAttribute</span>(DOMString name);
@@ -4453,16 +4452,16 @@ interface <dfn>Document</dfn> : <span>Node</span> {
   <span>Node</span> <span title=dom-Document-importNode>importNode</span>(<span>Node</span> <var title>node</var>, optional boolean <var title>deep</var> = true);
   <span>Node</span> <span title=dom-Document-adoptNode>adoptNode</span>(<span>Node</span> <var title>node</var>);
 
-  <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>interface</var>);
+  [NewObject] <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>interface</var>);
 
-  <span>Range</span> <span title=dom-Document-createRange>createRange</span>();
+  [NewObject] <span>Range</span> <span title=dom-Document-createRange>createRange</span>();
 
   // <span>NodeFilter</span>.<span title=dom-NodeFilter-SHOW_ALL>SHOW_ALL</span> = 0xFFFFFFFF
-  <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<!--
+  [NewObject] <span>NodeIterator</span> <span title=dom-Document-createNodeIterator>createNodeIterator</span>(<!--
   --><span>Node</span> <var title>root</var>, <!--
   -->optional unsigned long <var title>whatToShow</var> = 0xFFFFFFFF, <!--
   -->optional <span>NodeFilter</span>? <var title>filter</var> = null);
-  <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<!--
+  [NewObject] <span>TreeWalker</span> <span title=dom-Document-createTreeWalker>createTreeWalker</span>(<!--
   --><span>Node</span> <var title>root</var>, <!--
   -->optional unsigned long <var title>whatToShow</var> = 0xFFFFFFFF, <!--
   -->optional <span>NodeFilter</span>? <var title>filter</var> = null);
@@ -5152,9 +5151,9 @@ a <span title=concept-document>document</span> is created and associate it
 with that <span title=concept-document>document</span>.
 
 <pre class=idl>interface <dfn>DOMImplementation</dfn> {
-  <span>DocumentType</span> <span title=dom-DOMImplementation-createDocumentType>createDocumentType</span>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
-  <span>XMLDocument</span> <span title=dom-DOMImplementation-createDocument>createDocument</span>(DOMString? <var title>namespace</var>, [TreatNullAs=EmptyString] DOMString <var title>qualifiedName</var>, optional <span>DocumentType</span>? <var title>doctype</var> = null);
-  <span>Document</span> <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>(optional DOMString <var title>title</var>);
+  [NewObject] <span>DocumentType</span> <span title=dom-DOMImplementation-createDocumentType>createDocumentType</span>(DOMString qualifiedName, DOMString publicId, DOMString systemId);
+  [NewObject] <span>XMLDocument</span> <span title=dom-DOMImplementation-createDocument>createDocument</span>(DOMString? <var title>namespace</var>, [TreatNullAs=EmptyString] DOMString <var title>qualifiedName</var>, optional <span>DocumentType</span>? <var title>doctype</var> = null);
+  [NewObject] <span>Document</span> <span title=dom-DOMImplementation-createHTMLDocument>createHTMLDocument</span>(optional DOMString <var title>title</var>);
 
   boolean <span title=dom-DOMImplementation-hasFeature>hasFeature</span>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
 };</pre>
@@ -5547,9 +5546,9 @@ otherwise [createAttribute]- ->.
 
            attribute DOMString <span title=dom-Element-id>id</span>;
            attribute DOMString <span title=dom-Element-className>className</span>;
-  readonly attribute <span>DOMTokenList</span> <span title=dom-Element-classList>classList</span>;
+  [SameObject] readonly attribute <span>DOMTokenList</span> <span title=dom-Element-classList>classList</span>;
 
-  readonly attribute <span>Attr</span>[] <span title=dom-Element-attributes>attributes</span>;
+  [SameObject] readonly attribute <span>Attr</span>[] <span title=dom-Element-attributes>attributes</span>;
   DOMString? <span title=dom-Element-getAttribute>getAttribute</span>(DOMString <var title>name</var>);
   DOMString? <span title=dom-Element-getAttributeNS>getAttributeNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
   void <span title=dom-Element-setAttribute>setAttribute</span>(DOMString <var title>name</var>, DOMString <var title>value</var>);
@@ -5920,8 +5919,7 @@ of the <span>context object</span>'s
 <span title=concept-element-attribute>attribute list</span>.
 The returned <span data-anolis-spec=webidl>read only array</span> must be
 live. I.e. changes to the associated
-<span title=concept-attribute>attributes</span> are reflected. The same object must be
-returned each time.
+<span title=concept-attribute>attributes</span> are reflected.
 <!-- XXXlive define live centrally somewhere for both collections and this? -->
 
 <p>The <dfn title=dom-Element-getAttribute><code>getAttribute(<var title>name</var>)</code></dfn> method must run these steps:
@@ -6397,7 +6395,7 @@ method must <span title=concept-CD-replace>replace data</span> with node
 <h3>Interface <code>Text</code></h3>
 <pre class=idl>[<span title=dom-Text>Constructor</span>(optional DOMString <var title>data</var> = "")]
 interface <dfn>Text</dfn> : <span>CharacterData</span> {
-  <span>Text</span> <span title=dom-Text-splitText>splitText</span>(unsigned long <var title>offset</var>);
+  [NewObject] <span>Text</span> <span title=dom-Text-splitText>splitText</span>(unsigned long <var title>offset</var>);
   readonly attribute DOMString <span title=dom-Text-wholeText>wholeText</span>;
 };</pre>
 
@@ -6689,12 +6687,12 @@ interface <dfn>Range</dfn> {
   short <span title=dom-Range-compareBoundaryPoints>compareBoundaryPoints</span>(unsigned short <var title>how</var>, <span>Range</span> <var title>sourceRange</var>);
 
   void <span title=dom-Range-deleteContents>deleteContents</span>();
-  <span>DocumentFragment</span> <span title=dom-Range-extractContents>extractContents</span>();
-  <span>DocumentFragment</span> <span title=dom-Range-cloneContents>cloneContents</span>();
+  [NewObject] <span>DocumentFragment</span> <span title=dom-Range-extractContents>extractContents</span>();
+  [NewObject] <span>DocumentFragment</span> <span title=dom-Range-cloneContents>cloneContents</span>();
   void <span title=dom-Range-insertNode>insertNode</span>(<span>Node</span> <var title>node</var>);
   void <span title=dom-Range-surroundContents>surroundContents</span>(<span>Node</span> <var title>newParent</var>);
 
-  <span>Range</span> <span title=dom-Range-cloneRange>cloneRange</span>();
+  [NewObject] <span>Range</span> <span title=dom-Range-cloneRange>cloneRange</span>();
   void <span title=dom-Range-detach>detach</span>();
 
   boolean <span title=dom-Range-isPointInRange>isPointInRange</span>(<span>Node</span> <var title>node</var>, unsigned long <var title>offset</var>);
@@ -8348,7 +8346,7 @@ these steps:
 <h3>Interface <code>NodeIterator</code></h3>
 
 <pre class=idl>interface <dfn>NodeIterator</dfn> {
-  readonly attribute <span>Node</span> <span title=dom-NodeIterator-root>root</span>;
+  [SameObject] readonly attribute <span>Node</span> <span title=dom-NodeIterator-root>root</span>;
   readonly attribute <span>Node</span> <span title=dom-NodeIterator-referenceNode>referenceNode</span>;
   readonly attribute boolean <span title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</span>;
   readonly attribute unsigned long <span title=dom-NodeIterator-whatToShow>whatToShow</span>;
@@ -8504,7 +8502,7 @@ for compatibility.</span>
 <h3>Interface <code>TreeWalker</code></h3>
 
 <pre class=idl>interface <dfn>TreeWalker</dfn> {
-  readonly attribute <span>Node</span> <span title=dom-TreeWalker-root>root</span>;
+  [SameObject] readonly attribute <span>Node</span> <span title=dom-TreeWalker-root>root</span>;
   readonly attribute unsigned long <span title=dom-TreeWalker-whatToShow>whatToShow</span>;
   readonly attribute <span>NodeFilter</span>? <span title=dom-TreeWalker-filter>filter</span>;<!--
   readonly attribute boolean <span title=dom-TreeWalker-expandEntityReferences>expandEntityReferences</span>;-->
