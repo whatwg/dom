@@ -298,14 +298,14 @@ other.
 
 <h3>Ordered sets</h3>
 
-<p>The <dfn title=concept-set-parser>set parser</dfn> takes a string
+<p>The <dfn title=concept-ordered-set-parser>ordered set parser</dfn> takes a string
 <var title>input</var> and then runs these steps:
 
 <ol>
  <li><p>Let <var title>position</var> be a pointer into <var title>input</var>,
  initially pointing at the start of the string.
 
- <li><p>Let <var title>tokens</var> be a list of tokens, initially empty.
+ <li><p>Let <var title>tokens</var> be an ordered set of tokens, initially empty.
 
  <li><p><span>Skip ASCII whitespace</span>.
 
@@ -349,7 +349,7 @@ other.
 <span data-anolis-spec=encoding>ASCII whitespace</span> and discard the
 return value.
 
-<p>The <dfn title=concept-set-serializer>set serializer</dfn> takes a
+<p>The <dfn title=concept-ordered-set-serializer>ordered set serializer</dfn> takes a
 <var title>set</var> and returns the concatenation of the strings in
 <var title>set</var>, separated from each other by U+0020.
 
@@ -4395,7 +4395,7 @@ for a <span title=concept-node>node</span> <var title>root</var> is the
 <ol>
  <li>
   <p>Let <var title>classes</var> be the result of running the
-  <span title=concept-set-parser>set parser</span> on
+  <span title=concept-ordered-set-parser>ordered set parser</span> on
   <var title>classNames</var>.
 
  <li>
@@ -5733,7 +5733,7 @@ run these steps:
 <code>DOMTokenList</code> object. The <code>DOMTokenList</code> object's
 associated <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-local-name>local name</span> is
-<code title>class</code> and its associated list of unique tokens is called
+<code title>class</code> and its associated ordered set of tokens is called
 the <span title=concept-element>element</span>'s
 <dfn title=concept-class>classes</dfn>.
 
@@ -9165,7 +9165,8 @@ title=concept-collection>collection</span>, whose primary purpose is to expose
   <span title="dom-DOMTokenList-stringifier">stringifier</span>;
 };</pre>
 
-<p>A <code>DOMTokenList</code> object has an associated list of unique tokens, which is initially empty.
+<p>A <code>DOMTokenList</code> object has an associated ordered set of
+<dfn title=concept-DTL-tokens>tokens</dfn>, which is initially empty.
 
 <p>A <code>DOMTokenList</code> object also has an associated
 <span title=concept-element>element</span> and an
@@ -9184,8 +9185,8 @@ title=concept-collection>collection</span>, whose primary purpose is to expose
  for the associated <span title=concept-element>element</span> using
  associated <span title=concept-attribute>attribute</span>'s
  <span title=concept-attribute-local-name>local name</span> and the result
- of running the <span title=concept-set-serializer>set serializer</span> for
- the associated list of tokens.
+ of running the <span title=concept-ordered-set-serializer>ordered set serializer</span>
+ for <span title=concept-DTL-tokens>tokens</span>.
 </ol>
 
 <dl class="domintro">
@@ -9240,12 +9241,14 @@ title=concept-collection>collection</span>, whose primary purpose is to expose
 <div class="impl">
 
 <p>The <dfn title="dom-DOMTokenList-length"><code>length</code></dfn>
-attribute must return the number of tokens in the list of tokens.
+attribute must return the number of tokens in the
+<span title=concept-DTL-tokens>tokens</span>.
 
 <p>The object's
 <span data-anolis-spec=webidl>supported property indices</span> are the
-numbers in the range zero to the number of tokens in the list of tokens
-minus one, unless the list of tokens is empty, in which case there are no
+numbers in the range zero to the number of tokens in
+<span title=concept-DTL-tokens>tokens</span> minus one, unless
+<span title=concept-DTL-tokens>tokens</span> is  empty, in which case there are no
 <span data-anolis-spec=webidl>supported property indices</span>.
 
 <p>The
@@ -9254,9 +9257,10 @@ method must run these steps:
 
 <ol>
  <li><p>If <var title>index</var> is equal to or greater than the number of
- tokens in the list of tokens, return null.
+ tokens in <span title=concept-DTL-tokens>tokens</span>, return null.
 
- <li><p>Return the <var title>index</var>th token in the list of tokens.
+ <li><p>Return the <var title>index</var>th token in
+ <span title=concept-DTL-tokens>tokens</span>.
 </ol>
 
 <p>The
@@ -9273,8 +9277,8 @@ method must run these steps:
  <span title=concept-throw>throw</span>
  an "<code>InvalidCharacterError</code>" exception.
 
- <li><p>Return true if <var title>token</var> is in the list of tokens, and
- false otherwise.
+ <li><p>Return true if <var title>token</var> is in
+ <span title=concept-DTL-tokens>tokens</span>, and false otherwise.
 </ol>
 
 <p>The
@@ -9292,8 +9296,8 @@ method must run these steps:
  "<code>InvalidCharacterError</code>" exception.
 
  <li><p>For each <var title>token</var> in <var title>tokens</var>, in given
- order, that is not in the list of tokens, append <var title>token</var> to
- the list of tokens.
+ order, that is not in <span title=concept-DTL-tokens>tokens</span>, append
+ <var title>token</var> to <span title=concept-DTL-tokens>tokens</span>.
 
  <li><p>Run the <span title=concept-DTL-update>update steps</span>.
 </ol>
@@ -9313,7 +9317,7 @@ method must run these steps:
  "<code>InvalidCharacterError</code>" exception.
 
  <li><p>For each <var title>token</var> in <var title>tokens</var>, remove
- <var title>token</var> from the list of tokens.
+ <var title>token</var> from <span title=concept-DTL-tokens>tokens</span>.
 
  <li><p>Run the <span title=concept-DTL-update>update steps</span>.
 </ol>
@@ -9333,11 +9337,12 @@ method must run these steps:
  "<code>InvalidCharacterError</code>" exception.
 
  <li>
-  <p>If <var title>token</var> is in the list of tokens, run these substeps:
+  <p>If <var title>token</var> is in <span title=concept-DTL-tokens>tokens</span>, run
+  these substeps:
 
   <ol>
    <li><p>If <var title>force</var> is either not passed or is false, then remove
-   <var title>token</var> from the list of tokens, run the
+   <var title>token</var> from <span title=concept-DTL-tokens>tokens</span>, run the
    <span title=concept-DTL-update>update steps</span>, and return false.
 
    <li><p>Otherwise, return true.
@@ -9349,15 +9354,16 @@ method must run these steps:
   <ol>
    <li><p>If <var title>force</var> is passed and is false, return false.
 
-   <li><p>Otherwise, append <var title>token</var> to the list of tokens, run the
+   <li><p>Otherwise, append <var title>token</var> to
+   <span title=concept-DTL-tokens>tokens</span>, run the
    <span title=concept-DTL-update>update steps</span>, and return true.
   </ol>
 </ol>
 
 <p>The <dfn title="dom-DOMTokenList-stringifier">stringifier</dfn> must
 return the result of the
-<span title=concept-set-serializer>set serializer</span> for the associated
-list of tokens.
+<span title=concept-ordered-set-serializer>ordered set serializer</span> for
+<span title=concept-DTL-tokens>tokens</span>.
 
 </div>
 
@@ -9383,12 +9389,12 @@ list of tokens.
 
 <p>The <dfn title="dom-DOMSettableTokenList-value"><code>value</code></dfn>
 attribute must return the result of the
-<span title=concept-set-serializer>set serializer</span> for the associated
-list of tokens.
+<span title=concept-ordered-set-serializer>ordered set serializer</span> for
+<span title=concept-DTL-tokens>tokens</span>.
 
 <p>Setting the <code title=dom-DOMSettableTokenList-value>value</code>
-attribute must run the <span title=concept-set-parser>set parser</span> for
-the given value and set the associated list of tokens to the result.
+attribute must run the <span title=concept-ordered-set-parser>ordered set parser</span>
+for the given value and set <span title=concept-DTL-tokens>tokens</span> to the result.
 
 </div>
 
