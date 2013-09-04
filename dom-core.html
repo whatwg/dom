@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-27-august-2013">Living Standard — Last Updated 27 August 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-4-september-2013">Living Standard — Last Updated 4 September 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-27 August 2013, the editors have made this specification available
+4 September 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -81,10 +81,7 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
  <li><a href="#promises"><span class="secno">4 </span>Promises</a>
   <ol>
    <li><a href="#i-promise-you-an-introduction"><span class="secno">4.1 </span>I <code title="">Promise</code> you an introduction</a></li>
-   <li><a href="#promises-model"><span class="secno">4.2 </span>Promises Model</a>
-    <ol>
-     <li><a href="#hooks"><span class="secno">4.2.1 </span>Hooks</a></ol></li>
-   <li><a href="#promises-api"><span class="secno">4.3 </span>Promises API</a></ol></li>
+   <li><a href="#open-issues"><span class="secno">4.2 </span>Open issues</a></ol></li>
  <li><a href="#events"><span class="secno">5 </span>Events</a>
   <ol>
    <li><a href="#introduction-to-dom-events"><span class="secno">5.1 </span>Introduction to "DOM Events"</a></li>
@@ -667,36 +664,34 @@ Thanks!
 
 <p class="note" id="futures">This feature used to be called futures.
 
-<p class="XXX">The task model for promises will change:
-<a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=22296">microtask and promises</a>.
 
 <h3 id="i-promise-you-an-introduction"><span class="secno">4.1 </span>I <code title="">Promise</code> you an introduction</h3>
 
-<p><a href="#concept-promise" title="concept-promise">Promises</a> provide a convenient way to get access to the
+<p><span title="concept-promise">Promises</span> provide a convenient way to get access to the
 result of an operation.
 
-<p><a href="#concept-promise" title="concept-promise">Promises</a> can be returned by platform APIs, but can
+<p><span title="concept-promise">Promises</span> can be returned by platform APIs, but can
 also be used in conjunction with an existing API to make it easier to work with.
 
 <div class="example">
 
 <p>This example demonstrates creating a <code title="">fetchJSON(<var>url</var>)</code>
-function that returns a <code><a href="#promise">Promise</a></code> that is responsible for fetching a
+function that returns a <code>Promise</code> that is responsible for fetching a
 <a class="external" data-anolis-spec="url" href="http://url.spec.whatwg.org/#url">URL</a> and parsing the response as JSON.
 
 <pre>function fetchJSON(url) {
-  return new Promise(function(resolver) {
+  return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest()
     xhr.open("GET", url)
     xhr.responseType = "json"
     xhr.send()
-    // resolver.reject() is ignored once resolver.resolve() has been invoked
+    // reject() is ignored once resolve() has been invoked
     xhr.onload = function() {
       if(xhr.response)
-        resolver.resolve(xhr.response)
-      resolver.reject(new DOMError("JSONError"))
+        resolve(xhr.response)
+      reject(new TypeError)
     }
-    xhr.onloadend = function() { resolver.reject(new DOMError("NetworkError")) }
+    xhr.onloadend = function() { reject(new TypeError) }
   })
 }</pre>
 
@@ -704,8 +699,8 @@ function that returns a <code><a href="#promise">Promise</a></code> that is resp
 
 <pre>fetchJSON("/user/posts").then(showPosts, showFailcat)</pre>
 
-<p>Using static methods <a href="#concept-promise" title="concept-promise">promises</a> can be combined to
-create new <a href="#concept-promise" title="concept-promise">promises</a>, which allows for operating on the
+<p>Using static methods <span title="concept-promise">promises</span> can be combined to
+create new <span title="concept-promise">promises</span>, which allows for operating on the
 results of several asynchronous requests at once:
 
 <pre>Promise.every(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).then(
@@ -717,614 +712,12 @@ results of several asynchronous requests at once:
 
 </div>
 
+<h3 id="open-issues"><span class="secno">4.2 </span>Open issues</h3>
 
-<h3 id="promises-model"><span class="secno">4.2 </span>Promises Model</h3>
+<p class="XXX">The task model for promises will change:
+<a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=22296">microtask and promises</a>.
 
-<p>A <dfn id="concept-promise" title="concept-promise">promise</dfn> provides asynchronous access to the result of
-an operation that is ongoing, has yet to start, or has completed.
-
-<p>A <a href="#concept-promise" title="concept-promise">promise</a> has associated
-<dfn id="concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</dfn> and
-<dfn id="concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</dfn>, an associated
-<dfn id="concept-promise-state" title="concept-promise-state">state</dfn>, and an associated
-<dfn id="concept-promise-result" title="concept-promise-result">result</dfn>. Unless stated otherwise, a
-<a href="#concept-promise" title="concept-promise">promise</a>'s <a href="#concept-promise-state" title="concept-promise-state">state</a>
-is <i title="">pending</i>.
-
-<p>A <a href="#concept-promise" title="concept-promise">promise</a> also has an associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
-<p>To <dfn id="concept-promise-append" title="concept-promise-append">append</dfn> an
-<var title="">fulfillCallback</var> and a <var title="">rejectCallback</var> to a
-<var title="">promise</var>, run these steps:
-
-<ol>
- <li><p>Append <var title="">fulfillCallback</var> to <var title="">promise</var>'s
- <a href="#concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</a>.
-
- <li><p>Append <var title="">rejectCallback</var> to <var title="">promise</var>'
- <a href="#concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</a>.
-
- <li><p>If <var title="">promise</var>'s <a href="#concept-promise-state" title="concept-promise-state">state</a> is
- <i title="">fulfilled</i>, <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</a> with
- <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a>.
-
- <li><p>If <var title="">promise</var>'s <a href="#concept-promise-state" title="concept-promise-state">state</a> is
- <i title="">rejected</i>, <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</a> with
- <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a>.
-</ol>
-
-<p>A <dfn id="concept-promise-callback" title="concept-promise-callback">promise callback</dfn> for a
-<a href="#concept-resolver" title="concept-resolver">resolver</a> <var title="">resolver</var> and algorithm
-<var title="">algorithm</var> is a JavaScript <code title="">Function</code> Object which when
-called runs these steps:
-
-<ol>
- <li><p>Let <var title="">value</var> be the first argument that is passed, and
- <code title="">undefined</code> otherwise.
-
- <li><p>Run <var title="">resolver</var>'s <var title="">algorithm</var> with
- <var title="">value</var> and the <i title="">synchronous flag</i> set.
-</ol>
-
-<p>A <dfn id="concept-promise-wrapper-callback" title="concept-promise-wrapper-callback">promise wrapper callback</dfn> for a
-<a href="#concept-resolver" title="concept-resolver">resolver</a> <var title="">resolver</var> and callback
-<var title="">callback</var> is a JavaScript <code title="">Function</code> Object which when
-called runs these steps:
-
-<ol>
- <li><p>Let <var title="">argument</var> be the first argument that is passed, and
- <code title="">undefined</code> otherwise.
-
- <li><p>Set <var title="">callback</var>'s
- <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-callback-this-value">callback this value</a> to <var title="">resolver</var>'s
- associated <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">value</var> be the result of invoking <var title="">callback</var>
- with <var title="">argument</var> as argument.
-
- <li>
-  <p>If invoking <var title="">callback</var> threw an exception, catch it and run
-  <var title="">resolver</var>'s <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the
-  thrown exception as argument and the <i title="">synchronous flag</i> set.
-
-  <p class="note">The exception is not re-thrown and does not reach
-  <code title="">window.onerror</code>.
-  <!-- XXX ES6-exception (there's more of these)
-       http://lists.w3.org/Archives/Public/public-script-coord/2013AprJun/0006.html -->
-
- <li><p>Otherwise, run <var title="">resolver</var>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var> and the
- <i title="">synchronous flag</i> set.
-</ol>
-
-<p>To <dfn id="concept-promise-process" title="concept-promise-process">process</dfn> a <var title="">promise</var>'s
-<a href="#concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</a> or
-<a href="#concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</a> with a given
-<var title="">value</var>, call each callback with <var title="">value</var> as argument and
-then discard it.
-
-<p>A <dfn id="concept-resolver" title="concept-resolver">resolver</dfn> is in control of a
-<a href="#concept-promise" title="concept-promise">promise</a>'s <a href="#concept-promise-state" title="concept-promise-state">state</a>
-and <a href="#concept-promise-result" title="concept-promise-result">result</a>.
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a> has an associated
-<dfn id="resolved-flag">resolved flag</dfn>. Unless stated otherwise a
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s <a href="#resolved-flag">resolved flag</a> is unset.
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<dfn id="concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</dfn> algorithm takes a <var title="">value</var>
-and optionally a <i title="">synchronous flag</i>, and runs these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be the <a href="#context-object">context object</a>'s associated
- <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-state" title="concept-promise-state">state</a> to
- <i title="">fulfilled</i>.
-
- <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a> to
- <var title="">value</var>.
-
- <li><p>If the <i title="">synchronous flag</i> is set,
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</a> with
- <var title="">value</var>.
-
- <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-fulfill-callbacks" title="concept-promise-fulfill-callbacks">fulfill callbacks</a> with
- <var title="">value</var>.
-</ol>
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<dfn id="concept-resolver-resolve" title="concept-resolver-resolve">resolve</dfn> algorithm takes a <var title="">value</var>
-and optionally a <i title="">synchronous flag</i>, and runs these steps:
-
-<ol>
- <li>
-  <p>Let <var title="">then</var> be null.
-
-  <p class="note">Starting here the algorithm is described in terms of the JavaScript
-  specification. (Or ECMAScript, if you feel that is a more suitable name.)
-
- <li><p>If <var title="">value</var> is a JavaScript Object, set <var title="">then</var> to
- the result of calling the JavaScript <code title="">[[Get]]</code> internal method of
- <var title="">value</var> with property name <code title="">then</code>.
-
- <li><p>If calling the <code title="">[[Get]]</code> internal method threw an exception,
- catch it and run <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the thrown
- exception and the <i title="">synchronous flag</i> if set, and then terminate these steps.
- <!-- ES6-exception -->
-
- <li>
-  <p>If JavaScript IsCallable(<var title="">then</var>) is true, run these substeps and then
-  terminate these steps:
-
-  <ol>
-   <li><p>Let <var title="">fulfillCallback</var> be a
-   <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for the
-   <a href="#context-object">context object</a> and its <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a>
-   algorithm.
-
-   <li><p>Let <var title="">rejectCallback</var> be a
-   <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for the
-   <a href="#context-object">context object</a> and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a>
-   algorithm.
-
-   <li><p>Call the JavaScript <code title="">[[Call]]</code> internal method of
-   <var title="">then</var> with <b title="">this</b> value <var title="">value</var> and
-   <var title="">fulfillCallback</var> and <var title="">rejectCallback</var> as arguments.
-
-   <li><p>If calling the <code title="">[[Call]]</code> internal method threw an exception,
-   catch it and run <a href="#context-object">context object</a>'s <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a>
-   with the thrown exception and the <i title="">synchronous flag</i> if set.
-   <!-- ES6-exception -->
-  </ol>
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> with <var title="">value</var> and the
- <i title="">synchronous flag</i> if set.
-</ol>
-
-<p>A <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<dfn id="concept-resolver-reject" title="concept-resolver-reject">reject</dfn> algorithm takes a <var title="">value</var>
-and optionally a <i title="">synchronous flag</i>, and runs these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be the <a href="#context-object">context object</a>'s associated
- <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-state" title="concept-promise-state">state</a> to
- <i title="">rejected</i>.
-
- <li><p>Set <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a> to
- <var title="">value</var>.
-
- <li><p>If the <i title="">synchronous flag</i> is set,
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</a> with
- <var title="">value</var>.
-
- <li><p>Otherwise, the <i title="">synchronous flag</i> is unset,
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-task">queue a task</a> to
- <a href="#concept-promise-process" title="concept-promise-process">process</a> <var title="">promise</var>'s
- <a href="#concept-promise-reject-callbacks" title="concept-promise-reject-callbacks">reject callbacks</a> with
- <var title="">value</var>.
-</ol>
-
-<p>Unless stated otherwise, the <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#task-source">task source</a> used by
-<a href="#concept-promise" title="concept-promise">promises</a> and their
-<a href="#concept-resolver" title="concept-resolver">resolvers</a> is the
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#dom-manipulation-task-source">DOM manipulation task source</a>.
-
-<h4 id="hooks"><span class="secno">4.2.1 </span>Hooks</h4>
-
-<p>To <dfn id="concept-promise-fulfill" title="concept-promise-fulfill">fulfill</dfn> a
-<a href="#concept-promise" title="concept-promise">promise</a> with a <var title="">value</var>, run
-<a href="#concept-promise" title="concept-promise">promise</a>'s associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> algorithm with <var title="">value</var>.
-
-<p>To <dfn id="concept-promise-reject" title="concept-promise-reject">reject</dfn> a
-<a href="#concept-promise" title="concept-promise">promise</a> with a <var title="">value</var>, run
-<a href="#concept-promise" title="concept-promise">promise</a>'s associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm with <var title="">value</var>.
-
-
-<h3 id="promises-api"><span class="secno">4.3 </span>Promises API</h3>
-
-<pre class="idl">interface <dfn id="promiseresolver">PromiseResolver</dfn> {
-  void <a href="#dom-promiseresolver-fulfill" title="dom-PromiseResolver-fulfill">fulfill</a>(optional any <var title="">value</var>);
-  void <a href="#dom-promiseresolver-resolve" title="dom-PromiseResolver-resolve">resolve</a>(optional any <var title="">value</var>);
-  void <a href="#dom-promiseresolver-reject" title="dom-PromiseResolver-reject">reject</a>(optional any <var title="">value</var>);
-};
-
-callback <dfn id="promiseinit">PromiseInit</dfn> = void (<a href="#promiseresolver">PromiseResolver</a> <var title="">resolver</var>);
-callback <dfn id="anycallback">AnyCallback</dfn> = any (optional any <var title="">value</var>);
-
-[<a href="#dom-promise" title="dom-Promise">Constructor</a>(<a href="#promiseinit">PromiseInit</a> <var title="">init</var>)]
-interface <dfn id="promise">Promise</dfn> {
-  <a href="#promise">Promise</a> <a href="#dom-promise-then" title="dom-Promise-then">then</a>([TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">fulfillCallback</var>, [TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">rejectCallback</var>);
-  <a href="#promise">Promise</a> <a href="#dom-promise-catch" title="dom-Promise-catch">catch</a>([TreatUndefinedAs=Missing] optional <a href="#anycallback">AnyCallback</a> <var title="">rejectCallback</var>);
-
-  static <a href="#promise">Promise</a> <a href="#dom-promise-fulfill" title="dom-Promise-fulfill">fulfill</a>(any <var title="">value</var>);
-  static <a href="#promise">Promise</a> <a href="#dom-promise-resolve" title="dom-Promise-resolve">resolve</a>(any <var title="">value</var>); // same as <a href="#dom-promise-any" title="dom-Promise-any">any(<var>value</var>)</a>
-  static <a href="#promise">Promise</a> <a href="#dom-promise-reject" title="dom-Promise-reject">reject</a>(any <var title="">value</var>);
-
-  static <a href="#promise">Promise</a> <a href="#dom-promise-any" title="dom-Promise-any">_any</a>(any... <var title="">values</var>); // exposed as "any" in JavaScript, without "_"
-  static <a href="#promise">Promise</a> <a href="#dom-promise-every" title="dom-Promise-every">every</a>(any... <var title="">values</var>);
-  static <a href="#promise">Promise</a> <a href="#dom-promise-some" title="dom-Promise-some">some</a>(any... <var title="">values</var>);
-};</pre>
-
-<p>A <code><a href="#promiseresolver">PromiseResolver</a></code> object is a <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
-<dl class="domintro">
- <dt><code><var title="">resolver</var> . <a href="#dom-promiseresolver-fulfill" title="dom-PromiseResolver-fulfill">fulfill</a>(<var title="">value</var>)</code>
- <dd><p>Runs <var title="">resolver</var>'s
- <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a>.
-
- <dt><code><var title="">resolver</var> . <a href="#dom-promiseresolver-resolve" title="dom-PromiseResolver-resolve">resolve</a>(<var title="">value</var>)</code>
- <dd><p>Runs <var title="">resolver</var>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a>.
-
- <dt><code><var title="">resolver</var> . <a href="#dom-promiseresolver-reject" title="dom-PromiseResolver-reject">reject</a>(<var title="">value</var>)</code>
- <dd><p>Runs <var title="">resolver</var>'s
- <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a>.
-</dl>
-
-<p>The <dfn id="dom-promiseresolver-fulfill" title="dom-PromiseResolver-fulfill"><code>fulfill(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
- <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> with <var title="">value</var>.
-</ol>
-
-<p>The <dfn id="dom-promiseresolver-resolve" title="dom-PromiseResolver-resolve"><code>resolve(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
- <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">value</var>.
-</ol>
-
-<p>The <dfn id="dom-promiseresolver-reject" title="dom-PromiseResolver-reject"><code>reject(<var>value</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a> is set, terminate
- these steps.
-
- <li><p>Set the <a href="#context-object">context object</a>'s <a href="#resolved-flag">resolved flag</a>.
-
- <li><p>Run <a href="#context-object">context object</a>'s
- <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">value</var>.
-</ol>
-
-<p>A <code><a href="#promise">Promise</a></code> object is a <a href="#concept-promise" title="concept-promise">promise</a>.
-
-<dl class="domintro">
- <dt><code><var title="">promise</var> = new <a href="#dom-promise" title="dom-Promise">Promise</a>(<var title="">init</var>)</code>
- <dd><p>Creates a new <a href="#concept-promise" title="concept-promise">promise</a>. The <var title="">init</var>
- callback is passed the associated <a href="#concept-resolver" title="concept-resolver">resolver</a>. If the
- callback throws an exception, the <a href="#concept-promise" title="concept-promise">promise</a>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
- <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> is run with the thrown exception.
-
- <dt><code><var title="">newPromise</var> = <var title="">promise</var>.<a href="#dom-promise-then" title="dom-Promise-then">then</a>([<var title="">fulfillCallback</var> [, <var title="">rejectCallback</var>]])</code>
- <dd>
-  <p>Appends callbacks to <var title="">promise</var> of which one will be invoked with
-  <var title="">promise</var>'s <a href="#concept-promise-result" title="concept-promise-result">result</a> at some point
-  after <var title="">promise</var>'s <a href="#concept-promise-state" title="concept-promise-state">state</a> is set to
-  either <i title="">fulfilled</i> or <i title="">rejected</i>.
-
-  <p>If <var title="">fulfillCallback</var> or <var title="">rejectCallback</var> is omitted or undefined, a
-  callback will be appended that when invoked runs <var title="">newPromise</var>'s associated
-  <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-  <span title="concept-resolve">resolve</span> or <span title="concept-reject">reject</span>
-  algorithm respectively, with <var title="">promise</var>'s
-  <a href="#concept-promise-result" title="concept-promise-result">result</a>.
-
-  <p>If they are not omitted or undefined, when invoked their return value is passed to
-  <var title="">newPromise</var>'s associated <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-  <span title="concept-resolve">resolve</span> algorithm. If a callback throws an exception,
-  that exception is passed to <var title="">newPromise</var>'s associated
-  <a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-  <span title="concept-reject">reject</span> algorithm.
-
- <dt><code><var title="">newPromise</var> = <var title="">promise</var>.<a href="#dom-promise-catch" title="dom-Promise-catch">catch</a>([<var title="">rejectCallback</var>])</code>
- <dd><p>Identical to invoking <code><var title="">promise</var>.<a href="#dom-promise-then" title="dom-Promise-then">then</a>(undefined, <var title="">rejectCallback</var>)</code>.
-</dl>
-
-<p>The <dfn id="dom-promise" title="dom-Promise"><code>Promise(<var>init</var>)</code></dfn> constructor must
-run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Set <var title="">init</var>'s
- <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-callback-this-value">callback this value</a> to <var title="">promise</var>.
-
- <li><p>Invoke <var title="">init</var> with <var title="">resolver</var> passed as parameter.
-
- <li><p>If <var title="">init</var> threw an exception, catch it, and then, if
- <var title="">resolver</var>'s <a href="#resolved-flag">resolved flag</a> is unset, run <var title="">resolver</var>'s
- <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with the thrown exception as argument.
- <!-- ES6-exception -->
-
- <li><p>Return <var title="">promise</var>.
-</ol>
-
-<p>The
-<dfn id="dom-promise-then" title="dom-Promise-then"><code>then(<var>fulfillCallback</var>, <var>rejectCallback</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Let <var title="">fulfillWrapper</var> be a
- <a href="#concept-promise-wrapper-callback" title="concept-promise-wrapper-callback">promise wrapper callback</a> for
- <var title="">resolver</var> and <var title="">fulfillCallback</var> if
- <var title="">fulfillCallback</var> is not omitted and a
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> algorithm otherwise.
-
- <li><p>Let <var title="">rejectWrapper</var> be a
- <a href="#concept-promise-wrapper-callback" title="concept-promise-wrapper-callback">promise wrapper callback</a> for
- <var title="">resolver</var> and <var title="">rejectCallback</var> if
- <var title="">rejectCallback</var> is not omitted and a
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
-
- <li><p><a href="#concept-promise-append" title="concept-promise-append">Append</a> <var title="">fulfillWrapper</var> and
- <var title="">rejectWrapper</var> to the <a href="#context-object">context object</a>.
-
- <li><p>Return <var title="">promise</var>.
-</ol>
-
-<p>The <dfn id="dom-promise-catch" title="dom-Promise-catch"><code>catch(<var>rejectCallback</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Let <var title="">fulfillCallback</var> be a new
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> algorithm.
-
- <li><p>Let <var title="">rejectWrapper</var> be a
- <a href="#concept-promise-wrapper-callback" title="concept-promise-wrapper-callback">promise wrapper callback</a> for
- <var title="">resolver</var> and <var title="">rejectCallback</var> if
- <var title="">rejectCallback</var> is not omitted and a
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm otherwise.
-
- <li><p><a href="#concept-promise-append" title="concept-promise-append">Append</a> <var title="">fulfillCallback</var> and
- <var title="">rejectWrapper</var> to the <a href="#context-object">context object</a>.
-
- <li><p>Return <var title="">promise</var>.
-</ol>
-
-<hr>
-
-<dl class="domintro">
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-fulfill" title="dom-Promise-fulfill">fulfill</a>(<var>value</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that is <i title="">fulfilled</i>
- with <a href="#concept-promise-result" title="concept-promise-result">result</a> <var title="">value</var>.
-
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-resolve" title="dom-Promise-resolve">resolve</a>(<var>value</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that depends upon
- <var title="">value</var>.
-
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-reject" title="dom-Promise-reject">reject</a>(<var>value</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that is <i title="">rejected</i>
- with <a href="#concept-promise-result" title="concept-promise-result">result</a> <var title="">value</var>.
-</dl>
-
-<p>To <dfn id="concept-promise-resolve-wrap" title="concept-promise-resolve-wrap">resolve wrap</dfn> a <var title="">value</var>,
-return a new <a href="#concept-promise" title="concept-promise">promise</a> whose associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> is run with <var title="">value</var>.
-
-<p>The static <dfn id="dom-promise-fulfill" title="dom-Promise-fulfill"><code>fulfill(<var>value</var>)</code></dfn>
-method must return a new <a href="#concept-promise" title="concept-promise">promise</a> whose associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<a href="#concept-resolver-fulfill" title="concept-resolver-fulfill">fulfill</a> is run with <var title="">value</var>.
-
-<p>The static <dfn id="dom-promise-resolve" title="dom-Promise-resolve"><code>resolve(<var>value</var>)</code></dfn>
-method must return <var title="">value</var>
-<a href="#concept-promise-resolve-wrap" title="concept-promise-resolve-wrap">resolve wrapped</a>.
-
-<p>The static <dfn id="dom-promise-reject" title="dom-Promise-reject"><code>reject(<var>value</var>)</code></dfn>
-method must return a new <a href="#concept-promise" title="concept-promise">promise</a> whose associated
-<a href="#concept-resolver" title="concept-resolver">resolver</a>'s
-<a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> is run with <var title="">value</var>.
-
-<hr>
-
-<dl class="domintro">
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-any" title="dom-Promise-any">any</a>(<var>values</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that is <i title="">fulfilled</i>
- or <i title="">rejected</i> when any of <var>values</var> is either <i title="">fulfilled</i> or
- <i title="">rejected</i>.
-
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-every" title="dom-Promise-every">every</a>(<var>values</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that is <i title="">fulfilled</i>
- or <i title="">rejected</i> when all <var>values</var> are <i title="">fulfilled</i> or any is
- <i title="">rejected</i>.
-
- <dt><code><a href="#promise">Promise</a>.<a href="#dom-promise-some" title="dom-Promise-some">some</a>(<var>values</var>)</code>
- <dd><p>Returns a <a href="#concept-promise" title="concept-promise">promise</a> that is <i title="">fulfilled</i>
- or <i title="">rejected</i> when one of <var>values</var> is <i title="">fulfilled</i> or all
- are <i title="">rejected</i>.
-</dl>
-
-<p>The static <dfn id="dom-promise-any" title="dom-Promise-any"><code>any(<var>values</var>)</code></dfn> method
-must run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Let <var title="">fulfillCallback</var> be a new
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> algorithm.
-
- <li><p>Let <var title="">rejectCallback</var> be a new
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm.
-
- <li><p>If <var>values</var> is the empty list, invoke <var title="">resolver</var>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <code title="">undefined</code>.
-
- <li><p>Otherwise, for each <var title="">value</var> in <var title="">values</var>, in given order,
- <a href="#concept-promise-append" title="concept-promise-append">append</a> <var title="">fulfillCallback</var> and
- <var title="">rejectCallback</var> to the result of
- <a href="#concept-promise-resolve-wrap" title="concept-promise-resolve-wrap">resolve wrapping</a> <var title="">value</var>.
-
- <li><p>Return <var title="">promise</var>.
-</ol>
-
-<p>The static <dfn id="dom-promise-every" title="dom-Promise-every"><code>every(<var>values</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Let <var title="">index</var> be zero.
-
- <li><p>Let <var title="">countdown</var> be the number of <var title="">values</var>.
-
- <li><p>Let <var title="">arguments</var> be a JavaScript <code title="">Array</code> array
- object whose length is <var title="">countdown</var>.
-
- <li><p>Let <var title="">rejectCallback</var> be a new
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> algorithm.
-
- <li><p>If <var>values</var> is the empty list, invoke <var title="">resolver</var>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <code title="">undefined</code>.
-
- <li>
-  <p>Otherwise, for each <var title="">value</var> in <var title="">values</var>, in given order,
-  run these substeps:
-
-  <ol>
-   <li>
-    <p>Let <var title="">fulfillCallback</var> be a JavaScript <code title="">Function</code> Object
-    which when called runs these steps:
-
-    <ol>
-     <li><p>Let <var title="">argument</var> be the first argument that is passed, and
-     <code title="">undefined</code> otherwise.
-
-     <li><p>Insert <var title="">argument</var> into <var title="">arguments</var> at index
-     current value of <var title="">index</var>.
-
-     <li><p>Decrease <var title="">countdown</var> by one.
-
-     <li><p>If <var title="">countdown</var> is zero, run <var title="">resolver</var>'s
-     <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <var title="">arguments</var>
-     and the <i title="">synchronous flag</i> set.
-    </ol>
-
-   <li><p>Increase <var title="">index</var> by one.
-
-   <li><p><a href="#concept-promise-append" title="concept-promise-append">Append</a> <var title="">fulfillCallback</var>
-   and <var title="">rejectCallback</var> to the result of
-   <a href="#concept-promise-resolve-wrap" title="concept-promise-resolve-wrap">resolve wrapping</a> <var title="">value</var>.
-  </ol>
-
- <li><p>Return <var title="">promise</var>.
-</ol>
-
-<p>The static <dfn id="dom-promise-some" title="dom-Promise-some"><code>some(<var>values</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>Let <var title="">promise</var> be a new <a href="#concept-promise" title="concept-promise">promise</a>.
-
- <li><p>Let <var title="">resolver</var> be <var title="">promise</var>'s associated
- <a href="#concept-resolver" title="concept-resolver">resolver</a>.
-
- <li><p>Let <var title="">index</var> be zero.
-
- <li><p>Let <var title="">countdown</var> be the number of <var title="">values</var>.
-
- <li><p>Let <var title="">arguments</var> be a JavaScript <code title="">Array</code> array
- object whose length is <var title="">countdown</var>.
-
- <li><p>Let <var title="">fulfillCallback</var> be a new
- <a href="#concept-promise-callback" title="concept-promise-callback">promise callback</a> for <var title="">resolver</var>
- and its <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> algorithm.
-
- <li><p>If <var>values</var> is the empty list, invoke <var title="">resolver</var>'s
- <a href="#concept-resolver-resolve" title="concept-resolver-resolve">resolve</a> with <code title="">undefined</code>.
-
- <li>
-  <p>Otherwise, for each <var title="">value</var> in <var title="">values</var>, in given order,
-  run these substeps:
-
-  <ol>
-
-   <li>
-    <p>Let <var title="">rejectCallback</var> be a JavaScript <code title="">Function</code> Object
-    which when called runs these steps:
-
-    <ol>
-     <li><p>Let <var title="">argument</var> be the first argument that is passed, and
-     <code title="">undefined</code> otherwise.
-
-     <li><p>Insert <var title="">argument</var> into <var title="">arguments</var> at index
-     current value of <var title="">index</var>.
-
-     <li><p>Decrease <var title="">countdown</var> by one.
-
-     <li><p>If <var title="">countdown</var> is zero, run <var title="">resolver</var>'s
-     <a href="#concept-resolver-reject" title="concept-resolver-reject">reject</a> with <var title="">arguments</var> and
-     the <i title="">synchronous flag</i> set.
-    </ol>
-
-   <li><p>Increase <var title="">index</var> by one.
-
-   <li><p><a href="#concept-promise-append" title="concept-promise-append">Append</a> <var title="">fulfillCallback</var>
-   and <var title="">rejectCallback</var> to the result of
-   <a href="#concept-promise-resolve-wrap" title="concept-promise-resolve-wrap">resolve wrapping</a> <var title="">value</var>.
-  </ol>
-
- <li><p>Return <var title="">promise</var>.
-</ol>
+<p class="XXX">Promises is temporarily drafted elsewhere: <a href="https://github.com/domenic/promises-unwrapping/blob/master/README.md">Promises Objects</a>.
 
 
 
