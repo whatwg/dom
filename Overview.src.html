@@ -1846,32 +1846,31 @@ steps:
  <var title>parent</var>'s
  <span title=concept-node-document>node document</span>.
 
+ <li><p>Let <var title>removedNodes</var> be <var title>parent</var>'s
+ <span title=concept-tree-child>children</span>.
+
+ <li><p>Let <var title>addedNodes</var> be the empty list if <var title>node</var> is
+ null, <var title>node</var>'s <span title=concept-tree-child>children</span> if
+ <var title>node</var> is a <code>DocumentFragment</code>
+ <span title=concept-node>node</span>, and a list containing <var title>node</var>
+ otherwise.
+
  <li><p><span title=concept-node-remove>Remove</span> all
  <var title>parent</var>'s <span title=concept-tree-child>children</span>,
  with the <i title>suppress observers flag</i> set.
 
  <li><p>If <var title>node</var> is not null,
  <span title=concept-node-insert>insert</span> <var title>node</var> into
- <var title>parent</var> before null with the
- <i title>suppress observers flag</i> set.
-
- <li><p>Let <var title>nodes</var> be null if <var title>node</var> is null,
- <var title>node</var>'s <span title=concept-tree-child>children</span> if
- <var title>node</var> is a <code>DocumentFragment</code>
- <span title=concept-node>node</span>, and a list containing
- <var title>node</var> otherwise.
+ <var title>parent</var> before null with the <i title>suppress observers flag</i> set.
 
  <li><p><span>Queue a mutation record</span> of "<code>childList</code>" for
- <var title>parent</var> with addedNodes <var title>nodes</var> and
- removedNodes <var title>parent</var>'s
- <span title=concept-tree-child>children</span>.
+ <var title>parent</var> with addedNodes <var title>addedNodes</var> and
+ removedNodes <var title>removedNodes</var>.
 
- <li><p>Run <span>node is removed</span> for each
- <span title=concept-tree-child>child</span> of <var title>parent</var>, in
- <span title=concept-tree-order>tree order</span>, and then
- for each <span title=concept-node>node</span> in <var title>nodes</var>, in
- <span title=concept-tree-order>tree order</span>, run
- <span>node is inserted</span>.
+ <li><p>Run <span>node is removed</span> for each <span title=concept-node>node</span> in
+ <var title>removedNodes</var>, in <span title=concept-tree-order>tree order</span>, and
+ then run <span>node is inserted</span> for each <span title=concept-node>node</span> in
+ <var title>addedNodes</var>, in <span title=concept-tree-order>tree order</span>.
 </ol>
 
 <p class=note>This algorithm does not make any checks with regards to the
@@ -2547,15 +2546,19 @@ previousSibling <var title>previousSibling</var>, and nextSibling
    <code title=dom-MutationRecord-attributeNamespace>attributeNamespace</code>
    to <var title>namespace</var>.
 
-   <li><p>If <var title>addedNodes</var>, <var title>removedNodes</var>,
-   <var title>previousSibling</var>, and <var title>nextSibling</var> are
-   given, set <var title>record</var>'s
+   <li><p>If <var title>addedNodes</var> is given, set <var title>record</var>'s
    <code title=dom-MutationRecord-addedNodes>addedNodes</code> to
-   <var title>addedNodes</var>, <var title>record</var>'s
+   <var title>addedNodes</var>.
+
+   <li><p>If <var title>removedNodes</var> is given, set <var title>record</var>'s
    <code title=dom-MutationRecord-removedNodes>removedNodes</code> to
-   <var title>removedNodes</var>, <var title>record</var>'s
+   <var title>removedNodes</var>,
+
+   <li><p>If <var title>previousSibling</var> is given, set <var title>record</var>'s
    <code title=dom-MutationRecord-previousSibling>previousSibling</code> to
-   <var title>previousSibling</var>, and <var title>record</var>'s
+   <var title>previousSibling</var>.
+
+   <li><p>If <var title>nextSibling</var> is given, set <var title>record</var>'s
    <code title=dom-MutationRecord-nextSibling>nextSibling</code> to
    <var title>nextSibling</var>.
 

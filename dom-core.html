@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-4-september-2013">Living Standard — Last Updated 4 September 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-9-september-2013">Living Standard — Last Updated 9 September 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-4 September 2013, the editors have made this specification available
+9 September 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -1923,32 +1923,31 @@ steps:
  <var title="">parent</var>'s
  <a href="#concept-node-document" title="concept-node-document">node document</a>.
 
+ <li><p>Let <var title="">removedNodes</var> be <var title="">parent</var>'s
+ <a href="#concept-tree-child" title="concept-tree-child">children</a>.
+
+ <li><p>Let <var title="">addedNodes</var> be the empty list if <var title="">node</var> is
+ null, <var title="">node</var>'s <a href="#concept-tree-child" title="concept-tree-child">children</a> if
+ <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a>, and a list containing <var title="">node</var>
+ otherwise.
+
  <li><p><a href="#concept-node-remove" title="concept-node-remove">Remove</a> all
  <var title="">parent</var>'s <a href="#concept-tree-child" title="concept-tree-child">children</a>,
  with the <i title="">suppress observers flag</i> set.
 
  <li><p>If <var title="">node</var> is not null,
  <a href="#concept-node-insert" title="concept-node-insert">insert</a> <var title="">node</var> into
- <var title="">parent</var> before null with the
- <i title="">suppress observers flag</i> set.
-
- <li><p>Let <var title="">nodes</var> be null if <var title="">node</var> is null,
- <var title="">node</var>'s <a href="#concept-tree-child" title="concept-tree-child">children</a> if
- <var title="">node</var> is a <code><a href="#documentfragment">DocumentFragment</a></code>
- <a href="#concept-node" title="concept-node">node</a>, and a list containing
- <var title="">node</var> otherwise.
+ <var title="">parent</var> before null with the <i title="">suppress observers flag</i> set.
 
  <li><p><a href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>childList</code>" for
- <var title="">parent</var> with addedNodes <var title="">nodes</var> and
- removedNodes <var title="">parent</var>'s
- <a href="#concept-tree-child" title="concept-tree-child">children</a>.
+ <var title="">parent</var> with addedNodes <var title="">addedNodes</var> and
+ removedNodes <var title="">removedNodes</var>.
 
- <li><p>Run <a href="#node-is-removed">node is removed</a> for each
- <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">parent</var>, in
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, and then
- for each <a href="#concept-node" title="concept-node">node</a> in <var title="">nodes</var>, in
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, run
- <a href="#node-is-inserted">node is inserted</a>.
+ <li><p>Run <a href="#node-is-removed">node is removed</a> for each <a href="#concept-node" title="concept-node">node</a> in
+ <var title="">removedNodes</var>, in <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, and
+ then run <a href="#node-is-inserted">node is inserted</a> for each <a href="#concept-node" title="concept-node">node</a> in
+ <var title="">addedNodes</var>, in <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 </ol>
 
 <p class="note">This algorithm does not make any checks with regards to the
@@ -2624,15 +2623,19 @@ previousSibling <var title="">previousSibling</var>, and nextSibling
    <code title="dom-MutationRecord-attributeNamespace"><a href="#dom-mutationrecord-attributenamespace">attributeNamespace</a></code>
    to <var title="">namespace</var>.
 
-   <li><p>If <var title="">addedNodes</var>, <var title="">removedNodes</var>,
-   <var title="">previousSibling</var>, and <var title="">nextSibling</var> are
-   given, set <var title="">record</var>'s
+   <li><p>If <var title="">addedNodes</var> is given, set <var title="">record</var>'s
    <code title="dom-MutationRecord-addedNodes"><a href="#dom-mutationrecord-addednodes">addedNodes</a></code> to
-   <var title="">addedNodes</var>, <var title="">record</var>'s
+   <var title="">addedNodes</var>.
+
+   <li><p>If <var title="">removedNodes</var> is given, set <var title="">record</var>'s
    <code title="dom-MutationRecord-removedNodes"><a href="#dom-mutationrecord-removednodes">removedNodes</a></code> to
-   <var title="">removedNodes</var>, <var title="">record</var>'s
+   <var title="">removedNodes</var>,
+
+   <li><p>If <var title="">previousSibling</var> is given, set <var title="">record</var>'s
    <code title="dom-MutationRecord-previousSibling"><a href="#dom-mutationrecord-previoussibling">previousSibling</a></code> to
-   <var title="">previousSibling</var>, and <var title="">record</var>'s
+   <var title="">previousSibling</var>.
+
+   <li><p>If <var title="">nextSibling</var> is given, set <var title="">record</var>'s
    <code title="dom-MutationRecord-nextSibling"><a href="#dom-mutationrecord-nextsibling">nextSibling</a></code> to
    <var title="">nextSibling</var>.
 
