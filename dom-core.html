@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-9-september-2013">Living Standard — Last Updated 9 September 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-10-september-2013">Living Standard — Last Updated 10 September 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-9 September 2013, the editors have made this specification available
+10 September 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2376,11 +2376,11 @@ callback <dfn id="mutationcallback">MutationCallback</dfn> = void (sequence&lt;<
 
 dictionary <dfn id="mutationobserverinit">MutationObserverInit</dfn> {
   boolean <span title="dom-MutationObserverInit-childList">childList</span> = false;
-  boolean <span title="dom-MutationObserverInit-attributes">attributes</span> = false;
-  boolean <span title="dom-MutationObserverInit-characterData">characterData</span> = false;
+  boolean <span title="dom-MutationObserverInit-attributes">attributes</span>;
+  boolean <span title="dom-MutationObserverInit-characterData">characterData</span>;
   boolean <span title="dom-MutationObserverInit-subtree">subtree</span> = false;
-  boolean <span title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</span> = false;
-  boolean <span title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</span> = false;
+  boolean <span title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</span>;
+  boolean <span title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</span>;
   sequence&lt;DOMString&gt; <span title="dom-MutationObserverInit-attributeFilter">attributeFilter</span>;
 };</pre>
 
@@ -2482,28 +2482,39 @@ append it to the <i title="">scripting environment</i>'s list of
 method must run these steps:
 
 <ol>
- <li>
-  <p>Run these substeps, with <var title="">options</var> as the <a href="#context-object">context object</a>:
-  <ol>
-   <li><p>If neither
-   <code title="dom-MutationObserverInit-childList">childList</code>,
-   <code title="dom-MutationObserverInit-attributes">attributes</code>, nor
-   <code title="dom-MutationObserverInit-characterData">characterData</code>
-   is true, <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#syntaxerror">SyntaxError</a></code>".
+ <li><p>If either <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is
+ present or <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code> is present
+ and <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributes">attributes</code> is omitted, set
+ <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributes">attributes</code> to true.
 
-   <li><p>If <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is true and
-   <code title="dom-MutationObserverInit-attributes">attributes</code> is not true,
-   <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#syntaxerror">SyntaxError</a></code>".
+ <li><p>If <var title="">options</var>'
+ <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code>
+ is present and <var title="">options</var>'
+ <code title="dom-MutationObserverInit-characterData">characterData</code> is omitted, set
+ <var title="">options</var>'
+ <code title="dom-MutationObserverInit-characterData">characterData</code> to true.
 
-   <li><p>If <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code>
-   is a non-empty array and
-   <code title="dom-MutationObserverInit-attributes">attributes</code> is not true,
-   <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#syntaxerror">SyntaxError</a></code>".
+ <li><p>If <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is true
+ and <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributes">attributes</code> is false,
+ <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-throw">throw</a> a JavaScript <code title="">TypeError</code>.
 
-   <li><p>If <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code>
-   is true and <code title="dom-MutationObserverInit-characterData">characterData</code> is not true,
-   <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#syntaxerror">SyntaxError</a></code>".
-  </ol>
+ <li><p>If <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code> is present
+ and <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributes">attributes</code> is false,
+ <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-throw">throw</a> a JavaScript <code title="">TypeError</code>.
+
+ <li><p>If <var tilte="">options</var>'
+ <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code>
+ is true and <var title="">options</var>'
+ <code title="dom-MutationObserverInit-characterData">characterData</code> is false,
+ <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-throw">throw</a> a JavaScript <code title="">TypeError</code>.
 
  <li>
   <p>For each <a href="#registered-observer">registered observer</a> <var title="">registered</var> in
@@ -2574,22 +2585,20 @@ previousSibling <var title="">previousSibling</var>, and nextSibling
    <var title="">options</var>'s <code title="">subtree</code> is false, continue.
 
    <li><p>If <var title="">type</var> is "<code title="">attributes</code>" and
-   <var title="">options</var>'s <code title="">attributes</code> is false,
-   continue.
+   <var title="">options</var>'s <code title="">attributes</code> is not true, continue.
+   <!--not true==false||omitted-->
 
    <li><p>If <var title="">type</var> is "<code title="">attributes</code>",
-   <var title="">options</var>'s <code title="">attributeFilter</code> is
-   non-empty, and either <var title="">options</var>'s
-   <code title="">attributeFilter</code> does not contain <var title="">name</var>
-   or <var title="">namespace</var> is non-null, continue.
+   <var title="">options</var>'s <code title="">attributeFilter</code> is present, and either
+   <var title="">options</var>'s <code title="">attributeFilter</code> does not contain
+   <var title="">name</var> or <var title="">namespace</var> is non-null, continue.
 
    <li><p>If <var title="">type</var> is "<code title="">characterData</code>" and
-   <var title="">options</var>'s <code title="">characterData</code> is false,
-   continue.
+   <var title="">options</var>'s <code title="">characterData</code> is not true, continue.
+   <!--not true==false||omitted-->
 
    <li><p>If <var title="">type</var> is "<code title="">childList</code>" and
-   <var title="">options</var>'s <code title="">childList</code> is false,
-   continue.
+   <var title="">options</var>'s <code title="">childList</code> is false, continue.
 
    <li><p>If <var title="">registered observer</var>'s <b title="">observer</b> is
    not in <var title="">interested observers</var>, append
