@@ -1989,6 +1989,9 @@ interface <dfn>ParentNode</dfn> {
 
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
+
+  <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>);
+  <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(<var title>selectors</var>);
 };
 <span>Document</span> implements <span>ParentNode</span>;
 <span>DocumentFragment</span> implements <span>ParentNode</span>;
@@ -2032,6 +2035,18 @@ interface <dfn>ParentNode</dfn> {
   "<code>HierarchyRequestError</code>" if the constraints of the
   <span title=concept-node-tree>node tree</span> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title>node</var> . <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>)</code>
+ <dd>
+  <p>Returns the first <span title=concept-element>element</span> that is a
+  <span title=concept-tree-child>child</span> of <var title>node</var> that matches
+  <var title>selectors</var>.
+
+ <dt><code><var title>node</var> . <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(<var title>selectors</var>)</code>
+ <dd>
+  <p>Returns all <span title=concept-element>element</span>
+  <span title=concept-tree-child>children</span> of <var title>node</var> that match
+  <var title>selectors</var>.
 </dl>
 
 <p>The <dfn title=dom-ParentNode-children><code>children</code></dfn>
@@ -2081,6 +2096,36 @@ method must run these steps:
  <li><p><span title=concept-node-append>Append</span>
  <var title>node</var> to the <span>context object</span>.
 </ol>
+
+<p>To <dfn>evaluate a selectors string</dfn> <var title>selectors</var> against a
+<var title>node</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title>tree</var> be <var title>node</var>'s
+ <span title=concept-tree-root>root</span>.
+
+ <li><p>Let <var title>s</var> be the result of
+ <span title=concept-selectors-parser>parsing</span> <var title>selectors</var>.
+ <span data-anolis-ref>SELECTORS</span>
+
+ <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
+ JavaScript <code title>TypeError</code>.
+
+ <li><p>Return the result of <span>matching</span> <var title>s</var> against
+ <var title>tree</var> using <span>scoping root</span> <var tilte>node</var>.
+ <span data-anolis-ref>SELECTORS</span>.
+</ol>
+<!-- XXX needs more xref love -->
+
+<p>The
+<dfn title=dom-ParentNode-querySelector><code>querySelector(<var>selectors</var>)</code></dfn>
+method must return the first result of running <span>evaluate a selectors string</span>
+<var title>selectors</var> against the <span>context object</span>.
+
+<p>The
+<dfn title=dom-ParentNode-querySelectorAll><code>querySelectorAll(<var>selectors</var>)</code></dfn>
+method must return the result of running <span>evaluate a selectors string</span>
+<var title>selectors</var> against the <span>context object</span>.
 
 
 <h4>Interface <code>ChildNode</code></h4>
@@ -2406,8 +2451,7 @@ method must run these steps:
 
 <ol>
  <li><p>If either <var title>options</var>'
- <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> is
- present or <var title>options</var>'
+ <code title=dom-MutationObserverInit-attributeOldValue>attributeOldValue</code> or
  <code title=dom-MutationObserverInit-attributeFilter>attributeFilter</code> is present
  and <var title>options</var>'
  <code title=dom-MutationObserverInit-attributes>attributes</code> is omitted, set

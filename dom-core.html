@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-10-september-2013">Living Standard — Last Updated 10 September 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-11-september-2013">Living Standard — Last Updated 11 September 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-10 September 2013, the editors have made this specification available
+11 September 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2066,6 +2066,9 @@ interface <dfn id="parentnode">ParentNode</dfn> {
 
   void <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+
+  <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(<var title="">selectors</var>);
+  <a href="#nodelist">NodeList</a> <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(<var title="">selectors</var>);
 };
 <a href="#document">Document</a> implements <a href="#parentnode">ParentNode</a>;
 <a href="#documentfragment">DocumentFragment</a> implements <a href="#parentnode">ParentNode</a>;
@@ -2109,6 +2112,18 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
   <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(<var title="">selectors</var>)</code>
+ <dd>
+  <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
+  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">node</var> that matches
+  <var title="">selectors</var>.
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(<var title="">selectors</var>)</code>
+ <dd>
+  <p>Returns all <a href="#concept-element" title="concept-element">element</a>
+  <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> that match
+  <var title="">selectors</var>.
 </dl>
 
 <p>The <dfn id="dom-parentnode-children" title="dom-ParentNode-children"><code>children</code></dfn>
@@ -2158,6 +2173,36 @@ method must run these steps:
  <li><p><a href="#concept-node-append" title="concept-node-append">Append</a>
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
+
+<p>To <dfn id="evaluate-a-selectors-string">evaluate a selectors string</dfn> <var title="">selectors</var> against a
+<var title="">node</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">tree</var> be <var title="">node</var>'s
+ <a href="#concept-tree-root" title="concept-tree-root">root</a>.
+
+ <li><p>Let <var title="">s</var> be the result of
+ <span title="concept-selectors-parser">parsing</span> <var title="">selectors</var>.
+ <a href="#refsSELECTORS">[SELECTORS]</a>
+
+ <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-throw">throw</a> a
+ JavaScript <code title="">TypeError</code>.
+
+ <li><p>Return the result of <span>matching</span> <var title="">s</var> against
+ <var title="">tree</var> using <span>scoping root</span> <var tilte=""><a href="#node">node</a></var>.
+ <a href="#refsSELECTORS">[SELECTORS]</a>.
+</ol>
+<!-- XXX needs more xref love -->
+
+<p>The
+<dfn id="dom-parentnode-queryselector" title="dom-ParentNode-querySelector"><code>querySelector(<var>selectors</var>)</code></dfn>
+method must return the first result of running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a>
+<var title="">selectors</var> against the <a href="#context-object">context object</a>.
+
+<p>The
+<dfn id="dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll"><code>querySelectorAll(<var>selectors</var>)</code></dfn>
+method must return the result of running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a>
+<var title="">selectors</var> against the <a href="#context-object">context object</a>.
 
 
 <h4 id="interface-childnode"><span class="secno">6.2.3 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
@@ -2483,8 +2528,7 @@ method must run these steps:
 
 <ol>
  <li><p>If either <var title="">options</var>'
- <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> is
- present or <var title="">options</var>'
+ <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> or
  <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code> is present
  and <var title="">options</var>'
  <code title="dom-MutationObserverInit-attributes">attributes</code> is omitted, set
@@ -9085,6 +9129,9 @@ some of these features should be reintroduced.
 
 <dt id="refsRFC2119">[RFC2119]
 <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, Scott Bradner. IETF.
+
+<dt id="refsSELECTORS">[SELECTORS]
+<dd><cite><a href="http://dev.w3.org/csswg/selectors/">Selectors</a></cite>, Elika J. Etemad and Tab Atkins Jr.. W3C.
 
 <dt id="refsUIEVENTS">[UIEVENTS]
 <dd><cite><a href="https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm">UI Events</a></cite>, Gary Kacmarcik and Travis Leithead. W3C.
