@@ -628,8 +628,8 @@ function that returns a <code>Promise</code> that is responsible for fetching a
 create new <span title=concept-promise>promises</span>, which allows for operating on the
 results of several asynchronous requests at once:
 
-<pre>Promise.every(fetchJSON("/user/mario"), fetchJSON("/user/luigi")).then(
-  function(mario, luigi) { &hellip; },
+<pre>Promise.all([fetchJSON("/user/mario"), fetchJSON("/user/luigi")]).then(
+  function([mario, luigi]) { &hellip; },
   showFailcat
 )</pre>
 
@@ -1992,6 +1992,8 @@ interface <dfn>ParentNode</dfn> {
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 
+  <span>Element</span>? <span title=dom-ParentNode-query>query</span>(<var title>relativeSelectors</var>);
+  [NewObject] <span>Elements</span> <span title=dom-ParentNode-queryAll>queryAll</span>(<var title>relativeSelectors</var>);
   <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>);
   [NewObject] <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(<var title>selectors</var>);
 };
@@ -2037,6 +2039,18 @@ interface <dfn>ParentNode</dfn> {
   "<code>HierarchyRequestError</code>" if the constraints of the
   <span title=concept-node-tree>node tree</span> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title>node</var> . <span title=dom-ParentNode-query>query</span>(<var title>relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns the first <span title=concept-element>element</span> that is a
+  <span title=concept-tree-child>child</span> of <var title>node</var> that matches
+  <var title>relativeSelectors</var>.
+
+ <dt><code><var title>node</var> . <span title=dom-ParentNode-queryAll>queryAll</span>(<var title>relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns all <span title=concept-element>element</span>
+  <span title=concept-tree-child>children</span> of <var title>node</var> that match
+  <var title>relativeSelectors</var>.
 
  <dt><code><var title>node</var> . <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>)</code>
  <dd>
@@ -2099,12 +2113,52 @@ method must run these steps:
  <var title>node</var> to the <span>context object</span>.
 </ol>
 
+<p>To <dfn>evaluate a relative selectors string</dfn> <var title>relativeSelectors</var>
+against a <var title>node</var> or a <var title>list</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title>elementSet</var> be <var title>node</var> if that was given, and
+ all <span title=concept-element>elements</span> in <var title>list</var>, in the same
+ order, otherwise.
+
+ <li><p>Let <var title>s</var> be the result of
+ <span>absolutizing a relative selector list</span> <var title>relativeSelectors</var>
+ using <span>reference element set</span> <var title>elementSet</var>.
+ <span data-anolis-ref>SELECTORS</span>
+
+ <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
+ JavaScript <code title>TypeError</code>.
+
+ <li><p>Let <var title>result</var> be the empty list.
+
+ <li><p>For each <span title=concept-element>element</span> <var title>e</var> in
+ <var title>elementSet</var>, append the <span title=concept-element>elements</span> that
+ are not in <var title>result</var> and result from <span>matching</span>
+ <var title>s</var> against <var title>e</var>'s <span title=concept-tree-root>root</span>
+ using <span>scoping root</span> <var title>e</var>, to <var title>result</var>.
+ <span data-anolis-ref>SELECTORS</span>
+
+ <li><p>Return <var title>result</var>.
+</ol>
+
+<p>The
+<dfn title=dom-ParentNode-query><code>query(<var>relativeSelectors</var>)</code></dfn>
+method must return the first result of running
+<span>evaluate a relative selectors string</span> <var title>relativeSelectors</var>
+against the <span>context object</span>, and null if the result is an empty list.
+
+<p>The
+<dfn title=dom-ParentNode-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method must return the  <span title=concept-collection-static>static</span> result of
+running <span>evaluate a relative selectors string</span>
+<var title>relativeSelectors</var> against the <span>context object</span>.
+
 <p>To <dfn>evaluate a selectors string</dfn> <var title>selectors</var> against a
 <var title>node</var>, run these steps:
 
 <ol>
  <li><p>Let <var title>s</var> be the result of
- <span title=concept-selectors-parser>parsing</span> <var title>selectors</var>.
+ <span title=concept-selectors-parser>selectors parsing</span> <var title>selectors</var>.
  <span data-anolis-ref>SELECTORS</span>
 
  <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
@@ -2273,7 +2327,43 @@ method must run these steps:
 
 <h4>Collections: <code>Elements</code></h4>
 
-<p class=XXX>...
+<pre class=idl>class <dfn>Elements</dfn> extends <span>Array</span> {
+  <span>Element</span>? <span title=dom-Elements-query>query</span>(<var title>relativeSelectors</var>);
+  <span>Elements</span> <span title=dom-Elements-queryAll>queryAll</span>(<var title>relativeSelectors</var>);
+};</pre>
+
+<div class=XXX>
+<p>IDL bugs: <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20020"><code>Array</code> subclassing</a> and <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=23225">class, not interface</a>.
+
+<p><code>Elements</code> is an ES6-style subclass of <code>Array</code> with two
+additional methods. It's the new <code>NodeList</code> / <code>HTMLCollection</code>.
+</div>
+
+<dl class=domintro>
+ <dt><code><var title>elements</var> . <span title=dom-Elements-query>query</span>(<var title>relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns the first <span title=concept-element>element</span> that is a
+  <span title=concept-tree-child>child</span> of <var title>elements</var> that matches
+  <var title>relativeSelectors</var>.
+
+ <dt><code><var title>elements</var> . <span title=dom-Elements-queryAll>queryAll</span>(<var title>relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns all <span title=concept-element>element</span>
+  <span title=concept-tree-child>children</span> of <var title>elements</var> that match
+  <var title>relativeSelectors</var>.
+</dl>
+
+<p>The
+<dfn title=dom-Elements-query><code>query(<var>relativeSelectors</var>)</code></dfn>
+method must return the first result of running
+<span>evaluate a relative selectors string</span> <var title>relativeSelectors</var>
+against the <span>context object</span>, and null if the result is an empty list.
+
+<p>The
+<dfn title=dom-Elements-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method must return the  <span title=concept-collection-static>static</span> result of
+running <span>evaluate a relative selectors string</span>
+<var title>relativeSelectors</var> against the <span>context object</span>.
 
 
 <h4>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></h4>
