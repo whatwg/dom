@@ -2125,8 +2125,9 @@ is an empty list.
 
 <p>The
 <dfn title=dom-ParentNode-querySelectorAll><code>querySelectorAll(<var>selectors</var>)</code></dfn>
-method must return the result of running <span>evaluate a selectors string</span>
-<var title>selectors</var> against the <span>context object</span>.
+method must return the <span title=concept-collection-static>static</span> result of
+running <span>evaluate a selectors string</span> <var title>selectors</var> against the
+<span>context object</span>.
 
 
 <h4>Interface <code>ChildNode</code></h4>
@@ -2268,6 +2269,200 @@ method must run these steps:
  <span>context object</span>'s
  <span title=concept-tree-parent>parent</span>.
 </ol>
+
+
+<h4>Collections: <code>Elements</code></h4>
+
+<p class=XXX>...
+
+
+<h4>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></h4>
+
+<p>A <dfn title=concept-collection>collection</dfn> is an object that
+represents a lists of DOM nodes. A
+<span title=concept-collection>collection</span> can be either
+<dfn title=concept-collection-live>live</dfn> or
+<dfn title=concept-collection-static>static</dfn>. Unless otherwise stated,
+a <span title=concept-collection>collection</span> must be
+<span title=concept-collection-live>live</span>.
+
+<p>If a <span title=concept-collection>collection</span> is <span
+title=concept-collection-live>live</span>, then the attributes and methods
+on that object must operate on the actual underlying data, not a snapshot of
+the data.
+
+<p>When a <span title=concept-collection>collection</span> is created, a
+filter and a root are associated with it.
+
+<p>The <span title=concept-collection>collection</span> then
+<dfn title="represented by the collection">represents</dfn> a view of the
+subtree rooted at the <span title=concept-collection>collection's</span>
+root, containing only nodes that match the given filter. The view is linear.
+In the absence of specific requirements to the contrary, the nodes within
+the <span title=concept-collection>collection</span> must be sorted in
+<span title=concept-tree-order>tree order</span>.
+
+
+<h5>Interface <code>NodeList</code></h5>
+
+<p>A <code>NodeList</code> object is a
+<span title=concept-collection>collection</span> of
+<span title=concept-node>nodes</span>.
+
+<pre class=idl>[ArrayClass]
+interface <dfn>NodeList</dfn> {
+  getter <span>Node</span>? <span title=dom-NodeList-item>item</span>(unsigned long <var title>index</var>);
+  readonly attribute unsigned long <span title=dom-NodeList-length>length</span>;
+};</pre>
+
+<div class=impl>
+<p class=warning>It is unclear if it will be possible to turn
+<code>NodeList</code> into an <code title>ArrayClass</code> interface.
+<a href="http://code.google.com/p/chromium/issues/detail?id=229398">Experimentation</a>
+is planned by the Chromium project.
+</div>
+
+<dl class=domintro>
+ <dt><var title>collection</var> . <code title=dom-NodeList-length>length</code>
+ <dd>
+  <p>Returns the number of <span title=concept-node>nodes</span> in the
+  <span title=concept-collection>collection</span>.
+
+ <dt><var title>element</var> = <var title>collection</var> . <code title=dom-NodeList-item>item</code>(<var title>index</var>)
+ <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
+ <dd>
+  <p>Returns the <span title=concept-node>node</span> with index
+  <var title>index</var> from the
+  <span title=concept-collection>collection</span>. The
+  <span title=concept-node>nodes</span> are sorted in
+  <span title=concept-tree-order>tree order</span>.
+</dl>
+
+<div class=impl>
+
+<p>The object's <span data-anolis-spec=webidl>supported property indices</span>
+are the numbers in the range zero to one less than the number of nodes
+<span>represented by the collection</span>. If there are no such elements, then
+there are no <span data-anolis-spec=webidl>supported property indices</span>.
+
+<p>The <dfn title=dom-NodeList-length><code>length</code></dfn> attribute must
+return the number of nodes <span>represented by the collection</span>.
+
+<p>The
+<dfn title=dom-NodeList-item><code>item(<var title>index</var>)</code></dfn>
+method must return the <var title>index</var>th
+node in the <span title=concept-collection>collection</span>. If there is no
+<var title>index</var>th node in the <span
+title=concept-collection>collection</span>, then the method must return null.
+
+</div>
+
+
+<h5>Interface <code>HTMLCollection</code></h5>
+
+<p>An <code>HTMLCollection</code> object is a
+<span title=concept-collection>collection</span> of
+<span title=concept-element>elements</span>.
+
+<p class=note><code>HTMLCollection</code> is considered a terrible
+interface. We advise against copying or using it for new interfaces.
+
+<p class=note>This interface is called <code>HTMLCollection</code> for
+historical reasons. The
+<code title=dom-HTMLCollection-namedItem>namedItem()</code> method returns an
+<code data-anolis-spec=webidl>object</code> for interfaces that inherit from
+this interface, which return other objects for historical reasons.
+
+<pre class=idl>interface <dfn>HTMLCollection</dfn> {
+  readonly attribute unsigned long <span title=dom-HTMLCollection-length>length</span>;
+  getter <span>Element</span>? <span title=dom-HTMLCollection-item>item</span>(unsigned long <var title>index</var>);
+  getter <span>Element</span>? <span title=dom-HTMLCollection-namedItem>namedItem</span>(DOMString <var title>name</var>);
+};</pre>
+
+<dl class=domintro>
+ <dt><var title>collection</var> . <code title=dom-HTMLCollection-length>length</code>
+ <dd>
+  <p>Returns the number of <span title=concept-element>elements</span> in
+  the <span title=concept-collection>collection</span>.
+
+ <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-item>item</code>(<var title>index</var>)
+ <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
+ <dd>
+  <p>Returns the <span title=concept-element>element</span> with index
+  <var title>index</var> from the <span title=concept-collection>collection</span>.
+  The <span title=concept-element>elements</span> are sorted in <span title=concept-tree-order>tree order</span>.
+
+ <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-namedItem>namedItem</code>(<var title>name</var>)
+ <dt><var title>element</var> = <var title>collection</var>[<var title>name</var>]
+ <dd>
+  <p>Returns the first <span title=concept-element>element</span> with <span title="concept-id">ID</span> or name <var title>name</var>
+  from the collection.
+</dl>
+
+<div class=impl>
+
+<p>The object's <span data-anolis-spec=webidl>supported property indices</span>
+are the numbers in the range zero to one less than the number of nodes
+<span>represented by the collection</span>. If there are no such elements, then
+there are no <span data-anolis-spec=webidl>supported property indices</span>.
+
+<p>The <dfn title=dom-HTMLCollection-length><code>length</code></dfn> attribute
+must return the number of nodes <span>represented by the collection</span>.
+
+<p>The
+<dfn title=dom-HTMLCollection-item><code>item(<var title>index</var>)</code></dfn>
+method must return the <var title>index</var>th
+<span title=concept-element>element</span> in the <span title=concept-collection>collection</span>. If there is no
+<var title>index</var>th <span title=concept-element>element</span> in the <span title=concept-collection>collection</span>, then the method must return null.
+
+<p>The <span data-anolis-spec=webidl>supported property names</span> are the
+values from the list returned by these steps:
+
+<ol>
+ <li><p>Let <var title>result</var> be an empty list.
+ <li>
+  <p>For each <var title>element</var>
+  <span>represented by the collection</span>, in
+  <span title=concept-tree-order>tree order</span>, run these substeps:
+  <ol>
+   <li><p>If <var title>element</var> is in the <span>HTML namespace</span>
+   and <span title=concept-element-attribute-has>has</span> a
+   <span title=concept-named-attribute><code title>name</code> attribute</span>
+   whose <span title=concept-attribute-value>value</span> is neither the
+   empty string nor is in <var title>result</var>, append
+   <var title>element</var>'s
+   <span title=concept-named-attribute><code title>name</code> attribute</span>
+   <span title=concept-attribute-value>value</span> to <var title>result</var>.
+
+   <li><p>If <var title>element</var> has an
+   <span title=concept-ID>ID</span> which is neither the empty string nor is
+   in <var title>result</var>, append <var title>element</var>'s
+   <span title=concept-ID>ID</span> to <var title>result</var>.
+  </ol>
+ <li><p>Return <var title>result</var>.
+</ol>
+
+<p>The
+<dfn title=dom-HTMLCollection-namedItem><code>namedItem(<var title>key</var>)</code></dfn>
+method must run these steps:
+<ol>
+ <li>If <var title>key</var> is the empty string, return null.</li>
+ <li>
+  <p>Return the first <span title=concept-element>element</span> in the
+  <span title=concept-collection>collection</span> for which at least one of
+  the following is true:
+  <ul>
+   <li>it <span title=concept-element-attribute-has>has</span> a
+   <span title=concept-named-attribute><code title>name</code> attribute</span>
+   whose <span title=concept-attribute-value>value</span> is
+   <var title>key</var>;
+   <li>it has an <span title=concept-id>ID</span> which is
+   <var title>key</var>.
+  </ul>
+  <p>or null if there is no such <span title=concept-element>element</span>.
+</ol>
+
+</div>
 
 
 
@@ -5572,7 +5767,7 @@ have its name converted to ASCII lowercase before the element is affected.
 <dl class=domintro>
  <dt><code><var title>element</var> . <span title=dom-Element-matches>matches</span>(<var title>selectors</var>)</code>
  <dd><p>Returns true if matching <var title>selectors</var> against
- <var title>element</var>'s <span title=dom-tree-root>root</span> yields
+ <var title>element</var>'s <span title=concept-tree-root>root</span> yields
  <var title>element</var>, and false otherwise.
 </dl>
 
@@ -8384,199 +8579,6 @@ bitmask.
 
 
 
-<h2>Collections</h2>
-
-<p>A <dfn title=concept-collection>collection</dfn> is an object that
-represents a lists of DOM nodes. A
-<span title=concept-collection>collection</span> can be either
-<dfn title=concept-collection-live>live</dfn> or
-<dfn title=concept-collection-static>static</dfn>. Unless otherwise stated,
-a <span title=concept-collection>collection</span> must be
-<span title=concept-collection-live>live</span>.
-
-<p>If a <span title=concept-collection>collection</span> is <span
-title=concept-collection-live>live</span>, then the attributes and methods
-on that object must operate on the actual underlying data, not a snapshot of
-the data.
-
-<p>When a <span title=concept-collection>collection</span> is created, a
-filter and a root are associated with it.
-
-<p>The <span title=concept-collection>collection</span> then
-<dfn title="represented by the collection">represents</dfn> a view of the
-subtree rooted at the <span title=concept-collection>collection's</span>
-root, containing only nodes that match the given filter. The view is linear.
-In the absence of specific requirements to the contrary, the nodes within
-the <span title=concept-collection>collection</span> must be sorted in
-<span title=concept-tree-order>tree order</span>.
-
-<p>An attribute that returns a
-<span title=concept-collection-live>live</span>
-<span title=concept-collection>collection</span> must return the same object
-every time it is retrieved.
-
-
-<h3>Interface <code>NodeList</code></h3>
-
-<p>A <code>NodeList</code> object is a
-<span title=concept-collection>collection</span> of
-<span title=concept-node>nodes</span>.
-
-<pre class=idl>[ArrayClass]
-interface <dfn>NodeList</dfn> {
-  getter <span>Node</span>? <span title=dom-NodeList-item>item</span>(unsigned long <var title>index</var>);
-  readonly attribute unsigned long <span title=dom-NodeList-length>length</span>;
-};</pre>
-
-<div class=impl>
-<p class=warning>It is unclear if it will be possible to turn
-<code>NodeList</code> into an <code title>ArrayClass</code> interface.
-<a href="http://code.google.com/p/chromium/issues/detail?id=229398">Experimentation</a>
-is planned by the Chromium project.
-</div>
-
-<dl class=domintro>
- <dt><var title>collection</var> . <code title=dom-NodeList-length>length</code>
- <dd>
-  <p>Returns the number of <span title=concept-node>nodes</span> in the
-  <span title=concept-collection>collection</span>.
-
- <dt><var title>element</var> = <var title>collection</var> . <code title=dom-NodeList-item>item</code>(<var title>index</var>)
- <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
- <dd>
-  <p>Returns the <span title=concept-node>node</span> with index
-  <var title>index</var> from the
-  <span title=concept-collection>collection</span>. The
-  <span title=concept-node>nodes</span> are sorted in
-  <span title=concept-tree-order>tree order</span>.
-</dl>
-
-<div class=impl>
-
-<p>The object's <span data-anolis-spec=webidl>supported property indices</span>
-are the numbers in the range zero to one less than the number of nodes
-<span>represented by the collection</span>. If there are no such elements, then
-there are no <span data-anolis-spec=webidl>supported property indices</span>.
-
-<p>The <dfn title=dom-NodeList-length><code>length</code></dfn> attribute must
-return the number of nodes <span>represented by the collection</span>.
-
-<p>The
-<dfn title=dom-NodeList-item><code>item(<var title>index</var>)</code></dfn>
-method must return the <var title>index</var>th
-node in the <span title=concept-collection>collection</span>. If there is no
-<var title>index</var>th node in the <span
-title=concept-collection>collection</span>, then the method must return null.
-
-</div>
-
-
-<h3>Interface <code>HTMLCollection</code></h3>
-
-<p>An <code>HTMLCollection</code> object is a
-<span title=concept-collection>collection</span> of
-<span title=concept-element>elements</span>.
-
-<p class=note><code>HTMLCollection</code> is considered a terrible
-interface. We advise against copying or using it for new interfaces.
-
-<p class=note>This interface is called <code>HTMLCollection</code> for
-historical reasons. The
-<code title=dom-HTMLCollection-namedItem>namedItem()</code> method returns an
-<code data-anolis-spec=webidl>object</code> for interfaces that inherit from
-this interface, which return other objects for historical reasons.
-
-<pre class=idl>interface <dfn>HTMLCollection</dfn> {
-  readonly attribute unsigned long <span title=dom-HTMLCollection-length>length</span>;
-  getter <span>Element</span>? <span title=dom-HTMLCollection-item>item</span>(unsigned long <var title>index</var>);
-  getter <span>Element</span>? <span title=dom-HTMLCollection-namedItem>namedItem</span>(DOMString <var title>name</var>);
-};</pre>
-
-<dl class=domintro>
- <dt><var title>collection</var> . <code title=dom-HTMLCollection-length>length</code>
- <dd>
-  <p>Returns the number of <span title=concept-element>elements</span> in
-  the <span title=concept-collection>collection</span>.
-
- <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-item>item</code>(<var title>index</var>)
- <dt><var title>element</var> = <var title>collection</var>[<var title>index</var>]
- <dd>
-  <p>Returns the <span title=concept-element>element</span> with index
-  <var title>index</var> from the <span title=concept-collection>collection</span>.
-  The <span title=concept-element>elements</span> are sorted in <span title=concept-tree-order>tree order</span>.
-
- <dt><var title>element</var> = <var title>collection</var> . <code title=dom-HTMLCollection-namedItem>namedItem</code>(<var title>name</var>)
- <dt><var title>element</var> = <var title>collection</var>[<var title>name</var>]
- <dd>
-  <p>Returns the first <span title=concept-element>element</span> with <span title="concept-id">ID</span> or name <var title>name</var>
-  from the collection.
-</dl>
-
-<div class=impl>
-
-<p>The object's <span data-anolis-spec=webidl>supported property indices</span>
-are the numbers in the range zero to one less than the number of nodes
-<span>represented by the collection</span>. If there are no such elements, then
-there are no <span data-anolis-spec=webidl>supported property indices</span>.
-
-<p>The <dfn title=dom-HTMLCollection-length><code>length</code></dfn> attribute
-must return the number of nodes <span>represented by the collection</span>.
-
-<p>The
-<dfn title=dom-HTMLCollection-item><code>item(<var title>index</var>)</code></dfn>
-method must return the <var title>index</var>th
-<span title=concept-element>element</span> in the <span title=concept-collection>collection</span>. If there is no
-<var title>index</var>th <span title=concept-element>element</span> in the <span title=concept-collection>collection</span>, then the method must return null.
-
-<p>The <span data-anolis-spec=webidl>supported property names</span> are the
-values from the list returned by these steps:
-
-<ol>
- <li><p>Let <var title>result</var> be an empty list.
- <li>
-  <p>For each <var title>element</var>
-  <span>represented by the collection</span>, in
-  <span title=concept-tree-order>tree order</span>, run these substeps:
-  <ol>
-   <li><p>If <var title>element</var> is in the <span>HTML namespace</span>
-   and <span title=concept-element-attribute-has>has</span> a
-   <span title=concept-named-attribute><code title>name</code> attribute</span>
-   whose <span title=concept-attribute-value>value</span> is neither the
-   empty string nor is in <var title>result</var>, append
-   <var title>element</var>'s
-   <span title=concept-named-attribute><code title>name</code> attribute</span>
-   <span title=concept-attribute-value>value</span> to <var title>result</var>.
-
-   <li><p>If <var title>element</var> has an
-   <span title=concept-ID>ID</span> which is neither the empty string nor is
-   in <var title>result</var>, append <var title>element</var>'s
-   <span title=concept-ID>ID</span> to <var title>result</var>.
-  </ol>
- <li><p>Return <var title>result</var>.
-</ol>
-
-<p>The
-<dfn title=dom-HTMLCollection-namedItem><code>namedItem(<var title>key</var>)</code></dfn>
-method must run these steps:
-<ol>
- <li>If <var title>key</var> is the empty string, return null.</li>
- <li>
-  <p>Return the first <span title=concept-element>element</span> in the
-  <span title=concept-collection>collection</span> for which at least one of
-  the following is true:
-  <ul>
-   <li>it <span title=concept-element-attribute-has>has</span> a
-   <span title=concept-named-attribute><code title>name</code> attribute</span>
-   whose <span title=concept-attribute-value>value</span> is
-   <var title>key</var>;
-   <li>it has an <span title=concept-id>ID</span> which is
-   <var title>key</var>.
-  </ul>
-  <p>or null if there is no such <span title=concept-element>element</span>.
-</ol>
-
-</div>
-
 
 <!-- AttrExodus
 <h3>Interface <code>NamedNodeMap</code></h3>
@@ -8619,7 +8621,10 @@ title=concept-collection>collection</span>, whose primary purpose is to expose
 -->
 
 
-<h2>Lists</h2>
+<h2>Sets</h2>
+
+<p class=note>Yes, the names <code>DOMTokenList</code> and
+<code>DOMSettableTokenList</code> are unfortunate legacy mishaps.
 
 <h3>Interface <code>DOMTokenList</code></h3>
 
