@@ -1992,10 +1992,10 @@ interface <dfn>ParentNode</dfn> {
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 
-  <span>Element</span>? <span title=dom-ParentNode-query>query</span>(<var title>relativeSelectors</var>);
-  [NewObject] <span>Elements</span> <span title=dom-ParentNode-queryAll>queryAll</span>(<var title>relativeSelectors</var>);
-  <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>);
-  [NewObject] <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(<var title>selectors</var>);
+  <span>Element</span>? <span title=dom-ParentNode-query>query</span>(DOMString <var title>relativeSelectors</var>);
+  [NewObject] <span>Elements</span> <span title=dom-ParentNode-queryAll>queryAll</span>(DOMString <var title>relativeSelectors</var>);
+  <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(DOMString <var title>selectors</var>);
+  [NewObject] <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(DOMString <var title>selectors</var>);
 };
 <span>Document</span> implements <span>ParentNode</span>;
 <span>DocumentFragment</span> implements <span>ParentNode</span>;
@@ -2328,8 +2328,8 @@ method must run these steps:
 <h4>Collections: <code>Elements</code></h4>
 
 <pre class=idl>class <dfn>Elements</dfn> extends <span>Array</span> {
-  <span>Element</span>? <span title=dom-Elements-query>query</span>(<var title>relativeSelectors</var>);
-  <span>Elements</span> <span title=dom-Elements-queryAll>queryAll</span>(<var title>relativeSelectors</var>);
+  <span>Element</span>? <span title=dom-Elements-query>query</span>(DOMString <var title>relativeSelectors</var>);
+  <span>Elements</span> <span title=dom-Elements-queryAll>queryAll</span>(DOMString <var title>relativeSelectors</var>);
 };</pre>
 
 <div class=XXX>
@@ -2450,24 +2450,20 @@ title=concept-collection>collection</span>, then the method must return null.
 
 <h5>Interface <code>HTMLCollection</code></h5>
 
-<p>An <code>HTMLCollection</code> object is a
-<span title=concept-collection>collection</span> of
-<span title=concept-element>elements</span>.
-
-<p class=note><code>HTMLCollection</code> is considered a terrible
-interface. We advise against copying or using it for new interfaces.
-
-<p class=note>This interface is called <code>HTMLCollection</code> for
-historical reasons. The
-<code title=dom-HTMLCollection-namedItem>namedItem()</code> method returns an
-<code data-anolis-spec=webidl>object</code> for interfaces that inherit from
-this interface, which return other objects for historical reasons.
-
 <pre class=idl>interface <dfn>HTMLCollection</dfn> {
   readonly attribute unsigned long <span title=dom-HTMLCollection-length>length</span>;
   getter <span>Element</span>? <span title=dom-HTMLCollection-item>item</span>(unsigned long <var title>index</var>);
   getter <span>Element</span>? <span title=dom-HTMLCollection-namedItem>namedItem</span>(DOMString <var title>name</var>);
 };</pre>
+
+<p>An <code>HTMLCollection</code> object is a
+<span title=concept-collection>collection</span> of
+<span title=concept-element>elements</span>.
+
+<p class=note><code>Elements</code> is the better solution for representing a
+<span title=concept-collection>collection</span> of
+<span title=concept-element>elements</span>. <code>HTMLCollection</code> is an historical
+artefact we cannot rid the web of.
 
 <dl class=domintro>
  <dt><var title>collection</var> . <code title=dom-HTMLCollection-length>length</code>

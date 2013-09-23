@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-12-september-2013">Living Standard — Last Updated 12 September 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-23-september-2013">Living Standard — Last Updated 23 September 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-12 September 2013, the editors have made this specification available
+23 September 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2070,10 +2070,10 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   void <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
 
-  <a href="#element">Element</a>? <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(<var title="">relativeSelectors</var>);
-  [NewObject] <a href="#elements">Elements</a> <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(<var title="">relativeSelectors</var>);
-  <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(<var title="">selectors</var>);
-  [NewObject] <a href="#nodelist">NodeList</a> <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(<var title="">selectors</var>);
+  <a href="#element">Element</a>? <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(DOMString <var title="">relativeSelectors</var>);
+  [NewObject] <a href="#elements">Elements</a> <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
+  <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(DOMString <var title="">selectors</var>);
+  [NewObject] <a href="#nodelist">NodeList</a> <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(DOMString <var title="">selectors</var>);
 };
 <a href="#document">Document</a> implements <a href="#parentnode">ParentNode</a>;
 <a href="#documentfragment">DocumentFragment</a> implements <a href="#parentnode">ParentNode</a>;
@@ -2406,8 +2406,8 @@ method must run these steps:
 <h4 id="collections:-elements"><span class="secno">6.2.4 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
 
 <pre class="idl">class <dfn id="elements">Elements</dfn> extends <span>Array</span> {
-  <a href="#element">Element</a>? <a href="#dom-elements-query" title="dom-Elements-query">query</a>(<var title="">relativeSelectors</var>);
-  <a href="#elements">Elements</a> <a href="#dom-elements-queryall" title="dom-Elements-queryAll">queryAll</a>(<var title="">relativeSelectors</var>);
+  <a href="#element">Element</a>? <a href="#dom-elements-query" title="dom-Elements-query">query</a>(DOMString <var title="">relativeSelectors</var>);
+  <a href="#elements">Elements</a> <a href="#dom-elements-queryall" title="dom-Elements-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
 };</pre>
 
 <div class="XXX">
@@ -2526,24 +2526,20 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 
 <h5 id="interface-htmlcollection"><span class="secno">6.2.5.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
 
-<p>An <code><a href="#htmlcollection">HTMLCollection</a></code> object is a
-<a href="#concept-collection" title="concept-collection">collection</a> of
-<a href="#concept-element" title="concept-element">elements</a>.
-
-<p class="note"><code><a href="#htmlcollection">HTMLCollection</a></code> is considered a terrible
-interface. We advise against copying or using it for new interfaces.
-
-<p class="note">This interface is called <code><a href="#htmlcollection">HTMLCollection</a></code> for
-historical reasons. The
-<code title="dom-HTMLCollection-namedItem"><a href="#dom-htmlcollection-nameditem">namedItem()</a></code> method returns an
-<code class="external" data-anolis-spec="webidl"><a href="http://dev.w3.org/2006/webapi/WebIDL/#idl-object">object</a></code> for interfaces that inherit from
-this interface, which return other objects for historical reasons.
-
 <pre class="idl">interface <dfn id="htmlcollection">HTMLCollection</dfn> {
   readonly attribute unsigned long <a href="#dom-htmlcollection-length" title="dom-HTMLCollection-length">length</a>;
   getter <a href="#element">Element</a>? <a href="#dom-htmlcollection-item" title="dom-HTMLCollection-item">item</a>(unsigned long <var title="">index</var>);
   getter <a href="#element">Element</a>? <a href="#dom-htmlcollection-nameditem" title="dom-HTMLCollection-namedItem">namedItem</a>(DOMString <var title="">name</var>);
 };</pre>
+
+<p>An <code><a href="#htmlcollection">HTMLCollection</a></code> object is a
+<a href="#concept-collection" title="concept-collection">collection</a> of
+<a href="#concept-element" title="concept-element">elements</a>.
+
+<p class="note"><code><a href="#elements">Elements</a></code> is the better solution for representing a
+<a href="#concept-collection" title="concept-collection">collection</a> of
+<a href="#concept-element" title="concept-element">elements</a>. <code><a href="#htmlcollection">HTMLCollection</a></code> is an historical
+artefact we cannot rid the web of.
 
 <dl class="domintro">
  <dt><var title="">collection</var> . <code title="dom-HTMLCollection-length"><a href="#dom-htmlcollection-length">length</a></code>
