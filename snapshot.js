@@ -1,7 +1,7 @@
 
 
 var fs = require("fs")
-,   pth = require("pth")
+,   pth = require("path")
 ,   jsdom = require("jsdom")
 ,   rfs = function (f) { return fs.readFileSync(f, { encoding: "utf8" }); }
 ,   rel = function (f) { return pth.join(__dirname, f); }
@@ -11,17 +11,18 @@ var fs = require("fs")
 ,   respecConfig = {
         specStatus:     "ED"
     ,   shortName:      "dom"
-    ,   subtitle:       "Snapshot specification for the <a href='http://dom.spec.whatwg.org/'>DOM Living Standard</a>"
+    ,   subtitle:       "XXX"
+    ,   noReSpecCSS:    true
     ,   editors:        [
                             { name: "Anne van Kesteren", url: "http://annevankesteren.nl/",
                               company: "Mozilla", companyURL: "http://www.mozilla.org/",
-                              email: "annevk@annevk.nl" }
+                              email: "annevk@annevk.nl", note: "Upstream WHATWG version" }
                         ,   { name: "Aryeh Gregor",
                               company: "Mozilla", companyURL: "http://www.mozilla.org/",
-                              email: "ayg@aryeh.name" }
+                              email: "ayg@aryeh.name", note: "Upstream WHATWG version" }
                         ,   { name: "Ms2ger",
                               company: "Mozilla", companyURL: "http://www.mozilla.org/",
-                              email: "ms2ger@gmail.com" }
+                              email: "ms2ger@gmail.com", note: "Upstream WHATWG version" }
                         ,   { name: "Alex Russell", url: "http://infrequently.org/",
                               company: "Google", companyURL: "http://www.google.com/",
                               email: "slightlyoff@chromium.org" }
@@ -33,33 +34,64 @@ var fs = require("fs")
     ,   wgURI:          "http://www.w3.org/html/wg/"
     ,   wgPublicList:   "public-html"
     ,   wgPatentURI:    "http://www.w3.org/2004/01/pp-impl/40318/status"
-    ,   edDraftURI:     "http://darobin.github.com/html-ruby/"
+    ,   edDraftURI:     "http://w3c.github.com/dom/"
     ,   license:        "cc-by"
     }
 ;
 
+// take dom-core.html and munge the generated headers into it
+function mungeWithW3C (headers) {
+    jsdom.env({
+        html:   headers
+    ,   done:   function (err, window) {
+            if (err) error(err);
+            var w3Doc = window.document
+            ,   coreSrc = rfs(rel("dom-core.html"))
+            ;
+            jsdom.env({
+                html:   coreSrc
+            ,   done:   function (err, window) {
+                    if (err) error(err);
+                    var coreDoc = window.document
+                    ,   rsHead = w3Doc.querySelector("head")
+                    ,   targetHead = coreDoc.querySelector("head")
+                    ,   rsDiv = w3Doc.querySelector("div.head")
+                    ,   targetDiv = coreDoc.querySelector("div.head")
+                    ,   sotd = w3Doc.getElementById("sotd")
+                    ,   toc = coreDoc.getElementById("table-of-contents")
+                    ,   scripts = coreDoc.querySelectorAll("script")
+                    ,   imp = function (n) { return coreDoc.importNode(n, true); }
+                    ;
+                    targetHead.parentNode.replaceChild(imp(rsHead), targetHead);
+                    targetDiv.parentNode.replaceChild(imp(rsDiv), targetDiv);
+                    for (var i = 0, n = scripts.length; i < n; i++) {
+                        var scr = scripts[i];
+                        scr.parentNode.removeChild(scr);
+                    }
+                    toc.parentNode.insertBefore(imp(sotd), toc);
+
+                    var subtitle = coreDoc.getElementById("subtitle");
+                    subtitle.innerHTML = "Snapshot specification for the <a href='http://dom.spec.whatwg.org/'>DOM Living Standard</a>";
+
+                    fs.writeFileSync(rel("index.html"), coreDoc.outerHTML);
+                }
+            });
+        }
+    });
+}
+
 // make a document that can generate nice headers
 for (var k in localConfig) respecConfig[k] = localConfig[k];
 var respecSource = rfs(rel("header-maker.html"))
-                        .replace("###CONFIG###", JSON.stringify(respecConfig, null, 4));
-jsdom.env({
-    html:   respecSource
-,   done:   function (err, window) {
-        if (err) error(err);
-        console.log(window.respecEvents);
-        window.respecEvents.sub("end-all", function () {
-            console.log("notified of end-all");
-        });
-    }
-});
-
-// TODO
-//  - load up dom-core.html
-//  - generate the W3C headers using some local conf and ReSpec trickery
-//      - add a subtitle of the kind "Snapshot version of the <a href='...'>DOM Living Standard</a>"
-//      - try to make the list of editors reflect the genuine origin of the content
-//      - other changes?
-//  - save to index.html
-
-
-
+                        .replace("###CONFIG###", JSON.stringify(respecConfig, null, 4))
+,   doc = jsdom.jsdom(respecSource)
+,   win = doc.parentWindow
+;
+win.onload = function () {
+    win.respecEvents.sub("end-all", function () {
+        // XXX note that this will break with ReSpec 3.2, but that's an easy fix
+        var headersSource = (new win.berjon.respec()).toString();
+        // console.log(headersSource);
+        mungeWithW3C(headersSource);
+    });
+};
