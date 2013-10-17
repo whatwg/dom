@@ -34,7 +34,7 @@ var fs = require("fs")
     ,   wgURI:          "http://www.w3.org/html/wg/"
     ,   wgPublicList:   "public-html"
     ,   wgPatentURI:    "http://www.w3.org/2004/01/pp-impl/40318/status"
-    ,   edDraftURI:     "http://w3c.github.com/dom/"
+    ,   edDraftURI:     "http://w3c.github.io/dom/"
     ,   license:        "cc-by"
     }
 ;
