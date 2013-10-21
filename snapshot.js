@@ -1,5 +1,4 @@
 
-
 var fs = require("fs")
 ,   pth = require("path")
 ,   jsdom = require("jsdom")
@@ -8,6 +7,7 @@ var fs = require("fs")
 ,   error = function (e) { console.error(e); process.exit(1); }
 ,   localFile = rel("local-config.json") // use this file to override the config
 ,   localConfig = fs.existsSync(localFile) ? JSON.parse(rfs(localFile)) : {}
+,   outputFile = rel(process.argv[2] || "index.html")
 ,   respecConfig = {
         specStatus:     "ED"
     ,   shortName:      "dom"
@@ -32,7 +32,7 @@ var fs = require("fs")
                         ]
     ,   wg:             "HTML Working Group"
     ,   wgURI:          "http://www.w3.org/html/wg/"
-    ,   wgPublicList:   "public-html"
+    ,   wgPublicList:   "www-dom"
     ,   wgPatentURI:    "http://www.w3.org/2004/01/pp-impl/40318/status"
     ,   edDraftURI:     "http://w3c.github.io/dom/"
     ,   license:        "cc-by"
@@ -73,7 +73,7 @@ function mungeWithW3C (headers) {
                     var subtitle = coreDoc.getElementById("subtitle");
                     subtitle.innerHTML = "Snapshot specification for the <a href='http://dom.spec.whatwg.org/'>DOM Living Standard</a>";
 
-                    fs.writeFileSync(rel("index.html"), coreDoc.outerHTML);
+                    fs.writeFileSync(outputFile, coreDoc.outerHTML);
                 }
             });
         }
@@ -89,9 +89,9 @@ var respecSource = rfs(rel("header-maker.html"))
 ;
 win.onload = function () {
     win.respecEvents.sub("end-all", function () {
-        // XXX note that this will break with ReSpec 3.2, but that's an easy fix
-        var headersSource = (new win.berjon.respec()).toString();
-        // console.log(headersSource);
-        mungeWithW3C(headersSource);
+        win.require(["core/ui", "ui/save-html"], function (ui, saver) {
+            saver.show(ui, win.respecConfig, win.document, win.respecEvents);
+            mungeWithW3C(saver.toString());
+        });
     });
 };
