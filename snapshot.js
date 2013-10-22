@@ -7,7 +7,7 @@ var fs = require("fs")
 ,   error = function (e) { console.error(e); process.exit(1); }
 ,   localFile = rel("local-config.json") // use this file to override the config
 ,   localConfig = fs.existsSync(localFile) ? JSON.parse(rfs(localFile)) : {}
-,   outputFile = rel(process.argv[2] || "index.html")
+,   outputFile = rel(process.argv[2] || localConfig.output || "index.html")
 ,   respecConfig = {
         specStatus:     "ED"
     ,   shortName:      "dom"
