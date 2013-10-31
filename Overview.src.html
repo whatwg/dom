@@ -1992,6 +1992,7 @@ interface <dfn>ParentNode</dfn> {
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 
+  <span>Element</span>? <span title=dom-ParentNode-getElementById>getElementById</span>(DOMString <var title>elementId</var>);
   <span>Element</span>? <span title=dom-ParentNode-query>query</span>(DOMString <var title>relativeSelectors</var>);
   [NewObject] <span>Elements</span> <span title=dom-ParentNode-queryAll>queryAll</span>(DOMString <var title>relativeSelectors</var>);
   <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(DOMString <var title>selectors</var>);
@@ -2039,6 +2040,11 @@ interface <dfn>ParentNode</dfn> {
   "<code>HierarchyRequestError</code>" if the constraints of the
   <span title=concept-node-tree>node tree</span> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title>node</var> . <span title=dom-ParentNode-getElementById>getElementById</span>(<var title>elementId</var>)</code>
+ <dd><p>Returns the first <span title=concept-element>element</span> within
+ <var title>node</var>'s <span title=concept-tree-descendant>descendants</span> whose
+ <span title=concept-id>ID</span> is <var title>elementId</var>.
 
  <dt><code><var title>node</var> . <span title=dom-ParentNode-query>query</span>(<var title>relativeSelectors</var>)</code>
  <dd>
@@ -2112,6 +2118,14 @@ method must run these steps:
  <li><p><span title=concept-node-append>Append</span>
  <var title>node</var> to the <span>context object</span>.
 </ol>
+
+<p>The
+<dfn title=dom-ParentNode-getElementById><code>getElementById(<var>elementId</var>)</code></dfn>
+method must return the first <span title=concept-element>element</span>, in
+<span title=concept-tree-order>tree order</span>, within <span>context object</span>'s
+<span title=concept-tree-descendant>descendants</span>, whose
+<span title=concept-ID>ID</span> is <var title>elementId</var>, and null if there is no
+such <span title=concept-element>element</span> otherwise.
 
 <p>To <dfn>evaluate a relative selectors string</dfn> <var title>relativeSelectors</var>
 against a <var title>node</var> or a <var title>list</var>, run these steps:
@@ -4168,7 +4182,6 @@ interface <dfn>Document</dfn> : <span>Node</span> {
   <span>HTMLCollection</span> <span title=dom-Document-getElementsByTagName>getElementsByTagName</span>(DOMString <var title>localName</var>);
   <span>HTMLCollection</span> <span title=dom-Document-getElementsByTagNameNS>getElementsByTagNameNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
   <span>HTMLCollection</span> <span title=dom-Document-getElementsByClassName>getElementsByClassName</span>(DOMString <var title>classNames</var>);
-  <span>Element</span>? <span title=dom-Document-getElementById>getElementById</span>(DOMString <var title>elementId</var>);
 
   [NewObject] <span>Element</span> <span title=dom-Document-createElement>createElement</span>(DOMString <var title>localName</var>);
   [NewObject] <span>Element</span> <span title=dom-Document-createElementNS>createElementNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>qualifiedName</var>);
@@ -4401,10 +4414,6 @@ attribute must return the
   given by <var title>classes</var>.
   <p>The <var title>classes</var> argument is interpreted as a
   space-separated list of classes.
-
- <dt><var title>element</var> = <var title>document</var> . <code title=dom-Document-getElementById>getElementById(<var title>elementId</var>)</code>
- <dd><p>Returns the first <span title=concept-element>element</span> in
- <var title>document</var> with the given <span title=concept-id>ID</span>.
 </dl>
 
 <p>The <dfn title=dom-Document-doctype><code>doctype</code></dfn> attribute
@@ -4468,20 +4477,6 @@ for the <span>context object</span>.
  would return no nodes; none of the elements above are in the
  <code title>aaa,bbb</code> class.
 </div>
-
-<!-- v2:
->         * xGetParentElementByClassName(rootElement, className, tagName) -
-> Navigates upwards until we hit a parent element with the given class name and
-> optional tag name.
--->
-
-<p>The
-<dfn title=dom-Document-getElementById><code>getElementById(<var title>elementId</var>)</code></dfn>
-method must return the first <span title=concept-element>element</span>, in
-<span title=concept-tree-order>tree order</span>, within the
-<span>context object</span>'s <span title=concept-tree>tree</span>, whose
-<span title=concept-ID>ID</span> is <var title>elementId</var>, or null if
-there is none.
 
 <hr>
 

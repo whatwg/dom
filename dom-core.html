@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-29-october-2013">Living Standard — Last Updated 29 October 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-31-october-2013">Living Standard — Last Updated 31 October 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-29 October 2013, the editors have made this specification available
+31 October 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2070,6 +2070,7 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   void <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
 
+  <a href="#element">Element</a>? <a href="#dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
   <a href="#element">Element</a>? <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(DOMString <var title="">relativeSelectors</var>);
   [NewObject] <a href="#elements">Elements</a> <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
   <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(DOMString <var title="">selectors</var>);
@@ -2117,6 +2118,11 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
   <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
   <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById">getElementById</a>(<var title="">elementId</var>)</code>
+ <dd><p>Returns the first <a href="#concept-element" title="concept-element">element</a> within
+ <var title="">node</var>'s <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> whose
+ <a href="#concept-id" title="concept-id">ID</a> is <var title="">elementId</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
@@ -2190,6 +2196,14 @@ method must run these steps:
  <li><p><a href="#concept-node-append" title="concept-node-append">Append</a>
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
+
+<p>The
+<dfn id="dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById"><code>getElementById(<var>elementId</var>)</code></dfn>
+method must return the first <a href="#concept-element" title="concept-element">element</a>, in
+<a href="#concept-tree-order" title="concept-tree-order">tree order</a>, within <a href="#context-object">context object</a>'s
+<a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>, whose
+<a href="#concept-id" title="concept-ID">ID</a> is <var title="">elementId</var>, and null if there is no
+such <a href="#concept-element" title="concept-element">element</a> otherwise.
 
 <p>To <dfn id="evaluate-a-relative-selectors-string">evaluate a relative selectors string</dfn> <var title="">relativeSelectors</var>
 against a <var title="">node</var> or a <var title="">list</var>, run these steps:
@@ -4241,7 +4255,6 @@ interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   <a href="#htmlcollection">HTMLCollection</a> <a href="#dom-document-getelementsbytagname" title="dom-Document-getElementsByTagName">getElementsByTagName</a>(DOMString <var title="">localName</var>);
   <a href="#htmlcollection">HTMLCollection</a> <a href="#dom-document-getelementsbytagnamens" title="dom-Document-getElementsByTagNameNS">getElementsByTagNameNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">localName</var>);
   <a href="#htmlcollection">HTMLCollection</a> <a href="#dom-document-getelementsbyclassname" title="dom-Document-getElementsByClassName">getElementsByClassName</a>(DOMString <var title="">classNames</var>);
-  <a href="#element">Element</a>? <a href="#dom-document-getelementbyid" title="dom-Document-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
 
   [NewObject] <a href="#element">Element</a> <a href="#dom-document-createelement" title="dom-Document-createElement">createElement</a>(DOMString <var title="">localName</var>);
   [NewObject] <a href="#element">Element</a> <a href="#dom-document-createelementns" title="dom-Document-createElementNS">createElementNS</a>(DOMString? <var title="">namespace</var>, DOMString <var title="">qualifiedName</var>);
@@ -4474,10 +4487,6 @@ attribute must return the
   given by <var title="">classes</var>.
   <p>The <var title="">classes</var> argument is interpreted as a
   space-separated list of classes.
-
- <dt><var title="">element</var> = <var title="">document</var> . <code title="dom-Document-getElementById"><a href="#dom-document-getelementbyid">getElementById(<var title="">elementId</var>)</a></code>
- <dd><p>Returns the first <a href="#concept-element" title="concept-element">element</a> in
- <var title="">document</var> with the given <a href="#concept-id" title="concept-id">ID</a>.
 </dl>
 
 <p>The <dfn id="dom-document-doctype" title="dom-Document-doctype"><code>doctype</code></dfn> attribute
@@ -4541,20 +4550,6 @@ for the <a href="#context-object">context object</a>.
  would return no nodes; none of the elements above are in the
  <code title="">aaa,bbb</code> class.
 </div>
-
-<!-- v2:
->         * xGetParentElementByClassName(rootElement, className, tagName) -
-> Navigates upwards until we hit a parent element with the given class name and
-> optional tag name.
--->
-
-<p>The
-<dfn id="dom-document-getelementbyid" title="dom-Document-getElementById"><code>getElementById(<var title="">elementId</var>)</code></dfn>
-method must return the first <a href="#concept-element" title="concept-element">element</a>, in
-<a href="#concept-tree-order" title="concept-tree-order">tree order</a>, within the
-<a href="#context-object">context object</a>'s <a href="#concept-tree" title="concept-tree">tree</a>, whose
-<a href="#concept-id" title="concept-ID">ID</a> is <var title="">elementId</var>, or null if
-there is none.
 
 <hr>
 
