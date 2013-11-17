@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-12-november-2013">Living Standard — Last Updated 12 November 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-17-november-2013">Living Standard — Last Updated 17 November 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-12 November 2013, the editors have made this specification available
+17 November 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -99,12 +99,13 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
     <ol>
      <li><a href="#mutation-algorithms"><span class="secno">6.2.1 </span>Mutation algorithms</a></li>
      <li><a href="#interface-parentnode"><span class="secno">6.2.2 </span>Interface <code>ParentNode</code></a></li>
-     <li><a href="#interface-childnode"><span class="secno">6.2.3 </span>Interface <code>ChildNode</code></a></li>
-     <li><a href="#collections:-elements"><span class="secno">6.2.4 </span>Collections: <code>Elements</code></a></li>
-     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.5 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
+     <li><a href="#interface-nondocumenttypechildnode"><span class="secno">6.2.3 </span>Interface <code>NonDocumentTypeChildNode</code></a></li>
+     <li><a href="#interface-childnode"><span class="secno">6.2.4 </span>Interface <code>ChildNode</code></a></li>
+     <li><a href="#collections:-elements"><span class="secno">6.2.5 </span>Collections: <code>Elements</code></a></li>
+     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.6 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
       <ol>
-       <li><a href="#interface-nodelist"><span class="secno">6.2.5.1 </span>Interface <code>NodeList</code></a></li>
-       <li><a href="#interface-htmlcollection"><span class="secno">6.2.5.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
+       <li><a href="#interface-nodelist"><span class="secno">6.2.6.1 </span>Interface <code>NodeList</code></a></li>
+       <li><a href="#interface-htmlcollection"><span class="secno">6.2.6.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
    <li><a href="#mutation-observers"><span class="secno">6.3 </span>Mutation observers</a>
     <ol>
      <li><a href="#interface-mutationobserver"><span class="secno">6.3.1 </span>Interface <code>MutationObserver</code></a></li>
@@ -2249,13 +2250,57 @@ running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <
 <a href="#context-object">context object</a>.
 
 
-<h4 id="interface-childnode"><span class="secno">6.2.3 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
+<h4 id="interface-nondocumenttypechildnode"><span class="secno">6.2.3 </span>Interface <code><a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></h4>
+
+<p class="note">The
+<code title="dom-NonDocumentTypeChildNode-previousElementSibling"><a href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a></code>
+and
+<code title="dom-NonDocumentTypeChildNode-nextElementSibling"><a href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code>
+attributes have been removed from <code><a href="#documenttype">DocumentType</a></code> nodes for
+web-compatibility reasons. If these additions are deemed web-compatible
+enough in the future, they could be reinstated.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="nondocumenttypechildnode">NonDocumentTypeChildNode</dfn> {
+  readonly attribute <a href="#element">Element</a>? <a href="#dom-nondocumenttypechildnode-previouselementsibling" title="dom-NonDocumentTypeChildNode-previousElementSibling">previousElementSibling</a>;
+  readonly attribute <a href="#element">Element</a>? <a href="#dom-nondocumenttypechildnode-nextelementsibling" title="dom-NonDocumentTypeChildNode-nextElementSibling">nextElementSibling</a>;
+};
+<a href="#element">Element</a> implements <a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;
+<a href="#characterdata">CharacterData</a> implements <a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;</pre>
+
+<dl class="domintro">
+ <dt><code><var title="">element</var> = <var title="">node</var> . <a href="#dom-nondocumenttypechildnode-previouselementsibling" title="dom-NonDocumentTypeChildNode-previousElementSibling">previousElementSibling</a></code>
+ <dd><p>Returns the first
+ <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+ <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that
+ is an <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
+
+ <dt><code><var title="">element</var> = <var title="">node</var> . <a href="#dom-nondocumenttypechildnode-nextelementsibling" title="dom-NonDocumentTypeChildNode-nextElementSibling">nextElementSibling</a></code>
+ <dd><p>Returns the first
+ <a href="#concept-tree-following" title="concept-tree-following">following</a>
+ <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that
+ is an <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
+</dl>
+
+<p>The
+<dfn id="dom-nondocumenttypechildnode-previouselementsibling" title="dom-NonDocumentTypeChildNode-previousElementSibling"><code>previousElementSibling</code></dfn>
+attribute must return the first
+<a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
+<a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that is an
+<a href="#concept-element" title="concept-element">element</a>, and null otherwise.
+
+<p>The
+<dfn id="dom-nondocumenttypechildnode-nextelementsibling" title="dom-NonDocumentTypeChildNode-nextElementSibling"><code>nextElementSibling</code></dfn>
+attribute must return the first
+<a href="#concept-tree-following" title="concept-tree-following">following</a>
+<a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that is an
+<a href="#concept-element" title="concept-element">element</a>, and null otherwise.
+
+
+<h4 id="interface-childnode"><span class="secno">6.2.4 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
 
 <pre class="idl">[NoInterfaceObject]
 interface <dfn id="childnode">ChildNode</dfn> {
-  readonly attribute <a href="#element">Element</a>? <a href="#dom-childnode-previouselementsibling" title="dom-ChildNode-previousElementSibling">previousElementSibling</a>;
-  readonly attribute <a href="#element">Element</a>? <a href="#dom-childnode-nextelementsibling" title="dom-ChildNode-nextElementSibling">nextElementSibling</a>;
-
   void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
@@ -2266,18 +2311,6 @@ interface <dfn id="childnode">ChildNode</dfn> {
 <a href="#characterdata">CharacterData</a> implements <a href="#childnode">ChildNode</a>;</pre>
 
 <dl class="domintro">
- <dt><code><var title="">element</var> = <var title="">node</var> . <a href="#dom-childnode-previouselementsibling" title="dom-ChildNode-previousElementSibling">previousElementSibling</a></code>
- <dd><p>Returns the first
- <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
- <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that
- is an <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
-
- <dt><code><var title="">element</var> = <var title="">node</var> . <a href="#dom-childnode-nextelementsibling" title="dom-ChildNode-nextElementSibling">nextElementSibling</a></code>
- <dd><p>Returns the first
- <a href="#concept-tree-following" title="concept-tree-following">following</a>
- <a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that
- is an <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
-
  <dt><code><var title="">node</var> . <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>(<var title="">nodes</var>)</code>
  <dd>
   <p>Inserts <var title="">nodes</var> just before <var title="">node</var>,
@@ -2311,20 +2344,6 @@ interface <dfn id="childnode">ChildNode</dfn> {
  <dt><code><var title="">node</var> . <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>()</code>
  <dd><p>Removes <var title="">node</var>.
 </dl>
-
-<p>The
-<dfn id="dom-childnode-previouselementsibling" title="dom-ChildNode-previousElementSibling"><code>previousElementSibling</code></dfn>
-attribute must return the first
-<a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a>
-<a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that is an
-<a href="#concept-element" title="concept-element">element</a>, and null otherwise.
-
-<p>The
-<dfn id="dom-childnode-nextelementsibling" title="dom-ChildNode-nextElementSibling"><code>nextElementSibling</code></dfn>
-attribute must return the first
-<a href="#concept-tree-following" title="concept-tree-following">following</a>
-<a href="#concept-tree-sibling" title="concept-tree-sibling">sibling</a> that is an
-<a href="#concept-element" title="concept-element">element</a>, and null otherwise.
 
 <p>The
 <dfn id="dom-childnode-before" title="dom-ChildNode-before"><code>before(<var>nodes</var>)</code></dfn>
@@ -2390,7 +2409,7 @@ method must run these steps:
 </ol>
 
 
-<h4 id="collections:-elements"><span class="secno">6.2.4 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
+<h4 id="collections:-elements"><span class="secno">6.2.5 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
 
 <pre class="idl">class <dfn id="elements">Elements</dfn> extends <span>Array</span> {
   <a href="#element">Element</a>? <a href="#dom-elements-query" title="dom-Elements-query">query</a>(DOMString <var title="">relativeSelectors</var>);
@@ -2431,7 +2450,7 @@ result of running <a href="#evaluate-a-relative-selectors-string">evaluate a rel
 <var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
 
 
-<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.5 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
+<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.6 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
 
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
@@ -2457,7 +2476,7 @@ the <a href="#concept-collection" title="concept-collection">collection</a> must
 <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
 
-<h5 id="interface-nodelist"><span class="secno">6.2.5.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
+<h5 id="interface-nodelist"><span class="secno">6.2.6.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
 
 <p>A <code><a href="#nodelist">NodeList</a></code> object is a
 <a href="#concept-collection" title="concept-collection">collection</a> of
@@ -2511,7 +2530,7 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 </div>
 
 
-<h5 id="interface-htmlcollection"><span class="secno">6.2.5.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
+<h5 id="interface-htmlcollection"><span class="secno">6.2.6.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
 
 <pre class="idl">interface <dfn id="htmlcollection">HTMLCollection</dfn> {
   readonly attribute unsigned long <a href="#dom-htmlcollection-length" title="dom-HTMLCollection-length">length</a>;
