@@ -11,7 +11,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-20-november-2013">Living Standard — Last Updated 20 November 2013</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-26-november-2013">Living Standard — Last Updated 26 November 2013</h2>
 
 <dl>
  <dt>This Version:
@@ -45,7 +45,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-20 November 2013, the editors have made this specification available
+26 November 2013, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -98,14 +98,15 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
    <li><a href="#node-tree"><span class="secno">6.2 </span>Node tree</a>
     <ol>
      <li><a href="#mutation-algorithms"><span class="secno">6.2.1 </span>Mutation algorithms</a></li>
-     <li><a href="#interface-parentnode"><span class="secno">6.2.2 </span>Interface <code>ParentNode</code></a></li>
-     <li><a href="#interface-nondocumenttypechildnode"><span class="secno">6.2.3 </span>Interface <code>NonDocumentTypeChildNode</code></a></li>
-     <li><a href="#interface-childnode"><span class="secno">6.2.4 </span>Interface <code>ChildNode</code></a></li>
-     <li><a href="#collections:-elements"><span class="secno">6.2.5 </span>Collections: <code>Elements</code></a></li>
-     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.6 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
+     <li><a href="#interface-nonelementparentnode"><span class="secno">6.2.2 </span>Interface <code>NonElementParentNode</code></a></li>
+     <li><a href="#interface-parentnode"><span class="secno">6.2.3 </span>Interface <code>ParentNode</code></a></li>
+     <li><a href="#interface-nondocumenttypechildnode"><span class="secno">6.2.4 </span>Interface <code>NonDocumentTypeChildNode</code></a></li>
+     <li><a href="#interface-childnode"><span class="secno">6.2.5 </span>Interface <code>ChildNode</code></a></li>
+     <li><a href="#collections:-elements"><span class="secno">6.2.6 </span>Collections: <code>Elements</code></a></li>
+     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.7 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
       <ol>
-       <li><a href="#interface-nodelist"><span class="secno">6.2.6.1 </span>Interface <code>NodeList</code></a></li>
-       <li><a href="#interface-htmlcollection"><span class="secno">6.2.6.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
+       <li><a href="#interface-nodelist"><span class="secno">6.2.7.1 </span>Interface <code>NodeList</code></a></li>
+       <li><a href="#interface-htmlcollection"><span class="secno">6.2.7.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
    <li><a href="#mutation-observers"><span class="secno">6.3 </span>Mutation observers</a>
     <ol>
      <li><a href="#interface-mutationobserver"><span class="secno">6.3.1 </span>Interface <code>MutationObserver</code></a></li>
@@ -2007,7 +2008,38 @@ from a <var title="">parent</var>, optionally with
 </ol>
 
 
-<h4 id="interface-parentnode"><span class="secno">6.2.2 </span>Interface <code><a href="#parentnode">ParentNode</a></code></h4>
+<h4 id="interface-nonelementparentnode"><span class="secno">6.2.2 </span>Interface <code><a href="#nonelementparentnode">NonElementParentNode</a></code></h4>
+
+<p class="note no-backref">The
+<code title="dom-NonElementParentNode-getElementById"><a href="#dom-nonelementparentnode-getelementbyid">getElementById()</a></code> method is not
+on <a href="#concept-element" title="concept-element">elements</a> for compatibility with older versions of
+jQuery. If a time comes where that version of jQuery has disappeared, we might be able to
+support it.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="nonelementparentnode">NonElementParentNode</dfn> {
+  <a href="#element">Element</a>? <a href="#dom-nonelementparentnode-getelementbyid" title="dom-NonElementParentNode-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
+};
+<a href="#document">Document</a> implements <a href="#parentnode">ParentNode</a>;
+<a href="#documentfragment">DocumentFragment</a> implements <a href="#parentnode">ParentNode</a>;</pre>
+
+<dl class="domintro">
+ <dt><code><var title="">node</var> . <a href="#dom-nonelementparentnode-getelementbyid" title="dom-NonElementParentNode-getElementById">getElementById</a>(<var title="">elementId</var>)</code>
+ <dd><p>Returns the first <a href="#concept-element" title="concept-element">element</a> within
+ <var title="">node</var>'s <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> whose
+ <a href="#concept-id" title="concept-id">ID</a> is <var title="">elementId</var>.
+</dl>
+
+<p>The
+<dfn id="dom-nonelementparentnode-getelementbyid" title="dom-NonElementParentNode-getElementById"><code>getElementById(<var>elementId</var>)</code></dfn>
+method must return the first <a href="#concept-element" title="concept-element">element</a>, in
+<a href="#concept-tree-order" title="concept-tree-order">tree order</a>, within <a href="#context-object">context object</a>'s
+<a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>, whose
+<a href="#concept-id" title="concept-ID">ID</a> is <var title="">elementId</var>, and null if there is no
+such <a href="#concept-element" title="concept-element">element</a> otherwise.
+
+
+<h4 id="interface-parentnode"><span class="secno">6.2.3 </span>Interface <code><a href="#parentnode">ParentNode</a></code></h4>
 
 <p>The <dfn id="mutation-method-macro">mutation method macro</dfn>:
 
@@ -2040,7 +2072,6 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   void <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
 
-  <a href="#element">Element</a>? <a href="#dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
   <a href="#element">Element</a>? <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(DOMString <var title="">relativeSelectors</var>);
   [NewObject] <a href="#elements">Elements</a> <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
   <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(DOMString <var title="">selectors</var>);
@@ -2088,11 +2119,6 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
   <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
   <!-- "NotFoundError" is impossible -->
-
- <dt><code><var title="">node</var> . <a href="#dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById">getElementById</a>(<var title="">elementId</var>)</code>
- <dd><p>Returns the first <a href="#concept-element" title="concept-element">element</a> within
- <var title="">node</var>'s <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> whose
- <a href="#concept-id" title="concept-id">ID</a> is <var title="">elementId</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
@@ -2167,14 +2193,6 @@ method must run these steps:
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
 
-<p>The
-<dfn id="dom-parentnode-getelementbyid" title="dom-ParentNode-getElementById"><code>getElementById(<var>elementId</var>)</code></dfn>
-method must return the first <a href="#concept-element" title="concept-element">element</a>, in
-<a href="#concept-tree-order" title="concept-tree-order">tree order</a>, within <a href="#context-object">context object</a>'s
-<a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>, whose
-<a href="#concept-id" title="concept-ID">ID</a> is <var title="">elementId</var>, and null if there is no
-such <a href="#concept-element" title="concept-element">element</a> otherwise.
-
 <p>To <dfn id="evaluate-a-relative-selectors-string">evaluate a relative selectors string</dfn> <var title="">relativeSelectors</var>
 against a <var title="">node</var> or a <var title="">list</var>, run these steps:
 
@@ -2246,15 +2264,14 @@ running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <
 <a href="#context-object">context object</a>.
 
 
-<h4 id="interface-nondocumenttypechildnode"><span class="secno">6.2.3 </span>Interface <code><a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></h4>
+<h4 id="interface-nondocumenttypechildnode"><span class="secno">6.2.4 </span>Interface <code><a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></h4>
 
-<p class="note">The
+<p class="note no-backref">The
 <code title="dom-NonDocumentTypeChildNode-previousElementSibling"><a href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a></code>
-and
-<code title="dom-NonDocumentTypeChildNode-nextElementSibling"><a href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code>
-attributes have been removed from <code><a href="#documenttype">DocumentType</a></code> nodes for
-web-compatibility reasons. If these additions are deemed web-compatible
-enough in the future, they could be reinstated.
+and <code title="dom-NonDocumentTypeChildNode-nextElementSibling"><a href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code>
+attributes have been removed from <code><a href="#documenttype">DocumentType</a></code> nodes for compatibility
+reasons. If these additions are deemed compatible enough in the future, they could be
+reinstated.
 
 <pre class="idl">[NoInterfaceObject]
 interface <dfn id="nondocumenttypechildnode">NonDocumentTypeChildNode</dfn> {
@@ -2293,7 +2310,7 @@ attribute must return the first
 <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
 
 
-<h4 id="interface-childnode"><span class="secno">6.2.4 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
+<h4 id="interface-childnode"><span class="secno">6.2.5 </span>Interface <code><a href="#childnode">ChildNode</a></code></h4>
 
 <pre class="idl">[NoInterfaceObject]
 interface <dfn id="childnode">ChildNode</dfn> {
@@ -2405,7 +2422,7 @@ method must run these steps:
 </ol>
 
 
-<h4 id="collections:-elements"><span class="secno">6.2.5 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
+<h4 id="collections:-elements"><span class="secno">6.2.6 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
 
 <pre class="idl">class <dfn id="elements">Elements</dfn> extends <span>Array</span> {
   <a href="#element">Element</a>? <a href="#dom-elements-query" title="dom-Elements-query">query</a>(DOMString <var title="">relativeSelectors</var>);
@@ -2446,7 +2463,7 @@ result of running <a href="#evaluate-a-relative-selectors-string">evaluate a rel
 <var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
 
 
-<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.6 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
+<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">6.2.7 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
 
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
@@ -2472,7 +2489,7 @@ the <a href="#concept-collection" title="concept-collection">collection</a> must
 <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
 
-<h5 id="interface-nodelist"><span class="secno">6.2.6.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
+<h5 id="interface-nodelist"><span class="secno">6.2.7.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
 
 <p>A <code><a href="#nodelist">NodeList</a></code> object is a
 <a href="#concept-collection" title="concept-collection">collection</a> of
@@ -2526,7 +2543,7 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 </div>
 
 
-<h5 id="interface-htmlcollection"><span class="secno">6.2.6.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
+<h5 id="interface-htmlcollection"><span class="secno">6.2.7.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
 
 <pre class="idl">interface <dfn id="htmlcollection">HTMLCollection</dfn> {
   readonly attribute unsigned long <a href="#dom-htmlcollection-length" title="dom-HTMLCollection-length">length</a>;
