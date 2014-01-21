@@ -1,4 +1,14 @@
 
+// XXX
+//  okay, jsdom is doing *appaling* things to the input
+//  use Gumbo
+//      var doc = require("gumbo-parser")(htmlString).document
+//  use Sizzle
+//      var sizz = require("sizzle")
+//      var els = sizz("selector", elOrDocContext)
+//  use phantom to run ReSpec, it's more reliable than jsdom
+
+
 var fs = require("fs")
 ,   pth = require("path")
 ,   jsdom = require("jsdom")
@@ -73,7 +83,7 @@ function mungeWithW3C (headers) {
                     var subtitle = coreDoc.getElementById("subtitle");
                     subtitle.innerHTML = "Snapshot specification for the <a href='http://dom.spec.whatwg.org/'>DOM Living Standard</a>";
 
-                    fs.writeFileSync(outputFile, coreDoc.outerHTML);
+                    fs.writeFileSync(outputFile, "<!DOCTYPE html>\n" + coreDoc.outerHTML);
                 }
             });
         }
