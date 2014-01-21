@@ -1,0 +1,24 @@
+/*global phantom*/
+
+var webPage = require("webpage")
+,   page = webPage.create()
+,   sys = require("system")
+,   path = sys.args[1]
+;
+
+if (!path) {
+    console.error("No path given.");
+    phantom.exit(1);
+}
+
+page.open(path, function (status) {
+    if (status !== "success") {
+        console.error("Failed to load: " + path);
+        phantom.exit(1);
+    }
+});
+
+page.onCallback = function (data) {
+    console.log(JSON.stringify(data, null, 4));
+    phantom.exit(0);
+};

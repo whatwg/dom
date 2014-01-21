@@ -1,27 +1,20 @@
 
-// XXX
-//  okay, jsdom is doing *appaling* things to the input
-//  use Gumbo
-//      var doc = require("gumbo-parser")(htmlString).document
-//  use Sizzle
-//      var sizz = require("sizzle")
-//      var els = sizz("selector", elOrDocContext)
-//  use phantom to run ReSpec, it's more reliable than jsdom
-
-
 var fs = require("fs")
 ,   pth = require("path")
-,   jsdom = require("jsdom")
+,   tmp = require("tmp")
+,   exec = require("child_process").exec
 ,   rfs = function (f) { return fs.readFileSync(f, { encoding: "utf8" }); }
+,   wfs = function (f, data) { return fs.writeFileSync(f, data, { encoding: "utf8" }); }
 ,   rel = function (f) { return pth.join(__dirname, f); }
 ,   error = function (e) { console.error(e); process.exit(1); }
+,   runRSFile = rel("run-respec.phjs")
 ,   localFile = rel("local-config.json") // use this file to override the config
 ,   localConfig = fs.existsSync(localFile) ? JSON.parse(rfs(localFile)) : {}
 ,   outputFile = rel(process.argv[2] || localConfig.output || "index.html")
 ,   respecConfig = {
         specStatus:     "ED"
     ,   shortName:      "dom"
-    ,   subtitle:       "XXX"
+    // ,   subtitle:       "XXX"
     ,   noReSpecCSS:    true
     ,   editors:        [
                             { name: "Anne van Kesteren", url: "http://annevankesteren.nl/",
@@ -49,59 +42,36 @@ var fs = require("fs")
     }
 ;
 
-// take dom-core.html and munge the generated headers into it
-function mungeWithW3C (headers) {
-    jsdom.env({
-        html:   headers
-    ,   done:   function (err, window) {
-            if (err) error(err);
-            var w3Doc = window.document
-            ,   coreSrc = rfs(rel("dom-core.html"))
-            ;
-            jsdom.env({
-                html:   coreSrc
-            ,   done:   function (err, window) {
-                    if (err) error(err);
-                    var coreDoc = window.document
-                    ,   rsHead = w3Doc.querySelector("head")
-                    ,   targetHead = coreDoc.querySelector("head")
-                    ,   rsDiv = w3Doc.querySelector("div.head")
-                    ,   targetDiv = coreDoc.querySelector("div.head")
-                    ,   sotd = w3Doc.getElementById("sotd")
-                    ,   toc = coreDoc.getElementById("table-of-contents")
-                    ,   scripts = coreDoc.querySelectorAll("script")
-                    ,   imp = function (n) { return coreDoc.importNode(n, true); }
-                    ;
-                    targetHead.parentNode.replaceChild(imp(rsHead), targetHead);
-                    targetDiv.parentNode.replaceChild(imp(rsDiv), targetDiv);
-                    for (var i = 0, n = scripts.length; i < n; i++) {
-                        var scr = scripts[i];
-                        scr.parentNode.removeChild(scr);
-                    }
-                    toc.parentNode.insertBefore(imp(sotd), toc);
 
-                    var subtitle = coreDoc.getElementById("subtitle");
-                    subtitle.innerHTML = "Snapshot specification for the <a href='http://dom.spec.whatwg.org/'>DOM Living Standard</a>";
-
-                    fs.writeFileSync(outputFile, "<!DOCTYPE html>\n" + coreDoc.outerHTML);
-                }
-            });
-        }
-    });
-}
-
-// make a document that can generate nice headers
+// // make a document that can generate nice headers
 for (var k in localConfig) respecConfig[k] = localConfig[k];
 var respecSource = rfs(rel("header-maker.html"))
                         .replace("###CONFIG###", JSON.stringify(respecConfig, null, 4))
-,   doc = jsdom.jsdom(respecSource)
-,   win = doc.parentWindow
 ;
-win.onload = function () {
-    win.respecEvents.sub("end-all", function () {
-        win.require(["core/ui", "ui/save-html"], function (ui, saver) {
-            saver.show(ui, win.respecConfig, win.document, win.respecEvents);
-            mungeWithW3C(saver.toString());
-        });
+tmp.file({ postfix: ".html" }, function (err, path) {
+    if (err) error(err);
+    wfs(path, respecSource);
+    exec("phantomjs " + runRSFile + " " + path, function (err, stdout, stderr) {
+        if (err) throw "Error running PhantomJS script: " + (stderr || err || "unknown error");
+        var data = JSON.parse(stdout)
+        ,   domSrc = rfs("dom-core.html")
+                        .replace(/<head>[^]*?<\/head>/im, "<head>\n" + data.head + "\n</head>")
+                        .replace(/<div\s+class\s*=\s*["']?head["']?[^]*?<\/div>/im, "<div class='head'>" + data.divHead + "</div>")
+                        .replace(/<script[^]*?<\/script>/mig, "")
+                        .replace(/(<h2[^><]+id="table-of-contents)/i, data.sotd + "\n\n" + "$1")
+        ;
+        wfs(outputFile, domSrc);
     });
-};
+});
+
+// output
+
+// XXX need to run this in the Phantom page?
+// win.onload = function () {
+//     win.respecEvents.sub("end-all", function () {
+//         win.require(["core/ui", "ui/save-html"], function (ui, saver) {
+//             saver.show(ui, win.respecConfig, win.document, win.respecEvents);
+//             mungeWithW3C(saver.toString());
+//         });
+//     });
+// };
