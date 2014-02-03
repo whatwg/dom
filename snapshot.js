@@ -16,6 +16,10 @@ var fs = require("fs")
     ,   shortName:      "dom"
     // ,   subtitle:       "XXX"
     ,   noReSpecCSS:    true
+    ,   bugTracker: {
+            "new":  "https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM"
+        ,   open:   "https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---"
+        }
     ,   editors:        [
                             { name: "Anne van Kesteren", url: "http://annevankesteren.nl/",
                               company: "Mozilla", companyURL: "http://www.mozilla.org/",
