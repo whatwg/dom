@@ -7075,19 +7075,18 @@ method must run these steps:
  (<var title>new node</var>, <var title>new offset</var>).
 </ol>
 
-<p>The <dfn
-title=dom-Range-extractContents><code>extractContents()</code></dfn> method
-must run these steps:
+<p>To <dfn title=concept-range-extract>extract</dfn> a
+<span title=concept-range>range</span> <var title>range</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>frag</var> be a new <code>DocumentFragment</code>
- whose <span title=concept-node-document>node document</span> is the same as
- the <span title=concept-node-document>node document</span> of the
- <span>context object</span>'s
- <span title=concept-range-start-node>start node</span>.
+ <li><p>Let <var title>fragment</var> be a new <code>DocumentFragment</code>
+ <span title=concept-node>node</span> whose
+ <span title=concept-node-document>node document</span> is <var title>range</var>'s
+ <span title=concept-range-start-node>start node</span>'s
+ <span title=concept-node-document>node document</span>.
 
- <li><p>If <span title=concept-range-start>start</span> equals
- <span title=concept-range-end>end</span>, return <var title>frag</var>.
+ <li><p>If <var title>range</var>'s <span title=concept-range-start>start</span> equals
+ its <span title=concept-range-end>end</span>, return <var title>fragment</var>.
  <!-- This is only really needed when the start and end nodes are
  text/comment, to avoid creating an empty clone as the child of the
  fragment. (Opera 11 actually does include such an empty clone, it seems,
@@ -7095,11 +7094,9 @@ must run these steps:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var title>original start node</var>,
- <var title>original start offset</var>, <var title>original end node</var>,
- and <var title>original end offset</var> be the
- <span>context object</span>'s
- <span title=concept-range-start-node>start node</span>,
+ <li><p>Let <var title>original start node</var>, <var title>original start offset</var>,
+ <var title>original end node</var>, and <var title>original end offset</var> be
+ <var title>range</var>'s <span title=concept-range-start-node>start node</span>,
  <span title=concept-range-start-offset>start offset</span>,
  <span title=concept-range-end-node>end node</span>, and
  <span title=concept-range-end-offset>end offset</span>, respectively.
@@ -7124,7 +7121,7 @@ must run these steps:
    <var title>original start offset</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
    <li><p><span title=concept-CD-replace>Replace data</span> with node
    <var title>original start node</var>, offset
@@ -7132,7 +7129,7 @@ must run these steps:
    <var title>original end offset</var> minus
    <var title>original start offset</var>, and data the empty string.
 
-   <li><p>Return <var title>frag</var>.
+   <li><p>Return <var title>fragment</var>.
   </ol>
 
  <li><p>Let <var title>common ancestor</var> be
@@ -7143,49 +7140,45 @@ must run these steps:
  <var title>original end node</var>, set <var title>common ancestor</var> to
  its own <span title=concept-tree-parent>parent</span>.
 
- <li><p>If <var title>original start node</var> is an
- <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
- <var title>original end node</var>, let
- <var title>first partially contained child</var> be null.
+ <li><p>Let <var title>first partially contained child</var> be null.
 
- <li><p>Otherwise, let <var title>first partially contained child</var> be
- the first <span title=concept-tree-child>child</span> of
- <var title>common ancestor</var> that is <span>partially contained</span>
- in the <span>context object</span>.
-
- <li><p>If <var title>original end node</var> is an
+ <li><p>If <var title>original start node</var> is <em>not</em> an
  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
- <var title>original start node</var>, let
- <var title>last partially contained child</var> be null.
+ <var title>original end node</var>, set <var title>first partially contained child</var>
+ to the first <span title=concept-tree-child>child</span> of
+ <var title>common ancestor</var> that is <span>partially contained</span> in
+ <var title>range</var>.
+
+ <li><p>Let <var title>last partially contained child</var> be null.
 
  <li>
-  <p>Otherwise, let <var title>last partially contained child</var> be
-  the last <span title=concept-tree-child>child</span> of
-  <var title>common ancestor</var> that is <span>partially contained</span>
-  in the <span>context object</span>.
+  <p>If <var title>original end node</var> is <em>not</em> an
+  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original start node</var>, set
+  <var title>last partially contained child</var> to the last
+  <span title=concept-tree-child>child</span> of <var title>common ancestor</var> that is
+  <span>partially contained</span> in <var title>range</var>.
 
-  <p class=note>These variable assignments do actually always make sense.
-  For instance, if the original start node is not an
+  <p class="note no-backref">These variable assignments do actually always make sense.
+  For instance, if <var title>original start node</var> is not an
   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-  the
-  original end node, the original start node is itself partially contained in
-  the range, and so are all its ancestors up until a child of the common
-  ancestor. The common ancestor can't be original start node, because it must
-  be an
-  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-  the original end node. The other case is
-  similar. Also, notice that the two children will never be equal if both are
-  defined.
+  <var title>original end node</var>, <var title>original start node</var> is itself
+  <span>partially contained</span> in <var title>range</var>, and so are all its
+  <span title=concept-tree-ancestor>ancestors</span> up until a
+  <span title=concept-tree-child>child</span> of <var title>common ancestor</var>.
+  <var title>common ancestor</var> cannot be <var title>original start node</var>, because
+  it has to be an <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original end node</var>. The other case is similar. Also, notice that the two
+  <span title=concept-tree-child>children</span> will never be equal if both are defined.
 
  <li><p>Let <var title>contained children</var> be a list of all
  <span title=concept-tree-child>children</span> of
- <var title>common ancestor</var> that are <span>contained</span> in the
- <span>context object</span>, in
- <span title=concept-tree-order>tree order</span>.
+ <var title>common ancestor</var> that are <span>contained</span> in
+ <var title>range</var>, in <span title=concept-tree-order>tree order</span>.
 
  <li>
   <p>If any member of <var title>contained children</var> is a
-  <code>DocumentType</code>, <span title=concept-throw>throw</span> a
+  <span title=concept-doctype>doctype</span>, <span title=concept-throw>throw</span> a
   "<code>HierarchyRequestError</code>" exception.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
@@ -7193,8 +7186,8 @@ must run these steps:
   nodes. DOM 2 Range doesn't specify what exactly happens here, except that
   an exception should be thrown. -->
 
-  <p class=note>We do not have to worry about the first or last partially
-  contained node, because a <code>DocumentType</code> can never be
+  <p class="note no-backref">We do not have to worry about the first or last partially
+  contained node, because a <span title=concept-doctype>doctype</span> can never be
   partially contained. It cannot be a boundary point of a range, and it
   cannot be the ancestor of anything.
 
@@ -7207,27 +7200,25 @@ must run these steps:
  <li>
   <p>Otherwise:
   <ol>
-    <li>Let <var title>reference node</var> equal <var title>original start
-    node</var>.
+   <li><p>Let <var title>reference node</var> equal <var title>original start node</var>.
 
-    <li>While <var title>reference node</var>'s <span
-    title=concept-tree-parent>parent</span> is not null and is not an
+   <li><p>While <var title>reference node</var>'s
+   <span title=concept-tree-parent>parent</span> is not null and is not an
+   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+   <var title>original end node</var>, set <var title>reference node</var> to its
+   <span title=concept-tree-parent>parent</span>.
+
+   <li>
+    <p>Set <var title>new node</var> to the
+    <span title=concept-tree-parent>parent</span> of <var title>reference node</var>, and
+    <var title>new offset</var> to one plus <var title>reference node</var>'s
+    <span title=concept-tree-index>index</span>.
+
+    <p class=note>If <var title>reference node</var>'s
+    <span title=concept-tree-parent>parent</span> is null, it would be the
+    <span title=concept-range-root>root</span> of <var title>range</var>, so would be an
     <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-    <var title>original end node</var>,
-    set <var title>reference node</var> to its <span
-    title=concept-tree-parent>parent</span>.
-
-    <li>Set <var title>new node</var> to the <span
-    title=concept-tree-parent>parent</span> of <var title>reference node</var>,
-    and <var title>new offset</var> to one plus the <span
-    title=concept-tree-index>index</span> of <var title>reference node</var>.
-
-    <p class=note>If <var title>reference node</var>'s <span
-    title=concept-tree-parent>parent</span> were null,
-    it would be the <span title=concept-range-root>root</span> of the
-    <span>context object</span>, so would be an
-    <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of <var title>original end node</var>, and we couldn't
-    reach this point.
+    <var title>original end node</var>, and we could not reach this point.
   </ol>
 
   <!-- Now we start with mutations, so we can't refer to the context object
@@ -7238,8 +7229,8 @@ must run these steps:
   <code>Text</code>, <code>ProcessingInstruction</code>, or
   <code>Comment</code> <span title=concept-node>node</span>:
 
-  <p class=note>In this case, the first partially contained child is the
-  original start node.
+  <p class=note>In this case, <var title>first partially contained child</var> is
+  <var title>original start node</var>.
 
   <ol>
    <li><p>Let <var title>clone</var> be a
@@ -7256,7 +7247,7 @@ must run these steps:
    <var title>original start offset</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
    <li><p><span title=concept-CD-replace>Replace data</span> with node
    <var title>original start node</var>, offset
@@ -7276,47 +7267,35 @@ must run these steps:
    <var title>first partially contained child</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-    <li>Let <var title>subrange</var> be a new <code>Range</code> whose <span
-    title=concept-range-start>start</span> is (<var title>original start
-    node</var>, <var title>original start offset</var>) and whose <span
-    title=concept-range-end>end</span> is (<var title>first partially contained
-    child</var>, <span title=concept-node-length>length</span> of <var
-    title>first partially contained child</var>).
+   <li><p>Let <var title>subrange</var> be a new <span title=concept-range>range</span>
+   whose <span title=concept-range-start>start</span> is
+   (<var title>original start node</var>, <var title>original start offset</var>) and
+   whose <span title=concept-range-end>end</span> is
+   (<var title>first partially contained child</var>, <var title>first partially contained child</var>'s <span title=concept-node-length>length</span>).
 
-    <li>Let <var title>subfrag</var> be the result of calling <code
-    title=dom-Range-extractContents>extractContents()</code> on <var
-    title>subrange</var>.
+   <li><p>Let <var title>subfragment</var> be the result of
+   <span title=concept-range-extract>extracting</span> <var title>subrange</var>.
 
-    <p class=XXX>Is this method of recursing black-box detectable?  E.g., would
-    it fire extra DOM mutation events or something?  What we really mean is to
-    get a list of nodes to insert, then insert them directly into <var
-    title>frag</var>, without an intermediate document fragment.
-
-   <li>For each <span title=concept-tree-child>child</span> of
-   <var title>subfrag</var>, in
-   <span title=concept-tree-order>tree order</span>,
-   <span title=concept-node-append>append</span> that
-   <span title=concept-tree-child>child</span> to <var title>clone</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>subfragment</var> to
+   <var title>fragment</var>.
   </ol>
 
- <li><p>For each <var title>contained child</var> in
- <var title>contained children</var>,
- <span title=concept-node-append>append</span>
- <var title>contained child</var> to <var title>frag</var>.
+ <li><p>For each <var title>contained child</var> in <var title>contained children</var>,
+ <span title=concept-node-append>append</span> <var title>contained child</var> to
+ <var title>fragment</var>.
 
  <li>
   <p>If <var title>last partially contained child</var> is a
   <code>Text</code>, <code>ProcessingInstruction</code>, or
   <code>Comment</code> <span title=concept-node>node</span>:
 
-  <p class=note>In this case, the last partially contained child is the
-  original end node.
+  <p class=note>In this case, <var title>last partially contained child</var> is
+  <var title>original end node</var>.
 
   <ol>
-   <li><p>Let <var title>clone</var> be a
-   <span title=concept-node-clone>clone</span> of
+   <li><p>Let <var title>clone</var> be a <span title=concept-node-clone>clone</span> of
    <var title>original end node</var>.
 
    <li><p>Set the <span title=concept-CD-data>data</span> of
@@ -7326,11 +7305,11 @@ must run these steps:
    <var title>original end offset</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-    <li><p><span title=concept-CD-replace>Replace data</span> with node
-    <var title>original end node</var>, offset 0, count
-    <var title>original end offset</var>, and data the empty string.
+   <li><p><span title=concept-CD-replace>Replace data</span> with node
+   <var title>original end node</var>, offset 0, count
+   <var title>original end offset</var>, and data the empty string.
   </ol>
 
  <li>
@@ -7343,44 +7322,44 @@ must run these steps:
    <var title>last partially contained child</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-    <li>Let <var title>subrange</var> be a new <code>Range</code> whose <span
-    title=concept-range-start>start</span> is (<var title>last partially
-    contained child</var>, 0) and whose <span
-    title=concept-range-end>end</span> is (<var title>original end node</var>,
-    <var title>original end offset</var>).
+   <li><p>Let <var title>subrange</var> be a new <span title=concept-range>range</span>
+   whose <span title=concept-range-start>start</span> is
+   (<var title>last partially contained child</var>, 0) and whose
+   <span title=concept-range-end>end</span> is
+   (<var title>original end node</var>, <var title>original end offset</var>).
 
-    <li>Let <var title>subfrag</var> be the result of calling <code
-    title=dom-Range-extractContents>extractContents()</code> on <var
-    title>subrange</var>.
+   <li><p>Let <var title>subfragment</var> be the result of
+   <span title=concept-range-extract>extracting</span> <var title>subrange</var>.
 
-   <li><p>For each <span title=concept-tree-child>child</span> of
-   <var title>subfrag</var>, in
-   <span title=concept-tree-order>tree order</span>,
-   <span title=concept-node-append>append</span> that
-   <span title=concept-tree-child>child</span> to <var title>clone</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>subfragment</var> to
+   <var title>fragment</var>.
   </ol>
 
  <li><p>Set <span title=concept-range-start>start</span> and
  <span title=concept-range-end>end</span> to
  (<var title>new node</var>, <var title>new offset</var>).
 
- <li><p>Return <var title>frag</var>.
+ <li><p>Return <var title>fragment</var>.
 </ol>
 
-<p>The <dfn title=dom-Range-cloneContents><code>cloneContents()</code></dfn>
-method must run these steps:
+<p>The <dfn title=dom-Range-extractContents><code>extractContents()</code></dfn> method
+must return the result of <span title=concept-range-extract>extracting</span>
+<span>context object</span>.
+
+<p>To <dfn title=concept-range-clone>clone</dfn> a <span title=concept-range>range</span>
+<var title>range</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>frag</var> be a new <code>DocumentFragment</code>
- whose <span title=concept-node-document>node document</span> is the same as
- the <span title=concept-node-document>node document</span> of the
- <span>context object</span>'s
- <span title=concept-range-start-node>start node</span>.
+ <li><p>Let <var title>fragment</var> be a new <code>DocumentFragment</code>
+ <span title=concept-node>node</span> whose
+ <span title=concept-node-document>node document</span> is <var title>range</var>'s
+ <span title=concept-range-start-node>start node</span>'s
+ <span title=concept-node-document>node document</span>.
 
- <li><p>If <span title=concept-range-start>start</span> equals
- <span title=concept-range-end>end</span>, return <var title>frag</var>.
+ <li><p>If <var title>range</var>'s <span title=concept-range-start>start</span> equals
+ its <span title=concept-range-end>end</span>, return <var title>fragment</var>.
  <!-- This is only really needed when the start and end nodes are
  text/comment, to avoid creating an empty clone as the child of the
  fragment. (Opera 11 actually does include such an empty clone, it seems,
@@ -7388,11 +7367,9 @@ method must run these steps:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var title>original start node</var>,
- <var title>original start offset</var>, <var title>original end node</var>,
- and <var title>original end offset</var> be the
- <span>context object</span>'s
- <span title=concept-range-start-node>start node</span>,
+ <li><p>Let <var title>original start node</var>, <var title>original start offset</var>,
+ <var title>original end node</var>, and <var title>original end offset</var> be
+ <var title>range</var>'s <span title=concept-range-start-node>start node</span>,
  <span title=concept-range-start-offset>start offset</span>,
  <span title=concept-range-end-node>end node</span>, and
  <span title=concept-range-end-offset>end offset</span>, respectively.
@@ -7404,8 +7381,7 @@ method must run these steps:
   <span title=concept-node>node</span>:
 
   <ol>
-   <li><p>Let <var title>clone</var> be a
-   <span title=concept-node-clone>clone</span> of
+   <li><p>Let <var title>clone</var> be a <span title=concept-node-clone>clone</span> of
    <var title>original start node</var>.
 
    <li><p>Set the <span title=concept-CD-data>data</span> of
@@ -7417,9 +7393,9 @@ method must run these steps:
    <var title>original start offset</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-   <li><p>Return <var title>frag</var>.
+   <li><p>Return <var title>fragment</var>.
   </ol>
 
  <li><p>Let <var title>common ancestor</var> be
@@ -7431,62 +7407,59 @@ method must run these steps:
  <var title>common ancestor</var> to its own
  <span title=concept-tree-parent>parent</span>.
 
- <li><p>If <var title>original start node</var> is an
+ <li><p>Let <var title>first partially contained child</var> be null.
+
+ <li><p>If <var title>original start node</var> is <em>not</em> an
  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
- <var title>original end node</var>, let
- <var title>first partially contained child</var> be null.
+ <var title>original end node</var>, set <var title>first partially contained child</var>
+ to the first <span title=concept-tree-child>child</span> of
+ <var title>common ancestor</var> that is <span>partially contained</span> in
+ <var title>range</var>.
 
- <li><p>Otherwise, let <var title>first partially contained child</var> be
- the first <span title=concept-tree-child>child</span> of
- <var title>common ancestor</var> that is <span>partially contained</span>
- in the <span>context object</span>.
+ <li><p>Let <var title>last partially contained child</var> be null.
 
- <li><p>If <var title>original end node</var> is an
+ <li>
+  <p>If <var title>original end node</var> is <em>not</em> an
   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-  <var title>original start node</var>, let <var title>last
-  partially contained child</var> be null.
+  <var title>original start node</var>, set
+  <var title>last partially contained child</var> be the last
+  <span title=concept-tree-child>child</span> of <var title>common ancestor</var> that is
+  <span>partially contained</span> in <var title>range</var>.
 
-  <li>Otherwise, let <var title>last partially contained child</var> be the
-  last <span title=concept-tree-child>child</span> of
-  <var title>common ancestor</var> that is <span>partially contained</span> in
-  the <span>context object</span>.
-
-  <p class=note>These variable assignments do actually always make sense. For
-  instance, if the original start node is not an
+  <p class="note no-backref">These variable assignments do actually always make sense.
+  For instance, if <var title>original start node</var> is not an
   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-  the
-  original end node, the original start node is itself partially contained in
-  the range, and so are all its ancestors up until a child of the common
-  ancestor. The common ancestor can't be original start node, because it must
-  be an
-  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
-  the original end node. The other case is
-  similar. Also, notice that the two children will never be equal if both are
-  defined.
+  <var title>original end node</var>, <var title>original start node</var> is itself
+  <span>partially contained</span> in <var title>range</var>, and so are all its
+  <span title=concept-tree-ancestor>ancestors</span> up until a
+  <span title=concept-tree-child>child</span> of <var title>common ancestor</var>.
+  <var title>common ancestor</var> cannot be <var title>original start node</var>, because
+  it has to be an <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+  <var title>original end node</var>. The other case is similar. Also, notice that the two
+  <span title=concept-tree-child>children</span> will never be equal if both are defined.
 
  <li><p>Let <var title>contained children</var> be a list of all
  <span title=concept-tree-child>children</span> of
- <var title>common ancestor</var> that are <span>contained</span> in the
- <span>context object</span>, in
- <span title=concept-tree-order>tree order</span>.
+ <var title>common ancestor</var> that are <span>contained</span> in
+ <var title>range</var>, in <span title=concept-tree-order>tree order</span>.
 
  <li>
   <p>If any member of <var title>contained children</var> is a
-  <code>DocumentType</code>, <span title=concept-throw>throw</span> a
+  <span title=concept-doctype>doctype</span>, <span title=concept-throw>throw</span> a
   "<code>HierarchyRequestError</code>" exception.
 
-  <p class=note>We don't have to worry about the first or last partially
-  contained node, because a <code>DocumentType</code> can never be partially
-  contained. It can't be a boundary point of a range, and it can't be the
-  ancestor of anything.
+  <p class="note no-backref">We do not have to worry about the first or last partially
+  contained node, because a <span title=concept-doctype>doctype</span> can never be
+  partially contained. It cannot be a boundary point of a range, and it
+  cannot be the ancestor of anything.
 
  <li>
   <p>If <var title>first partially contained child</var> is a
   <code>Text</code>, <code>ProcessingInstruction</code>, or
   <code>Comment</code> <span title=concept-node>node</span>:
 
-  <p class=note>In this case, the first partially contained child is the
-  original start node.
+  <p class=note>In this case, <var title>first partially contained child</var> is
+  <var title>original start node</var>.
 
   <ol>
    <li><p>Let <var title>clone</var> be a
@@ -7503,7 +7476,7 @@ method must run these steps:
    <var title>original start offset</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
   </ol>
 
  <li>
@@ -7516,29 +7489,19 @@ method must run these steps:
    <var title>first partially contained child</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-    <li>Let <var title>subrange</var> be a new <code>Range</code> whose <span
-    title=concept-range-start>start</span> is (<var title>original start
-    node</var>, <var title>original start offset</var>) and whose <span
-    title=concept-range-end>end</span> is (<var title>first partially contained
-    child</var>, <span title=concept-node-length>length</span> of <var
-    title>first partially contained child</var>).
+   <li><p>Let <var title>subrange</var> be a new <span title=concept-range>range</span>
+   whose <span title=concept-range-start>start</span> is
+   (<var title>original start node</var>, <var title>original start offset</var>) and
+   whose <span title=concept-range-end>end</span> is
+   (<var title>first partially contained child</var>, <var title>first partially contained child</var>'s <span title=concept-node-length>length</span>).
 
-    <li>Let <var title>subfrag</var> be the result of calling <code
-    title=dom-Range-cloneContents>cloneContents()</code> on <var
-    title>subrange</var>.
+   <li><p>Let <var title>subfragment</var> be the result of
+   <span title=concept-range-clone>cloning</span> <var title>subrange</var>.
 
-    <p class=XXX>Is this method of recursing black-box detectable?  E.g., would
-    it fire extra DOM mutation events or something?  What we really mean is to
-    get a list of nodes to insert, then insert them directly into <var
-    title>frag</var>, without an intermediate document fragment.
-
-   <li><p>For each <span title=concept-tree-child>child</span> of
-   <var title>subfrag</var>, in
-   <span title=concept-tree-order>tree order</span>,
-   <span title=concept-node-append>append</span> that
-   <span title=concept-tree-child>child</span> to <var title>clone</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>subfragment</var> to
+   <var title>fragment</var>.
   </ol>
 
  <li>
@@ -7546,12 +7509,11 @@ method must run these steps:
   <var title>contained children</var>:
 
   <ol>
-   <li><p>Let <var title>clone</var> be a
-   <span title=concept-node-clone>clone</span> of
+   <li><p>Let <var title>clone</var> be a <span title=concept-node-clone>clone</span> of
    <var title>contained child</var>.
 
-   <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>clone</var> to
+   <var title>fragment</var>.
   </ol>
 
  <li>
@@ -7559,12 +7521,11 @@ method must run these steps:
   <code>Text</code>, <code>ProcessingInstruction</code>, or
   <code>Comment</code> <span title=concept-node>node</span>:
 
-  <p class=note>In this case, the last partially contained child is the
-  original end node.
+  <p class=note>In this case, <var title>last partially contained child</var> is
+  <var title>original end node</var>.
 
   <ol>
-   <li><p>Let <var title>clone</var> be a
-   <span title=concept-node-clone>clone</span> of
+   <li><p>Let <var title>clone</var> be a <span title=concept-node-clone>clone</span> of
    <var title>original end node</var>.
 
    <li><p>Set the <span title=concept-CD-data>data</span> of
@@ -7573,8 +7534,8 @@ method must run these steps:
    <var title>original end node</var>, offset 0, and count
    <var title>original end offset</var>.
 
-   <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>clone</var> to
+   <var title>fragment</var>.
   </ol>
 
  <li>
@@ -7587,27 +7548,27 @@ method must run these steps:
    <var title>last partially contained child</var>.
 
    <li><p><span title=concept-node-append>Append</span> <var title>clone</var>
-   to <var title>frag</var>.
+   to <var title>fragment</var>.
 
-    <li>Let <var title>subrange</var> be a new <code>Range</code> whose <span
-    title=concept-range-start>start</span> is (<var title>last partially
-    contained child</var>, 0) and whose <span
-    title=concept-range-end>end</span> is (<var title>original end node</var>,
-    <var title>original end offset</var>).
+   <li><p>Let <var title>subrange</var> be a new <span title=concept-range>range</span>
+   whose <span title=concept-range-start>start</span> is
+   (<var title>last partially contained child</var>, 0) and whose
+   <span title=concept-range-end>end</span> is
+   (<var title>original end node</var>, <var title>original end offset</var>).
 
-    <li>Let <var title>subfrag</var> be the result of calling <code
-    title=dom-Range-cloneContents>cloneContents()</code> on <var
-    title>subrange</var>.
+   <li><p>Let <var title>subfragment</var> be the result of
+   <span title=concept-range-clone>cloning</span> <var title>subrange</var>.
 
-   <li><p>For each <span title=concept-tree-child>child</span> of
-   <var title>subfrag</var>, in
-   <span title=concept-tree-order>tree order</span>,
-   <span title=concept-node-append>append</span> that
-   <span title=concept-tree-child>child</span> to <var title>clone</var>.
+   <li><p><span title=concept-node-append>Append</span> <var title>subfragment</var> to
+   <var title>fragment</var>.
   </ol>
 
- <li><p>Return <var title>frag</var>.
+ <li><p>Return <var title>fragment</var>.
 </ol>
+
+<p>The <dfn title=dom-Range-cloneContents><code>cloneContents()</code></dfn>
+method must return the result of <span title=concept-range-clone>cloning</span>
+<span>context object</span>.
 
 <p>To <dfn title=concept-range-insert>insert</dfn> a <span title=concept-node>node</span>
 <var title>node</var> into a <span title=concept-range>range</span>
@@ -7766,25 +7727,24 @@ check first thing, which matches everyone but Firefox.
  happened to write down and it makes no real difference, with the even
  split. -->
 
-  <li>Call <code title=dom-Range-extractContents>extractContents()</code> on
-  the <span>context object</span>, and let <var title>fragment</var> be the
-  result.
-  <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
-  immediately throw here. Firefox removes the non-DocumentType nodes and
-  throws, Opera removes all nodes and doesn't throw. This applies to
-  extractContents() proper, and also affects surroundContents(). I match DOM 2
-  Range, IE9, and Chrome 12 dev. -->
+ <li><p>Let <var title>fragment</var> be the result of
+ <span title=concept-range-extract>extracting</span> <span>context object</span>.
+ <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
+ immediately throw here. Firefox removes the non-DocumentType nodes and
+ throws, Opera removes all nodes and doesn't throw. This applies to
+ extractContents() proper, and also affects surroundContents(). I match DOM 2
+ Range, IE9, and Chrome 12 dev. -->
 
  <li><p>If <var title>newParent</var> has
  <span title=concept-tree-child>children</span>,
  <span title=concept-node-replace-all>replace all</span> with null within
  <var title>newParent</var>.
 
-  <li><p><span title=concept-range-insert>Insert</span> <var title>newParent</var> into
-  <span>context object</span>.
+ <li><p><span title=concept-range-insert>Insert</span> <var title>newParent</var> into
+ <span>context object</span>.
 
-  <li><p><span title=concept-node-append>Append</span> <var title>fragment</var> to
-  <var title>newParent</var>.
+ <li><p><span title=concept-node-append>Append</span> <var title>fragment</var> to
+ <var title>newParent</var>.
 
   <li>Call <code title=dom-Range-selectNode>selectNode(<var
   title>newParent</var>)</code> on the <span>context object</span>.
