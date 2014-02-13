@@ -7609,9 +7609,9 @@ method must run these steps:
  <li><p>Return <var title>frag</var>.
 </ol>
 
-<p>The
-<dfn title=dom-Range-insertNode><code>insertNode(<var>node</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn title=concept-range-insert>insert</dfn> a <span title=concept-node>node</span>
+<var title>node</var> into a <span title=concept-range>range</span>
+<var title>range</var>, run these steps:
 
 <ol>
   <!-- IE9 and Opera 11.00 throw "WrongDocumentError" if the documents don't
@@ -7624,13 +7624,12 @@ method must run these steps:
   position, and other browsers disagree, so the spec follows the majority.
   -->
 
- <li><p>If <span title=concept-range-start-node>start node</span> is either
- a <code>ProcessingInstruction</code> or <code>Comment</code>
+ <li><p>If <var title>range</var>'s <span title=concept-range-start-node>start node</span>
+ is either a <code>ProcessingInstruction</code> or <code>Comment</code>
  <span title=concept-node>node</span>, or a <code>Text</code>
- <span title=concept-node>node</span> whose
- <span title=concept-tree-parent>parent</span> is null,
- <span title=concept-throw>throw</span> an
- "<code>HierarchyRequestError</code>" exception.
+ <span title=concept-node>node</span> whose <span title=concept-tree-parent>parent</span>
+ is null, <span title=concept-throw>throw</span> an "<code>HierarchyRequestError</code>"
+ exception.
  <!--
  Behavior for Text node with null parent:
 
@@ -7647,6 +7646,7 @@ method must run these steps:
  HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
  text node.
  -->
+ <li><p>Let <var title>referenceNode</var> be null.
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -7656,27 +7656,23 @@ method must run these steps:
 
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
- <li><p>If <span title=concept-range-start-node>start node</span> is a
- <code>Text</code> <span title=concept-node>node</span>,
+ <li><p>If <var title>range</var>'s <span title=concept-range-start-node>start node</span>
+ is a <code>Text</code> <span title=concept-node>node</span>,
  <span title=concept-Text-split>split</span> it with offset
- <span>context object</span>'s
- <span title=concept-range-start-offset>start offset</span>, and let
- <var title>reference node</var> be the result.
+ <var title>range</var>'s <span title=concept-range-start-offset>start offset</span>, and
+ set <var title>referenceNode</var> to the result.
 
- <li><p>Otherwise, let <var title>reference node</var> be the
+ <li><p>Otherwise, set <var title>referenceNode</var> to the
  <span title=concept-tree-child>child</span> of
  <span title=concept-range-start-node>start node</span> whose
  <span title=concept-tree-index>index</span> is
- <span title=concept-range-start-offset>start offset</span>, or null if
- there is no such <span title=concept-tree-child>child</span>.
+ <span title=concept-range-start-offset>start offset</span>, and null if
+ there is no such <span title=concept-tree-child>child</span> otherwise.
 
- <li><p>If <var title>reference node</var> is null, let
- <var title>parent</var> be
- <span title=concept-range-start-node>start node</span>.
-
- <li><p>Otherwise, let <var title>parent</var> be the
- <span title=concept-tree-parent>parent</span> of
- <var title>reference node</var>.
+ <li><p>Let <var title>parent</var> be <var title>range</var>'s
+ <span title=concept-range-start-node>start node</span> if <var title>referenceNode</var>
+ is null, and <var title>referenceNode</var>'s
+ <span title=concept-tree-parent>parent</span> otherwise.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
@@ -7699,27 +7695,27 @@ method must run these steps:
  The logic for how much to increment the position by is copied from the
  "insert" algorithm.  Getting the new offset right was surprisingly tricky.
  -->
- <li><p>Let <var title>new offset</var> be the
- <span title=concept-tree-index>index</span> of
- <var title>reference node</var>, or <var title>parent</var>'s
- <span title=concept-node-length>length</span> if
- <var title>reference node</var> is null.
+ <li><p>Let <var title>newOffset</var> be <var title>parent</var>'s
+ <span title=concept-node-length>length</span> if <var title>referenceNode</var> is null,
+ and <var title>referenceNode</var>'s <span title=concept-tree-index>index</span>
+ otherwise.
 
- <li><p>Add <var title>node</var>'s
- <span title=concept-node-length>length</span> to
- <var title>new offset</var>, if <var title>node</var> is a
- <code>DocumentFragment</code>.  Otherwise add one to
- <var title>new offset</var>.
+ <li><p>Increase <var title>newOffset</var> by <var title>node</var>'s
+ <span title=concept-node-length>length</span> if <var title>node</var> is a
+ <code>DocumentFragment</code> <span title=concept-node>node</span>, and one otherwise.
 
  <li><p><span title=concept-node-pre-insert>Pre-insert</span>
- <var title>node</var> into <var title>parent</var> before
- <var title>reference node</var>.
+ <var title>node</var> into <var title>parent</var> before <var title>referenceNode</var>.
 
- <li><p>If <span title=concept-range-start>start</span> and
- <span title=concept-range-end>end</span> are the same, set
- <span title=concept-range-end>end</span> to (<var title>parent</var>,
- <var title>new offset</var>).
+ <li><p>If <var title>range</var>'s <span title=concept-range-start>start</span> and
+ <span title=concept-range-end>end</span> are the same, set <var title>range</var>'s
+ <span title=concept-range-end>end</span> to
+ (<var title>parent</var>, <var title>newOffset</var>).
 </ol>
+
+<p>The <dfn title=dom-Range-insertNode><code>insertNode(<var>node</var>)</code></dfn>
+method must <span title=concept-range-insert>insert</span> <var title>node</var> into
+<span>context object</span>.
 
 <p>The
 <dfn title=dom-Range-surroundContents><code>surroundContents(<var>newParent</var>)</code></dfn>
@@ -7784,8 +7780,8 @@ check first thing, which matches everyone but Firefox.
  <span title=concept-node-replace-all>replace all</span> with null within
  <var title>newParent</var>.
 
-  <li>Call <code title=dom-Range-insertNode>insertNode(<var
-  title>newParent</var>)</code> on the <span>context object</span>.
+  <li><p><span title=concept-range-insert>Insert</span> <var title>newParent</var> into
+  <span>context object</span>.
 
   <li>Call <code
   title=dom-Node-appendChild>appendChild(<var title>fragment</var>)</code> on

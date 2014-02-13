@@ -12,7 +12,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1>DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-12-february-2014">Living Standard — Last Updated 12 February 2014</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-13-february-2014">Living Standard — Last Updated 13 February 2014</h2>
 
 <dl>
  <dt>This Version:
@@ -46,7 +46,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-12 February 2014, the editors have made this specification available
+13 February 2014, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -7648,9 +7648,9 @@ method must run these steps:
  <li><p>Return <var title="">frag</var>.
 </ol>
 
-<p>The
-<dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var>node</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn id="concept-range-insert" title="concept-range-insert">insert</dfn> a <a href="#concept-node" title="concept-node">node</a>
+<var title="">node</var> into a <a href="#concept-range" title="concept-range">range</a>
+<var title="">range</var>, run these steps:
 
 <ol>
   <!-- IE9 and Opera 11.00 throw "WrongDocumentError" if the documents don't
@@ -7663,13 +7663,12 @@ method must run these steps:
   position, and other browsers disagree, so the spec follows the majority.
   -->
 
- <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is either
- a <code><a href="#processinginstruction">ProcessingInstruction</a></code> or <code><a href="#comment">Comment</a></code>
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is either a <code><a href="#processinginstruction">ProcessingInstruction</a></code> or <code><a href="#comment">Comment</a></code>
  <a href="#concept-node" title="concept-node">node</a>, or a <code><a href="#text">Text</a></code>
- <a href="#concept-node" title="concept-node">node</a> whose
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" exception.
+ <a href="#concept-node" title="concept-node">node</a> whose <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>
+ is null, <a href="#concept-throw" title="concept-throw">throw</a> an "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>"
+ exception.
  <!--
  Behavior for Text node with null parent:
 
@@ -7686,6 +7685,7 @@ method must run these steps:
  HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
  text node.
  -->
+ <li><p>Let <var title="">referenceNode</var> be null.
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -7695,27 +7695,23 @@ method must run these steps:
 
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
- <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
- <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
  <a href="#concept-text-split" title="concept-Text-split">split</a> it with offset
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and let
- <var title="">reference node</var> be the result.
+ <var title="">range</var>'s <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and
+ set <var title="">referenceNode</var> to the result.
 
- <li><p>Otherwise, let <var title="">reference node</var> be the
+ <li><p>Otherwise, set <var title="">referenceNode</var> to the
  <a href="#concept-tree-child" title="concept-tree-child">child</a> of
  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> whose
  <a href="#concept-tree-index" title="concept-tree-index">index</a> is
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, or null if
- there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and null if
+ there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a> otherwise.
 
- <li><p>If <var title="">reference node</var> is null, let
- <var title="">parent</var> be
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
-
- <li><p>Otherwise, let <var title="">parent</var> be the
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of
- <var title="">reference node</var>.
+ <li><p>Let <var title="">parent</var> be <var title="">range</var>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> if <var title="">referenceNode</var>
+ is null, and <var title="">referenceNode</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> otherwise.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
@@ -7738,27 +7734,27 @@ method must run these steps:
  The logic for how much to increment the position by is copied from the
  "insert" algorithm.  Getting the new offset right was surprisingly tricky.
  -->
- <li><p>Let <var title="">new offset</var> be the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of
- <var title="">reference node</var>, or <var title="">parent</var>'s
- <a href="#concept-node-length" title="concept-node-length">length</a> if
- <var title="">reference node</var> is null.
+ <li><p>Let <var title="">newOffset</var> be <var title="">parent</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> if <var title="">referenceNode</var> is null,
+ and <var title="">referenceNode</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>
+ otherwise.
 
- <li><p>Add <var title="">node</var>'s
- <a href="#concept-node-length" title="concept-node-length">length</a> to
- <var title="">new offset</var>, if <var title="">node</var> is a
- <code><a href="#documentfragment">DocumentFragment</a></code>.  Otherwise add one to
- <var title="">new offset</var>.
+ <li><p>Increase <var title="">newOffset</var> by <var title="">node</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> if <var title="">node</var> is a
+ <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, and one otherwise.
 
  <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
- <var title="">node</var> into <var title="">parent</var> before
- <var title="">reference node</var>.
+ <var title="">node</var> into <var title="">parent</var> before <var title="">referenceNode</var>.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> and
- <a href="#concept-range-end" title="concept-range-end">end</a> are the same, set
- <a href="#concept-range-end" title="concept-range-end">end</a> to (<var title="">parent</var>,
- <var title="">new offset</var>).
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> and
+ <a href="#concept-range-end" title="concept-range-end">end</a> are the same, set <var title="">range</var>'s
+ <a href="#concept-range-end" title="concept-range-end">end</a> to
+ (<var title="">parent</var>, <var title="">newOffset</var>).
 </ol>
+
+<p>The <dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var>node</var>)</code></dfn>
+method must <a href="#concept-range-insert" title="concept-range-insert">insert</a> <var title="">node</var> into
+<a href="#context-object">context object</a>.
 
 <p>The
 <dfn id="dom-range-surroundcontents" title="dom-Range-surroundContents"><code>surroundContents(<var>newParent</var>)</code></dfn>
@@ -7823,7 +7819,8 @@ check first thing, which matches everyone but Firefox.
  <a href="#concept-node-replace-all" title="concept-node-replace-all">replace all</a> with null within
  <var title="">newParent</var>.
 
-  <li>Call <code title="dom-Range-insertNode"><a href="#dom-range-insertnode">insertNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
+  <li><p><a href="#concept-range-insert" title="concept-range-insert">Insert</a> <var title="">newParent</var> into
+  <a href="#context-object">context object</a>.
 
   <li>Call <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild(<var title="">fragment</var>)</a></code> on
   <var title="">newParent</var>.
