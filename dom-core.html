@@ -8,7 +8,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1 class="allcaps">DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-18-march-2014">Living Standard — Last Updated 18 March 2014</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-19-march-2014">Living Standard — Last Updated 19 March 2014</h2>
 
 <dl>
  <dt>This Version:
@@ -42,7 +42,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-18 March 2014, the editors have made this specification available
+19 March 2014, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2584,19 +2584,40 @@ method must run these steps:
 
 <h3 id="mutation-observers"><span class="secno">5.3 </span>Mutation observers</h3>
 
-<p>Each <i title="">scripting environment</i> has an associated list of
-<code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty. To
-<dfn id="concept-mo-invoke" title="concept-MO-invoke">invoke</dfn> <code><a href="#mutationobserver">MutationObserver</a></code>
-objects, run these steps:
+<p>Each
+<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a> has a
+<dfn id="mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</dfn> and an associated list of
+<code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty.
+<a href="#refsHTML">[HTML]</a>
+
+<p>To <dfn id="queue-a-mutation-observer-compound-microtask">queue a mutation observer compound microtask</dfn>, run these steps:
 
 <ol>
+ <li><p>If <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a> is set, terminate
+ these steps.
+
+ <li><p>Set <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
+
+ <li><p><a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-microtask" title="queue a microtask">Queue</a> a
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#compound-microtask">compound microtask</a> to
+ <a href="#notify-mutation-observers">notify mutation observers</a>.
+</ol>
+
+<p>To <dfn id="notify-mutation-observers">notify mutation observers</dfn>, run these steps:
+
+<ol>
+ <li><p>Unset <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
+
  <li><p>Let <var title="">notify list</var> be a copy of
- <i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
- objects.
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s
+ list of <code><a href="#mutationobserver">MutationObserver</a></code> objects.
 
  <li>
   <p>For each <code><a href="#mutationobserver">MutationObserver</a></code> object <var title="">mo</var>
-  in <var title="">notify list</var>, run these substeps:
+  in <var title="">notify list</var>,
+  <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#execute-a-compound-microtask-subtask">execute a compound microtask subtask</a> to run these
+  steps:
+  <a href="#refsHTML">[HTML]</a>
 
   <ol>
    <li><p>Let <var title="">queue</var> be a copy of <var title="">mo</var>'s
@@ -2615,19 +2636,7 @@ objects, run these steps:
    <var title="">mo</var> (itself) as second argument and
    <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>.
   </ol>
-
- <li><p><p>If any <code><a href="#mutationobserver">MutationObserver</a></code> object in
- <i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
- objects has a non-empty <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a> at
- this point, run these steps again (indeed, all of them).
 </ol>
-
-<p class="note">The DOM standard does not define the
-<i title="">scripting environment</i> nor its scope. The HTML standard defines
-how this concept integrates with the rest of the platform as well as when
-<a href="#concept-mo-invoke" title="concept-MO-invoke">invoke</a> is invoked.
-<a href="#refsHTML">[HTML]</a>
-<!-- XXX could move this to DOM now? -->
 
 <hr>
 
@@ -2760,8 +2769,9 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
 <dfn id="dom-mutationobserver" title="dom-MutationObserver"><code>MutationObserver(<var>callback</var>)</code></dfn>
 constructor must create a new <code><a href="#mutationobserver">MutationObserver</a></code> object with
 <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> set to <var>callback</var>,
-append it to the <i title="">scripting environment</i>'s list of
-<code><a href="#mutationobserver">MutationObserver</a></code> objects, and then return it.
+append it to the
+<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s list
+of <code><a href="#mutationobserver">MutationObserver</a></code> objects, and then return it.
 
 <p>The
 <dfn id="dom-mutationobserver-observe" title="dom-MutationObserver-observe"><code>observe(<var title="">target</var>, <var title="">options</var>)</code></dfn>
@@ -2940,6 +2950,8 @@ previousSibling <var title="">previousSibling</var>, and nextSibling
    <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
    <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
   </ol>
+
+ <li><p><a href="#queue-a-mutation-observer-compound-microtask">Queue a mutation observer compound microtask</a>.
 </ol>
 
 
