@@ -2504,19 +2504,40 @@ method must run these steps:
 
 <h3>Mutation observers</h3>
 
-<p>Each <i title>scripting environment</i> has an associated list of
-<code>MutationObserver</code> objects which is initially empty. To
-<dfn title=concept-MO-invoke>invoke</dfn> <code>MutationObserver</code>
-objects, run these steps:
+<p>Each
+<span data-anolis-spec=html>unit of related similar-origin browsing contexts</span> has a
+<dfn>mutation observer compound microtask queued flag</dfn> and an associated list of
+<code>MutationObserver</code> objects which is initially empty.
+<span data-anolis-ref>HTML</span>
+
+<p>To <dfn>queue a mutation observer compound microtask</dfn>, run these steps:
 
 <ol>
+ <li><p>If <span>mutation observer compound microtask queued flag</span> is set, terminate
+ these steps.
+
+ <li><p>Set <span>mutation observer compound microtask queued flag</span>.
+
+ <li><p><span data-anolis-spec=html title="queue a microtask">Queue</span> a
+ <span data-anolis-spec=html>compound microtask</span> to
+ <span>notify mutation observers</span>.
+</ol>
+
+<p>To <dfn>notify mutation observers</dfn>, run these steps:
+
+<ol>
+ <li><p>Unset <span>mutation observer compound microtask queued flag</span>.
+
  <li><p>Let <var title>notify list</var> be a copy of
- <i title>scripting environment</i>'s list of <code>MutationObserver</code>
- objects.
+ <span data-anolis-spec=html>unit of related similar-origin browsing contexts</span>'s
+ list of <code>MutationObserver</code> objects.
 
  <li>
   <p>For each <code>MutationObserver</code> object <var title>mo</var>
-  in <var title>notify list</var>, run these substeps:
+  in <var title>notify list</var>,
+  <span data-anolis-spec=html>execute a compound microtask subtask</span> to run these
+  steps:
+  <span data-anolis-ref>HTML</span>
 
   <ol>
    <li><p>Let <var title>queue</var> be a copy of <var title>mo</var>'s
@@ -2535,19 +2556,7 @@ objects, run these steps:
    <var title>mo</var> (itself) as second argument and
    <span data-anolis-spec=webidl>callback this value</span>.
   </ol>
-
- <li><p><p>If any <code>MutationObserver</code> object in
- <i title>scripting environment</i>'s list of <code>MutationObserver</code>
- objects has a non-empty <span title=concept-MO-queue>record queue</span> at
- this point, run these steps again (indeed, all of them).
 </ol>
-
-<p class=note>The DOM standard does not define the
-<i title>scripting environment</i> nor its scope. The HTML standard defines
-how this concept integrates with the rest of the platform as well as when
-<span title=concept-MO-invoke>invoke</span> is invoked.
-<span data-anolis-ref>HTML</span>
-<!-- XXX could move this to DOM now? -->
 
 <hr>
 
@@ -2680,8 +2689,9 @@ to the <span title=concept-tree>tree</span> of
 <dfn title=dom-MutationObserver><code>MutationObserver(<var>callback</var>)</code></dfn>
 constructor must create a new <code>MutationObserver</code> object with
 <span title=concept-MO-callback>callback</span> set to <var>callback</var>,
-append it to the <i title>scripting environment</i>'s list of
-<code>MutationObserver</code> objects, and then return it.
+append it to the
+<span data-anolis-spec=html>unit of related similar-origin browsing contexts</span>'s list
+of <code>MutationObserver</code> objects, and then return it.
 
 <p>The
 <dfn title=dom-MutationObserver-observe><code>observe(<var title>target</var>, <var title>options</var>)</code></dfn>
@@ -2860,6 +2870,8 @@ previousSibling <var title>previousSibling</var>, and nextSibling
    <li><p>Append <var title>record</var> to <var title>observer</var>'s
    <span title=concept-MO-queue>record queue</span>.
   </ol>
+
+ <li><p><span>Queue a mutation observer compound microtask</span>.
 </ol>
 
 
