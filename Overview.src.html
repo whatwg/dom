@@ -2051,41 +2051,37 @@ method must run these steps:
  <var title>node</var> to the <span>context object</span>.
 </ol>
 
-<p>To <dfn>evaluate a relative selectors string</dfn> <var title>relativeSelectors</var>
-against a <var title>node</var> or a <var title>list</var>, run these steps:
+<p>To <dfn>match a relative selectors string</dfn> <var title>relativeSelectors</var>
+against a <var title>set</var>, run these steps:
 
 <ol>
- <li><p>Let <var title>elementSet</var> be <var title>node</var> if that was given, and
- all <span title=concept-element>elements</span> in <var title>list</var>, in the same
- order, otherwise.
-
  <li><p>Let <var title>s</var> be the result of
  <span data-anolis-spec=selectors>parse a relative selector</span> from
  <var title>relativeSelectors</var> against
  <span data-anolis-spec=selectors>reference element set</span>
- <var title>elementSet</var>. <span data-anolis-ref>SELECTORS</span>
+ <var title>set</var>. <span data-anolis-ref>SELECTORS</span>
 
  <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
  JavaScript <code title>TypeError</code>.
 
  <li><p>Return the result of <span data-anolis-spec=selectors>match a selector</span>
  <var title>s</var> using <span data-anolis-spec=selectors>reference element set</span>
- <var title>elementSet</var>. <span data-anolis-ref>SELECTORS</span>
+ <var title>set</var>. <span data-anolis-ref>SELECTORS</span>
 </ol>
 
 <p>The
 <dfn title=dom-ParentNode-query><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<span>evaluate a relative selectors string</span> <var title>relativeSelectors</var>
-against the <span>context object</span>, and null if the result is an empty list.
+<span>match a relative selectors string</span> <var title>relativeSelectors</var> against
+a set consisting of <span>context object</span>, and null if the result is an empty list.
 
 <p>The
 <dfn title=dom-ParentNode-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
-method must return an <code>Elements</code> array initialized with the result of
-running <span>evaluate a relative selectors string</span>
-<var title>relativeSelectors</var> against the <span>context object</span>.
+method must return an <code>Elements</code> array initialized with the result of running
+<span>match a relative selectors string</span> <var title>relativeSelectors</var> against
+a set consisting of <span>context object</span>.
 
-<p>To <dfn>evaluate a selectors string</dfn> <var title>selectors</var> against a
+<p>To <dfn>scope-match a selectors string</dfn> <var title>selectors</var> against a
 <var title>node</var>, run these steps:
 
 <ol>
@@ -2099,20 +2095,22 @@ running <span>evaluate a relative selectors string</span>
  <li><p>Return the result of <span data-anolis-spec=selectors>match a selector</span>
  <var title>s</var> against
  <var title>node</var>'s <span title=concept-tree-root>root</span> using
- <span data-anolis-spec=selectors>scoping root</span> <var title>node</var>.
+ <span data-anolis-spec=selectors>scoping root</span> <var title>node</var> and
+ scoping method
+ <span data-anolis-spec=selectors title="scope-contained selectors">scope-contained</span>.
  <span data-anolis-ref>SELECTORS</span>.
 </ol>
 
 <p>The
 <dfn title=dom-ParentNode-querySelector><code>querySelector(<var>selectors</var>)</code></dfn>
-method must return the first result of running <span>evaluate a selectors string</span>
+method must return the first result of running <span>scope-match a selectors string</span>
 <var title>selectors</var> against the <span>context object</span>, and null if the result
-is an empty list.
+is an empty list otherwise.
 
 <p>The
 <dfn title=dom-ParentNode-querySelectorAll><code>querySelectorAll(<var>selectors</var>)</code></dfn>
 method must return the <span title=concept-collection-static>static</span> result of
-running <span>evaluate a selectors string</span> <var title>selectors</var> against the
+running <span>scope-match a selectors string</span> <var title>selectors</var> against the
 <span>context object</span>.
 
 
@@ -2305,13 +2303,13 @@ additional methods. It's the new <code>NodeList</code> / <code>HTMLCollection</c
 <p>The
 <dfn title=dom-Elements-query><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<span>evaluate a relative selectors string</span> <var title>relativeSelectors</var>
+<span>match a relative selectors string</span> <var title>relativeSelectors</var>
 against the <span>context object</span>, and null if the result is an empty list.
 
 <p>The
 <dfn title=dom-Elements-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
 method must return the result of running <code title>this.constructor</code> with the
-result of running <span>evaluate a relative selectors string</span>
+result of running <span>match a relative selectors string</span>
 <var title>relativeSelectors</var> against the <span>context object</span>.
 
 
@@ -5760,10 +5758,28 @@ have its name converted to ASCII lowercase before the element is affected.
  <var title>element</var>, and false otherwise.
 </dl>
 
+<p>To <dfn>match a selectors string</dfn> <var title>selectors</var> against a
+<var title>set</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title>s</var> be the result of
+ <span data-anolis-spec=selectors>parse a selector</span> from <var title>selectors</var>
+ against <span data-anolis-spec=selectors>reference element set</span>
+ <var title>set</var>.
+ <span data-anolis-ref>SELECTORS</span>
+
+ <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
+ JavaScript <code title>TypeError</code>.
+
+ <li><p>Return the result of <span data-anolis-spec=selectors>match a selector</span>
+ <var title>s</var> using <span data-anolis-spec=selectors>reference element set</span>
+ <var title>set</var>. <span data-anolis-ref>SELECTORS</span>
+</ol>
+
 <p>The <dfn title=dom-Element-matches><code>matches(<var>selectors</var>)</code></dfn>
 method must return true if the <span>context object</span> is in the result of running
-<span>evaluate a selectors string</span> <var title>selectors</var> against the
-<span>context object</span>, and false otherwise.
+<span>match a selectors string</span> <var title>selectors</var> against a set consisting
+of <span>context object</span>, and false otherwise.
 
 <hr>
 
