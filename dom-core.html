@@ -8,7 +8,7 @@
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
 <h1 class="allcaps">DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-19-march-2014">Living Standard — Last Updated 19 March 2014</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-20-march-2014">Living Standard — Last Updated 20 March 2014</h2>
 
 <dl>
  <dt>This Version:
@@ -42,7 +42,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-19 March 2014, the editors have made this specification available
+20 March 2014, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -2133,41 +2133,37 @@ method must run these steps:
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
 
-<p>To <dfn id="evaluate-a-relative-selectors-string">evaluate a relative selectors string</dfn> <var title="">relativeSelectors</var>
-against a <var title="">node</var> or a <var title="">list</var>, run these steps:
+<p>To <dfn id="match-a-relative-selectors-string">match a relative selectors string</dfn> <var title="">relativeSelectors</var>
+against a <var title="">set</var>, run these steps:
 
 <ol>
- <li><p>Let <var title="">elementSet</var> be <var title="">node</var> if that was given, and
- all <a href="#concept-element" title="concept-element">elements</a> in <var title="">list</var>, in the same
- order, otherwise.
-
  <li><p>Let <var title="">s</var> be the result of
  <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#parse-a-relative-selector">parse a relative selector</a> from
  <var title="">relativeSelectors</var> against
  <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
- <var title="">elementSet</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
 
  <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-throw">throw</a> a
  JavaScript <code title="">TypeError</code>.
 
  <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
  <var title="">s</var> using <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
- <var title="">elementSet</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
 </ol>
 
 <p>The
 <dfn id="dom-parentnode-query" title="dom-ParentNode-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a> <var title="">relativeSelectors</var>
-against the <a href="#context-object">context object</a>, and null if the result is an empty list.
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>, and null if the result is an empty list.
 
 <p>The
 <dfn id="dom-parentnode-queryall" title="dom-ParentNode-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
-method must return an <code><a href="#elements">Elements</a></code> array initialized with the result of
-running <a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a>
-<var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
+method must return an <code><a href="#elements">Elements</a></code> array initialized with the result of running
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>.
 
-<p>To <dfn id="evaluate-a-selectors-string">evaluate a selectors string</dfn> <var title="">selectors</var> against a
+<p>To <dfn id="scope-match-a-selectors-string">scope-match a selectors string</dfn> <var title="">selectors</var> against a
 <var title="">node</var>, run these steps:
 
 <ol>
@@ -2181,20 +2177,22 @@ running <a href="#evaluate-a-relative-selectors-string">evaluate a relative sele
  <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
  <var title="">s</var> against
  <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a> using
- <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a> <var title="">node</var>.
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a> <var title="">node</var> and
+ scoping method
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scope-contained-selectors" title="scope-contained selectors">scope-contained</a>.
  <a href="#refsSELECTORS">[SELECTORS]</a>.
 </ol>
 
 <p>The
 <dfn id="dom-parentnode-queryselector" title="dom-ParentNode-querySelector"><code>querySelector(<var>selectors</var>)</code></dfn>
-method must return the first result of running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a>
+method must return the first result of running <a href="#scope-match-a-selectors-string">scope-match a selectors string</a>
 <var title="">selectors</var> against the <a href="#context-object">context object</a>, and null if the result
-is an empty list.
+is an empty list otherwise.
 
 <p>The
 <dfn id="dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll"><code>querySelectorAll(<var>selectors</var>)</code></dfn>
 method must return the <a href="#concept-collection-static" title="concept-collection-static">static</a> result of
-running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <var title="">selectors</var> against the
+running <a href="#scope-match-a-selectors-string">scope-match a selectors string</a> <var title="">selectors</var> against the
 <a href="#context-object">context object</a>.
 
 
@@ -2387,13 +2385,13 @@ additional methods. It's the new <code><a href="#nodelist">NodeList</a></code> /
 <p>The
 <dfn id="dom-elements-query" title="dom-Elements-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a> <var title="">relativeSelectors</var>
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var>
 against the <a href="#context-object">context object</a>, and null if the result is an empty list.
 
 <p>The
 <dfn id="dom-elements-queryall" title="dom-Elements-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
 method must return the result of running <code title="">this.constructor</code> with the
-result of running <a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a>
+result of running <a href="#match-a-relative-selectors-string">match a relative selectors string</a>
 <var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
 
 
@@ -5833,10 +5831,28 @@ have its name converted to ASCII lowercase before the element is affected.
  <var title="">element</var>, and false otherwise.
 </dl>
 
+<p>To <dfn id="match-a-selectors-string">match a selectors string</dfn> <var title="">selectors</var> against a
+<var title="">set</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">s</var> be the result of
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#parse-a-selector">parse a selector</a> from <var title="">selectors</var>
+ against <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
+ <var title="">set</var>.
+ <a href="#refsSELECTORS">[SELECTORS]</a>
+
+ <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-throw">throw</a> a
+ JavaScript <code title="">TypeError</code>.
+
+ <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
+ <var title="">s</var> using <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+</ol>
+
 <p>The <dfn id="dom-element-matches" title="dom-Element-matches"><code>matches(<var>selectors</var>)</code></dfn>
 method must return true if the <a href="#context-object">context object</a> is in the result of running
-<a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <var title="">selectors</var> against the
-<a href="#context-object">context object</a>, and false otherwise.
+<a href="#match-a-selectors-string">match a selectors string</a> <var title="">selectors</var> against a set consisting
+of <a href="#context-object">context object</a>, and false otherwise.
 
 <hr>
 
