@@ -10,7 +10,7 @@ var fs = require("fs")
 
 fs.readdirSync(__dirname)
     .forEach(function (f) {
-        if (/\.json$/.test(f)) return;
+        if (!/\.json$/.test(f)) return;
         data[f.replace(/\.json$/, "")] = JSON.parse(fs.readFileSync(pth.join(__dirname, f), "utf8"));
     });
 
@@ -20,22 +20,22 @@ for (var ua in data) {
         var testData = data[ua].results[i]
         ,   id = testData.test
         ;
-        if (!out[id]) {
-            out[id] = {
+        if (!out.results[id]) {
+            out.results[id] = {
                 byUA:       {}
             ,   totals:     {}
             ,   subtests:   {}
             };
         }
-        out[id].byUA[ua] = testData.status;
-        if (!out[id].totals[testData.status]) out[id].totals[testData.status] = 1;
-        else out[id].totals[testData.status]++;
+        out.results[id].byUA[ua] = testData.status;
+        if (!out.results[id].totals[testData.status]) out.results[id].totals[testData.status] = 1;
+        else out.results[id].totals[testData.status]++;
         for (var j = 0, m = testData.subtests.length; j < m; j++) {
             var st = testData.subtests[j];
-            if (!out[id].subtests[st.name]) out[id].subtests[st.name] = { byUA: {}, totals: {} };
-            out[id].subtests[st.name].byUA[ua] = st.status;
-            if (!out[id].subtests[st.name].totals[st.status]) out[id].subtests[st.name].totals[st.status] = 1;
-            else out[id].subtests[st.name].totals[st.status]++;
+            if (!out.results[id].subtests[st.name]) out.results[id].subtests[st.name] = { byUA: {}, totals: {} };
+            out.results[id].subtests[st.name].byUA[ua] = st.status;
+            if (!out.results[id].subtests[st.name].totals[st.status]) out.results[id].subtests[st.name].totals[st.status] = 1;
+            else out.results[id].subtests[st.name].totals[st.status]++;
         }
     }
 }
