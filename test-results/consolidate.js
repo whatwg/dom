@@ -10,7 +10,7 @@ var fs = require("fs")
 
 fs.readdirSync(__dirname)
     .forEach(function (f) {
-        if (!/\.json$/.test(f)) return;
+        if (!/^\w\w\d\d\.json$/.test(f)) return;
         data[f.replace(/\.json$/, "")] = JSON.parse(fs.readFileSync(pth.join(__dirname, f), "utf8"));
     });
 
