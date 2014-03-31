@@ -26,9 +26,12 @@ for (var test in data.results) {
         status: run.byUA
     ,   name:   test
     ,   fails:  []
+    ,   total:  0
     };
-    for (var n in run.subtests)
+    for (var n in run.subtests) {
+        result.total++;
         if (!run.subtests[n].totals.PASS || run.subtests[n].totals.PASS < 2) result.fails.push({ name: n, byUA: run.subtests[n].byUA });
+    }
     if (result.fails.length) out.push(result);
 }
 
@@ -37,7 +40,9 @@ var table = "<thead><tr class='persist-header'><th>Test</th><th>" + ua.join("</t
 ;
 for (var i = 0, n = out.length; i < n; i++) {
     var test = out[i];
-    table += "<tr class='test'><td><a href='" + test.name + "' target='_blank'>" + test.name + "</a></td>" + cells(test.status) + "</tr>\n";
+    table += "<tr class='test'><td><a href='http://www.w3c-test.org" + test.name + "' target='_blank'>" +
+             test.name + "</a> <small>(" + test.fails.length + "/" + test.total + ", " +
+             (100*test.fails.length/test.total).toFixed(2) + "%)</small></td>" + cells(test.status) + "</tr>\n";
     for (var j = 0, m = test.fails.length; j < m; j++) {
         var st = test.fails[j];
         fails++;
