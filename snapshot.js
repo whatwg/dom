@@ -79,6 +79,9 @@ tmp.file({ postfix: ".html" }, function (err, path) {
             domSrc = domSrc.replace(rex, "<dt id=\"refs" + ref + "\">[" + ref + "]\n" + references[ref]);
         }
 
+        // turn XXX into simple warnings
+        domSrc = domSrc.replace(/class="XXX"/g, "class='warning'");
+
         wfs(outputFile, domSrc);
     });
 });
