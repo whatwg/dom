@@ -1,14 +1,7 @@
-<!DOCTYPE html><html lang="en-US"><head>
-
-    <meta charset="utf-8">
-    <title>W3C DOM4</title>
-    
-    
-    
-    <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-ED"><!--[if lt IE 9]><![endif]-->
-</head>
- <body>
+<!DOCTYPE html><html lang="en-US"><meta charset="utf-8">
+<title>DOM Standard</title>
+<link href="http://www.whatwg.org/style/specification" rel="stylesheet">
+<link href="//resources.whatwg.org/logo-dom.svg" rel="icon">
 
 <div class='head'>
   <p>
@@ -18,7 +11,7 @@
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">W3C DOM4</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-02-03T13:29:46.000Z" id="w3c-editor-s-draft-03-february-2014">W3C Editor's Draft <time class="dt-published" datetime="2014-02-03">03 February 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-03-31T10:31:49.000Z" id="w3c-editor-s-draft-31-march-2014">W3C Editor's Draft <time class="dt-published" datetime="2014-03-31">31 March 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -88,7 +81,7 @@
 
 
 <h2 class="no-num no-toc" id="abstract">Abstract</h2>
-<p>DOM defines a platform-neutral model for events and document nodes.
+<p>DOM defines a platform-neutral model for events and node trees.
 
 
 <h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
@@ -130,6 +123,7 @@
             documents at any time. It is inappropriate to cite this document as other than work in
             progress.
           </p>
+        
         
         
         <p>
@@ -274,9 +268,8 @@
    <li>Simplifying them as much as possible.
   </ul>
 
- <li><p>By moving features from HTML5 that ought to be part of the DOM
- platform here, while preventing a dependency on HTML5.
- <a href="#refsHTML">[HTML]</a>
+ <li><p>By moving features from the HTML standard that ought to be part of the DOM
+ platform here. <a href="#refsHTML">[HTML]</a>
 
  <li>
   <p>By defining a replacement for the "Mutation Events" and
@@ -548,6 +541,12 @@ return value.
 
 
 <h2 id="errors"><span class="secno">3 </span>Errors</h2>
+
+<p class="XXX">This entire section will move out of DOM into IDL. <code><a href="#domexception">DOMException</a></code>
+will be defined in terms of JavaScript and made available in both document and worker
+environments. <code><a href="#domerror">DOMError</a></code> will go away.
+
+
 <h3 id="exception-domexception"><span class="secno">3.1 </span>Exception <code><a href="#domexception">DOMException</a></code></h3>
 <pre class="idl">exception <dfn id="domexception">DOMException</dfn> {
   const unsigned short <a href="#dom-domexception-index_size_err" title="dom-DOMException-INDEX_SIZE_ERR">INDEX_SIZE_ERR</a> = 1;
@@ -619,7 +618,7 @@ interface <dfn id="domerror">DOMError</dfn> {
   readonly attribute DOMString <a href="#dom-domerror-message" title="dom-DOMError-message">message</a>;
 };</pre>
 
-<p class="XXX"><code><a href="#domerror">DOMError</a></code> might be nuked in favor of using
+<p class="XXX"><code><a href="#domerror">DOMError</a></code> will be nuked in favor of using
 <code><a href="#domexception">DOMException</a></code> exclusively. See <a href="https://mail.mozilla.org/pipermail/es-discuss/2013-July/thread.html#31677">Creating your own errors</a>
 on es-discuss for more details.
 
@@ -894,7 +893,8 @@ would have been <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target"
 
 <h3 id="interface-event"><span class="secno">4.2 </span>Interface <code><a href="#event">Event</a></code></h3>
 
-<pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>)]
+<pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>),
+ Exposed=Window,Worker]
 interface <dfn id="event">Event</dfn> {
   readonly attribute DOMString <a href="#dom-event-type" title="dom-Event-type">type</a>;
   readonly attribute <a href="#eventtarget">EventTarget</a>? <a href="#dom-event-target" title="dom-Event-target">target</a>;
@@ -1096,11 +1096,9 @@ initialized to false.
 <p>The <dfn id="dom-event-timestamp" title="dom-Event-timeStamp"><code>timeStamp</code></dfn> attribute
 must return the value it was initialized to. When an
 <a href="#concept-event" title="concept-event">event</a> is created the attribute must be
-initialized to the number of milliseconds that has passed since
-00:00:00 UTC on 1 January 1970.
-
-<!-- XXX leap seconds?
-         http://krijnhoetmer.nl/irc-logs/whatwg/20110707#l-330 -->
+initialized to the number of milliseconds that have passed since
+00:00:00 UTC on 1 January 1970, ignoring leap seconds.
+<!-- leap seconds are ignored by JavaScript too -->
 
 <hr>
 
@@ -1139,7 +1137,8 @@ it has to be supported for legacy content.
 
 <h3 id="interface-customevent"><span class="secno">4.3 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
-<pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>)]
+<pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>),
+ Exposed=Window,Worker]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
   readonly attribute any <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;
 
@@ -1225,7 +1224,8 @@ for historical reasons.
 
 <h3 id="interface-eventtarget"><span class="secno">4.6 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
-<pre class="idl">interface <dfn id="eventtarget">EventTarget</dfn> {
+<pre class="idl">[Exposed=Window,Worker]
+interface <dfn id="eventtarget">EventTarget</dfn> {
   void <a href="#dom-eventtarget-addeventlistener" title="dom-EventTarget-addEventListener">addEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">callback</var>, optional boolean <var title="">capture</var> = false);
   void <a href="#dom-eventtarget-removeeventlistener" title="dom-EventTarget-removeEventListener">removeEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">callback</var>, optional boolean <var title="">capture</var> = false);
   boolean <a href="#dom-eventtarget-dispatchevent" title="dom-EventTarget-dispatchEvent">dispatchEvent</a>(<a href="#event">Event</a> <var title="">event</var>);
@@ -1560,8 +1560,6 @@ concept is clear. Markup goes in, a <a href="#concept-tree" title="concept-tree"
 <p class="note">The most excellent
 <a href="http://software.hixie.ch/utilities/js/live-dom-viewer/">Live DOM Viewer</a>
 can be used to explore this matter in more detail.
-
-<p class="XXX">How much should be explained here? Ideas?
 
 
 <h3 id="node-tree"><span class="secno">5.2 </span>Node tree</h3>
@@ -2057,8 +2055,8 @@ support it.
 interface <dfn id="nonelementparentnode">NonElementParentNode</dfn> {
   <a href="#element">Element</a>? <a href="#dom-nonelementparentnode-getelementbyid" title="dom-NonElementParentNode-getElementById">getElementById</a>(DOMString <var title="">elementId</var>);
 };
-<a href="#document">Document</a> implements <a href="#parentnode">ParentNode</a>;
-<a href="#documentfragment">DocumentFragment</a> implements <a href="#parentnode">ParentNode</a>;</pre>
+<a href="#document">Document</a> implements <a href="#nonelementparentnode">NonElementParentNode</a>;
+<a href="#documentfragment">DocumentFragment</a> implements <a href="#nonelementparentnode">NonElementParentNode</a>;</pre>
 
 <dl class="domintro">
  <dt><code><var title="">node</var> . <a href="#dom-nonelementparentnode-getelementbyid" title="dom-NonElementParentNode-getElementById">getElementById</a>(<var title="">elementId</var>)</code>
@@ -2072,7 +2070,7 @@ interface <dfn id="nonelementparentnode">NonElementParentNode</dfn> {
 method must return the first <a href="#concept-element" title="concept-element">element</a>, in
 <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, within <a href="#context-object">context object</a>'s
 <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>, whose
-<a href="#concept-id" title="concept-ID">ID</a> is <var title="">elementId</var>, and null if there is no
+<a href="#concept-id" title="concept-id">ID</a> is <var title="">elementId</var>, and null if there is no
 such <a href="#concept-element" title="concept-element">element</a> otherwise.
 
 
@@ -2160,26 +2158,26 @@ interface <dfn id="parentnode">ParentNode</dfn> {
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
   <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
-  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">node</var> that matches
-  <var title="">relativeSelectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of <var title="">node</var> that
+  matches <var title="">relativeSelectors</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
   <p>Returns all <a href="#concept-element" title="concept-element">element</a>
-  <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> that match
-  <var title="">relativeSelectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> of <var title="">node</var> that
+  match <var title="">relativeSelectors</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(<var title="">selectors</var>)</code>
  <dd>
   <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
-  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">node</var> that matches
-  <var title="">selectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of <var title="">node</var> that
+  matches <var title="">selectors</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(<var title="">selectors</var>)</code>
  <dd>
   <p>Returns all <a href="#concept-element" title="concept-element">element</a>
-  <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">node</var> that match
-  <var title="">selectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> of <var title="">node</var> that
+  match <var title="">selectors</var>.
 </dl>
 
 <p>The <dfn id="dom-parentnode-children" title="dom-ParentNode-children"><code>children</code></dfn>
@@ -2230,42 +2228,37 @@ method must run these steps:
  <var title="">node</var> to the <a href="#context-object">context object</a>.
 </ol>
 
-<p>To <dfn id="evaluate-a-relative-selectors-string">evaluate a relative selectors string</dfn> <var title="">relativeSelectors</var>
-against a <var title="">node</var> or a <var title="">list</var>, run these steps:
+<p>To <dfn id="match-a-relative-selectors-string">match a relative selectors string</dfn> <var title="">relativeSelectors</var>
+against a <var title="">set</var>, run these steps:
 
 <ol>
- <li><p>Let <var title="">elementSet</var> be <var title="">node</var> if that was given, and
- all <a href="#concept-element" title="concept-element">elements</a> in <var title="">list</var>, in the same
- order, otherwise.
-
  <li><p>Let <var title="">s</var> be the result of
  <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#parse-a-relative-selector">parse a relative selector</a> from
  <var title="">relativeSelectors</var> against
  <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
- <var title="">elementSet</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
 
  <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-throw">throw</a> a
  JavaScript <code title="">TypeError</code>.
 
  <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
- <var title="">s</var> using <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a>
- <var title="">e</var> and <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
- <var title="">elementSet</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+ <var title="">s</var> using <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
 </ol>
 
 <p>The
 <dfn id="dom-parentnode-query" title="dom-ParentNode-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a> <var title="">relativeSelectors</var>
-against the <a href="#context-object">context object</a>, and null if the result is an empty list.
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>, and null if the result is an empty list.
 
 <p>The
 <dfn id="dom-parentnode-queryall" title="dom-ParentNode-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
-method must return an <code><a href="#elements">Elements</a></code> array initialized with the result of
-running <a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a>
-<var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
+method must return an <code><a href="#elements">Elements</a></code> array initialized with the result of running
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>.
 
-<p>To <dfn id="evaluate-a-selectors-string">evaluate a selectors string</dfn> <var title="">selectors</var> against a
+<p>To <dfn id="scope-match-a-selectors-string">scope-match a selectors string</dfn> <var title="">selectors</var> against a
 <var title="">node</var>, run these steps:
 
 <ol>
@@ -2279,20 +2272,22 @@ running <a href="#evaluate-a-relative-selectors-string">evaluate a relative sele
  <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
  <var title="">s</var> against
  <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a> using
- <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a> <var title="">node</var>.
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a> <var title="">node</var> and
+ scoping method
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scope-filtered-selectors" title="scope-filtered selectors">scope-filtered</a>.
  <a href="#refsSELECTORS">[SELECTORS]</a>.
 </ol>
 
 <p>The
 <dfn id="dom-parentnode-queryselector" title="dom-ParentNode-querySelector"><code>querySelector(<var>selectors</var>)</code></dfn>
-method must return the first result of running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a>
+method must return the first result of running <a href="#scope-match-a-selectors-string">scope-match a selectors string</a>
 <var title="">selectors</var> against the <a href="#context-object">context object</a>, and null if the result
-is an empty list.
+is an empty list otherwise.
 
 <p>The
 <dfn id="dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll"><code>querySelectorAll(<var>selectors</var>)</code></dfn>
 method must return the <a href="#concept-collection-static" title="concept-collection-static">static</a> result of
-running <a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <var title="">selectors</var> against the
+running <a href="#scope-match-a-selectors-string">scope-match a selectors string</a> <var title="">selectors</var> against the
 <a href="#context-object">context object</a>.
 
 
@@ -2472,26 +2467,26 @@ additional methods. It's the new <code><a href="#nodelist">NodeList</a></code> /
  <dt><code><var title="">elements</var> . <a href="#dom-elements-query" title="dom-Elements-query">query</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
   <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
-  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">elements</var> that matches
-  <var title="">relativeSelectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of <var title="">elements</var> that
+  matches <var title="">relativeSelectors</var>.
 
  <dt><code><var title="">elements</var> . <a href="#dom-elements-queryall" title="dom-Elements-queryAll">queryAll</a>(<var title="">relativeSelectors</var>)</code>
  <dd>
   <p>Returns all <a href="#concept-element" title="concept-element">element</a>
-  <a href="#concept-tree-child" title="concept-tree-child">children</a> of <var title="">elements</var> that match
-  <var title="">relativeSelectors</var>.
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> of <var title="">elements</var> that
+  match <var title="">relativeSelectors</var>.
 </dl>
 
 <p>The
 <dfn id="dom-elements-query" title="dom-Elements-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
 method must return the first result of running
-<a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a> <var title="">relativeSelectors</var>
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var>
 against the <a href="#context-object">context object</a>, and null if the result is an empty list.
 
 <p>The
 <dfn id="dom-elements-queryall" title="dom-Elements-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
 method must return the result of running <code title="">this.constructor</code> with the
-result of running <a href="#evaluate-a-relative-selectors-string">evaluate a relative selectors string</a>
+result of running <a href="#match-a-relative-selectors-string">match a relative selectors string</a>
 <var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
 
 
@@ -2628,8 +2623,9 @@ method must return the <var title="">index</var>th
 <a href="#concept-element" title="concept-element">element</a> in the <a href="#concept-collection" title="concept-collection">collection</a>. If there is no
 <var title="">index</var>th <a href="#concept-element" title="concept-element">element</a> in the <a href="#concept-collection" title="concept-collection">collection</a>, then the method must return null.
 
-<p>The <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-supported-property-names">supported property names</a> are the
-values from the list returned by these steps:
+<p>The <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-supported-property-names">supported property names</a>, all
+<a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-unenumerable">unenumerable</a>, are the values from the list returned
+by these steps:
 
 <ol>
  <li><p>Let <var title="">result</var> be an empty list.
@@ -2638,6 +2634,11 @@ values from the list returned by these steps:
   <a href="#represented-by-the-collection">represented by the collection</a>, in
   <a href="#concept-tree-order" title="concept-tree-order">tree order</a>, run these substeps:
   <ol>
+   <li><p>If <var title="">element</var> has an
+   <a href="#concept-id" title="concept-id">ID</a> which is neither the empty string nor is
+   in <var title="">result</var>, append <var title="">element</var>'s
+   <a href="#concept-id" title="concept-id">ID</a> to <var title="">result</var>.
+
    <li><p>If <var title="">element</var> is in the <a href="#html-namespace">HTML namespace</a>
    and <a href="#concept-element-attribute-has" title="concept-element-attribute-has">has</a> a
    <a href="#concept-named-attribute" title="concept-named-attribute"><code title="">name</code> attribute</a>
@@ -2646,11 +2647,6 @@ values from the list returned by these steps:
    <var title="">element</var>'s
    <a href="#concept-named-attribute" title="concept-named-attribute"><code title="">name</code> attribute</a>
    <a href="#concept-attribute-value" title="concept-attribute-value">value</a> to <var title="">result</var>.
-
-   <li><p>If <var title="">element</var> has an
-   <a href="#concept-id" title="concept-ID">ID</a> which is neither the empty string nor is
-   in <var title="">result</var>, append <var title="">element</var>'s
-   <a href="#concept-id" title="concept-ID">ID</a> to <var title="">result</var>.
   </ol>
  <li><p>Return <var title="">result</var>.
 </ol>
@@ -2665,12 +2661,11 @@ method must run these steps:
   <a href="#concept-collection" title="concept-collection">collection</a> for which at least one of
   the following is true:
   <ul>
+   <li>it has an <a href="#concept-id" title="concept-id">ID</a> which is <var title="">key</var>.
    <li>it <a href="#concept-element-attribute-has" title="concept-element-attribute-has">has</a> a
    <a href="#concept-named-attribute" title="concept-named-attribute"><code title="">name</code> attribute</a>
    whose <a href="#concept-attribute-value" title="concept-attribute-value">value</a> is
    <var title="">key</var>;
-   <li>it has an <a href="#concept-id" title="concept-id">ID</a> which is
-   <var title="">key</var>.
   </ul>
   <p>or null if there is no such <a href="#concept-element" title="concept-element">element</a>.
 </ol>
@@ -2681,19 +2676,40 @@ method must run these steps:
 
 <h3 id="mutation-observers"><span class="secno">5.3 </span>Mutation observers</h3>
 
-<p>Each <i title="">scripting environment</i> has an associated list of
-<code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty. To
-<dfn id="concept-mo-invoke" title="concept-MO-invoke">invoke</dfn> <code><a href="#mutationobserver">MutationObserver</a></code>
-objects, run these steps:
+<p>Each
+<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a> has a
+<dfn id="mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</dfn> and an associated list of
+<code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty.
+<a href="#refsHTML">[HTML]</a>
+
+<p>To <dfn id="queue-a-mutation-observer-compound-microtask">queue a mutation observer compound microtask</dfn>, run these steps:
 
 <ol>
+ <li><p>If <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a> is set, terminate
+ these steps.
+
+ <li><p>Set <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
+
+ <li><p><a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-microtask" title="queue a microtask">Queue</a> a
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#compound-microtask">compound microtask</a> to
+ <a href="#notify-mutation-observers">notify mutation observers</a>.
+</ol>
+
+<p>To <dfn id="notify-mutation-observers">notify mutation observers</dfn>, run these steps:
+
+<ol>
+ <li><p>Unset <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
+
  <li><p>Let <var title="">notify list</var> be a copy of
- <i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
- objects.
+ <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s
+ list of <code><a href="#mutationobserver">MutationObserver</a></code> objects.
 
  <li>
   <p>For each <code><a href="#mutationobserver">MutationObserver</a></code> object <var title="">mo</var>
-  in <var title="">notify list</var>, run these substeps:
+  in <var title="">notify list</var>,
+  <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#execute-a-compound-microtask-subtask">execute a compound microtask subtask</a> to run these
+  steps:
+  <a href="#refsHTML">[HTML]</a>
 
   <ol>
    <li><p>Let <var title="">queue</var> be a copy of <var title="">mo</var>'s
@@ -2712,19 +2728,7 @@ objects, run these steps:
    <var title="">mo</var> (itself) as second argument and
    <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>.
   </ol>
-
- <li><p><p>If any <code><a href="#mutationobserver">MutationObserver</a></code> object in
- <i title="">scripting environment</i>'s list of <code><a href="#mutationobserver">MutationObserver</a></code>
- objects has a non-empty <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a> at
- this point, run these steps again (indeed, all of them).
 </ol>
-
-<p class="note">The DOM standard does not define the
-<i title="">scripting environment</i> nor its scope. The HTML standard defines
-how this concept integrates with the rest of the platform as well as when
-<a href="#concept-mo-invoke" title="concept-MO-invoke">invoke</a> is invoked.
-<a href="#refsHTML">[HTML]</a>
-<!-- XXX could move this to DOM now? -->
 
 <hr>
 
@@ -2801,11 +2805,16 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
 
    <dt><code title="dom-MutationObserverInit-attributes">attributes</code>
    <dd><p>Set to true if mutations to <var title="">target</var>'s
-   <a href="#concept-attribute" title="concept-attribute">attributes</a> are to be observed.
+   <a href="#concept-attribute" title="concept-attribute">attributes</a> are to be observed. Can be omitted if
+   <code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code> and/or
+   <code title="dom-MutationObserverInit-attributeFilter">attributeFilter</code> is
+   specified.
 
    <dt><code title="dom-MutationObserverInit-characterData">characterData</code>
    <dd><p>Set to true if mutations to <var title="">target</var>'s
-   <a href="#concept-cd-data" title="concept-CD-data">data</a> are to be observed.
+   <a href="#concept-cd-data" title="concept-CD-data">data</a> are to be observed. Can be omitted if
+   <code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code>
+   is specified.
 
    <dt><code title="dom-MutationObserverInit-subtree">subtree</code>
    <dd><p>Set to true if mutations to not just <var title="">target</var>, but
@@ -2815,8 +2824,8 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
 
    <dt><code title="dom-MutationObserverInit-attributeOldValue">attributeOldValue</code>
    <dd><p>Set to true if
-   <code title="dom-MutationObserverInit-attributes">attributes</code> is set
-   to true and <var title="">target</var>'s
+   <code title="dom-MutationObserverInit-attributes">attributes</code> is true or omitted
+   and <var title="">target</var>'s
    <a href="#concept-attribute" title="concept-attribute">attribute</a>
    <a href="#concept-attribute-value" title="concept-attribute-value">value</a> before the mutation
    needs to be recorded.
@@ -2824,7 +2833,7 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
    <dt><code title="dom-MutationObserverInit-characterDataOldValue">characterDataOldValue</code>
    <dd><p>Set to true if
    <code title="dom-MutationObserverInit-characterData">characterData</code>
-   is set to true and <var title="">target</var>'s
+   is set to true or omitted and <var title="">target</var>'s
    <a href="#concept-cd-data" title="concept-CD-data">data</a> before the mutation
    needs to be recorded.
 
@@ -2833,7 +2842,8 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
    <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local names</a> (without
    <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>) if not all
    <a href="#concept-attribute" title="concept-attribute">attribute</a> mutations need to be
-   observed.
+   observed and <code title="dom-MutationObserverInit-attributes">attributes</code> is true
+   or omitted.
   </dl>
 
  <dt><code><var title="">observer</var> . <a href="#dom-mutationobserver-disconnect" title="dom-MutationObserver-disconnect">disconnect</a>()</code>
@@ -2851,8 +2861,9 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
 <dfn id="dom-mutationobserver" title="dom-MutationObserver"><code>MutationObserver(<var>callback</var>)</code></dfn>
 constructor must create a new <code><a href="#mutationobserver">MutationObserver</a></code> object with
 <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> set to <var>callback</var>,
-append it to the <i title="">scripting environment</i>'s list of
-<code><a href="#mutationobserver">MutationObserver</a></code> objects, and then return it.
+append it to the
+<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s list
+of <code><a href="#mutationobserver">MutationObserver</a></code> objects, and then return it.
 
 <p>The
 <dfn id="dom-mutationobserver-observe" title="dom-MutationObserver-observe"><code>observe(<var title="">target</var>, <var title="">options</var>)</code></dfn>
@@ -3031,6 +3042,8 @@ previousSibling <var title="">previousSibling</var>, and nextSibling
    <li><p>Append <var title="">record</var> to <var title="">observer</var>'s
    <a href="#concept-mo-queue" title="concept-MO-queue">record queue</a>.
   </ol>
+
+ <li><p><a href="#queue-a-mutation-observer-compound-microtask">Queue a mutation observer compound microtask</a>.
 </ol>
 
 
@@ -3513,8 +3526,9 @@ must return the following, depending on the <a href="#context-object">context ob
  <dd><p>Null.
 </dl>
 
-<p>Setting the <code title="dom-Node-nodeValue"><a href="#dom-node-nodevalue">nodeValue</a></code> attribute
-must do as described below, depending on the <a href="#context-object">context object</a>:
+<p>The <code title="dom-Node-nodeValue"><a href="#dom-node-nodevalue">nodeValue</a></code> attribute must,
+on setting, if the new value is null, act as if it was the empty string
+instead, and then do as described below, depending on the <a href="#context-object">context object</a>:
 
 <dl class="switch">
  <!--AttrExodus <dt><code>Attr</code> -->
@@ -3687,10 +3701,10 @@ must run these steps:</p>
 <hr>
 
 <dl class="domintro">
- <dt><code><var title="">node</var> . <a href="#dom-node-clonenode" title="dom-Node-cloneNode">cloneNode</a>([<var title="">deep</var>])</code>
+ <dt><code><var title="">node</var> . <a href="#dom-node-clonenode" title="dom-Node-cloneNode">cloneNode</a>([<var title="">deep</var> = false])</code>
  <dd><p>Returns a copy of <var title="">node</var>. If
- <var title="">deep</var> is true or omitted, the copy also includes the
- <var title="">node</var> <a href="#concept-tree-child" title="concept-tree-child">children</a>.
+ <var title="">deep</var> is true, the copy also includes the
+ <var title="">node</var>'s <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>.
 
  <dt><code><var title="">node</var> . <a href="#dom-node-isequalnode" title="dom-Node-isEqualNode">isEqualNode</a>(<var title="">other</var>)</code>
  <dd><p>Returns whether <var title="">node</var> and <var title="">other</var>
@@ -3699,14 +3713,14 @@ must run these steps:</p>
 
 <div class="impl">
 
-<p>Specifications may define
+<p><a href="#other-applicable-specifications" title="Other applicable specifications">Specifications</a> may define
 <dfn id="concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</dfn> for all or some
 <a href="#concept-node" title="concept-node">nodes</a>. The algorithm is passed <var title="">copy</var>,
 <var title="">node</var>, <var title="">document</var>, and optionally a
 <i title="">clone children flag</i>, as indicated in the
 <a href="#concept-node-clone" title="concept-node-clone">clone</a> algorithm.
 
-<p class="note">HTML defines
+<p class="note no-backref">HTML defines
 <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a> for
 <code class="external" data-anolis-spec="html"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#the-script-element">script</a></code> and
 <code class="external" data-anolis-spec="html"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#the-input-element">input</a></code> elements. SVG ought to do the same
@@ -3796,19 +3810,15 @@ method must return a <a href="#concept-node-clone" title="concept-node-clone">cl
 <a href="#context-object">context object</a>, with the <i title="">clone children flag</i> set
 if <var title="">deep</var> is true.
 
-<p>The
-<dfn id="dom-node-isequalnode" title="dom-Node-isEqualNode"><code>isEqualNode(<var title="">node</var>)</code></dfn>
-method must return true if all of the following conditions are true, and
-false otherwise:
+<p>A <a href="#concept-node" title="concept-node">node</a> <var title="">A</var>
+<dfn id="concept-node-equals" title="concept-node-equals">equals</dfn> a <a href="#concept-node" title="concept-node">node</a>
+<var title="">B</var> if all of the following conditions are true:
 
 <ul>
- <li><p><var title="">node</var> is not null.
- <li><p><var title="">node</var>'s
- <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value is the same
- as the <a href="#context-object">context object</a>'s
- <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value.
+ <li><p><var title="">A</var> and <var title="">B</var>'s
+ <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value is identical.
  <li>
-  <p>The following are also equal, depending on <var title="">node</var>:
+  <p>The following are also equal, depending on <var title="">A</var>:
   <dl class="switch">
    <dt><code><a href="#documenttype">DocumentType</a></code>
    <dd><p>Its <a href="#concept-doctype-name" title="concept-doctype-name">name</a>,
@@ -3839,25 +3849,27 @@ false otherwise:
    <dt>Any other node
    <dd><p>—
   </dl>
- <li><p>If <var title="">node</var> is an <code><a href="#element">Element</a></code>, each
+ <li><p>If <var title="">A</var> is an <a href="#concept-element" title="concept-element">element</a>, each
  <a href="#concept-attribute" title="concept-attribute">attribute</a> in its
  <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a> has an
  <a href="#concept-attribute" title="concept-attribute">attribute</a> with the same
  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a>,
  <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a>, and
- <a href="#concept-attribute-value" title="concept-attribute-value">value</a> in the
- <a href="#context-object">context object</a>'s
+ <a href="#concept-attribute-value" title="concept-attribute-value">value</a> in <var title="">B</var>'s
  <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
- <li><p><var title="">node</var> has the same number of
- <a href="#concept-tree-child" title="concept-tree-child">children</a> as the
- <a href="#context-object">context object</a>.
- <li><p>Calling <code title="dom-Node-isEqualNode"><a href="#dom-node-isequalnode">isEqualNode()</a></code> on
- each <a href="#concept-tree-child" title="concept-tree-child">child</a> of the
- <a href="#context-object">context object</a>, with the
- <a href="#concept-tree-child" title="concept-tree-child">child</a> of the same index in
- <var title="">node</var> as argument returns true for every
- <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+ <li><p><var title="">A</var> and <var title="">B</var> have the same number of
+ <a href="#concept-tree-child" title="concept-tree-child">children</a>.
+ <li><p>Each <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">A</var>
+ <a href="#concept-node-equals" title="concept-node-equals">equals</a> the
+ <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">B</var> at the identical
+ <a href="#concept-tree-index" title="concept-tree-index">index</a>.
 </ul>
+
+<p>The
+<dfn id="dom-node-isequalnode" title="dom-Node-isEqualNode"><code>isEqualNode(<var title="">node</var>)</code></dfn>
+method must return true if <var title="">node</var> is not null and
+<a href="#context-object">context object</a> <a href="#concept-node-equals" title="concept-node-equals">equals</a>
+<var title="">node</var>, and false otherwise.
 
 </div>
 
@@ -3872,7 +3884,7 @@ false otherwise:
   <dl>
    <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_disconnected" title="dom-Node-DOCUMENT_POSITION_DISCONNECTED">DOCUMENT_POSITION_DISCONNECTED</a></code> (1)
    <dd>Set when <var title="">node</var> and <var>other</var> are not in the
-   same <a href="#concept-document" title="concept-document">document</a>.
+   same <a href="#concept-tree" title="concept-tree">tree</a>.
 
    <dt><code><a href="#node">Node</a> . <a href="#dom-node-document_position_preceding" title="dom-Node-DOCUMENT_POSITION_PRECEDING">DOCUMENT_POSITION_PRECEDING</a></code> (2)
    <dd>Set when <var title="">other</var> is
@@ -4825,12 +4837,12 @@ data-anolis-spec=xmlns>NCName</code> production in Namespaces in XML.-->
 <hr>
 
 <dl class="domintro">
- <dt><var title="">clone</var> = <var title="">document</var> . <code title="dom-Document-importNode"><a href="#dom-document-importnode">importNode(<var>node</var> [, <var>deep</var>])</a></code>
+ <dt><var title="">clone</var> = <var title="">document</var> . <code title="dom-Document-importNode"><a href="#dom-document-importnode">importNode(<var>node</var> [, <var>deep</var> = false])</a></code>
  <dd>
  <dd>
   <p>Returns a copy of <var title="">node</var>. If
-  <var title="">deep</var> is true or omitted, the copy also includes the
-  <var title="">node</var> <a href="#concept-tree-child" title="concept-tree-child">children</a>.
+  <var title="">deep</var> is true, the copy also includes the
+  <var title="">node</var>'s <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>.
 
   <p>If <var title="">node</var> is a
   <a href="#concept-document" title="concept-document">document</a> throws a
@@ -4864,24 +4876,32 @@ method must run these steps:
  <i title="">clone children flag</i> set if <var title="">deep</var> is true.
 </ol>
 
+<p><a href="#other-applicable-specifications" title="Other applicable specifications">Specifications</a> may define
+<dfn id="concept-node-adopt-ext" title="concept-node-adopt-ext">adopting steps</dfn> for all or some
+<a href="#concept-node" title="concept-node">nodes</a>. The algorithm is passed <var title="">node</var> and
+<var title="">oldDocument</var>, as indicated in the
+<a class="no-backref" href="#concept-node-adopt" title="concept-node-adopt">adopt</a> algorithm.
+
 <p>To <dfn id="concept-node-adopt" title="concept-node-adopt">adopt</dfn> a <var title="">node</var> into
 a <var title="">document</var>, run these steps:
 
 <ol>
+ <li><p>Let <var title="">oldDocument</var> be <var title="">node</var>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a>.
+
  <li><p>If <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null,
  <a href="#concept-node-remove" title="concept-node-remove">remove</a> <var title="">node</var> from
  its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
- <li><p>Set <a href="#concept-node-document" title="concept-node-document">node document</a> for
- <var title="">node</var> and all its
- <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a>
+ <li><p>Set <var title="">node</var>'s
+ <a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendants</a>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a> to <var title="">document</var>.
  <!--AttrExodus as well as any associated <code>Attr</code> nodes-->
- to <var title="">document</var>.
 
- <li><p>If <var title="">node</var> is an
- <a href="#concept-element" title="concept-element">element</a>, it is
- <a href="#affected-by-a-base-url-change">affected by a base URL change</a>.
+ <li><p>Run any <a href="#concept-node-adopt-ext" title="concept-node-adopt-ext">adopting steps</a> defined for
+ <var title="">node</var> in <a href="#other-applicable-specifications">other applicable specifications</a> and pass
+ <var title="">node</var> and <var title="">oldDocument</var> as parameters.
 </ol>
 
 <p>The
@@ -5000,7 +5020,7 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   [NewObject] <a href="#xmldocument">XMLDocument</a> <a href="#dom-domimplementation-createdocument" title="dom-DOMImplementation-createDocument">createDocument</a>(DOMString? <var title="">namespace</var>, [TreatNullAs=EmptyString] DOMString <var title="">qualifiedName</var>, optional <a href="#documenttype">DocumentType</a>? <var title="">doctype</var> = null);
   [NewObject] <a href="#document">Document</a> <a href="#dom-domimplementation-createhtmldocument" title="dom-DOMImplementation-createHTMLDocument">createHTMLDocument</a>(optional DOMString <var title="">title</var>);
 
-  boolean <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(DOMString feature, [TreatNullAs=EmptyString] DOMString version);
+  boolean <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(); // useless; always returns true
 };</pre>
 
 <dl class="domintro">
@@ -5039,24 +5059,6 @@ with that <a href="#concept-document" title="concept-document">document</a>.
   <a href="#concept-tree" title="concept-tree">tree</a> already constructed including a
   <code title="">title</code> element, unless the <var title="">title</var>
   argument is omitted.
-
- <dt><code><var title="">document</var> .
- <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a> .
- <a href="#dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature">hasFeature</a>(
- <var title="">feature</var>, <var title="">version</var>)</code>
-
- <dd>
-  <p>If <var title="">feature</var> is an
-  <a href="http://www.w3.org/TR/SVG/feature.html">SVG feature</a> string,
-  returns whether that feature is supported.  If <var title="">feature</var> is
-  not the empty string, only returns true if the feature is supported as
-  defined in the given version of the SVG specification (e.g.,
-  "<code title="">1.1</code>").
-
-  <p>If <var title="">feature</var> is not an SVG feature, but rather some other
-  string like "<code title="">HTML</code>" or
-  "<code title="">flibbertigibbet</code>", always returns true.  Thus, this method
-  is only useful for testing SVG features.
 </dl>
 
 <div class="impl">
@@ -5212,47 +5214,15 @@ method must run these steps:
  <li><p>Return <var title="">doc</var>.
 </ol>
 
-<p>The <dfn id="dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature"><code>hasFeature(<var title="">feature</var>, <var title="">version</var>)</code></dfn> method must run
-these steps:
-
-<ol>
- <li><p>If <var title="">feature</var> begins with an
- <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for one of the strings
- "<code title="">http://www.w3.org/TR/SVG</code>",
- "<code title="">org.w3c.dom.svg</code>", or "<code title="">org.w3c.svg</code>":
-
- <ol>
-  <li><p>If <var title="">version</var> is the empty string:
-
-  <ol>
-   <li><p>Return true if there is some SVG specification that defines a feature
-   that is an <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for
-   <var title="">feature</var>, and the user agent meets all the requirements of
-   that specification for that feature. Otherwise, return false.
-  </ol>
-
-  <li><p>Return true if <var title="">version</var> is the version identifier for
-  a known SVG specification, and that specification defines a feature that is
-  an <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for <var title="">feature</var>,
-  and the user agent meets all the requirements of that specification for that
-  feature. Otherwise, return false.
-
-  <p class="XXX">What happens if a feature is only defined in 1.1 but the version
-  string passed is 1.0?  Most UAs return true in this case too, but do we want
-  to spec that?
- </ol>
-
- <li><p>Return true.
-</ol>
+<p>The <dfn id="dom-domimplementation-hasfeature" title="dom-DOMImplementation-hasFeature"><code>hasFeature()</code></dfn> method
+must return true.
 
 <p class="note"><code title="dom-DOMImplementation-hasFeature"><a href="#dom-domimplementation-hasfeature">hasFeature()</a></code>
 originally would report whether the user agent claimed to support a given DOM
 feature, but experience proved it was not nearly as reliable or granular as
-simply checking whether the desired interfaces, attributes, or methods existed.
+simply checking whether the desired objects, attributes, or methods existed.
 As such, it should no longer be used, but continues to exist (and simply
-returns true) so that old pages don't stop working.  SVG features are a
-separate mechanism that reused the existing method, so they continue to work as
-a special case.
+returns true) so that old pages don't stop working.
 
 </div>
 
@@ -5654,15 +5624,6 @@ constraints, there can only be one such
 
 <hr>
 
-<p>Specifications may define <dfn id="base-url-change-steps">base URL change steps</dfn>.
-
-<p>When an <a href="#concept-element" title="concept-element">element</a> is
-<dfn id="affected-by-a-base-url-change">affected by a base URL change</dfn>, the user agent must run the
-<a href="#base-url-change-steps">base URL change steps</a>, as defined in
-<a href="#other-applicable-specifications">other applicable specifications</a>.
-
-<hr>
-
 <dl class="domintro">
  <dt><var title="">namespace</var> = <var title="">element</var> . <code title="dom-Element-namespaceURI"><a href="#dom-element-namespaceuri">namespaceURI</a></code>
  <dd><p>Returns the <a href="#concept-element-namespace" title="concept-element-namespace">namespace</a>.
@@ -5965,10 +5926,28 @@ have its name converted to ASCII lowercase before the element is affected.
  <var title="">element</var>, and false otherwise.
 </dl>
 
+<p>To <dfn id="match-a-selectors-string">match a selectors string</dfn> <var title="">selectors</var> against a
+<var title="">set</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">s</var> be the result of
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#parse-a-selector">parse a selector</a> from <var title="">selectors</var>
+ against <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
+ <var title="">set</var>.
+ <a href="#refsSELECTORS">[SELECTORS]</a>
+
+ <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-throw">throw</a> a
+ JavaScript <code title="">TypeError</code>.
+
+ <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#match-a-selector">match a selector</a>
+ <var title="">s</var> using <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#reference-element-set">reference element set</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+</ol>
+
 <p>The <dfn id="dom-element-matches" title="dom-Element-matches"><code>matches(<var>selectors</var>)</code></dfn>
 method must return true if the <a href="#context-object">context object</a> is in the result of running
-<a href="#evaluate-a-selectors-string">evaluate a selectors string</a> <var title="">selectors</var> against the
-<a href="#context-object">context object</a>, and false otherwise.
+<a href="#match-a-selectors-string">match a selectors string</a> <var title="">selectors</var> against a set consisting
+of <a href="#context-object">context object</a>, and false otherwise.
 
 <hr>
 
@@ -5999,6 +5978,10 @@ for the <a href="#context-object">context object</a>.
   readonly attribute DOMString <a href="#dom-attr-name" title="dom-Attr-name">name</a>;
   readonly attribute DOMString? <a href="#dom-attr-namespaceuri" title="dom-Attr-namespaceURI">namespaceURI</a>;
   readonly attribute DOMString? <a href="#dom-attr-prefix" title="dom-Attr-prefix">prefix</a>;
+
+  readonly attribute <a href="#element">Element</a>? <a href="#dom-attr-ownerelement" title="dom-Attr-ownerElement">ownerElement</a>;
+
+  readonly attribute boolean <a href="#dom-attr-specified" title="dom-Attr-specified">specified</a>; // useless; always returns true
 };</pre>
 
 <p><code><a href="#attr">Attr</a></code> objects are simply known as
@@ -6057,6 +6040,19 @@ attribute must return the
 <p>The <dfn id="dom-attr-prefix" title="dom-Attr-prefix"><code>prefix</code></dfn> attribute must
 return the
 <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a>.
+
+<hr>
+
+<p>The <dfn id="dom-attr-ownerelement" title="dom-Attr-ownerElement"><code>ownerElement</code></dfn> attribute must
+return the <a href="#concept-element" title="concept-element">element</a> whose
+<a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a> contains the
+<a href="#context-object">context object</a>, and null if there is no such
+<a href="#concept-element" title="concept-element">element</a> otherwise.
+
+<hr>
+
+<p>The <dfn id="dom-attr-specified" title="dom-Attr-specified"><code>specified</code></dfn> attribute must return
+true.
 
 
 <h3 id="interface-characterdata"><span class="secno">5.9 </span>Interface <code><a href="#characterdata">CharacterData</a></code></h3>
@@ -6446,7 +6442,6 @@ whose <a href="#concept-cd-data" title="concept-CD-data">data</a> is <var title=
 
 
 <h2 id="ranges"><span class="secno">6 </span>Ranges</h2>
-<!-- XXX do not call other methods but use concepts -->
 
 <h3 id="introduction-to-dom-ranges"><span class="secno">6.1 </span>Introduction to "DOM Ranges"</h3>
 
@@ -6998,30 +6993,33 @@ method must if <var title="">toStart</var> is true, set
 <a href="#concept-range-start" title="concept-range-start">start</a> to
 <a href="#concept-range-end" title="concept-range-end">end</a> otherwise.
 
-
-<p>The
-<dfn id="dom-range-selectnode" title="dom-Range-selectNode"><code>selectNode(<var>node</var>)</code></dfn>
-method must run these steps:
+<p>To <dfn id="concept-range-select" title="concept-range-select">select</dfn> a <a href="#concept-node" title="concept-node">node</a>
+<var title="">node</var> within a <a href="#concept-range" title="concept-range">range</a>
+<var title="">range</var>, run these steps:
 
 <ol>
  <li><p>Let <var title="">parent</var> be <var title="">node</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
- <li><p>If <var title="">parent</var> is null,
- <a href="#concept-throw" title="concept-throw">throw</a> an
+ <li><p>If <var title="">parent</var> is null, <a href="#concept-throw" title="concept-throw">throw</a> an
  "<code><a href="#invalidnodetypeerror">InvalidNodeTypeError</a></code>".
 
- <li><p>Let <var title="">index</var> be the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">node</var>.
+ <li><p>Let <var title="">index</var> be <var title="">node</var>'s
+ <a href="#concept-tree-index" title="concept-tree-index">index</a>.
 
- <li><p>Set <a href="#concept-range-start" title="concept-range-start">start</a> to the
+ <li><p>Set <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> to
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
  (<var title="">parent</var>, <var title="">index</var>).
 
- <li><p>Set <a href="#concept-range-end" title="concept-range-end">end</a> to the
+ <li><p>Set <var title="">range</var>'s <a href="#concept-range-end" title="concept-range-end">end</a> to
  <a href="#concept-range-bp" title="concept-range-bp">boundary point</a>
  (<var title="">parent</var>, <var title="">index</var> plus one).
 </ol>
+
+<p>The
+<dfn id="dom-range-selectnode" title="dom-Range-selectNode"><code>selectNode(<var>node</var>)</code></dfn>
+method must <a href="#concept-range-select" title="concept-range-select">select</a> <var title="">node</var> within
+<a href="#context-object">context object</a>.
 
 <p>The
 <dfn id="dom-range-selectnodecontents" title="dom-Range-selectNodeContents"><code>selectNodeContents(<var>node</var>)</code></dfn>
@@ -7236,18 +7234,18 @@ method must run these steps:
  (<var title="">new node</var>, <var title="">new offset</var>).
 </ol>
 
-<p>The <dfn id="dom-range-extractcontents" title="dom-Range-extractContents"><code>extractContents()</code></dfn> method
-must run these steps:
+<p>To <dfn id="concept-range-extract" title="concept-range-extract">extract</dfn> a
+<a href="#concept-range" title="concept-range">range</a> <var title="">range</var>, run these steps:
 
 <ol>
- <li><p>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
- whose <a href="#concept-node-document" title="concept-node-document">node document</a> is the same as
- the <a href="#concept-node-document" title="concept-node-document">node document</a> of the
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
+ <li><p>Let <var title="">fragment</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a> whose
+ <a href="#concept-node-document" title="concept-node-document">node document</a> is <var title="">range</var>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a>.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> equals
- <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">frag</var>.
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> equals
+ its <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">fragment</var>.
  <!-- This is only really needed when the start and end nodes are
  text/comment, to avoid creating an empty clone as the child of the
  fragment. (Opera 11 actually does include such an empty clone, it seems,
@@ -7255,11 +7253,9 @@ must run these steps:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var title="">original start node</var>,
- <var title="">original start offset</var>, <var title="">original end node</var>,
- and <var title="">original end offset</var> be the
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
+ <li><p>Let <var title="">original start node</var>, <var title="">original start offset</var>,
+ <var title="">original end node</var>, and <var title="">original end offset</var> be
+ <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
  <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and
  <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, respectively.
@@ -7284,7 +7280,7 @@ must run these steps:
    <var title="">original start offset</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
    <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
    <var title="">original start node</var>, offset
@@ -7292,7 +7288,7 @@ must run these steps:
    <var title="">original end offset</var> minus
    <var title="">original start offset</var>, and data the empty string.
 
-   <li><p>Return <var title="">frag</var>.
+   <li><p>Return <var title="">fragment</var>.
   </ol>
 
  <li><p>Let <var title="">common ancestor</var> be
@@ -7303,49 +7299,45 @@ must run these steps:
  <var title="">original end node</var>, set <var title="">common ancestor</var> to
  its own <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
- <li><p>If <var title="">original start node</var> is an
- <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
- <var title="">original end node</var>, let
- <var title="">first partially contained child</var> be null.
+ <li><p>Let <var title="">first partially contained child</var> be null.
 
- <li><p>Otherwise, let <var title="">first partially contained child</var> be
- the first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
- <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a>
- in the <a href="#context-object">context object</a>.
-
- <li><p>If <var title="">original end node</var> is an
+ <li><p>If <var title="">original start node</var> is <em>not</em> an
  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
- <var title="">original start node</var>, let
- <var title="">last partially contained child</var> be null.
+ <var title="">original end node</var>, set <var title="">first partially contained child</var>
+ to the first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+ <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+ <var title="">range</var>.
+
+ <li><p>Let <var title="">last partially contained child</var> be null.
 
  <li>
-  <p>Otherwise, let <var title="">last partially contained child</var> be
-  the last <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a>
-  in the <a href="#context-object">context object</a>.
+  <p>If <var title="">original end node</var> is <em>not</em> an
+  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
+  <var title="">original start node</var>, set
+  <var title="">last partially contained child</var> to the last
+  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">common ancestor</var> that is
+  <a href="#partially-contained">partially contained</a> in <var title="">range</var>.
 
-  <p class="note">These variable assignments do actually always make sense.
-  For instance, if the original start node is not an
+  <p class="note no-backref">These variable assignments do actually always make sense.
+  For instance, if <var title="">original start node</var> is not an
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  the
-  original end node, the original start node is itself partially contained in
-  the range, and so are all its ancestors up until a child of the common
-  ancestor. The common ancestor can't be original start node, because it must
-  be an
-  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  the original end node. The other case is
-  similar. Also, notice that the two children will never be equal if both are
-  defined.
+  <var title="">original end node</var>, <var title="">original start node</var> is itself
+  <a href="#partially-contained">partially contained</a> in <var title="">range</var>, and so are all its
+  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a> up until a
+  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">common ancestor</var>.
+  <var title="">common ancestor</var> cannot be <var title="">original start node</var>, because
+  it has to be an <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
+  <var title="">original end node</var>. The other case is similar. Also, notice that the two
+  <a href="#concept-tree-child" title="concept-tree-child">children</a> will never be equal if both are defined.
 
  <li><p>Let <var title="">contained children</var> be a list of all
  <a href="#concept-tree-child" title="concept-tree-child">children</a> of
- <var title="">common ancestor</var> that are <a href="#contained">contained</a> in the
- <a href="#context-object">context object</a>, in
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+ <var title="">common ancestor</var> that are <a href="#contained">contained</a> in
+ <var title="">range</var>, in <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
  <li>
   <p>If any member of <var title="">contained children</var> is a
-  <code><a href="#documenttype">DocumentType</a></code>, <a href="#concept-throw" title="concept-throw">throw</a> a
+  <a href="#concept-doctype" title="concept-doctype">doctype</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" exception.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
@@ -7353,8 +7345,8 @@ must run these steps:
   nodes. DOM 2 Range doesn't specify what exactly happens here, except that
   an exception should be thrown. -->
 
-  <p class="note">We do not have to worry about the first or last partially
-  contained node, because a <code><a href="#documenttype">DocumentType</a></code> can never be
+  <p class="note no-backref">We do not have to worry about the first or last partially
+  contained node, because a <a href="#concept-doctype" title="concept-doctype">doctype</a> can never be
   partially contained. It cannot be a boundary point of a range, and it
   cannot be the ancestor of anything.
 
@@ -7367,22 +7359,25 @@ must run these steps:
  <li>
   <p>Otherwise:
   <ol>
-    <li>Let <var title="">reference node</var> equal <var title="">original start
-    node</var>.
+   <li><p>Let <var title="">reference node</var> equal <var title="">original start node</var>.
 
-    <li>While <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null and is not an
+   <li><p>While <var title="">reference node</var>'s
+   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not null and is not an
+   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
+   <var title="">original end node</var>, set <var title="">reference node</var> to its
+   <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+   <li>
+    <p>Set <var title="">new node</var> to the
+    <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of <var title="">reference node</var>, and
+    <var title="">new offset</var> to one plus <var title="">reference node</var>'s
+    <a href="#concept-tree-index" title="concept-tree-index">index</a>.
+
+    <p class="note">If <var title="">reference node</var>'s
+    <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null, it would be the
+    <a href="#concept-range-root" title="concept-range-root">root</a> of <var title="">range</var>, so would be an
     <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-    <var title="">original end node</var>,
-    set <var title="">reference node</var> to its <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
-
-    <li>Set <var title="">new node</var> to the <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of <var title="">reference node</var>,
-    and <var title="">new offset</var> to one plus the <a href="#concept-tree-index" title="concept-tree-index">index</a> of <var title="">reference node</var>.
-
-    <p class="note">If <var title="">reference node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> were null,
-    it would be the <a href="#concept-range-root" title="concept-range-root">root</a> of the
-    <a href="#context-object">context object</a>, so would be an
-    <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of <var title="">original end node</var>, and we couldn't
-    reach this point.
+    <var title="">original end node</var>, and we could not reach this point.
   </ol>
 
   <!-- Now we start with mutations, so we can't refer to the context object
@@ -7393,8 +7388,8 @@ must run these steps:
   <code><a href="#text">Text</a></code>, <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or
   <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>:
 
-  <p class="note">In this case, the first partially contained child is the
-  original start node.
+  <p class="note">In this case, <var title="">first partially contained child</var> is
+  <var title="">original start node</var>.
 
   <ol>
    <li><p>Let <var title="">clone</var> be a
@@ -7411,7 +7406,7 @@ must run these steps:
    <var title="">original start offset</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
    <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
    <var title="">original start node</var>, offset
@@ -7431,41 +7426,35 @@ must run these steps:
    <var title="">first partially contained child</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">original start
-    node</var>, <var title="">original start offset</var>) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">first partially contained
-    child</var>, <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">first partially contained child</var>).
+   <li><p>Let <var title="">subrange</var> be a new <a href="#concept-range" title="concept-range">range</a>
+   whose <a href="#concept-range-start" title="concept-range-start">start</a> is
+   (<var title="">original start node</var>, <var title="">original start offset</var>) and
+   whose <a href="#concept-range-end" title="concept-range-end">end</a> is
+   (<var title="">first partially contained child</var>, <var title="">first partially contained child</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>).
 
-    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on <var title="">subrange</var>.
+   <li><p>Let <var title="">subfragment</var> be the result of
+   <a href="#concept-range-extract" title="concept-range-extract">extracting</a> <var title="">subrange</var>.
 
-    <p class="XXX">Is this method of recursing black-box detectable?  E.g., would
-    it fire extra DOM mutation events or something?  What we really mean is to
-    get a list of nodes to insert, then insert them directly into <var title="">frag</var>, without an intermediate document fragment.
-
-   <li>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-   <var title="">subfrag</var>, in
-   <a href="#concept-tree-order" title="concept-tree-order">tree order</a>,
-   <a href="#concept-node-append" title="concept-node-append">append</a> that
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">subfragment</var> to
+   <var title="">fragment</var>.
   </ol>
 
- <li><p>For each <var title="">contained child</var> in
- <var title="">contained children</var>,
- <a href="#concept-node-append" title="concept-node-append">append</a>
- <var title="">contained child</var> to <var title="">frag</var>.
+ <li><p>For each <var title="">contained child</var> in <var title="">contained children</var>,
+ <a href="#concept-node-append" title="concept-node-append">append</a> <var title="">contained child</var> to
+ <var title="">fragment</var>.
 
  <li>
   <p>If <var title="">last partially contained child</var> is a
   <code><a href="#text">Text</a></code>, <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or
   <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>:
 
-  <p class="note">In this case, the last partially contained child is the
-  original end node.
+  <p class="note">In this case, <var title="">last partially contained child</var> is
+  <var title="">original end node</var>.
 
   <ol>
-   <li><p>Let <var title="">clone</var> be a
-   <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
+   <li><p>Let <var title="">clone</var> be a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
    <var title="">original end node</var>.
 
    <li><p>Set the <a href="#concept-cd-data" title="concept-CD-data">data</a> of
@@ -7475,11 +7464,11 @@ must run these steps:
    <var title="">original end offset</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-    <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
-    <var title="">original end node</var>, offset 0, count
-    <var title="">original end offset</var>, and data the empty string.
+   <li><p><a href="#concept-cd-replace" title="concept-CD-replace">Replace data</a> with node
+   <var title="">original end node</var>, offset 0, count
+   <var title="">original end offset</var>, and data the empty string.
   </ol>
 
  <li>
@@ -7492,40 +7481,44 @@ must run these steps:
    <var title="">last partially contained child</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">last partially
-    contained child</var>, 0) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">original end node</var>,
-    <var title="">original end offset</var>).
+   <li><p>Let <var title="">subrange</var> be a new <a href="#concept-range" title="concept-range">range</a>
+   whose <a href="#concept-range-start" title="concept-range-start">start</a> is
+   (<var title="">last partially contained child</var>, 0) and whose
+   <a href="#concept-range-end" title="concept-range-end">end</a> is
+   (<var title="">original end node</var>, <var title="">original end offset</var>).
 
-    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on <var title="">subrange</var>.
+   <li><p>Let <var title="">subfragment</var> be the result of
+   <a href="#concept-range-extract" title="concept-range-extract">extracting</a> <var title="">subrange</var>.
 
-   <li><p>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-   <var title="">subfrag</var>, in
-   <a href="#concept-tree-order" title="concept-tree-order">tree order</a>,
-   <a href="#concept-node-append" title="concept-node-append">append</a> that
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">subfragment</var> to
+   <var title="">fragment</var>.
   </ol>
 
  <li><p>Set <a href="#concept-range-start" title="concept-range-start">start</a> and
  <a href="#concept-range-end" title="concept-range-end">end</a> to
  (<var title="">new node</var>, <var title="">new offset</var>).
 
- <li><p>Return <var title="">frag</var>.
+ <li><p>Return <var title="">fragment</var>.
 </ol>
 
-<p>The <dfn id="dom-range-clonecontents" title="dom-Range-cloneContents"><code>cloneContents()</code></dfn>
-method must run these steps:
+<p>The <dfn id="dom-range-extractcontents" title="dom-Range-extractContents"><code>extractContents()</code></dfn> method
+must return the result of <a href="#concept-range-extract" title="concept-range-extract">extracting</a>
+<a href="#context-object">context object</a>.
+
+<p>To <dfn id="concept-range-clone" title="concept-range-clone">clone</dfn> a <a href="#concept-range" title="concept-range">range</a>
+<var title="">range</var>, run these steps:
 
 <ol>
- <li><p>Let <var title="">frag</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
- whose <a href="#concept-node-document" title="concept-node-document">node document</a> is the same as
- the <a href="#concept-node-document" title="concept-node-document">node document</a> of the
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
+ <li><p>Let <var title="">fragment</var> be a new <code><a href="#documentfragment">DocumentFragment</a></code>
+ <a href="#concept-node" title="concept-node">node</a> whose
+ <a href="#concept-node-document" title="concept-node-document">node document</a> is <var title="">range</var>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>'s
+ <a href="#concept-node-document" title="concept-node-document">node document</a>.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> equals
- <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">frag</var>.
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> equals
+ its <a href="#concept-range-end" title="concept-range-end">end</a>, return <var title="">fragment</var>.
  <!-- This is only really needed when the start and end nodes are
  text/comment, to avoid creating an empty clone as the child of the
  fragment. (Opera 11 actually does include such an empty clone, it seems,
@@ -7533,11 +7526,9 @@ method must run these steps:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var title="">original start node</var>,
- <var title="">original start offset</var>, <var title="">original end node</var>,
- and <var title="">original end offset</var> be the
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
+ <li><p>Let <var title="">original start node</var>, <var title="">original start offset</var>,
+ <var title="">original end node</var>, and <var title="">original end offset</var> be
+ <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>,
  <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
  <a href="#concept-range-end-node" title="concept-range-end-node">end node</a>, and
  <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a>, respectively.
@@ -7549,8 +7540,7 @@ method must run these steps:
   <a href="#concept-node" title="concept-node">node</a>:
 
   <ol>
-   <li><p>Let <var title="">clone</var> be a
-   <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
+   <li><p>Let <var title="">clone</var> be a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
    <var title="">original start node</var>.
 
    <li><p>Set the <a href="#concept-cd-data" title="concept-CD-data">data</a> of
@@ -7562,9 +7552,9 @@ method must run these steps:
    <var title="">original start offset</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-   <li><p>Return <var title="">frag</var>.
+   <li><p>Return <var title="">fragment</var>.
   </ol>
 
  <li><p>Let <var title="">common ancestor</var> be
@@ -7576,62 +7566,59 @@ method must run these steps:
  <var title="">common ancestor</var> to its own
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
- <li><p>If <var title="">original start node</var> is an
+ <li><p>Let <var title="">first partially contained child</var> be null.
+
+ <li><p>If <var title="">original start node</var> is <em>not</em> an
  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
- <var title="">original end node</var>, let
- <var title="">first partially contained child</var> be null.
+ <var title="">original end node</var>, set <var title="">first partially contained child</var>
+ to the first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
+ <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
+ <var title="">range</var>.
 
- <li><p>Otherwise, let <var title="">first partially contained child</var> be
- the first <a href="#concept-tree-child" title="concept-tree-child">child</a> of
- <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a>
- in the <a href="#context-object">context object</a>.
+ <li><p>Let <var title="">last partially contained child</var> be null.
 
- <li><p>If <var title="">original end node</var> is an
+ <li>
+  <p>If <var title="">original end node</var> is <em>not</em> an
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  <var title="">original start node</var>, let <var title="">last
-  partially contained child</var> be null.
+  <var title="">original start node</var>, set
+  <var title="">last partially contained child</var> be the last
+  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">common ancestor</var> that is
+  <a href="#partially-contained">partially contained</a> in <var title="">range</var>.
 
-  <li>Otherwise, let <var title="">last partially contained child</var> be the
-  last <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-  <var title="">common ancestor</var> that is <a href="#partially-contained">partially contained</a> in
-  the <a href="#context-object">context object</a>.
-
-  <p class="note">These variable assignments do actually always make sense. For
-  instance, if the original start node is not an
+  <p class="note no-backref">These variable assignments do actually always make sense.
+  For instance, if <var title="">original start node</var> is not an
   <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  the
-  original end node, the original start node is itself partially contained in
-  the range, and so are all its ancestors up until a child of the common
-  ancestor. The common ancestor can't be original start node, because it must
-  be an
-  <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-  the original end node. The other case is
-  similar. Also, notice that the two children will never be equal if both are
-  defined.
+  <var title="">original end node</var>, <var title="">original start node</var> is itself
+  <a href="#partially-contained">partially contained</a> in <var title="">range</var>, and so are all its
+  <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestors</a> up until a
+  <a href="#concept-tree-child" title="concept-tree-child">child</a> of <var title="">common ancestor</var>.
+  <var title="">common ancestor</var> cannot be <var title="">original start node</var>, because
+  it has to be an <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of
+  <var title="">original end node</var>. The other case is similar. Also, notice that the two
+  <a href="#concept-tree-child" title="concept-tree-child">children</a> will never be equal if both are defined.
 
  <li><p>Let <var title="">contained children</var> be a list of all
  <a href="#concept-tree-child" title="concept-tree-child">children</a> of
- <var title="">common ancestor</var> that are <a href="#contained">contained</a> in the
- <a href="#context-object">context object</a>, in
- <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
+ <var title="">common ancestor</var> that are <a href="#contained">contained</a> in
+ <var title="">range</var>, in <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
  <li>
   <p>If any member of <var title="">contained children</var> is a
-  <code><a href="#documenttype">DocumentType</a></code>, <a href="#concept-throw" title="concept-throw">throw</a> a
+  <a href="#concept-doctype" title="concept-doctype">doctype</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
   "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" exception.
 
-  <p class="note">We don't have to worry about the first or last partially
-  contained node, because a <code><a href="#documenttype">DocumentType</a></code> can never be partially
-  contained. It can't be a boundary point of a range, and it can't be the
-  ancestor of anything.
+  <p class="note no-backref">We do not have to worry about the first or last partially
+  contained node, because a <a href="#concept-doctype" title="concept-doctype">doctype</a> can never be
+  partially contained. It cannot be a boundary point of a range, and it
+  cannot be the ancestor of anything.
 
  <li>
   <p>If <var title="">first partially contained child</var> is a
   <code><a href="#text">Text</a></code>, <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or
   <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>:
 
-  <p class="note">In this case, the first partially contained child is the
-  original start node.
+  <p class="note">In this case, <var title="">first partially contained child</var> is
+  <var title="">original start node</var>.
 
   <ol>
    <li><p>Let <var title="">clone</var> be a
@@ -7648,7 +7635,7 @@ method must run these steps:
    <var title="">original start offset</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
   </ol>
 
  <li>
@@ -7661,23 +7648,19 @@ method must run these steps:
    <var title="">first partially contained child</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">original start
-    node</var>, <var title="">original start offset</var>) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">first partially contained
-    child</var>, <a href="#concept-node-length" title="concept-node-length">length</a> of <var title="">first partially contained child</var>).
+   <li><p>Let <var title="">subrange</var> be a new <a href="#concept-range" title="concept-range">range</a>
+   whose <a href="#concept-range-start" title="concept-range-start">start</a> is
+   (<var title="">original start node</var>, <var title="">original start offset</var>) and
+   whose <a href="#concept-range-end" title="concept-range-end">end</a> is
+   (<var title="">first partially contained child</var>, <var title="">first partially contained child</var>'s <a href="#concept-node-length" title="concept-node-length">length</a>).
 
-    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-cloneContents"><a href="#dom-range-clonecontents">cloneContents()</a></code> on <var title="">subrange</var>.
+   <li><p>Let <var title="">subfragment</var> be the result of
+   <a href="#concept-range-clone" title="concept-range-clone">cloning</a> <var title="">subrange</var>.
 
-    <p class="XXX">Is this method of recursing black-box detectable?  E.g., would
-    it fire extra DOM mutation events or something?  What we really mean is to
-    get a list of nodes to insert, then insert them directly into <var title="">frag</var>, without an intermediate document fragment.
-
-   <li><p>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-   <var title="">subfrag</var>, in
-   <a href="#concept-tree-order" title="concept-tree-order">tree order</a>,
-   <a href="#concept-node-append" title="concept-node-append">append</a> that
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">subfragment</var> to
+   <var title="">fragment</var>.
   </ol>
 
  <li>
@@ -7685,12 +7668,11 @@ method must run these steps:
   <var title="">contained children</var>:
 
   <ol>
-   <li><p>Let <var title="">clone</var> be a
-   <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
+   <li><p>Let <var title="">clone</var> be a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
    <var title="">contained child</var>.
 
-   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var> to
+   <var title="">fragment</var>.
   </ol>
 
  <li>
@@ -7698,12 +7680,11 @@ method must run these steps:
   <code><a href="#text">Text</a></code>, <code><a href="#processinginstruction">ProcessingInstruction</a></code>, or
   <code><a href="#comment">Comment</a></code> <a href="#concept-node" title="concept-node">node</a>:
 
-  <p class="note">In this case, the last partially contained child is the
-  original end node.
+  <p class="note">In this case, <var title="">last partially contained child</var> is
+  <var title="">original end node</var>.
 
   <ol>
-   <li><p>Let <var title="">clone</var> be a
-   <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
+   <li><p>Let <var title="">clone</var> be a <a href="#concept-node-clone" title="concept-node-clone">clone</a> of
    <var title="">original end node</var>.
 
    <li><p>Set the <a href="#concept-cd-data" title="concept-CD-data">data</a> of
@@ -7712,8 +7693,8 @@ method must run these steps:
    <var title="">original end node</var>, offset 0, and count
    <var title="">original end offset</var>.
 
-   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var> to
+   <var title="">fragment</var>.
   </ol>
 
  <li>
@@ -7726,27 +7707,31 @@ method must run these steps:
    <var title="">last partially contained child</var>.
 
    <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">clone</var>
-   to <var title="">frag</var>.
+   to <var title="">fragment</var>.
 
-    <li>Let <var title="">subrange</var> be a new <code><a href="#range">Range</a></code> whose <a href="#concept-range-start" title="concept-range-start">start</a> is (<var title="">last partially
-    contained child</var>, 0) and whose <a href="#concept-range-end" title="concept-range-end">end</a> is (<var title="">original end node</var>,
-    <var title="">original end offset</var>).
+   <li><p>Let <var title="">subrange</var> be a new <a href="#concept-range" title="concept-range">range</a>
+   whose <a href="#concept-range-start" title="concept-range-start">start</a> is
+   (<var title="">last partially contained child</var>, 0) and whose
+   <a href="#concept-range-end" title="concept-range-end">end</a> is
+   (<var title="">original end node</var>, <var title="">original end offset</var>).
 
-    <li>Let <var title="">subfrag</var> be the result of calling <code title="dom-Range-cloneContents"><a href="#dom-range-clonecontents">cloneContents()</a></code> on <var title="">subrange</var>.
+   <li><p>Let <var title="">subfragment</var> be the result of
+   <a href="#concept-range-clone" title="concept-range-clone">cloning</a> <var title="">subrange</var>.
 
-   <li><p>For each <a href="#concept-tree-child" title="concept-tree-child">child</a> of
-   <var title="">subfrag</var>, in
-   <a href="#concept-tree-order" title="concept-tree-order">tree order</a>,
-   <a href="#concept-node-append" title="concept-node-append">append</a> that
-   <a href="#concept-tree-child" title="concept-tree-child">child</a> to <var title="">clone</var>.
+   <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">subfragment</var> to
+   <var title="">fragment</var>.
   </ol>
 
- <li><p>Return <var title="">frag</var>.
+ <li><p>Return <var title="">fragment</var>.
 </ol>
 
-<p>The
-<dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var>node</var>)</code></dfn>
-method must run these steps:
+<p>The <dfn id="dom-range-clonecontents" title="dom-Range-cloneContents"><code>cloneContents()</code></dfn>
+method must return the result of <a href="#concept-range-clone" title="concept-range-clone">cloning</a>
+<a href="#context-object">context object</a>.
+
+<p>To <dfn id="concept-range-insert" title="concept-range-insert">insert</dfn> a <a href="#concept-node" title="concept-node">node</a>
+<var title="">node</var> into a <a href="#concept-range" title="concept-range">range</a>
+<var title="">range</var>, run these steps:
 
 <ol>
   <!-- IE9 and Opera 11.00 throw "WrongDocumentError" if the documents don't
@@ -7759,13 +7744,12 @@ method must run these steps:
   position, and other browsers disagree, so the spec follows the majority.
   -->
 
- <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is either
- a <code><a href="#processinginstruction">ProcessingInstruction</a></code> or <code><a href="#comment">Comment</a></code>
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is either a <code><a href="#processinginstruction">ProcessingInstruction</a></code> or <code><a href="#comment">Comment</a></code>
  <a href="#concept-node" title="concept-node">node</a>, or a <code><a href="#text">Text</a></code>
- <a href="#concept-node" title="concept-node">node</a> whose
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is null,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" exception.
+ <a href="#concept-node" title="concept-node">node</a> whose <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>
+ is null, <a href="#concept-throw" title="concept-throw">throw</a> an "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>"
+ exception.
  <!--
  Behavior for Text node with null parent:
 
@@ -7782,6 +7766,7 @@ method must run these steps:
  HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
  text node.
  -->
+ <li><p>Let <var title="">referenceNode</var> be null.
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -7791,27 +7776,23 @@ method must run these steps:
 
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
- <li><p>If <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is a
- <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
  <a href="#concept-text-split" title="concept-Text-split">split</a> it with offset
- <a href="#context-object">context object</a>'s
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and let
- <var title="">reference node</var> be the result.
+ <var title="">range</var>'s <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and
+ set <var title="">referenceNode</var> to the result.
 
- <li><p>Otherwise, let <var title="">reference node</var> be the
+ <li><p>Otherwise, set <var title="">referenceNode</var> to the
  <a href="#concept-tree-child" title="concept-tree-child">child</a> of
  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> whose
  <a href="#concept-tree-index" title="concept-tree-index">index</a> is
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, or null if
- there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
+ <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and null if
+ there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a> otherwise.
 
- <li><p>If <var title="">reference node</var> is null, let
- <var title="">parent</var> be
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>.
-
- <li><p>Otherwise, let <var title="">parent</var> be the
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> of
- <var title="">reference node</var>.
+ <li><p>Let <var title="">parent</var> be <var title="">range</var>'s
+ <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> if <var title="">referenceNode</var>
+ is null, and <var title="">referenceNode</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> otherwise.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
@@ -7834,27 +7815,27 @@ method must run these steps:
  The logic for how much to increment the position by is copied from the
  "insert" algorithm.  Getting the new offset right was surprisingly tricky.
  -->
- <li><p>Let <var title="">new offset</var> be the
- <a href="#concept-tree-index" title="concept-tree-index">index</a> of
- <var title="">reference node</var>, or <var title="">parent</var>'s
- <a href="#concept-node-length" title="concept-node-length">length</a> if
- <var title="">reference node</var> is null.
+ <li><p>Let <var title="">newOffset</var> be <var title="">parent</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> if <var title="">referenceNode</var> is null,
+ and <var title="">referenceNode</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>
+ otherwise.
 
- <li><p>Add <var title="">node</var>'s
- <a href="#concept-node-length" title="concept-node-length">length</a> to
- <var title="">new offset</var>, if <var title="">node</var> is a
- <code><a href="#documentfragment">DocumentFragment</a></code>.  Otherwise add one to
- <var title="">new offset</var>.
+ <li><p>Increase <var title="">newOffset</var> by <var title="">node</var>'s
+ <a href="#concept-node-length" title="concept-node-length">length</a> if <var title="">node</var> is a
+ <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>, and one otherwise.
 
  <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
- <var title="">node</var> into <var title="">parent</var> before
- <var title="">reference node</var>.
+ <var title="">node</var> into <var title="">parent</var> before <var title="">referenceNode</var>.
 
- <li><p>If <a href="#concept-range-start" title="concept-range-start">start</a> and
- <a href="#concept-range-end" title="concept-range-end">end</a> are the same, set
- <a href="#concept-range-end" title="concept-range-end">end</a> to (<var title="">parent</var>,
- <var title="">new offset</var>).
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start" title="concept-range-start">start</a> and
+ <a href="#concept-range-end" title="concept-range-end">end</a> are the same, set <var title="">range</var>'s
+ <a href="#concept-range-end" title="concept-range-end">end</a> to
+ (<var title="">parent</var>, <var title="">newOffset</var>).
 </ol>
+
+<p>The <dfn id="dom-range-insertnode" title="dom-Range-insertNode"><code>insertNode(<var>node</var>)</code></dfn>
+method must <a href="#concept-range-insert" title="concept-range-insert">insert</a> <var title="">node</var> into
+<a href="#context-object">context object</a>.
 
 <p>The
 <dfn id="dom-range-surroundcontents" title="dom-Range-surroundContents"><code>surroundContents(<var>newParent</var>)</code></dfn>
@@ -7905,29 +7886,30 @@ check first thing, which matches everyone but Firefox.
  happened to write down and it makes no real difference, with the even
  split. -->
 
-  <li>Call <code title="dom-Range-extractContents"><a href="#dom-range-extractcontents">extractContents()</a></code> on
-  the <a href="#context-object">context object</a>, and let <var title="">fragment</var> be the
-  result.
-  <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
-  immediately throw here. Firefox removes the non-DocumentType nodes and
-  throws, Opera removes all nodes and doesn't throw. This applies to
-  extractContents() proper, and also affects surroundContents(). I match DOM 2
-  Range, IE9, and Chrome 12 dev. -->
+ <li><p>Let <var title="">fragment</var> be the result of
+ <a href="#concept-range-extract" title="concept-range-extract">extracting</a> <a href="#context-object">context object</a>.
+ <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
+ immediately throw here. Firefox removes the non-DocumentType nodes and
+ throws, Opera removes all nodes and doesn't throw. This applies to
+ extractContents() proper, and also affects surroundContents(). I match DOM 2
+ Range, IE9, and Chrome 12 dev. -->
 
  <li><p>If <var title="">newParent</var> has
  <a href="#concept-tree-child" title="concept-tree-child">children</a>,
  <a href="#concept-node-replace-all" title="concept-node-replace-all">replace all</a> with null within
  <var title="">newParent</var>.
 
-  <li>Call <code title="dom-Range-insertNode"><a href="#dom-range-insertnode">insertNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
+ <li><p><a href="#concept-range-insert" title="concept-range-insert">Insert</a> <var title="">newParent</var> into
+ <a href="#context-object">context object</a>.
 
-  <li>Call <code title="dom-Node-appendChild"><a href="#dom-node-appendchild">appendChild(<var title="">fragment</var>)</a></code> on
-  <var title="">newParent</var>.
+ <li><p><a href="#concept-node-append" title="concept-node-append">Append</a> <var title="">fragment</var> to
+ <var title="">newParent</var>.
 
-  <li>Call <code title="dom-Range-selectNode"><a href="#dom-range-selectnode">selectNode(<var title="">newParent</var>)</a></code> on the <a href="#context-object">context object</a>.
-  <!-- Generally this isn't needed, because insertNode() will already do it,
-  but it makes a difference in at least one corner case (when the original
-  range lies in a single text node). -->
+ <li><p><a href="#concept-range-select" title="concept-range-select">Select</a> <var title="">newParent</var> within
+ <a href="#context-object">context object</a>.
+ <!-- Generally this isn't needed, because insertNode() will already do it,
+ but it makes a difference in at least one corner case (when the original
+ range lies in a single text node). -->
 </ol>
 
 <p>The <dfn id="dom-range-clonerange" title="dom-Range-cloneRange"><code>cloneRange()</code></dfn>
@@ -8116,18 +8098,14 @@ steps:
 
 <hr>
 
-<div class="note">
-<p>The following extensions to the <code><a href="#range">Range</a></code> interface are defined
-in various other specifications:
-<ul>
- <li>the <code class="external" data-anolis-spec="domps" title="dom-Range-createContextualFragment"><a href="http://domparsing.spec.whatwg.org/#dom-range-createcontextualfragment">createContextualFragment()</a></code> method;
- <a class="informative" href="#refsDOMPS">[DOMPS]</a>
- <li>the <code title="dom-Range-getClientRects">getClientRects()</code> method; and
- <li>the <code title="dom-Range-getBoundingClientRect">getBoundingClientRect()</code> method.
- <a class="informative" href="#refsCSSOMVIEW">[CSSOMVIEW]</a>
- <!-- XXX xref for cssom-view is broken -->
-</ul>
-</div>
+<p class="note">The
+<code class="external" data-anolis-spec="domps" title="dom-Range-createContextualFragment"><a href="http://domparsing.spec.whatwg.org/#dom-range-createcontextualfragment">createContextualFragment()</a></code>,
+<code class="external" data-anolis-spec="cssom-view" title="dom-Range-getClientRects"><a href="http://dev.w3.org/csswg/cssom-view/#dom-range-getclientrects">getClientRects()</a></code>,
+and
+<code class="external" data-anolis-spec="cssom-view" title="dom-Range-getBoundingClientRect"><a href="http://dev.w3.org/csswg/cssom-view/#dom-range-getboundingclientrect">getBoundingClientRect()</a></code>
+methods are defined in other specifications.
+<a class="informative" href="#refsDOMPS">[DOMPS]</a>
+<a class="informative" href="#refsCSSOMVIEW">[CSSOMVIEW]</a>
 
 
 
@@ -9341,12 +9319,15 @@ Igor Bukanov,
 Jacob Rossi,
 Jake Verbaten,
 James Graham,
+James Robinson,
 Jens Lindström,
 João Eiras,
 Jonas Sicking,
 Joshua Bell,
+Justin Summerlin,
 呂康豪 (Kang-Hao Lu),
 Kevin Sweeney,
+Manish Goregaokar,
 Manish Tripathi,
 Marcos Caceres,
 Mark Miller,
