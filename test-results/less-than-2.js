@@ -6,6 +6,7 @@ var fs = require("fs")
 ,   ua = data.ua
 ,   title = "Features with fewer than 2 passes"
 ,   tmpl = fs.readFileSync(pth.join(__dirname, "template.html"), "utf8")
+,   totalSubtests = 0
 ;
 
 function process (data) {
@@ -30,28 +31,39 @@ for (var test in data.results) {
     };
     for (var n in run.subtests) {
         result.total++;
+        totalSubtests++;
         if (!run.subtests[n].totals.PASS || run.subtests[n].totals.PASS < 2) result.fails.push({ name: n, byUA: run.subtests[n].byUA });
     }
     if (result.fails.length) out.push(result);
 }
 
 var table = "<thead><tr class='persist-header'><th>Test</th><th>" + ua.join("</th><th>") + "</th></tr></thead>\n"
+,   toc = "<h3>Test Files</h3>\n<ol class='toc'>"
 ,   fails = 0
 ;
 for (var i = 0, n = out.length; i < n; i++) {
-    var test = out[i];
-    table += "<tr class='test'><td><a href='http://www.w3c-test.org" + test.name + "' target='_blank'>" +
-             test.name + "</a> <small>(" + test.fails.length + "/" + test.total + ", " +
-             (100*test.fails.length/test.total).toFixed(2) + "%)</small></td>" + cells(test.status) + "</tr>\n";
+    var test = out[i]
+    ,   details = "<small>(" + test.fails.length + "/" + test.total + ", " +
+                 (100*test.fails.length/test.total).toFixed(2) + "%, " +
+                 (100*test.fails.length/totalSubtests).toFixed(2) + "% of total)</small>"
+    ;
+    table += "<tr class='test' id='test-file-" + i + "'><td><a href='http://www.w3c-test.org" + test.name + "' target='_blank'>" +
+             test.name + "</a> " + details + "</td>" + cells(test.status) + "</tr>\n";
+    toc += "<li><a href='#test-file-" + i + "'>" + test.name + "</a> " + details + "</li>";
     for (var j = 0, m = test.fails.length; j < m; j++) {
         var st = test.fails[j];
         fails++;
         table += "<tr class='subtest'><td>" + st.name + "</td>" + cells(st.byUA) + "</tr>\n";
     }
 }
+table += "</table>";
+toc += "</ol>";
 
 var meta = "<strong>Test files with failures</strong>: " + out.length +
-           "; <strong>Subtests with more than 2 failures: </strong>" + fails;
+           "; <strong>Subtests with more than 2 failures: </strong>" + fails +
+           "; <strong>Failure level</strong>: " + fails + "/" + totalSubtests + " (" +
+           (100*fails/totalSubtests).toFixed(2) + "%)"
+;
 
 fs.writeFileSync(
     pth.join(__dirname, "less-than-2.html")
@@ -59,5 +71,6 @@ fs.writeFileSync(
         title: title
     ,   table: table
     ,   meta:  meta
+    ,   toc:  toc
     })
 );
