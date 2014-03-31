@@ -44,6 +44,7 @@ var fs = require("fs")
     ,   edDraftURI:     "http://w3c.github.io/dom/"
     ,   license:        "cc-by"
     }
+,   references = {}
 ;
 
 
@@ -52,6 +53,14 @@ for (var k in localConfig) respecConfig[k] = localConfig[k];
 var respecSource = rfs(rel("header-maker.html"))
                         .replace("###CONFIG###", JSON.stringify(respecConfig, null, 4))
 ;
+
+// preparet the reference overrides
+fs.readdirSync(rel("references")).forEach(function (f) {
+    if (!/\.html$/.test(f)) return;
+    references[f.replace(/\.html$/, "")] = rfs(rel("references/" + f));
+});
+
+
 tmp.file({ postfix: ".html" }, function (err, path) {
     if (err) error(err);
     wfs(path, respecSource);
@@ -64,6 +73,12 @@ tmp.file({ postfix: ".html" }, function (err, path) {
                         .replace(/<script[^]*?<\/script>/mig, "")
                         .replace(/(<h2[^><]+id="table-of-contents)/i, data.sotd + "\n\n" + "$1")
         ;
+        
+        for (var ref in references) {
+            var rex = new RegExp("<dt id=\"refs" + ref + "\">\\[" + ref + "\\]\\n<dd>.*?\\n");
+            domSrc = domSrc.replace(rex, "<dt id=\"refs" + ref + "\">[" + ref + "]\n" + references[ref]);
+        }
+
         wfs(outputFile, domSrc);
     });
 });
