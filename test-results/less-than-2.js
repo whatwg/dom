@@ -60,7 +60,7 @@ table += "</table>";
 toc += "</ol>";
 
 var meta = "<strong>Test files with failures</strong>: " + out.length +
-           "; <strong>Subtests with more than 2 failures: </strong>" + fails +
+           "; <strong>Subtests with fewer than 2 passes: </strong>" + fails +
            "; <strong>Failure level</strong>: " + fails + "/" + totalSubtests + " (" +
            (100*fails/totalSubtests).toFixed(2) + "%)"
 ;
