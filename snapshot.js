@@ -59,8 +59,8 @@ tmp.file({ postfix: ".html" }, function (err, path) {
         if (err) throw "Error running PhantomJS script: " + (stderr || err || "unknown error");
         var data = JSON.parse(stdout)
         ,   domSrc = rfs("dom-core.html")
-                        .replace(/<head>[^]*?<\/head>/im, "<head>\n" + data.head + "\n</head>")
-                        .replace(/<div\s+class\s*=\s*["']?head["']?[^]*?<\/div>/im, "<div class='head'>" + data.divHead + "</div>")
+                        .replace(/<meta charset[^]*?<div/im, "<head>\n" + data.head + "\n</head>\n<div")
+                        .replace(/<div class="head">[^]*?<\/div>/im, "<div class='head'>" + data.divHead + "</div>")
                         .replace(/<script[^]*?<\/script>/mig, "")
                         .replace(/(<h2[^><]+id="table-of-contents)/i, data.sotd + "\n\n" + "$1")
         ;
