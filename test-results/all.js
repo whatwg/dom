@@ -10,6 +10,11 @@ var fs = require("fs")
 ,   uaPass = {}
 ;
 
+function esc (str) {
+    if (!str) return str;
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function process (data) {
     return tmpl.replace(/\{\{(\w+)\}\}/g, function (m, p1) {
         return data[p1] !== undefined ? data[p1] : "@@@ERROR@@@";
@@ -18,7 +23,7 @@ function process (data) {
 
 function cells (data) {
     var res = "";
-    for (var i = 0, n = ua.length; i < n; i++) res += "<td class='" + data[ua[i]] + "'>" + data[ua[i]] + "</td>";
+    for (var i = 0, n = ua.length; i < n; i++) res += "<td class='" + data[ua[i]] + "'>" + esc(data[ua[i]]) + "</td>";
     return res;
 }
 
@@ -50,19 +55,17 @@ var table = "<thead><tr class='persist-header'><th>Test</th><th>" + ua.join("</t
 ;
 for (var i = 0, n = out.length; i < n; i++) {
     var test = out[i];
-    table += "<tr class='test' id='test-file-" + i + "'><td><a href='http://www.w3c-test.org" + test.name + "' target='_blank'>" +
-             test.name + "</a></td>" + cells(test.status) + "</tr>\n";
-    toc += "<li><a href='#test-file-" + i + "'>" + test.name + "</a></li>";
+    table += "<tr class='test' id='test-file-" + i + "'><td><a href='http://www.w3c-test.org" + esc(test.name) + "' target='_blank'>" +
+             esc(test.name) + "</a></td>" + cells(test.status) + "</tr>\n";
+    toc += "<li><a href='#test-file-" + i + "'>" + esc(test.name) + "</a></li>";
     for (var j = 0, m = test.subtests.length; j < m; j++) {
         var st = test.subtests[j];
         subtests++;
-        table += "<tr class='subtest'><td>" + st.name + "</td>" + cells(st.byUA) + "</tr>\n";
+        table += "<tr class='subtest'><td>" + esc(st.name) + "</td>" + cells(st.byUA) + "</tr>\n";
     }
 }
 table += "</table>";
 toc += "</ol>";
-
-// XXX we need better stats
 
 var meta = "<p><strong>Test files</strong>: " + out.length + 
            "; <strong>Total subtests</strong>: " + subtests + "</p>" +
