@@ -59,10 +59,10 @@ for (var i = 0, n = out.length; i < n; i++) {
 table += "</table>";
 toc += "</ol>";
 
-var meta = "<strong>Test files with failures</strong>: " + out.length +
+var meta = "<p><strong>Test files with failures</strong>: " + out.length +
            "; <strong>Subtests with fewer than 2 passes: </strong>" + fails +
            "; <strong>Failure level</strong>: " + fails + "/" + totalSubtests + " (" +
-           (100*fails/totalSubtests).toFixed(2) + "%)"
+           (100*fails/totalSubtests).toFixed(2) + "%)</p>"
 ;
 
 fs.writeFileSync(
