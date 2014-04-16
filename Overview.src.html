@@ -1931,8 +1931,6 @@ interface <dfn>ParentNode</dfn> {
   void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
 
-  <span>Element</span>? <span title=dom-ParentNode-query>query</span>(DOMString <var title>relativeSelectors</var>);
-  [NewObject] <span>Elements</span> <span title=dom-ParentNode-queryAll>queryAll</span>(DOMString <var title>relativeSelectors</var>);
   <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(DOMString <var title>selectors</var>);
   [NewObject] <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(DOMString <var title>selectors</var>);
 };
@@ -1978,18 +1976,6 @@ interface <dfn>ParentNode</dfn> {
   "<code>HierarchyRequestError</code>" if the constraints of the
   <span title=concept-node-tree>node tree</span> are violated.
   <!-- "NotFoundError" is impossible -->
-
- <dt><code><var title>node</var> . <span title=dom-ParentNode-query>query</span>(<var title>relativeSelectors</var>)</code>
- <dd>
-  <p>Returns the first <span title=concept-element>element</span> that is a
-  <span title=concept-tree-descendant>descendant</span> of <var title>node</var> that
-  matches <var title>relativeSelectors</var>.
-
- <dt><code><var title>node</var> . <span title=dom-ParentNode-queryAll>queryAll</span>(<var title>relativeSelectors</var>)</code>
- <dd>
-  <p>Returns all <span title=concept-element>element</span>
-  <span title=concept-tree-descendant>descendants</span> of <var title>node</var> that
-  match <var title>relativeSelectors</var>.
 
  <dt><code><var title>node</var> . <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>)</code>
  <dd>
@@ -2051,36 +2037,6 @@ method must run these steps:
  <li><p><span title=concept-node-append>Append</span>
  <var title>node</var> to the <span>context object</span>.
 </ol>
-
-<p>To <dfn>match a relative selectors string</dfn> <var title>relativeSelectors</var>
-against a <var title>set</var>, run these steps:
-
-<ol>
- <li><p>Let <var title>s</var> be the result of
- <span data-anolis-spec=selectors>parse a relative selector</span> from
- <var title>relativeSelectors</var> against <var title>set</var>.
- <span data-anolis-ref>SELECTORS</span>
-
- <li><p>If <var title>s</var> is failure, <span data-anolis-spec=webidl>throw</span> a
- JavaScript <code title>TypeError</code>.
-
- <li><p>Return the result of <span data-anolis-spec=selectors>evaluate a selector</span>
- <var title>s</var> using
- <span data-anolis-spec=selectors title=":scope element">:scope elements</span>
- <var title>set</var>. <span data-anolis-ref>SELECTORS</span>
-</ol>
-
-<p>The
-<dfn title=dom-ParentNode-query><code>query(<var>relativeSelectors</var>)</code></dfn>
-method must return the first result of running
-<span>match a relative selectors string</span> <var title>relativeSelectors</var> against
-a set consisting of <span>context object</span>, and null if the result is an empty list.
-
-<p>The
-<dfn title=dom-ParentNode-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
-method must return an <code>Elements</code> array initialized with the result of running
-<span>match a relative selectors string</span> <var title>relativeSelectors</var> against
-a set consisting of <span>context object</span>.
 
 <p>To <dfn>scope-match a selectors string</dfn> <var title>selectors</var> against a
 <var title>node</var>, run these steps:
@@ -2273,47 +2229,6 @@ method must run these steps:
 </ol>
 
 
-<h4>Collections: <code>Elements</code></h4>
-
-<pre class=idl>class <dfn>Elements</dfn> extends <span>Array</span> {
-  <span>Element</span>? <span title=dom-Elements-query>query</span>(DOMString <var title>relativeSelectors</var>);
-  <span>Elements</span> <span title=dom-Elements-queryAll>queryAll</span>(DOMString <var title>relativeSelectors</var>);
-};</pre>
-
-<div class=XXX>
-<p>IDL bugs: <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20020"><code>Array</code> subclassing</a> and <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=23225">class, not interface</a>.
-
-<p><code>Elements</code> is an ES6-style subclass of <code>Array</code> with two
-additional methods. It's the new <code>NodeList</code> / <code>HTMLCollection</code>.
-</div>
-
-<dl class=domintro>
- <dt><code><var title>elements</var> . <span title=dom-Elements-query>query</span>(<var title>relativeSelectors</var>)</code>
- <dd>
-  <p>Returns the first <span title=concept-element>element</span> that is a
-  <span title=concept-tree-descendant>descendant</span> of <var title>elements</var> that
-  matches <var title>relativeSelectors</var>.
-
- <dt><code><var title>elements</var> . <span title=dom-Elements-queryAll>queryAll</span>(<var title>relativeSelectors</var>)</code>
- <dd>
-  <p>Returns all <span title=concept-element>element</span>
-  <span title=concept-tree-descendant>descendants</span> of <var title>elements</var> that
-  match <var title>relativeSelectors</var>.
-</dl>
-
-<p>The
-<dfn title=dom-Elements-query><code>query(<var>relativeSelectors</var>)</code></dfn>
-method must return the first result of running
-<span>match a relative selectors string</span> <var title>relativeSelectors</var>
-against the <span>context object</span>, and null if the result is an empty list.
-
-<p>The
-<dfn title=dom-Elements-queryAll><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
-method must return the result of running <code title>this.constructor</code> with the
-result of running <span>match a relative selectors string</span>
-<var title>relativeSelectors</var> against the <span>context object</span>.
-
-
 <h4>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></h4>
 
 <p>A <dfn title=concept-collection>collection</dfn> is an object that
@@ -2347,18 +2262,11 @@ the <span title=concept-collection>collection</span> must be sorted in
 <span title=concept-collection>collection</span> of
 <span title=concept-node>nodes</span>.
 
-<pre class=idl>[ArrayClass]
+<pre class=idl>
 interface <dfn>NodeList</dfn> {
   getter <span>Node</span>? <span title=dom-NodeList-item>item</span>(unsigned long <var title>index</var>);
   readonly attribute unsigned long <span title=dom-NodeList-length>length</span>;
 };</pre>
-
-<div class=impl>
-<p class=warning>It is unclear if it will be possible to turn
-<code>NodeList</code> into an <code title>ArrayClass</code> interface.
-<a href="http://code.google.com/p/chromium/issues/detail?id=229398">Experimentation</a>
-is planned by the Chromium project.
-</div>
 
 <dl class=domintro>
  <dt><var title>collection</var> . <code title=dom-NodeList-length>length</code>
@@ -2407,11 +2315,6 @@ title=concept-collection>collection</span>, then the method must return null.
 <p>An <code>HTMLCollection</code> object is a
 <span title=concept-collection>collection</span> of
 <span title=concept-element>elements</span>.
-
-<p class=note><code>Elements</code> is the better solution for representing a
-<span title=concept-collection>collection</span> of
-<span title=concept-element>elements</span>. <code>HTMLCollection</code> is an historical
-artifact we cannot rid the web of.
 
 <dl class=domintro>
  <dt><var title>collection</var> . <code title=dom-HTMLCollection-length>length</code>
