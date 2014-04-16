@@ -81,6 +81,11 @@ tmp.file({ postfix: ".html" }, function (err, path) {
 
         // turn XXX into simple warnings
         domSrc = domSrc.replace(/class="XXX"/g, "class='warning'");
+        // soften the warnings a little bit
+        domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will go away."
+                            ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out.");
+        domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will be nuked"
+                            ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out");
 
         wfs(outputFile, domSrc);
     });
