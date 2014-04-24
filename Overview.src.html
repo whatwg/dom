@@ -1460,8 +1460,8 @@ hooks for <span>other applicable specifications</span> to process the
 further and ensures that when multiple <span title=concept-node>nodes</span>
 are inserted or removed this happens atomically.
 
-<p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
-<var title>node</var> into a <var title>parent</var> before a
+<p>To <dfn title=concept-node-ensure-pre-insertion-validity>ensure pre-insertion validity</dfn>
+of a <var title>node</var> into a <var title>parent</var> before a
 <var title>child</var>, run these steps:
 
 <ol>
@@ -1537,6 +1537,16 @@ are inserted or removed this happens atomically.
    <var title>child</var> is null and <var title>parent</var> has an
    <span title=concept-element>element</span> <span title=concept-tree-child>child</span>.
   </dl>
+</ol>
+
+<p>To <dfn title=concept-node-pre-insert>pre-insert</dfn> a
+<var title>node</var> into a <var title>parent</var> before a
+<var title>child</var>, run these steps:
+
+<ol>
+ <li><p><span title=concept-node-ensure-pre-insertion-validity>Ensure pre-insertion validity</span>
+ of <var title>node</var> into <var title>parent</var> before
+ <var title>child</var>.
 
  <li><p>Let <var title>reference child</var> be <var title>child</var>.
 
@@ -7571,10 +7581,6 @@ method must return the result of <span title=concept-range-clone>cloning</span>
  is null, <span title=concept-throw>throw</span> an "<code>HierarchyRequestError</code>"
  exception.
 
- <li><p>If <var title>node</var>'s <span title=concept-tree-parent>parent</span> is not
- null, <span title=concept-node-remove>remove</span> <var title>node</var> from its
- <span title=concept-tree-parent>parent</span>.
-
  <!--
  Behavior for Text node with null parent:
 
@@ -7593,31 +7599,52 @@ method must return the result of <span title=concept-range-clone>cloning</span>
  -->
  <li><p>Let <var title>referenceNode</var> be null.
 
- <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
- node if the insertBefore() is going to throw an exception (at least if the
- new node is the parent of the start node, for instance). Firefox 4.0 and
- Opera 11.00 don't, and the latter behavior is much easier to spec, so
- that's what I go with.
-
- IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
- with what all other browsers do. -->
  <li><p>If <var title>range</var>'s <span title=concept-range-start-node>start node</span>
  is a <code>Text</code> <span title=concept-node>node</span>,
- <span title=concept-Text-split>split</span> it with offset
- <var title>range</var>'s <span title=concept-range-start-offset>start offset</span>, and
- set <var title>referenceNode</var> to the result.
+ set <var title>referenceNode</var> to that <code>Text</code>
+ <span title=concept-node>node</span>. <!-- This will change when we split
+ it. -->
 
  <li><p>Otherwise, set <var title>referenceNode</var> to the
  <span title=concept-tree-child>child</span> of
  <span title=concept-range-start-node>start node</span> whose
  <span title=concept-tree-index>index</span> is
  <span title=concept-range-start-offset>start offset</span>, and null if
- there is no such <span title=concept-tree-child>child</span> otherwise.
+ there is no such <span title=concept-tree-child>child</span>.
 
  <li><p>Let <var title>parent</var> be <var title>range</var>'s
  <span title=concept-range-start-node>start node</span> if <var title>referenceNode</var>
  is null, and <var title>referenceNode</var>'s
  <span title=concept-tree-parent>parent</span> otherwise.
+
+ <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
+ node if the insertBefore() is going to throw an exception (at least if the
+ new node is the parent of the start node, for instance). Firefox 4.0 and
+ Opera 11.00 don't.  Now that we have "ensure pre-insertion validity," we go
+ with the IE/Chrome behavior because it's more correct.
+
+ IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
+ with what all other browsers do. -->
+ <li><p><span title=concept-node-ensure-pre-insertion-validity>Ensure pre-insertion validity</span>
+ of <var title>node</var> into <var title>parent</var> before
+ <var title>referenceNode</var>.
+
+ <li><p>If <var title>range</var>'s <span title=concept-range-start-node>start node</span>
+ is a <code>Text</code> <span title=concept-node>node</span>,
+ <span title=concept-Text-split>split</span> it with offset
+ <var title>range</var>'s <span title=concept-range-start-offset>start offset</span>,
+ set <var title>referenceNode</var> to the result, and set
+ <var title>parent</var> to <var title>referenceNode</var>'s
+ <span title=concept-tree-parent>parent</span>.
+
+ <li><p>If <var title>node</var> equals <var title>referenceNode</var>, set
+ <var title>referenceNode</var> to its
+ <span title=concept-tree-next-sibling>next sibling</span>. <!-- Because we're
+ about to remove node from its parent. -->
+
+ <li><p>If <var title>node</var>'s <span title=concept-tree-parent>parent</span> is not
+ null, <span title=concept-node-remove>remove</span> <var title>node</var> from its
+ <span title=concept-tree-parent>parent</span>.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
