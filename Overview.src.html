@@ -897,11 +897,7 @@ method must set both the <span>stop propagation flag</span> and
 
 <p>The <dfn title=dom-Event-bubbles><code>bubbles</code></dfn> and
 <dfn title=dom-Event-cancelable><code>cancelable</code></dfn> attributes
-must return the values they were initialized to. When an
-<span title=concept-event>event</span> is created, they must be initialized
-to false. <span class=note>The <code>EventInit</code> dictionary is not sufficient due to
-the existence of the legacy
-<code title=dom-Document-createEvent>createEvent()</code>.</span>
+must return the values they were initialized to.
 
 <p>The
 <dfn title=dom-Event-preventDefault><code>preventDefault()</code></dfn>
@@ -994,11 +990,7 @@ dictionary <dfn>CustomEventInit</dfn> : <span>EventInit</span> {
 </dl>
 
 <p>The <dfn title=dom-CustomEvent-detail><code>detail</code></dfn> attribute
-must return the value it was initialized to. When an
-<span title=concept-event>event</span> is created the attribute must be
-initialized to null. <span class=note>The <code>CustomEventInit</code> dictionary is not
-sufficient due to the existence of the legacy
-<code title=dom-Document-createEvent>createEvent()</code>.</span>
+must return the value it was initialized to.
 
 <p>The
 <dfn title=dom-CustomEvent-initCustomEvent><code>initCustomEvent(<var title>type</var>, <var title>bubbles</var>, <var title>cancelable</var>, <var title>detail</var>)</code></dfn>
@@ -4776,12 +4768,12 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>Let <var title>event</var> be null.
+ <li><p>Let <var title>constructor</var> be null.
 
  <li>
   <p>If <var title>interface</var> is an
   <span>ASCII case-insensitive</span> match for any of the strings in the
-  first column in the following table, let <var title>event</var> be the
+  first column in the following table, set <var title>constructor</var> to the
   interface in the second column on the same row as the matching string:
 
   <table>
@@ -4804,8 +4796,12 @@ method must run these steps:
  <li><p>If <var title>event</var> is null, <span title=concept-throw>throw</span> a
  "<code>NotSupportedError</code>".
 
- <li><p>Return a new <span title=concept-event>event</span> implementing the
- <var title>event</var> interface.
+ <li><p>Let <var title>event</var> be the result of
+ <span title=concept-event-constructor>invoking</span> <var title>constructor</var>.
+
+ <li><p>Unset <var title>event</var>'s <span>initialized flag</span>.
+
+ <li><p>Return <var title>event</var>.
 </ol>
 
 <p class="note"><span title=concept-event>Event</span> constructors can be used instead.
