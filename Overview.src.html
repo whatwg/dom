@@ -5232,7 +5232,8 @@ otherwise [createAttribute]- ->.
   <span>Attr</span> <span title=dom-Element-setAttributeNode>setAttributeNode</span>(Attr newAttr);
   <span>Attr</span> <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(Attr oldAttr);
 -->
-  boolean <span title=dom-Element-matches>matches</span>(DOMString <var title>selectors</var>);
+  <span>Element</span>? <span title=dom-Element-closest>closest</span>(DOMString <var>selectors</var>);
+  boolean <span title=dom-Element-matches>matches</span>(DOMString <var>selectors</var>);
 
   <span>HTMLCollection</span> <span title=dom-Element-getElementsByTagName>getElementsByTagName</span>(DOMString <var title>localName</var>);
   <span>HTMLCollection</span> <span title=dom-Element-getElementsByTagNameNS>getElementsByTagNameNS</span>(DOMString? <var title>namespace</var>, DOMString <var title>localName</var>);
@@ -5774,18 +5775,23 @@ have its name converted to ASCII lowercase before the element is affected.
 <hr>
 
 <dl class=domintro>
- <dt><code><var title>element</var> . <span title=dom-Element-matches>matches</span>(<var title>selectors</var>)</code>
- <dd><p>Returns true if matching <var title>selectors</var> against
+ <dt><code><var title>element</var> . <span title=dom-Element-closest>closest</span>(<var>selectors</var>)</code>
+ <dd><p>Returns the first (starting at <var title>element</var>)
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> that matches
+ <var title>selectors</var>, and null otherwise.
+
+ <dt><code><var title>element</var> . <span title=dom-Element-matches>matches</span>(<var>selectors</var>)</code>
+ <dd><p>Returns true if matching <var>selectors</var> against
  <var title>element</var>'s <span title=concept-tree-root>root</span> yields
  <var title>element</var>, and false otherwise.
 </dl>
 
-<p>To <dfn>match a selectors string</dfn> <var title>selectors</var> against a
+<p>To <dfn>match a selectors string</dfn> <var>selectors</var> against a
 <var title>set</var>, run these steps:
 
 <ol>
  <li><p>Let <var title>s</var> be the result of
- <span data-anolis-spec=selectors>parse a selector</span> from <var title>selectors</var>.
+ <span data-anolis-spec=selectors>parse a selector</span> from <var>selectors</var>.
  <span data-anolis-ref>SELECTORS</span>
 
  <li><p>If <var title>s</var> is failure, <span title=concept-throw>throw</span> a
@@ -5797,9 +5803,26 @@ have its name converted to ASCII lowercase before the element is affected.
  <var title>set</var>. <span data-anolis-ref>SELECTORS</span>
 </ol>
 
+<p>The <dfn title=dom-Element-closest><code>closest(<var>selectors</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>Let <var>elements</var> be <span>context object</span>'s
+ <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> that are
+ <span title=concept-element>elements</span>, in reverse
+ <span title=concept-tree-order>tree order</span>.
+
+ <li><p>For each <var title>element</var> in <var>elements</var>, return
+ <var title>element</var> if <var title>element</var> is in the result of running
+ <span>match a selectors string</span> <var>selectors</var> against a set consisting
+ of <var title>element</var>.
+
+ <li><p>Return null.
+</ol>
+
 <p>The <dfn title=dom-Element-matches><code>matches(<var>selectors</var>)</code></dfn>
 method must return true if the <span>context object</span> is in the result of running
-<span>match a selectors string</span> <var title>selectors</var> against a set consisting
+<span>match a selectors string</span> <var>selectors</var> against a set consisting
 of <span>context object</span>, and false otherwise.
 
 <hr>
