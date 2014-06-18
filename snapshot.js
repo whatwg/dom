@@ -54,7 +54,7 @@ var respecSource = rfs(rel("header-maker.html"))
                         .replace("###CONFIG###", JSON.stringify(respecConfig, null, 4))
 ;
 
-// preparet the reference overrides
+// prepare the reference overrides
 fs.readdirSync(rel("references")).forEach(function (f) {
     if (!/\.html$/.test(f)) return;
     references[f.replace(/\.html$/, "")] = rfs(rel("references/" + f));
@@ -90,6 +90,7 @@ tmp.file({ postfix: ".html" }, function (err, path) {
         domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will be nuked"
                             ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out");
 
+        console.log("Writing " + outputFile);
         wfs(outputFile, domSrc);
     });
 });
