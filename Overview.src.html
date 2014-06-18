@@ -1928,9 +1928,6 @@ interface <dfn>ParentNode</dfn> {
   readonly attribute <span>Element</span>? <span title=dom-ParentNode-lastElementChild>lastElementChild</span>;
   readonly attribute unsigned long <span title=dom-ParentNode-childElementCount>childElementCount</span>;
 
-  void <span title=dom-ParentNode-prepend>prepend</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ParentNode-append>append</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-
   <span>Element</span>? <span title=dom-ParentNode-querySelector>querySelector</span>(DOMString <var title>selectors</var>);
   [NewObject] <span>NodeList</span> <span title=dom-ParentNode-querySelectorAll>querySelectorAll</span>(DOMString <var title>selectors</var>);
 };
@@ -1952,30 +1949,6 @@ interface <dfn>ParentNode</dfn> {
  is an <span title=concept-element>element</span>, and null otherwise.
 
  <!-- childElementCount is redundant -->
-
- <dt><code><var title>node</var> . <span title=dom-ParentNode-prepend>prepend</span>(<var title>nodes</var>)</code>
- <dd>
-  <p>Inserts <var title>nodes</var> before the
-  <span title=concept-tree-first-child>first child</span> of
-  <var title>node</var>, while replacing strings in <var title>nodes</var>
-  with equivalent <code>Text</code> <span title=concept-node>nodes</span>.
-
-  <p><span title=concept-throw>Throws</span> a
-  "<code>HierarchyRequestError</code>" if the constraints of the
-  <span title=concept-node-tree>node tree</span> are violated.
-  <!-- "NotFoundError" is impossible -->
-
- <dt><code><var title>node</var> . <span title=dom-ParentNode-append>append</span>(<var title>nodes</var>)</code>
- <dd>
-  <p>Inserts <var title>nodes</var> after the
-  <span title=concept-tree-last-child>last child</span> of
-  <var title>node</var>, while replacing strings in <var title>nodes</var>
-  with equivalent <code>Text</code> <span title=concept-node>nodes</span>.
-
-  <p><span title=concept-throw>Throws</span> a
-  "<code>HierarchyRequestError</code>" if the constraints of the
-  <span title=concept-node-tree>node tree</span> are violated.
-  <!-- "NotFoundError" is impossible -->
 
  <dt><code><var title>node</var> . <span title=dom-ParentNode-querySelector>querySelector</span>(<var title>selectors</var>)</code>
  <dd>
@@ -2013,30 +1986,6 @@ attribute must return the number of
 <span title=concept-tree-child>children</span> of the
 <span>context object</span> that are
 <span title=concept-element>elements</span>.
-
-<p>The
-<dfn title=dom-ParentNode-prepend><code>prepend(<var>nodes</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li>Run the <span>mutation method macro</span>.
-
- <li><p><span title=concept-node-pre-insert>Pre-insert</span>
- <var title>node</var> into the <span>context object</span> before the
- <span>context object</span>'s
- <span title=concept-tree-first-child>first child</span>.
-</ol>
-
-<p>The
-<dfn title=dom-ParentNode-append><code>append(<var>nodes</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li>Run the <span>mutation method macro</span>.
-
- <li><p><span title=concept-node-append>Append</span>
- <var title>node</var> to the <span>context object</span>.
-</ol>
 
 <p>To <dfn>scope-match a selectors string</dfn> <var title>selectors</var> against a
 <var title>node</var>, run these steps:
@@ -2121,9 +2070,6 @@ attribute must return the first
 
 <pre class=idl>[NoInterfaceObject]
 interface <dfn>ChildNode</dfn> {
-  void <span title=dom-ChildNode-before>before</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-after>after</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
-  void <span title=dom-ChildNode-replace>replace</span>((<span>Node</span> or DOMString)... <var title>nodes</var>);
   void <span title=dom-ChildNode-remove>remove</span>();
 };
 <span>DocumentType</span> implements <span>ChildNode</span>;
@@ -2131,88 +2077,9 @@ interface <dfn>ChildNode</dfn> {
 <span>CharacterData</span> implements <span>ChildNode</span>;</pre>
 
 <dl class=domintro>
- <dt><code><var title>node</var> . <span title=dom-ChildNode-before>before</span>(<var title>nodes</var>)</code>
- <dd>
-  <p>Inserts <var title>nodes</var> just before <var title>node</var>,
-  while replacing strings in <var title>nodes</var> with equivalent
-  <code>Text</code> <span title=concept-node>nodes</span>.
-
-  <p><span title=concept-throw>Throws</span> a
-  "<code>HierarchyRequestError</code>" if the constraints of the
-  <span title=concept-node-tree>node tree</span> are violated.
-
- <dt><code><var title>node</var> . <span title=dom-ChildNode-after>after</span>(<var title>nodes</var>)</code>
- <dd>
-  <p>Inserts <var title>nodes</var> just after <var title>node</var>,
-  while replacing strings in <var title>nodes</var> with equivalent
-  <code>Text</code> <span title=concept-node>nodes</span>.
-
-  <p><span title=concept-throw>Throws</span> a
-  "<code>HierarchyRequestError</code>" if the constraints of the
-  <span title=concept-node-tree>node tree</span> are violated.
-
- <dt><code><var title>node</var> . <span title=dom-ChildNode-after>replace</span>(<var title>nodes</var>)</code>
- <dd>
-  <p>Replaces <var title>node</var> with <var title>nodes</var>, while
-  replacing strings in <var title>nodes</var> with equivalent
-  <code>Text</code> <span title=concept-node>nodes</span>.
-
-  <p><span title=concept-throw>Throws</span> a
-  "<code>HierarchyRequestError</code>" if the constraints of the
-  <span title=concept-node-tree>node tree</span> are violated.
-
  <dt><code><var title>node</var> . <span title=dom-ChildNode-remove>remove</span>()</code>
  <dd><p>Removes <var title>node</var>.
 </dl>
-
-<p>The
-<dfn title=dom-ChildNode-before><code>before(<var>nodes</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span> does not have a
- <span title=concept-tree-parent>parent</span>, terminate these steps.
-
- <li>Run the <span>mutation method macro</span>.
-
- <li><p><span title=concept-node-pre-insert>Pre-insert</span>
- <var title>node</var> into the <span>context object</span>'s
- <span title=concept-tree-parent>parent</span> before the
- <span>context object</span>.
-</ol>
-
-<p>The
-<dfn title=dom-ChildNode-after><code>after(<var>nodes</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span> does not have a
- <span title=concept-tree-parent>parent</span>, terminate these steps.
-
- <li>Run the <span>mutation method macro</span>.
-
- <li><p><span title=concept-node-pre-insert>Pre-insert</span>
- <var title>node</var> into the <span>context object</span>'s
- <span title=concept-tree-parent>parent</span> before the
- <span>context object</span>'s
- <span title=concept-tree-next-sibling>next sibling</span>.
-</ol>
-
-<p>The
-<dfn title=dom-ChildNode-replace><code>replace(<var>nodes</var>)</code></dfn>
-method must run these steps:
-
-<ol>
- <li><p>If the <span>context object</span> does not have a
- <span title=concept-tree-parent>parent</span>, terminate these steps.
-
- <li>Run the <span>mutation method macro</span>.
-
- <li><p><span title=concept-node-replace>Replace</span> the
- <span>context object</span> with <var title>node</var> within the
- <span>context object</span>'s
- <span title=concept-tree-parent>parent</span>.
-</ol>
 
 <p>The
 <dfn title=dom-ChildNode-remove><code>remove()</code></dfn>
