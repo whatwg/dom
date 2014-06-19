@@ -83,12 +83,12 @@ tmp.file({ postfix: ".html" }, function (err, path) {
         domSrc = domSrc.replace(/class="XXX"/g, "class='warning'");
         // soften the warnings a little bit
 
-        domSrc = domSrc.replace("<p class='warning'><code><a href=\"#domerror\">DOMError</a></code>"
-                            ,   "<p class='warning'><code><a href=\"#domerror\">DOMError</a></code> is defined here but only used in other specifications. <code><a href=\"#domerror\">DOMError</a></code>");
-        domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will go away."
-                            ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out.");
-        domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will be nuked"
-                            ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out");
+        // domSrc = domSrc.replace("<p class='warning'><code><a href=\"#domerror\">DOMError</a></code>"
+        //                     ,   "<p class='warning'><code><a href=\"#domerror\">DOMError</a></code> is defined here but only used in other specifications. <code><a href=\"#domerror\">DOMError</a></code>");
+        // domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will go away."
+        //                     ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out.");
+        // domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will be nuked"
+        //                     ,   "<code><a href=\"#domerror\">DOMError</a></code> will be phased out");
 
         console.log("Writing " + outputFile);
         wfs(outputFile, domSrc);
