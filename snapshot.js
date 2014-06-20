@@ -83,6 +83,10 @@ tmp.file({ postfix: ".html" }, function (err, path) {
         domSrc = domSrc.replace(/class="XXX"/g, "class='warning'");
         // soften the warnings a little bit
 
+        // subst links
+        domSrc = domSrc.replace(/http:\/\/www\.whatwg\.org\/specs\/web-apps\/current-work\/multipage\/[\w-]+\.html#/g
+                            ,   "http://www.w3.org/html/wg/drafts/html/master/#");
+
         // domSrc = domSrc.replace("<p class='warning'><code><a href=\"#domerror\">DOMError</a></code>"
         //                     ,   "<p class='warning'><code><a href=\"#domerror\">DOMError</a></code> is defined here but only used in other specifications. <code><a href=\"#domerror\">DOMError</a></code>");
         // domSrc = domSrc.replace("<code><a href=\"#domerror\">DOMError</a></code> will go away."
