@@ -1443,13 +1443,6 @@ follows, expressed as a relationship between the type of
 
 <h4>Mutation algorithms</h4>
 
-<p>At certain points in the algorithms below it is said that a
-<dfn>node is inserted</dfn> or a <dfn>node is removed</dfn>. These are
-hooks for <span>other applicable specifications</span> to process the
-<span title=concept-node>nodes</span> that have been inserted or removed
-further and ensures that when multiple <span title=concept-node>nodes</span>
-are inserted or removed this happens atomically.
-
 <p>To <dfn title=concept-node-ensure-pre-insertion-validity>ensure pre-insertion validity</dfn>
 of a <var title>node</var> into a <var title>parent</var> before a
 <var title>child</var>, run these steps:
@@ -1555,6 +1548,10 @@ of a <var title>node</var> into a <var title>parent</var> before a
  <!-- technically this is post-insert -->
 </ol>
 
+<p><span title="Other applicable specifications">Specifications</span> may define
+<dfn title=concept-node-insert-ext>insertion steps</dfn> for all or some
+<span title=concept-node>nodes</span>. The algorithm is passed <var>newNode</var> as
+indicated in the <span title=concept-node-insert>insert</span> algorithm below.
 
 <p>To <dfn title=concept-node-insert>insert</dfn> a <var title>node</var>
 into a <var title>parent</var> before a <var title>child</var>, optionally
@@ -1617,14 +1614,18 @@ with a <i title>suppress observers flag</i>, run these steps:
  <span title=concept-tree-last-child>last child</span> if
  <var title>child</var> is null.
 
- <li><p>Insert all <span title=concept-node>nodes</span> in
- <var title>nodes</var> before <var title>child</var> or at the end of
- <var title>parent</var> if <var title>child</var> is null.
+ <li>
+  <p>For each <var>newNode</var> in <var title>nodes</var>, in
+  <span title=concept-tree-order>tree order</span>, run these substeps:
 
- <li><p>If <i title>suppress observers flag</i> is unset, for each
- <span title=concept-node>node</span> in <var title>nodes</var>, in
- <span title=concept-tree-order>tree order</span> run
- <span>node is inserted</span>.
+  <ol>
+   <li><p>Insert <var>newNode</var> into <var title>parent</var> before
+   <var title>child</var> or at the end of <var title>parent</var> if
+   <var title>child</var> is null.
+
+   <li><p>Run the <span title=concept-node-insert-ext>insertion steps</span> with
+   <var>newNode</var>.
+  </ol>
 </ol>
 
 
@@ -1743,12 +1744,6 @@ steps:
  previousSibling <var title>child</var>'s
  <span title=concept-tree-previous-sibling>previous sibling</span>.
 
- <li><p>Run <span>node is removed</span> for <var title>child</var>, and
- then for each <span title=concept-node>node</span> in
- <var title>nodes</var>, in
- <span title=concept-tree-order>tree order</span>, run
- <span>node is inserted</span>.
-
  <li><p>Return <var title>child</var>.
 </ol>
 
@@ -1772,8 +1767,9 @@ steps:
  otherwise.
 
  <li><p><span title=concept-node-remove>Remove</span> all
- <var title>parent</var>'s <span title=concept-tree-child>children</span>,
- with the <i title>suppress observers flag</i> set.
+ <var title>parent</var>'s <span title=concept-tree-child>children</span>, in
+ <span title=concept-tree-order>tree order</span>, with the
+ <i title>suppress observers flag</i> set.
 
  <li><p>If <var title>node</var> is not null,
  <span title=concept-node-insert>insert</span> <var title>node</var> into
@@ -1782,11 +1778,6 @@ steps:
  <li><p><span>Queue a mutation record</span> of "<code>childList</code>" for
  <var title>parent</var> with addedNodes <var title>addedNodes</var> and
  removedNodes <var title>removedNodes</var>.
-
- <li><p>Run <span>node is removed</span> for each <span title=concept-node>node</span> in
- <var title>removedNodes</var>, in <span title=concept-tree-order>tree order</span>, and
- then run <span>node is inserted</span> for each <span title=concept-node>node</span> in
- <var title>addedNodes</var>, in <span title=concept-tree-order>tree order</span>.
 </ol>
 
 <p class=note>This algorithm does not make any checks with regards to the
@@ -1809,6 +1800,12 @@ steps:
  <!-- technically this is post-remove -->
 </ol>
 
+
+<p><span title="Other applicable specifications">Specifications</span> may define
+<dfn title=concept-node-remove-ext>removing steps</dfn> for all or some
+<span title=concept-node>nodes</span>. The algorithm is passed <var>removedNode</var>,
+<var>oldParent</var>, and <var>oldPreviousSibling</var>, as indicated in the
+<span title=concept-node-remove>remove</span> algorithm below.
 
 <p>To <dfn title=concept-node-remove>remove</dfn> a <var title>node</var>
 from a <var title>parent</var>, optionally with
@@ -1846,13 +1843,15 @@ from a <var title>parent</var>, optionally with
  <var title>index</var>, decrease its
  <span title=concept-range-end-offset>end offset</span> by one.
 
+ <li><p>Let <var>oldPreviousSibling</var> be <var title>node</var>'s
+ <span title=concept-tree-previous-sibling>previous sibling</span>
+
  <li><p>If <i title>suppress observers flag</i> is unset,
  <span>queue a mutation record</span> of "<code>childList</code>" for
  <var title>parent</var> with removedNodes a list solely containing
  <var title>node</var>, nextSibling <var title>node</var>'s
  <span title=concept-tree-next-sibling>next sibling</span>,
- and previousSibling <var title>node</var>'s
- <span title=concept-tree-previous-sibling>previous sibling</span>.
+ and previousSibling <var>oldPreviousSibling</var>.
 
  <li><p>For each <span title=concept-tree-ancestor>ancestor</span>
  <var title>ancestor</var> of <var title>node</var>, if
@@ -1868,8 +1867,8 @@ from a <var title>parent</var>, optionally with
 
  <li><p>Remove <var title>node</var> from its <var title>parent</var>.
 
- <li><p>If <i title>suppress observers flag</i> is unset, run
- <span>node is removed</span> for <var title>node</var>.
+ <li><p>Run the <span title=concept-node-remove-ext>removing steps</span> with
+ <var title>node</var>, <var title>parent</var>, and <var>oldPreviousSibling</var>.
 </ol>
 
 
@@ -8041,40 +8040,52 @@ method.
 <span title=concept-traversal-root>root</span>, whose filter matches any
 <span title=concept-node>node</span>.
 
-<p>Before a <span title=concept-node>node</span> is removed from the
-<span>iterator collection</span>, these steps must be run:
+<p>Each <code>NodeIterator</code> object has these
+<span title=concept-node-remove-ext>removing steps</span> with <var>oldNode</var>,
+<var>oldParent</var>, and <var>oldPreviousSibling</var>:
 
 <ol>
- <li><p>If the <span title=concept-node>node</span> is
- <span title=concept-traversal-root>root</span> or is not an
+ <li><p>If <var>oldNode</var> is not an
  <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of the
- <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- value, terminate these steps.
+ <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute value,
+ terminate these steps.
 
- <li><p>If the
- <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
- attribute value is false, set the
- <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- to the first <span title=concept-node>node</span>
- <span title=concept-tree-preceding>preceding</span> the
- <span title=concept-node>node</span> that is being removed, and terminate
- these steps.
+ <li>
+  <p>If the
+  <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+  attribute value is true, run these substeps:
 
- <li><p>If there is a <span title=concept-node>node</span>
- <span title=concept-tree-following>following</span> the last
- <span title=concept-tree-inclusive-descendant>inclusive descendant</span> of
- the <span title=concept-node>node</span> that is being removed, set the
- <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- to the first such <span title=concept-node>node</span>, and terminate these
- steps.
+  <ol>
+   <li><p>Let <var>nextSibling</var> be <var>oldPreviousSibling</var>'s
+   <span title=concept-tree-next-sibling>next sibling</span>, if
+   <var>oldPreviousSibling</var> is non-null, and <var>oldParent</var>'s
+   <span title=concept-tree-first-child>first child</span> otherwise.
 
- <li><p>Set the
- <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
- to the first <span title=concept-node>node</span>
- <span title=concept-tree-preceding>preceding</span> the
- <span title=concept-node>node</span> that is being removed and set the
- <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
- attribute to false.
+   <li><p>If <var>nextSibling</var> is non-null, set the
+   <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute to
+   <var>nextSibling</var> and terminate these steps.
+
+   <li><p>Let <var>next</var> be the first <span title=concept-node>node</span>
+   <span title=concept-tree-following>following</span> <var>oldParent</var>.
+
+   <li><p>If <var>next</var> is not an
+   <span title=concept-tree-inclusive-ancestor>inclusive ancestor</span> of
+   <span title=concept-traversal-root>root</span>, set the
+   <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute to
+   <var>next</var> and terminate these steps.
+
+   <li>
+    <p>Otherwise, set the
+    <code title=dom-NodeIterator-pointerBeforeReferenceNode>pointerBeforeReferenceNode</code>
+    attribute to false.
+
+    <p class=note>Steps are not terminated here.
+  </ol>
+
+ <li><p>>Set the <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
+ to first <span title=concept-node>node</span>
+ <span title=concept-tree-preceding>preceding</span> <var>oldPreviousSibling</var>, if
+ <var>oldPreviousSibling</var> is non-null, and to <var>oldParent</var> otherwise.
 </ol>
 
 <p class=note>As mentioned earlier <code>NodeIterator</code> objects have an
