@@ -5135,57 +5135,6 @@ attribute must return the
 
 
 
-<!-- AttrExodus
-<h3>Interface <code>Attr</code></h3>
-
-<p>The tentative plan is to let <code>Attr</code> no longer have
-child nodes and turn it into a very lightweight object that no longer
-inherits from <code>Node</code> &mdash;
-<a href=http://lists.w3.org/Archives/Public/public-webapps/2010JulSep/0797.html>http://lists.w3.org/Archives/Public/public-webapps/2010JulSep/0797.html</a>
-
-<pre class=idl>interface <dfn>Attr</dfn> : <span>Node</span> {
-  readonly attribute DOMString <span title=dom-Attr-name>name</span>;
-  readonly attribute boolean <span title=dom-Attr-specified>specified</span>;
-           attribute DOMString <span title=dom-Attr-value>value</span>;
-  readonly attribute <span>Element</span> <span title=dom-Attr-ownerElement>ownerElement</span>;<!- -
-  readonly attribute boolean isId;- ->
-};</pre>
-
-<p><code>Attr</code> nodes represent <dfn
-title=concept-attribute>attributes</dfn>. They have a <dfn
-title=concept-attribute-name>name</dfn> and an <dfn
-title=concept-attribute-element>element</dfn> associated with them when they are
-created<!- -, or when they are passed as the argument to the <code
-title=dom-Element-setAttributeNode>setAttributeNode</code> method.
-[createAttribute]- ->. <code>Attr</code> nodes are not considered part of the
-document tree, so their <code title=dom-Node-parentNode>parentNode</code>, <code
-title=dom-Node-previousSibling>previousSibling</code> and <code
-title=dom-Node-nextSibling>nextSibling</code> attributes return null. Also, its
-child nodes can not be manipulated directly through the <code
-title=dom-Node-insertBefore>insertBefore</code>, <code
-title=dom-Node-replaceChild>replaceChild</code> and <code
-title=dom-Node-appendChild>appendChild</code> methods.
-
-<p>The <dfn title=dom-Attr-name><code>name</code></dfn> attribute must return
-the <span title=concept-attribute-name>name</span> associated with the
-<span>context object</span>.
-
-<p>The <dfn title=dom-Attr-specified><code>specified</code></dfn> attribute must
-return true.
-
-<p>The <dfn title=dom-Attr-value><code>value</code></dfn> attribute must return the value of the <span>context object</span>'s
-<code title=dom-Node-textContent>textContent</code> attribute and on
-setting, must set the <span>context object</span>'s
-<code title=dom-Node-textContent>textContent</code> attribute to the new
-value.
-
-<p>The <dfn title=dom-Attr-ownerElement><code>ownerElement</code></dfn>
-attribute must return the <span title=concept-attribute-element>element</span>
-associated with the <span>context object</span><!- -, if there is one, or null
-otherwise [createAttribute]- ->.
--->
-
-
 <h3>Interface <code>Element</code></h3>
 <pre class=idl>interface <dfn>Element</dfn> : <span>Node</span> {
   readonly attribute DOMString? <span title=dom-Element-namespaceURI>namespaceURI</span>;
@@ -5960,12 +5909,14 @@ method, when invoked, must run these steps:
 <h4>Interface <code>Attr</code></h4>
 
 <pre class=idl>interface <dfn>Attr</dfn> {
-  readonly attribute DOMString <span title=dom-Attr-localName>localName</span>;
-  readonly attribute DOMString <span title=dom-Attr-value>value</span>;
-
-  readonly attribute DOMString <span title=dom-Attr-name>name</span>;
   readonly attribute DOMString? <span title=dom-Attr-namespaceURI>namespaceURI</span>;
   readonly attribute DOMString? <span title=dom-Attr-prefix>prefix</span>;
+  readonly attribute DOMString <span title=dom-Attr-localName>localName</span>;
+  readonly attribute DOMString <span title=dom-Attr-name>name</span>;
+           attribute DOMString <span title=dom-Attr-value>value</span>;
+           attribute DOMString <span title=dom-Attr-textContent>textContent</span>; // alias of .value
+
+  readonly attribute <span>Element</span> <span title=dom-Attr-ownerElement>ownerElement</span>
 
   readonly attribute boolean <span title=dom-Attr-specified>specified</span>; // useless; always returns true
 };</pre>
@@ -5975,22 +5926,26 @@ method, when invoked, must run these steps:
 to as <em>content attributes</em> to avoid confusion with IDL attributes.
 
 <p><span title=concept-attribute>Attributes</span> have a
-<dfn title=concept-attribute-local-name>local name</dfn> and
-<dfn title=concept-attribute-value>value</dfn>.
+<dfn title=concept-attribute-namespace>namespace</dfn> (null or a non-empty string),
+<dfn title=concept-attribute-namespace-prefix>namespace prefix</dfn> (null or a non-empty string),
+<dfn title=concept-attribute-local-name>local name</dfn> (a non-empty string),
+<dfn title=concept-attribute-name>name</dfn> (a non-empty string), and
+<dfn title=concept-attribute-value>value</dfn> (a string).
 
-<p>For legacy reasons, <span title=concept-attribute>attributes</span> also
-have an associated <dfn title=concept-attribute-name>name</dfn>,
-<dfn title=concept-attribute-namespace>namespace</dfn>, and
-<dfn title=concept-attribute-namespace-prefix>namespace prefix</dfn>.
+<p><span title=concept-attribute>Attributes</span> also have an associated
+<dfn title=concept-attribute-element>element</dfn> (null or an
+<span title=concept-element>element</span>).
+
+<p class=note>If designed today they would just have a name and value. ☹
 
 <p>When an <span title=concept-attribute>attribute</span> is created, its
 <span title=concept-attribute-local-name>local name</span> and
-<span title=concept-attribute-value>value</span> are always given. Unless
-explicitly given when an <span title=concept-attribute>attribute</span> is
-created, its <span title=concept-attribute-name>name</span> is
-identical to its <span title=concept-attribute-local-name>local name</span>,
-and its <span title=concept-attribute-namespace>namespace</span> and
-<span title=concept-attribute-namespace-prefix>namespace prefix</span> are
+<span title=concept-attribute-value>value</span> are always given. Unless explicitly given
+when an <span title=concept-attribute>attribute</span> is created, its
+<span title=concept-attribute-name>name</span> is set to its
+<span title=concept-attribute-local-name>local name</span>, and its
+<span title=concept-attribute-namespace>namespace</span> and
+<span title=concept-attribute-namespace-prefix>namespace prefix</span> are set to
 null.
 
 <p>An
@@ -6004,29 +5959,46 @@ null.
 
 <hr>
 
-<p>The <dfn title=dom-Attr-localName><code>localName</code></dfn> attribute
-must return the <span title=concept-attribute-local-name>local name</span>.
-
-<p>The <dfn title=dom-Attr-value><code>value</code></dfn> attribute must
-return the <span title=concept-attribute-value>value</span>.
-
-<hr>
-
-<p>The <dfn title=dom-Attr-name><code>name</code></dfn> attribute must
-return the <span title=concept-attribute-name>name</span>.
-
 <p>The <dfn title=dom-Attr-namespaceURI><code>namespaceURI</code></dfn>
-attribute must return the
+attribute's getter must return the
 <span title=concept-attribute-namespace>namespace</span>.
 
-<p>The <dfn title=dom-Attr-prefix><code>prefix</code></dfn> attribute must
-return the
-<span title=concept-attribute-namespace-prefix>namespace prefix</span>.
+<p>The <dfn title=dom-Attr-prefix><code>prefix</code></dfn> attribute's getter must return
+the <span title=concept-attribute-namespace-prefix>namespace prefix</span>.
+
+<p>The <dfn title=dom-Attr-localName><code>localName</code></dfn> attribute's getter must
+return the <span title=concept-attribute-local-name>local name</span>.
+
+<p>The <dfn title=dom-Attr-name><code>name</code></dfn> attribute's getter must return the
+<span title=concept-attribute-name>name</span>.
+
+<p>The <dfn title=dom-Attr-value><code>value</code></dfn> attribute's getter and
+<dfn title=dom-Attr-textContent><code>textContent</code></dfn> attribute's getter must
+both return the <span title=concept-attribute-value>value</span>.
+
+<p>The <code title=dom-Attr-value>value</code> attribute's setter and
+<code title=dom-Attr-textContent>textContent</code> attribute's setter must both run these
+steps:
+
+<ol>
+ <li><p>If <span>context object</span>'s
+ <span title=concept-attribute-element>element</span> is null, set its
+ <span title=concept-attribute-value>value</span> to the given value.
+
+ <li><p>Otherwise, <span title=concept-element-attributes-change>change</span> the
+ <span>context object</span> from <span>context object</span>'s
+ <span title=concept-attribute-element>element</span> to the given value.
+</ol>
 
 <hr>
 
-<p>The <dfn title=dom-Attr-specified><code>specified</code></dfn> attribute must return
-true.
+<p>The <dfn title=dom-Attr-ownerElement><code>ownerElement</code></dfn> attribute's getter
+must return the <span title=concept-attribute-element>element</span>.
+
+<hr>
+
+<p>The <dfn title=dom-Attr-specified><code>specified</code></dfn> attribute's getter must
+return true.
 
 
 <h3>Interface <code>CharacterData</code></h3>
