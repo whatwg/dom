@@ -5265,12 +5265,13 @@ attribute must return the
   void <a href="#dom-element-removeattributens" title="dom-Element-removeAttributeNS">removeAttributeNS</a>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
   boolean <a href="#dom-element-hasattribute" title="dom-Element-hasAttribute">hasAttribute</a>(DOMString <var>name</var>);
   boolean <a href="#dom-element-hasattributens" title="dom-Element-hasAttributeNS">hasAttributeNS</a>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
-<!--
-  <span>Attr</span> <span title=dom-Element-getAttributeNode>getAttributeNode</span>(DOMString name);
-  <span>Attr</span> <span title=dom-Element-getAttributeNodeNS>getAttributeNodeNS</span>(DOMString namespace, DOMString localName);
-  <span>Attr</span> <span title=dom-Element-setAttributeNode>setAttributeNode</span>(Attr newAttr);
-  <span>Attr</span> <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(Attr oldAttr);
--->
+
+  <a href="#attr">Attr</a>? <a href="#dom-element-getattributenode" title="dom-Element-getAttributeNode">getAttributeNode</a>(DOMString <var>name</var>);
+  <a href="#attr">Attr</a>? <a href="#dom-element-getattributenodens" title="dom-Element-getAttributeNodeNS">getAttributeNodeNS</a>(DOMString <var>namespace</var>, DOMString <var>localName</var>);
+  <a href="#attr">Attr</a>? <a href="#dom-element-setattributenode" title="dom-Element-setAttributeNode">setAttributeNode</a>(Attr <var title="">attr</var>);
+  <a href="#attr">Attr</a>? <a href="#dom-element-setattributenode" title="dom-Element-setAttributeNode">setAttributeNodeNS</a>(Attr <var title="">attr</var>);
+  <a href="#attr">Attr</a>? <a href="#dom-element-removeattributenode" title="dom-Element-removeAttributeNode">removeAttributeNode</a>(Attr <var title="">attr</var>);
+
   <a href="#element">Element</a>? <a href="#dom-element-closest" title="dom-Element-closest">closest</a>(DOMString <var>selectors</var>);
   boolean <a href="#dom-element-matches" title="dom-Element-matches">matches</a>(DOMString <var>selectors</var>);
 
@@ -5337,14 +5338,11 @@ optionally a <var>name</var>, <var title="">prefix</var>, and
 
  <li><p>If <var title="">attribute</var> is null, create an
  <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
- <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
- <var>localName</var>,
- <a href="#concept-attribute-value" title="concept-attribute-value">value</a> is <var title="">value</var>,
- <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is <var>name</var>,
- <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is
- <var>namespace</var>, and
+ <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is <var>namespace</var>,
  <a href="#concept-attribute-namespace-prefix" title="concept-attribute-namespace-prefix">namespace prefix</a> is
- <var title="">prefix</var>, and then
+ <var title="">prefix</var>, <a href="#concept-attribute-local-name" title="concept-attribute-local-name">local name</a> is
+ <var>localName</var>, <a href="#concept-attribute-name" title="concept-attribute-name">name</a> is <var>name</var>,
+ and <a href="#concept-attribute-value" title="concept-attribute-value">value</a> is <var title="">value</var>, and then
  <a href="#concept-element-attributes-append" title="concept-element-attributes-append">append</a> this
  <a href="#concept-attribute" title="concept-attribute">attribute</a> to <var title="">element</var>
  and terminate these steps.
@@ -5391,6 +5389,9 @@ run these steps:
  <li><p>Append the <var title="">attribute</var> to the <var title="">element</var>'s
  <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
 
+ <li><p>Set <var title="">attribute</var>'s
+ <a href="#concept-attribute-element" title="concept-attribute-element">element</a> to <var title="">element</var>.
+
  <li><p>An <a href="#attribute-is-set">attribute is set</a> and an
  <a href="#attribute-is-added">attribute is added</a>.
 </ol>
@@ -5412,6 +5413,9 @@ run these steps:
  <li><p>Remove <var title="">attribute</var> from the
  <var title="">element</var>'s
  <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
+
+ <li><p>Set <var title="">attribute</var>'s
+ <a href="#concept-attribute-element" title="concept-attribute-element">element</a> to null.
 
  <li><p>An <a href="#attribute-is-removed">attribute is removed</a>.
 </ol>
@@ -5791,15 +5795,42 @@ method must run these steps:
  <var>localName</var>, and false otherwise.
 </ol>
 
-<!--<dfn title=dom-Element-getAttributeNode>getAttributeNode</dfn>: when the
-Element.getAttributeNode() method is invoked on an HTML element, the name
-argument must be converted to ASCII lowercase before the element's attributes
-are examined. (In HTML documents.) -->
+<hr>
 
+<p>The <dfn id="dom-element-getattributenode" title="dom-Element-getAttributeNode">getAttributeNode(<var>name</var>)</dfn>
+method, when invoked, must return the result of
+<a href="#concept-element-attributes-get-by-name" title="concept-element-attributes-get-by-name">getting an attribute</a> given
+<var>name</var> and the <a href="#context-object">context object</a>.
+
+<p>The <dfn id="dom-element-getattributenodens" title="dom-Element-getAttributeNodeNS">getAttributeNodeNS(<var>namespace</var>, <var>localName</var>)</dfn>
+method, when invoked, must return the result of
+<a href="#concept-element-attributes-get-by-namespace" title="concept-element-attributes-get-by-namespace">getting an attribute</a> given
+<var>namespace</var>, <var>localName</var>, and the <a href="#context-object">context object</a>.
+
+<p class="XXX">The
+<dfn id="dom-element-setattributenode" title="dom-Element-setAttributeNode">setAttributeNode(<var>attr</var>)</dfn>
+method, when invoked, must ...
 <!-- <dfn title=dom-Element-setAttributeNode>setAttributeNode</dfn>: when an
 Attr node is set on an HTML element using Element.setAttributeNode(), it must
 have its name converted to ASCII lowercase before the element is affected.
 (In HTML documents.) -->
+
+<p class="XXX">The
+<dfn id="dom-element-setattributenodens" title="dom-Element-setAttributeNodeNS">settAttributeNodeNS(<var>attr</var>)</dfn>
+method, when invoked, must ...
+
+<p class="XXX">The
+<dfn id="dom-element-removeattributenode" title="dom-Element-removeAttributeNode">removeAttributeNode(<var>attr</var>)</dfn>
+method, when invoked, must run these steps:
+
+<ol>
+ <li><p>If <var title="">attr</var> is not in <a href="#context-object">context object</a>'s
+ <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#notfounderror">NotFoundError</a></code>" exception.
+
+ <li><p><a href="#concept-element-attributes-remove" title="concept-element-attributes-remove">Remove</a> <var title="">attr</var>
+ from <a href="#context-object">context object</a>.
+</ol>
 
 <hr>
 
@@ -5990,7 +6021,7 @@ method, when invoked, must run these steps:
            attribute DOMString <a href="#dom-attr-value" title="dom-Attr-value">value</a>;
            attribute DOMString <a href="#dom-attr-textcontent" title="dom-Attr-textContent">textContent</a>; // alias of .value
 
-  readonly attribute <a href="#element">Element</a> <a href="#dom-attr-ownerelement" title="dom-Attr-ownerElement">ownerElement</a>
+  readonly attribute <a href="#element">Element</a>? <a href="#dom-attr-ownerelement" title="dom-Attr-ownerElement">ownerElement</a>;
 
   readonly attribute boolean <a href="#dom-attr-specified" title="dom-Attr-specified">specified</a>; // useless; always returns true
 };</pre>
@@ -6062,6 +6093,9 @@ steps:
  <a href="#context-object">context object</a> from <a href="#context-object">context object</a>'s
  <a href="#concept-attribute-element" title="concept-attribute-element">element</a> to the given value.
 </ol>
+
+<p class="note">Unlike <code title="dom-Node-textContent"><a href="#dom-node-textcontent">textContent</a></code>, no special null
+handling is required here.
 
 <hr>
 
@@ -9135,10 +9169,6 @@ some of these features should be reintroduced.
  <dt><code><a href="#element">Element</a></code>
  <dd>
   <ul class="brief">
-   <li><dfn id="dom-element-getattributenode" title="dom-Element-getAttributeNode"><code>getAttributeNode()</code></dfn>
-   <li><dfn id="dom-element-getattributenodens" title="dom-Element-getAttributeNodeNS"><code>getAttributeNodeNS()</code></dfn>
-   <li><dfn id="dom-element-setattributenode" title="dom-Element-setAttributeNode"><code>setAttributeNode()</code></dfn>
-   <li><dfn id="dom-element-removeattributenode" title="dom-Element-removeAttributeNode"><code>removeAttributeNode()</code></dfn>
    <li><dfn id="dom-element-schematypeinfo" title="dom-Element-schemaTypeInfo"><code>schemaTypeInfo</code></dfn>
    <li><dfn id="dom-element-setidattribute" title="dom-Element-setIdAttribute"><code>setIdAttribute()</code></dfn>
    <li><dfn id="dom-element-setidattributens" title="dom-Element-setIdAttributeNS"><code>setIdAttributeNS()</code></dfn>
