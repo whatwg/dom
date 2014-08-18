@@ -442,6 +442,53 @@ return value.
 <p>The <dfn id="xmlns-namespace">XMLNS namespace</dfn> is
 <code title="">http://www.w3.org/2000/xmlns/</code>.
 
+<p>To <dfn id="validate">validate</dfn> a <var>qualifiedName</var>, run these steps:
+
+<ol>
+ <li><p>If <var title="">qualifiedName</var> does not match the
+ <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a href="#concept-throw" title="concept-throw">throw</a>
+ an "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception.
+
+ <li><p>If <var title="">qualifiedName</var> does not match the
+ <code class="external" data-anolis-spec="xmlns"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production,
+ <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+</ol>
+
+<p>To <dfn id="validate-and-extract">validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>,
+run these steps:
+
+<ol>
+ <li><p>If <var>namespace</var> is the empty string, set it to null.
+
+ <li><p><a href="#validate">Validate</a> <var>qualifiedName</var>. Rethrow any exceptions.
+
+ <li><p>Let <var>prefix</var> be null.
+
+ <li><p>Let <var>localName</var> be <var>qualifiedName</var>.
+
+ <li><p>If <var>name</var> contains a "<code>:</code>" (U+003E), then split the
+ string on it and set <var>prefix</var> to the part before and <var>localName</var> to
+ the part after.
+
+ <li><p>If <var title="">prefix</var> is non-null and <var>namespace</var> is null,
+ <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+
+ <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and <var>namespace</var> is
+ not the <a href="#xml-namespace">XML namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+
+ <li><p>If either <var>name</var> or <var title="">prefix</var> is "<code title="">xmlns</code>"
+ and <var>namespace</var> is not the <a href="#xmlns-namespace">XMLNS namespace</a>,
+ <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+
+ <li><p>If <var>namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a> and neither
+ <var>name</var> nor <var title="">prefix</var> is "<code title="">xmlns</code>",
+ <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+
+ <li><p>Return <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
+ <var>qualifiedName</var>.
+</ol>
+
 
 
 <h2 id="errors"><span class="secno">3 </span>Errors</h2>
@@ -4615,36 +4662,9 @@ stated otherwise.
 <dfn id="dom-document-createelementns" title="dom-Document-createElementNS"><code>createElementNS(<var>namespace</var>, <var title="">qualifiedName</var>)</code></dfn>
 method must run these steps:
 <ol>
- <li><p>If <var>namespace</var> is the empty string, set it to null.
-
- <li><p>If <var title="">qualifiedName</var> does not match the
- <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception.
- <li><p>If <var title="">qualifiedName</var> does not match the
- <code class="external" data-anolis-spec="xmlns"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
- <li><p>If <var title="">qualifiedName</var> contains a "<code>:</code>"
- (U+003E), then split the string on it and let <var title="">prefix</var> be
- the part before and <var>localName</var> the part after. Otherwise,
- let <var title="">prefix</var> be null and <var>localName</var> be
- <var title="">qualifiedName</var>.
- <li><p>If <var title="">prefix</var> is not null and
- <var>namespace</var> is null, <a href="#concept-throw" title="concept-throw">throw</a>
- a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
- <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and
- <var>namespace</var> is not the <a href="#xml-namespace">XML namespace</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
- <li><p>If either <var title="">qualifiedName</var> or <var title="">prefix</var> is
- "<code title="">xmlns</code>" and <var>namespace</var> is not the
- <a href="#xmlns-namespace">XMLNS namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
- <li><p>If <var>namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a>
- and neither <var title="">qualifiedName</var> nor <var title="">prefix</var> is
- "<code title="">xmlns</code>", <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
+ <var>qualifiedName</var> be the result of passing <var>namespace</var> and
+ <var>qualifiedName</var> to <a href="#validate-and-extract">validate and extract</a>. Rethrow any exceptions.
 
  <li><p>Let <var title="">interface</var> be the
  <a href="#concept-element-interface" title="concept-element-interface">element interface</a> for
@@ -4826,36 +4846,9 @@ method, when invoked, must run these steps:
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>If <var>namespace</var> is the empty string, set it to null.
-
- <li><p>If <var>name</var> does not match the <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code>
- production, <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception.
-
- <li><p>If <var>name</var> does not match the <code class="external" data-anolis-spec="xmlns"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code>
- production, <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>"
- exception.
-
- <li><p>If <var>name</var> contains a "<code>:</code>" (U+003E), then split the
- string on it and let <var title="">prefix</var> be the part before and <var>localName</var>
- the part after. Otherwise, let <var title="">prefix</var> be null and <var>localName</var>
- be <var>name</var>.
-
- <li><p>If <var title="">prefix</var> is not null and <var>namespace</var> is null,
- <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and <var>namespace</var> is
- not the <a href="#xml-namespace">XML namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If either <var>name</var> or <var title="">prefix</var> is
- "<code title="">xmlns</code>" and <var>namespace</var> is not the
- <a href="#xmlns-namespace">XMLNS namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If <var>namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a> and neither
- <var>name</var> nor <var title="">prefix</var> is "<code title="">xmlns</code>",
- <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
+ <var>name</var> be the result of passing <var>namespace</var> and <var>name</var> to
+ <a href="#validate-and-extract">validate and extract</a>. Rethrow any exceptions.
 
  <li><p>Return a new <a href="#concept-attribute" title="concept-attribute">attribute</a> whose
  <a href="#concept-attribute-namespace" title="concept-attribute-namespace">namespace</a> is <var>namespace</var>,
@@ -5023,13 +5016,7 @@ with that <a href="#concept-document" title="concept-document">document</a>.
 method must run these steps:
 
 <ol>
- <li><p>If <var title="">qualifiedName</var> does not match the
- <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception.
- <li><p>If <var title="">qualifiedName</var> does not match the <code class="external" data-anolis-spec="xmlns"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+ <li><p><a href="#validate">Validate</a> <var title="">qualifiedName</var>. Rethrow any exceptions.
  <!-- <li><p>If <var title>publicId</var> contains a character that does not
  match the <code data-anolis-spec=xml>PubidChar</code> production in XML,
  <span title=concept-throw>throw</span> an
@@ -5744,46 +5731,13 @@ method must run these steps:
 </ol>
 
 <p>The
-<dfn id="dom-element-setattributens" title="dom-Element-setAttributeNS"><code>setAttributeNS(<var>namespace</var>, <var>name</var>, <var title="">value</var>)</code></dfn>
+<dfn id="dom-element-setattributens" title="dom-Element-setAttributeNS"><code>setAttributeNS(<var>namespace</var>, <var>name</var>, <var>value</var>)</code></dfn>
 method must run these steps:
 
 <ol>
- <li><p>If <var>namespace</var> is the empty string, set it to null.
-
- <li><p>If <var>name</var> does not match the
- <code class="external" data-anolis-spec="xml"><a href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML,
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidcharactererror">InvalidCharacterError</a></code>" exception.
-
- <li><p>If <var>name</var> does not match the
- <code class="external" data-anolis-spec="xmlns"><a href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production in Namespaces in XML,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If <var>name</var> contains a "<code>:</code>" (U+003E),
- then split the string on it and let <var title="">prefix</var> be the part
- before and <var>localName</var> the part after. Otherwise, let
- <var title="">prefix</var> be null and <var>localName</var> be
- <var>name</var>.
-
- <li><p>If <var title="">prefix</var> is not null and
- <var>namespace</var> is null, <a href="#concept-throw" title="concept-throw">throw</a>
- a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If <var title="">prefix</var> is "<code title="">xml</code>" and
- <var>namespace</var> is not the <a href="#xml-namespace">XML namespace</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If either <var>name</var> or <var title="">prefix</var> is
- "<code title="">xmlns</code>" and <var>namespace</var> is not the
- <a href="#xmlns-namespace">XMLNS namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
-
- <li><p>If <var>namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a>
- and neither <var>name</var> nor <var title="">prefix</var> is
- "<code title="">xmlns</code>", <a href="#concept-throw" title="concept-throw">throw</a> a
- "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
+ <var>name</var> be the result of passing <var>namespace</var> and <var>name</var> to
+ <a href="#validate-and-extract">validate and extract</a>. Rethrow any exceptions.
 
  <li><p><a href="#concept-element-attributes-set" title="concept-element-attributes-set">Set an attribute</a>
  for the <a href="#context-object">context object</a> using
