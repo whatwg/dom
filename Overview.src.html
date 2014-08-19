@@ -5192,9 +5192,9 @@ attribute must return the
 
   <span>Attr</span>? <span title=dom-Element-getAttributeNode>getAttributeNode</span>(DOMString <var>name</var>);
   <span>Attr</span>? <span title=dom-Element-getAttributeNodeNS>getAttributeNodeNS</span>(DOMString <var>namespace</var>, DOMString <var>localName</var>);
-  <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNode</span>(Attr <var title>attr</var>);
-  <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNodeNS</span>(Attr <var title>attr</var>);
-  <span>Attr</span>? <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(Attr <var title>attr</var>);
+  <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNode</span>(<span>Attr</span> <var title>attr</var>);
+  <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNodeNS</span>(<span>Attr</span> <var title>attr</var>);
+  <span>Attr</span> <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(<span>Attr</span> <var title>attr</var>);
 
   <span>Element</span>? <span title=dom-Element-closest>closest</span>(DOMString <var>selectors</var>);
   boolean <span title=dom-Element-matches>matches</span>(DOMString <var>selectors</var>);
@@ -5235,46 +5235,6 @@ an <dfn>attribute is changed</dfn>, an <dfn>attribute is added</dfn>, and
 an <dfn>attribute is removed</dfn>, for further processing of the
 <span title=concept-attribute>attribute</span>'s
 <span title=concept-attribute-value>value</span>.
-
-<p>To <dfn title=concept-element-attributes-set>set an attribute</dfn> for
-an <span title=concept-element>element</span> <var title>element</var>
-using a <var>localName</var> and <var title>value</var>, and
-optionally a <var>name</var>, <var title>prefix</var>, and
-<var>namespace</var>, run these steps:
-
-<ol>
- <li><p>If <var>name</var> is not given, set it to
- <var>localName</var>.
-
- <li><p>If <var title>prefix</var> is not given, set it to null.
-
- <li><p>If <var>namespace</var> is not given, set it to null.
-
- <li><p>Let <var title>attribute</var> be the
- <span title=concept-attribute>attribute</span> in
- <var title>element</var>'s
- <span title=concept-element-attribute>attribute list</span>
- whose <span title=concept-attribute-namespace>namespace</span> is
- <var>namespace</var> and whose
- <span title=concept-attribute-local-name>local name</span>
- is <var>localName</var>, or null if there is no such
- <span title=concept-attribute>attribute</span>.
-
- <li><p>If <var title>attribute</var> is null, create an
- <span title=concept-attribute>attribute</span> whose
- <span title=concept-attribute-namespace>namespace</span> is <var>namespace</var>,
- <span title=concept-attribute-namespace-prefix>namespace prefix</span> is
- <var title>prefix</var>, <span title=concept-attribute-local-name>local name</span> is
- <var>localName</var>, <span title=concept-attribute-name>name</span> is <var>name</var>,
- and <span title=concept-attribute-value>value</span> is <var title>value</var>, and then
- <span title=concept-element-attributes-append>append</span> this
- <span title=concept-attribute>attribute</span> to <var title>element</var>
- and terminate these steps.
-
- <li><p><span title=concept-element-attributes-change>Change</span>
- <var title>attribute</var> from <var title>element</var> to
- <var title>value</var>.
-</ol>
 
 <p>To <dfn title=concept-element-attributes-change>change</dfn> an
 <span title=concept-attribute>attribute</span> <var title>attribute</var>
@@ -5376,6 +5336,85 @@ given a <var>namespace</var>, <var>localName</var>, and
  <var>namespace</var> and
  <span title=concept-attribute-local-name>local name</span> is
  <var>localName</var>, if any, and null otherwise.
+</ol>
+
+<p>To <dfn title=concept-element-attributes-set>set an attribute</dfn> given an
+<span title=concept-attribute>attribute</span> <var title>attr</var>,
+<span title=concept-element>element</span> <var title>element</var>, and optionally a
+<i title>namespace and local name flag</i>, run these steps:
+
+<ol>
+ <li><p>If <var title>attr</var>'s <span title=concept-attribute-element>element</span> is
+ neither null nor <var title>element</var>, <span title=concept-throw>throw</span> an
+ "<code>InUseAttributeError</code>".
+
+ <li><p>Let <var>oldAttr</var> be null.
+
+ <li><p>If the <i title>namespace and local name flag</i> is set, set <var>oldAttr</var>
+ to the result of
+ <span title=concept-element-attributes-get-by-namespace>getting an attribute</span>
+ given <var title>attr</var>'s <span title=concept-attribute-namespace>namespace</span>,
+ <var title>attr</var>'s <span title=concept-attribute-local-name>local name</span>, and
+ <var title>element</var>.
+
+ <li>
+  <p>Otherwise, set <var>oldAttr</var> to the result of
+  <span title=concept-element-attributes-get-by-name>getting an attribute</span> given
+  <var title>attr</var>'s <span title=concept-attribute-name>name</span> and
+  <var title>element</var>.
+
+  <p class="note no-backref">The result of this is that an
+  <span title=concept-attribute>attribute</span> on an
+  <span title=concept-element>element</span> with an <span>HTML namespace</span> in an
+  <span>HTML document</span> can be replaced with another
+  <span title=concept-attribute>attribute</span> whose
+  <span title=concept-attribute-name>name</span> is only an
+  <span>ASCII case-insensitive</span> match. We do not care, because nobody ought to be
+  working with <span title=concept-attribute>attributes</span> in this way.
+
+ <li><p>If <var>oldAttr</var> is <var title>attr</var>, return <var title>attr</var>.
+
+ <li><p>If <var>oldAttr</var> is non-null,
+ <span title=concept-element-attributes-remove>remove</span> it from
+ <var title>element</var>.
+
+ <li><p><span title=concept-element-attributes-append>Append</span> <var title>attr</var>
+ to <var title>element</var>.
+
+ <li><p>Return <var>oldAttr</var>.
+</ol>
+
+<p>To <dfn title=concept-element-attributes-set-value>set an attribute value</dfn> for
+an <span title=concept-element>element</span> <var title>element</var>
+using a <var>localName</var> and <var title>value</var>, and
+optionally a <var>name</var>, <var title>prefix</var>, and
+<var>namespace</var>, run these steps:
+
+<ol>
+ <li><p>If <var>name</var> is not given, set it to <var>localName</var>.
+
+ <li><p>If <var title>prefix</var> is not given, set it to null.
+
+ <li><p>If <var>namespace</var> is not given, set it to null.
+
+ <li><p>Let <var title>attribute</var> be the result of
+ <span title=concept-element-attributes-get-namespace>getting an attribute</span> given
+ <var>namespace</var>, <var>localName</var>, and <var title>element</var>.
+
+ <li><p>If <var title>attribute</var> is null, create an
+ <span title=concept-attribute>attribute</span> whose
+ <span title=concept-attribute-namespace>namespace</span> is <var>namespace</var>,
+ <span title=concept-attribute-namespace-prefix>namespace prefix</span> is
+ <var title>prefix</var>, <span title=concept-attribute-local-name>local name</span> is
+ <var>localName</var>, <span title=concept-attribute-name>name</span> is <var>name</var>,
+ and <span title=concept-attribute-value>value</span> is <var title>value</var>, and then
+ <span title=concept-element-attributes-append>append</span> this
+ <span title=concept-attribute>attribute</span> to <var title>element</var>
+ and terminate these steps.
+
+ <li><p><span title=concept-element-attributes-change>Change</span>
+ <var title>attribute</var> from <var title>element</var> to
+ <var title>value</var>.
 </ol>
 
 <p>To
@@ -5575,7 +5614,7 @@ steps must be run:
 </ol>
 
 <p>On setting,
-<span title=concept-element-attributes-set>set an attribute</span> for the
+<span title=concept-element-attributes-set-value>set an attribute value</span> for the
 <span>context object</span> using the name of the attribute and the given
 value.
 
@@ -5667,7 +5706,7 @@ method must run these steps:
  <var>name</var> be the result of passing <var>namespace</var> and <var>name</var> to
  <span>validate and extract</span>. Rethrow any exceptions.
 
- <li><p><span title=concept-element-attributes-set>Set an attribute</span>
+ <li><p><span title=concept-element-attributes-set-value>Set an attribute value</span>
  for the <span>context object</span> using
  <var>localName</var>, <var title>value</var>, and also
  <var>name</var>, <var title>prefix</var>, and
@@ -5683,8 +5722,8 @@ method must
 <p>The
 <dfn title=dom-Element-removeAttributeNS><code>removeAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method must
-<span title=concept-element-attributes-remove-by-name>remove an attribute</span> given
-<var>namespace</var>, <var>localName</var>, and the
+<span title=concept-element-attributes-remove-by-namespace>remove an attribute</span>
+given <var>namespace</var>, <var>localName</var>, and the
 <span>context object</span>, and then return undefined.
 
 <p>The
@@ -5731,19 +5770,20 @@ method, when invoked, must return the result of
 <span title=concept-element-attributes-get-by-namespace>getting an attribute</span> given
 <var>namespace</var>, <var>localName</var>, and the <span>context object</span>.
 
-<p class=XXX>The
-<dfn title=dom-Element-setAttributeNode>setAttributeNode(<var>attr</var>)</dfn>
-method, when invoked, must ...
-<!-- <dfn title=dom-Element-setAttributeNode>setAttributeNode</dfn>: when an
-Attr node is set on an HTML element using Element.setAttributeNode(), it must
-have its name converted to ASCII lowercase before the element is affected.
-(In HTML documents.) -->
+<p>The
+<dfn title=dom-Element-setAttributeNode><code>setAttributeNode(<var>attr</var>)</code></dfn>
+method, when invoked, must return the result of
+<span title=concept-element-attributes-set>setting an attribute</span> given
+<var title>attr</var> and the <span>context object</span>. Rethrow any exceptions.
 
-<p class=XXX>The
-<dfn title=dom-Element-setAttributeNodeNS>settAttributeNodeNS(<var>attr</var>)</dfn>
-method, when invoked, must ...
+<p>The
+<dfn title=dom-Element-setAttributeNodeNS><code>setAttributeNodeNS(<var>attr</var>)</code></dfn>
+method, when invoked, must return the result of
+<span title=concept-element-attributes-set>setting an attribute</span> given
+<var title>attr</var>, the <span>context object</span>, and
+<i title>namespace and local name flag</i> set. Rethrow any exceptions.
 
-<p class=XXX>The
+<p>The
 <dfn title=dom-Element-removeAttributeNode>removeAttributeNode(<var>attr</var>)</dfn>
 method, when invoked, must run these steps:
 
@@ -5754,6 +5794,8 @@ method, when invoked, must run these steps:
 
  <li><p><span title=concept-element-attributes-remove>Remove</span> <var title>attr</var>
  from <span>context object</span>.
+
+ <li><p>Return <var title>attr</var>.
 </ol>
 
 <hr>
@@ -5836,11 +5878,11 @@ for the <span>context object</span>.
   readonly attribute unsigned long <span title=dom-NamedNodeMap-length>length</span>;
   getter <span>Attr</span>? <span title=dom-NamedNodeMap-item>item</span>(unsigned long <var title>index</var>);
   getter <span>Attr</span>? <span title=dom-NamedNodeMap-getNamedItem>getNamedItem</span>(DOMString <var>name</var>);
-  <span>Attr</span>? <span title=dom-NamedNodeMap-getNamedItemNS>getNamedItemNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);<!--
+  <span>Attr</span>? <span title=dom-NamedNodeMap-getNamedItemNS>getNamedItemNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
   <span>Attr</span>? <span title=dom-NamedNodeMap-setNamedItem>setNamedItem</span>(<span>Attr</span> <var title>attr</var>);
-  <span>Attr</span>? <span title=dom-NamedNodeMap-setNamedItemNS>setNamedItemNS</span>(<span>Attr</span> <var title>attr</var>);-->
-  <span>Attr</span> <span title=dom-removeNamedItem>removeNamedItem</span>(DOMString <var>name</var>);
-  <span>Attr</span> <span title=dom-removeNamedItemNS>removeNamedItemNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
+  <span>Attr</span>? <span title=dom-NamedNodeMap-setNamedItemNS>setNamedItemNS</span>(<span>Attr</span> <var title>attr</var>);
+  <span>Attr</span> <span title=dom-NamedNodeMap-removeNamedItem>removeNamedItem</span>(DOMString <var>name</var>);
+  <span>Attr</span> <span title=dom-NamedNodeMap-removeNamedItemNS>removeNamedItemNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
 };</pre>
 <!-- XXX Symbol.iterator -->
 
@@ -5866,13 +5908,13 @@ range zero to the number of <span title=concept-attribute>attributes</span> in i
 <span title=concept-NamedNodeMap-attribute>attribute list</span> is empty, in which case
 there are no <span data-anolis-spec=webidl>supported property indices</span>.
 
-<p>The <dfn title=concept-NamedNodeMap-length><code>length</code></dfn> attribute's getter
+<p>The <dfn title=dom-NamedNodeMap-length><code>length</code></dfn> attribute's getter
 must return the number of <span title=concept-attribute>attributes</span> in the
 <span title=concept-NamedNodeMap-attribute>attribute list</span>.
 
 <p>The
-<dfn title=concept-NamedNodeMap-item><code>item(<var title>index</var>)</code></dfn>
-method, when invoked, must run these steps:
+<dfn title=dom-NamedNodeMap-item><code>item(<var title>index</var>)</code></dfn> method,
+when invoked, must run these steps:
 
 <ol>
  <li><p>If <var title>index</var> is equal to or greater than the number of
@@ -5892,21 +5934,34 @@ method, when invoked, must run these steps:
 <span title=concept-NamedNodeMap-attribute>attribute list</span>, in order.
 
 <p>The
-<dfn title=concept-NamedNodeMap-getNamedItem><code>getNamedItem(<var>name</var>)</code></dfn>
+<dfn title=dom-NamedNodeMap-getNamedItem><code>getNamedItem(<var>name</var>)</code></dfn>
 method, when invoked, must return the result of
 <span title=concept-element-attributes-get-by-name>getting an attribute</span> given
 <var>name</var> and <span title=concept-NamedNodeMap-element>element</span>.
 
 <p>The
-<dfn title=concept-NamedNodeMap-getNamedItemNS><code>getNamedItemNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
+<dfn title=dom-NamedNodeMap-getNamedItemNS><code>getNamedItemNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must return the result of
 <span title=concept-element-attributes-get-by-namespace>getting an attribute</span> given
 <var>namespace</var>, <var>localName</var>, and
 <span title=concept-NamedNodeMap-element>element</span>.
 
+<p>The
+<dfn title=dom-NamedNodeMap-setNamedItem><code>setNamedItem(<var>attr</var>)</code></dfn>
+method, when invoked, must return the result of
+<span title=concept-element-attributes-set>setting an attribute</span> given
+<var title>attr</var> and <span title=concept-NamedNodeMap-element>element</span>. Rethrow
+any exceptions.
 
 <p>The
-<dfn title=concept-NamedNodeMap-removeNamedItem><code>removeNamedItem(<var>name</var>)</code></dfn>
+<dfn title=dom-NamedNodeMap-setNamedItemNS><code>setNamedItemNS(<var>attr</var>)</code></dfn>
+method, when invoked, must return the result of
+<span title=concept-element-attributes-set>setting an attribute</span> given
+<var title>attr</var>, <span title=concept-NamedNodeMap-element>element</span>, and
+<i title>namespace and local name flag</i> set. Rethrow any exceptions.
+
+<p>The
+<dfn title=dom-NamedNodeMap-removeNamedItem><code>removeNamedItem(<var>name</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
@@ -5921,7 +5976,7 @@ method, when invoked, must run these steps:
 </ol>
 
 <p>The
-<dfn title=concept-NamedNodeMap-removeNamedItemNS><code>removeNamedItemNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
+<dfn title=dom-NamedNodeMap-removeNamedItemNS><code>removeNamedItemNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
@@ -8744,7 +8799,7 @@ bitmask.
  <span title=concept-attribute>attribute</span> (when the object is a
  <code>DOMSettableTokenList</code>), terminate these steps.
 
- <li><p><span title=concept-element-attributes-set>Set an attribute</span>
+ <li><p><span title=concept-element-attributes-set-value>Set an attribute value</span>
  for the associated <span title=concept-element>element</span> using
  associated <span title=concept-attribute>attribute</span>'s
  <span title=concept-attribute-local-name>local name</span> and the result
