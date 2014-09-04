@@ -382,7 +382,7 @@ run these steps:
 
  <li><p>Let <var>localName</var> be <var>qualifiedName</var>.
 
- <li><p>If <var>name</var> contains a "<code>:</code>" (U+003E), then split the
+ <li><p>If <var>qualifiedName</var> contains a "<code>:</code>" (U+003E), then split the
  string on it and set <var>prefix</var> to the part before and <var>localName</var> to
  the part after.
 
@@ -393,12 +393,13 @@ run these steps:
  not the <span>XML namespace</span>, <span title=concept-throw>throw</span> a
  "<code>NamespaceError</code>" exception.
 
- <li><p>If either <var>name</var> or <var title>prefix</var> is "<code title>xmlns</code>"
- and <var>namespace</var> is not the <span>XMLNS namespace</span>,
- <span title=concept-throw>throw</span> a "<code>NamespaceError</code>" exception.
+ <li><p>If either <var>qualifiedName</var> or <var title>prefix</var> is
+ "<code title>xmlns</code>" and <var>namespace</var> is not the
+ <span>XMLNS namespace</span>, <span title=concept-throw>throw</span> a
+ "<code>NamespaceError</code>" exception.
 
  <li><p>If <var>namespace</var> is the <span>XMLNS namespace</span> and neither
- <var>name</var> nor <var title>prefix</var> is "<code title>xmlns</code>",
+ <var>qualifiedName</var> nor <var title>prefix</var> is "<code title>xmlns</code>",
  <span title=concept-throw>throw</span> a "<code>NamespaceError</code>" exception.
 
  <li><p>Return <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
@@ -562,7 +563,7 @@ Thanks!
  <tr>
   <td>"<dfn><code>InUseAttributeError</code></dfn>"
   <td>The attribute is in use.
-  <td><dfn title=dom-DOMException-INUSE_ATTRIBUTE_ERR><code>INUSE_ATTRIBUTE_ERR</code></dfn> (9)
+  <td><dfn title=dom-DOMException-INUSE_ATTRIBUTE_ERR><code>INUSE_ATTRIBUTE_ERR</code></dfn> (10)
  <tr>
   <td>"<dfn><code>InvalidStateError</code></dfn>"
   <td>The object is in an invalid state.
@@ -768,7 +769,7 @@ would have been <code title=dom-Event-AT_TARGET>AT_TARGET</code>.
 <h3>Interface <code>Event</code></h3>
 
 <pre class="idl">[<span title=concept-event-constructor>Constructor</span>(DOMString <var title>type</var>, optional <span>EventInit</span> <var title>eventInitDict</var>),
- Exposed=Window,Worker]
+ Exposed=(Window,Worker)]
 interface <dfn>Event</dfn> {
   readonly attribute DOMString <span title=dom-Event-type>type</span>;
   readonly attribute <span>EventTarget</span>? <span title=dom-Event-target>target</span>;
@@ -1008,7 +1009,7 @@ it has to be supported for legacy content.
 <h3>Interface <code>CustomEvent</code></h3>
 
 <pre class=idl>[<span title=concept-event-constructor>Constructor</span>(DOMString <var title>type</var>, optional <span>CustomEventInit</span> <var title>eventInitDict</var>),
- Exposed=Window,Worker]
+ Exposed=(Window,Worker)]
 interface <dfn>CustomEvent</dfn> : <span>Event</span> {
   readonly attribute any <span title=dom-CustomEvent-detail>detail</span>;
 
@@ -1090,7 +1091,7 @@ for historical reasons.
 
 <h3>Interface <code>EventTarget</code></h3>
 
-<pre class=idl>[Exposed=Window,Worker]
+<pre class=idl>[Exposed=(Window,Worker)]
 interface <dfn>EventTarget</dfn> {
   void <span title=dom-EventTarget-addEventListener>addEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>callback</var>, optional boolean <var title>capture</var> = false);
   void <span title=dom-EventTarget-removeEventListener>removeEventListener</span>(DOMString <var title>type</var>, <span>EventListener</span>? <var title>callback</var>, optional boolean <var title>capture</var> = false);
@@ -4186,8 +4187,8 @@ interface <dfn>Document</dfn> : <span>Node</span> {
   <span>Node</span> <span title=dom-Document-importNode>importNode</span>(<span>Node</span> <var title>node</var>, optional boolean <var title>deep</var> = false);
   <span>Node</span> <span title=dom-Document-adoptNode>adoptNode</span>(<span>Node</span> <var title>node</var>);
 
-  <span>Attr</span> <span title=dom-Document-createAttribute>createAttribute</span>(DOMString <var>localName</var>);
-  <span>Attr</span> <span title=dom-Document-createAttributeNS>createAttributeNS</span>(DOMString <var>namespace</var>, DOMString <var>name</var>);
+  [NewObject] <span>Attr</span> <span title=dom-Document-createAttribute>createAttribute</span>(DOMString <var>localName</var>);
+  [NewObject] <span>Attr</span> <span title=dom-Document-createAttributeNS>createAttributeNS</span>(DOMString? <var>namespace</var>, DOMString <var>name</var>);
 
   [NewObject] <span>Event</span> <span title=dom-Document-createEvent>createEvent</span>(DOMString <var title>interface</var>);
 
@@ -5195,7 +5196,7 @@ attribute must return the
   boolean <span title=dom-Element-hasAttributeNS>hasAttributeNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
 
   <span>Attr</span>? <span title=dom-Element-getAttributeNode>getAttributeNode</span>(DOMString <var>name</var>);
-  <span>Attr</span>? <span title=dom-Element-getAttributeNodeNS>getAttributeNodeNS</span>(DOMString <var>namespace</var>, DOMString <var>localName</var>);
+  <span>Attr</span>? <span title=dom-Element-getAttributeNodeNS>getAttributeNodeNS</span>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
   <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNode</span>(<span>Attr</span> <var title>attr</var>);
   <span>Attr</span>? <span title=dom-Element-setAttributeNode>setAttributeNodeNS</span>(<span>Attr</span> <var title>attr</var>);
   <span>Attr</span> <span title=dom-Element-removeAttributeNode>removeAttributeNode</span>(<span>Attr</span> <var title>attr</var>);
@@ -5433,7 +5434,7 @@ given a <var>name</var> and <span title=concept-element>element</span>
 
  <li><p>If <var title>attr</var> is non-null,
  <span title=concept-element-attributes-remove>remove</span> it from
- <var title>element</var>'s <span title=concept-element-attribute>attribute list</span>.
+ <var title>element</var>.
 
  <li><p>Return <var title>attr</var>.
 </ol>
@@ -5450,7 +5451,7 @@ given a <var>namespace</var>, <var>localName</var>, and
 
  <li><p>If <var title>attr</var> is non-null,
  <span title=concept-element-attributes-remove>remove</span> it from
- <var title>element</var>'s <span title=concept-element-attribute>attribute list</span>.
+ <var title>element</var>.
 
  <li><p>Return <var title>attr</var>.
 </ol>
@@ -8255,7 +8256,7 @@ method.
     <p class=note>Steps are not terminated here.
   </ol>
 
- <li><p>>Set the <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
+ <li><p>Set the <code title=dom-NodeIterator-referenceNode>referenceNode</code> attribute
  to first <span title=concept-node>node</span>
  <span title=concept-tree-preceding>preceding</span> <var>oldPreviousSibling</var>, if
  <var>oldPreviousSibling</var> is non-null, and to <var>oldParent</var> otherwise.

@@ -9,7 +9,7 @@
 
 <hgroup>
  <h1 class="allcaps">DOM</h1>
- <h2>Living Standard — Last Updated 19 August 2014</h2>
+ <h2>Living Standard — Last Updated 4 September 2014</h2>
 </hgroup>
 
 <dl>
@@ -44,7 +44,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-19 August 2014, the editors have made this specification available
+4 September 2014, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -466,7 +466,7 @@ run these steps:
 
  <li><p>Let <var>localName</var> be <var>qualifiedName</var>.
 
- <li><p>If <var>name</var> contains a "<code>:</code>" (U+003E), then split the
+ <li><p>If <var>qualifiedName</var> contains a "<code>:</code>" (U+003E), then split the
  string on it and set <var>prefix</var> to the part before and <var>localName</var> to
  the part after.
 
@@ -477,12 +477,13 @@ run these steps:
  not the <a href="#xml-namespace">XML namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
  "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
 
- <li><p>If either <var>name</var> or <var title="">prefix</var> is "<code title="">xmlns</code>"
- and <var>namespace</var> is not the <a href="#xmlns-namespace">XMLNS namespace</a>,
- <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
+ <li><p>If either <var>qualifiedName</var> or <var title="">prefix</var> is
+ "<code title="">xmlns</code>" and <var>namespace</var> is not the
+ <a href="#xmlns-namespace">XMLNS namespace</a>, <a href="#concept-throw" title="concept-throw">throw</a> a
+ "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
 
  <li><p>If <var>namespace</var> is the <a href="#xmlns-namespace">XMLNS namespace</a> and neither
- <var>name</var> nor <var title="">prefix</var> is "<code title="">xmlns</code>",
+ <var>qualifiedName</var> nor <var title="">prefix</var> is "<code title="">xmlns</code>",
  <a href="#concept-throw" title="concept-throw">throw</a> a "<code><a href="#namespaceerror">NamespaceError</a></code>" exception.
 
  <li><p>Return <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
@@ -646,7 +647,7 @@ Thanks!
  <tr>
   <td>"<dfn id="inuseattributeerror"><code>InUseAttributeError</code></dfn>"
   <td>The attribute is in use.
-  <td><dfn id="dom-domexception-inuse_attribute_err" title="dom-DOMException-INUSE_ATTRIBUTE_ERR"><code>INUSE_ATTRIBUTE_ERR</code></dfn> (9)
+  <td><dfn id="dom-domexception-inuse_attribute_err" title="dom-DOMException-INUSE_ATTRIBUTE_ERR"><code>INUSE_ATTRIBUTE_ERR</code></dfn> (10)
  <tr>
   <td>"<dfn id="invalidstateerror"><code>InvalidStateError</code></dfn>"
   <td>The object is in an invalid state.
@@ -852,7 +853,7 @@ would have been <code title="dom-Event-AT_TARGET"><a href="#dom-event-at_target"
 <h3 id="interface-event"><span class="secno">4.2 </span>Interface <code><a href="#event">Event</a></code></h3>
 
 <pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#eventinit">EventInit</a> <var title="">eventInitDict</var>),
- Exposed=Window,Worker]
+ Exposed=(Window,Worker)]
 interface <dfn id="event">Event</dfn> {
   readonly attribute DOMString <a href="#dom-event-type" title="dom-Event-type">type</a>;
   readonly attribute <a href="#eventtarget">EventTarget</a>? <a href="#dom-event-target" title="dom-Event-target">target</a>;
@@ -1092,7 +1093,7 @@ it has to be supported for legacy content.
 <h3 id="interface-customevent"><span class="secno">4.3 </span>Interface <code><a href="#customevent">CustomEvent</a></code></h3>
 
 <pre class="idl">[<a href="#concept-event-constructor" title="concept-event-constructor">Constructor</a>(DOMString <var title="">type</var>, optional <a href="#customeventinit">CustomEventInit</a> <var title="">eventInitDict</var>),
- Exposed=Window,Worker]
+ Exposed=(Window,Worker)]
 interface <dfn id="customevent">CustomEvent</dfn> : <a href="#event">Event</a> {
   readonly attribute any <a href="#dom-customevent-detail" title="dom-CustomEvent-detail">detail</a>;
 
@@ -1174,7 +1175,7 @@ for historical reasons.
 
 <h3 id="interface-eventtarget"><span class="secno">4.6 </span>Interface <code><a href="#eventtarget">EventTarget</a></code></h3>
 
-<pre class="idl">[Exposed=Window,Worker]
+<pre class="idl">[Exposed=(Window,Worker)]
 interface <dfn id="eventtarget">EventTarget</dfn> {
   void <a href="#dom-eventtarget-addeventlistener" title="dom-EventTarget-addEventListener">addEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">callback</var>, optional boolean <var title="">capture</var> = false);
   void <a href="#dom-eventtarget-removeeventlistener" title="dom-EventTarget-removeEventListener">removeEventListener</a>(DOMString <var title="">type</var>, <a href="#eventlistener">EventListener</a>? <var title="">callback</var>, optional boolean <var title="">capture</var> = false);
@@ -4265,8 +4266,8 @@ interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   <a href="#node">Node</a> <a href="#dom-document-importnode" title="dom-Document-importNode">importNode</a>(<a href="#node">Node</a> <var title="">node</var>, optional boolean <var title="">deep</var> = false);
   <a href="#node">Node</a> <a href="#dom-document-adoptnode" title="dom-Document-adoptNode">adoptNode</a>(<a href="#node">Node</a> <var title="">node</var>);
 
-  <a href="#attr">Attr</a> <a href="#dom-document-createattribute" title="dom-Document-createAttribute">createAttribute</a>(DOMString <var>localName</var>);
-  <a href="#attr">Attr</a> <a href="#dom-document-createattributens" title="dom-Document-createAttributeNS">createAttributeNS</a>(DOMString <var>namespace</var>, DOMString <var>name</var>);
+  [NewObject] <a href="#attr">Attr</a> <a href="#dom-document-createattribute" title="dom-Document-createAttribute">createAttribute</a>(DOMString <var>localName</var>);
+  [NewObject] <a href="#attr">Attr</a> <a href="#dom-document-createattributens" title="dom-Document-createAttributeNS">createAttributeNS</a>(DOMString? <var>namespace</var>, DOMString <var>name</var>);
 
   [NewObject] <a href="#event">Event</a> <a href="#dom-document-createevent" title="dom-Document-createEvent">createEvent</a>(DOMString <var title="">interface</var>);
 
@@ -5271,7 +5272,7 @@ attribute must return the
   boolean <a href="#dom-element-hasattributens" title="dom-Element-hasAttributeNS">hasAttributeNS</a>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
 
   <a href="#attr">Attr</a>? <a href="#dom-element-getattributenode" title="dom-Element-getAttributeNode">getAttributeNode</a>(DOMString <var>name</var>);
-  <a href="#attr">Attr</a>? <a href="#dom-element-getattributenodens" title="dom-Element-getAttributeNodeNS">getAttributeNodeNS</a>(DOMString <var>namespace</var>, DOMString <var>localName</var>);
+  <a href="#attr">Attr</a>? <a href="#dom-element-getattributenodens" title="dom-Element-getAttributeNodeNS">getAttributeNodeNS</a>(DOMString? <var>namespace</var>, DOMString <var>localName</var>);
   <a href="#attr">Attr</a>? <a href="#dom-element-setattributenode" title="dom-Element-setAttributeNode">setAttributeNode</a>(<a href="#attr">Attr</a> <var title="">attr</var>);
   <a href="#attr">Attr</a>? <a href="#dom-element-setattributenode" title="dom-Element-setAttributeNode">setAttributeNodeNS</a>(<a href="#attr">Attr</a> <var title="">attr</var>);
   <a href="#attr">Attr</a> <a href="#dom-element-removeattributenode" title="dom-Element-removeAttributeNode">removeAttributeNode</a>(<a href="#attr">Attr</a> <var title="">attr</var>);
@@ -5509,7 +5510,7 @@ given a <var>name</var> and <a href="#concept-element" title="concept-element">e
 
  <li><p>If <var title="">attr</var> is non-null,
  <a href="#concept-element-attributes-remove" title="concept-element-attributes-remove">remove</a> it from
- <var title="">element</var>'s <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
+ <var title="">element</var>.
 
  <li><p>Return <var title="">attr</var>.
 </ol>
@@ -5526,7 +5527,7 @@ given a <var>namespace</var>, <var>localName</var>, and
 
  <li><p>If <var title="">attr</var> is non-null,
  <a href="#concept-element-attributes-remove" title="concept-element-attributes-remove">remove</a> it from
- <var title="">element</var>'s <a href="#concept-element-attribute" title="concept-element-attribute">attribute list</a>.
+ <var title="">element</var>.
 
  <li><p>Return <var title="">attr</var>.
 </ol>
@@ -8328,7 +8329,7 @@ method.
     <p class="note">Steps are not terminated here.
   </ol>
 
- <li><p>&gt;Set the <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
+ <li><p>Set the <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
  to first <a href="#concept-node" title="concept-node">node</a>
  <a href="#concept-tree-preceding" title="concept-tree-preceding">preceding</a> <var>oldPreviousSibling</var>, if
  <var>oldPreviousSibling</var> is non-null, and to <var>oldParent</var> otherwise.
