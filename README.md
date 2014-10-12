@@ -1,4 +1,3 @@
-
 # DOM Standard
 
 This is the repository in which the W3C snapshot version of the DOM Standard is maintained.
