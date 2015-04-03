@@ -7,8 +7,10 @@
 
 <p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
 
-<h1 class="allcaps">DOM</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-16-april-2014">Living Standard — Last Updated 16 April 2014</h2>
+<hgroup>
+ <h1 class="allcaps">DOM</h1>
+ <h2>Living Standard — Last Updated 7 May 2014</h2>
+</hgroup>
 
 <dl>
  <dt>This Version:
@@ -42,7 +44,7 @@
 <p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
 To the extent possible under law, the editors have waived all copyright and
 related or neighboring rights to this work. In addition, as of
-16 April 2014, the editors have made this specification available
+7 May 2014, the editors have made this specification available
 under the
 <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at
@@ -95,10 +97,11 @@ http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
      <li><a href="#interface-parentnode"><span class="secno">5.2.3 </span>Interface <code>ParentNode</code></a></li>
      <li><a href="#interface-nondocumenttypechildnode"><span class="secno">5.2.4 </span>Interface <code>NonDocumentTypeChildNode</code></a></li>
      <li><a href="#interface-childnode"><span class="secno">5.2.5 </span>Interface <code>ChildNode</code></a></li>
-     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">5.2.6 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
+     <li><a href="#collections:-elements"><span class="secno">5.2.6 </span>Collections: <code>Elements</code></a></li>
+     <li><a href="#old-style-collections:-nodelist-and-htmlcollection"><span class="secno">5.2.7 </span>Old-style collections: <code>NodeList</code> and <code>HTMLCollection</code></a>
       <ol>
-       <li><a href="#interface-nodelist"><span class="secno">5.2.6.1 </span>Interface <code>NodeList</code></a></li>
-       <li><a href="#interface-htmlcollection"><span class="secno">5.2.6.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
+       <li><a href="#interface-nodelist"><span class="secno">5.2.7.1 </span>Interface <code>NodeList</code></a></li>
+       <li><a href="#interface-htmlcollection"><span class="secno">5.2.7.2 </span>Interface <code>HTMLCollection</code></a></ol></ol></li>
    <li><a href="#mutation-observers"><span class="secno">5.3 </span>Mutation observers</a>
     <ol>
      <li><a href="#interface-mutationobserver"><span class="secno">5.3.1 </span>Interface <code>MutationObserver</code></a></li>
@@ -442,10 +445,10 @@ return value.
 
 <h2 id="errors"><span class="secno">3 </span>Errors</h2>
 
-<p class="XXX">This entire section will move out of DOM into IDL. Use this standard as
-reference for <code><a href="#domexception">DOMException</a></code> until that has happened. Replace instances of
-<code><a href="#domerror">DOMError</a></code> with <code><a href="#domexception">DOMException</a></code> as <code><a href="#domerror">DOMError</a></code> will be
-nuked from orbit soon.
+<p class="XXX">This entire section will move out of DOM into IDL. <code><a href="#domexception">DOMException</a></code>
+will be defined in terms of JavaScript and made available in both document and worker
+environments. <code><a href="#domerror">DOMError</a></code> will go away.
+
 
 <h3 id="exception-domexception"><span class="secno">3.1 </span>Exception <code><a href="#domexception">DOMException</a></code></h3>
 <pre class="idl">exception <dfn id="domexception">DOMException</dfn> {
@@ -518,8 +521,13 @@ interface <dfn id="domerror">DOMError</dfn> {
   readonly attribute DOMString <a href="#dom-domerror-message" title="dom-DOMError-message">message</a>;
 };</pre>
 
-<p class="XXX"><code><a href="#domerror">DOMError</a></code> will be nuked. Replace your usage with
-<code><a href="#domexception">DOMException</a></code> now.
+<p class="XXX"><code><a href="#domerror">DOMError</a></code> will be nuked in favor of using
+<code><a href="#domexception">DOMException</a></code> exclusively. See <a href="https://mail.mozilla.org/pipermail/es-discuss/2013-July/thread.html#31677">Creating your own errors</a>
+on es-discuss for more details.
+
+<p class="note">This interface is intended for other specifications that want
+to introduce error handling through other means than exceptions. As with
+exceptions, the <a href="#error-names-table">error names table</a> is used.
 
 <p>The <dfn id="dom-domerror" title="dom-DOMError"><code>DOMError(<var title="">name</var>, <var title="">message</var>)</code></dfn>
 constructor must return a new <code><a href="#domerror">DOMError</a></code> object whose
@@ -661,6 +669,7 @@ Thanks!
   <td>The I/O read operation failed.
   <td>—
 </table>
+
 
 
 <h2 id="events"><span class="secno">4 </span>Events</h2>
@@ -971,11 +980,7 @@ method must set both the <a href="#stop-propagation-flag">stop propagation flag<
 
 <p>The <dfn id="dom-event-bubbles" title="dom-Event-bubbles"><code>bubbles</code></dfn> and
 <dfn id="dom-event-cancelable" title="dom-Event-cancelable"><code>cancelable</code></dfn> attributes
-must return the values they were initialized to. When an
-<a href="#concept-event" title="concept-event">event</a> is created, they must be initialized
-to false. <span class="note">The <code><a href="#eventinit">EventInit</a></code> dictionary is not sufficient due to
-the existence of the legacy
-<code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code>.</span>
+must return the values they were initialized to.
 
 <p>The
 <dfn id="dom-event-preventdefault" title="dom-Event-preventDefault"><code>preventDefault()</code></dfn>
@@ -1068,11 +1073,7 @@ dictionary <dfn id="customeventinit">CustomEventInit</dfn> : <a href="#eventinit
 </dl>
 
 <p>The <dfn id="dom-customevent-detail" title="dom-CustomEvent-detail"><code>detail</code></dfn> attribute
-must return the value it was initialized to. When an
-<a href="#concept-event" title="concept-event">event</a> is created the attribute must be
-initialized to null. <span class="note">The <code><a href="#customeventinit">CustomEventInit</a></code> dictionary is not
-sufficient due to the existence of the legacy
-<code title="dom-Document-createEvent"><a href="#dom-document-createevent">createEvent()</a></code>.</span>
+must return the value it was initialized to.
 
 <p>The
 <dfn id="dom-customevent-initcustomevent" title="dom-CustomEvent-initCustomEvent"><code>initCustomEvent(<var title="">type</var>, <var title="">bubbles</var>, <var title="">cancelable</var>, <var title="">detail</var>)</code></dfn>
@@ -1536,8 +1537,8 @@ hooks for <a href="#other-applicable-specifications">other applicable specificat
 further and ensures that when multiple <a href="#concept-node" title="concept-node">nodes</a>
 are inserted or removed this happens atomically.
 
-<p>To <dfn id="concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</dfn> a
-<var title="">node</var> into a <var title="">parent</var> before a
+<p>To <dfn id="concept-node-ensure-pre-insertion-validity" title="concept-node-ensure-pre-insertion-validity">ensure pre-insertion validity</dfn>
+of a <var title="">node</var> into a <var title="">parent</var> before a
 <var title="">child</var>, run these steps:
 
 <ol>
@@ -1613,6 +1614,16 @@ are inserted or removed this happens atomically.
    <var title="">child</var> is null and <var title="">parent</var> has an
    <a href="#concept-element" title="concept-element">element</a> <a href="#concept-tree-child" title="concept-tree-child">child</a>.
   </dl>
+</ol>
+
+<p>To <dfn id="concept-node-pre-insert" title="concept-node-pre-insert">pre-insert</dfn> a
+<var title="">node</var> into a <var title="">parent</var> before a
+<var title="">child</var>, run these steps:
+
+<ol>
+ <li><p><a href="#concept-node-ensure-pre-insertion-validity" title="concept-node-ensure-pre-insertion-validity">Ensure pre-insertion validity</a>
+ of <var title="">node</var> into <var title="">parent</var> before
+ <var title="">child</var>.
 
  <li><p>Let <var title="">reference child</var> be <var title="">child</var>.
 
@@ -1642,21 +1653,26 @@ with a <i title="">suppress observers flag</i>, run these steps:
  it is a <code><a href="#documentfragment">DocumentFragment</a></code> <a href="#concept-node" title="concept-node">node</a>,
  and one otherwise.
 
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
- <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
- increase its <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
- <var title="">count</var>.
+ <li>
+  <p>If <var title="">child</var> is non-null, run these substeps:
 
- <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
- <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
- <var title="">parent</var> and
- <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
- <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
- increase its <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
- <var title="">count</var>.
+  <ol>
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> is
+   <var title="">parent</var> and
+   <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> is greater than
+   <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
+   increase its <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a> by
+   <var title="">count</var>.
+
+   <li><p>For each <a href="#concept-range" title="concept-range">range</a> whose
+   <a href="#concept-range-end-node" title="concept-range-end-node">end node</a> is
+   <var title="">parent</var> and
+   <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> is greater than
+   <var title="">child</var>'s <a href="#concept-tree-index" title="concept-tree-index">index</a>,
+   increase its <a href="#concept-range-end-offset" title="concept-range-end-offset">end offset</a> by
+   <var title="">count</var>.
+  </ol>
 
  <li><p>Let <var title="">nodes</var> be <var title="">node</var>'s
  <a href="#concept-tree-child" title="concept-tree-child">children</a> if <var title="">node</var> is
@@ -2005,6 +2021,11 @@ interface <dfn id="parentnode">ParentNode</dfn> {
   readonly attribute <a href="#element">Element</a>? <a href="#dom-parentnode-lastelementchild" title="dom-ParentNode-lastElementChild">lastElementChild</a>;
   readonly attribute unsigned long <a href="#dom-parentnode-childelementcount" title="dom-ParentNode-childElementCount">childElementCount</a>;
 
+  void <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+
+  <a href="#element">Element</a>? <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(DOMString <var title="">relativeSelectors</var>);
+  [NewObject] <a href="#elements">Elements</a> <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
   <a href="#element">Element</a>? <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(DOMString <var title="">selectors</var>);
   [NewObject] <a href="#nodelist">NodeList</a> <a href="#dom-parentnode-queryselectorall" title="dom-ParentNode-querySelectorAll">querySelectorAll</a>(DOMString <var title="">selectors</var>);
 };
@@ -2026,6 +2047,42 @@ interface <dfn id="parentnode">ParentNode</dfn> {
  is an <a href="#concept-element" title="concept-element">element</a>, and null otherwise.
 
  <!-- childElementCount is redundant -->
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-prepend" title="dom-ParentNode-prepend">prepend</a>(<var title="">nodes</var>)</code>
+ <dd>
+  <p>Inserts <var title="">nodes</var> before the
+  <a href="#concept-tree-first-child" title="concept-tree-first-child">first child</a> of
+  <var title="">node</var>, while replacing strings in <var title="">nodes</var>
+  with equivalent <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>.
+
+  <p><a href="#concept-throw" title="concept-throw">Throws</a> a
+  "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
+  <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-append" title="dom-ParentNode-append">append</a>(<var title="">nodes</var>)</code>
+ <dd>
+  <p>Inserts <var title="">nodes</var> after the
+  <a href="#concept-tree-last-child" title="concept-tree-last-child">last child</a> of
+  <var title="">node</var>, while replacing strings in <var title="">nodes</var>
+  with equivalent <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>.
+
+  <p><a href="#concept-throw" title="concept-throw">Throws</a> a
+  "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
+  <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-query" title="dom-ParentNode-query">query</a>(<var title="">relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of <var title="">node</var> that
+  matches <var title="">relativeSelectors</var>.
+
+ <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryall" title="dom-ParentNode-queryAll">queryAll</a>(<var title="">relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns all <a href="#concept-element" title="concept-element">element</a>
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> of <var title="">node</var> that
+  match <var title="">relativeSelectors</var>.
 
  <dt><code><var title="">node</var> . <a href="#dom-parentnode-queryselector" title="dom-ParentNode-querySelector">querySelector</a>(<var title="">selectors</var>)</code>
  <dd>
@@ -2064,6 +2121,60 @@ attribute must return the number of
 <a href="#context-object">context object</a> that are
 <a href="#concept-element" title="concept-element">elements</a>.
 
+<p>The
+<dfn id="dom-parentnode-prepend" title="dom-ParentNode-prepend"><code>prepend(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a> before the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-first-child" title="concept-tree-first-child">first child</a>.
+</ol>
+
+<p>The
+<dfn id="dom-parentnode-append" title="dom-ParentNode-append"><code>append(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-append" title="concept-node-append">Append</a>
+ <var title="">node</var> to the <a href="#context-object">context object</a>.
+</ol>
+
+<p>To <dfn id="match-a-relative-selectors-string">match a relative selectors string</dfn> <var title="">relativeSelectors</var>
+against a <var title="">set</var>, run these steps:
+
+<ol>
+ <li><p>Let <var title="">s</var> be the result of
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#parse-a-relative-selector">parse a relative selector</a> from
+ <var title="">relativeSelectors</var> against <var title="">set</var>.
+ <a href="#refsSELECTORS">[SELECTORS]</a>
+
+ <li><p>If <var title="">s</var> is failure, <a class="external" data-anolis-spec="webidl" href="http://heycam.github.io/webidl/#dfn-throw">throw</a> a
+ JavaScript <code title="">TypeError</code>.
+
+ <li><p>Return the result of <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#evaluate-a-selector">evaluate a selector</a>
+ <var title="">s</var> using
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scope-element" title=":scope element">:scope elements</a>
+ <var title="">set</var>. <a href="#refsSELECTORS">[SELECTORS]</a>
+</ol>
+
+<p>The
+<dfn id="dom-parentnode-query" title="dom-ParentNode-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
+method must return the first result of running
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>, and null if the result is an empty list.
+
+<p>The
+<dfn id="dom-parentnode-queryall" title="dom-ParentNode-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method must return an <code><a href="#elements">Elements</a></code> array initialized with the result of running
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var> against
+a set consisting of <a href="#context-object">context object</a>.
+
 <p>To <dfn id="scope-match-a-selectors-string">scope-match a selectors string</dfn> <var title="">selectors</var> against a
 <var title="">node</var>, run these steps:
 
@@ -2080,7 +2191,7 @@ attribute must return the number of
  <var title="">node</var>'s <a href="#concept-tree-root" title="concept-tree-root">root</a> using
  <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scoping-root">scoping root</a> <var title="">node</var> and
  scoping method
- <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scope-filtered-" title="scope-filtered selectors">scope-filtered</a>.
+ <a class="external" data-anolis-spec="selectors" href="http://dev.w3.org/csswg/selectors/#scope-filtered-selectors" title="scope-filtered selectors">scope-filtered</a>.
  <a href="#refsSELECTORS">[SELECTORS]</a>.
 </ol>
 
@@ -2147,6 +2258,9 @@ attribute must return the first
 
 <pre class="idl">[NoInterfaceObject]
 interface <dfn id="childnode">ChildNode</dfn> {
+  void <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
+  void <a href="#dom-childnode-replace" title="dom-ChildNode-replace">replace</a>((<a href="#node">Node</a> or DOMString)... <var title="">nodes</var>);
   void <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>();
 };
 <a href="#documenttype">DocumentType</a> implements <a href="#childnode">ChildNode</a>;
@@ -2154,9 +2268,88 @@ interface <dfn id="childnode">ChildNode</dfn> {
 <a href="#characterdata">CharacterData</a> implements <a href="#childnode">ChildNode</a>;</pre>
 
 <dl class="domintro">
+ <dt><code><var title="">node</var> . <a href="#dom-childnode-before" title="dom-ChildNode-before">before</a>(<var title="">nodes</var>)</code>
+ <dd>
+  <p>Inserts <var title="">nodes</var> just before <var title="">node</var>,
+  while replacing strings in <var title="">nodes</var> with equivalent
+  <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>.
+
+  <p><a href="#concept-throw" title="concept-throw">Throws</a> a
+  "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
+  <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
+
+ <dt><code><var title="">node</var> . <a href="#dom-childnode-after" title="dom-ChildNode-after">after</a>(<var title="">nodes</var>)</code>
+ <dd>
+  <p>Inserts <var title="">nodes</var> just after <var title="">node</var>,
+  while replacing strings in <var title="">nodes</var> with equivalent
+  <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>.
+
+  <p><a href="#concept-throw" title="concept-throw">Throws</a> a
+  "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
+  <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
+
+ <dt><code><var title="">node</var> . <a href="#dom-childnode-after" title="dom-ChildNode-after">replace</a>(<var title="">nodes</var>)</code>
+ <dd>
+  <p>Replaces <var title="">node</var> with <var title="">nodes</var>, while
+  replacing strings in <var title="">nodes</var> with equivalent
+  <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>.
+
+  <p><a href="#concept-throw" title="concept-throw">Throws</a> a
+  "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>" if the constraints of the
+  <a href="#concept-node-tree" title="concept-node-tree">node tree</a> are violated.
+
  <dt><code><var title="">node</var> . <a href="#dom-childnode-remove" title="dom-ChildNode-remove">remove</a>()</code>
  <dd><p>Removes <var title="">node</var>.
 </dl>
+
+<p>The
+<dfn id="dom-childnode-before" title="dom-ChildNode-before"><code>before(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> before the
+ <a href="#context-object">context object</a>.
+</ol>
+
+<p>The
+<dfn id="dom-childnode-after" title="dom-ChildNode-after"><code>after(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-pre-insert" title="concept-node-pre-insert">Pre-insert</a>
+ <var title="">node</var> into the <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> before the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>.
+</ol>
+
+<p>The
+<dfn id="dom-childnode-replace" title="dom-ChildNode-replace"><code>replace(<var>nodes</var>)</code></dfn>
+method must run these steps:
+
+<ol>
+ <li><p>If the <a href="#context-object">context object</a> does not have a
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>, terminate these steps.
+
+ <li>Run the <a href="#mutation-method-macro">mutation method macro</a>.
+
+ <li><p><a href="#concept-node-replace" title="concept-node-replace">Replace</a> the
+ <a href="#context-object">context object</a> with <var title="">node</var> within the
+ <a href="#context-object">context object</a>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+</ol>
 
 <p>The
 <dfn id="dom-childnode-remove" title="dom-ChildNode-remove"><code>remove()</code></dfn>
@@ -2173,7 +2366,48 @@ method must run these steps:
 </ol>
 
 
-<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">5.2.6 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
+<h4 id="collections:-elements"><span class="secno">5.2.6 </span>Collections: <code><a href="#elements">Elements</a></code></h4>
+
+<pre class="idl">class <dfn id="elements">Elements</dfn> extends <span>Array</span> {
+  <a href="#element">Element</a>? <a href="#dom-elements-query" title="dom-Elements-query">query</a>(DOMString <var title="">relativeSelectors</var>);
+  <a href="#elements">Elements</a> <a href="#dom-elements-queryall" title="dom-Elements-queryAll">queryAll</a>(DOMString <var title="">relativeSelectors</var>);
+};</pre>
+
+<div class="XXX">
+<p>IDL bugs: <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20020"><code>Array</code> subclassing</a> and <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=23225">class, not interface</a>.
+
+<p><code><a href="#elements">Elements</a></code> is an ES6-style subclass of <code>Array</code> with two
+additional methods. It's the new <code><a href="#nodelist">NodeList</a></code> / <code><a href="#htmlcollection">HTMLCollection</a></code>.
+</div>
+
+<dl class="domintro">
+ <dt><code><var title="">elements</var> . <a href="#dom-elements-query" title="dom-Elements-query">query</a>(<var title="">relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns the first <a href="#concept-element" title="concept-element">element</a> that is a
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of <var title="">elements</var> that
+  matches <var title="">relativeSelectors</var>.
+
+ <dt><code><var title="">elements</var> . <a href="#dom-elements-queryall" title="dom-Elements-queryAll">queryAll</a>(<var title="">relativeSelectors</var>)</code>
+ <dd>
+  <p>Returns all <a href="#concept-element" title="concept-element">element</a>
+  <a href="#concept-tree-descendant" title="concept-tree-descendant">descendants</a> of <var title="">elements</var> that
+  match <var title="">relativeSelectors</var>.
+</dl>
+
+<p>The
+<dfn id="dom-elements-query" title="dom-Elements-query"><code>query(<var>relativeSelectors</var>)</code></dfn>
+method must return the first result of running
+<a href="#match-a-relative-selectors-string">match a relative selectors string</a> <var title="">relativeSelectors</var>
+against the <a href="#context-object">context object</a>, and null if the result is an empty list.
+
+<p>The
+<dfn id="dom-elements-queryall" title="dom-Elements-queryAll"><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method must return the result of running <code title="">this.constructor</code> with the
+result of running <a href="#match-a-relative-selectors-string">match a relative selectors string</a>
+<var title="">relativeSelectors</var> against the <a href="#context-object">context object</a>.
+
+
+<h4 id="old-style-collections:-nodelist-and-htmlcollection"><span class="secno">5.2.7 </span>Old-style collections: <code><a href="#nodelist">NodeList</a></code> and <code><a href="#htmlcollection">HTMLCollection</a></code></h4>
 
 <p>A <dfn id="concept-collection" title="concept-collection">collection</dfn> is an object that
 represents a lists of DOM nodes. A
@@ -2199,16 +2433,24 @@ the <a href="#concept-collection" title="concept-collection">collection</a> must
 <a href="#concept-tree-order" title="concept-tree-order">tree order</a>.
 
 
-<h5 id="interface-nodelist"><span class="secno">5.2.6.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
+<h5 id="interface-nodelist"><span class="secno">5.2.7.1 </span>Interface <code><a href="#nodelist">NodeList</a></code></h5>
 
 <p>A <code><a href="#nodelist">NodeList</a></code> object is a
 <a href="#concept-collection" title="concept-collection">collection</a> of
 <a href="#concept-node" title="concept-node">nodes</a>.
 
-<pre class="idl">interface <dfn id="nodelist">NodeList</dfn> {
+<pre class="idl">[ArrayClass]
+interface <dfn id="nodelist">NodeList</dfn> {
   getter <a href="#node">Node</a>? <a href="#dom-nodelist-item" title="dom-NodeList-item">item</a>(unsigned long <var title="">index</var>);
   readonly attribute unsigned long <a href="#dom-nodelist-length" title="dom-NodeList-length">length</a>;
 };</pre>
+
+<div class="impl">
+<p class="warning">It is unclear if it will be possible to turn
+<code><a href="#nodelist">NodeList</a></code> into an <code title="">ArrayClass</code> interface.
+<a href="http://code.google.com/p/chromium/issues/detail?id=229398">Experimentation</a>
+is planned by the Chromium project.
+</div>
 
 <dl class="domintro">
  <dt><var title="">collection</var> . <code title="dom-NodeList-length"><a href="#dom-nodelist-length">length</a></code>
@@ -2245,7 +2487,7 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 </div>
 
 
-<h5 id="interface-htmlcollection"><span class="secno">5.2.6.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
+<h5 id="interface-htmlcollection"><span class="secno">5.2.7.2 </span>Interface <code><a href="#htmlcollection">HTMLCollection</a></code></h5>
 
 <pre class="idl">interface <dfn id="htmlcollection">HTMLCollection</dfn> {
   readonly attribute unsigned long <a href="#dom-htmlcollection-length" title="dom-HTMLCollection-length">length</a>;
@@ -2256,6 +2498,11 @@ node in the <a href="#concept-collection" title="concept-collection">collection<
 <p>An <code><a href="#htmlcollection">HTMLCollection</a></code> object is a
 <a href="#concept-collection" title="concept-collection">collection</a> of
 <a href="#concept-element" title="concept-element">elements</a>.
+
+<p class="note"><code><a href="#elements">Elements</a></code> is the better solution for representing a
+<a href="#concept-collection" title="concept-collection">collection</a> of
+<a href="#concept-element" title="concept-element">elements</a>. <code><a href="#htmlcollection">HTMLCollection</a></code> is an historical
+artifact we cannot rid the web of.
 
 <dl class="domintro">
  <dt><var title="">collection</var> . <code title="dom-HTMLCollection-length"><a href="#dom-htmlcollection-length">length</a></code>
@@ -3964,6 +4211,7 @@ interface <dfn id="document">Document</dfn> : <a href="#node">Node</a> {
   [SameObject] readonly attribute <a href="#domimplementation">DOMImplementation</a> <a href="#dom-document-implementation" title="dom-Document-implementation">implementation</a>;
   readonly attribute DOMString <a href="#dom-document-url" title="dom-Document-URL">URL</a>;
   readonly attribute DOMString <a href="#dom-document-documenturi" title="dom-Document-documentURI">documentURI</a>;
+  readonly attribute DOMString <a href="#dom-document-origin" title="dom-Document-origin">origin</a>;
   readonly attribute DOMString <a href="#dom-document-compatmode" title="dom-Document-compatMode">compatMode</a>;
   readonly attribute DOMString <a href="#dom-document-characterset" title="dom-Document-characterSet">characterSet</a>;
   readonly attribute DOMString <a href="#dom-document-contenttype" title="dom-Document-contentType">contentType</a>;
@@ -4073,6 +4321,9 @@ original names on the basis that they are nonsensical.)
  <dt><code><var title="">document</var> . <a href="#dom-document-documenturi" title="dom-Document-documentURI">documentURI</a></code>
  <dd><p>Returns <var title="">document</var>'s <a href="#concept-document-url" title="concept-document-url">URL</a>.
 
+ <dt><code><var title="">document</var> . <a href="#dom-document-origin" title="dom-Document-origin">origin</a></code>
+ <dd><p>Returns <var title="">document</var>'s <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a>.
+
  <dt><code><var title="">document</var> . <a href="#dom-document-compatmode" title="dom-Document-compatMode">compatMode</a></code>
  <dd>
   <p>Returns the string "<code title="">CSS1Compat</code>" if
@@ -4116,6 +4367,11 @@ associated with the <a href="#concept-document" title="concept-document">documen
 <p>The <dfn id="dom-document-url" title="dom-Document-URL"><code>URL</code></dfn> and
 <dfn id="dom-document-documenturi" title="dom-Document-documentURI"><code>documentURI</code></dfn>
 attributes must return the <a href="#concept-document-url" title="concept-document-url">URL</a>.
+
+<p>The <dfn id="dom-document-origin" title="dom-Document-origin"><code>origin</code></dfn>
+attribute must return the <a class="external" data-anolis-spec="origin" href="http://tools.ietf.org/html/rfc6454#section-6.1">Unicode serialization</a> of
+<a href="#context-object">context object</a>'s <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a>.
+<a href="#refsORIGIN">[ORIGIN]</a>
 
 <p>The <dfn id="dom-document-compatmode" title="dom-Document-compatMode"><code>compatMode</code></dfn>
 attribute must return "<code title="">BackCompat</code>" if the
@@ -4588,12 +4844,12 @@ method must run these steps:
 method must run these steps:
 
 <ol>
- <li><p>Let <var title="">event</var> be null.
+ <li><p>Let <var title="">constructor</var> be null.
 
  <li>
   <p>If <var title="">interface</var> is an
   <a href="#ascii-case-insensitive">ASCII case-insensitive</a> match for any of the strings in the
-  first column in the following table, let <var title="">event</var> be the
+  first column in the following table, set <var title="">constructor</var> to the
   interface in the second column on the same row as the matching string:
 
   <table>
@@ -4613,11 +4869,16 @@ method must run these steps:
        http://trac.webkit.org/browser/trunk/Source/WebCore/dom/EventNames.in
        http://mxr.mozilla.org/mozilla-central/source/content/events/src/nsEventDispatcher.cpp#819 -->
 
- <li><p>If <var title="">event</var> is null, <a href="#concept-throw" title="concept-throw">throw</a> a
+ <li><p>If <var title="">constructor</var> is null, <a href="#concept-throw" title="concept-throw">throw</a> a
  "<code><a href="#notsupportederror">NotSupportedError</a></code>".
 
- <li><p>Return a new <a href="#concept-event" title="concept-event">event</a> implementing the
- <var title="">event</var> interface.
+ <li><p>Let <var title="">event</var> be the result of
+ <a href="#concept-event-constructor" title="concept-event-constructor">invoking</a> <var title="">constructor</var> with
+ the empty string as argument.
+
+ <li><p>Unset <var title="">event</var>'s <a href="#initialized-flag">initialized flag</a>.
+
+ <li><p>Return <var title="">event</var>.
 </ol>
 
 <p class="note"><a href="#concept-event" title="concept-event">Event</a> constructors can be used instead.
@@ -7396,10 +7657,6 @@ method must return the result of <a href="#concept-range-clone" title="concept-r
  is null, <a href="#concept-throw" title="concept-throw">throw</a> an "<code><a href="#hierarchyrequesterror">HierarchyRequestError</a></code>"
  exception.
 
- <li><p>If <var title="">node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
- null, <a href="#concept-node-remove" title="concept-node-remove">remove</a> <var title="">node</var> from its
- <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
-
  <!--
  Behavior for Text node with null parent:
 
@@ -7418,31 +7675,52 @@ method must return the result of <a href="#concept-range-clone" title="concept-r
  -->
  <li><p>Let <var title="">referenceNode</var> be null.
 
- <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
- node if the insertBefore() is going to throw an exception (at least if the
- new node is the parent of the start node, for instance). Firefox 4.0 and
- Opera 11.00 don't, and the latter behavior is much easier to spec, so
- that's what I go with.
-
- IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
- with what all other browsers do. -->
  <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
  is a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
- <a href="#concept-text-split" title="concept-Text-split">split</a> it with offset
- <var title="">range</var>'s <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and
- set <var title="">referenceNode</var> to the result.
+ set <var title="">referenceNode</var> to that <code><a href="#text">Text</a></code>
+ <a href="#concept-node" title="concept-node">node</a>. <!-- This will change when we split
+ it. -->
 
  <li><p>Otherwise, set <var title="">referenceNode</var> to the
  <a href="#concept-tree-child" title="concept-tree-child">child</a> of
  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> whose
  <a href="#concept-tree-index" title="concept-tree-index">index</a> is
  <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>, and null if
- there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a> otherwise.
+ there is no such <a href="#concept-tree-child" title="concept-tree-child">child</a>.
 
  <li><p>Let <var title="">parent</var> be <var title="">range</var>'s
  <a href="#concept-range-start-node" title="concept-range-start-node">start node</a> if <var title="">referenceNode</var>
  is null, and <var title="">referenceNode</var>'s
  <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> otherwise.
+
+ <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
+ node if the insertBefore() is going to throw an exception (at least if the
+ new node is the parent of the start node, for instance). Firefox 4.0 and
+ Opera 11.00 don't.  Now that we have "ensure pre-insertion validity," we go
+ with the IE/Chrome behavior because it's more correct.
+
+ IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
+ with what all other browsers do. -->
+ <li><p><a href="#concept-node-ensure-pre-insertion-validity" title="concept-node-ensure-pre-insertion-validity">Ensure pre-insertion validity</a>
+ of <var title="">node</var> into <var title="">parent</var> before
+ <var title="">referenceNode</var>.
+
+ <li><p>If <var title="">range</var>'s <a href="#concept-range-start-node" title="concept-range-start-node">start node</a>
+ is a <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">node</a>,
+ <a href="#concept-text-split" title="concept-Text-split">split</a> it with offset
+ <var title="">range</var>'s <a href="#concept-range-start-offset" title="concept-range-start-offset">start offset</a>,
+ set <var title="">referenceNode</var> to the result, and set
+ <var title="">parent</var> to <var title="">referenceNode</var>'s
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
+
+ <li><p>If <var title="">node</var> equals <var title="">referenceNode</var>, set
+ <var title="">referenceNode</var> to its
+ <a href="#concept-tree-next-sibling" title="concept-tree-next-sibling">next sibling</a>. <!-- Because we're
+ about to remove node from its parent. -->
+
+ <li><p>If <var title="">node</var>'s <a href="#concept-tree-parent" title="concept-tree-parent">parent</a> is not
+ null, <a href="#concept-node-remove" title="concept-node-remove">remove</a> <var title="">node</var> from its
+ <a href="#concept-tree-parent" title="concept-tree-parent">parent</a>.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
@@ -7765,10 +8043,6 @@ methods are defined in other specifications.
 to filter and traverse <a href="#concept-node" title="concept-node">node</a>
 <a href="#concept-tree" title="concept-tree">trees</a>.
 
-<p>Each <code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> object has an
-associated <dfn id="concept-traversal-active" title="concept-traversal-active">active flag</dfn> to avoid
-recursive invocations. It is initially unset.
-
 <p>Each <code><a href="#nodeiterator">NodeIterator</a></code> and <code><a href="#treewalker">TreeWalker</a></code> object also
 has an associated <dfn id="concept-traversal-root" title="concept-traversal-root">root</dfn>
 <a href="#concept-node" title="concept-node">node</a>,
@@ -7779,9 +8053,6 @@ has an associated <dfn id="concept-traversal-root" title="concept-traversal-root
 these steps:
 
 <ol>
- <li><p>If <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a> is set
- <a href="#concept-throw" title="concept-throw">throw</a> an
- "<code><a href="#invalidstateerror">InvalidStateError</a></code>".
  <li><p>Let <var title="">n</var> be <var title="">node</var>'s
  <code title="dom-Node-nodeType"><a href="#dom-node-nodetype">nodeType</a></code> attribute value minus 1.
  <li><p>If the <var title="">n</var><sup>th</sup> bit (where 0 is the least
@@ -7791,10 +8062,8 @@ these steps:
  <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
  <li><p>If <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> is null,
  return <code title="dom-NodeFilter-FILTER_ACCEPT"><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>.
- <li><p>Set the <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a>.
  <li><p>Let <var title="">result</var> be the return value of invoking
  <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a>.
- <li><p>Unset the <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a>.
  <li><p>If an exception was thrown, re-throw the exception.
  <li><p>Return <var title="">result</var>.
 </ol>
@@ -7830,14 +8099,11 @@ method.
 <a href="#iterator-collection">iterator collection</a>, these steps must be run:
 
 <ol>
- <li><p>If the <a href="#concept-node" title="concept-node">node</a> is not a
- <a href="#concept-tree-descendant" title="concept-tree-descendant">descendant</a> of
- <a href="#concept-traversal-root" title="concept-traversal-root">root</a> and is not an
- <a href="#concept-tree-ancestor" title="concept-tree-ancestor">ancestor</a> of the
+ <li><p>If the <a href="#concept-node" title="concept-node">node</a> is
+ <a href="#concept-traversal-root" title="concept-traversal-root">root</a> or is not an
+ <a href="#concept-tree-inclusive-ancestor" title="concept-tree-inclusive-ancestor">inclusive ancestor</a> of the
  <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
- value or the
- <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
- value itself, terminate these steps.
+ value, terminate these steps.
 
  <li><p>If the
  <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
@@ -7848,11 +8114,10 @@ method.
  <a href="#concept-node" title="concept-node">node</a> that is being removed, and terminate
  these steps.
 
- <li><p>If the
- <code title="dom-NodeIterator-pointerBeforeReferenceNode"><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
- attribute value is true and there is a <a href="#concept-node" title="concept-node">node</a>
- <a href="#concept-tree-following" title="concept-tree-following">following</a> the
- <a href="#concept-node" title="concept-node">node</a> that is being removed, set the
+ <li><p>If there is a <a href="#concept-node" title="concept-node">node</a>
+ <a href="#concept-tree-following" title="concept-tree-following">following</a> the last
+ <a href="#concept-tree-inclusive-descendant" title="concept-tree-inclusive-descendant">inclusive descendant</a> of
+ the <a href="#concept-node" title="concept-node">node</a> that is being removed, set the
  <code title="dom-NodeIterator-referenceNode"><a href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
  to the first such <a href="#concept-node" title="concept-node">node</a>, and terminate these
  steps.
@@ -7867,8 +8132,7 @@ method.
 </ol>
 
 <p class="note">As mentioned earlier <code><a href="#nodeiterator">NodeIterator</a></code> objects have an
-associated <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a>,
-<a href="#concept-traversal-root" title="concept-traversal-root">root</a>
+associated <a href="#concept-traversal-root" title="concept-traversal-root">root</a>
 <a href="#concept-node" title="concept-node">node</a>,
 <a href="#concept-traversal-whattoshow" title="concept-traversal-whatToShow">whatToShow</a> bitmask, and
 <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> callback as well.
@@ -7978,8 +8242,7 @@ for compatibility.</span>
 <code title="dom-Document-createTreeWalker"><a href="#dom-document-createtreewalker">createTreeWalker()</a></code> method.
 
 <p class="note">As mentioned earlier <code><a href="#treewalker">TreeWalker</a></code> objects have an
-associated <a href="#concept-traversal-active" title="concept-traversal-active">active flag</a>,
-<a href="#concept-traversal-root" title="concept-traversal-root">root</a>
+associated <a href="#concept-traversal-root" title="concept-traversal-root">root</a>
 <a href="#concept-node" title="concept-node">node</a>,
 <a href="#concept-traversal-whattoshow" title="concept-traversal-whatToShow">whatToShow</a> bitmask, and
 <a href="#concept-traversal-filter" title="concept-traversal-filter">filter</a> callback.
@@ -9000,6 +9263,7 @@ Stig Halvorsen,
 Tab Atkins,
 Timo Tijhof,
 Travis Leithead,
+Warren He,
 Yehuda Katz, and
 Zack Weinberg
 
