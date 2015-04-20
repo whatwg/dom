@@ -17,534 +17,6 @@
   
 
   <meta content="Bikeshed 1.0.0" name="generator">
-  <script async="" src="https://resources.whatwg.org/file-issue.js"></script>
-  
-
-
-
-
-
-
-  <script id="head" src="//resources.whatwg.org/dfn.js"></script>
-  
-
-
-
-  <script>self = (typeof window !== 'undefined')
-	? window   // if in browser
-	: (
-		(typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
-		? self // if in worker
-		: {}   // if in node js
-	);
-
-/**
- * Prism: Lightweight, robust, elegant syntax highlighting
- * MIT license http://www.opensource.org/licenses/mit-license.php/
- * @author Lea Verou http://lea.verou.me
- */
-
-var Prism = (function(){
-
-// Private helper vars
-var lang = /\blang(?:uage)?-(?!\*)(\w+)\b/i;
-
-var _ = self.Prism = {
-	util: {
-		encode: function (tokens) {
-			if (tokens instanceof Token) {
-				return new Token(tokens.type, _.util.encode(tokens.content), tokens.alias);
-			} else if (_.util.type(tokens) === 'Array') {
-				return tokens.map(_.util.encode);
-			} else {
-				return tokens.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\u00a0/g, ' ');
-			}
-		},
-
-		type: function (o) {
-			return Object.prototype.toString.call(o).match(/\[object (\w+)\]/)[1];
-		},
-
-		// Deep clone a language definition (e.g. to extend it)
-		clone: function (o) {
-			var type = _.util.type(o);
-
-			switch (type) {
-				case 'Object':
-					var clone = {};
-
-					for (var key in o) {
-						if (o.hasOwnProperty(key)) {
-							clone[key] = _.util.clone(o[key]);
-						}
-					}
-
-					return clone;
-
-				case 'Array':
-					return o.slice();
-			}
-
-			return o;
-		}
-	},
-
-	languages: {
-		extend: function (id, redef) {
-			var lang = _.util.clone(_.languages[id]);
-
-			for (var key in redef) {
-				lang[key] = redef[key];
-			}
-
-			return lang;
-		},
-
-		// Insert a token before another token in a language literal
-		insertBefore: function (inside, before, insert, root) {
-			root = root || _.languages;
-			var grammar = root[inside];
-			var ret = {};
-
-			for (var token in grammar) {
-
-				if (grammar.hasOwnProperty(token)) {
-
-					if (token == before) {
-
-						for (var newToken in insert) {
-
-							if (insert.hasOwnProperty(newToken)) {
-								ret[newToken] = insert[newToken];
-							}
-						}
-					}
-
-					ret[token] = grammar[token];
-				}
-			}
-
-			return root[inside] = ret;
-		},
-
-		// Traverse a language definition with Depth First Search
-		DFS: function(o, callback, type) {
-			for (var i in o) {
-				if (o.hasOwnProperty(i)) {
-					callback.call(o, i, o[i], type || i);
-
-					if (_.util.type(o[i]) === 'Object') {
-						_.languages.DFS(o[i], callback);
-					} else if (_.util.type(o[i]) === 'Array') {
-						_.languages.DFS(o[i], callback, i);
-					}
-				}
-			}
-		}
-	},
-
-	highlightAll: function(async, callback) {
-		var elements = document.querySelectorAll('code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code');
-		for (var i=0, element; element = elements[i++];) {
-			if (element.classList.contains("idl")) {
-				// Bikeshed handles IDL blocks already.
-				continue;
-			}
-			_.highlightElement(element, async === true, callback);
-		}
-
-		var elements = document.querySelectorAll('pre[class*="language-"], [class*="language-"] pre, pre[class*="lang-"], [class*="lang-"] pre');
-		for (var i=0, element; element = elements[i++];) {
-			if (element.firstElementChild && element.firstElementChild.tagName.toLowerCase() == "code") {
-				// Already handled by the previous loop
-				continue;
-			}
-			if (element.classList.contains("idl")) {
-				// Bikeshed handles IDL blocks already.
-				continue;
-			}
-			_.highlightElement(element, async === true, callback);
-		}
-	},
-
-	highlightElement: function(element, async, callback) {
-		// Find language
-		var language, grammar, parent = element;
-
-		while (parent && !lang.test(parent.className)) {
-			parent = parent.parentNode;
-		}
-
-		if (parent) {
-			language = (parent.className.match(lang) || [,''])[1];
-			grammar = _.languages[language];
-		}
-
-		if (!grammar) {
-			return;
-		}
-
-		// Set language on the element, if not present
-		element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
-
-		// Set language on the parent, for styling
-		parent = element.parentNode;
-
-		if (/pre/i.test(parent.nodeName)) {
-			parent.className = parent.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
-		}
-
-		var code = element.textContent;
-
-		if(!code) {
-			return;
-		}
-
-		var env = {
-			element: element,
-			language: language,
-			grammar: grammar,
-			code: code
-		};
-
-		_.hooks.run('before-highlight', env);
-
-		if (async && self.Worker) {
-			var worker = new Worker(_.filename);
-
-			worker.onmessage = function(evt) {
-				env.highlightedCode = Token.stringify(JSON.parse(evt.data), language);
-
-				_.hooks.run('before-insert', env);
-
-				env.element.innerHTML = env.highlightedCode;
-
-				callback && callback.call(env.element);
-				_.hooks.run('after-highlight', env);
-			};
-
-			worker.postMessage(JSON.stringify({
-				language: env.language,
-				code: env.code
-			}));
-		}
-		else {
-			env.highlightedCode = _.highlight(env.code, env.grammar, env.language)
-
-			_.hooks.run('before-insert', env);
-
-			env.element.innerHTML = env.highlightedCode;
-
-			callback && callback.call(element);
-
-			_.hooks.run('after-highlight', env);
-		}
-	},
-
-	highlight: function (text, grammar, language) {
-		var tokens = _.tokenize(text, grammar);
-		return Token.stringify(_.util.encode(tokens), language);
-	},
-
-	tokenize: function(text, grammar, language) {
-		var Token = _.Token;
-
-		var strarr = [text];
-
-		var rest = grammar.rest;
-
-		if (rest) {
-			for (var token in rest) {
-				grammar[token] = rest[token];
-			}
-
-			delete grammar.rest;
-		}
-
-		tokenloop: for (var token in grammar) {
-			if(!grammar.hasOwnProperty(token) || !grammar[token]) {
-				continue;
-			}
-
-			var patterns = grammar[token];
-			patterns = (_.util.type(patterns) === "Array") ? patterns : [patterns];
-
-			for (var j = 0; j < patterns.length; ++j) {
-				var pattern = patterns[j],
-					inside = pattern.inside,
-					lookbehind = !!pattern.lookbehind,
-					lookbehindLength = 0,
-					alias = pattern.alias;
-
-				pattern = pattern.pattern || pattern;
-
-				for (var i=0; i<strarr.length; i++) { // Don’t cache length as it changes during the loop
-
-					var str = strarr[i];
-
-					if (strarr.length > text.length) {
-						// Something went terribly wrong, ABORT, ABORT!
-						break tokenloop;
-					}
-
-					if (str instanceof Token) {
-						continue;
-					}
-
-					pattern.lastIndex = 0;
-
-					var match = pattern.exec(str);
-
-					if (match) {
-						if(lookbehind) {
-							lookbehindLength = match[1].length;
-						}
-
-						var from = match.index - 1 + lookbehindLength,
-							match = match[0].slice(lookbehindLength),
-							len = match.length,
-							to = from + len,
-							before = str.slice(0, from + 1),
-							after = str.slice(to + 1);
-
-						var args = [i, 1];
-
-						if (before) {
-							args.push(before);
-						}
-
-						var wrapped = new Token(token, inside? _.tokenize(match, inside) : match, alias);
-
-						args.push(wrapped);
-
-						if (after) {
-							args.push(after);
-						}
-
-						Array.prototype.splice.apply(strarr, args);
-					}
-				}
-			}
-		}
-
-		return strarr;
-	},
-
-	hooks: {
-		all: {},
-
-		add: function (name, callback) {
-			var hooks = _.hooks.all;
-
-			hooks[name] = hooks[name] || [];
-
-			hooks[name].push(callback);
-		},
-
-		run: function (name, env) {
-			var callbacks = _.hooks.all[name];
-
-			if (!callbacks || !callbacks.length) {
-				return;
-			}
-
-			for (var i=0, callback; callback = callbacks[i++];) {
-				callback(env);
-			}
-		}
-	}
-};
-
-var Token = _.Token = function(type, content, alias) {
-	this.type = type;
-	this.content = content;
-	this.alias = alias;
-};
-
-Token.stringify = function(o, language, parent) {
-	if (typeof o == 'string') {
-		return o;
-	}
-
-	if (Object.prototype.toString.call(o) == '[object Array]') {
-		return o.map(function(element) {
-			return Token.stringify(element, language, o);
-		}).join('');
-	}
-
-	var env = {
-		type: o.type,
-		content: Token.stringify(o.content, language, parent),
-		tag: 'span',
-		classes: ['token', o.type],
-		attributes: {},
-		language: language,
-		parent: parent
-	};
-
-	if (env.type == 'comment') {
-		env.attributes['spellcheck'] = 'true';
-	}
-
-	if (o.alias) {
-		var aliases = _.util.type(o.alias) === 'Array' ? o.alias : [o.alias];
-		Array.prototype.push.apply(env.classes, aliases);
-	}
-
-	_.hooks.run('wrap', env);
-
-	var attributes = '';
-
-	for (var name in env.attributes) {
-		attributes += name + '="' + (env.attributes[name] || '') + '"';
-	}
-
-	return '<' + env.tag + ' class="' + env.classes.join(' ') + '" ' + attributes + '>' + env.content + '</' + env.tag + '>';
-
-};
-
-if (!self.document) {
-	if (!self.addEventListener) {
-		// in Node.js
-		return self.Prism;
-	}
- 	// In worker
-	self.addEventListener('message', function(evt) {
-		var message = JSON.parse(evt.data),
-		    lang = message.language,
-		    code = message.code;
-
-		self.postMessage(JSON.stringify(_.util.encode(_.tokenize(code, _.languages[lang]))));
-		self.close();
-	}, false);
-
-	return self.Prism;
-}
-
-// Get current script and highlight
-var script = document.getElementsByTagName('script');
-
-script = script[script.length - 1];
-
-if (script) {
-	_.filename = script.src;
-
-	if (document.addEventListener && !script.hasAttribute('data-manual')) {
-		document.addEventListener('DOMContentLoaded', _.highlightAll);
-	}
-}
-
-return self.Prism;
-
-})();
-
-if (typeof module !== 'undefined' && module.exports) {
-	module.exports = Prism;
-}
-;
-Prism.languages.clike = {
-	'comment': [
-		{
-			pattern: /(^|[^\\])\/\*[\w\W]*?\*\//g,
-			lookbehind: true
-		},
-		{
-			pattern: /(^|[^\\:])\/\/.*?(\r?\n|$)/g,
-			lookbehind: true
-		}
-	],
-	'string': /("|')(\\?.)*?\1/g,
-	'class-name': {
-		pattern: /((?:(?:class|interface|extends|implements|trait|instanceof|new)\s+)|(?:catch\s+\())[a-z0-9_\.\\]+/ig,
-		lookbehind: true,
-		inside: {
-			punctuation: /(\.|\\)/
-		}
-	},
-	'keyword': /\b(if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/g,
-	'boolean': /\b(true|false)\b/g,
-	'function': {
-		pattern: /[a-z0-9_]+\(/ig,
-		inside: {
-			punctuation: /\(/
-		}
-	},
-	'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?)\b/g,
-	'operator': /[-+]{1,2}|!|<=?|>=?|={1,3}|&{1,2}|\|?\||\?|\*|\/|\~|\^|\%/g,
-	'ignore': /&(lt|gt|amp);/gi,
-	'punctuation': /[{}[\];(),.:]/g
-};
-;
-Prism.languages.markup = {
-	'comment': /<!--[\w\W]*?-->/g,
-	'prolog': /<\?.+?\?>/,
-	'doctype': /<!DOCTYPE.+?>/,
-	'cdata': /<!\[CDATA\[[\w\W]*?]]>/i,
-	'tag': {
-		pattern: /<\/?[\w:-]+\s*(?:\s+[\w:-]+(?:=(?:("|')(\\?[\w\W])*?\1|[^\s'">=]+))?\s*)*\/?>/gi,
-		inside: {
-			'tag': {
-				pattern: /^<\/?[\w:-]+/i,
-				inside: {
-					'punctuation': /^<\/?/,
-					'namespace': /^[\w-]+?:/
-				}
-			},
-			'attr-value': {
-				pattern: /=(?:('|")[\w\W]*?(\1)|[^\s>]+)/gi,
-				inside: {
-					'punctuation': /=|>|"/g
-				}
-			},
-			'punctuation': /\/?>/g,
-			'attr-name': {
-				pattern: /[\w:-]+/g,
-				inside: {
-					'namespace': /^[\w-]+?:/
-				}
-			}
-
-		}
-	},
-	'entity': /\&#?[\da-z]{1,8};/gi
-};
-
-// Plugin to make entity title show the real entity, idea by Roman Komarov
-Prism.hooks.add('wrap', function(env) {
-
-	if (env.type === 'entity') {
-		env.attributes['title'] = env.content.replace(/&amp;/, '&');
-	}
-});
-;
-Prism.languages.javascript = Prism.languages.extend('clike', {
-	'keyword': /\b(break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|get|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|set|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)\b/g,
-	'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?|NaN|-?Infinity)\b/g
-});
-
-Prism.languages.insertBefore('javascript', 'keyword', {
-	'regex': {
-		pattern: /(^|[^/])\/(?!\/)(\[.+?]|\\.|[^/\r\n])+\/[gim]{0,3}(?=\s*($|[\r\n,.;})]))/g,
-		lookbehind: true
-	}
-});
-
-if (Prism.languages.markup) {
-	Prism.languages.insertBefore('markup', 'tag', {
-		'script': {
-			pattern: /<script[\w\W]*?>[\w\W]*?<\/script>/ig,
-			inside: {
-				'tag': {
-					pattern: /<script[\w\W]*?>|<\/script>/ig,
-					inside: Prism.languages.markup.tag.inside
-				},
-				rest: Prism.languages.javascript
-			}
-		}
-	});
-}
-;
-</script>
   <style>/* http://prismjs.com/download.html?themes=prism&languages=clike */
 /**
  * prism.js default theme for JavaScript, CSS and HTML
@@ -691,7 +163,7 @@ pre[class*="language-"] {
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated
-    <time class="dt-updated" datetime="2015-04-16">16 April 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-04-20">20 April 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -874,6 +346,13 @@ Interface <code class="idl"><span>Range</span></code></span></a>
 
 
    <p></p>
+
+
+   <script async="" src="https://resources.whatwg.org/file-issue.js"></script>
+
+
+
+
 
 
    <h2 class="no-num heading settled" id="goals"><span class="content">
@@ -1920,8 +1399,8 @@ Interface <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTar
 
    <pre class="idl">[Exposed=(Window,Worker)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="eventtarget">EventTarget<a class="self-link" href="#eventtarget"></a></dfn> {
-  void <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-global-name="EventTarget<interface>/addEventListener(type, callback, capture)<method>/addEventListener(type, callback)<method>" data-lt="addEventListener(type, callback, capture)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistenertype-callback-capture">addEventListener<a class="self-link" href="#dom-eventtarget-addeventlistenertype-callback-capture"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/addEventListener/type<argument>" id="dom-eventtarget-addeventlistener-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/addEventListener/capture<argument>" id="dom-eventtarget-addeventlistener-capture">capture<a class="self-link" href="#dom-eventtarget-addeventlistener-capture"></a></dfn> = false);
-  void <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-global-name="EventTarget<interface>/removeEventListener(type, callback, capture)<method>/removeEventListener(type, callback)<method>" data-lt="removeEventListener(type, callback, capture)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistenertype-callback-capture">removeEventListener<a class="self-link" href="#dom-eventtarget-removeeventlistenertype-callback-capture"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/removeEventListener/type<argument>" id="dom-eventtarget-removeeventlistener-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/removeEventListener/capture<argument>" id="dom-eventtarget-removeeventlistener-capture">capture<a class="self-link" href="#dom-eventtarget-removeeventlistener-capture"></a></dfn> = false);
+  void <a class="idl-code" data-global-name="EventTarget<interface>/addEventListener(type, callback, capture)<method>/addEventListener(type, callback)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/addEventListener/type<argument>" id="dom-eventtarget-addeventlistener-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/addEventListener/capture<argument>" id="dom-eventtarget-addeventlistener-capture">capture<a class="self-link" href="#dom-eventtarget-addeventlistener-capture"></a></dfn> = false);
+  void <a class="idl-code" data-global-name="EventTarget<interface>/removeEventListener(type, callback, capture)<method>/removeEventListener(type, callback)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/removeEventListener/type<argument>" id="dom-eventtarget-removeeventlistener-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener" data-dfn-type="argument" data-export="" data-global-name="EventTarget/removeEventListener/capture<argument>" id="dom-eventtarget-removeeventlistener-capture">capture<a class="self-link" href="#dom-eventtarget-removeeventlistener-capture"></a></dfn> = false);
   boolean <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-global-name="EventTarget<interface>/dispatchEvent(event)<method>" data-lt="dispatchEvent(event)" id="dom-eventtarget-dispatcheventevent">dispatchEvent<a class="self-link" href="#dom-eventtarget-dispatcheventevent"></a></dfn>(<a data-link-type="idl-name" href="#event">Event</a> <dfn class="idl-code" data-dfn-for="EventTarget/dispatchEvent" data-dfn-type="argument" data-export="" data-global-name="EventTarget/dispatchEvent/event<argument>" id="dom-eventtarget-dispatchevent-event">event<a class="self-link" href="#dom-eventtarget-dispatchevent-event"></a></dfn>);
 };
 
@@ -5097,9 +4576,9 @@ must run these steps:</p>
 
     <p class="note" role="note">Note: HTML defines
 <a data-link-type="dfn" href="#concept-node-clone-ext">cloning steps</a> for
-<code><a data-link-type="element" href="https://html.spec.whatwg.org/#script">script</a></code> and
+<code><a data-link-type="element">script</a></code> and
 <code><a data-link-type="element" href="https://html.spec.whatwg.org/#the-input-element">input</a></code> elements. SVG ought to do the same
-for its <code><a data-link-type="element" href="https://html.spec.whatwg.org/#script">script</a></code> elements, but does not call this out at
+for its <code><a data-link-type="element">script</a></code> elements, but does not call this out at
 the moment.</p>
 
 
@@ -5880,8 +5359,8 @@ Interface <code class="idl"><a data-link-type="idl" href="https://html.spec.what
   [NewObject] <a data-link-type="idl-name" href="#range">Range</a> <a class="idl-code" data-global-name="Document<interface>/createRange()<method>" data-link-type="method" href="#dom-document-createrange">createRange</a>();
 
   // NodeFilter.SHOW_ALL = 0xFFFFFFFF
-  [NewObject] <a data-link-type="idl-name" href="#nodeiterator">NodeIterator</a> <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" data-global-name="Document<interface>/createNodeIterator(root, whatToShow, filter)<method>/createNodeIterator(root, whatToShow)<method>/createNodeIterator(root)<method>" data-lt="createNodeIterator(root, whatToShow, filter)|createNodeIterator(root, whatToShow)|createNodeIterator(root)" id="dom-document-createnodeiteratorroot-whattoshow-filter">createNodeIterator<a class="self-link" href="#dom-document-createnodeiteratorroot-whattoshow-filter"></a></dfn>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/root<argument>" id="dom-document-createnodeiterator-root">root<a class="self-link" href="#dom-document-createnodeiterator-root"></a></dfn>, optional unsigned long <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/whatToShow<argument>" id="dom-document-createnodeiterator-whattoshow">whatToShow<a class="self-link" href="#dom-document-createnodeiterator-whattoshow"></a></dfn> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/filter<argument>" id="dom-document-createnodeiterator-filter">filter<a class="self-link" href="#dom-document-createnodeiterator-filter"></a></dfn> = null);
-  [NewObject] <a data-link-type="idl-name" href="#treewalker">TreeWalker</a> <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" data-global-name="Document<interface>/createTreeWalker(root, whatToShow, filter)<method>/createTreeWalker(root, whatToShow)<method>/createTreeWalker(root)<method>" data-lt="createTreeWalker(root, whatToShow, filter)|createTreeWalker(root, whatToShow)|createTreeWalker(root)" id="dom-document-createtreewalkerroot-whattoshow-filter">createTreeWalker<a class="self-link" href="#dom-document-createtreewalkerroot-whattoshow-filter"></a></dfn>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/root<argument>" id="dom-document-createtreewalker-root">root<a class="self-link" href="#dom-document-createtreewalker-root"></a></dfn>, optional unsigned long <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/whatToShow<argument>" id="dom-document-createtreewalker-whattoshow">whatToShow<a class="self-link" href="#dom-document-createtreewalker-whattoshow"></a></dfn> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/filter<argument>" id="dom-document-createtreewalker-filter">filter<a class="self-link" href="#dom-document-createtreewalker-filter"></a></dfn> = null);
+  [NewObject] <a data-link-type="idl-name" href="#nodeiterator">NodeIterator</a> <a class="idl-code" data-global-name="Document<interface>/createNodeIterator(root, whatToShow, filter)<method>/createNodeIterator(root, whatToShow)<method>/createNodeIterator(root)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-document-createnodeiterator">createNodeIterator</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/root<argument>" id="dom-document-createnodeiterator-root">root<a class="self-link" href="#dom-document-createnodeiterator-root"></a></dfn>, optional unsigned long <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/whatToShow<argument>" id="dom-document-createnodeiterator-whattoshow">whatToShow<a class="self-link" href="#dom-document-createnodeiterator-whattoshow"></a></dfn> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <dfn class="idl-code" data-dfn-for="Document/createNodeIterator" data-dfn-type="argument" data-export="" data-global-name="Document/createNodeIterator/filter<argument>" id="dom-document-createnodeiterator-filter">filter<a class="self-link" href="#dom-document-createnodeiterator-filter"></a></dfn> = null);
+  [NewObject] <a data-link-type="idl-name" href="#treewalker">TreeWalker</a> <a class="idl-code" data-global-name="Document<interface>/createTreeWalker(root, whatToShow, filter)<method>/createTreeWalker(root, whatToShow)<method>/createTreeWalker(root)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-document-createtreewalker">createTreeWalker</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/root<argument>" id="dom-document-createtreewalker-root">root<a class="self-link" href="#dom-document-createtreewalker-root"></a></dfn>, optional unsigned long <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/whatToShow<argument>" id="dom-document-createtreewalker-whattoshow">whatToShow<a class="self-link" href="#dom-document-createtreewalker-whattoshow"></a></dfn> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <dfn class="idl-code" data-dfn-for="Document/createTreeWalker" data-dfn-type="argument" data-export="" data-global-name="Document/createTreeWalker/filter<argument>" id="dom-document-createtreewalker-filter">filter<a class="self-link" href="#dom-document-createtreewalker-filter"></a></dfn> = null);
 };
 
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="xmldocument">XMLDocument<a class="self-link" href="#xmldocument"></a></dfn> : <a data-link-type="idl-name" href="https://html.spec.whatwg.org/#dom-document">Document</a> {};
@@ -6976,7 +6455,7 @@ with that <a data-link-type="dfn" href="#concept-document">document</a>.</p>
 
    <pre class="idl">interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="domimplementation">DOMImplementation<a class="self-link" href="#domimplementation"></a></dfn> {
   [NewObject] <a data-link-type="idl-name" href="#documenttype">DocumentType</a> <dfn class="idl-code" data-dfn-for="DOMImplementation" data-dfn-type="method" data-export="" data-global-name="DOMImplementation<interface>/createDocumentType(qualifiedName, publicId, systemId)<method>" data-lt="createDocumentType(qualifiedName, publicId, systemId)" id="dom-domimplementation-createdocumenttypequalifiedname-publicid-systemid">createDocumentType<a class="self-link" href="#dom-domimplementation-createdocumenttypequalifiedname-publicid-systemid"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocumentType" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocumentType/qualifiedName<argument>" id="dom-domimplementation-createdocumenttype-qualifiedname">qualifiedName<a class="self-link" href="#dom-domimplementation-createdocumenttype-qualifiedname"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocumentType" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocumentType/publicId<argument>" id="dom-domimplementation-createdocumenttype-publicid">publicId<a class="self-link" href="#dom-domimplementation-createdocumenttype-publicid"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocumentType" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocumentType/systemId<argument>" id="dom-domimplementation-createdocumenttype-systemid">systemId<a class="self-link" href="#dom-domimplementation-createdocumenttype-systemid"></a></dfn>);
-  [NewObject] <a data-link-type="idl-name" href="#xmldocument">XMLDocument</a> <dfn class="idl-code" data-dfn-for="DOMImplementation" data-dfn-type="method" data-export="" data-global-name="DOMImplementation<interface>/createDocument(namespace, qualifiedName, doctype)<method>/createDocument(namespace, qualifiedName)<method>" data-lt="createDocument(namespace, qualifiedName, doctype)|createDocument(namespace, qualifiedName)" id="dom-domimplementation-createdocumentnamespace-qualifiedname-doctype">createDocument<a class="self-link" href="#dom-domimplementation-createdocumentnamespace-qualifiedname-doctype"></a></dfn>(DOMString? <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/namespace<argument>" id="dom-domimplementation-createdocument-namespace">namespace<a class="self-link" href="#dom-domimplementation-createdocument-namespace"></a></dfn>, [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/qualifiedName<argument>" id="dom-domimplementation-createdocument-qualifiedname">qualifiedName<a class="self-link" href="#dom-domimplementation-createdocument-qualifiedname"></a></dfn>, optional <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/doctype<argument>" id="dom-domimplementation-createdocument-doctype">doctype<a class="self-link" href="#dom-domimplementation-createdocument-doctype"></a></dfn> = null);
+  [NewObject] <a data-link-type="idl-name" href="#xmldocument">XMLDocument</a> <a class="idl-code" data-global-name="DOMImplementation<interface>/createDocument(namespace, qualifiedName, doctype)<method>/createDocument(namespace, qualifiedName)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-domimplementation-createdocument">createDocument</a>(DOMString? <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/namespace<argument>" id="dom-domimplementation-createdocument-namespace">namespace<a class="self-link" href="#dom-domimplementation-createdocument-namespace"></a></dfn>, [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/qualifiedName<argument>" id="dom-domimplementation-createdocument-qualifiedname">qualifiedName<a class="self-link" href="#dom-domimplementation-createdocument-qualifiedname"></a></dfn>, optional <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <dfn class="idl-code" data-dfn-for="DOMImplementation/createDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createDocument/doctype<argument>" id="dom-domimplementation-createdocument-doctype">doctype<a class="self-link" href="#dom-domimplementation-createdocument-doctype"></a></dfn> = null);
   [NewObject] <a data-link-type="idl-name" href="https://html.spec.whatwg.org/#dom-document">Document</a> <a class="idl-code" data-global-name="DOMImplementation<interface>/createHTMLDocument(title)<method>/createHTMLDocument()<method>" data-link-type="method" href="#dom-domimplementation-createhtmldocument">createHTMLDocument</a>(optional DOMString <dfn class="idl-code" data-dfn-for="DOMImplementation/createHTMLDocument" data-dfn-type="argument" data-export="" data-global-name="DOMImplementation/createHTMLDocument/title<argument>" id="dom-domimplementation-createhtmldocument-title">title<a class="self-link" href="#dom-domimplementation-createhtmldocument-title"></a></dfn>);
 
   boolean <a class="idl-code" data-global-name="DOMImplementation<interface>/hasFeature()<method>" data-link-type="method" href="#dom-domimplementation-hasfeature">hasFeature</a>(); // useless; always returns true
@@ -7026,7 +6505,7 @@ with that <a data-link-type="dfn" href="#concept-document">document</a>.</p>
     <dd>
   Returns a <a data-link-type="dfn" href="#concept-document">document</a>, with a basic
   <a data-link-type="dfn" href="#concept-tree">tree</a> already constructed including a
-  <code><a data-link-type="element" href="https://html.spec.whatwg.org/#the-title-element">title</a></code> element, unless the <var>title</var>
+  <code><a data-link-type="element">title</a></code> element, unless the <var>title</var>
   argument is omitted.
 </dl>
 
@@ -7162,7 +6641,7 @@ method must run these steps:</p>
   
       <ol>
    
-       <li>Create a <code><a data-link-type="element" href="https://html.spec.whatwg.org/#the-title-element">title</a></code> element in the
+       <li>Create a <code><a data-link-type="element">title</a></code> element in the
    <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, and
    <a data-link-type="dfn" href="#concept-node-append">append</a> it to the
    <code><a data-link-type="element" href="https://html.spec.whatwg.org/#the-head-element">head</a></code> element created in the previous step.
@@ -7172,7 +6651,7 @@ method must run these steps:</p>
    set its <a data-link-type="dfn" href="#concept-CD-data">data</a> to <var>title</var>
    (which could be the empty string), and
    <a data-link-type="dfn" href="#concept-node-append">append</a> it to the
-   <code><a data-link-type="element" href="https://html.spec.whatwg.org/#the-title-element">title</a></code> element created in the previous step.
+   <code><a data-link-type="element">title</a></code> element created in the previous step.
   
       </ol>
       
@@ -11672,7 +11151,7 @@ bitmask.</p>
   boolean <dfn class="idl-code" data-dfn-for="DOMTokenList" data-dfn-type="method" data-export="" data-global-name="DOMTokenList<interface>/contains(token)<method>" data-lt="contains(token)" id="dom-domtokenlist-containstoken">contains<a class="self-link" href="#dom-domtokenlist-containstoken"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/contains" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/contains/token<argument>" id="dom-domtokenlist-contains-token">token<a class="self-link" href="#dom-domtokenlist-contains-token"></a></dfn>);
   void <a class="idl-code" data-global-name="DOMTokenList<interface>/add(tokens...)<method>/add()<method>" data-link-type="method" href="#dom-domtokenlist-addtokens">add</a>(DOMString... <dfn class="idl-code" data-dfn-for="DOMTokenList/add" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/add/tokens<argument>" id="dom-domtokenlist-add-tokens">tokens<a class="self-link" href="#dom-domtokenlist-add-tokens"></a></dfn>);
   void <a class="idl-code" data-global-name="DOMTokenList<interface>/remove(tokens...)<method>/remove()<method>" data-link-type="method" href="#dom-domtokenlist-removetokens">remove</a>(DOMString... <dfn class="idl-code" data-dfn-for="DOMTokenList/remove" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/remove/tokens<argument>" id="dom-domtokenlist-remove-tokens">tokens<a class="self-link" href="#dom-domtokenlist-remove-tokens"></a></dfn>);
-  boolean <dfn class="idl-code" data-dfn-for="DOMTokenList" data-dfn-type="method" data-export="" data-global-name="DOMTokenList<interface>/toggle(token, force)<method>/toggle(token)<method>" data-lt="toggle(token, force)|toggle(token)" id="dom-domtokenlist-toggletoken-force">toggle<a class="self-link" href="#dom-domtokenlist-toggletoken-force"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/toggle/token<argument>" id="dom-domtokenlist-toggle-token">token<a class="self-link" href="#dom-domtokenlist-toggle-token"></a></dfn>, optional boolean <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/toggle/force<argument>" id="dom-domtokenlist-toggle-force">force<a class="self-link" href="#dom-domtokenlist-toggle-force"></a></dfn>);
+  boolean <a class="idl-code" data-global-name="DOMTokenList<interface>/toggle(token, force)<method>/toggle(token)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-domtokenlist-toggle">toggle</a>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/toggle/token<argument>" id="dom-domtokenlist-toggle-token">token<a class="self-link" href="#dom-domtokenlist-toggle-token"></a></dfn>, optional boolean <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle" data-dfn-type="argument" data-export="" data-global-name="DOMTokenList/toggle/force<argument>" id="dom-domtokenlist-toggle-force">force<a class="self-link" href="#dom-domtokenlist-toggle-force"></a></dfn>);
   <a data-global-name="DOMTokenList/stringification behavior<dfn>" data-link-type="dfn" href="#stringification-behavior">stringifier</a>;
   iterable&lt;DOMString>;
 };
@@ -12025,7 +11504,7 @@ other chapters are defined by the <cite>UI Events</cite> specification.
 <cite>DOM Level 3 Core</cite>.</p>
 
 
-   <p><code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-domstring">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-domexception">DOMException</a></code>, and
+   <p><code class="idl"><a data-link-type="idl" href="http://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-domexception">DOMException</a></code>, and
 <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a></code> are now defined in Web IDL.</p>
 
 
@@ -12409,6 +11888,10 @@ and Ms2ger (<a href="//www.mozilla.org/">Mozilla</a>,
 the extent possible under law, the editors have waived all copyright and related or
 neighboring rights to this work.</p>
 
+
+   <script id="head" src="//resources.whatwg.org/dfn.js"></script>
+
+
 </main>
   
 
@@ -12420,8 +11903,6 @@ neighboring rights to this work.</p>
    <li>add(), <a href="#dom-domtokenlist-addtokens">7.1</a>
    <li>addedNodes, <a href="#dom-mutationrecord-addednodes">4.3.3</a>
    <li>addEventListener(), <a href="#dom-eventtarget-addeventlistener">3.6</a>
-   <li>addEventListener(type, callback), <a href="#dom-eventtarget-addeventlistenertype-callback-capture">3.6</a>
-   <li>addEventListener(type, callback, capture), <a href="#dom-eventtarget-addeventlistenertype-callback-capture">3.6</a>
    <li>add(tokens), <a href="#dom-domtokenlist-addtokens">7.1</a>
    <li>adopt, <a href="#concept-node-adopt">4.5</a>
    <li>adopting steps, <a href="#concept-node-adopt-ext">4.5</a>
@@ -12583,8 +12064,6 @@ neighboring rights to this work.</p>
    <li>createComment(data), <a href="#dom-document-createcommentdata">4.5</a>
    <li>createDocument(), <a href="#dom-domimplementation-createdocument">4.5.1</a>
    <li>createDocumentFragment(), <a href="#dom-document-createdocumentfragment">4.5</a>
-   <li>createDocument(namespace, qualifiedName), <a href="#dom-domimplementation-createdocumentnamespace-qualifiedname-doctype">4.5.1</a>
-   <li>createDocument(namespace, qualifiedName, doctype), <a href="#dom-domimplementation-createdocumentnamespace-qualifiedname-doctype">4.5.1</a>
    <li>createDocumentType(), <a href="#dom-domimplementation-createdocumenttype">4.5.1</a>
    <li>createDocumentType(qualifiedName, publicId, systemId), <a href="#dom-domimplementation-createdocumenttypequalifiedname-publicid-systemid">4.5.1</a>
    <li>createElement(), <a href="#dom-document-createelement">4.5</a>
@@ -12596,18 +12075,12 @@ neighboring rights to this work.</p>
    <li>createEvent(interface), <a href="#dom-document-createeventinterface">4.5</a>
    <li>createHTMLDocument(), <a href="#dom-domimplementation-createhtmldocument">4.5.1</a>
    <li>createNodeIterator(), <a href="#dom-document-createnodeiterator">4.5</a>
-   <li>createNodeIterator(root), <a href="#dom-document-createnodeiteratorroot-whattoshow-filter">4.5</a>
-   <li>createNodeIterator(root, whatToShow), <a href="#dom-document-createnodeiteratorroot-whattoshow-filter">4.5</a>
-   <li>createNodeIterator(root, whatToShow, filter), <a href="#dom-document-createnodeiteratorroot-whattoshow-filter">4.5</a>
    <li>createProcessingInstruction(), <a href="#dom-document-createprocessinginstruction">4.5</a>
    <li>createProcessingInstruction(target, data), <a href="#dom-document-createprocessinginstructiontarget-data">4.5</a>
    <li>createRange(), <a href="#dom-document-createrange">4.5</a>
    <li>createTextNode(), <a href="#dom-document-createtextnode">4.5</a>
    <li>createTextNode(data), <a href="#dom-document-createtextnodedata">4.5</a>
    <li>createTreeWalker(), <a href="#dom-document-createtreewalker">4.5</a>
-   <li>createTreeWalker(root), <a href="#dom-document-createtreewalkerroot-whattoshow-filter">4.5</a>
-   <li>createTreeWalker(root, whatToShow), <a href="#dom-document-createtreewalkerroot-whattoshow-filter">4.5</a>
-   <li>createTreeWalker(root, whatToShow, filter), <a href="#dom-document-createtreewalkerroot-whattoshow-filter">4.5</a>
    <li>currentNode, <a href="#dom-treewalker-currentnode">6.2</a>
    <li>currentTarget, <a href="#dom-event-currenttarget">3.2</a>
    <li>CustomEvent, <a href="#customevent">3.3</a>
@@ -13207,8 +12680,6 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
    <li>removeChild(child), <a href="#dom-node-removechildchild">4.4</a>
    <li>removedNodes, <a href="#dom-mutationrecord-removednodes">4.3.3</a>
    <li>removeEventListener(), <a href="#dom-eventtarget-removeeventlistener">3.6</a>
-   <li>removeEventListener(type, callback), <a href="#dom-eventtarget-removeeventlistenertype-callback-capture">3.6</a>
-   <li>removeEventListener(type, callback, capture), <a href="#dom-eventtarget-removeeventlistenertype-callback-capture">3.6</a>
    <li>removeNamedItem(), <a href="#dom-namednodemap-removenameditem">4.8.1</a>
    <li>removeNamedItem(name), <a href="#dom-namednodemap-removenameditemname">4.8.1</a>
    <li>removeNamedItemNS(), <a href="#dom-namednodemap-removenameditemns">4.8.1</a>
@@ -13354,8 +12825,6 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
    <li>timeStamp, <a href="#dom-event-timestamp">3.2</a>
    <li>title, <a href="#dom-domimplementation-createhtmldocument-title">4.5.1</a>
    <li>toggle(), <a href="#dom-domtokenlist-toggle">7.1</a>
-   <li>toggle(token), <a href="#dom-domtokenlist-toggletoken-force">7.1</a>
-   <li>toggle(token, force), <a href="#dom-domtokenlist-toggletoken-force">7.1</a>
    <li>token
     <ul>
      <li>argument for DOMTokenList/contains, <a href="#dom-domtokenlist-contains-token">7.1</a>
@@ -13425,7 +12894,16 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
      <li><a href="http://dev.w3.org/csswg/cssom-view-1/#dom-range-getboundingclientrect">getBoundingClientRect()</a>
      <li><a href="http://dev.w3.org/csswg/cssom-view-1/#dom-range-getclientrects">getClientRects()</a>
     </ul>
-   <li><a data-link-type="biblio" href="#biblio-html5">[html5]</a> defines the following terms:
+   <li><a data-link-type="biblio" href="#biblio-dom-ls">[dom-ls]</a> defines the following terms:
+    <ul>
+     <li><a href="http://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener">addEventListener(type, callback)</a>
+     <li><a href="http://dom.spec.whatwg.org/#dom-domimplementation-createdocument">createDocument(namespace, qualifiedName)</a>
+     <li><a href="http://dom.spec.whatwg.org/#dom-document-createnodeiterator">createNodeIterator(root, whatToShow)</a>
+     <li><a href="http://dom.spec.whatwg.org/#dom-document-createtreewalker">createTreeWalker(root, whatToShow)</a>
+     <li><a href="http://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener">removeEventListener(type, callback)</a>
+     <li><a href="http://dom.spec.whatwg.org/#dom-domtokenlist-toggle">toggle(token)</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-html">[html]</a> defines the following terms:
     <ul>
      <li><a href="https://html.spec.whatwg.org/#dom-document">Document</a>
      <li><a href="https://html.spec.whatwg.org/#htmlhtmlelement">HTMLHtmlElement</a>
@@ -13437,9 +12915,7 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
      <li><a href="https://html.spec.whatwg.org/#the-input-element">input</a>
      <li><a href="https://html.spec.whatwg.org/#dom-xmldocument-load">load(url)
 </a>
-     <li><a href="https://html.spec.whatwg.org/#script">script</a>
      <li><a href="https://html.spec.whatwg.org/#the-template-element">template</a>
-     <li><a href="https://html.spec.whatwg.org/#the-title-element">title</a>
     </ul>
    <li><a data-link-type="biblio" href="#biblio-selectors-4">[selectors-4]</a> defines the following terms:
     <ul>
@@ -13450,6 +12926,10 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
      <li><a href="http://dev.w3.org/csswg/selectors-4/#parse-a-selector">parse a selector</a>
      <li><a href="http://dev.w3.org/csswg/selectors-4/#scope_filtered">scope-filtered</a>
      <li><a href="http://dev.w3.org/csswg/selectors-4/#scoping-root">scoping root</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-webidl">[webidl]</a> defines the following terms:
+    <ul>
+     <li><a href="http://heycam.github.io/webidl/#idl-DOMString">DOMString</a>
     </ul></ul>
   <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
@@ -13462,10 +12942,10 @@ namespace and local name localName, <a href="#concept-getElementsByTagNameNS">4.
    <dd>Cameron McCormack. <a href="http://www.w3.org/TR/WebIDL/">Web IDL</a>. 19 April 2012. CR. URL: <a href="http://www.w3.org/TR/WebIDL/">http://www.w3.org/TR/WebIDL/</a>
    <dt id="biblio-cssom-view-1"><a class="self-link" href="#biblio-cssom-view-1"></a>[CSSOM-VIEW-1]
    <dd>CSS Object Model View Module Level 1 URL: <a href="http://www.w3.org/TR/cssom-view/">http://www.w3.org/TR/cssom-view/</a>
+   <dt id="biblio-dom-ls"><a class="self-link" href="#biblio-dom-ls"></a>[DOM-LS]
+   <dd>Document Object Model URL: <a href="http://dom.spec.whatwg.org/">http://dom.spec.whatwg.org/</a>
    <dt id="biblio-encoding"><a class="self-link" href="#biblio-encoding"></a>[ENCODING]
    <dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="http://www.w3.org/TR/encoding/">Encoding</a>. 16 September 2014. CR. URL: <a href="http://www.w3.org/TR/encoding/">http://www.w3.org/TR/encoding/</a>
-   <dt id="biblio-html5"><a class="self-link" href="#biblio-html5"></a>[HTML5]
-   <dd>Ian Hickson; et al. <a href="http://www.w3.org/TR/html5/">HTML5</a>. 28 October 2014. REC. URL: <a href="http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
    <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-selectors-4"><a class="self-link" href="#biblio-selectors-4"></a>[SELECTORS-4]
@@ -13541,8 +13021,8 @@ dictionary <a data-global-name="" href="#dictdef-customeventinit">CustomEventIni
 
 [Exposed=(Window,Worker)]
 interface <a data-global-name="" href="#eventtarget">EventTarget</a> {
-  void <a data-global-name="EventTarget<interface>/addEventListener(type, callback, capture)<method>/addEventListener(type, callback)<method>" href="#dom-eventtarget-addeventlistenertype-callback-capture">addEventListener</a>(DOMString <a data-global-name="EventTarget/addEventListener/type<argument>" href="#dom-eventtarget-addeventlistener-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a data-global-name="EventTarget/addEventListener/capture<argument>" href="#dom-eventtarget-addeventlistener-capture">capture</a> = false);
-  void <a data-global-name="EventTarget<interface>/removeEventListener(type, callback, capture)<method>/removeEventListener(type, callback)<method>" href="#dom-eventtarget-removeeventlistenertype-callback-capture">removeEventListener</a>(DOMString <a data-global-name="EventTarget/removeEventListener/type<argument>" href="#dom-eventtarget-removeeventlistener-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a data-global-name="EventTarget/removeEventListener/capture<argument>" href="#dom-eventtarget-removeeventlistener-capture">capture</a> = false);
+  void <a class="idl-code" data-global-name="EventTarget<interface>/addEventListener(type, callback, capture)<method>/addEventListener(type, callback)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <a data-global-name="EventTarget/addEventListener/type<argument>" href="#dom-eventtarget-addeventlistener-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a data-global-name="EventTarget/addEventListener/capture<argument>" href="#dom-eventtarget-addeventlistener-capture">capture</a> = false);
+  void <a class="idl-code" data-global-name="EventTarget<interface>/removeEventListener(type, callback, capture)<method>/removeEventListener(type, callback)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <a data-global-name="EventTarget/removeEventListener/type<argument>" href="#dom-eventtarget-removeeventlistener-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a data-global-name="EventTarget/removeEventListener/capture<argument>" href="#dom-eventtarget-removeeventlistener-capture">capture</a> = false);
   boolean <a data-global-name="EventTarget<interface>/dispatchEvent(event)<method>" href="#dom-eventtarget-dispatcheventevent">dispatchEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <a data-global-name="EventTarget/dispatchEvent/event<argument>" href="#dom-eventtarget-dispatchevent-event">event</a>);
 };
 
@@ -13731,15 +13211,15 @@ interface <a class="idl-code" data-global-name="" data-link-type="interface" hre
   [NewObject] <a data-link-type="idl-name" href="#range">Range</a> <a class="idl-code" data-global-name="Document<interface>/createRange()<method>" data-link-type="method" href="#dom-document-createrange">createRange</a>();
 
   // NodeFilter.SHOW_ALL = 0xFFFFFFFF
-  [NewObject] <a data-link-type="idl-name" href="#nodeiterator">NodeIterator</a> <a data-global-name="Document<interface>/createNodeIterator(root, whatToShow, filter)<method>/createNodeIterator(root, whatToShow)<method>/createNodeIterator(root)<method>" href="#dom-document-createnodeiteratorroot-whattoshow-filter">createNodeIterator</a>(<a data-link-type="idl-name" href="#node">Node</a> <a data-global-name="Document/createNodeIterator/root<argument>" href="#dom-document-createnodeiterator-root">root</a>, optional unsigned long <a data-global-name="Document/createNodeIterator/whatToShow<argument>" href="#dom-document-createnodeiterator-whattoshow">whatToShow</a> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a data-global-name="Document/createNodeIterator/filter<argument>" href="#dom-document-createnodeiterator-filter">filter</a> = null);
-  [NewObject] <a data-link-type="idl-name" href="#treewalker">TreeWalker</a> <a data-global-name="Document<interface>/createTreeWalker(root, whatToShow, filter)<method>/createTreeWalker(root, whatToShow)<method>/createTreeWalker(root)<method>" href="#dom-document-createtreewalkerroot-whattoshow-filter">createTreeWalker</a>(<a data-link-type="idl-name" href="#node">Node</a> <a data-global-name="Document/createTreeWalker/root<argument>" href="#dom-document-createtreewalker-root">root</a>, optional unsigned long <a data-global-name="Document/createTreeWalker/whatToShow<argument>" href="#dom-document-createtreewalker-whattoshow">whatToShow</a> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a data-global-name="Document/createTreeWalker/filter<argument>" href="#dom-document-createtreewalker-filter">filter</a> = null);
+  [NewObject] <a data-link-type="idl-name" href="#nodeiterator">NodeIterator</a> <a class="idl-code" data-global-name="Document<interface>/createNodeIterator(root, whatToShow, filter)<method>/createNodeIterator(root, whatToShow)<method>/createNodeIterator(root)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-document-createnodeiterator">createNodeIterator</a>(<a data-link-type="idl-name" href="#node">Node</a> <a data-global-name="Document/createNodeIterator/root<argument>" href="#dom-document-createnodeiterator-root">root</a>, optional unsigned long <a data-global-name="Document/createNodeIterator/whatToShow<argument>" href="#dom-document-createnodeiterator-whattoshow">whatToShow</a> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a data-global-name="Document/createNodeIterator/filter<argument>" href="#dom-document-createnodeiterator-filter">filter</a> = null);
+  [NewObject] <a data-link-type="idl-name" href="#treewalker">TreeWalker</a> <a class="idl-code" data-global-name="Document<interface>/createTreeWalker(root, whatToShow, filter)<method>/createTreeWalker(root, whatToShow)<method>/createTreeWalker(root)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-document-createtreewalker">createTreeWalker</a>(<a data-link-type="idl-name" href="#node">Node</a> <a data-global-name="Document/createTreeWalker/root<argument>" href="#dom-document-createtreewalker-root">root</a>, optional unsigned long <a data-global-name="Document/createTreeWalker/whatToShow<argument>" href="#dom-document-createtreewalker-whattoshow">whatToShow</a> = 0xFFFFFFFF, optional <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a data-global-name="Document/createTreeWalker/filter<argument>" href="#dom-document-createtreewalker-filter">filter</a> = null);
 };
 
 interface <a data-global-name="" href="#xmldocument">XMLDocument</a> : <a data-link-type="idl-name" href="https://html.spec.whatwg.org/#dom-document">Document</a> {};
 
 interface <a data-global-name="" href="#domimplementation">DOMImplementation</a> {
   [NewObject] <a data-link-type="idl-name" href="#documenttype">DocumentType</a> <a data-global-name="DOMImplementation<interface>/createDocumentType(qualifiedName, publicId, systemId)<method>" href="#dom-domimplementation-createdocumenttypequalifiedname-publicid-systemid">createDocumentType</a>(DOMString <a data-global-name="DOMImplementation/createDocumentType/qualifiedName<argument>" href="#dom-domimplementation-createdocumenttype-qualifiedname">qualifiedName</a>, DOMString <a data-global-name="DOMImplementation/createDocumentType/publicId<argument>" href="#dom-domimplementation-createdocumenttype-publicid">publicId</a>, DOMString <a data-global-name="DOMImplementation/createDocumentType/systemId<argument>" href="#dom-domimplementation-createdocumenttype-systemid">systemId</a>);
-  [NewObject] <a data-link-type="idl-name" href="#xmldocument">XMLDocument</a> <a data-global-name="DOMImplementation<interface>/createDocument(namespace, qualifiedName, doctype)<method>/createDocument(namespace, qualifiedName)<method>" href="#dom-domimplementation-createdocumentnamespace-qualifiedname-doctype">createDocument</a>(DOMString? <a data-global-name="DOMImplementation/createDocument/namespace<argument>" href="#dom-domimplementation-createdocument-namespace">namespace</a>, [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] DOMString <a data-global-name="DOMImplementation/createDocument/qualifiedName<argument>" href="#dom-domimplementation-createdocument-qualifiedname">qualifiedName</a>, optional <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a data-global-name="DOMImplementation/createDocument/doctype<argument>" href="#dom-domimplementation-createdocument-doctype">doctype</a> = null);
+  [NewObject] <a data-link-type="idl-name" href="#xmldocument">XMLDocument</a> <a class="idl-code" data-global-name="DOMImplementation<interface>/createDocument(namespace, qualifiedName, doctype)<method>/createDocument(namespace, qualifiedName)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-domimplementation-createdocument">createDocument</a>(DOMString? <a data-global-name="DOMImplementation/createDocument/namespace<argument>" href="#dom-domimplementation-createdocument-namespace">namespace</a>, [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] DOMString <a data-global-name="DOMImplementation/createDocument/qualifiedName<argument>" href="#dom-domimplementation-createdocument-qualifiedname">qualifiedName</a>, optional <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a data-global-name="DOMImplementation/createDocument/doctype<argument>" href="#dom-domimplementation-createdocument-doctype">doctype</a> = null);
   [NewObject] <a data-link-type="idl-name" href="https://html.spec.whatwg.org/#dom-document">Document</a> <a class="idl-code" data-global-name="DOMImplementation<interface>/createHTMLDocument(title)<method>/createHTMLDocument()<method>" data-link-type="method" href="#dom-domimplementation-createhtmldocument">createHTMLDocument</a>(optional DOMString <a data-global-name="DOMImplementation/createHTMLDocument/title<argument>" href="#dom-domimplementation-createhtmldocument-title">title</a>);
 
   boolean <a class="idl-code" data-global-name="DOMImplementation<interface>/hasFeature()<method>" data-link-type="method" href="#dom-domimplementation-hasfeature">hasFeature</a>(); // useless; always returns true
@@ -13933,7 +13413,7 @@ interface <a data-global-name="" href="#domtokenlist">DOMTokenList</a> {
   boolean <a data-global-name="DOMTokenList<interface>/contains(token)<method>" href="#dom-domtokenlist-containstoken">contains</a>(DOMString <a data-global-name="DOMTokenList/contains/token<argument>" href="#dom-domtokenlist-contains-token">token</a>);
   void <a class="idl-code" data-global-name="DOMTokenList<interface>/add(tokens...)<method>/add()<method>" data-link-type="method" href="#dom-domtokenlist-addtokens">add</a>(DOMString... <a data-global-name="DOMTokenList/add/tokens<argument>" href="#dom-domtokenlist-add-tokens">tokens</a>);
   void <a class="idl-code" data-global-name="DOMTokenList<interface>/remove(tokens...)<method>/remove()<method>" data-link-type="method" href="#dom-domtokenlist-removetokens">remove</a>(DOMString... <a data-global-name="DOMTokenList/remove/tokens<argument>" href="#dom-domtokenlist-remove-tokens">tokens</a>);
-  boolean <a data-global-name="DOMTokenList<interface>/toggle(token, force)<method>/toggle(token)<method>" href="#dom-domtokenlist-toggletoken-force">toggle</a>(DOMString <a data-global-name="DOMTokenList/toggle/token<argument>" href="#dom-domtokenlist-toggle-token">token</a>, optional boolean <a data-global-name="DOMTokenList/toggle/force<argument>" href="#dom-domtokenlist-toggle-force">force</a>);
+  boolean <a class="idl-code" data-global-name="DOMTokenList<interface>/toggle(token, force)<method>/toggle(token)<method>" data-link-type="method" href="http://dom.spec.whatwg.org/#dom-domtokenlist-toggle">toggle</a>(DOMString <a data-global-name="DOMTokenList/toggle/token<argument>" href="#dom-domtokenlist-toggle-token">token</a>, optional boolean <a data-global-name="DOMTokenList/toggle/force<argument>" href="#dom-domtokenlist-toggle-force">force</a>);
   <a data-global-name="DOMTokenList/stringification behavior<dfn>" data-link-type="dfn" href="#stringification-behavior">stringifier</a>;
   iterable&lt;DOMString>;
 };
@@ -13943,5 +13423,520 @@ interface <a data-global-name="" href="#domsettabletokenlist">DOMSettableTokenLi
 };
 
 </pre>
+  <script>self = (typeof window !== 'undefined')
+	? window   // if in browser
+	: (
+		(typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
+		? self // if in worker
+		: {}   // if in node js
+	);
+
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ * MIT license http://www.opensource.org/licenses/mit-license.php/
+ * @author Lea Verou http://lea.verou.me
+ */
+
+var Prism = (function(){
+
+// Private helper vars
+var lang = /\blang(?:uage)?-(?!\*)(\w+)\b/i;
+
+var _ = self.Prism = {
+	util: {
+		encode: function (tokens) {
+			if (tokens instanceof Token) {
+				return new Token(tokens.type, _.util.encode(tokens.content), tokens.alias);
+			} else if (_.util.type(tokens) === 'Array') {
+				return tokens.map(_.util.encode);
+			} else {
+				return tokens.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\u00a0/g, ' ');
+			}
+		},
+
+		type: function (o) {
+			return Object.prototype.toString.call(o).match(/\[object (\w+)\]/)[1];
+		},
+
+		// Deep clone a language definition (e.g. to extend it)
+		clone: function (o) {
+			var type = _.util.type(o);
+
+			switch (type) {
+				case 'Object':
+					var clone = {};
+
+					for (var key in o) {
+						if (o.hasOwnProperty(key)) {
+							clone[key] = _.util.clone(o[key]);
+						}
+					}
+
+					return clone;
+
+				case 'Array':
+					return o.slice();
+			}
+
+			return o;
+		}
+	},
+
+	languages: {
+		extend: function (id, redef) {
+			var lang = _.util.clone(_.languages[id]);
+
+			for (var key in redef) {
+				lang[key] = redef[key];
+			}
+
+			return lang;
+		},
+
+		// Insert a token before another token in a language literal
+		insertBefore: function (inside, before, insert, root) {
+			root = root || _.languages;
+			var grammar = root[inside];
+			var ret = {};
+
+			for (var token in grammar) {
+
+				if (grammar.hasOwnProperty(token)) {
+
+					if (token == before) {
+
+						for (var newToken in insert) {
+
+							if (insert.hasOwnProperty(newToken)) {
+								ret[newToken] = insert[newToken];
+							}
+						}
+					}
+
+					ret[token] = grammar[token];
+				}
+			}
+
+			return root[inside] = ret;
+		},
+
+		// Traverse a language definition with Depth First Search
+		DFS: function(o, callback, type) {
+			for (var i in o) {
+				if (o.hasOwnProperty(i)) {
+					callback.call(o, i, o[i], type || i);
+
+					if (_.util.type(o[i]) === 'Object') {
+						_.languages.DFS(o[i], callback);
+					} else if (_.util.type(o[i]) === 'Array') {
+						_.languages.DFS(o[i], callback, i);
+					}
+				}
+			}
+		}
+	},
+
+	highlightAll: function(async, callback) {
+		var elements = document.querySelectorAll('code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code');
+		for (var i=0, element; element = elements[i++];) {
+			if (element.classList.contains("idl")) {
+				// Bikeshed handles IDL blocks already.
+				continue;
+			}
+			_.highlightElement(element, async === true, callback);
+		}
+
+		var elements = document.querySelectorAll('pre[class*="language-"], [class*="language-"] pre, pre[class*="lang-"], [class*="lang-"] pre');
+		for (var i=0, element; element = elements[i++];) {
+			if (element.firstElementChild && element.firstElementChild.tagName.toLowerCase() == "code") {
+				// Already handled by the previous loop
+				continue;
+			}
+			if (element.classList.contains("idl")) {
+				// Bikeshed handles IDL blocks already.
+				continue;
+			}
+			_.highlightElement(element, async === true, callback);
+		}
+	},
+
+	highlightElement: function(element, async, callback) {
+		// Find language
+		var language, grammar, parent = element;
+
+		while (parent && !lang.test(parent.className)) {
+			parent = parent.parentNode;
+		}
+
+		if (parent) {
+			language = (parent.className.match(lang) || [,''])[1];
+			grammar = _.languages[language];
+		}
+
+		if (!grammar) {
+			return;
+		}
+
+		// Set language on the element, if not present
+		element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+
+		// Set language on the parent, for styling
+		parent = element.parentNode;
+
+		if (/pre/i.test(parent.nodeName)) {
+			parent.className = parent.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+		}
+
+		var code = element.textContent;
+
+		if(!code) {
+			return;
+		}
+
+		var env = {
+			element: element,
+			language: language,
+			grammar: grammar,
+			code: code
+		};
+
+		_.hooks.run('before-highlight', env);
+
+		if (async && self.Worker) {
+			var worker = new Worker(_.filename);
+
+			worker.onmessage = function(evt) {
+				env.highlightedCode = Token.stringify(JSON.parse(evt.data), language);
+
+				_.hooks.run('before-insert', env);
+
+				env.element.innerHTML = env.highlightedCode;
+
+				callback && callback.call(env.element);
+				_.hooks.run('after-highlight', env);
+			};
+
+			worker.postMessage(JSON.stringify({
+				language: env.language,
+				code: env.code
+			}));
+		}
+		else {
+			env.highlightedCode = _.highlight(env.code, env.grammar, env.language)
+
+			_.hooks.run('before-insert', env);
+
+			env.element.innerHTML = env.highlightedCode;
+
+			callback && callback.call(element);
+
+			_.hooks.run('after-highlight', env);
+		}
+	},
+
+	highlight: function (text, grammar, language) {
+		var tokens = _.tokenize(text, grammar);
+		return Token.stringify(_.util.encode(tokens), language);
+	},
+
+	tokenize: function(text, grammar, language) {
+		var Token = _.Token;
+
+		var strarr = [text];
+
+		var rest = grammar.rest;
+
+		if (rest) {
+			for (var token in rest) {
+				grammar[token] = rest[token];
+			}
+
+			delete grammar.rest;
+		}
+
+		tokenloop: for (var token in grammar) {
+			if(!grammar.hasOwnProperty(token) || !grammar[token]) {
+				continue;
+			}
+
+			var patterns = grammar[token];
+			patterns = (_.util.type(patterns) === "Array") ? patterns : [patterns];
+
+			for (var j = 0; j < patterns.length; ++j) {
+				var pattern = patterns[j],
+					inside = pattern.inside,
+					lookbehind = !!pattern.lookbehind,
+					lookbehindLength = 0,
+					alias = pattern.alias;
+
+				pattern = pattern.pattern || pattern;
+
+				for (var i=0; i<strarr.length; i++) { // Don’t cache length as it changes during the loop
+
+					var str = strarr[i];
+
+					if (strarr.length > text.length) {
+						// Something went terribly wrong, ABORT, ABORT!
+						break tokenloop;
+					}
+
+					if (str instanceof Token) {
+						continue;
+					}
+
+					pattern.lastIndex = 0;
+
+					var match = pattern.exec(str);
+
+					if (match) {
+						if(lookbehind) {
+							lookbehindLength = match[1].length;
+						}
+
+						var from = match.index - 1 + lookbehindLength,
+							match = match[0].slice(lookbehindLength),
+							len = match.length,
+							to = from + len,
+							before = str.slice(0, from + 1),
+							after = str.slice(to + 1);
+
+						var args = [i, 1];
+
+						if (before) {
+							args.push(before);
+						}
+
+						var wrapped = new Token(token, inside? _.tokenize(match, inside) : match, alias);
+
+						args.push(wrapped);
+
+						if (after) {
+							args.push(after);
+						}
+
+						Array.prototype.splice.apply(strarr, args);
+					}
+				}
+			}
+		}
+
+		return strarr;
+	},
+
+	hooks: {
+		all: {},
+
+		add: function (name, callback) {
+			var hooks = _.hooks.all;
+
+			hooks[name] = hooks[name] || [];
+
+			hooks[name].push(callback);
+		},
+
+		run: function (name, env) {
+			var callbacks = _.hooks.all[name];
+
+			if (!callbacks || !callbacks.length) {
+				return;
+			}
+
+			for (var i=0, callback; callback = callbacks[i++];) {
+				callback(env);
+			}
+		}
+	}
+};
+
+var Token = _.Token = function(type, content, alias) {
+	this.type = type;
+	this.content = content;
+	this.alias = alias;
+};
+
+Token.stringify = function(o, language, parent) {
+	if (typeof o == 'string') {
+		return o;
+	}
+
+	if (Object.prototype.toString.call(o) == '[object Array]') {
+		return o.map(function(element) {
+			return Token.stringify(element, language, o);
+		}).join('');
+	}
+
+	var env = {
+		type: o.type,
+		content: Token.stringify(o.content, language, parent),
+		tag: 'span',
+		classes: ['token', o.type],
+		attributes: {},
+		language: language,
+		parent: parent
+	};
+
+	if (env.type == 'comment') {
+		env.attributes['spellcheck'] = 'true';
+	}
+
+	if (o.alias) {
+		var aliases = _.util.type(o.alias) === 'Array' ? o.alias : [o.alias];
+		Array.prototype.push.apply(env.classes, aliases);
+	}
+
+	_.hooks.run('wrap', env);
+
+	var attributes = '';
+
+	for (var name in env.attributes) {
+		attributes += name + '="' + (env.attributes[name] || '') + '"';
+	}
+
+	return '<' + env.tag + ' class="' + env.classes.join(' ') + '" ' + attributes + '>' + env.content + '</' + env.tag + '>';
+
+};
+
+if (!self.document) {
+	if (!self.addEventListener) {
+		// in Node.js
+		return self.Prism;
+	}
+ 	// In worker
+	self.addEventListener('message', function(evt) {
+		var message = JSON.parse(evt.data),
+		    lang = message.language,
+		    code = message.code;
+
+		self.postMessage(JSON.stringify(_.util.encode(_.tokenize(code, _.languages[lang]))));
+		self.close();
+	}, false);
+
+	return self.Prism;
+}
+
+// Get current script and highlight
+var script = document.getElementsByTagName('script');
+
+script = script[script.length - 1];
+
+if (script) {
+	_.filename = script.src;
+
+	if (document.addEventListener && !script.hasAttribute('data-manual')) {
+		document.addEventListener('DOMContentLoaded', _.highlightAll);
+	}
+}
+
+return self.Prism;
+
+})();
+
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = Prism;
+}
+;
+Prism.languages.clike = {
+	'comment': [
+		{
+			pattern: /(^|[^\\])\/\*[\w\W]*?\*\//g,
+			lookbehind: true
+		},
+		{
+			pattern: /(^|[^\\:])\/\/.*?(\r?\n|$)/g,
+			lookbehind: true
+		}
+	],
+	'string': /("|')(\\?.)*?\1/g,
+	'class-name': {
+		pattern: /((?:(?:class|interface|extends|implements|trait|instanceof|new)\s+)|(?:catch\s+\())[a-z0-9_\.\\]+/ig,
+		lookbehind: true,
+		inside: {
+			punctuation: /(\.|\\)/
+		}
+	},
+	'keyword': /\b(if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/g,
+	'boolean': /\b(true|false)\b/g,
+	'function': {
+		pattern: /[a-z0-9_]+\(/ig,
+		inside: {
+			punctuation: /\(/
+		}
+	},
+	'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?)\b/g,
+	'operator': /[-+]{1,2}|!|<=?|>=?|={1,3}|&{1,2}|\|?\||\?|\*|\/|\~|\^|\%/g,
+	'ignore': /&(lt|gt|amp);/gi,
+	'punctuation': /[{}[\];(),.:]/g
+};
+;
+Prism.languages.markup = {
+	'comment': /<!--[\w\W]*?-->/g,
+	'prolog': /<\?.+?\?>/,
+	'doctype': /<!DOCTYPE.+?>/,
+	'cdata': /<!\[CDATA\[[\w\W]*?]]>/i,
+	'tag': {
+		pattern: /<\/?[\w:-]+\s*(?:\s+[\w:-]+(?:=(?:("|')(\\?[\w\W])*?\1|[^\s'">=]+))?\s*)*\/?>/gi,
+		inside: {
+			'tag': {
+				pattern: /^<\/?[\w:-]+/i,
+				inside: {
+					'punctuation': /^<\/?/,
+					'namespace': /^[\w-]+?:/
+				}
+			},
+			'attr-value': {
+				pattern: /=(?:('|")[\w\W]*?(\1)|[^\s>]+)/gi,
+				inside: {
+					'punctuation': /=|>|"/g
+				}
+			},
+			'punctuation': /\/?>/g,
+			'attr-name': {
+				pattern: /[\w:-]+/g,
+				inside: {
+					'namespace': /^[\w-]+?:/
+				}
+			}
+
+		}
+	},
+	'entity': /\&#?[\da-z]{1,8};/gi
+};
+
+// Plugin to make entity title show the real entity, idea by Roman Komarov
+Prism.hooks.add('wrap', function(env) {
+
+	if (env.type === 'entity') {
+		env.attributes['title'] = env.content.replace(/&amp;/, '&');
+	}
+});
+;
+Prism.languages.javascript = Prism.languages.extend('clike', {
+	'keyword': /\b(break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|get|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|set|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)\b/g,
+	'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?|NaN|-?Infinity)\b/g
+});
+
+Prism.languages.insertBefore('javascript', 'keyword', {
+	'regex': {
+		pattern: /(^|[^/])\/(?!\/)(\[.+?]|\\.|[^/\r\n])+\/[gim]{0,3}(?=\s*($|[\r\n,.;})]))/g,
+		lookbehind: true
+	}
+});
+
+if (Prism.languages.markup) {
+	Prism.languages.insertBefore('markup', 'tag', {
+		'script': {
+			pattern: /<script[\w\W]*?>[\w\W]*?<\/script>/ig,
+			inside: {
+				'tag': {
+					pattern: /<script[\w\W]*?>|<\/script>/ig,
+					inside: Prism.languages.markup.tag.inside
+				},
+				rest: Prism.languages.javascript
+			}
+		}
+	});
+}
+;
+</script>
  </body>
 </html>
