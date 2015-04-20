@@ -1,14 +1,14 @@
 <pre class='metadata'>
 Title: DOM Standard
 H1: DOM
-Shortname: dom-core-ls
+Shortname: dom
 Status: LS
 Group: WHATWG
 No Editor: true
-!Participate: <a href=https://github.com/whatwg/dom>GitHub whatwg/dom</a> (<a href=https://github.com/whatwg/dom/issues/new>new issue</a>, <a href=https://github.com/whatwg/dom/issues>open issues</a>)
+!Participate: <a href=https://github.com/whatwg/dom>GitHub whatwg/dom</a> (<a href=https://github.com/whatwg/dom/issues/new>new issue</a>, <a href=https://github.com/whatwg/dom/issues>open issues</a>, <a href=https://www.w3.org/Bugs/Public/buglist.cgi?component=DOM&amp;product=WebAppsWG&amp;resolution=--->legacy open bugs</a>)
 !Participate: <a href=https://wiki.whatwg.org/wiki/IRC>IRC: #whatwg on Freenode</a>
-!Commits: <a href=https://github.com/whatwg/dom/commits>https://github.com/whatwg/dom/commits</a>
-!Commits: <a href=https://twitter.com/thedomstandard>https://twitter.com/thedomstandard</a>
+!Commits: <a href=https://github.com/whatwg/dom/commits>GitHub whatwg/dom/commits</a>
+!Commits: <a href=https://twitter.com/thedomstandard>@thedomstandard</a>
 Logo: https://resources.whatwg.org/logo-dom.svg
 Abstract: DOM defines a platform-neutral model for events and node trees.
 Ignored Terms: EmptyString, Array, Elements, Document
@@ -85,7 +85,6 @@ urlPrefix: https://heycam.github.io/webidl/
         text: WrongDocumentError
         text: DOMException; urlPrefix: #dfn-
     type: interface;
-        text: DOMString; urlPrefix: #idl-
         text: DOMTimeStamp; urlPrefix: #common-
 urlPrefix: https://html.spec.whatwg.org/multipage/
     type: dfn
@@ -118,7 +117,7 @@ type: interface
 </pre>
 
 <pre class='link-defaults'>
-spec:html5; type:element
+spec:html; type:element
     text: title
     text: script
 </pre>
@@ -1818,7 +1817,8 @@ jQuery. If a time comes where that version of jQuery has disappeared, we might b
 support it.
 
 <pre class=idl>
-[NoInterfaceObject]
+[NoInterfaceObject,
+ Exposed=Window]
 interface NonElementParentNode {
   Element? getElementById(DOMString elementId);
 };
@@ -1867,7 +1867,8 @@ The <dfn>mutation method macro</dfn>:
 </ol>
 
 <pre class=idl>
-[NoInterfaceObject]
+[NoInterfaceObject,
+ Exposed=Window]
 interface ParentNode {
   [SameObject] readonly attribute HTMLCollection children;
   readonly attribute Element? firstElementChild;
@@ -2060,7 +2061,8 @@ reasons. If these additions are deemed compatible enough in the future, they cou
 reinstated.
 
 <pre class=idl>
-[NoInterfaceObject]
+[NoInterfaceObject,
+ Exposed=Window]
 interface NonDocumentTypeChildNode {
   readonly attribute Element? previousElementSibling;
   readonly attribute Element? nextElementSibling;
@@ -2096,7 +2098,8 @@ and null otherwise.
 Interface {{ChildNode}}</h4>
 
 <pre class=idl>
-[NoInterfaceObject]
+[NoInterfaceObject,
+ Exposed=Window]
 interface ChildNode {
   [Unscopeable] void before((Node or DOMString)... nodes);
   [Unscopeable] void after((Node or DOMString)... nodes);
@@ -2286,6 +2289,7 @@ A {{NodeList}} object is a
 <a>nodes</a>.
 
 <pre class=idl>
+[Exposed=Window]
 interface NodeList {
   getter Node? item(unsigned long index);
   readonly attribute unsigned long length;
@@ -2332,6 +2336,7 @@ node in the <a>collection</a>. If there is no
 Interface {{HTMLCollection}}</h5>
 
 <pre class=idl>
+[Exposed=Window]
 interface HTMLCollection {
   readonly attribute unsigned long length;
   getter Element? item(unsigned long index);
@@ -2813,6 +2818,7 @@ previousSibling <var>previousSibling</var>, and nextSibling
 Interface {{MutationRecord}}</h4>
 
 <pre class=idl>
+[Exposed=Window]
 interface MutationRecord {
   readonly attribute DOMString type;
   readonly attribute Node target;
@@ -2916,6 +2922,7 @@ reference to the <a>node</a>.
 Interface {{Node}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface Node : EventTarget {
   const unsigned short ELEMENT_NODE = 1;
   const unsigned short ATTRIBUTE_NODE = 2; // historical
@@ -4043,6 +4050,8 @@ object may be returned as returned by an earlier call.
 Interface {{Document}}</h3>
 
 <pre class=idl force="Document<interface>">
+[Constructor,
+ Exposed=Window]
 interface Document : Node {
   [SameObject] readonly attribute DOMImplementation implementation;
   readonly attribute DOMString URL;
@@ -4081,6 +4090,7 @@ interface Document : Node {
   [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
 };
 
+[Exposed=Window]
 interface XMLDocument : Document {};
 </pre>
 
@@ -4861,6 +4871,7 @@ a <a>document</a> is created and associate it
 with that <a>document</a>.
 
 <pre class=idl>
+[Exposed=Window]
 interface DOMImplementation {
   [NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
   [NewObject] XMLDocument createDocument(DOMString? namespace, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
@@ -5070,7 +5081,8 @@ returns true) so that old pages don't stop working.
 
 <h3 id='interface-documentfragment'>Interface {{DocumentFragment}}</h3>
 <pre class=idl>
-[Constructor]
+[Constructor,
+ Exposed=Window]
 interface DocumentFragment : Node {
 };
 </pre>
@@ -5113,6 +5125,7 @@ must return a new {{DocumentFragment}} <a>node</a> whose
 <h3 id='interface-documenttype'>Interface {{DocumentType}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface DocumentType : Node {
   readonly attribute DOMString name;
   readonly attribute DOMString publicId;
@@ -5150,6 +5163,7 @@ attribute must return the
 <h3 id='interface-element'>Interface {{Element}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface Element : Node {
   readonly attribute DOMString? namespaceURI;
   readonly attribute DOMString? prefix;
@@ -5855,6 +5869,7 @@ for the <a>context object</a>.
 <h4 id='interface-namednodemap'>Interface {{NamedNodeMap}}</h4>
 
 <pre class=idl>
+[Exposed=Window]
 interface NamedNodeMap {
   readonly attribute unsigned long length;
   getter Attr? item(unsigned long index);
@@ -5972,6 +5987,7 @@ method, when invoked, must run these steps:
 <h4 id='interface-attr'>Interface {{Attr}}</h4>
 
 <pre class=idl>
+[Exposed=Window]
 interface Attr {
   readonly attribute DOMString? namespaceURI;
   readonly attribute DOMString? prefix;
@@ -6075,6 +6091,7 @@ return true.
 <h3 id='interface-characterdata'>Interface {{CharacterData}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface CharacterData : Node {
   [TreatNullAs=EmptyString] attribute DOMString data;
   readonly attribute unsigned long length;
@@ -6270,7 +6287,8 @@ method must <a>replace data</a> with node
 <h3 id='interface-text'>Interface {{Text}}</h3>
 
 <pre class=idl>
-[Constructor(optional DOMString data = "")]
+[Constructor(optional DOMString data = ""),
+ Exposed=Window]
 interface Text : CharacterData {
   [NewObject] Text splitText(unsigned long offset);
   readonly attribute DOMString wholeText;
@@ -6434,6 +6452,7 @@ attribute must return a concatenation of the
 <h3 id='interface-processinginstruction'>Interface {{ProcessingInstruction}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface ProcessingInstruction : CharacterData {
   readonly attribute DOMString target;
 };</pre>
@@ -6450,7 +6469,8 @@ attribute must return the <a lt="PI target">target</a>.
 <h3 id='interface-comment'>Interface {{Comment}}</h3>
 
 <pre class=idl>
-[Constructor(optional DOMString data = "")]
+[Constructor(optional DOMString data = ""),
+ Exposed=Window]
 interface Comment : CharacterData {
 };
 </pre>
@@ -6550,6 +6570,8 @@ details.
 Interface {{Range}}</h3>
 
 <pre class=idl>
+[Constructor,
+ Exposed=Window]
 interface Range {
   readonly attribute Node startContainer;
   readonly attribute unsigned long startOffset;
@@ -8189,6 +8211,7 @@ these steps:
 <h3 id="interface-nodeiterator">Interface {{NodeIterator}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface NodeIterator {
   [SameObject] readonly attribute Node root;
   readonly attribute Node referenceNode;
@@ -8353,6 +8376,7 @@ for compatibility.</span>
 <h3 id='interface-treewalker'>Interface {{TreeWalker}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 interface TreeWalker {
   [SameObject] readonly attribute Node root;
   readonly attribute unsigned long whatToShow;
@@ -8703,6 +8727,7 @@ method must run these steps:
 <h3 id="interface-nodefilter">Interface {{NodeFilter}}</h3>
 
 <pre class=idl>
+[Exposed=Window]
 callback interface NodeFilter {
   // Constants for acceptNode()
   const unsigned short FILTER_ACCEPT = 1;
@@ -9301,7 +9326,7 @@ Rafael Weinstein,
 Rick Waldron,
 Robbert Broersma,
 Robin Berjon,
-Rune <span lt="Fabulous">F.</span> Halvorsen,
+Rune <span title=Fabulous>F.</span> Halvorsen,
 Ryosuke Niwa,
 Seo Sanghyeon,
 Shiki Okasaka,
