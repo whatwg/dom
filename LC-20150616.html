@@ -1,60 +1,282 @@
-<!DOCTYPE html><html lang="en-US"><meta charset="utf-8">
-<title>DOM Standard</title>
-<link href="http://www.whatwg.org/style/specification" rel="stylesheet">
-<link href="//resources.whatwg.org/logo-dom.svg" rel="icon">
+<!DOCTYPE html><html lang="en-US"><head>
+<meta lang="" property="dc:language" content="en">
+    <meta charset="utf-8">
+    <title>W3C DOM4</title>
+    
+    
+    
+    <style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title , div.ednote-title, div.warning-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title, div.ednote-title { color: #2b2; }
+div.warning-title { color: #f22; }
+div.issue-title span, div.note-title span, div.ednote-title span, div.warning-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue, div.ednote, div.warning {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .ednote > p:first-child, .issue > p:first-child, .warning > p:first-child { margin-top: 0 }
+.issue, .note, .ednote, .warning {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note , div.ednote,  div.warning {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.ednote, span.issue, span.warning { padding: .1em .5em .15em; }
 
-<div class="head">
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note, .ednote {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
 
-<p><a class="logo" href="//www.whatwg.org/"><img alt="WHATWG" height="100" src="//resources.whatwg.org/logo-dom.svg" width="100"></a></p>
+.warning {
+    border-color: #f11;
+    border-right-width: .2em;
+    border-top-width: .2em;
+    border-bottom-width: .2em;
+    border-style: solid;
+    background: #fbe9e9;
+}
 
-<hgroup>
- <h1 class="allcaps">DOM</h1>
- <h2>Living Standard — Last Updated 7 May 2014</h2>
-</hgroup>
+.warning-title:before{
+    content: "⚠"; /*U+26A0 WARNING SIGN*/
+    font-size: 3em;
+    float: left;
+    height: 100%;
+    padding-right: .3em;
+    vertical-align: top;
+    margin-top: -0.5em;
+}
 
-<dl>
- <dt>This Version:
- <dd><a href="http://dom.spec.whatwg.org/">http://dom.spec.whatwg.org/</a>
+li.task-list-item {
+    list-style: none;
+}
 
- <dt>Participate:</dt>
- <dd class="dontpublish">Send feedback to
- <a href="mailto:www-dom@w3.org?subject=DOM%3A%20">www-dom@w3.org</a> (<a href="http://lists.w3.org/Archives/Public/www-dom/">archives</a>) or
- <a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM">file a bug</a>
- (<a href="https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---">open bugs</a>)
- <dd class="dontpublish"><a href="http://wiki.whatwg.org/wiki/IRC">IRC: #whatwg on Freenode</a>
+input.task-list-item-checkbox {
+    margin: 0 0.35em 0.25em -1.6em;
+    vertical-align: middle;
+}
+</style><link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-WD"><!--[if lt IE 9]><![endif]-->
+</head>
+<div class='head'>
+  <p>
+      
+        
+            <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+        
+      
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">W3C DOM4</h1>
+  
+  <h2 id="w3c-last-call-working-draft-16-june-2015">W3C Last Call Working Draft <time property="dcterms:issued" class="dt-published" datetime="2015-06-16">16 June 2015</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="http://www.w3.org/TR/2015/WD-dom-20150616/">http://www.w3.org/TR/2015/WD-dom-20150616/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/dom/">http://www.w3.org/TR/dom/</a></dd>
+    
+    
+    
+    
+    
+      <dt>Bug tracker:</dt>
+      <dd><a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=WebAppsWG&amp;component=DOM">file a bug</a> (<a href="https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---">open bugs</a>)</dd>
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a rel="dcterms:replaces" href="http://www.w3.org/TR/2014/WD-dom-20140710/">http://www.w3.org/TR/2014/WD-dom-20140710/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd class="p-author h-card vcard" property="bibo:editor" resource="_:editor0"><span property="rdf:first" typeof="foaf:Person"><meta property="foaf:name" content="Anne van Kesteren"><a class="u-url url p-name fn" property="foaf:homepage" href="http://annevankesteren.nl/">Anne van Kesteren</a>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.mozilla.org/">Mozilla</a> (Upstream WHATWG version)</span>
+<span property="rdf:rest" resource="_:editor1"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor1"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Aryeh Gregor</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.mozilla.org/">Mozilla</a> (Upstream WHATWG version)</span>
+<span property="rdf:rest" resource="_:editor2"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor2"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Ms2ger</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.mozilla.org/">Mozilla</a> (Upstream WHATWG version)</span>
+<span property="rdf:rest" resource="_:editor3"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor3"><span property="rdf:first" typeof="foaf:Person"><meta property="foaf:name" content="Alex Russell"><a class="u-url url p-name fn" property="foaf:homepage" href="http://infrequently.org/">Alex Russell</a>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.google.com/">Google</a></span>
+<span property="rdf:rest" resource="_:editor4"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor4"><span property="rdf:first" typeof="foaf:Person"><meta property="foaf:name" content="Robin Berjon"><a class="u-url url p-name fn" property="foaf:homepage" href="http://berjon.com/">Robin Berjon</a>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://w3.org/">W3C</a></span>
+<span property="rdf:rest" resource="rdf:nil"></span>
+</dd>
 
- <dt>Version History:
- <dd><a href="https://github.com/whatwg/dom/commits">https://github.com/whatwg/dom/commits</a>
- <dd><a href="https://twitter.com/thedomstandard">@thedomstandard</a>
-
- <dt>Editors:
- <dd><a href="http://annevankesteren.nl/">Anne van Kesteren</a>
-  (<a href="http://www.mozilla.org/">Mozilla</a>)
-  &lt;<a href="mailto:annevk@annevk.nl">annevk@annevk.nl</a>&gt;
- <dd>Aryeh Gregor
-  (<a href="http://www.mozilla.org/">Mozilla</a>)
-  &lt;<a href="mailto:ayg@aryeh.name">ayg@aryeh.name</a>&gt;
- <dd>Ms2ger
-  (<a href="http://www.mozilla.org/">Mozilla</a>)
-  &lt;<a href="mailto:ms2ger@gmail.com">ms2ger@gmail.com</a>&gt;
-</dl>
-
-<script async="" src="//resources.whatwg.org/file-bug.js"></script>
-
-<p class="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="http://i.creativecommons.org/p/zero/1.0/80x15.png"></a>
-To the extent possible under law, the editors have waived all copyright and
-related or neighboring rights to this work. In addition, as of
-7 May 2014, the editors have made this specification available
-under the
-<a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
-which is available at
-http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
-
+    
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2015
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>). 
+        
+          Some Rights Reserved: this document is dual-licensed,
+          <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a> and 
+          <a href="http://www.w3.org/Consortium/Legal/copyright-documents">W3C Document License</a>.
+        
+        W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        
+          <a href="http://www.w3.org/Consortium/Legal/2013/copyright-documents-dual.html">document use</a>
+        
+        rules apply.
+      </p>
+    
+  
+  <hr>
 </div>
 
 
 <h2 class="no-num no-toc" id="abstract">Abstract</h2>
 <p>DOM defines a platform-neutral model for events and node trees.
+
+
+<h2 id="h-sotd" resource="#h-sotd"><span property="xhv:role" resource="xhv:heading">Status of This Document</span></h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+        
+      <p>
+        This document is published as a snapshot of the 
+        <a href="http://dom.spec.whatwg.org/">DOM Living Standard</a> with the intent of keeping 
+        the differences from the original to a strict minimum, and only through subsetting (only
+        things that are not implemented were removed for this publication).
+      </p>
+      <div class="warning"><div class="warning-title"><span>Warning</span></div><div class="">
+        <p>
+          Implementers should take heed of the
+          <a href="https://www.w3.org/Bugs/Public/buglist.cgi?product=WebAppsWG&amp;component=DOM&amp;resolution=---">bugs list</a> in general, but more particularly of these two bugs that adversely affect 
+          interoperability (most particularly of the
+          <a href="#interface-document"><code>Document</code> interface</a>):
+        </p>
+        <ul>
+          <li><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=19431">https://www.w3.org/Bugs/Public/show_bug.cgi?id=19431</a></li>
+          <li><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=22960">https://www.w3.org/Bugs/Public/show_bug.cgi?id=22960</a></li>
+        </ul>
+      </div></div>
+      <p>
+        An extensive <a href="http://w3c-test.org/dom/">test suite for this specification</a> is
+        available. The criteria for this document to enter the Proposed Recommendation stage is to
+        have all of the features of this specification supported by a minimum of two independent
+        and interoperable user agents. Note that if this Last Call is successful this specification
+        will skip Candidate Recommendation and go directly to Proposed Recommendation.
+      </p>
+<!--
+      <p>
+        The following features are considered to be at risk and may be removed before transitioning
+        to Recommendation:
+      </p>
+      <ul>
+        <li><code>ParentNode.prepend()</code> and <code>ParentNode.append()</code></li>
+        <li>
+          <code>ChildNode.after()</code>, <code>ChildNode.before()</code>, and
+          <code>ChildNode.replace()</code>
+        </li>
+      </ul>
+-->
+    
+        
+        <p>
+          This document was published by the <a href="http://www.w3.org/html/wg/">HTML Working Group</a> as a Last Call Working Draft.
+          
+            This document is intended to become a W3C Recommendation.
+          
+          
+            If you wish to make comments regarding this document, please send them to 
+            <a href="mailto:www-dom@w3.org">www-dom@w3.org</a> 
+            (<a href="mailto:www-dom-request@w3.org?subject=subscribe">subscribe</a>,
+            <a href="http://lists.w3.org/Archives/Public/www-dom/">archives</a>).
+          
+          The Last Call period ends 07 July 2015.
+          
+          
+          
+            
+            All comments are welcome.
+            
+          
+        </p>
+        
+        
+        
+          <p>
+            Publication as a Last Call Working Draft does not imply endorsement by the W3C
+            Membership. This is a draft document and may be updated, replaced or obsoleted by other
+            documents at any time. It is inappropriate to cite this document as other than work in
+            progress.
+          </p>
+        
+        
+        
+          <p>
+            This is a Last Call Working Draft and thus the Working Group has determined that this
+            document has satisfied the relevant technical requirements and is sufficiently stable to
+            advance through the Technical Recommendation process.
+          </p>
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a id="sotd_patent" property="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent
+            Policy</a>.
+          
+          
+          
+            
+              W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent
+              disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes
+            instructions for disclosing a patent. An individual who has actual knowledge of a patent
+            which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+            Claim(s)</a> must disclose the information in accordance with
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the W3C Patent Policy</a>.
+          
+          
+        </p>
+        
+          <p>This document is governed by the <a id="w3c_process_revision" href="http://www.w3.org/2014/Process-20140801/">1 August 2014 W3C Process Document</a>.
+          </p>
+        
+        
+      
+    
+  
 
 
 <h2 class="no-num no-toc" id="table-of-contents">Table of Contents</h2>
@@ -444,7 +666,7 @@ return value.
 
 <h2 id="errors"><span class="secno">3 </span>Errors</h2>
 
-<p class="XXX">This entire section will move out of DOM into IDL. <code><a href="#domexception">DOMException</a></code>
+<p class='warning'>This entire section will move out of DOM into IDL. <code><a href="#domexception">DOMException</a></code>
 will be defined in terms of JavaScript and made available in both document and worker
 environments. <code><a href="#domerror">DOMError</a></code> will go away.
 
@@ -520,7 +742,7 @@ interface <dfn id="domerror">DOMError</dfn> {
   readonly attribute DOMString <a href="#dom-domerror-message" title="dom-DOMError-message">message</a>;
 };</pre>
 
-<p class="XXX"><code><a href="#domerror">DOMError</a></code> will be nuked in favor of using
+<p class='warning'><code><a href="#domerror">DOMError</a></code> will be nuked in favor of using
 <code><a href="#domexception">DOMException</a></code> exclusively. See <a href="https://mail.mozilla.org/pipermail/es-discuss/2013-July/thread.html#31677">Creating your own errors</a>
 on es-discuss for more details.
 
@@ -1451,7 +1673,7 @@ http://software.hixie.ch/utilities/js/live-dom-viewer/?%3C!DOCTYPE%20html%3E%0D%
 -->
 
 <p>Note that, due to the magic that is
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#html-parser" title="HTML parser">HTML parsing</a>, not all
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/syntax.html#html-parser" title="HTML parser">HTML parsing</a>, not all
 <a class="external" data-anolis-spec="encoding" href="http://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a> were turned into
 <code><a href="#text">Text</a></code> <a href="#concept-node" title="concept-node">nodes</a>, but the general
 concept is clear. Markup goes in, a <a href="#concept-tree" title="concept-tree">tree</a> of
@@ -2393,7 +2615,7 @@ method must run these steps:
 <h3 id="mutation-observers"><span class="secno">5.3 </span>Mutation observers</h3>
 
 <p>Each
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a> has a
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a> has a
 <dfn id="mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</dfn> and an associated list of
 <code><a href="#mutationobserver">MutationObserver</a></code> objects which is initially empty.
 <a href="#refsHTML">[HTML]</a>
@@ -2406,8 +2628,8 @@ method must run these steps:
 
  <li><p>Set <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
 
- <li><p><a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#queue-a-microtask" title="queue a microtask">Queue</a> a
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#compound-microtask">compound microtask</a> to
+ <li><p><a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-microtask" title="queue a microtask">Queue</a> a
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#compound-microtask">compound microtask</a> to
  <a href="#notify-mutation-observers">notify mutation observers</a>.
 </ol>
 
@@ -2417,13 +2639,13 @@ method must run these steps:
  <li><p>Unset <a href="#mutation-observer-compound-microtask-queued-flag">mutation observer compound microtask queued flag</a>.
 
  <li><p>Let <var title="">notify list</var> be a copy of
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s
  list of <code><a href="#mutationobserver">MutationObserver</a></code> objects.
 
  <li>
   <p>For each <code><a href="#mutationobserver">MutationObserver</a></code> object <var title="">mo</var>
   in <var title="">notify list</var>,
-  <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#execute-a-compound-microtask-subtask">execute a compound microtask subtask</a> to run these
+  <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#execute-a-compound-microtask-subtask">execute a compound microtask subtask</a> to run these
   steps:
   <a href="#refsHTML">[HTML]</a>
 
@@ -2578,7 +2800,7 @@ to the <a href="#concept-tree" title="concept-tree">tree</a> of
 constructor must create a new <code><a href="#mutationobserver">MutationObserver</a></code> object with
 <a href="#concept-mo-callback" title="concept-MO-callback">callback</a> set to <var>callback</var>,
 append it to the
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s list
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#unit-of-related-similar-origin-browsing-contexts">unit of related similar-origin browsing contexts</a>'s list
 of <code><a href="#mutationobserver">MutationObserver</a></code> objects, and then return it.
 
 <p>The
@@ -3438,8 +3660,8 @@ must run these steps:</p>
 
 <p class="note no-backref">HTML defines
 <a href="#concept-node-clone-ext" title="concept-node-clone-ext">cloning steps</a> for
-<code class="external" data-anolis-spec="html"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#the-script-element">script</a></code> and
-<code class="external" data-anolis-spec="html"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#the-input-element">input</a></code> elements. SVG ought to do the same
+<code class="external" data-anolis-spec="html"><a href="http://www.w3.org/html/wg/drafts/html/master/scripting-1.html#the-script-element">script</a></code> and
+<code class="external" data-anolis-spec="html"><a href="http://www.w3.org/html/wg/drafts/html/master/forms.html#the-input-element">input</a></code> elements. SVG ought to do the same
 for its <code title="">script</code> elements, but does not call this out at
 the moment.
 
@@ -4073,10 +4295,10 @@ known as <dfn id="concept-document" title="concept-document">documents</dfn>.
 "<code title="">about:blank</code>".
 
 <p>Unless stated otherwise, a <a href="#concept-document" title="concept-document">document</a>'s
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> is a globally unique identifier
-and its <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> is an
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> of that
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a>.
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> is a globally unique identifier
+and its <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> is an
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> of that
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a>.
 <a href="#refsHTML">[HTML]</a>
 
 <p>A <a href="#concept-document" title="concept-document">document</a> is assumed to be an
@@ -4096,7 +4318,7 @@ otherwise, a <a href="#concept-document" title="concept-document">document</a> m
 
 <p class="note">The mode is only ever changed from the default if the
 <a href="#concept-document" title="concept-document">document</a> is created by the
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#html-parser">HTML parser</a>, based on the presence,
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/syntax.html#html-parser">HTML parser</a>, based on the presence,
 absence, or value of the DOCTYPE string.
 <a href="#refsHTML">[HTML]</a>
 
@@ -4121,7 +4343,7 @@ original names on the basis that they are nonsensical.)
  <dd><p>Returns <var title="">document</var>'s <a href="#concept-document-url" title="concept-document-url">URL</a>.
 
  <dt><code><var title="">document</var> . <a href="#dom-document-origin" title="dom-Document-origin">origin</a></code>
- <dd><p>Returns <var title="">document</var>'s <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a>.
+ <dd><p>Returns <var title="">document</var>'s <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a>.
 
  <dt><code><var title="">document</var> . <a href="#dom-document-compatmode" title="dom-Document-compatMode">compatMode</a></code>
  <dd>
@@ -4143,13 +4365,13 @@ original names on the basis that they are nonsensical.)
 
 <p>The <dfn id="dom-document" title="dom-Document"><code>Document()</code></dfn> constructor
 must return a new <a href="#concept-document" title="concept-document">document</a> whose
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> is an
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> of the global object's associated
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> is an
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> of the global object's associated
 <a href="#concept-document" title="concept-document">document</a>, and
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> is an
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
-<a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> of the
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> is an
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+<a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> of the
 global object's associated <a href="#concept-document" title="concept-document">document</a>.
 <a href="#refsHTML">[HTML]</a>
 
@@ -4169,7 +4391,7 @@ attributes must return the <a href="#concept-document-url" title="concept-docume
 
 <p>The <dfn id="dom-document-origin" title="dom-Document-origin"><code>origin</code></dfn>
 attribute must return the <a class="external" data-anolis-spec="origin" href="http://tools.ietf.org/html/rfc6454#section-6.1">Unicode serialization</a> of
-<a href="#context-object">context object</a>'s <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a>.
+<a href="#context-object">context object</a>'s <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a>.
 <a href="#refsORIGIN">[ORIGIN]</a>
 
 <p>The <dfn id="dom-document-compatmode" title="dom-Document-compatMode"><code>compatMode</code></dfn>
@@ -4831,7 +5053,7 @@ method must run these steps:
   <p class="note">This method creates an <code><a href="#xmldocument">XMLDocument</a></code> rather than
   a normal <a href="#concept-document" title="concept-document">document</a>. They are identical
   except for the addition of the
-  <code class="external" data-anolis-spec="html" title="dom-XMLDocument-load"><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-xmldocument-load">load()</a></code>
+  <code class="external" data-anolis-spec="html" title="dom-XMLDocument-load"><a href="http://www.w3.org/html/wg/drafts/html/master/dom.html#dom-xmldocument-load">load()</a></code>
   method deployed content relies upon.
   <a href="#refsHTML">[HTML]</a>
 
@@ -4853,15 +5075,15 @@ method must run these steps:
  <var title="">element</var> to <var title="">document</var>.
 
  <li><p><var title="">document</var>'s
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> is an
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> of the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> is an
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> of the
  <a href="#context-object">context object</a>'s associated
  <a href="#concept-document" title="concept-document">document</a>, and
  <var title="">document</var>'s
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> is an
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> of the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> is an
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> of the
  <a href="#context-object">context object</a>'s associated
  <a href="#concept-document" title="concept-document">document</a>.
  <a href="#refsHTML">[HTML]</a>
@@ -4919,15 +5141,15 @@ method must run these steps:
  <code title="">html</code> element created in the earlier step.
 
  <li><p><var title="">doc</var>'s
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> is an
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#origin">origin</a> of the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> is an
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#origin">origin</a> of the
  <a href="#context-object">context object</a>'s associated
  <a href="#concept-document" title="concept-document">document</a>, and
  <var title="">doc</var>'s
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> is an
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
- <a class="external" data-anolis-spec="html" href="http://www.whatwg.org/specs/web-apps/current-work/multipage/origin-0.html#effective-script-origin">effective script origin</a> of the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> is an
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#concept-origin-alias" title="concept-origin-alias">alias</a> to the
+ <a class="external" data-anolis-spec="html" href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#effective-script-origin">effective script origin</a> of the
  <a href="#context-object">context object</a>'s associated
  <a href="#concept-document" title="concept-document">document</a>.
  <a href="#refsHTML">[HTML]</a>
@@ -8912,7 +9134,9 @@ some of these features should be reintroduced.
 
 <h2 class="no-num" id="references">References</h2>
 <div id="anolis-references"><dl><dt id="refsCSSOMVIEW">[CSSOMVIEW]
-<dd>(Non-normative) <cite><a href="http://dev.w3.org/csswg/cssom-view/">CSSOM View Module</a></cite>, Simon Pieters and Glenn Adams. W3C.
+<dd>(Non-normative) <ul><li><cite><a href="http://www.w3.org/TR/DOM-Level-2-Style/">Document Object Model (DOM) Level 2 Style</a></cite>, C. Wilson, P. Le Hégaret, V. Apparao. W3C.</li>
+  <li><cite><a href="http://dev.w3.org/csswg/cssom-view/">CSSOM View Module</a></cite>, S. Pieters, G. Adams. W3C.</li>
+</ul></dd>
 
 <dt id="refsDOM2TR">[DOM2TR]
 <dd>(Non-normative) <cite><a href="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/">Document Object Model (DOM) Level 2 Traversal and Range Specification</a></cite>, Joe Kesselman, Jonathan Robie, Mike Champion et al.. W3C.
@@ -8924,16 +9148,18 @@ some of these features should be reintroduced.
 <dd>(Non-normative) <cite><a href="http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html">Document Object Model (DOM) Level 3 Events Specification</a></cite>, Travis Leithead. W3C.
 
 <dt id="refsDOMPS">[DOMPS]
-<dd>(Non-normative) <cite><a href="http://domparsing.spec.whatwg.org/">DOM Parsing and Serialization</a></cite>, Ms2ger. WHATWG.
+<dd>(Non-normative) <cite><a href="http://dvcs.w3.org/hg/innerhtml/raw-file/tip/index.html">DOM Parsing and Serialization</a></cite>, T. Leithead. Work in Progress. W3C.</dd>
 
 <dt id="refsELEMENTTRAVERSAL">[ELEMENTTRAVERSAL]
 <dd>(Non-normative) <cite><a href="http://www.w3.org/TR/ElementTraversal/">Element Traversal Specification</a></cite>, Doug Schepers. W3C.
 
 <dt id="refsENCODING">[ENCODING]
-<dd><cite><a href="http://encoding.spec.whatwg.org/">Encoding</a></cite>, Anne van Kesteren. WHATWG.
+<dd><cite><a href="http://www.w3.org/TR/encoding/">Encoding</a></cite>, A. van Kesteren, J. Bell, A. Phillips. W3C.</dd>
 
 <dt id="refsHTML">[HTML]
-<dd><cite><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/">HTML</a></cite>, Ian Hickson. WHATWG.
+<dd>
+   <cite><a href="http://www.w3.org/TR/html/">HTML5</a></cite>,
+   R. Berjon, T. Leithead, E. Doyle Navara, E. O'Connor, S. Pfeiffer. W3C.</dd>
 
 <dt id="refsORIGIN">[ORIGIN]
 <dd><cite><a href="http://tools.ietf.org/html/rfc6454">The Web Origin Concept</a></cite>, Adam Barth. IETF.
@@ -8942,19 +9168,25 @@ some of these features should be reintroduced.
 <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, Scott Bradner. IETF.
 
 <dt id="refsSELECTORS">[SELECTORS]
-<dd><cite><a href="http://dev.w3.org/csswg/selectors/">Selectors</a></cite>, Elika J. Etemad and Tab Atkins Jr.. W3C.
+<dd><cite><a href="http://www.w3.org/TR/selectors/">Selectors</a></cite>, E. Etemad, T. Atkins. W3C.</dd>
 
 <dt id="refsSELECTORSAPI">[SELECTORSAPI]
 <dd>(Non-normative) <cite><a href="http://dev.w3.org/2006/webapi/selectors-api2/">Selectors API Level 2</a></cite>, Lachlan Hunt. W3C.
 
 <dt id="refsUIEVENTS">[UIEVENTS]
-<dd><cite><a href="https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm">UI Events</a></cite>, Gary Kacmarcik and Travis Leithead. W3C.
+<dd><cite><a href="http://www.w3.org/TR/uievents/">UI Events</a></cite>, Gary Kacmarcik and Travis Leithead. W3C.</dd>
 
 <dt id="refsURL">[URL]
-<dd><cite><a href="http://url.spec.whatwg.org/">URL</a></cite>, Anne van Kesteren. WHATWG.
+<dd>
+  (Non-normative)
+  <ul>
+    <li><cite><a href="http://url.spec.whatwg.org/">URL</a></cite>, Anne van Kesteren. WHATWG.</li>
+    <li><cite><a href="http://www.ietf.org/rfc/rfc3986.txt">RFC3986</a></cite>, T. Berners-Lee; R. Fielding; L. Masinter. IETF.</li>
+  </ul>
+</dd>
 
 <dt id="refsWEBIDL">[WEBIDL]
-<dd><cite><a href="http://heycam.github.io/webidl/">Web IDL</a></cite>, Cameron McCormack. W3C.
+<dd><cite><a href="http://www.w3.org/TR/WebIDL/">Web IDL</a></cite>, Cameron McCormack. W3C.</dd>
 
 <dt id="refsXML">[XML]
 <dd><cite><a href="http://www.w3.org/TR/xml/">Extensible Markup Language</a></cite>, Tim Bray, Jean Paoli, C. M. Sperberg-McQueen et al.. W3C.
@@ -9050,5 +9282,5 @@ Björn Höhrmann, Doug Schepers, Gavin Nicol, Joe Kesselman, Jonathan Robie,
 Lachlan Hunt, Lauren Wood, Mike Champion, Peter Sharpe, Philippe Le Hégaret, Robin Berjon,
 Steve Byrne, Tom Pixley, and Vidur Apparao.
 
-<script id="head" src="http://www.whatwg.org/specs/web-apps/current-work/dfn.js"></script>
+
 <!-- vim: set expandtab shiftwidth=1 tabstop=1 textwidth=76 -->
