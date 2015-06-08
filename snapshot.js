@@ -42,6 +42,7 @@ var fs = require("fs")
     ,   wgPublicList:   "www-dom"
     ,   wgPatentURI:    "http://www.w3.org/2004/01/pp-impl/40318/status"
     ,   license:        "cc-by"
+    ,   processVersion: "2005"
     }
 ,   references = {}
 ;
