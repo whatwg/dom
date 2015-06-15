@@ -137,19 +137,19 @@ This specification standardizes the DOM. It does so as follows:
   [[SELECTORS-API2]], the
   "DOM Event Architecture" and "Basic Event Interfaces" chapters of
   <cite>DOM Level 3 Events</cite>
-  [[uievents-20031107]] (specific type
-  of events do not belong in the base specification), and
+  [[uievents-20031107]] (specific types
+  of events do not belong in the DOM Standard), and
   <cite>DOM Level 2 Traversal and Range</cite>
   [[DOM-Level-2-Traversal-Range]], and:
 
   <ul>
-   <li>Aligning them with the needs of JavaScript where possible.
+   <li>Aligning them with the JavaScript ecosystem where possible.
    <li>Aligning them with existing implementations.
    <li>Simplifying them as much as possible.
   </ul>
 
- <li>By moving features from the HTML standard that ought to be part of the DOM
- platform here. [[!HTML]]
+ <li>By moving features from the HTML Standard [[!HTML]] that make more sense to be
+ specified as part of the DOM Standard.
 
  <li>
   By defining a replacement for the "Mutation Events" and
@@ -170,7 +170,7 @@ All diagrams, examples, and notes in this specification are
 non-normative, as are all sections explicitly marked non-normative.
 Everything else in this specification is normative.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
 For readability, these words do not appear in all uppercase letters in this
@@ -179,7 +179,7 @@ specification. [[!RFC2119]]
 Requirements phrased in the imperative as part of algorithms
 (such as "strip any leading space characters" or "return false and
 terminate these steps") are to be interpreted with the meaning of the
-key word ("must", "should", "may", etc) used in introducing the
+keyword ("must", "should", "may", etc.) used in introducing the
 algorithm.
 
 Conformance requirements phrased as algorithms or specific steps
@@ -222,22 +222,9 @@ doing so reduces interoperability and fragments the user base,
 allowing only users of specific user agents to access the content in
 question.
 
-If vendor-specific extensions are needed, the members should be
-prefixed by vendor-specific strings to prevent clashes with future
-versions of this specification. Extensions must be defined so that
-the use of extensions neither contradicts nor causes the
-non-conformance of functionality defined in the specification.
-<!-- thanks to QA Framework -->
-
-When vendor-neutral extensions to this specification are needed,
-either this specification can be updated accordingly, or an
-extension specification can be written that overrides the
-requirements in this specification. When someone applying this
-specification to their activities decides that they will recognize
-the requirements of such an extension specification, it becomes an
-<dfn export lt="other applicable specifications">applicable specification</dfn>
-for the purposes of conformance requirements in
-this specification.
+When extensions are needed, the DOM Standard can be updated accordingly, or a new standard
+can be written that hooks into the provided extensibility hooks for
+<dfn export lt="other applicable specifications">applicable specifications</dfn>.
 <!-- https://www.w3.org/mid/17E341CD-E790-422C-9F9A-69347EE01CEB@iki.fi -->
 
 
@@ -313,13 +300,11 @@ same <a>tree</a> and <var>A</var> comes
 after <var>B</var> in
 <a>tree order</a>.
 
-The <dfn export for=tree id=concept-tree-first-child>first child</dfn> of an object is
-its first <a>child</a> or null if it has no
-<a>child</a>.
+The <dfn export for=tree id=concept-tree-first-child>first child</dfn> of an object is its
+first <a>child</a> or null if it has no <a>children</a>.
 
-The <dfn export for=tree id=concept-tree-last-child>last child</dfn> of an object is
-its last <a>child</a> or null if it has no
-<a>child</a>.
+The <dfn export for=tree id=concept-tree-last-child>last child</dfn> of an object is its
+last <a>child</a> or null if it has no <a>children</a>.
 
 The <dfn export for=tree id=concept-tree-previous-sibling>previous sibling</dfn> of an
 object is its first <a>preceding</a>
@@ -484,20 +469,16 @@ run these steps:
 
 
 
-<h2 id='events'>
-Events</h2>
+<h2 id=events>Events</h2>
 
-<h3 id='introduction-to-dom-events'>
-Introduction to "DOM Events"</h3>
+<h3 id=introduction-to-dom-events>Introduction to "DOM Events"</h3>
 
-Throughout the web platform <a>events</a> are
-<a>dispatched</a> to objects to signal an
-occurrence, such as network activity or user interaction. These objects
-implement the {{EventTarget}} interface and can therefore add
-<a>event listeners</a> to observe
-<a>events</a>:
+Throughout the web platform <a>events</a> are <a>dispatched</a> to objects to signal an
+occurrence, such as network activity or user interaction. These objects implement the
+{{EventTarget}} interface and can therefore add <a>event listeners</a> to observe
+<a>events</a> by calling {{EventTarget/addEventListener()}}:
 
-<pre class='lang-javascript'>
+<pre class=lang-javascript>
 obj.addEventListener("load", imgFetched)
 
 function imgFetched(ev) {
@@ -583,8 +564,7 @@ object's  <a>ancestor</a>
 <a>event listeners</a> are invoked again,
 but now in reverse <a>tree order</a>.
 
-Lets look at an example on how <a>events</a>
-work in a <a>tree</a>:
+Lets look at an example of how <a>events</a> work in a <a>tree</a>:
 
 <pre class='lang-markup'>
 &lt;!doctype html>
@@ -607,8 +587,7 @@ work in a <a>tree</a>:
 &lt;/html>
 </pre>
 
-The <code>debug</code> function will be invoked twice. Each time
-the <a>events</a>'s
+The <code>debug</code> function will be invoked twice. Each time the <a>event</a>'s
 {{Event/target}} attribute value will be the
 <code>span</code> <a for="/">element</a>. The
 first time {{Event/currentTarget}} attribute's
@@ -661,7 +640,7 @@ dictionary EventInit {
 </pre>
 
 An <dfn export id=concept-event>event</dfn> allows for signaling that
-something has occurred. E.g. that an image has completed downloading. It is
+something has occurred, e.g. that an image has completed downloading. It is
 represented by the {{Event}} interface or an interface that
 inherits from the {{Event}} interface.
 
@@ -680,37 +659,31 @@ inherits from the {{Event}} interface.
  "<code>submit</code>".
 
  <dt><code><var>event</var> . {{Event/target}}</code>
- <dd>Returns the object <var>event</var> is
- <a>dispatched</a> to.
+ <dd>Returns the object to which <var>event</var> is <a>dispatched</a>.
 
  <dt><code><var>event</var> . {{Event/currentTarget}}</code>
- <dd>Returns the object whose
- <a>event listener</a>'s <b>callback</b>
- is invoked.
+ <dd>Returns the object whose <a>event listener</a>'s <b>callback</b> is currently being
+ invoked.
 
  <dt><code><var>event</var> . {{Event/eventPhase}}</code>
- <dd>Returns the <a>event</a>'s phase, which is
- one of {{Event/NONE}},
+ <dd>Returns the <a>event</a>'s phase, which is one of {{Event/NONE}},
  {{Event/CAPTURING_PHASE}},
  {{Event/AT_TARGET}}, and
  {{Event/BUBBLING_PHASE}}.
 
  <dt><code><var>event</var> . <a method for=Event lt="stopPropagation()">stopPropagation</a>()</code>
- <dd>When <a>dispatched</a> in a
- <a>tree</a>, invoking this method prevents
- <var>event</var> from reaching any other objects than the current.
+ <dd>When <a>dispatched</a> in a <a>tree</a>, invoking this method prevents
+ <var>event</var> from reaching any objects other than the current object.
 
  <dt><code><var>event</var> . <a method for=Event lt="stopImmediatePropagation()">stopImmediatePropagation</a>()</code>
  <dd>Invoking this method prevents <var>event</var> from reaching
- any <a>event listeners</a> registered
- after the current one and when
- <a>dispatched</a> in a
- <a>tree</a> also prevents
- <var>event</var> from reaching any other objects.
+ any registered <a>event listeners</a> after the current one finishes running and, when
+ <a>dispatched</a> in a <a>tree</a>, also prevents <var>event</var> from reaching any
+ other objects.
 
  <dt><code><var>event</var> . {{Event/bubbles}}</code>
  <dd>Returns true or false depending on how <var>event</var> was initialized. True if
- <var>event</var>’s goes through its {{Event/target}} attribute value's <a>ancestors</a>
+ <var>event</var> goes through its {{Event/target}} attribute value's <a>ancestors</a>
  in reverse <a>tree order</a>, and false otherwise.
 
  <dt><code><var>event</var> . {{Event/cancelable}}</code>
@@ -738,8 +711,8 @@ inherits from the {{Event}} interface.
  false otherwise.
 
  <dt><code><var>event</var> . {{Event/timeStamp}}</code>
- <dd>Returns the creation time of <var>event</var> in the number of
- milliseconds that passed since 00:00:00 UTC on 1 January 1970.
+ <dd>Returns the creation time of <var>event</var> as the number of milliseconds that
+ passed since 00:00:00 UTC on 1 January 1970.
 
  <!-- initEvent is dead -->
 </dl>
@@ -954,12 +927,11 @@ invoked, these steps must be run:
 </ol>
 
 
-<h3 id='defining-event-interfaces'>
-Defining event interfaces</h3>
+<h3 id=defining-event-interfaces>Defining event interfaces</h3>
 
-In general, when defining a new interface that inherits from
-{{Event}} please always ask feedback from the WHATWG or the
-W3C WebApps WG community.
+In general, when defining a new interface that inherits from {{Event}} please always ask
+feedback from the <a href=https://whatwg.org/>WHATWG</a> or the
+<a href=http://www.w3.org/2008/webapps/>W3C WebApps WG</a> community.
 
 The {{CustomEvent}} interface can be used as starting point.
 However, do not introduce any <code>init<var>*</var>Event()</code>
@@ -1037,12 +1009,9 @@ concept.
  <var>capture</var>.
 
  <dt><code><var>target</var> . <a method lt="dispatchEvent()">dispatchEvent</a>(<var>event</var>)</code>
- <dd><a>Dispatches</a> a synthetic
- event <var>event</var> to <var>target</var> and returns true
- if either <var>event</var>'s
- {{Event/cancelable}} attribute value is false
- or it's {{Event/preventDefault()}} method
- was not invoked, and false otherwise.
+ <dd><a>Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns
+ true if either <var>event</var>'s {{Event/cancelable}} attribute value is false or its
+ {{Event/preventDefault()}} method was not invoked, and false otherwise.
 </dl>
 
 The
@@ -1085,12 +1054,10 @@ method must run these steps:
 </ol>
 
 
-<h3 id='dispatching-events'>
-Dispatching events</h3>
+<h3 id=dispatching-events>Dispatching events</h3>
 
-To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an
-<a>event</a> to a given object, optionally with
-a <var>target override</var>, run these steps:
+To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an <a>event</a> to a
+given object, with an optional <var>target override</var>, run these steps:
 
 <ol>
  <li>Let <var>event</var> be the
@@ -1100,7 +1067,7 @@ a <var>target override</var>, run these steps:
 
  <li>Initialize <var>event</var>'s
  {{Event/target}} attribute to
- <var>target override</var>, if it is given, or the object to which
+ <var>target override</var>, if it is given, and the object to which
  <var>event</var> is dispatched otherwise.
 
  <li>If <var>event</var>'s
@@ -1252,11 +1219,8 @@ markup-based resource, ranging from short static documents to long essays or
 reports with rich multimedia, as well as to fully-fledged interactive
 applications.
 
-These documents are presented as a
-<a>node tree</a>. Some of the
-<a>nodes</a> in the
-<a>tree</a> can have
-<a>children</a>, while others are leaves.
+These documents are presented as a <a>node tree</a>. Some of the <a>nodes</a> in the
+<a>tree</a> can have <a>children</a>, while others are always leaves.
 
 To illustrate, consider this HTML document:
 
@@ -1324,7 +1288,7 @@ Node tree</h3>
 Objects implementing the {{Document}},
 {{DocumentFragment}}, {{DocumentType}},
 {{Element}}, {{Text}}, {{ProcessingInstruction}},
-or {{Comment}} interfaces (simply called
+or {{Comment}} interface (simply called
 <dfn export id=concept-node>nodes</dfn>)
 <a>participate</a> in a
 <a>tree</a>, simply named the
@@ -1497,8 +1461,8 @@ To <dfn export for=Node id=concept-node-pre-insert>pre-insert</dfn> a
 indicated in the <a for=Node>insert</a> algorithm below.
 
 To <dfn export id=concept-node-insert for=Node>insert</dfn> a <var>node</var>
-into a <var>parent</var> before a <var>child</var>, optionally
-with a <i>suppress observers flag</i>, run these steps:
+into a <var>parent</var> before a <var>child</var>, with an optional
+<i>suppress observers flag</i>, run these steps:
 
 <ol>
  <li>Let <var>count</var> be the number of
@@ -1723,8 +1687,8 @@ To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
  removedNodes <var>removedNodes</var>.
 </ol>
 
-Note: This algorithm does not make any checks with regards to the
-<a>node tree</a> constraints. Use it wisely.
+Note: This algorithm does not make any checks with regards to the <a>node tree</a>
+constraints. Specification authors need to use it wisely.
 
 
 To <dfn export for=Node id=concept-node-pre-remove>pre-remove</dfn> a
@@ -1751,8 +1715,8 @@ To <dfn export for=Node id=concept-node-pre-remove>pre-remove</dfn> a
 <a>remove</a> algorithm below.
 
 To <dfn export for=Node id=concept-node-remove>remove</dfn> a <var>node</var>
-from a <var>parent</var>, optionally with
-<i>suppress observers flag</i> set, run these steps:
+from a <var>parent</var>, with an optional <i>suppress observers flag</i>, run these
+steps:
 
 <ol>
  <li>Let <var>index</var> be <var>node</var>'s
@@ -1800,7 +1764,7 @@ from a <var>parent</var>, optionally with
  <var>ancestor</var> of <var>node</var>, if
  <var>ancestor</var> has any
  <a>registered observers</a> whose
- <b>options</b>'s
+ <b>options</b>'
  {{MutationObserverInit/subtree}} is true, then
  for each such <a>registered observer</a> <var>registered</var>, append a
  <a>transient registered observer</a> whose <b>observer</b> and
@@ -2432,7 +2396,7 @@ method must run these steps:
   <a>collection</a> for which at least one of
   the following is true:
   <ul>
-   <li>it has an <a>ID</a> which is <var>key</var>.
+   <li>it has an <a>ID</a> which is <var>key</var>;
    <li>it <a lt="has an attribute">has</a> a
    <a lt="named attribute"><code>name</code> attribute</a>
    whose <a for=Attr>value</a> is
@@ -2473,7 +2437,7 @@ To <dfn export>notify mutation observers</dfn>, run these steps:
  <li>Unset <a>mutation observer compound microtask queued flag</a>.
 
  <li>Let <var>notify list</var> be a copy of
- <a>unit of related similar-origin browsing contexts</a>'s
+ <a>unit of related similar-origin browsing contexts</a>'
  list of {{MutationObserver}} objects.
 
  <li>
@@ -2630,7 +2594,7 @@ The
 constructor must create a new {{MutationObserver}} object with
 <a>callback</a> set to <var>callback</var>,
 append it to the
-<a>unit of related similar-origin browsing contexts</a>'s list
+<a>unit of related similar-origin browsing contexts</a>' list
 of {{MutationObserver}} objects, and then return it.
 
 The
@@ -2742,23 +2706,23 @@ previousSibling <var>previousSibling</var>, and nextSibling
 
   <ol>
    <li>If <var>node</var> is not <var>target</var> and
-   <var>options</var>'s <code>subtree</code> is false, continue.
+   <var>options</var>' <code>subtree</code> is false, continue.
 
    <li>If <var>type</var> is "<code>attributes</code>" and
-   <var>options</var>'s <code>attributes</code> is not true, continue.
+   <var>options</var>' <code>attributes</code> is not true, continue.
    <!--not true==false||omitted-->
 
    <li>If <var>type</var> is "<code>attributes</code>",
-   <var>options</var>'s <code>attributeFilter</code> is present, and either
-   <var>options</var>'s <code>attributeFilter</code> does not contain
+   <var>options</var>' <code>attributeFilter</code> is present, and either
+   <var>options</var>' <code>attributeFilter</code> does not contain
    <var>name</var> or <var>namespace</var> is non-null, continue.
 
    <li>If <var>type</var> is "<code>characterData</code>" and
-   <var>options</var>'s <code>characterData</code> is not true, continue.
+   <var>options</var>' <code>characterData</code> is not true, continue.
    <!--not true==false||omitted-->
 
    <li>If <var>type</var> is "<code>childList</code>" and
-   <var>options</var>'s <code>childList</code> is false, continue.
+   <var>options</var>' <code>childList</code> is false, continue.
 
    <li>If <var>registered observer</var>'s <b>observer</b> is
    not in <var>interested observers</var>, append
@@ -2766,9 +2730,9 @@ previousSibling <var>previousSibling</var>, and nextSibling
    <var>interested observers</var>.
 
    <li>If either <var>type</var> is "<code>attributes</code>"
-   and <var>options</var>'s <code>attributeOldValue</code> is true, or
+   and <var>options</var>' <code>attributeOldValue</code> is true, or
    <var>type</var> is "<code>characterData</code>" and
-   <var>options</var>'s <code>characterDataOldValue</code> is true,
+   <var>options</var>' <code>characterDataOldValue</code> is true,
    set the paired string of
    <var>registered observer</var>'s <b>observer</b> in
    <var>interested observers</var> to <var>oldValue</var>.
@@ -3480,9 +3444,8 @@ For each {{Text}} <a>node</a>
 <a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Node id=concept-node-clone-ext>cloning steps</dfn> for all or some
 <a>nodes</a>. The algorithm is passed <var>copy</var>,
-<var>node</var>, <var>document</var>, and optionally a
-<i>clone children flag</i>, as indicated in the
-<a lt="clone a node">clone</a> algorithm.
+<var>node</var>, <var>document</var>, and an optional <i>clone children flag</i>, as
+indicated in the <a lt="clone a node">clone</a> algorithm.
 
 Note: HTML defines
 <a>cloning steps</a> for
@@ -3491,9 +3454,10 @@ Note: HTML defines
 for its <{script}> elements, but does not call this out at
 the moment.
 
-To <dfn export for=Node id=concept-node-clone lt="clone a node" local-lt="clone">clone</dfn> a <var>node</var>,
-optionally with a <var>document</var> and a <i>clone children flag</i>, run
-these steps:
+To
+<dfn export for=Node id=concept-node-clone lt="clone a node" local-lt="clone">clone</dfn>
+a <var>node</var>, with an optional <var>document</var> and <i>clone children flag</i>,
+run these steps:
 <!-- This algorithm is used by dom-Node-cloneNode, dom-Document-importNode,
 dom-Range-extractContents, dom-Range-cloneContents -->
 
@@ -5347,7 +5311,7 @@ given a <var>namespace</var>, <var>localName</var>, and
 
 To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 <a>attribute</a> <var>attr</var>,
-<a for="/">element</a> <var>element</var>, and optionally a
+<a for="/">element</a> <var>element</var>, and an optional
 <i>namespace and local name flag</i>, run these steps:
 
 <ol>
@@ -5393,9 +5357,8 @@ To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 
 To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> for
 an <a for="/">element</a> <var>element</var>
-using a <var>localName</var> and <var>value</var>, and
-optionally a <var>name</var>, <var>prefix</var>, and
-<var>namespace</var>, run these steps:
+using a <var>localName</var> and <var>value</var>, and an optional <var>name</var>,
+<var>prefix</var>, and <var>namespace</var>, run these steps:
 
 <ol>
  <li>If <var>name</var> is not given, set it to <var>localName</var>.
@@ -9347,6 +9310,7 @@ Simon Pieters,
 Steve Byrne,
 Stig Halvorsen,
 Tab Atkins,
+<i title>timeless</i>,
 Timo Tijhof,
 Tom Pixley,
 Travis Leithead,
