@@ -2064,8 +2064,7 @@ attribute must return the first <a>following</a> <a>sibling</a> that is an <a fo
 and null otherwise.
 
 
-<h4 id='interface-childnode'>
-Interface {{ChildNode}}</h4>
+<h4 id=interface-childnode>Interface {{ChildNode}}</h4>
 
 <pre class=idl>
 [NoInterfaceObject,
@@ -2116,66 +2115,74 @@ CharacterData implements ChildNode;
  <dd>Removes <var>node</var>.
 </dl>
 
-The
-<dfn method for=ChildNode>before(<var>nodes</var>)</dfn>
-method must run these steps:
+The <dfn method for=ChildNode><code>before(<var>nodes</var>)</code></dfn> method, when
+invoked, must run these steps:
 
 <ol>
- <li>If the <a>context object</a> does not have a
- <a>parent</a>, terminate these steps.
+ <li><p>Let <var>parent</var> be <a>context object</a>'s <a>parent</a>.
 
- <li>Let <var>node</var> be the result of <a>converting <var>nodes</var> into a node</a>.
+ <li><p>If <var>parent</var> is null, terminate these steps.
 
- <li><a>Pre-insert</a>
- <var>node</var> into the <a>context object</a>'s
- <a>parent</a> before the
- <a>context object</a>.
+ <li><p>Let <var>viablePreviousSibling</var> be <a>context object</a>'s first
+ <a>preceding</a> <a>sibling</a> not in <var>nodes</var>, and null otherwise.
+
+ <li><p>Let <var>node</var> be the result of
+ <a>converting <var>nodes</var> into a node</a>.
+
+ <li><p>If <var>viablePreviousSibling</var> is non-null, set it to
+ <var>viablePreviousSibling</var>'s <a>next sibling</a>, and to <var>parent</var>'s
+ <a>first child</a> otherwise.
+
+ <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viablePreviousSibling</var>.
 </ol>
 
-The
-<dfn method for=ChildNode>after(<var>nodes</var>)</dfn>
-method must run these steps:
+The <dfn method for=ChildNode><code>after(<var>nodes</var>)</code></dfn> method, when
+invoked, must run these steps:
 
 <ol>
- <li>If the <a>context object</a> does not have a
- <a>parent</a>, terminate these steps.
+ <li><p>Let <var>parent</var> be <a>context object</a>'s <a>parent</a>.
 
- <li>Let <var>node</var> be the result of <a>converting <var>nodes</var> into a node</a>.
+ <li><p>If <var>parent</var> is null, terminate these steps.
 
- <li><a>Pre-insert</a>
- <var>node</var> into the <a>context object</a>'s
- <a>parent</a> before the
- <a>context object</a>'s
- <a>next sibling</a>.
+ <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
+ <a>sibling</a> not in <var>nodes</var>, and null otherwise.
+
+ <li><p>Let <var>node</var> be the result of
+ <a>converting <var>nodes</var> into a node</a>.
+
+ <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viableNextSibling</var>.
 </ol>
 
-The
-<dfn method for=ChildNode>replaceWith(<var>nodes</var>)</dfn>
-method must run these steps:
+The <dfn method for=ChildNode><code>replaceWith(<var>nodes</var>)</code></dfn> method,
+when invoked, must run these steps:
 
 <ol>
- <li>If the <a>context object</a> does not have a
- <a>parent</a>, terminate these steps.
+ <li><p>Let <var>parent</var> be <a>context object</a>'s <a>parent</a>.
 
- <li>Let <var>node</var> be the result of <a>converting <var>nodes</var> into a node</a>.
+ <li><p>If <var>parent</var> is null, terminate these steps.
 
- <li><a>Replace</a> the
- <a>context object</a> with <var>node</var> within the
- <a>context object</a>'s
- <a>parent</a>.
+ <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
+ <a>sibling</a> not in <var>nodes</var>, and null otherwise.
+
+ <li><p>Let <var>node</var> be the result of
+ <a>converting <var>nodes</var> into a node</a>.
+
+ <li><p>If <a>context object</a>'s <a>parent</a> is <var>parent</var>, <a>replace</a> the
+ <a>context object</a> with <var>node</var> within <var>parent</var>.
+
+ <li><p>Otherwise, <a>pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viableNextSibling</var>.
 </ol>
 
-The
-<dfn method for=ChildNode>remove()</dfn>
-method must run these steps:
+The <dfn method for=ChildNode><code>remove()</code></dfn> method, when invoked, must run
+these steps:
 
 <ol>
- <li>If the <a>context object</a> does not have a
- <a>parent</a>, terminate these steps.
+ <li><p>If <a>context object</a>'s <a>parent</a> is null, terminate these steps.
 
- <li><a>Remove</a> the
- <a>context object</a> from the
- <a>context object</a>'s
+ <li><p><a>Remove</a> the <a>context object</a> from <a>context object</a>'s
  <a>parent</a>.
 </ol>
 

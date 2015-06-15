@@ -250,8 +250,7 @@ Interface <code>NonElementParentNode</code></span></a>
         <li><a href="#interface-parentnode"><span class="secno">4.2.3</span> <span class="content">Interface <code>ParentNode</code></span></a>
         <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.4</span> <span class="content">
 Interface <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
-        <li><a href="#interface-childnode"><span class="secno">4.2.5</span> <span class="content">
-Interface <code class="idl"><span>ChildNode</span></code></span></a>
+        <li><a href="#interface-childnode"><span class="secno">4.2.5</span> <span class="content">Interface <code class="idl"><span>ChildNode</span></code></span></a>
         <li><a href="#element-collections"><span class="secno">4.2.6</span> <span class="content">
 Collections: <code class="idl"><span>Elements</span></code></span></a>
         <li><a href="#old-style-collections"><span class="secno">4.2.7</span> <span class="content">
@@ -2800,8 +2799,7 @@ and null otherwise.</p>
 
 
 
-   <h4 class="heading settled" data-level="4.2.5" id="interface-childnode"><span class="secno">4.2.5. </span><span class="content">
-Interface <code class="idl"><a data-link-type="idl" href="#childnode">ChildNode</a></code></span><a class="self-link" href="#interface-childnode"></a></h4>
+   <h4 class="heading settled" data-level="4.2.5" id="interface-childnode"><span class="secno">4.2.5. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#childnode">ChildNode</a></code></span><a class="self-link" href="#interface-childnode"></a></h4>
 
 
    <pre class="idl">[NoInterfaceObject,
@@ -2868,86 +2866,121 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="chi
 </dl>
 
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="before(nodes...)|before(nodes)" id="dom-childnode-beforenodes">before(<var>nodes</var>)<a class="self-link" href="#dom-childnode-beforenodes"></a></dfn>
-method must run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="before(nodes...)|before(nodes)" id="dom-childnode-beforenodes"><code>before(<var>nodes</var>)</code><a class="self-link" href="#dom-childnode-beforenodes"></a></dfn> method, when
+invoked, must run these steps:</p>
 
 
    <ol>
  
-    <li>If the <a data-link-type="dfn" href="#context-object">context object</a> does not have a
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a>, terminate these steps.
+    <li>
+     <p>Let <var>parent</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>.
 
- 
-    <li>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
+ </p>
+    <li>
+     <p>If <var>parent</var> is null, terminate these steps.
 
- 
-    <li><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a>
- <var>node</var> into the <a data-link-type="dfn" href="#context-object">context object</a>’s
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a> before the
- <a data-link-type="dfn" href="#context-object">context object</a>.
-</ol>
+ </p>
+    <li>
+     <p>Let <var>viablePreviousSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first
+ <a data-link-type="dfn" href="#concept-tree-preceding">preceding</a> <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise.
 
+ </p>
+    <li>
+     <p>Let <var>node</var> be the result of
+ <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="after(nodes...)|after(nodes)" id="dom-childnode-afternodes">after(<var>nodes</var>)<a class="self-link" href="#dom-childnode-afternodes"></a></dfn>
-method must run these steps:</p>
+ </p>
+    <li>
+     <p>If <var>viablePreviousSibling</var> is non-null, set it to
+ <var>viablePreviousSibling</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>, and to <var>parent</var>’s
+ <a data-link-type="dfn" href="#concept-tree-first-child">first child</a> otherwise.
 
-
-   <ol>
- 
-    <li>If the <a data-link-type="dfn" href="#context-object">context object</a> does not have a
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a>, terminate these steps.
-
- 
-    <li>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
-
- 
-    <li><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a>
- <var>node</var> into the <a data-link-type="dfn" href="#context-object">context object</a>’s
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a> before the
- <a data-link-type="dfn" href="#context-object">context object</a>’s
- <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>.
-</ol>
+ </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viablePreviousSibling</var>.
+</p></ol>
 
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="replaceWith(nodes...)|replaceWith(nodes)" id="dom-childnode-replacewithnodes">replaceWith(<var>nodes</var>)<a class="self-link" href="#dom-childnode-replacewithnodes"></a></dfn>
-method must run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="after(nodes...)|after(nodes)" id="dom-childnode-afternodes"><code>after(<var>nodes</var>)</code><a class="self-link" href="#dom-childnode-afternodes"></a></dfn> method, when
+invoked, must run these steps:</p>
 
 
    <ol>
  
-    <li>If the <a data-link-type="dfn" href="#context-object">context object</a> does not have a
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a>, terminate these steps.
+    <li>
+     <p>Let <var>parent</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>.
 
- 
-    <li>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
+ </p>
+    <li>
+     <p>If <var>parent</var> is null, terminate these steps.
 
+ </p>
+    <li>
+     <p>Let <var>viableNextSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first <a data-link-type="dfn" href="#concept-tree-following">following</a>
+ <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise.
+
+ </p>
+    <li>
+     <p>Let <var>node</var> be the result of
+ <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
+
+ </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viableNextSibling</var>.
+</p></ol>
+
+
+   <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="replaceWith(nodes...)|replaceWith(nodes)" id="dom-childnode-replacewithnodes"><code>replaceWith(<var>nodes</var>)</code><a class="self-link" href="#dom-childnode-replacewithnodes"></a></dfn> method,
+when invoked, must run these steps:</p>
+
+
+   <ol>
  
-    <li><a data-link-type="dfn" href="#concept-node-replace">Replace</a> the
- <a data-link-type="dfn" href="#context-object">context object</a> with <var>node</var> within the
- <a data-link-type="dfn" href="#context-object">context object</a>’s
+    <li>
+     <p>Let <var>parent</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>.
+
+ </p>
+    <li>
+     <p>If <var>parent</var> is null, terminate these steps.
+
+ </p>
+    <li>
+     <p>Let <var>viableNextSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first <a data-link-type="dfn" href="#concept-tree-following">following</a>
+ <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise.
+
+ </p>
+    <li>
+     <p>Let <var>node</var> be the result of
+ <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>.
+
+ </p>
+    <li>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is <var>parent</var>, <a data-link-type="dfn" href="#concept-node-replace">replace</a> the
+ <a data-link-type="dfn" href="#context-object">context object</a> with <var>node</var> within <var>parent</var>.
+
+ </p>
+    <li>
+     <p>Otherwise, <a data-link-type="dfn" href="#concept-node-pre-insert">pre-insert</a> <var>node</var> into <var>parent</var> before
+ <var>viableNextSibling</var>.
+</p></ol>
+
+
+   <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" id="dom-childnode-remove"><code>remove()</code><a class="self-link" href="#dom-childnode-remove"></a></dfn> method, when invoked, must run
+these steps:</p>
+
+
+   <ol>
+ 
+    <li>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is null, terminate these steps.
+
+ </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-node-remove">Remove</a> the <a data-link-type="dfn" href="#context-object">context object</a> from <a data-link-type="dfn" href="#context-object">context object</a>’s
  <a data-link-type="dfn" href="#concept-tree-parent">parent</a>.
-</ol>
-
-
-   <p>The
-<dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" id="dom-childnode-remove">remove()<a class="self-link" href="#dom-childnode-remove"></a></dfn>
-method must run these steps:</p>
-
-
-   <ol>
- 
-    <li>If the <a data-link-type="dfn" href="#context-object">context object</a> does not have a
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a>, terminate these steps.
-
- 
-    <li><a data-link-type="dfn" href="#concept-node-remove">Remove</a> the
- <a data-link-type="dfn" href="#context-object">context object</a> from the
- <a data-link-type="dfn" href="#context-object">context object</a>’s
- <a data-link-type="dfn" href="#concept-tree-parent">parent</a>.
-</ol>
+</p></ol>
 
 
 
