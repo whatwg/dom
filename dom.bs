@@ -102,6 +102,9 @@ urlPrefix: https://html.spec.whatwg.org/multipage/
             text: effective script origin
             text: origin alias; url: #concept-origin-alias
             text: Unicode serialization of an origin
+urlPrefix: https://w3c.github.io/webcomponents/spec/shadow/
+	type: dfn; urlPrefix: #dfn-
+		text: shadow root
 url: http://www.w3.org/TR/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
     type: method; text: createContextualFragment(); for: Range;
 type: interface
@@ -4636,7 +4639,7 @@ Note: No check is performed that <var>target</var> contains
   <var>node</var>'s <a>descendants</a>.
 
   If <var>node</var> is a
-  <a>document</a> throws a
+  <a>document</a> or a <a>shadow root</a>, throws a
   {{NotSupportedError}}
   exception.
 
@@ -4647,8 +4650,9 @@ Note: No check is performed that <var>target</var> contains
   <a>document</a> and returns it.
 
   If <var>node</var> is a
-  <a>document</a> throws a
-  {{NotSupportedError}}
+  <a>document</a>, throws a
+  {{NotSupportedError}} or, if <var>node</var> is a <a>shadow root</a>, throws a
+  {{HierarchyRequestError}}
   exception.
 </dl>
 
@@ -4658,7 +4662,7 @@ method must run these steps:
 
 <ol>
  <li>If <var>node</var> is a
- <a>document</a>,
+ <a>document</a> or <a>shadow root</a>,
  <a>throw</a> a
  {{NotSupportedError}} exception.
 
@@ -4701,9 +4705,10 @@ method must run these steps:
 
 <ol>
  <li>If <var>node</var> is a
- <a>document</a>,
- <a>throw</a> a
- {{NotSupportedError}} exception.
+ <a>document</a>, <a>throw</a> a {{NotSupportedError}} exception.
+
+ <li>If <var>node</var> is a 
+ <a>shadow root</a>, <a>throw</a> a {{HierarchyRequestError}} exception.
 
  <li><a>Adopt</a> <var>node</var>
  into the <a>context object</a>.
