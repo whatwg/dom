@@ -56,11 +56,11 @@ urlPrefix: https://encoding.spec.whatwg.org/
         text: utf-16le
 urlPrefix: http://www.w3.org/TR/xml/#NT-
     type: type
-        text: Name
-        text: Char
+        text: Name; url: Name
+        text: Char; url: Char
 urlPrefix: http://www.w3.org/TR/xml-names/#NT-
     type: type
-        text: QName
+        text: QName; url: QName
 urlPrefix: https://heycam.github.io/webidl/
     type: dfn; urlPrefix: #dfn-
         text: throw
@@ -2291,11 +2291,10 @@ there are no <a>supported property indices</a>.
 The <dfn attribute for=NodeList>length</dfn> attribute must
 return the number of nodes <a>represented by the collection</a>.
 
-The
-<dfn method for=NodeList>item(<var>index</var>)</dfn>
-method must return the <var>index</var>th
-node in the <a>collection</a>. If there is no
-<var>index</var>th node in the <a>collection</a>, then the method must return null.
+The <dfn method for=NodeList><code>item(<var>index</var>)</code></dfn> method must return
+the <var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>. If there is no
+<var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>, then the method must
+return null.
 
 </div>
 
@@ -2353,9 +2352,9 @@ must return the number of nodes <a>represented by the collection</a>.
 
 The
 <dfn method for=HTMLCollection>item(<var>index</var>)</dfn>
-method must return the <var>index</var>th
+method must return the <var>index</var><sup>th</sup>
 <a for="/">element</a> in the <a>collection</a>. If there is no
-<var>index</var>th <a for="/">element</a> in the <a>collection</a>, then the method must return null.
+<var>index</var><sup>th</sup> <a for="/">element</a> in the <a>collection</a>, then the method must return null.
 
 The <a>supported property names</a>, all <a>unenumerable</a>,
 are the values from the list returned by these steps:
@@ -3730,9 +3729,7 @@ To <dfn export lt="locate a namespace prefix|locating a namespace prefix">locate
  null, return its
  <a for=Element>namespace prefix</a>.
 
- <li>If, <var>element</var>
- <a lt="has an attribute">has</a> an
- <a>attribute</a> whose
+ <li>If <var>element</var> <a lt="has an attribute">has</a> an <a>attribute</a> whose
  <a for=Attr>namespace prefix</a> is
  "<code>xmlns</code>" and
  <a for=Attr>value</a> is
@@ -4781,7 +4778,7 @@ method must run these steps:
  <li>Return <var>event</var>.
 </ol>
 
-<p class="note"><a>Event</a> constructors can be used instead.
+<p class=note><a>Event</a> constructors ought to be used instead.
 
 <hr>
 
@@ -4791,7 +4788,7 @@ method must return a new <a>range</a> with
 <a>start</a> and
 <a>end</a>.
 
-Note: The {{Range/Range()}} constructor can be used instead.
+<p class=note>The {{Range/Range()}} constructor ought to be used instead.
 
 <hr>
 
@@ -4801,16 +4798,11 @@ method must run these steps:
 
 <ol>
  <li>Create a {{NodeIterator}} object.
- <li>Set <a for="traversal">root</a> and initialize
- the {{NodeIterator/referenceNode}}
- attribute to the <var>root</var> argument.
- <li>Initialize the
- {{NodeIterator/pointerBeforeReferenceNode}}
- attribute to true.
- <li>Set <a for="traversal">whatToShow</a> to
- the <var>whatToShow</var> argument.
- <li>Set <a for="traversal">filter</a> to
- <var>filter</var>.
+ <li>Set <a for="traversal">root</a> to <var>root</var> and initialize the
+ {{NodeIterator/referenceNode}} attribute to <var>root</var>.
+ <li>Initialize the {{NodeIterator/pointerBeforeReferenceNode}} attribute to true.
+ <li>Set <a for="traversal">whatToShow</a> to <var>whatToShow</var>.
+ <li>Set <a for="traversal">filter</a> to <var>filter</var>.
  <li>Return the newly created {{NodeIterator}} object.
 </ol>
 
@@ -4820,13 +4812,10 @@ method must run these steps:
 
 <ol>
  <li>Create a {{TreeWalker}} object.
- <li>Set <a for="traversal">root</a> and initialize
- the {{TreeWalker/currentNode}} attribute to
- the <var>root</var> argument.
- <li>Set <a for="traversal">whatToShow</a> to
- the <var>whatToShow</var> argument.
- <li>Set <a for="traversal">filter</a> to
- <var>filter</var>.
+ <li>Set <a for="traversal">root</a> to <var>root</var> and initialize the
+ {{TreeWalker/currentNode}} attribute to <var>root</var>.
+ <li>Set <a for="traversal">whatToShow</a> to <var>whatToShow</var>.
+ <li>Set <a for="traversal">filter</a> to <var>filter</var>.
  <li>Return the newly created {{TreeWalker}} object.
 </ol>
 
@@ -4915,10 +4904,10 @@ method must run these steps:
  associated <a>document</a> of the
  <a>context object</a>.
 </ol>
-Note: No check is performed that <var>publicId</var>
-matches the <code>PublicChar</code> production or that
-<var>systemId</var> does not contain both a '<code>"</code>' and
-"<code>'</code>".
+
+<p class=note>No check is performed that <var>publicId</var> matches the
+<code>PublicChar</code> production or that <var>systemId</var> does not contain both a
+'<code>"</code>' and a "<code>'</code>".
 
 The
 <dfn method for="DOMImplementation">createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)</dfn>
@@ -4970,53 +4959,38 @@ method must run these steps:
 </ol>
 
 The
-<dfn method for="DOMImplementation">createHTMLDocument(<var>title</var>)</dfn>
-method must run these steps:
+<dfn method for="DOMImplementation"><code>createHTMLDocument(<var>title</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li>Let <var>doc</var> be a new
- <a>document</a> that is an
- <a>HTML document</a>.
+ <li>Let <var>doc</var> be a new <a>document</a> that is an <a>HTML document</a>.
 
- <li>Set <var>doc</var>'s
- <a for=Document>content type</a> to
- "<code>text/html</code>".
+ <li>Set <var>doc</var>'s <a for=Document>content type</a> to "<code>text/html</code>".
 
- <li>Create a <a>doctype</a>, with
- "<code>html</code>"
- as its <a for=DocumentType>name</a> and with its
- <a>node document</a> set to
- <var>doc</var>. <a>Append</a>
- the newly created node to <var>doc</var>.
+ <li><a>Append</a> a new <a>doctype</a>, with "<code>html</code>" as its
+ <a for=DocumentType>name</a> and with its <a>node document</a> set to <var>doc</var>, to
+ <var>doc</var>.
 
- <li>Create an <{html}> element in the <span>HTML
- namespace</span>, and <a>append</a>
- it to <var>doc</var>.
+ <li><a>Append</a> a new <{html}> element in the <span>HTML namespace</span>, to
+ <var>doc</var>.
 
- <li>Create a <{head}> element in the <span>HTML
- namespace</span>, and  <a>append</a>
- it to the <{html}> element created in the previous step.
+ <li><a>Append</a> a new <{head}> element in the <span>HTML namespace</span>, to the
+ <{html}> element created earlier.
 
  <li>
   If the <var>title</var> argument is not omitted:
 
   <ol>
-   <li>Create a <{title}> element in the
-   <a>HTML namespace</a>, and
-   <a>append</a> it to the
-   <{head}> element created in the previous step.
+   <li><a>Append</a> a new <{title}> element in the <a>HTML namespace</a>, to the <{head}>
+   element created earlier.
 
-   <li>Create a {{Text}} <a>node</a>,
-   set its <a>data</a> to <var>title</var>
-   (which could be the empty string), and
-   <a>append</a> it to the
-   <{title}> element created in the previous step.
+   <li><a>Append</a> a new {{Text}} <a>node</a>, with its <a>data</a> set to
+   <var>title</var> (which could be the empty string), to the <{title}> element created
+   earlier.
   </ol>
 
- <li>Create a <{body}> element in the
- <a>HTML namespace</a>, and
- <a>append</a> it to the
- <{html}> element created in the earlier step.
+ <li><a>Append</a> a new <{body}> element in the <a>HTML namespace</a>, to the <{html}>
+ element created earlier.
 
  <li><var>doc</var>'s
  <a>origin</a> is an
@@ -5038,7 +5012,7 @@ method must run these steps:
 The <dfn method for="DOMImplementation">hasFeature()</dfn> method
 must return true.
 
-Note: {{hasFeature()}}
+<p class=note>{{hasFeature()}}
 originally would report whether the user agent claimed to support a given DOM
 feature, but experience proved it was not nearly as reliable or granular as
 simply checking whether the desired objects, attributes, or methods existed.
@@ -5194,12 +5168,11 @@ null.
 <var>A</var> is in its
 <a for=Element>attribute list</a>.
 
-<a lt="other applicable specifications">Applicable specifications</a>
-and this specification (can) use the hooks an <dfn export>attribute is set</dfn>,
-an <dfn export>attribute is changed</dfn>, an <dfn export>attribute is added</dfn>, and
-an <dfn export>attribute is removed</dfn>, for further processing of the
-<a>attribute</a>'s
-<a for=Attr>value</a>.
+This specification uses and
+<a lt="other applicable specifications">applicable specifications</a> can use the hooks an
+<dfn export>attribute is set</dfn>, an <dfn export>attribute is changed</dfn>, an
+<dfn export>attribute is added</dfn>, and an <dfn export>attribute is removed</dfn>, for
+further processing of the <a>attribute</a>'s <a for=Attr>value</a>.
 
 To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
 <a>attribute</a> <var>attribute</var>
@@ -5416,23 +5389,20 @@ given a <var>namespace</var>, <var>localName</var>, and
 
 <hr>
 
-<a>Elements</a> can have an associated
-<dfn export for=Element id=concept-id lt="ID">unique identifier (ID)</dfn> and have an associated
-{{DOMTokenList}} object. The {{DOMTokenList}} object's
-associated <a>attribute</a>'s
-<a for=Attr>local name</a> is
-<code>class</code> and its associated ordered set of tokens is called
-the <a for="/">element</a>'s
-<dfn export for=Element id=concept-class lt="class">classes</dfn>.
+An <a>element</a> can have an associated
+<dfn export for=Element id=concept-id lt="ID">unique identifier (ID)</dfn>
 
-Note: Historically <a>elements</a> could
-have multiple identifiers e.g. by using the HTML <code>id</code>
-<a>attribute</a> and a DTD. This specification
-makes <a>ID</a> a concept of the DOM and allows for
-only one per <a for="/">element</a>, given by an
+<p class=note>Historically <a>elements</a> could have multiple identifiers e.g. by using
+the HTML <code>id</code> <a>attribute</a> and a DTD. This specification makes <a>ID</a> a
+concept of the DOM and allows for only one per <a for="/">element</a>, given by an
 <a lt="named attribute"><code>id</code> attribute</a>.
 
-Either when an <a for="/">element</a> is created that
+An <a>element</a> has an associated {{DOMTokenList}} object. The {{DOMTokenList}} object's
+associated <a>attribute</a>'s <a for=Attr>local name</a> is <code>class</code> and its
+associated ordered set of tokens is called the <a for="/">element</a>'s
+<dfn export for=Element id=concept-class lt="class">classes</dfn>.
+
+When an <a for="/">element</a> is created that
 <a lt="has an attribute">has</a> an
 <a lt="named attribute"><code>id</code> attribute</a> whose
 <a for=Attr>value</a> is not the empty string or
@@ -5451,7 +5421,7 @@ When an <a for="/">element</a>'s
 <a for="/">element</a>'s
 <a>ID</a>.
 
-Either when an <a for="/">element</a> is created that
+When an <a for="/">element</a> is created that
 <a lt="has an attribute">has</a> a
 <a lt="named attribute"><code>class</code> attribute</a> or
 when an <a for="/">element</a>'s
@@ -6445,7 +6415,7 @@ interface Comment : CharacterData {
 </pre>
 
 <dl class=domintro>
-s <dt><code><var>comment</var> = new <a constructor lt="Comment()">Comment([<var>data</var> = ""])</a></code>
+ <dt><code><var>comment</var> = new <a constructor lt="Comment()">Comment([<var>data</var> = ""])</a></code>
  <dd>Returns a new {{Comment}} <a>node</a> whose
  <a>data</a> is <var>data</var>.
 </dl>
@@ -6727,6 +6697,11 @@ in a <a>range</a> if it is an
   <a>contained</a>, so are any
   <a>siblings</a> that lie between them.
 
+  <li>The <a>start node</a> and
+  <a>end node</a> of a
+  <a>range</a> are never <a>contained</a>
+  within it.
+
   <li>The first <a>contained</a>
   <a>node</a> (if there are any) will always be
   after the <a>start node</a>, and the
@@ -6735,20 +6710,13 @@ in a <a>range</a> if it is an
   <a>end node</a>'s last
   <a>descendant</a>.
 
-  <li>The <a>start node</a> and
-  <a>end node</a> of a
-  <a>range</a> are never <a>contained</a>
-  within it.
-
-  <li>There exists some partially contained
+  <li>There exists a partially contained
   <a>node</a> if and only if the
   <a>start node</a> and
   <a>end node</a> are different.
 
-  <li>The
-  {{Range/commonAncestorContainer}}
-  attribute value is never <a>contained</a> or
-  <a>partially contained</a>.
+  <li>The {{Range/commonAncestorContainer}} attribute value is neither <a>contained</a>
+  nor <a>partially contained</a>.
 
   <li>If the <a>start node</a> is an
   <a>ancestor</a> of the
@@ -8871,7 +8839,7 @@ method must run these steps:
  <li>If <var>index</var> is equal to or greater than the number of
  tokens in <a>tokens</a>, return null.
 
- <li>Return the <var>index</var>th token in
+ <li>Return the <var>index</var><sup>th</sup> token in
  <a>tokens</a>.
 </ol>
 
