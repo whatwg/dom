@@ -88,7 +88,7 @@
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated
-    <time class="dt-updated" datetime="2015-07-28">28 July 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-07-29">29 July 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -1997,18 +1997,6 @@ into a <var>parent</var> before a <var>child</var>, with an optional
  list containing solely <var>node</var> otherwise.
 
  
-    <li>
-  If <var>node</var> is a <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code>
-  <a data-link-type="dfn" href="#concept-node">node</a>, <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a>
-  of "<code>childList</code>" for <var>node</var> with removedNodes
-  <var>nodes</var>.
-
-
-     <p class="note" role="note">Note: This step intentionally does not pay attention to the
-  <i>suppress observers flag</i>.</p>
-     
-
- 
     <li>If <var>node</var> is a <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code>
  <a data-link-type="dfn" href="#concept-node">node</a>,
  <a data-link-type="dfn" href="#concept-node-remove">remove</a> its
@@ -2016,15 +2004,15 @@ into a <var>parent</var> before a <var>child</var>, with an optional
  <i>suppress observers flag</i> set.
 
  
-    <li>If <i>suppress observers flag</i> is unset,
- <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with addedNodes <var>nodes</var>,
- nextSibling <var>child</var>, and previousSibling
- <var>child</var>’s
- <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a>
- or <var>parent</var>’s
- <a data-link-type="dfn" href="#concept-tree-last-child">last child</a> if
- <var>child</var> is null.
+    <li>
+  If <var>node</var> is a <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> <a data-link-type="dfn" href="#concept-node">node</a>,
+  <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+  <var>node</var> with removedNodes <var>nodes</var>.
+
+
+     <p class="note" role="note">Note: This step intentionally does not pay attention to the
+  <i>suppress observers flag</i>.</p>
+     
 
  
     <li>
@@ -2044,6 +2032,14 @@ into a <var>parent</var> before a <var>child</var>, with an optional
   
      </ol>
      
+
+ 
+    <li>If <i>suppress observers flag</i> is unset,
+ <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ <var>parent</var> with addedNodes <var>nodes</var>, nextSibling
+ <var>child</var>, and previousSibling <var>child</var>’s
+ <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> or <var>parent</var>’s <a data-link-type="dfn" href="#concept-tree-last-child">last child</a> if
+ <var>child</var> is null.
 </ol>
 
 
@@ -2317,32 +2313,28 @@ steps:</p>
  <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a>
 
  
-    <li>If <i>suppress observers flag</i> is unset,
- <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with removedNodes a list solely containing
- <var>node</var>, nextSibling <var>node</var>’s
- <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>,
- and previousSibling <var>oldPreviousSibling</var>.
-
- 
-    <li>For each <a data-link-type="dfn" href="#concept-tree-ancestor">ancestor</a>
- <var>ancestor</var> of <var>node</var>, if
- <var>ancestor</var> has any
- <a data-link-type="dfn" href="#registered-observer">registered observers</a> whose
- <b>options</b>'
- <code class="idl"><a data-link-type="idl" href="#dom-mutationobserverinit-subtree">subtree</a></code> is true, then
- for each such <a data-link-type="dfn" href="#registered-observer">registered observer</a> <var>registered</var>, append a
- <a data-link-type="dfn" href="#transient-registered-observer">transient registered observer</a> whose <b>observer</b> and
- <b>options</b> are identical to those of <var>registered</var> and <b>source</b>
- which is <var>registered</var> to <var>node</var>’s list of
- <a data-link-type="dfn" href="#registered-observer">registered observers</a>.
-
- 
     <li>Remove <var>node</var> from its <var>parent</var>.
 
  
     <li>Run the <a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with
  <var>node</var>, <var>parent</var>, and <var>oldPreviousSibling</var>.
+
+ 
+    <li>For each <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestor</a> <var>ancestor</var> of
+ <var>parent</var>, if <var>ancestor</var> has any <a data-link-type="dfn" href="#registered-observer">registered observers</a>
+ whose <b>options</b>' <code class="idl"><a data-link-type="idl" href="#dom-mutationobserverinit-subtree">subtree</a></code> is true, then for each
+ such <a data-link-type="dfn" href="#registered-observer">registered observer</a> <var>registered</var>, append a
+ <a data-link-type="dfn" href="#transient-registered-observer">transient registered observer</a> whose <b>observer</b> and <b>options</b>
+ are identical to those of <var>registered</var> and <b>source</b>  which is
+ <var>registered</var> to <var>node</var>’s list of
+ <a data-link-type="dfn" href="#registered-observer">registered observers</a>.
+
+ 
+    <li>If <i>suppress observers flag</i> is unset,
+ <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for
+ <var>parent</var> with removedNodes a list solely containing <var>node</var>,
+ nextSibling <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>, and previousSibling
+ <var>oldPreviousSibling</var>.
 </ol>
 
 
