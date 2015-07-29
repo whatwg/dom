@@ -1483,30 +1483,19 @@ into a <var>parent</var> before a <var>child</var>, with an optional
  a {{DocumentFragment}} <a>node</a>, and a
  list containing solely <var>node</var> otherwise.
 
- <li>
-  If <var>node</var> is a {{DocumentFragment}}
-  <a>node</a>, <a>queue a mutation record</a>
-  of "<code>childList</code>" for <var>node</var> with removedNodes
-  <var>nodes</var>.
-
-  Note: This step intentionally does not pay attention to the
-  <i>suppress observers flag</i>.
-
  <li>If <var>node</var> is a {{DocumentFragment}}
  <a>node</a>,
  <a>remove</a> its
  <a>children</a> with the
  <i>suppress observers flag</i> set.
 
- <li>If <i>suppress observers flag</i> is unset,
- <a>queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with addedNodes <var>nodes</var>,
- nextSibling <var>child</var>, and previousSibling
- <var>child</var>'s
- <a>previous sibling</a>
- or <var>parent</var>'s
- <a>last child</a> if
- <var>child</var> is null.
+ <li>
+  If <var>node</var> is a {{DocumentFragment}} <a>node</a>,
+  <a>queue a mutation record</a> of "<code>childList</code>" for
+  <var>node</var> with removedNodes <var>nodes</var>.
+
+  Note: This step intentionally does not pay attention to the
+  <i>suppress observers flag</i>.
 
  <li>
   For each <var>newNode</var> in <var>nodes</var>, in
@@ -1520,6 +1509,14 @@ into a <var>parent</var> before a <var>child</var>, with an optional
    <li>Run the <a>insertion steps</a> with
    <var>newNode</var>.
   </ol>
+
+ <li>If <i>suppress observers flag</i> is unset,
+ <a>queue a mutation record</a> of "<code>childList</code>" for
+ <var>parent</var> with addedNodes <var>nodes</var>, nextSibling
+ <var>child</var>, and previousSibling <var>child</var>'s
+ <a>previous sibling</a> or <var>parent</var>'s <a>last child</a> if
+ <var>child</var> is null.
+
 </ol>
 
 
@@ -1740,29 +1737,25 @@ steps:
  <li>Let <var>oldPreviousSibling</var> be <var>node</var>'s
  <a>previous sibling</a>
 
- <li>If <i>suppress observers flag</i> is unset,
- <a>queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with removedNodes a list solely containing
- <var>node</var>, nextSibling <var>node</var>'s
- <a>next sibling</a>,
- and previousSibling <var>oldPreviousSibling</var>.
-
- <li>For each <a>ancestor</a>
- <var>ancestor</var> of <var>node</var>, if
- <var>ancestor</var> has any
- <a>registered observers</a> whose
- <b>options</b>'
- {{MutationObserverInit/subtree}} is true, then
- for each such <a>registered observer</a> <var>registered</var>, append a
- <a>transient registered observer</a> whose <b>observer</b> and
- <b>options</b> are identical to those of <var>registered</var> and <b>source</b>
- which is <var>registered</var> to <var>node</var>'s list of
- <a>registered observers</a>.
-
  <li>Remove <var>node</var> from its <var>parent</var>.
 
  <li>Run the <a>removing steps</a> with
  <var>node</var>, <var>parent</var>, and <var>oldPreviousSibling</var>.
+
+ <li>For each <a>inclusive ancestor</a> <var>ancestor</var> of
+ <var>parent</var>, if <var>ancestor</var> has any <a>registered observers</a>
+ whose <b>options</b>' {{MutationObserverInit/subtree}} is true, then for each
+ such <a>registered observer</a> <var>registered</var>, append a
+ <a>transient registered observer</a> whose <b>observer</b> and <b>options</b>
+ are identical to those of <var>registered</var> and <b>source</b>  which is
+ <var>registered</var> to <var>node</var>'s list of
+ <a>registered observers</a>.
+
+ <li>If <i>suppress observers flag</i> is unset,
+ <a>queue a mutation record</a> of "<code>childList</code>" for
+ <var>parent</var> with removedNodes a list solely containing <var>node</var>,
+ nextSibling <var>node</var>'s <a>next sibling</a>, and previousSibling
+ <var>oldPreviousSibling</var>.
 </ol>
 
 
