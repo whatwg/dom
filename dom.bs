@@ -413,8 +413,48 @@ The <dfn export id=concept-ordered-set-serializer>ordered set serializer</dfn> t
 <var>set</var>, separated from each other by U+0020.
 
 
-<h3 id='namespaces'>
-Namespaces</h3>
+<h3 id=selectors>Selectors</h3>
+
+To <dfn export>match a relative selectors string</dfn> <var>relativeSelectors</var>
+against a <var>set</var>, run these steps:
+
+<ol>
+ <li>Let <var>s</var> be the result of
+ <a>parse a relative selector</a> from
+ <var>relativeSelectors</var> against <var>set</var>.
+ [[!SELECTORS4]]
+
+ <li>If <var>s</var> is failure, <a>throw</a> a {{SyntaxError}}.
+
+ <li>Return the result of <a>evaluate a selector</a> <var>s</var>
+  using <a>:scope elements</a> <var>set</var>. [[!SELECTORS4]]
+</ol>
+
+To <dfn export>scope-match a selectors string</dfn> <var>selectors</var> against a
+<var>node</var>, run these steps:
+
+<ol>
+ <li>Let <var>s</var> be the result of
+ <a>parse a selector</a> <var>selectors</var>.
+ [[!SELECTORS4]]
+
+ <li>If <var>s</var> is failure, <a>throw</a> a
+ {{SyntaxError}}.
+
+ <li>Return the result of <a>evaluate a selector</a>
+ <var>s</var> against
+ <var>node</var>'s <a for=tree>root</a> using
+ <a>scoping root</a> <var>node</var> and
+ scoping method
+ <a>scope-filtered</a>.
+ [[!SELECTORS4]].
+</ol>
+
+<p class=note>Support for namespaces within selectors is not planned and will not be
+added.
+
+
+<h3 id=namespaces>Namespaces</h3>
 
 The <dfn export>HTML namespace</dfn> is
 <code>http://www.w3.org/1999/xhtml</code>.
@@ -1953,68 +1993,28 @@ method must run these steps:
  <var>node</var> to the <a>context object</a>.
 </ol>
 
-To <dfn export>match a relative selectors string</dfn> <var>relativeSelectors</var>
-against a <var>set</var>, run these steps:
-
-<ol>
- <li>Let <var>s</var> be the result of
- <a>parse a relative selector</a> from
- <var>relativeSelectors</var> against <var>set</var>.
- [[!SELECTORS4]]
-
- <li>If <var>s</var> is failure, <a>throw</a> a {{SyntaxError}}.
-
- <li>Return the result of <a>evaluate a selector</a> <var>s</var>
-  using <a>:scope elements</a> <var>set</var>. [[!SELECTORS4]]
-</ol>
-
-The
-<dfn method for=ParentNode>query(<var>relativeSelectors</var>)</dfn>
-method must return the first result of running
+The <dfn method for=ParentNode><code>query(<var>relativeSelectors</var>)</code></dfn>
+method, when invoked, must return the first result of running
 <a>match a relative selectors string</a> <var>relativeSelectors</var> against
 a set consisting of <a>context object</a>, and null if the result is an empty list.
 
-The
-<dfn method for=ParentNode>queryAll(<var>relativeSelectors</var>)</dfn>
-method must return an {{Elements}} array initialized with the result of running
-<a>match a relative selectors string</a> <var>relativeSelectors</var> against
+The <dfn method for=ParentNode><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method, when invoked, must return an {{Elements}} array initialized with the result of
+running <a>match a relative selectors string</a> <var>relativeSelectors</var> against
 a set consisting of <a>context object</a>.
 
-To <dfn export>scope-match a selectors string</dfn> <var>selectors</var> against a
-<var>node</var>, run these steps:
+The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn>
+method, when invoked, must return the first result of running
+<a>scope-match a selectors string</a> <var>selectors</var> against the
+<a>context object</a>, and null if the result is an empty list otherwise.
 
-<ol>
- <li>Let <var>s</var> be the result of
- <a>parse a selector</a> <var>selectors</var>.
- [[!SELECTORS4]]
-
- <li>If <var>s</var> is failure, <a>throw</a> a
- {{SyntaxError}}.
-
- <li>Return the result of <a>evaluate a selector</a>
- <var>s</var> against
- <var>node</var>'s <a for=tree>root</a> using
- <a>scoping root</a> <var>node</var> and
- scoping method
- <a>scope-filtered</a>.
- [[!SELECTORS4]].
-</ol>
-
-The
-<dfn method for=ParentNode>querySelector(<var>selectors</var>)</dfn>
-method must return the first result of running <a>scope-match a selectors string</a>
-<var>selectors</var> against the <a>context object</a>, and null if the result
-is an empty list otherwise.
-
-The
-<dfn method for="ParentNode">querySelectorAll(<var>selectors</var>)</dfn>
-method must return the <a lt="static collection">static</a> result of
+The <dfn method for="ParentNode"><code>querySelectorAll(<var>selectors</var>)</code></dfn>
+method, when invoked, must return the <a lt="static collection">static</a> result of
 running <a>scope-match a selectors string</a> <var>selectors</var> against the
 <a>context object</a>.
 
 
-<h4 id='interface-nondocumenttypechildnode'>
-Interface {{NonDocumentTypeChildNode}}</h4>
+<h4 id=interface-nondocumenttypechildnode>Interface {{NonDocumentTypeChildNode}}</h4>
 
 Note: The {{previousElementSibling}} and {{nextElementSibling}}
 attributes have been removed from {{DocumentType}} nodes for compatibility
@@ -2214,17 +2214,16 @@ than <a>elements</a> a simple {{Array}} can be used.)
   match <var>relativeSelectors</var>.
 </dl>
 
-The
-<dfn method for=Elements>query(<var>relativeSelectors</var>)</dfn>
-method must return the first result of running
+The <dfn method for=Elements><code>query(<var>relativeSelectors</var>)</code></dfn>
+method, when invoked, must return the first result of running
 <a>match a relative selectors string</a> <var>relativeSelectors</var>
 against the <a>context object</a>, and null if the result is an empty list.
 
-The
-<dfn method for=Elements>queryAll(<var>relativeSelectors</var>)</dfn>
-method must return the result of running <code class='lang-javascript'>this.constructor</code> with the
-result of running <a>match a relative selectors string</a>
-<var>relativeSelectors</var> against the <a>context object</a>.
+The <dfn method for=Elements><code>queryAll(<var>relativeSelectors</var>)</code></dfn>
+method, when invoked, must return the result of running
+<code class='lang-javascript'>this.constructor</code> with the result of running
+<a>match a relative selectors string</a> <var>relativeSelectors</var> against the
+<a>context object</a>.
 
 
 <h4 id='old-style-collections'>
@@ -5732,7 +5731,7 @@ method, when invoked, must run these steps:
  <var>element</var>, and false otherwise.
 </dl>
 
-The <dfn method for="Element">closest(<var>selectors</var>)</dfn>
+The <dfn method for=Element><code>closest(<var>selectors</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
@@ -5757,7 +5756,7 @@ method, when invoked, must run these steps:
  <li>Return null.
 </ol>
 
-The <dfn method for="Element">matches(<var>selectors</var>)</dfn>
+The <dfn method for=Element><code>matches(<var>selectors</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>

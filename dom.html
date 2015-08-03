@@ -141,8 +141,8 @@ Terminology</span></a>
 Trees</span></a>
       <li><a href="#strings"><span class="secno">2.2</span> <span class="content">Strings</span></a>
       <li><a href="#ordered sets"><span class="secno">2.3</span> <span class="content">Ordered sets</span></a>
-      <li><a href="#namespaces"><span class="secno">2.4</span> <span class="content">
-Namespaces</span></a>
+      <li><a href="#selectors"><span class="secno">2.4</span> <span class="content">Selectors</span></a>
+      <li><a href="#namespaces"><span class="secno">2.5</span> <span class="content">Namespaces</span></a>
      </ul>
     <li><a href="#events"><span class="secno">3</span> <span class="content">Events</span></a>
      <ul class="toc">
@@ -170,8 +170,7 @@ Mutation algorithms</span></a>
         <li><a href="#interface-nonelementparentnode"><span class="secno">4.2.2</span> <span class="content">
 Interface <code>NonElementParentNode</code></span></a>
         <li><a href="#interface-parentnode"><span class="secno">4.2.3</span> <span class="content">Interface <code>ParentNode</code></span></a>
-        <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.4</span> <span class="content">
-Interface <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
+        <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.4</span> <span class="content">Interface <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
         <li><a href="#interface-childnode"><span class="secno">4.2.5</span> <span class="content">Interface <code class="idl"><span>ChildNode</span></code></span></a>
         <li><a href="#element-collections"><span class="secno">4.2.6</span> <span class="content">
 Collections: <code class="idl"><span>Elements</span></code></span></a>
@@ -631,8 +630,60 @@ return value.</p>
 
 
 
-   <h3 class="heading settled" data-level="2.4" id="namespaces"><span class="secno">2.4. </span><span class="content">
-Namespaces</span><a class="self-link" href="#namespaces"></a></h3>
+   <h3 class="heading settled" data-level="2.4" id="selectors"><span class="secno">2.4. </span><span class="content">Selectors</span><a class="self-link" href="#selectors"></a></h3>
+
+
+   <p>To <dfn data-dfn-type="dfn" data-export="" id="match-a-relative-selectors-string">match a relative selectors string<a class="self-link" href="#match-a-relative-selectors-string"></a></dfn> <var>relativeSelectors</var>
+against a <var>set</var>, run these steps:</p>
+
+
+   <ol>
+ 
+    <li>Let <var>s</var> be the result of
+ <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#parse-a-relative-selector">parse a relative selector</a> from
+ <var>relativeSelectors</var> against <var>set</var>.
+ <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
+
+ 
+    <li>If <var>s</var> is failure, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code>.
+
+ 
+    <li>Return the result of <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#evaluate-a-selector">evaluate a selector</a> <var>s</var>
+  using <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scope-element">:scope elements</a> <var>set</var>. <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
+</ol>
+
+
+   <p>To <dfn data-dfn-type="dfn" data-export="" id="scope_match-a-selectors-string">scope-match a selectors string<a class="self-link" href="#scope_match-a-selectors-string"></a></dfn> <var>selectors</var> against a
+<var>node</var>, run these steps:</p>
+
+
+   <ol>
+ 
+    <li>Let <var>s</var> be the result of
+ <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#parse-a-selector">parse a selector</a> <var>selectors</var>.
+ <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
+
+ 
+    <li>If <var>s</var> is failure, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a
+ <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code>.
+
+ 
+    <li>Return the result of <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#evaluate-a-selector">evaluate a selector</a>
+ <var>s</var> against
+ <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> using
+ <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scoping-root">scoping root</a> <var>node</var> and
+ scoping method
+ <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scope_filtered">scope-filtered</a>.
+ <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>.
+</ol>
+
+
+   <p class="note" role="note">Support for namespaces within selectors is not planned and will not be
+added.
+
+
+</p>
+   <h3 class="heading settled" data-level="2.5" id="namespaces"><span class="secno">2.5. </span><span class="content">Namespaces</span><a class="self-link" href="#namespaces"></a></h3>
 
 
    <p>The <dfn data-dfn-type="dfn" data-export="" id="html-namespace">HTML namespace<a class="self-link" href="#html-namespace"></a></dfn> is
@@ -2589,82 +2640,32 @@ method must run these steps:</p>
 </ol>
 
 
-   <p>To <dfn data-dfn-type="dfn" data-export="" id="match-a-relative-selectors-string">match a relative selectors string<a class="self-link" href="#match-a-relative-selectors-string"></a></dfn> <var>relativeSelectors</var>
-against a <var>set</var>, run these steps:</p>
-
-
-   <ol>
- 
-    <li>Let <var>s</var> be the result of
- <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#parse-a-relative-selector">parse a relative selector</a> from
- <var>relativeSelectors</var> against <var>set</var>.
- <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
-
- 
-    <li>If <var>s</var> is failure, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code>.
-
- 
-    <li>Return the result of <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#evaluate-a-selector">evaluate a selector</a> <var>s</var>
-  using <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scope-element">:scope elements</a> <var>set</var>. <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
-</ol>
-
-
-   <p>The
-<dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-query">query(<var>relativeSelectors</var>)<a class="self-link" href="#dom-parentnode-query"></a></dfn>
-method must return the first result of running
+   <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-query"><code>query(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-parentnode-query"></a></dfn>
+method, when invoked, must return the first result of running
 <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against
 a set consisting of <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list.</p>
 
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryall">queryAll(<var>relativeSelectors</var>)<a class="self-link" href="#dom-parentnode-queryall"></a></dfn>
-method must return an <code class="idl"><a data-link-type="idl">Elements</a></code> array initialized with the result of running
-<a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against
+   <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryall"><code>queryAll(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-parentnode-queryall"></a></dfn>
+method, when invoked, must return an <code class="idl"><a data-link-type="idl">Elements</a></code> array initialized with the result of
+running <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against
 a set consisting of <a data-link-type="dfn" href="#context-object">context object</a>.</p>
 
 
-   <p>To <dfn data-dfn-type="dfn" data-export="" id="scope_match-a-selectors-string">scope-match a selectors string<a class="self-link" href="#scope_match-a-selectors-string"></a></dfn> <var>selectors</var> against a
-<var>node</var>, run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselector"><code>querySelector(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselector"></a></dfn>
+method, when invoked, must return the first result of running
+<a data-link-type="dfn" href="#scope_match-a-selectors-string">scope-match a selectors string</a> <var>selectors</var> against the
+<a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list otherwise.</p>
 
 
-   <ol>
- 
-    <li>Let <var>s</var> be the result of
- <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#parse-a-selector">parse a selector</a> <var>selectors</var>.
- <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>
-
- 
-    <li>If <var>s</var> is failure, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a
- <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code>.
-
- 
-    <li>Return the result of <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#evaluate-a-selector">evaluate a selector</a>
- <var>s</var> against
- <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> using
- <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scoping-root">scoping root</a> <var>node</var> and
- scoping method
- <a data-link-type="dfn" href="https://drafts.csswg.org/selectors-4/#scope_filtered">scope-filtered</a>.
- <a data-link-type="biblio" href="#biblio-selectors4">[SELECTORS4]</a>.
-</ol>
-
-
-   <p>The
-<dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselector">querySelector(<var>selectors</var>)<a class="self-link" href="#dom-parentnode-queryselector"></a></dfn>
-method must return the first result of running <a data-link-type="dfn" href="#scope_match-a-selectors-string">scope-match a selectors string</a>
-<var>selectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result
-is an empty list otherwise.</p>
-
-
-   <p>The
-<dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselectorall">querySelectorAll(<var>selectors</var>)<a class="self-link" href="#dom-parentnode-queryselectorall"></a></dfn>
-method must return the <a data-link-type="dfn" href="#concept-collection-static">static</a> result of
+   <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselectorall"><code>querySelectorAll(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselectorall"></a></dfn>
+method, when invoked, must return the <a data-link-type="dfn" href="#concept-collection-static">static</a> result of
 running <a data-link-type="dfn" href="#scope_match-a-selectors-string">scope-match a selectors string</a> <var>selectors</var> against the
 <a data-link-type="dfn" href="#context-object">context object</a>.</p>
 
 
 
-   <h4 class="heading settled" data-level="4.2.4" id="interface-nondocumenttypechildnode"><span class="secno">4.2.4. </span><span class="content">
-Interface <code class="idl"><a data-link-type="idl" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></span><a class="self-link" href="#interface-nondocumenttypechildnode"></a></h4>
+   <h4 class="heading settled" data-level="4.2.4" id="interface-nondocumenttypechildnode"><span class="secno">4.2.4. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></span><a class="self-link" href="#interface-nondocumenttypechildnode"></a></h4>
 
 
    <p class="note" role="note">Note: The <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code>
@@ -2944,18 +2945,17 @@ than <a data-link-type="dfn" href="#concept-element">elements</a> a simple <code
 </dl>
 
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-query">query(<var>relativeSelectors</var>)<a class="self-link" href="#dom-elements-query"></a></dfn>
-method must return the first result of running
+   <p>The <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-query"><code>query(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-elements-query"></a></dfn>
+method, when invoked, must return the first result of running
 <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var>
 against the <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list.</p>
 
 
-   <p>The
-<dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-queryall">queryAll(<var>relativeSelectors</var>)<a class="self-link" href="#dom-elements-queryall"></a></dfn>
-method must return the result of running <code class="lang-javascript highlight" highlight="javascript"><span class="k">this</span><span class="p">.</span><span class="nx">constructor</span></code> with the
-result of running <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a>
-<var>relativeSelectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-queryall"><code>queryAll(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-elements-queryall"></a></dfn>
+method, when invoked, must return the result of running
+<code class="lang-javascript highlight" highlight="javascript"><span class="k">this</span><span class="p">.</span><span class="nx">constructor</span></code> with the result of running
+<a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against the
+<a data-link-type="dfn" href="#context-object">context object</a>.</p>
 
 
 
@@ -7484,7 +7484,7 @@ method, when invoked, must run these steps:</p>
 </dl>
 
 
-   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-closest">closest(<var>selectors</var>)<a class="self-link" href="#dom-element-closest"></a></dfn>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-closest"><code>closest(<var>selectors</var>)</code><a class="self-link" href="#dom-element-closest"></a></dfn>
 method, when invoked, must run these steps:</p>
 
 
@@ -7516,7 +7516,7 @@ method, when invoked, must run these steps:</p>
 </ol>
 
 
-   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-matches">matches(<var>selectors</var>)<a class="self-link" href="#dom-element-matches"></a></dfn>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-matches"><code>matches(<var>selectors</var>)</code><a class="self-link" href="#dom-element-matches"></a></dfn>
 method, when invoked, must run these steps:</p>
 
 
@@ -12174,7 +12174,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-range-compareboundarypoints-how-sourcerange-how">how</a><span>, in §5.2</span>
    <li><a href="#htmlcollection">HTMLCollection</a><span>, in §4.2.7.2</span>
    <li><a href="#html-document">HTML document</a><span>, in §4.5</span>
-   <li><a href="#html-namespace">HTML namespace</a><span>, in §2.4</span>
+   <li><a href="#html-namespace">HTML namespace</a><span>, in §2.5</span>
    <li><a href="#dom-element-id">id</a><span>, in §4.8</span>
    <li><a href="#concept-id">ID</a><span>, in §4.8</span>
    <li><a href="#dom-document-implementation">implementation</a><span>, in §4.5</span>
@@ -12272,7 +12272,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#locate-a-namespace-prefix">locating a namespace prefix</a><span>, in §4.4</span>
    <li><a href="#dom-node-lookupnamespaceuri">lookupNamespaceURI(prefix)</a><span>, in §4.4</span>
    <li><a href="#dom-node-lookupprefix">lookupPrefix(namespace)</a><span>, in §4.4</span>
-   <li><a href="#match-a-relative-selectors-string">match a relative selectors string</a><span>, in §4.2.3</span>
+   <li><a href="#match-a-relative-selectors-string">match a relative selectors string</a><span>, in §2.4</span>
    <li><a href="#dom-element-matches">matches(selectors)</a><span>, in §4.8</span>
    <li><a href="#concept-document-mode">mode</a><span>, in §4.5</span>
    <li><a href="#callbackdef-mutationcallback">MutationCallback</a><span>, in §4.3.1</span>
@@ -12551,7 +12551,7 @@ namespace and local name localName</a><span>, in §4.4</span>
      <li><a href="#dom-treewalker-root">attribute for TreeWalker</a><span>, in §6.2</span>
     </ul>
    <li><a href="#dom-element-schematypeinfo">schemaTypeInfo</a><span>, in §8.2</span>
-   <li><a href="#scope_match-a-selectors-string">scope-match a selectors string</a><span>, in §4.2.3</span>
+   <li><a href="#scope_match-a-selectors-string">scope-match a selectors string</a><span>, in §2.4</span>
    <li><a href="#concept-range-select">select</a><span>, in §5.2</span>
    <li><a href="#dom-range-selectnodecontents">selectNodeContents(node)</a><span>, in §5.2</span>
    <li><a href="#dom-range-selectnode">selectNode(node)</a><span>, in §5.2</span>
@@ -12692,8 +12692,8 @@ namespace and local name localName</a><span>, in §4.4</span>
      <li><a href="#dom-document-url">attribute for Document</a><span>, in §4.5</span>
     </ul>
    <li><a href="#userdatahandler">UserDataHandler</a><span>, in §8.2</span>
-   <li><a href="#validate">validate</a><span>, in §2.4</span>
-   <li><a href="#validate-and-extract">validate and extract</a><span>, in §2.4</span>
+   <li><a href="#validate">validate</a><span>, in §2.5</span>
+   <li><a href="#validate-and-extract">validate and extract</a><span>, in §2.5</span>
    <li>value
     <ul>
      <li><a href="#dom-element-setattribute-name-value-value">argument for Element/setAttribute(name, value)</a><span>, in §4.8</span>
@@ -12714,8 +12714,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#xmldocument">XMLDocument</a><span>, in §4.5</span>
    <li><a href="#xml-document">XML document</a><span>, in §4.5</span>
    <li><a href="#dom-document-xmlencoding">xmlEncoding</a><span>, in §8.2</span>
-   <li><a href="#xml-namespace">XML namespace</a><span>, in §2.4</span>
-   <li><a href="#xmlns-namespace">XMLNS namespace</a><span>, in §2.4</span>
+   <li><a href="#xml-namespace">XML namespace</a><span>, in §2.5</span>
+   <li><a href="#xmlns-namespace">XMLNS namespace</a><span>, in §2.5</span>
    <li><a href="#dom-document-xmlstandalone">xmlStandalone</a><span>, in §8.2</span>
    <li><a href="#dom-document-xmlversion">xmlVersion</a><span>, in §8.2</span></ul>
   <h3 class="no-num heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
