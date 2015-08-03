@@ -3466,11 +3466,7 @@ dom-Range-extractContents, dom-Range-cloneContents -->
    <dt>{{Document}}
    <dd>Its <a for=Document>encoding</a>,
    <a for=Document>content type</a>,
-   <a for=Document>URL</a>, its mode
-   (<a>quirks mode</a>,
-   <a>limited-quirks mode</a>, or
-   <a>no-quirks mode</a>), and its type
-   (<a>XML document</a> or <a>HTML document</a>).
+   <a for=Document>URL</a>, <a for=Document>type</a>, and <a for=Document>mode</a>.
 
    <dt>{{DocumentType}}
    <dd>Its <a for=DocumentType>name</a>,
@@ -3989,11 +3985,9 @@ for a <a>node</a> <var>root</var> is the
   <a>elements</a> that have all their
   <a>classes</a> in <var>classes</var>.
 
-  The comparisons for the <a>classes</a> must be done
-  in an <a>ASCII case-insensitive</a> manner if <var>root</var>'s
-  <a>node document</a> is in
-  <a>quirks mode</a>, and in a
-  <a>case-sensitive</a> manner otherwise.
+  The comparisons for the <a>classes</a> must be done in an <a>ASCII case-insensitive</a>
+  manner if <var>root</var>'s <a>node document</a>'s <a for=Document>mode</a> is
+  "<code>quirks</code>", and in a <a>case-sensitive</a> manner otherwise.
 </ol>
 
 When invoked with the same argument, the same {{HTMLCollection}}
@@ -4052,42 +4046,49 @@ interface XMLDocument : Document {};
 known as <dfn export id=concept-document lt="document">documents</dfn>.
 
 Each <a>document</a> has an associated
-<dfn export for=Document id=concept-document-base-url>base URL</dfn>,
-<dfn export for=Document id=concept-document-encoding>encoding</dfn>,
-<dfn export for=Document id=concept-document-content-type>content type</dfn>, and
-<dfn export for=Document id=concept-document-url>URL</dfn>.
+<dfn export for=Document id=concept-document-base-url>base URL</dfn> (a <a spec=url>URL</a>),
+<dfn export for=Document id=concept-document-encoding>encoding</dfn> (an <a for="/">encoding</a>),
+<dfn export for=Document id=concept-document-content-type>content type</dfn> (a string),
+<dfn export for=Document id=concept-document-url>URL</dfn> (a <a spec=url>URL</a>),
+<dfn export for=Document id=concept-document-type>type</dfn> ("<code>xml</code>" or "<code>html</code>"), and
+<dfn export for=Document id=concept-document-mode>mode</dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>").
 [[!ENCODING]]
 [[!URL]]
 
 Unless stated otherwise, a <a>document</a>'s <a for=Document>base URL</a> is
 "<code>about:blank</code>", <a for=Document>encoding</a> is the <a>utf-8</a>
 <a for="/">encoding</a>, <a for=Document>content type</a> is
-"<code>application/xml</code>", and its <a for=Document>URL</a> is
-"<code>about:blank</code>".
+"<code>application/xml</code>", <a for=Document>URL</a> is "<code>about:blank</code>",
+<a for=Document>type</a> is "<code>xml</code>", and its
+<a for=Document>mode</a> is "<code>no-quirks</code>".
 
 Unless stated otherwise, a <a>document</a>'s <a>origin</a> is a globally unique identifier
 and its <a>effective script origin</a> is an <a lt="origin alias">alias</a> of that
 <a>origin</a>. [[!HTML]]
 
-A <a>document</a> is assumed to be an <dfn export>XML document</dfn>
-unless it is flagged as being an <dfn export>HTML document</dfn>.
-Whether a <a>document</a> is an <a>HTML document</a> or an <a>XML document</a>
+A <a>document</a> is said to be an <dfn export>XML document</dfn> if its
+<a for=Document>type</a> is "<code>xml</code>", and an <dfn export>HTML document</dfn>
+otherwise. Whether a <a>document</a> is an <a>HTML document</a> or an <a>XML document</a>
 affects the behavior of certain APIs.
 
-A <a>document</a> is always set to one of three modes:
-<dfn export id=concept-document-no-quirks>no-quirks mode</dfn>, the default;
-<dfn export id=concept-document-quirks>quirks mode</dfn>, used typically for legacy documents;
-and <dfn export id=concept-document-limited-quirks>limited-quirks mode</dfn>.
-Unless stated otherwise, a <a>document</a> must be in <a>no-quirks mode</a>.
+A <a>document</a> is said to be in
+<dfn export id=concept-document-no-quirks>no-quirks mode</dfn> if its
+<a for=Document>mode</a> is "<code>no-quirks</code>",
+<dfn export id=concept-document-quirks>quirks mode</dfn> if its <a for=Document>mode</a>
+is "<code>quirks</code>", and
+<dfn export id=concept-document-limited-quirks>limited-quirks mode</dfn> if its
+<a for=Document>mode</a> is "<code>limited-quirks</code>".
 
-Note: The mode is only ever changed from the default if the <a>document</a> is created by
-the <a>HTML parser</a>, based on the presence, absence, or value of the DOCTYPE string.
-[[!HTML]]
+<div class="note no-backref">
+ <p>The mode is only ever changed from the default if the <a>document</a> is created by
+ the <a>HTML parser</a>, based on the presence, absence, or value of the DOCTYPE string.
+ [[!HTML]]
 
-<p class="note no-backref"><a>No-quirks mode</a> was originally known as "standards mode"
-and <a>limited-quirks mode</a> was once known as "almost standards mode". They have been
-renamed because their details are now defined by standards. (And because Ian Hickson
-vetoed their original names on the basis that they are nonsensical.)
+ <p><a>No-quirks mode</a> was originally known as "standards mode"
+ and <a>limited-quirks mode</a> was once known as "almost standards mode". They have been
+ renamed because their details are now defined by standards. (And because Ian Hickson
+ vetoed their original names on the basis that they are nonsensical.)
+</div>
 
 <hr>
 
@@ -4107,12 +4108,9 @@ vetoed their original names on the basis that they are nonsensical.)
 
  <dt><code><var>document</var> . {{Document/compatMode}}</code>
  <dd>
-  Returns the string "<code>CSS1Compat</code>" if
-  <var>document</var> is in
-  <a>no-quirks mode</a> or
-  <a>limited-quirks mode</a>, and
-  "<code>BackCompat</code>", if <var>document</var> is in
-  <a>quirks mode</a>.
+  Returns the string "<code>BackCompat</code>" if <var>document</var>'s
+  <a for=Document>mode</a> is "<code>quirks</code>", and "<code>CSS1Compat</code>"
+  otherwise.
 
  <dt><code><var>document</var> . {{Document/characterSet}}</code>
  <dd>Returns <var>document</var>'s
@@ -4154,11 +4152,9 @@ attribute must return the
 <a lt="Unicode serialization of an origin">Unicode serialization</a>
 of <a>context object</a>'s <a>origin</a>.
 
-The <dfn attribute for="Document">compatMode</dfn>
-attribute must return "<code>BackCompat</code>" if the
-<a>context object</a> is in
-<a>quirks mode</a>, and
-"<code>CSS1Compat</code>" otherwise.
+The <dfn attribute for="Document"><code>compatMode</code></dfn> attribute's getter must
+return "<code>BackCompat</code>" if <a>context object</a>'s <a for=Document>mode</a> is
+"<code>quirks</code>", and "<code>CSS1Compat</code>" otherwise.
 
 The <dfn attribute for="Document">characterSet</dfn> attribute's
 getter and <dfn attribute for="Document">inputEncoding</dfn>
