@@ -3459,40 +3459,34 @@ run these steps:
 dom-Range-extractContents, dom-Range-cloneContents -->
 
 <ol>
- <li>If <var>document</var> is not given, let <var>document</var> be
- <var>node</var>'s <a>node document</a>.
-
- <li>Let <var>copy</var> be a <a>node</a>
- that implements the same interfaces as <var>node</var>.
+ <li><p>If <var>document</var> is not given, let <var>document</var> be <var>node</var>'s
+ <a>node document</a>.
 
  <li>
-  If <var>copy</var> is a
-  <a>document</a>, set its
-  <a>node document</a> and
-  <var>document</var> to <var>copy</var>.
-  Otherwise, set <var>copy</var>'s
-  <a>node document</a> to
-  <var>document</var>.
+  <p>Let <var>copy</var> be a <a>node</a> that implements the same interfaces as
+  <var>node</var>, and fulfills these additional requirements, switching on
+  <var>node</var>:
 
- <li>
-  Copy the following from <var>node</var> to <var>copy</var>, depending on
-  the type of <var>node</var>:
   <dl class=switch>
    <dt>{{Document}}
-   <dd>Its <a for=Document>encoding</a>,
-   <a for=Document>content type</a>,
-   <a for=Document>URL</a>, <a for=Document>type</a>, and <a for=Document>mode</a>.
+   <dd>
+    <p>Set <var>copy</var>'s <a for=Document>encoding</a>,
+    <a for=Document>content type</a>, <a for=Document>URL</a>, <a for=Document>type</a>,
+    and <a for=Document>mode</a>, to those of <var>node</var>.
 
    <dt>{{DocumentType}}
-   <dd>Its <a for=DocumentType>name</a>,
-   <a>public ID</a>, and
-   <a>system ID</a>.
+   <dd><p>Set <var>copy</var>'s <a for=DocumentType>name</a>, <a>public ID</a>, and
+   <a>system ID</a>, to those of <var>node</var>.
 
    <dt>{{Element}}
-   <dd>Its <a for=Element>namespace</a>,
-   <a for=Element>namespace prefix</a>,
-   <a for=Element>local name</a>, and its
-   <a for=Element>attribute list</a>.
+   <dd>
+    <p>Set <var>copy</var>'s <a for=Element>namespace</a>,
+    <a for=Element>namespace prefix</a>, and <a for=Element>local name</a>, to those of
+    <var>node</var>.
+
+    <p>For each <a>attribute</a> in <var>node</var>'s <a for=Element>attribute list</a>,
+    in order, <a lt="append an attribute">append</a> a copy to <var>copy</var>'s
+    <a for=Element>attribute list</a>.
 
    <!--AttrExodus
    <dt>{{Attr}}
@@ -3501,25 +3495,27 @@ dom-Range-extractContents, dom-Range-cloneContents -->
 
    <dt>{{Text}}
    <dt>{{Comment}}
-   <dd>Its <a>data</a>.
+   <dd>Set <var>copy</var>'s <a>data</a>, to that of <var>node</var>.
 
    <dt>{{ProcessingInstruction}}
-   <dd>Its <a for=ProcessingInstruction>target</a> and <a>data</a>.
+   <dd>Set <var>copy</var>'s <a for=ProcessingInstruction>target</a> and <a>data</a> to
+   those of <var>node</var>.
 
    <dt>Any other node
    <dd>&mdash;
   </dl>
 
- <li>Run any <a>cloning steps</a>
- defined for <var>node</var> in <a>other applicable specifications</a> and
- pass <var>copy</var>, <var>node</var>, <var>document</var> and the
- <i>clone children flag</i> if set, as parameters.
+ <li><p>Set <var>copy</var>'s <a>node document</a> and <var>document</var> to
+ <var>copy</var>, if <var>copy</var> is a <a>document</a>, and set <var>copy</var>'s
+ <a>node document</a> to <var>document</var> otherwise.
 
- <li>If the <i>clone children flag</i> is set,
- <a lt="clone a node">clone</a> all the
- <a>children</a> of <var>node</var> and
- append them to <var>copy</var>, with <var>document</var>
- as specified and the <i>clone children flag</i> being set.
+ <li>Run any <a>cloning steps</a> defined for <var>node</var> in
+ <a>other applicable specifications</a> and pass <var>copy</var>, <var>node</var>,
+ <var>document</var> and the <i>clone children flag</i> if set, as parameters.
+
+ <li>If the <i>clone children flag</i> is set, <a lt="clone a node">clone</a> all the
+ <a>children</a> of <var>node</var> and append them to <var>copy</var>, with
+ <var>document</var> as specified and the <i>clone children flag</i> being set.
 
  <li>Return <var>copy</var>.
 </ol>
