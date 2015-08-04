@@ -1785,6 +1785,11 @@ steps:
  <var>index</var>, decrease its
  <a>end offset</a> by one.
 
+ <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
+ <a for=traversal>root</a>'s <a>node document</a> is <var>node</var>'s
+ <a>node document</a>, run the <a><code>NodeIterator</code> pre-removing steps</a> given
+ <var>node</var> and <var>iterator</var>.
+
  <li>Let <var>oldPreviousSibling</var> be <var>node</var>'s
  <a>previous sibling</a>
 
@@ -8130,9 +8135,8 @@ interface NodeIterator {
 };
 </pre>
 
-Note: {{NodeIterator}} objects can be created using the
-{{createNodeIterator()}}
-method.
+<p class="note no-backref">{{NodeIterator}} objects can be created using the
+{{createNodeIterator()}} method.
 
 Each {{NodeIterator}} object has an associated
 <dfn export for=NodeIterator>iterator collection</dfn>, which is a
@@ -8140,59 +8144,45 @@ Each {{NodeIterator}} object has an associated
 <a for="traversal">root</a>, whose filter matches any
 <a>node</a>.
 
-Each {{NodeIterator}} object has these
-<a>removing steps</a> with <var>oldNode</var>,
-<var>oldParent</var>, and <var>oldPreviousSibling</var>:
+<p class="note no-backref">As mentioned earlier, {{NodeIterator}} objects have an
+associated
+<a for="traversal">root</a> <a>node</a>,
+<a for="traversal">whatToShow</a> bitmask, and
+<a for="traversal">filter</a> callback as well.
+
+The <dfn><code>NodeIterator</code> pre-removing steps</dfn> given a
+<var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:
 
 <ol>
- <li>If <var>oldNode</var> is not an
- <a>inclusive ancestor</a> of the
- {{NodeIterator/referenceNode}} attribute value,
- terminate these steps.
+ <li><p>If <var>toBeRemovedNode</var> is not an <a>inclusive ancestor</a> of the
+ {{NodeIterator/referenceNode}} attribute value, terminate these steps.
 
  <li>
-  If the
-  {{NodeIterator/pointerBeforeReferenceNode}}
-  attribute value is true, run these substeps:
+  <p>If the {{NodeIterator/pointerBeforeReferenceNode}} attribute value is true, run these
+  substeps:
 
   <ol>
-   <li>Let <var>nextSibling</var> be <var>oldPreviousSibling</var>'s
-   <a>next sibling</a>, if
-   <var>oldPreviousSibling</var> is non-null, and <var>oldParent</var>'s
-   <a>first child</a> otherwise.
+   <li><p>Let <var>next</var> be <var>toBeRemovedNode</var>'s first <a>following</a>
+   <a>node</a> that is an <a>inclusive descendant</a> of <var>nodeIterator</var>'s
+   <a for=traversal>root</a> and is not an <a>inclusive descendant</a> of
+   <var>toBeRemovedNode</var>, and null if there is no such <a>node</a>.
 
-   <li>If <var>nextSibling</var> is non-null, set the
-   {{NodeIterator/referenceNode}} attribute to
-   <var>nextSibling</var> and terminate these steps.
-
-   <li>Let <var>next</var> be the first <a>node</a>
-   <a>following</a> <var>oldParent</var>.
-
-   <li>If <a for="traversal">root</a> is an
-   <a>inclusive ancestor</a> of
-   <var>next</var>, set the
-   {{NodeIterator/referenceNode}} attribute to
-   <var>next</var> and terminate these steps.
+   <li><p>If <var>next</var> is non-null, set <var>nodeIterator</var>'s
+   {{NodeIterator/referenceNode}} attribute to <var>next</var> and terminate these steps.
 
    <li>
-    Otherwise, set the
-    {{NodeIterator/pointerBeforeReferenceNode}}
-    attribute to false.
+    Otherwise, set <var>nodeIterator</var>'s
+    {{NodeIterator/pointerBeforeReferenceNode}} attribute to false.
 
     Note: Steps are not terminated here.
   </ol>
 
- <li>Set the {{NodeIterator/referenceNode}} attribute
- to the <a>inclusive descendant</a> of <var>oldPreviousSibling</var> that
- appears last in <a>tree order</a>, if <var>oldPreviousSibling</var> is non-null,
- and to <var>oldParent</var> otherwise.
+ <li><p>Set <var>nodeIterator</var>'s {{NodeIterator/referenceNode}} attribute to the
+ <a>inclusive descendant</a> of <var>toBeRemovedNode</var>'s <a>previous sibling</a> that
+ appears last in <a>tree order</a>, if <var>toBeRemovedNode</var>'s
+ <a>previous sibling</a> is non-null, and to <var>toBeRemovedNode</var>'s <a>parent</a>
+ otherwise.
 </ol>
-
-Note: As mentioned earlier {{NodeIterator}} objects have an
-associated <a for="traversal">root</a>
-<a>node</a>,
-<a for="traversal">whatToShow</a> bitmask, and
-<a for="traversal">filter</a> callback as well.
 
 <hr>
 

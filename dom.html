@@ -2373,6 +2373,13 @@ steps:</p>
  <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> by one.
 
  
+    <li>
+     <p>For each <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> object <var>iterator</var> whose
+ <a data-link-type="dfn" href="#concept-traversal-root">root</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a> is <var>node</var>’s
+ <a data-link-type="dfn" href="#concept-node-document">node document</a>, run the <a data-link-type="dfn" href="#nodeiterator-pre_removing-steps"><code>NodeIterator</code> pre-removing steps</a> given
+ <var>node</var> and <var>iterator</var>.
+
+ </p>
     <li>Let <var>oldPreviousSibling</var> be <var>node</var>’s
  <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a>
 
@@ -10297,11 +10304,10 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nod
 </pre>
 
 
-   <p class="note" role="note">Note: <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> objects can be created using the
-<code class="idl"><a data-link-type="idl" href="#dom-document-createnodeiterator">createNodeIterator()</a></code>
-method.</p>
+   <p class="note no-backref" role="note"><code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> objects can be created using the
+<code class="idl"><a data-link-type="idl" href="#dom-document-createnodeiterator">createNodeIterator()</a></code> method.
 
-
+</p>
    <p>Each <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> object has an associated
 <dfn data-dfn-for="NodeIterator" data-dfn-type="dfn" data-export="" id="iterator-collection">iterator collection<a class="self-link" href="#iterator-collection"></a></dfn>, which is a
 <a data-link-type="dfn" href="#concept-collection">collection</a> rooted at
@@ -10309,53 +10315,47 @@ method.</p>
 <a data-link-type="dfn" href="#concept-node">node</a>.</p>
 
 
-   <p>Each <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> object has these
-<a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with <var>oldNode</var>,
-<var>oldParent</var>, and <var>oldPreviousSibling</var>:</p>
+   <p class="note no-backref" role="note">As mentioned earlier, <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> objects have an
+associated
+<a data-link-type="dfn" href="#concept-traversal-root">root</a> <a data-link-type="dfn" href="#concept-node">node</a>,
+<a data-link-type="dfn" href="#concept-traversal-whatToShow">whatToShow</a> bitmask, and
+<a data-link-type="dfn" href="#concept-traversal-filter">filter</a> callback as well.
+
+</p>
+   <p>The <dfn data-dfn-type="dfn" data-noexport="" id="nodeiterator-pre_removing-steps"><code>NodeIterator</code> pre-removing steps<a class="self-link" href="#nodeiterator-pre_removing-steps"></a></dfn> given a
+<var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:</p>
 
 
    <ol>
  
-    <li>If <var>oldNode</var> is not an
- <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestor</a> of the
- <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute value,
- terminate these steps.
-
- 
     <li>
-  If the
-  <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-  attribute value is true, run these substeps:
+     <p>If <var>toBeRemovedNode</var> is not an <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestor</a> of the
+ <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute value, terminate these steps.
 
+ </p>
+    <li>
   
+     <p>If the <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code> attribute value is true, run these
+  substeps:
+
+  </p>
      <ol>
    
-      <li>Let <var>nextSibling</var> be <var>oldPreviousSibling</var>’s
-   <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>, if
-   <var>oldPreviousSibling</var> is non-null, and <var>oldParent</var>’s
-   <a data-link-type="dfn" href="#concept-tree-first-child">first child</a> otherwise.
-
-   
-      <li>If <var>nextSibling</var> is non-null, set the
-   <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute to
-   <var>nextSibling</var> and terminate these steps.
-
-   
-      <li>Let <var>next</var> be the first <a data-link-type="dfn" href="#concept-node">node</a>
-   <a data-link-type="dfn" href="#concept-tree-following">following</a> <var>oldParent</var>.
-
-   
-      <li>If <a data-link-type="dfn" href="#concept-traversal-root">root</a> is an
-   <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestor</a> of
-   <var>next</var>, set the
-   <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute to
-   <var>next</var> and terminate these steps.
-
-   
       <li>
-    Otherwise, set the
-    <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code>
-    attribute to false.
+       <p>Let <var>next</var> be <var>toBeRemovedNode</var>’s first <a data-link-type="dfn" href="#concept-tree-following">following</a>
+   <a data-link-type="dfn" href="#concept-node">node</a> that is an <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>nodeIterator</var>’s
+   <a data-link-type="dfn" href="#concept-traversal-root">root</a> and is not an <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of
+   <var>toBeRemovedNode</var>, and null if there is no such <a data-link-type="dfn" href="#concept-node">node</a>.
+
+   </p>
+      <li>
+       <p>If <var>next</var> is non-null, set <var>nodeIterator</var>’s
+   <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute to <var>next</var> and terminate these steps.
+
+   </p>
+      <li>
+    Otherwise, set <var>nodeIterator</var>’s
+    <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a></code> attribute to false.
 
 
        <p class="note" role="note">Note: Steps are not terminated here.</p>
@@ -10365,18 +10365,13 @@ method.</p>
      
 
  
-    <li>Set the <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute
- to the <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>oldPreviousSibling</var> that
- appears last in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, if <var>oldPreviousSibling</var> is non-null,
- and to <var>oldParent</var> otherwise.
-</ol>
-
-
-   <p class="note" role="note">Note: As mentioned earlier <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code> objects have an
-associated <a data-link-type="dfn" href="#concept-traversal-root">root</a>
-<a data-link-type="dfn" href="#concept-node">node</a>,
-<a data-link-type="dfn" href="#concept-traversal-whatToShow">whatToShow</a> bitmask, and
-<a data-link-type="dfn" href="#concept-traversal-filter">filter</a> callback as well.</p>
+    <li>
+     <p>Set <var>nodeIterator</var>’s <code class="idl"><a data-link-type="idl" href="#dom-nodeiterator-referencenode">referenceNode</a></code> attribute to the
+ <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>toBeRemovedNode</var>’s <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> that
+ appears last in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, if <var>toBeRemovedNode</var>’s
+ <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> is non-null, and to <var>toBeRemovedNode</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>
+ otherwise.
+</p></ol>
 
 
    <hr>
@@ -12368,6 +12363,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-node-document">node document</a><span>, in §4.4</span>
    <li><a href="#callbackdef-nodefilter">NodeFilter</a><span>, in §6.3</span>
    <li><a href="#nodeiterator">NodeIterator</a><span>, in §6.1</span>
+   <li><a href="#nodeiterator-pre_removing-steps">NodeIterator pre-removing steps</a><span>, in §6.1</span>
    <li><a href="#nodelist">NodeList</a><span>, in §4.2.7.1</span>
    <li><a href="#dom-node-nodename">nodeName</a><span>, in §4.4</span>
    <li>nodes
