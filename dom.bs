@@ -8673,202 +8673,150 @@ interface DOMTokenList {
 };
 </pre>
 
-A {{DOMTokenList}} object has an associated ordered set of
+<p>A {{DOMTokenList}} object has an associated ordered set of
 <dfn export id=concept-DTL-tokens for="DOMTokenList">tokens</dfn>, which is initially empty.
 
-A {{DOMTokenList}} object also has an associated
-<a for="/">element</a> and an
-<a>attribute</a>'s
+<p>A {{DOMTokenList}} object also has an associated <a for="/">element</a> and an <a>attribute</a>'s
 <a for=Attr>local name</a>.
 
-A {{DOMTokenList}} object's
-<dfn export id=concept-DTL-update for="DOMTokenList">update steps</dfn> are:
-
-<ol>
- <li>If there is no associated
- <a>attribute</a> (when the object is a
- {{DOMSettableTokenList}}), terminate these steps.
-
- <li><a>Set an attribute value</a>
- for the associated <a for="/">element</a> using
- associated <a>attribute</a>'s
- <a for=Attr>local name</a> and the result
- of running the <a>ordered set serializer</a>
- for <a>tokens</a>.
-</ol>
+<p>A {{DOMTokenList}} object's
+<dfn export id=concept-DTL-update for="DOMTokenList">update steps</dfn> are to
+<a>set an attribute value</a> for the associated <a for="/">element</a> using associated
+<a>attribute</a>'s <a for=Attr>local name</a> and the result of running the
+<a>ordered set serializer</a> for <a>tokens</a>.
 
 <dl class="domintro">
  <dt><code><var>tokenlist</var> . {{DOMTokenList/length}}</code>
- <dd>Returns the number of tokens.
+ <dd><p>Returns the number of tokens.
 
  <dt><code><var>tokenlist</var> . {{DOMTokenList/item(index)}}</code>
  <dt><code><var>tokenlist</var>[<var>index</var>]</code>
- <dd>Returns the token with index <var>index</var>.
+ <dd><p>Returns the token with index <var>index</var>.
 
  <dt><code><var>tokenlist</var> . {{DOMTokenList/contains(token)}}</code>
  <dd>
-  Returns true if <var>token</var> is present, and false otherwise.
-  Throws a {{SyntaxError}} exception if <var>token</var>
-  is the empty string.
-  Throws an {{InvalidCharacterError}} exception if
-  <var>token</var> contains any
+  <p>Returns true if <var>token</var> is present, and false otherwise.
+  <p>Throws a {{SyntaxError}} exception if <var>token</var> is the empty string.
+  <p>Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="add()">add(<var>tokens</var>&hellip;)</a></code>
  <dd>
-  Adds all arguments passed, except those already present.
-  Throws a {{SyntaxError}} exception if one if the arguments
-  is the empty string.
-  Throws an {{InvalidCharacterError}} exception if one of the
-  arguments contains any
+  <p>Adds all arguments passed, except those already present.
+  <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
-  Removes arguments passed, if they are present.
-  Throws a {{SyntaxError}} exception if one if the arguments
-  is the empty string.
-  Throws an {{InvalidCharacterError}} exception if one of the
-  arguments contains any
+  <p>Removes arguments passed, if they are present.
+  <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="toggle()">toggle(<var>token</var> [, <var>force</var>])</a></code>
  <dd>
-  If <var>force</var> is not given, "toggles"
-  <var>token</var>, removing it if it's present and adding it if it's
-  not. If <var>force</var> is true, adds <var>token</var> (same as {{add()}}).
-  If <var>force</var> is false, removes <var>token</var> (same as {{DOMTokenList/remove()}}).
-  Returns true if <var>token</var> is now present, and false otherwise.
-  Throws a {{SyntaxError}} exception if <var>token</var> is empty.
-  Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any spaces.
+  <p>If <var>force</var> is not given, "toggles" <var>token</var>, removing it if it's present and
+  adding it if it's not. If <var>force</var> is true, adds <var>token</var> (same as {{add()}}). If
+  <var>force</var> is false, removes <var>token</var> (same as {{DOMTokenList/remove()}}).
+  <p>Returns true if <var>token</var> is now present, and false otherwise.
+  <p>Throws a {{SyntaxError}} exception if <var>token</var> is empty.
+  <p>Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any spaces.
 </dl>
 
-<div class="impl">
+<p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return the
+number of tokens in the <a>tokens</a>.
 
-The <dfn attribute for=DOMTokenList>length</dfn>
-attribute must return the number of tokens in the
-<a>tokens</a>.
-
-The object's
-<a>supported property indices</a> are the
-numbers in the range zero to the number of tokens in
-<a>tokens</a> minus one, unless
-<a>tokens</a> is  empty, in which case there are no
+<p>The object's <a>supported property indices</a> are the numbers in the range zero to the number of
+tokens in <a>tokens</a> minus one, unless <a>tokens</a> is  empty, in which case there are no
 <a>supported property indices</a>.
 
-The
-<dfn method for="DOMTokenList">item(<var>index</var>)</dfn>
-method must run these steps:
+<p>The <dfn method for="DOMTokenList"><code>item(<var>index</var>)</code></dfn> method, when
+invoked, must run these steps:
 
 <ol>
- <li>If <var>index</var> is equal to or greater than the number of
- tokens in <a>tokens</a>, return null.
+ <li><p>If <var>index</var> is equal to or greater than the number of tokens in <a>tokens</a>,
+ return null.
 
- <li>Return the <var>index</var><sup>th</sup> token in
- <a>tokens</a>.
+ <li><p>Return the <var>index</var><sup>th</sup> token in <a>tokens</a>.
 </ol>
 
-The
-<dfn method for="DOMTokenList">contains(<var>token</var>)</dfn>
-method must run these steps:
+<p>The <dfn method for="DOMTokenList"><code>contains(<var>token</var>)</code></dfn> method, when
+invoked, must run these steps:
 
 <ol>
- <li>If <var>token</var> is the empty string, then
- <a>throw</a> a {{SyntaxError}}
- exception.
+ <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}} exception.
 
- <li>If <var>token</var> contains any
- <a>ASCII whitespace</a>, then
- <a>throw</a>
- an {{InvalidCharacterError}} exception.
-
- <li>Return true if <var>token</var> is in
- <a>tokens</a>, and false otherwise.
-</ol>
-
-The
-<dfn method for="DOMTokenList" lt="add(tokens)|add()">add(<var>tokens</var>&hellip;)</dfn>
-method must run these steps:
-
-<ol>
- <li>If one of <var>tokens</var> is the empty string,
- <a>throw</a> a {{SyntaxError}}
- exception.
-
- <li>If one of <var>tokens</var> contains any
- <a>ASCII whitespace</a>, then
- <a>throw</a> an
+ <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
  {{InvalidCharacterError}} exception.
 
- <li>For each <var>token</var> in <var>tokens</var>, in given
- order, that is not in <a>tokens</a>, append
- <var>token</var> to <a>tokens</a>.
-
- <li>Run the <a>update steps</a>.
+ <li><p>Return true if <var>token</var> is in <a>tokens</a>, and false otherwise.
 </ol>
 
-The
-<dfn method for="DOMTokenList" lt="remove(tokens)|remove()">remove(<var>tokens</var>&hellip;)</dfn>
-method must run these steps:
+<p>The
+<dfn method for="DOMTokenList" lt="add(tokens)|add()"><code>add(<var>tokens</var>&hellip;)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li>If one of <var>tokens</var> is the empty string,
- <a>throw</a> a {{SyntaxError}}
- exception.
+ <li><p>If one of <var>tokens</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
 
- <li>If one of <var>tokens</var> contains any
- <a>ASCII whitespace</a>, then
- <a>throw</a> an
+ <li><p>If one of <var>tokens</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
  {{InvalidCharacterError}} exception.
 
- <li>For each <var>token</var> in <var>tokens</var>, remove
- <var>token</var> from <a>tokens</a>.
+ <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
+ <a>tokens</a>, append <var>token</var> to <a>tokens</a>.
 
- <li>Run the <a>update steps</a>.
+ <li><p>Run the <a>update steps</a>.
 </ol>
 
-The
-<dfn method for="DOMTokenList">toggle(<var>token</var>, <var>force</var>)</dfn>
-method must run these steps:
+<p>The
+<dfn method for="DOMTokenList" lt="remove(tokens)|remove()"><code>remove(<var>tokens</var>&hellip;)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li>If <var>token</var> is the empty string,
- <a>throw</a> a {{SyntaxError}}
- exception.
+ <li><p>If one of <var>tokens</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
 
- <li>If <var>token</var> contains any
- <a>ASCII whitespace</a>,
- <a>throw</a> an
+ <li><p>If one of <var>tokens</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
+ {{InvalidCharacterError}} exception.
+
+ <li><p>For each <var>token</var> in <var>tokens</var>, remove <var>token</var> from <a>tokens</a>.
+
+ <li><p>Run the <a>update steps</a>.
+</ol>
+
+<p>The
+<dfn method for="DOMTokenList"><code>toggle(<var>token</var>, <var>force</var>)</code></dfn>
+method, when invoked, must run these steps:
+
+<ol>
+ <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
+
+ <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, <a>throw</a> an
  {{InvalidCharacterError}} exception.
 
  <li>
-  If <var>token</var> is in <a>tokens</a>, run
-  these substeps:
+  <p>If <var>token</var> is in <a>tokens</a>, run these substeps:
 
   <ol>
-   <li>If <var>force</var> is either not passed or is false, then remove
-   <var>token</var> from <a>tokens</a>, run the
-   <a>update steps</a>, and return false.
+   <li><p>If <var>force</var> is either not passed or is false, then remove <var>token</var> from
+   <a>tokens</a>, run the <a>update steps</a>, and return false.
 
-   <li>Otherwise, return true.
+   <li><p>Otherwise, return true.
   </ol>
 
  <li>
-  Otherwise, run these substeps:
+  <p>Otherwise, run these substeps:
 
   <ol>
-   <li>If <var>force</var> is passed and is false, return false.
+   <li><p>If <var>force</var> is passed and is false, return false.
 
-   <li>Otherwise, append <var>token</var> to
-   <a>tokens</a>, run the
-   <a>update steps</a>, and return true.
+   <li><p>Otherwise, append <var>token</var> to <a>tokens</a>, run the <a>update steps</a>, and
+   return true.
   </ol>
 </ol>
 
-The <dfn export for=DOMTokenList dom-DOMTokenList-toString>stringification behavior</dfn>
+<p>The <dfn export for=DOMTokenList dom-DOMTokenList-toString>stringification behavior</dfn>
 must return the result of the <a>ordered set serializer</a> for <a>tokens</a>.
-
-</div>
 
 
 <h3 id="interface-domsettabletokenlist">Interface {{DOMSettableTokenList}}</h3>
@@ -8879,29 +8827,19 @@ interface DOMSettableTokenList : DOMTokenList {
 };
 </pre>
 
-A {{DOMSettableTokenList}} object is equivalent to a
-{{DOMTokenList}} object without an associated
-<a>attribute</a>.
-
 <dl class="domintro">
  <dt><code><var>tokenlist</var> . {{DOMSettableTokenList/value}}</code>
  <dd>
-  Returns the associated set as string.
-  Can be set, to change the associated set via a string.
+  <p>Returns the associated set as string.
+  <p>Can be set, to change the associated attribute.
 </dl>
 
-<div class="impl">
+<p>The <dfn attribute for=DOMSettableTokenList><code>value</code></dfn> attribute must return the
+result of running the <a>ordered set serializer</a> for <a>tokens</a>.
 
-The <dfn attribute for=DOMSettableTokenList>value</dfn>
-attribute must return the result of the
-<a>ordered set serializer</a> for
-<a>tokens</a>.
-
-Setting the {{DOMSettableTokenList/value}}
-attribute must run the <a>ordered set parser</a>
-for the given value and set <a>tokens</a> to the result.
-
-</div>
+<p>Setting the {{DOMSettableTokenList/value}} attribute must <a>set an attribute value</a> for the
+associated <a for="/">element</a> using associated <a>attribute</a>'s <a for=Attr>local name</a> and
+the given value.
 
 
 
