@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2015-10-30">30 October 2015</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2015-11-10">10 November 2015</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -4028,6 +4028,19 @@ constants for the <a data-link-type="dfn" href="#concept-traversal-whattoshow">w
 </pre>
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object has an associated ordered set of <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-export="" id="concept-dtl-tokens">tokens<a class="self-link" href="#concept-dtl-tokens"></a></dfn>, which is initially empty. </p>
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object also has an associated <a data-link-type="dfn" href="#concept-element">element</a> and an <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>. </p>
+   <p><a data-link-type="dfn" href="#other-applicable-specifications">Specifications</a> may define <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" id="concept-supported-tokens">supported tokens<a class="self-link" href="#concept-supported-tokens"></a></dfn> for a <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code>'s
+associated attribute.</p>
+   <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMString" data-dfn-type="dfn" data-export="" id="concept-domtokenlist-validation">validation steps<a class="self-link" href="#concept-domtokenlist-validation"></a></dfn> for a given <var>token</var> are: </p>
+   <ol>
+    <li>
+     <p>If the associated attribute does not define <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return true. </p>
+    <li>
+     <p>Let <var>lowercase token</var> be a copy of <var>token</var>, <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. </p>
+    <li>
+     <p>If <var>lowercase token</var> is present in <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return true. </p>
+    <li>
+     <p>Return false. </p>
+   </ol>
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-export="" id="concept-dtl-update">update steps<a class="self-link" href="#concept-dtl-update"></a></dfn> are to <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for the associated <a data-link-type="dfn" href="#concept-element">element</a> using associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> and the result of running the <a data-link-type="dfn" href="#concept-ordered-set-serializer">ordered set serializer</a> for <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
    <dl class="domintro">
     <dt><code><var>tokenlist</var> . <code class="idl"><a data-link-type="idl" href="#dom-domtokenlist-length">length</a></code></code> 
@@ -4044,9 +4057,10 @@ constants for the <a data-link-type="dfn" href="#concept-traversal-whattoshow">w
      <p>Throws an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception if <var>token</var> contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>. </p>
     <dt><code><var>tokenlist</var> . <a data-link-type="functionish" href="#dom-domtokenlist-add">add(<var>tokens</var>…)</a></code> 
     <dd>
-     <p>Adds all arguments passed, except those already present. </p>
+     <p>Adds all valid arguments passed, except those already present. </p>
      <p>Throws a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code> exception if one if the arguments is the empty string. </p>
      <p>Throws an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception if one of the arguments contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>. </p>
+     <p>Returns false if any invalid arguments passed, true otherwise. </p>
     <dt><code><var>tokenlist</var> . <a data-link-type="functionish" href="#dom-domtokenlist-remove">remove(<var>tokens</var>…)</a></code> 
     <dd>
      <p>Removes arguments passed, if they are present. </p>
@@ -4055,7 +4069,8 @@ constants for the <a data-link-type="dfn" href="#concept-traversal-whattoshow">w
     <dt><code><var>tokenlist</var> . <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-toggle">toggle(<var>token</var> [, <var>force</var>])</a></code> 
     <dd>
      <p>If <var>force</var> is not given, "toggles" <var>token</var>, removing it if it’s present and
-  adding it if it’s not. If <var>force</var> is true, adds <var>token</var> (same as <code class="idl"><a data-link-type="idl" href="#dom-domtokenlist-add">add()</a></code>). If <var>force</var> is false, removes <var>token</var> (same as <code class="idl"><a data-link-type="idl" href="#dom-domtokenlist-remove">remove()</a></code>). </p>
+  adding it if it’s not present and is valid. If <var>force</var> is true, adds <var>token</var> if it is valid (same as <code class="idl"><a data-link-type="idl" href="#dom-domtokenlist-add">add()</a></code>). If <var>force</var> is false, removes <var>token</var> (same
+  as <code class="idl"><a data-link-type="idl" href="#dom-domtokenlist-remove">remove()</a></code>). </p>
      <p>Returns true if <var>token</var> is now present, and false otherwise. </p>
      <p>Throws a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code> exception if <var>token</var> is empty. </p>
      <p>Throws an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception if <var>token</var> contains any spaces. </p>
@@ -4089,10 +4104,14 @@ invoked, must run these steps: </p>
      <p>If one of <var>tokens</var> is the empty string, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code> exception. </p>
     <li>
      <p>If one of <var>tokens</var> contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. </p>
+    <li>Let <var>valid</var> be true. 
     <li>
-     <p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
+     <p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is false,
+ set <var>valid</var> to false. Otherwise, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
     <li>
      <p>Run the <a data-link-type="dfn" href="#concept-dtl-update">update steps</a>. </p>
+    <li>
+     <p>Return <var>valid</var>. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="DOMTokenList" data-dfn-type="method" data-export="" data-lt="remove(tokens)|remove()" id="dom-domtokenlist-remove"><code>remove(<var>tokens</var>…)</code><a class="self-link" href="#dom-domtokenlist-remove"></a></dfn> method, when invoked, must run these steps: </p>
    <ol>
@@ -4124,6 +4143,9 @@ invoked, must run these steps: </p>
      <ol>
       <li>
        <p>If <var>force</var> is passed and is false, return false. </p>
+      <li>
+       <p>Otherwise, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is
+   false, return false. </p>
       <li>
        <p>Otherwise, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, run the <a data-link-type="dfn" href="#concept-dtl-update">update steps</a>, and
    return true. </p>
@@ -4371,6 +4393,7 @@ Travis Leithead,
 Vidur Apparao,
 Warren He,
 Yehuda Katz,
+Yoav Weiss,
 Yoichi Osato, and
 Zack Weinberg
 for being awesome!</p>
@@ -5261,6 +5284,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-cd-substring">substring data</a><span>, in §4.9</span>
    <li><a href="#dom-characterdata-substringdata">substringData(offset, count)</a><span>, in §4.9</span>
    <li><a href="#dom-mutationobserverinit-subtree">subtree</a><span>, in §4.3.1</span>
+   <li><a href="#concept-supported-tokens">supported tokens</a><span>, in §7.1</span>
    <li><a href="#dom-range-surroundcontents">surroundContents(newParent)</a><span>, in §5.2</span>
    <li>
     systemId
@@ -5340,6 +5364,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#userdatahandler">UserDataHandler</a><span>, in §8.2</span>
    <li><a href="#validate">validate</a><span>, in §2.5</span>
    <li><a href="#validate-and-extract">validate and extract</a><span>, in §2.5</span>
+   <li><a href="#concept-domtokenlist-validation">validation steps</a><span>, in §7.1</span>
    <li>
     value
     <ul>
@@ -5417,7 +5442,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <dt id="biblio-cssom-view"><a class="self-link" href="#biblio-cssom-view"></a>[CSSOM-VIEW]
    <dd>Simon Pieters; Glenn Adams. <a href="http://dev.w3.org/csswg/cssom-view/">CSSOM View Module</a>. 17 December 2013. WD. URL: <a href="http://dev.w3.org/csswg/cssom-view/">http://dev.w3.org/csswg/cssom-view/</a>
    <dt id="biblio-encoding"><a class="self-link" href="#biblio-encoding"></a>[ENCODING]
-   <dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="https://encoding.spec.whatwg.org/">Encoding</a>. 16 September 2014. CR. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
+   <dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="https://encoding.spec.whatwg.org/">Encoding</a>. 20 October 2015. CR. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
    <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-selectors-4"><a class="self-link" href="#biblio-selectors-4"></a>[SELECTORS-4]

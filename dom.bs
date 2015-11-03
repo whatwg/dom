@@ -8679,6 +8679,25 @@ interface DOMTokenList {
 <p>A {{DOMTokenList}} object also has an associated <a for="/">element</a> and an <a>attribute</a>'s
 <a for=Attr>local name</a>.
 
+<a lt="Other applicable specifications">Specifications</a> may define
+<dfn export for=Node id=concept-supported-tokens>supported tokens</dfn> for a {{DOMTokenList}}'s
+associated attribute.
+
+<p>A {{DOMTokenList}} object's
+<dfn export id=concept-domtokenlist-validation for="DOMString">validation steps</dfn> for a given
+<var>token</var> are:
+
+<ol>
+ <li><p>If the associated attribute does not define <a>supported tokens</a>, return true.
+
+ <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>,
+ <a>converted to ASCII lowercase</a>.
+
+ <li><p>If <var>lowercase token</var> is present in <a>supported tokens</a>, return true.
+
+ <li><p>Return false.
+</ol>
+
 <p>A {{DOMTokenList}} object's
 <dfn export id=concept-dtl-update for="DOMTokenList">update steps</dfn> are to
 <a>set an attribute value</a> for the associated <a for="/">element</a> using associated
@@ -8702,10 +8721,11 @@ interface DOMTokenList {
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="add()">add(<var>tokens</var>&hellip;)</a></code>
  <dd>
-  <p>Adds all arguments passed, except those already present.
+  <p>Adds all valid arguments passed, except those already present.
   <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
   <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
+  <p>Returns false if any invalid arguments passed, true otherwise.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
@@ -8717,8 +8737,9 @@ interface DOMTokenList {
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="toggle()">toggle(<var>token</var> [, <var>force</var>])</a></code>
  <dd>
   <p>If <var>force</var> is not given, "toggles" <var>token</var>, removing it if it's present and
-  adding it if it's not. If <var>force</var> is true, adds <var>token</var> (same as {{add()}}). If
-  <var>force</var> is false, removes <var>token</var> (same as {{DOMTokenList/remove()}}).
+  adding it if it's not present and is valid. If <var>force</var> is true, adds <var>token</var>
+  if it is valid (same as {{add()}}). If <var>force</var> is false, removes <var>token</var> (same
+  as {{DOMTokenList/remove()}}).
   <p>Returns true if <var>token</var> is now present, and false otherwise.
   <p>Throws a {{SyntaxError}} exception if <var>token</var> is empty.
   <p>Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any spaces.
@@ -8763,10 +8784,15 @@ method, when invoked, must run these steps:
  <li><p>If one of <var>tokens</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
  {{InvalidCharacterError}} exception.
 
+ <li>Let <var>valid</var> be true.
+
  <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
- <a>tokens</a>, append <var>token</var> to <a>tokens</a>.
+ <a>tokens</a>, run <a>validation steps</a> with <var>token</var>. If the return value is false,
+ set <var>valid</var> to false. Otherwise, append <var>token</var> to <a>tokens</a>.
 
  <li><p>Run the <a>update steps</a>.
+
+ <li><p>Return <var>valid</var>.
 </ol>
 
 <p>The
@@ -8809,6 +8835,9 @@ method, when invoked, must run these steps:
 
   <ol>
    <li><p>If <var>force</var> is passed and is false, return false.
+
+   <li><p>Otherwise, run <a>validation steps</a> with <var>token</var>. If the return value is
+   false, return false.
 
    <li><p>Otherwise, append <var>token</var> to <a>tokens</a>, run the <a>update steps</a>, and
    return true.
@@ -9145,6 +9174,7 @@ Travis Leithead,
 Vidur Apparao,
 Warren He,
 Yehuda Katz,
+Yoav Weiss,
 Yoichi Osato, and
 Zack Weinberg
 for being awesome!
