@@ -727,45 +727,51 @@ invoked, must run these steps: </p>
      <p><a data-link-type="dfn" href="#concept-event-dispatch">Dispatch</a> the <var>event</var> and return the value that returns. </p>
    </ol>
    <h3 class="heading settled" data-level="3.7" id="dispatching-events"><span class="secno">3.7. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
-   <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <a data-link-type="dfn" href="#concept-event">event</a> to a
-given object, with an optional <var>target override</var>, run these steps:</p>
+   <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <var>event</var> to a <var>target</var>, with an optional <var>target override</var>, run these steps: </p>
    <ol>
-    <li>Let <var>event</var> be the <a data-link-type="dfn" href="#concept-event">event</a> that is dispatched. 
-    <li>Set <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute to <var>target override</var>, if it is given, and the object to which <var>event</var> is dispatched otherwise. 
-    <li>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value is <a data-link-type="dfn" href="#concept-tree-participate">participating</a> in a <a data-link-type="dfn" href="#concept-tree">tree</a>, let <var>event path</var> be a
- static ordered list of all its <a data-link-type="dfn" href="#concept-tree-ancestor">ancestors</a> in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, and let <var>event path</var> be the empty list otherwise. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. 
-    <li>For each object in <var>event path</var>, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> its <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with event <var>event</var>, as long as <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. 
-    <li><a data-link-type="dfn" href="#concept-event-listener-invoke">Invoke</a> the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> of <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value with <var>event</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset. 
     <li>
-      If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute value is true, run
-  these substeps: 
+     <p>Set <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute to <var>target override</var>, if it is given, and <var>target</var> otherwise. </p>
+    <li>
+     <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value is <a data-link-type="dfn" href="#concept-tree-participate">participating</a> in a <a data-link-type="dfn" href="#concept-tree">tree</a>, let <var>event path</var> be a static ordered list of all its <a data-link-type="dfn" href="#concept-tree-ancestor">ancestors</a> in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, and let <var>event path</var> be the empty list otherwise. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
+    <li>
+     <p>For each <var>object</var> in <var>event path</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. </p>
+    <li>
+     <p>If <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value with <var>event</var>. </p>
+    <li>
+     <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute value is true, run these substeps: </p>
      <ol>
-      <li>Reverse the order of <var>event path</var>. 
-      <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. 
-      <li>For each object in <var>event path</var>, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> its <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>, with event <var>event</var> as long as <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset. 
+      <li>
+       <p>Reverse the order of <var>event path</var>. </p>
+      <li>
+       <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. </p>
+      <li>
+       <p>For each <var>object</var> in <var>event path</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
      </ol>
-    <li>Unset <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-none">NONE</a></code>. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to null. 
-    <li>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. 
-   </ol>
-   <p>To <dfn data-dfn-for="event listener" data-dfn-type="dfn" data-export="" id="concept-event-listener-invoke">invoke<a class="self-link" href="#concept-event-listener-invoke"></a></dfn> the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> for an object with an event run these steps: </p>
-   <ol>
     <li>
-     <p>Let <var>event</var> be the <a data-link-type="dfn" href="#concept-event">event</a> for which the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> are invoked. </p>
+     <p>Unset <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-none">NONE</a></code>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to null. </p>
+    <li>
+     <p>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. </p>
+   </ol>
+   <p>To <dfn data-dfn-for="event listener" data-dfn-type="dfn" data-export="" id="concept-event-listener-invoke">invoke<a class="self-link" href="#concept-event-listener-invoke"></a></dfn> an <var>object</var> with <var>event</var>, run these steps: </p>
+   <ol>
     <li>
      <p>Let <var>listeners</var> be the empty list. </p>
     <li>
-     <p>For each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> associated with the object for which these steps are run,
-  append a pointer to the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to <var>listeners</var>. </p>
+     <p>For each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> associated with <var>object</var>, append a pointer to the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to <var>listeners</var>. </p>
      <p class="note no-backref" role="note">This avoids <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> added after this point from being
   run. Note that removal still has an affect due to the <b>removed flag</b>. </p>
     <li>
-     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to the object for which
- these steps are run. </p>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to <var>object</var>. </p>
     <li>
      <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
   these substeps: </p>
@@ -780,9 +786,7 @@ given object, with an optional <var>target override</var>, run these steps:</p>
       <li>
        <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is true, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
       <li>
-       <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with the
-   event passed to this algorithm as the first argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any
-   exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
+       <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with <var>event</var> as argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
      </ol>
    </ol>
    <h3 class="heading settled" data-level="3.8" id="firing-events"><span class="secno">3.8. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
@@ -4418,6 +4422,7 @@ Robin Berjon,
 Rune <span title="Fabulous">F.</span> Halvorsen,
 Ryosuke Niwa,
 Samuel Giles,
+Sebastian Mayr,
 Seo Sanghyeon,
 Shiki Okasaka,
 Simon Pieters,

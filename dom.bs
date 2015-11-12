@@ -1061,99 +1061,64 @@ invoked, must run these steps:
 
 <h3 id=dispatching-events>Dispatching events</h3>
 
-To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an <a>event</a> to a
-given object, with an optional <var>target override</var>, run these steps:
+<p>To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an <var>event</var> to a
+<var>target</var>, with an optional <var>target override</var>, run these steps:
 
 <ol>
- <li>Let <var>event</var> be the
- <a>event</a> that is dispatched.
+ <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
 
- <li>Set <var>event</var>'s <a>dispatch flag</a>.
+ <li><p>Initialize <var>event</var>'s {{Event/target}} attribute to
+ <var>target override</var>, if it is given, and <var>target</var> otherwise.
 
- <li>Initialize <var>event</var>'s
- {{Event/target}} attribute to
- <var>target override</var>, if it is given, and the object to which
- <var>event</var> is dispatched otherwise.
+ <li><p>If <var>event</var>'s {{Event/target}} attribute value is <a>participating</a> in a
+ <a>tree</a>, let <var>event path</var> be a static ordered list of all its <a>ancestors</a> in
+ <a>tree order</a>, and let <var>event path</var> be the empty list otherwise.
 
- <li>If <var>event</var>'s
- {{Event/target}} attribute value is
- <a>participating</a> in a
- <a>tree</a>, let <var>event path</var> be a
- static ordered list of all its
- <a>ancestors</a> in
- <a>tree order</a>, and let
- <var>event path</var> be the empty list otherwise.
+ <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
 
- <li>Initialize <var>event</var>'s
- {{Event/eventPhase}} attribute to
- {{Event/CAPTURING_PHASE}}.
+ <li><p>For each <var>object</var> in <var>event path</var>, if <var>event</var>'s
+ <a>stop propagation flag</a> is unset, <a>invoke</a> <var>object</var> with <var>event</var>.
 
- <li>For each object in <var>event path</var>,
- <a>invoke</a> its
- <a>event listeners</a> with event
- <var>event</var>, as long as <var>event</var>'s
- <a>stop propagation flag</a> is unset.
+ <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
- <li>Initialize <var>event</var>'s
- {{Event/eventPhase}} attribute to
- {{Event/AT_TARGET}}.
-
- <li><a>Invoke</a> the
- <a>event listeners</a> of
- <var>event</var>'s {{Event/target}}
- attribute value with <var>event</var>, if <var>event</var>'s
- <a>stop propagation flag</a> is unset.
+ <li><p>If <var>event</var>'s <a>stop propagation flag</a> is unset, <a>invoke</a>
+ <var>event</var>'s {{Event/target}} attribute value with <var>event</var>.
 
  <li>
-  If <var>event</var>'s
-  {{Event/bubbles}} attribute value is true, run
-  these substeps:
+  <p>If <var>event</var>'s {{Event/bubbles}} attribute value is true, run these substeps:
 
   <ol>
-   <li>Reverse the order of <var>event path</var>.
+   <li><p>Reverse the order of <var>event path</var>.
 
-   <li>Initialize <var>event</var>'s
-   {{Event/eventPhase}} attribute to
-   {{Event/BUBBLING_PHASE}}.
+   <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/BUBBLING_PHASE}}.
 
-   <li>For each object in <var>event path</var>,
-   <a>invoke</a> its
-   <a>event listeners</a>, with event
-   <var>event</var> as long as <var>event</var>'s
-   <a>stop propagation flag</a> is unset.
+   <li><p>For each <var>object</var> in <var>event path</var>, if <var>event</var>'s
+   <a>stop propagation flag</a> is unset, <a>invoke</a> <var>object</var> with <var>event</var>.
   </ol>
 
- <li>Unset <var>event</var>'s <a>dispatch flag</a>.
+ <li><p>Unset <var>event</var>'s <a>dispatch flag</a>.
 
- <li>Initialize <var>event</var>'s
- {{Event/eventPhase}} attribute to
- {{Event/NONE}}.
+ <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/NONE}}.
 
- <li>Initialize <var>event</var>'s
- {{Event/currentTarget}} attribute to null.
+ <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to null.
 
- <li>Return false if <var>event</var>'s <a>canceled flag</a>
- is set, and true otherwise.
+ <li><p>Return false if <var>event</var>'s <a>canceled flag</a> is set, and true otherwise.
 </ol>
 
-
-<p>To <dfn export for="event listener" id=concept-event-listener-invoke>invoke</dfn> the
-<a>event listeners</a> for an object with an event run these steps:
+<p>To <dfn export for="event listener" id=concept-event-listener-invoke>invoke</dfn> an
+<var>object</var> with <var>event</var>, run these steps:
 
 <ol>
- <li><p>Let <var>event</var> be the <a>event</a> for which the <a>event listeners</a> are invoked.
-
  <li><p>Let <var>listeners</var> be the empty list.
 
  <li>
-  <p>For each <a>event listener</a> associated with the object for which these steps are run,
-  append a pointer to the <a>event listener</a> to <var>listeners</var>.
+  <p>For each <a>event listener</a> associated with <var>object</var>, append a pointer to the
+  <a>event listener</a> to <var>listeners</var>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an affect due to the <b>removed flag</b>.
 
- <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to the object for which
- these steps are run.
+ <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>object</var>.
 
  <li>
   <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
@@ -1174,10 +1139,9 @@ given object, with an optional <var>target override</var>, run these steps:
    <var>listener</var>'s <b>capture</b> is true, terminate these substeps (and run them for the next
    <a>event listener</a>).
 
-   <li><p>Call <var>listener</var>'s <b>callback</b>'s {{EventListener/handleEvent()}}, with the
-   event passed to this algorithm as the first argument and <var>event</var>'s
-   {{Event/currentTarget}} attribute value as <a>callback this value</a>. If this throws any
-   exception, <a>report the exception</a>.
+   <li><p>Call <var>listener</var>'s <b>callback</b>'s {{EventListener/handleEvent()}}, with
+   <var>event</var> as argument and <var>event</var>'s {{Event/currentTarget}} attribute value as
+   <a>callback this value</a>. If this throws any exception, <a>report the exception</a>.
   </ol>
 </ol>
 
@@ -9151,6 +9115,7 @@ Robin Berjon,
 Rune <span title=Fabulous>F.</span> Halvorsen,
 Ryosuke Niwa,
 Samuel Giles,
+Sebastian Mayr,
 Seo Sanghyeon,
 Shiki Okasaka,
 Simon Pieters,
