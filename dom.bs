@@ -8585,6 +8585,7 @@ interface DOMTokenList {
   void add(DOMString... tokens);
   void remove(DOMString... tokens);
   boolean toggle(DOMString token, optional boolean force);
+  void replace(DOMString token, DOMString newToken);
   stringifier;
   iterable&lt;DOMString>;
 };
@@ -8687,6 +8688,13 @@ associated <a for="/">element</a>'s
   <p>Returns true if <var>token</var> is now present, and false otherwise.
   <p>Throws a {{SyntaxError}} exception if <var>token</var> is empty.
   <p>Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any spaces.
+
+ <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt=replace()>replace(<var>token</var>, <var>newToken</var>)</a></code>
+ <dd>
+  <p>Replaces <var>token</var> with <var>newToken</var>.
+  <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
+  <a>ASCII whitespace</a>.
 </dl>
 
 <p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return the
@@ -8764,8 +8772,7 @@ method, when invoked, must run these steps:
  <li><p>Run the <a>update steps</a>.
 </ol>
 
-<p>The
-<dfn method for="DOMTokenList"><code>toggle(<var>token</var>, <var>force</var>)</code></dfn>
+<p>The <dfn method for=DOMTokenList><code>toggle(<var>token</var>, <var>force</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
@@ -8796,6 +8803,26 @@ method, when invoked, must run these steps:
    <li><p>Otherwise, append <var>token</var> to <a>tokens</a>, run the <a>update steps</a>, and
    return true.
   </ol>
+</ol>
+
+<p>The
+<dfn method for=DOMTokenList><code>replace(<var>token</var>, <var>newToken</var>)</code></dfn>
+method, when invoked, must run these steps:
+<!-- Argument order based on String.prototype.replace(), not replaceChild() -->
+
+<ol>
+ <li><p>If either <var>token</var> or <var>newToken</var> is the empty string, <a>throw</a> a
+ {{SyntaxError}} exception.
+
+ <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>,
+ <a>throw</a> an {{InvalidCharacterError}} exception.
+
+ <li><p>If <var>token</var> is not in <a>tokens</a> or running the <a>validation steps</a> for
+ <var>newToken</var> return false, terminate these steps.
+
+ <li><p>Replace <var>token</var> in <a>tokens</a> with <var>newToken</var>.
+
+ <li><p>Run the <a>update steps</a>.
 </ol>
 
 <p>The <dfn export for=DOMTokenList id=dom-domtokenlist-stringifier>stringification behavior</dfn>
