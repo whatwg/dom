@@ -8582,7 +8582,7 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  void add(DOMString... tokens);
+  boolean add(DOMString... tokens);
   void remove(DOMString... tokens);
   boolean toggle(DOMString token, optional boolean force);
   void replace(DOMString token, DOMString newToken);
@@ -8606,8 +8606,8 @@ associated <a>attribute</a>'s <a for=Attr>local name</a>.
 <var>token</var> are:
 
 <ol>
- <li><p>If the associated attribute's <a for=Attr>local name</a> does not define <a>supported
- tokens</a>, return true.
+ <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
+ <a>supported tokens</a>, return true.
 
  <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>,
  <a>converted to ASCII lowercase</a>.
@@ -8642,8 +8642,16 @@ are to:
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> or
 associated <a for="/">element</a>'s
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
-<a lt="attribute is set">set</a>, set <a>tokens</a> to the new <a for=Attr>value</a>,
-<a lt="ordered set parser">parsed</a>.
+<a lt="attribute is set">set</a>, run these substeps:
+
+<ol>
+ <li><p>Let <var>temporary tokens</var> be the new <a for=Attr>value</a>,
+ <a lt="ordered set parser">parsed</a>.
+
+ <li><p>For each <var>token</var> in <var>temporary tokens</var>, run
+ <a>validation steps</a> with <var>token</var>. If the return value is true, append <var>token</var>
+ to <a>tokens</a>.
+</ol>
 
 <p>When an associated <a for="/">element</a>'s
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
