@@ -683,11 +683,10 @@ callback interface <dfn class="idl-code" data-dfn-type="callback" data-export=""
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> is an object to which an <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> when something has
 occurred. Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> has an associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>.</p>
-   <p>An <dfn data-dfn-type="dfn" data-export="" id="concept-event-listener">event listener<a class="self-link" href="#concept-event-listener"></a></dfn> associates a
-callback with a specific <a data-link-type="dfn" href="#concept-event">event</a>. Each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b> (of the <a data-link-type="dfn" href="#concept-event">event</a>), <b>callback</b>, and <b>capture</b> variable.</p>
-   <p class="note no-backref" role="note">The <b>callback</b> is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code> for
-historical reasons. As can be seen from the definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a more broad
-concept. </p>
+   <p>An <dfn data-dfn-type="dfn" data-export="" id="concept-event-listener">event listener<a class="self-link" href="#concept-event-listener"></a></dfn> can be used to observe a specific <a data-link-type="dfn" href="#concept-event">event</a>. </p>
+   <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b>, <b>callback</b>, and <b>capture</b>. An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> also has an associated <b>removed flag</b>, which is initially unset. </p>
+   <p class="note no-backref" role="note">The callback is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code> for historical reasons. As can be
+seen from the definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a more broad concept. </p>
    <dl class="domintro">
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>capture</var> = false])</code> 
     <dd>
@@ -698,30 +697,34 @@ concept. </p>
   the <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>.
   When false, <b>callback</b> will not be invoked when <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. Either way, <b>callback</b> will be
   invoked if <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. 
-     <p>The <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is appended to <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> and is not appended if it is a duplicate, i.e. having the same <b>type</b>, <b>callback</b>, and <b>capture</b> values.</p>
+     <p>The <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is appended to <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> and is not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and <b>capture</b> values.</p>
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>capture</var> = false])</code> 
     <dd>Remove the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with the same <var>type</var>, <var>callback</var>, and <var>capture</var>. 
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<var>event</var>)</code> 
     <dd><a data-link-type="dfn" href="#concept-event-dispatch">Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns
  true if either <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is false or its <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> method was not invoked, and false otherwise. 
    </dl>
-   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="addEventListener(type, callback, capture)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistener">addEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)<a class="self-link" href="#dom-eventtarget-addeventlistener"></a></dfn> method must run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="addEventListener(type, callback, capture)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistener"><code>addEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)</code><a class="self-link" href="#dom-eventtarget-addeventlistener"></a></dfn> method, when invoked, must run these steps: </p>
    <ol>
-    <li>If <var>callback</var> is null, terminate these steps. 
-    <li>Append an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with <b>type</b> set to <var>type</var>, <b>callback</b> set to <var>callback</var>, and <b>capture</b> set to <var>capture</var>, unless there
- already is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in
- that list with the same <b>type</b>, <b>callback</b>, and <b>capture</b>. 
+    <li>
+     <p>If <var>callback</var> is null, terminate these steps. </p>
+    <li>
+     <p>Append an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with <b>type</b> set to <var>type</var>, <b>callback</b> set to <var>callback</var>, and <b>capture</b> set to <var>capture</var>, unless there already is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in that list with the
+ same <b>type</b>, <b>callback</b>, and <b>capture</b>. </p>
    </ol>
-   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, capture)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener">removeEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)<a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method must run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, capture)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener"><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)</code><a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method, when invoked, must, if there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>name</var>, <b>callback</b> is <var>callback</var>,
+and <b>capture</b> is <var>capture</var>, set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed flag</b> and
+remove it from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
+   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" id="dom-eventtarget-dispatchevent"><code>dispatchEvent(<var>event</var>)</code><a class="self-link" href="#dom-eventtarget-dispatchevent"></a></dfn> method, when
+invoked, must run these steps: </p>
    <ol>
-    <li>Remove an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>, whose <b>type</b> is <var>name</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is <var>capture</var>. 
-   </ol>
-   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" id="dom-eventtarget-dispatchevent">dispatchEvent(<var>event</var>)<a class="self-link" href="#dom-eventtarget-dispatchevent"></a></dfn> method must run these steps:</p>
-   <ol>
-    <li>If <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a> is set, or if
- its <a data-link-type="dfn" href="#initialized-flag">initialized flag</a> is not set, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a></code> exception. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to false. 
-    <li><a data-link-type="dfn" href="#concept-event-dispatch">Dispatch</a> the <var>event</var> and return the value that returns. 
+    <li>
+     <p>If <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a> is set, or if its <a data-link-type="dfn" href="#initialized-flag">initialized flag</a> is not
+ set, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a></code> exception. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to false. </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-event-dispatch">Dispatch</a> the <var>event</var> and return the value that returns. </p>
    </ol>
    <h3 class="heading settled" data-level="3.7" id="dispatching-events"><span class="secno">3.7. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
    <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <a data-link-type="dfn" href="#concept-event">event</a> to a
@@ -749,27 +752,37 @@ given object, with an optional <var>target override</var>, run these steps:</p>
     <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to null. 
     <li>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. 
    </ol>
-   <p>To <dfn data-dfn-for="event listener" data-dfn-type="dfn" data-export="" id="concept-event-listener-invoke">invoke<a class="self-link" href="#concept-event-listener-invoke"></a></dfn> the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> for an object with an
-event run these steps:</p>
+   <p>To <dfn data-dfn-for="event listener" data-dfn-type="dfn" data-export="" id="concept-event-listener-invoke">invoke<a class="self-link" href="#concept-event-listener-invoke"></a></dfn> the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> for an object with an event run these steps: </p>
    <ol>
-    <li>Let <var>event</var> be the <a data-link-type="dfn" href="#concept-event">event</a> for which the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> are invoked. 
-    <li>Let <var>listeners</var> be a copy of the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> associated with
- the object for which these steps are run. 
-    <li>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to the
- object for which these steps are run. 
     <li>
-      Then run these substeps for each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in <var>listeners</var>: 
+     <p>Let <var>event</var> be the <a data-link-type="dfn" href="#concept-event">event</a> for which the <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> are invoked. </p>
+    <li>
+     <p>Let <var>listeners</var> be the empty list. </p>
+    <li>
+     <p>For each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> associated with the object for which these steps are run,
+  append a pointer to the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to <var>listeners</var>. </p>
+     <p class="note no-backref" role="note">This avoids <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> added after this point from being
+  run. Note that removal still has an affect due to the <b>removed flag</b>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to the object for which
+ these steps are run. </p>
+    <li>
+     <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
+  these substeps: </p>
      <ol>
-      <li>If <var>event</var>’s <a data-link-type="dfn" href="#stop-immediate-propagation-flag">stop immediate propagation flag</a> is set, terminate the <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> algorithm. 
-      <li>Let <var>listener</var> be the <a data-link-type="dfn" href="#concept-event-listener">event listener</a>. 
-      <li>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is not <var>listener</var>’s <b>type</b>, terminate
-   these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). 
-      <li>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is false, terminate these
-   substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). 
-      <li>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is true, terminate these
-   substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). 
-      <li>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with the event passed to
-   this algorithm as the first argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. 
+      <li>
+       <p>If <var>event</var>’s <a data-link-type="dfn" href="#stop-immediate-propagation-flag">stop immediate propagation flag</a> is set, terminate the <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> algorithm. </p>
+      <li>
+       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is not <var>listener</var>’s <b>type</b>, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+      <li>
+       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is false, terminate these substeps (and run them for the
+   next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+      <li>
+       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is true, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+      <li>
+       <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with the
+   event passed to this algorithm as the first argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any
+   exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
      </ol>
    </ol>
    <h3 class="heading settled" data-level="3.8" id="firing-events"><span class="secno">3.8. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
