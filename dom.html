@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2015-11-13">13 November 2015</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2015-11-21">21 November 2015</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -4052,13 +4052,13 @@ associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMString" data-dfn-type="dfn" data-export="" id="concept-domtokenlist-validation">validation steps<a class="self-link" href="#concept-domtokenlist-validation"></a></dfn> for a given <var>token</var> are: </p>
    <ol>
     <li>
-     <p>If the associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> does not define <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return true. </p>
+     <p>If the associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> does not define <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return "no supported tokens". </p>
     <li>
      <p>Let <var>lowercase token</var> be a copy of <var>token</var>, <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. </p>
     <li>
-     <p>If <var>lowercase token</var> is present in <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return true. </p>
+     <p>If <var>lowercase token</var> is present in <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, return "supported". </p>
     <li>
-     <p>Return false. </p>
+     <p>Return "not supported". </p>
    </ol>
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-noexport="" id="concept-dtl-update">update steps<a class="self-link" href="#concept-dtl-update"></a></dfn> are
 to <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for the associated <a data-link-type="dfn" href="#concept-element">element</a> using associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> and the result of running the <a data-link-type="dfn" href="#concept-ordered-set-serializer">ordered set serializer</a> for <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
@@ -4078,7 +4078,7 @@ associated <a data-link-type="dfn" href="#concept-element">element</a>’s <a da
     <li>
      <p>Let <var>temporary tokens</var> be the new <a data-link-type="dfn" href="#concept-attribute-value">value</a>, <a data-link-type="dfn" href="#concept-ordered-set-parser">parsed</a>. </p>
     <li>
-     <p>For each <var>token</var> in <var>temporary tokens</var>, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is true, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
+     <p>For each <var>token</var> in <var>temporary tokens</var>, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is not "not supported", append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
    </ol>
    <p>When an associated <a data-link-type="dfn" href="#concept-element">element</a>’s <a data-link-type="dfn" href="#concept-named-attribute"><var>associated attribute’s local name</var> attribute</a> is <a data-link-type="dfn" href="#attribute-is-removed">removed</a>, set <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> to the empty set. </p>
    <dl class="domintro">
@@ -4099,7 +4099,8 @@ associated <a data-link-type="dfn" href="#concept-element">element</a>’s <a da
      <p>Adds all valid arguments passed, except those already present. </p>
      <p>Throws a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code> exception if one if the arguments is the empty string. </p>
      <p>Throws an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception if one of the arguments contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>. </p>
-     <p>Returns false if any invalid arguments passed, true otherwise. </p>
+     <p>Returns "not supported" if any invalid arguments passed, "no supported tokens", if
+  the associated <a data-link-type="dfn" href="#concept-attribute">attribute</a> did not define <a data-link-type="dfn" href="#concept-supported-tokens">supported tokens</a>, "supported" otherwise. </p>
     <dt><code><var>tokenlist</var> . <a data-link-type="functionish" href="#dom-domtokenlist-remove">remove(<var>tokens</var>…)</a></code> 
     <dd>
      <p>Removes arguments passed, if they are present. </p>
@@ -4152,10 +4153,11 @@ invoked, must run these steps: </p>
       <li>
        <p>If <var>token</var> contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. </p>
      </ol>
-    <li>Let <var>valid</var> be true. 
+    <li>Let <var>valid</var> be "supported". 
     <li>
-     <p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is false,
- set <var>valid</var> to false. Otherwise, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
+     <p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var> and let <var>result</var> be the return value.
+ If <var>result</var> is not "supported", set <var>valid</var> to <var>result</var>.
+ If <var>result</var> is not "not supported", append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
     <li>
      <p>Run the <a data-link-type="dfn" href="#concept-dtl-update">update steps</a>. </p>
     <li>
@@ -4197,7 +4199,7 @@ invoked, must run these steps: </p>
        <p>If <var>force</var> is passed and is false, return false. </p>
       <li>
        <p>Otherwise, run <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> with <var>token</var>. If the return value is
-   false, return false. </p>
+   "not supported", return false. </p>
       <li>
        <p>Otherwise, append <var>token</var> to <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>, run the <a data-link-type="dfn" href="#concept-dtl-update">update steps</a>, and
    return true. </p>
@@ -4210,7 +4212,7 @@ invoked, must run these steps: </p>
     <li>
      <p>If either <var>token</var> or <var>newToken</var> contains any <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</a>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. </p>
     <li>
-     <p>If <var>token</var> is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> or running the <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> for <var>newToken</var> return false, terminate these steps. </p>
+     <p>If <var>token</var> is not in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> or running the <a data-link-type="dfn" href="#concept-domtokenlist-validation">validation steps</a> for <var>newToken</var> return "not supported", terminate these steps. </p>
     <li>
      <p>Replace <var>token</var> in <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> with <var>newToken</var>. </p>
     <li>
