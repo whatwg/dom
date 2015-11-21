@@ -8607,14 +8607,14 @@ associated <a>attribute</a>'s <a for=Attr>local name</a>.
 
 <ol>
  <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
- <a>supported tokens</a>, return true.
+ <a>supported tokens</a>, return "no supported tokens".
 
  <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>,
  <a>converted to ASCII lowercase</a>.
 
- <li><p>If <var>lowercase token</var> is present in <a>supported tokens</a>, return true.
+ <li><p>If <var>lowercase token</var> is present in <a>supported tokens</a>, return "supported".
 
- <li><p>Return false.
+ <li><p>Return "not supported".
 </ol>
 
 <p>A {{DOMTokenList}} object's <dfn id=concept-dtl-update for="DOMTokenList">update steps</dfn> are
@@ -8649,8 +8649,8 @@ associated <a for="/">element</a>'s
  <a lt="ordered set parser">parsed</a>.
 
  <li><p>For each <var>token</var> in <var>temporary tokens</var>, run
- <a>validation steps</a> with <var>token</var>. If the return value is true, append <var>token</var>
- to <a>tokens</a>.
+ <a>validation steps</a> with <var>token</var>. If the return value is not "not supported", append
+ <var>token</var> to <a>tokens</a>.
 </ol>
 
 <p>When an associated <a for="/">element</a>'s
@@ -8678,7 +8678,8 @@ associated <a for="/">element</a>'s
   <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
   <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
-  <p>Returns false if any invalid arguments passed, true otherwise.
+  <p>Returns "not supported" if any invalid arguments passed, "no supported tokens", if
+  the associated <a>attribute</a> did not define <a>supported tokens</a>, "supported" otherwise.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
@@ -8749,11 +8750,12 @@ method, when invoked, must run these steps:
    {{InvalidCharacterError}} exception.
   </ol>
 
- <li>Let <var>valid</var> be true.
+ <li>Let <var>valid</var> be "supported".
 
  <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
- <a>tokens</a>, run <a>validation steps</a> with <var>token</var>. If the return value is false,
- set <var>valid</var> to false. Otherwise, append <var>token</var> to <a>tokens</a>.
+ <a>tokens</a>, run <a>validation steps</a> with <var>token</var> and let <var>result</var> be the return value.
+ If <var>result</var> is not "supported", set <var>valid</var> to <var>result</var>.
+ If <var>result</var> is not "not supported", append <var>token</var> to <a>tokens</a>.
 
  <li><p>Run the <a>update steps</a>.
 
@@ -8806,7 +8808,7 @@ method, when invoked, must run these steps:
    <li><p>If <var>force</var> is passed and is false, return false.
 
    <li><p>Otherwise, run <a>validation steps</a> with <var>token</var>. If the return value is
-   false, return false.
+   "not supported", return false.
 
    <li><p>Otherwise, append <var>token</var> to <a>tokens</a>, run the <a>update steps</a>, and
    return true.
@@ -8826,7 +8828,7 @@ method, when invoked, must run these steps:
  <a>throw</a> an {{InvalidCharacterError}} exception.
 
  <li><p>If <var>token</var> is not in <a>tokens</a> or running the <a>validation steps</a> for
- <var>newToken</var> return false, terminate these steps.
+ <var>newToken</var> return "not supported", terminate these steps.
 
  <li><p>Replace <var>token</var> in <a>tokens</a> with <var>newToken</var>.
 
