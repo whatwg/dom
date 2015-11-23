@@ -498,8 +498,7 @@ run these steps:
  <var>qualifiedName</var> nor <var>prefix</var> is "<code>xmlns</code>",
  <a>throw</a> a {{NamespaceError}} exception.
 
- <li>Return <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
- <var>qualifiedName</var>.
+ <li>Return <var>namespace</var>, <var>prefix</var>, and <var>localName</var>.
 </ol>
 
 
@@ -3405,7 +3404,7 @@ dom-Range-extractContents, dom-Range-cloneContents -->
      <li><p>Let <var>copyAttribute</var> be a new <a>attribute</a>.
 
      <li><p>Set <var>copyAttribute</var>'s <a for=Attr>namespace</a>,
-     <a for=Attr>namespace prefix</a>, <a for=Attr>local name</a>, <a for=Attr>name</a>,
+     <a for=Attr>namespace prefix</a>, <a for=Attr>local name</a>,
      and <a for=Attr>value</a>, to those of <var>attribute</var>.
 
      <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to
@@ -4448,10 +4447,11 @@ The <dfn method for="Document">createElement(<var>localName</var>)</dfn> method 
 The
 <dfn method for="Document">createElementNS(<var>namespace</var>, <var>qualifiedName</var>)</dfn>
 method must run these steps:
+
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
- <var>qualifiedName</var> be the result of passing <var>namespace</var> and
- <var>qualifiedName</var> to <a>validate and extract</a>. Rethrow any exceptions.
+ <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
+ <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>. Rethrow any
+ exceptions.
 
  <li>Let <var>interface</var> be the
  <a>element interface</a> for
@@ -4626,16 +4626,12 @@ The
 method, when invoked, must run these steps:
 
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
- <var>name</var> be the result of passing <var>namespace</var> and <var>name</var> to
- <a>validate and extract</a>. Rethrow any exceptions.
+ <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
+ <var>namespace</var> and <var>name</var> to <a>validate and extract</a>. Rethrow any exceptions.
 
- <li>Return a new <a>attribute</a> whose
- <a for=Attr>namespace</a> is <var>namespace</var>,
- <a for=Attr>namespace prefix</a> is
- <var>prefix</var>, <a for=Attr>local name</a> is
- <var>localName</var>, and <a for=Attr>name</a> is
- <var>name</var>.
+ <li>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
+ <a for=Attr>namespace prefix</a> is <var>prefix</var>, and <a for=Attr>local name</a> is
+ <var>localName</var>.
 </ol>
 
 <hr>
@@ -5158,10 +5154,8 @@ given a <var>name</var> and <a for="/">element</a>
  <a>HTML document</a>, let <var>name</var> be
  <a>converted to ASCII lowercase</a>.
 
- <li>Return the first <a>attribute</a> in
- <var>element</var>'s <a for=Element>attribute list</a>
- whose <a for=Attr>name</a> is <var>name</var>, and null
- otherwise.
+ <li>Return the first <a>attribute</a> in <var>element</var>'s <a for=Element>attribute list</a>
+ whose <a for=Attr>qualified name</a> is <var>name</var>, and null otherwise.
 </ol>
 
 To <dfn export id=concept-element-attributes-get-by-namespace>get an attribute by namespace and local name</dfn>
@@ -5199,17 +5193,16 @@ To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
  <var>element</var>.
 
  <li>
-  Otherwise, set <var>oldAttr</var> to the result of
-  <a lt="get an attribute by name">getting an attribute</a> given
-  <var>attr</var>'s <a for=Attr>name</a> and
-  <var>element</var>.
+  <p>Otherwise, set <var>oldAttr</var> to the result of
+  <a lt="get an attribute by name">getting an attribute</a> given <var>attr</var>'s
+  <a for=Attr>local name</a> and <var>element</var>.
 
   <p class="note no-backref">The result of this is that an
   <a>attribute</a> on an
   <a for="/">element</a> with an <a>HTML namespace</a> in an
   <a>HTML document</a> can be replaced with another
   <a>attribute</a> whose
-  <a for=Attr>name</a> is only an
+  <a for=Attr>qualified name</a> is only an
   <a>ASCII case-insensitive</a> match. We do not care, because nobody ought to be
   working with <a>attributes</a> in this way.
 
@@ -5227,12 +5220,10 @@ To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 
 To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> for
 an <a for="/">element</a> <var>element</var>
-using a <var>localName</var> and <var>value</var>, and an optional <var>name</var>,
-<var>prefix</var>, and <var>namespace</var>, run these steps:
+using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</var>, and
+<var>namespace</var>, run these steps:
 
 <ol>
- <li>If <var>name</var> is not given, set it to <var>localName</var>.
-
  <li>If <var>prefix</var> is not given, set it to null.
 
  <li>If <var>namespace</var> is not given, set it to null.
@@ -5246,7 +5237,7 @@ using a <var>localName</var> and <var>value</var>, and an optional <var>name</va
  <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is
  <var>prefix</var>, <a for=Attr>local name</a> is
- <var>localName</var>, <a for=Attr>name</a> is <var>name</var>,
+ <var>localName</var>,
  and <a for=Attr>value</a> is <var>value</var>, and then
  <a lt="append an attribute">append</a> this
  <a>attribute</a> to <var>element</var>
@@ -5487,9 +5478,9 @@ method must run these steps:
  <a>node document</a> is an <a>HTML document</a>, let <var>name</var> be
  <a>converted to ASCII lowercase</a>.
 
- <li>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
- <a for=Element>attribute list</a> whose <a for=Attr>name</a> is <var>name</var>, and null
- otherwise.<!-- This is step 2 of "get an attribute by name". -->
+ <li>Return the first <a>attribute</a> in <a>context object</a>'s <a for=Element>attribute list</a>
+ whose <a for=Attr>qualified name</a> is <var>name</var>, and null otherwise.
+ <!-- This is step 2 of "get an attribute by name". -->
 
  <li>If <var>attribute</var> is null, create an
  <a>attribute</a> whose
@@ -5510,15 +5501,13 @@ The
 method must run these steps:
 
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, <var>localName</var>, and
- <var>name</var> be the result of passing <var>namespace</var> and <var>name</var> to
- <a>validate and extract</a>. Rethrow any exceptions.
+ <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
+ <var>namespace</var> and <var>name</var> to <a>validate and extract</a>. Rethrow any exceptions.
 
  <li><a>Set an attribute value</a>
  for the <a>context object</a> using
  <var>localName</var>, <var>value</var>, and also
- <var>name</var>, <var>prefix</var>, and
- <var>namespace</var>.
+ <var>prefix</var> and <var>namespace</var>.
 </ol>
 
 The
@@ -5534,21 +5523,15 @@ method must
 given <var>namespace</var>, <var>localName</var>, and the
 <a>context object</a>, and then return undefined.
 
-The
-<dfn method for="Element">hasAttribute(<var>name</var>)</dfn>
-method must run these steps:
-<ol>
- <li>If the <a>context object</a> is in the
- <a>HTML namespace</a> and its
- <a>node document</a> is an
- <a>HTML document</a>, let <var>name</var> be
- <a>converted to ASCII lowercase</a>.
+<p>The <dfn method for="Element"><code>hasAttribute(<var>name</var>)</code></dfn> method, when
+invoked, must run these steps:
 
- <li>Return true if the <a>context object</a>
- <a lt="has an attribute">has</a> an
- <a>attribute</a> whose
- <a for=Attr>name</a> is
- <var>name</var>, and false otherwise.
+<ol>
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a>node document</a> is
+ an <a>HTML document</a>, let <var>name</var> be <a>converted to ASCII lowercase</a>.
+
+ <li><p>Return true if the <a>context object</a> <a lt="has an attribute">has</a> an
+ <a>attribute</a> whose <a for=Attr>qualified name</a> is <var>name</var>, and false otherwise.
 </ol>
 
 The
@@ -5739,11 +5722,8 @@ when invoked, must run these steps:
  <a for=NamedNodeMap>attribute list</a>.
 </ol>
 
-A {{NamedNodeMap}} object's
-<a>supported property names</a>, all
-<a>unenumerable</a>, are the
-<a for=Attr>names</a> of the
-<a>attributes</a> in the
+<p>A {{NamedNodeMap}} object's <a>supported property names</a>, all <a>unenumerable</a>, are the
+<a for=Attr>qualified names</a> of the <a>attributes</a> in the
 <a for=NamedNodeMap>attribute list</a>, in order.
 
 The
@@ -5832,18 +5812,23 @@ to as <em>content attributes</em> to avoid confusion with IDL attributes.
 <dfn export id=concept-attribute-namespace for=Attr>namespace</dfn> (null or a non-empty string),
 <dfn export id=concept-attribute-namespace-prefix for=Attr>namespace prefix</dfn> (null or a non-empty string),
 <dfn export id=concept-attribute-local-name for=Attr>local name</dfn> (a non-empty string),
-<dfn export id=concept-attribute-name for=Attr>name</dfn> (a non-empty string),
 <dfn export id=concept-attribute-value for=Attr>value</dfn> (a string), and
 <dfn export id=concept-attribute-element for=Attr>element</dfn> (null or an
 <a for="/">element</a>).
 
 <p class="note no-backref">If designed today they would just have a name and value. ☹
 
+<p>An <a>attribute</a>'s <dfn id=concept-attribute-qualified-name for=Attr>qualified name</dfn> is its
+<a for=Attr>local name</a> if its <a for=Attr>namespace prefix</a> is null, and its
+<a for=Attr>namespace prefix</a>, followed by "<code>:</code>", followed by its
+<a for=Attr>local name</a>, otherwise.
+
+<p class=note>User agents could have this as internal slot as an optimization, but are not required
+to. The standard has this concept for readability.
+
 When an <a>attribute</a> is created, its
 <a for=Attr>local name</a> is given. Unless explicitly
 given when an <a>attribute</a> is created, its
-<a for=Attr>name</a> is set to its
-<a for=Attr>local name</a>, its
 <a for=Attr>namespace</a>,
 <a for=Attr>namespace prefix</a>, and
 <a for=Attr>element</a> are set to null, and its
@@ -5860,28 +5845,25 @@ null.
 
 <hr>
 
-The <dfn attribute for="Attr">namespaceURI</dfn>
-attribute's getter must return the
+<p>The <dfn attribute for="Attr"><code>namespaceURI</code></dfn> attribute's getter must return the
 <a for=Attr>namespace</a>.
 
-The <dfn attribute for="Attr">prefix</dfn> attribute's getter must return
-the <a for=Attr>namespace prefix</a>.
+<p>The <dfn attribute for="Attr"><code>prefix</code></dfn> attribute's getter must return the
+<a for=Attr>namespace prefix</a>.
 
-The <dfn attribute for="Attr">localName</dfn> attribute's getter must
-return the <a for=Attr>local name</a>.
+<p>The <dfn attribute for="Attr"><code>localName</code></dfn> attribute's getter must return the
+<a for=Attr>local name</a>.
 
-The <dfn attribute for="Attr">name</dfn> attribute's getter must return the
-<a for=Attr>name</a>.
+<p>The <dfn attribute for="Attr"><code>name</code></dfn> attribute's getter must return the
+<a for=Attr>qualified name</a>.
 
-The <dfn attribute for="Attr">value</dfn> attribute's getter,
-<dfn attribute for="Attr">nodeValue</dfn> attribute's getter, and
-<dfn attribute for="Attr">textContent</dfn> attribute's getter, must
-return the <a for=Attr>value</a>.
+<p>The <dfn attribute for="Attr"><code>value</code></dfn> attribute's getter,
+<dfn attribute for="Attr"><code>nodeValue</code></dfn> attribute's getter, and
+<dfn attribute for="Attr"><code>textContent</code></dfn> attribute's getter, must return the
+<a for=Attr>value</a>.
 
-The {{Attr/value}} attribute's setter,
-{{Attr/nodeValue}} attribute's setter, and
-{{Attr/textContent}} attribute's setter, must run these
-steps:
+<p>The {{Attr/value}} attribute's setter, {{Attr/nodeValue}} attribute's setter, and
+{{Attr/textContent}} attribute's setter, must run these steps:
 
 <ol>
  <li>If <a>context object</a>'s
