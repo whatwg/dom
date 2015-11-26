@@ -5041,7 +5041,7 @@ interface Element : Node {
 
            attribute DOMString id;
            attribute DOMString className;
-  [SameObject] readonly attribute DOMTokenList classList;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
 
   boolean hasAttributes();
   [SameObject] readonly attribute NamedNodeMap attributes;
@@ -8561,8 +8561,7 @@ These constants can be used for the
 
 <h2 id="sets">Sets</h2>
 
-<p class="note no-backref">Yes, the names {{DOMTokenList}} and {{DOMSettableTokenList}}
-are unfortunate legacy mishaps.
+<p class="note no-backref">Yes, the name {{DOMTokenList}} is an unfortunate legacy mishap.
 
 <h3 id="interface-domtokenlist">Interface {{DOMTokenList}}</h3>
 
@@ -8576,6 +8575,7 @@ interface DOMTokenList {
   boolean toggle(DOMString token, optional boolean force);
   void replace(DOMString token, DOMString newToken);
   boolean supports(DOMString token);
+           attribute DOMString value;
   stringifier;
   iterable&lt;DOMString>;
 };
@@ -8690,6 +8690,11 @@ associated <a for="/">element</a>'s
   <p>Returns true if <var>token</var> is in the associated attribute's supported tokens. Returns
   false otherwise.
   <p>Throws a <code>TypeError</code> exception if the associated attribute has no supported tokens defined.
+
+ <dt><code><var>tokenlist</var> . {{DOMTokenList/value}}</code>
+ <dd>
+  <p>Returns the associated set as string.
+  <p>Can be set, to change the associated attribute.
 </dl>
 
 <p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return the
@@ -8822,32 +8827,15 @@ method, when invoked, must run these steps:
  <li><p>Return <var>result</var>.
 </ol>
 
-<p>The <dfn export for=DOMTokenList id=dom-domtokenlist-stringifier>stringification behavior</dfn>
-must return the result of running <a>context object</a>'s <a>serialize steps</a>.
-
-
-<h3 id="interface-domsettabletokenlist">Interface {{DOMSettableTokenList}}</h3>
-
-<pre class="idl">
-interface DOMSettableTokenList : DOMTokenList {
-            attribute DOMString value;
-};
-</pre>
-
-<dl class="domintro">
- <dt><code><var>tokenlist</var> . {{DOMSettableTokenList/value}}</code>
- <dd>
-  <p>Returns the associated set as string.
-  <p>Can be set, to change the associated attribute.
-</dl>
-
-<p>The <dfn attribute for=DOMSettableTokenList><code>value</code></dfn> attribute must return the
+<p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> attribute must return the
 result of running <a>context object</a>'s <a>serialize steps</a>.
 
-<p>Setting the {{DOMSettableTokenList/value}} attribute must <a>set an attribute value</a> for the
+<p>Setting the {{DOMTokenList/value}} attribute must <a>set an attribute value</a> for the
 associated <a for="/">element</a> using associated <a>attribute</a>'s <a for=Attr>local name</a> and
 the given value.
 
+<p>The <dfn export for=DOMTokenList id=dom-domtokenlist-stringifier>stringification behavior</dfn>
+must return the result of running <a>context object</a>'s <a>serialize steps</a>.
 
 
 <h2 id='historical'>Historical</h2>
@@ -9153,6 +9141,7 @@ Stig Halvorsen,
 Tab Atkins,
 <i title>timeless</i>,
 Timo Tijhof,
+Tobie Langel,
 Tom Pixley,
 Travis Leithead,
 Vidur Apparao,
