@@ -1041,7 +1041,7 @@ method, when invoked, must run these steps:
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)</code></dfn>
 method, when invoked, must, if there is an <a>event listener</a> in the associated list of
-<a>event listeners</a> whose <b>type</b> is <var>name</var>, <b>callback</b> is <var>callback</var>,
+<a>event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
 and <b>capture</b> is <var>capture</var>, set that <a>event listener</a>'s <b>removed flag</b> and
 remove it from the associated list of <a>event listeners</a>.
 
@@ -3963,7 +3963,7 @@ interface Document : Node {
   Node adoptNode(Node node);
 
   [NewObject] Attr createAttribute(DOMString localName);
-  [NewObject] Attr createAttributeNS(DOMString? namespace, DOMString name);
+  [NewObject] Attr createAttributeNS(DOMString? namespace, DOMString qualifiedName);
 
   [NewObject] Event createEvent(DOMString interface);
 
@@ -4623,14 +4623,15 @@ method, when invoked, must run these steps:
 </ol>
 
 The
-<dfn method for="Document">createAttributeNS(<var>namespace</var>, <var>name</var>)</dfn>
+<dfn method for="Document"><code>createAttributeNS(<var>namespace</var>, <var>qualifiedName</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
- <var>namespace</var> and <var>name</var> to <a>validate and extract</a>. Rethrow any exceptions.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
+ passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>. Rethrow
+ any exceptions.
 
- <li>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
+ <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is <var>prefix</var>, and <a for=Attr>local name</a> is
  <var>localName</var>.
 </ol>
@@ -5020,16 +5021,16 @@ interface Element : Node {
   boolean hasAttributes();
   [SameObject] readonly attribute NamedNodeMap attributes;
   sequence&lt;DOMString> getAttributeNames();
-  DOMString? getAttribute(DOMString name);
+  DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  void setAttribute(DOMString name, DOMString value);
-  void setAttributeNS(DOMString? namespace, DOMString name, DOMString value);
-  void removeAttribute(DOMString name);
+  void setAttribute(DOMString qualifiedName, DOMString value);
+  void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
+  void removeAttribute(DOMString qualifiedName);
   void removeAttributeNS(DOMString? namespace, DOMString localName);
-  boolean hasAttribute(DOMString name);
+  boolean hasAttribute(DOMString qualifiedName);
   boolean hasAttributeNS(DOMString? namespace, DOMString localName);
 
-  Attr? getAttributeNode(DOMString name);
+  Attr? getAttributeNode(DOMString qualifiedName);
   Attr? getAttributeNodeNS(DOMString? namespace, DOMString localName);
   Attr? setAttributeNode(Attr attr);
   Attr? setAttributeNodeNS(Attr attr);
@@ -5146,23 +5147,21 @@ run these steps:
 
 <hr>
 
-To <dfn export id=concept-element-attributes-get-by-name>get an attribute by name</dfn>
-given a <var>name</var> and <a for="/">element</a>
-<var>element</var>, run these steps:
+To <dfn export id=concept-element-attributes-get-by-name>get an attribute by name</dfn> given a
+<var>qualifiedName</var> and <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
- <li>If <var>element</var> is in the <a>HTML namespace</a> and its
- <a>node document</a> is an
- <a>HTML document</a>, let <var>name</var> be
- <a>converted to ASCII lowercase</a>.
+ <li><p>If <var>element</var> is in the <a>HTML namespace</a> and its <a>node document</a> is an
+ <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
 
- <li>Return the first <a>attribute</a> in <var>element</var>'s <a for=Element>attribute list</a>
- whose <a for=Attr>qualified name</a> is <var>name</var>, and null otherwise.
+ <li><p>Return the first <a>attribute</a> in <var>element</var>'s <a for=Element>attribute list</a>
+ whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and null otherwise.
 </ol>
 
-To <dfn export id=concept-element-attributes-get-by-namespace>get an attribute by namespace and local name</dfn>
-given a <var>namespace</var>, <var>localName</var>, and
-<a for="/">element</a> <var>element</var>, run these steps:
+To
+<dfn export id=concept-element-attributes-get-by-namespace>get an attribute by namespace and local name</dfn>
+given a <var>namespace</var>, <var>localName</var>, and <a for="/">element</a> <var>element</var>,
+run these steps:
 
 <ol>
  <li>If <var>namespace</var> is the empty string, set it to null.
@@ -5229,19 +5228,17 @@ using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</
 
 To
 <dfn export id=concept-element-attributes-remove-by-name>remove an attribute by name</dfn>
-given a <var>name</var> and <a for="/">element</a>
-<var>element</var>, run these steps:
+given a <var>qualifiedName</var> and <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
- <li>Let <var>attr</var> be the result of
+ <li><p>Let <var>attr</var> be the result of
  <a lt="get an attribute by name">getting an attribute</a> given
- <var>name</var> and <var>element</var>.
+ <var>qualifiedName</var> and <var>element</var>.
 
- <li>If <var>attr</var> is non-null,
- <a lt="remove an attribute">remove</a> it from
+ <li><p>If <var>attr</var> is non-null, <a lt="remove an attribute">remove</a> it from
  <var>element</var>.
 
- <li>Return <var>attr</var>.
+ <li><p>Return <var>attr</var>.
 </ol>
 
 To
@@ -5425,15 +5422,17 @@ the <a for=Attr>qualified names</a> of the <a>attributes</a> in the <a>context o
 <p class=note>These are not guaranteed to be unique.<!-- A theoretical getAttributeNamesNS() could
 return an array of unique two-value-arrays. -->
 
-The <dfn method for="Element">getAttribute(<var>name</var>)</dfn> method must run these steps:
+The <dfn method for="Element"><code>getAttribute(<var>qualifiedName</var>)</code></dfn> method, when
+invoked, must run these steps:
+
 <ol>
- <li>Let <var>attr</var> be the result of
- <a lt="get an attribute by name">getting an attribute</a> given
- <var>name</var> and the <a>context object</a>.
+ <li><p>Let <var>attr</var> be the result of
+ <a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and the
+ <a>context object</a>.
 
- <li>If <var>attr</var> is null, return null.
+ <li><p>If <var>attr</var> is null, return null.
 
- <li>Return <var>attr</var>'s <a for=Attr>value</a>.
+ <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.
 </ol>
 
 The
@@ -5451,57 +5450,48 @@ method must run the following steps:
   <li>Return <var>attr</var>'s <a for=Attr>value</a>.
 </ol>
 
-The <dfn method for="Element"><code>setAttribute(<var>name</var>, <var>value</var>)</code></dfn>
-method must run these steps:
+The
+<dfn method for="Element"><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li>If <var>name</var> does not match the
- <code><a type>Name</a></code> production in XML,
- <a>throw</a> an
- {{InvalidCharacterError}} exception.
+ <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
+ XML, <a>throw</a> an {{InvalidCharacterError}} exception.
 
- <li>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a>node document</a> is an <a>HTML document</a>, let <var>name</var> be
- <a>converted to ASCII lowercase</a>.
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a>node document</a> is
+ an <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
 
- <li>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
- <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>name</var>, and null
- otherwise.
+ <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
+ <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
+ and null otherwise.
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
- <li>If <var>attribute</var> is null, create an
- <a>attribute</a> whose
- <a for="Attr">local name</a> is <var>name</var> and
- <a for=Attr>value</a> is <var>value</var>,
- <a lt="append an attribute">append</a> this
- <a>attribute</a> to the <a>context object</a>'s
- <a for=Element>attribute list</a>, and then terminate these
- steps.
+ <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
+ <a for="Attr">local name</a> is <var>qualifiedName</var> and <a for=Attr>value</a> is
+ <var>value</var>, <a lt="append an attribute">append</a> this <a>attribute</a> to the
+ <a>context object</a>'s <a for=Element>attribute list</a>, and then terminate these steps.
 
- <li><a lt="change an attribute">Change</a>
- <var>attribute</var> from <a>context object</a> to
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> from <a>context object</a> to
  <var>value</var>.
 </ol>
 
 The
-<dfn method for="Element">setAttributeNS(<var>namespace</var>, <var>name</var>, <var>value</var>)</dfn>
-method must run these steps:
+<dfn method for="Element"><code>setAttributeNS(<var>namespace</var>, <var>qualifiedName</var>, <var>value</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
- <var>namespace</var> and <var>name</var> to <a>validate and extract</a>. Rethrow any exceptions.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
+ passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>. Rethrow
+ any exceptions.
 
- <li><a>Set an attribute value</a>
- for the <a>context object</a> using
- <var>localName</var>, <var>value</var>, and also
- <var>prefix</var> and <var>namespace</var>.
+ <li><p><a>Set an attribute value</a> for the <a>context object</a> using <var>localName</var>,
+ <var>value</var>, and also <var>prefix</var> and <var>namespace</var>.
 </ol>
 
 The
-<dfn method for="Element">removeAttribute(<var>name</var>)</dfn>
-method must
-<a lt="remove an attribute by name">remove an attribute</a> given
-<var>name</var> and the <a>context object</a>, and then return undefined.
+<dfn method for="Element"><code>removeAttribute(<var>qualifiedName</var>)</code></dfn>
+method, when invoked, must <a lt="remove an attribute by name">remove an attribute</a> given
+<var>qualifiedName</var> and the <a>context object</a>, and then return undefined.
 
 The
 <dfn method for="Element">removeAttributeNS(<var>namespace</var>, <var>localName</var>)</dfn>
@@ -5510,20 +5500,21 @@ method must
 given <var>namespace</var>, <var>localName</var>, and the
 <a>context object</a>, and then return undefined.
 
-<p>The <dfn method for="Element"><code>hasAttribute(<var>name</var>)</code></dfn> method, when
-invoked, must run these steps:
+<p>The <dfn method for="Element"><code>hasAttribute(<var>qualifiedName</var>)</code></dfn> method,
+when invoked, must run these steps:
 
 <ol>
  <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a>node document</a> is
- an <a>HTML document</a>, let <var>name</var> be <a>converted to ASCII lowercase</a>.
+ an <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
 
  <li><p>Return true if the <a>context object</a> <a lt="has an attribute">has</a> an
- <a>attribute</a> whose <a for=Attr>qualified name</a> is <var>name</var>, and false otherwise.
+ <a>attribute</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and false
+ otherwise.
 </ol>
 
 The
-<dfn method for="Element">hasAttributeNS(<var>namespace</var>, <var>localName</var>)</dfn>
-method must run these steps:
+<dfn method for="Element"><code>hasAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
  <li>If <var>namespace</var> is the empty string, set it to null.
@@ -5539,13 +5530,13 @@ method must run these steps:
 <hr>
 
 The
-<dfn method for="Element">getAttributeNode(<var>name</var>)</dfn>
+<dfn method for="Element"><code>getAttributeNode(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the result of
 <a lt="get an attribute by name">getting an attribute</a> given
-<var>name</var> and the <a>context object</a>.
+<var>qualifiedName</var> and the <a>context object</a>.
 
 The
-<dfn method for="Element">getAttributeNodeNS(<var>namespace</var>, <var>localName</var>)</dfn>
+<dfn method for="Element"><code>getAttributeNodeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must return the result of
 <a lt="get an attribute by namespace and local name">getting an attribute</a> given
 <var>namespace</var>, <var>localName</var>, and the <a>context object</a>.
@@ -5556,7 +5547,7 @@ invoked, must return the result of <a lt="set an attribute">setting an attribute
 <var>attr</var> and the <a>context object</a>. Rethrow any exceptions.
 
 The
-<dfn method for="Element">removeAttributeNode(<var>attr</var>)</dfn>
+<dfn method for="Element"><code>removeAttributeNode(<var>attr</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
@@ -5656,11 +5647,11 @@ for the <a>context object</a>.
 interface NamedNodeMap {
   readonly attribute unsigned long length;
   getter Attr? item(unsigned long index);
-  getter Attr? getNamedItem(DOMString name);
+  getter Attr? getNamedItem(DOMString qualifiedName);
   Attr? getNamedItemNS(DOMString? namespace, DOMString localName);
   Attr? setNamedItem(Attr attr);
   Attr? setNamedItemNS(Attr attr);
-  Attr removeNamedItem(DOMString name);
+  Attr removeNamedItem(DOMString qualifiedName);
   Attr removeNamedItemNS(DOMString? namespace, DOMString localName);
 };
 </pre>
@@ -5705,11 +5696,10 @@ when invoked, must run these steps:
 <a for=Attr>qualified names</a> of the <a>attributes</a> in the
 <a for=NamedNodeMap>attribute list</a>, in order.
 
-The
-<dfn method for="NamedNodeMap">getNamedItem(<var>name</var>)</dfn>
+The <dfn method for="NamedNodeMap"><code>getNamedItem(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the result of
-<a lt="get an attribute by name">getting an attribute</a> given
-<var>name</var> and <a for=NamedNodeMap>element</a>.
+<a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and
+<a for=NamedNodeMap>element</a>.
 
 The
 <dfn method for="NamedNodeMap">getNamedItemNS(<var>namespace</var>, <var>localName</var>)</dfn>
@@ -5722,19 +5712,18 @@ The <dfn method for="NamedNodeMap"><code>setNamedItem(<var>attr</var>)</code></d
 <dfn method for="NamedNodeMap"><code>setNamedItemNS(<var>attr</var>)</code></dfn>
 methods, when invoked, must return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var> and <a for=NamedNodeMap>element</a>. Rethrow any exceptions.
 
-The
-<dfn method for="NamedNodeMap">removeNamedItem(<var>name</var>)</dfn>
+The <dfn method for="NamedNodeMap"><code>removeNamedItem(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
- <li>Let <var>attr</var> be the result of
+ <li><p>Let <var>attr</var> be the result of
  <a lt="remove an attribute by name">removing an attribute</a> given
- <var>name</var> and <a for=NamedNodeMap>element</a>.
+ <var>qualifiedName</var> and <a for=NamedNodeMap>element</a>.
 
- <li>If <var>attr</var> is null, <a>throw</a> a
+ <li><p>If <var>attr</var> is null, <a>throw</a> a
  {{NotFoundError}} exception.
 
- <li>Return <var>attr</var>.
+ <li><p>Return <var>attr</var>.
 </ol>
 
 The
