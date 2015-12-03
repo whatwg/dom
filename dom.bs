@@ -8531,10 +8531,11 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  boolean add(DOMString... tokens);
+  void add(DOMString... tokens);
   void remove(DOMString... tokens);
   boolean toggle(DOMString token, optional boolean force);
   void replace(DOMString token, DOMString newToken);
+  boolean supports(DOMString token);
   stringifier;
   iterable&lt;DOMString>;
 };
@@ -8556,7 +8557,7 @@ associated <a>attribute</a>'s <a for=Attr>local name</a>.
 
 <ol>
  <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
- <a>supported tokens</a>, return true.
+ <a>supported tokens</a>, <a>throw</a> a <code>TypeError</code>.
 
  <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>,
  <a>converted to ASCII lowercase</a>.
@@ -8591,16 +8592,8 @@ are to:
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> or
 associated <a for="/">element</a>'s
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
-<a lt="attribute is set">set</a>, run these substeps:
-
-<ol>
- <li><p>Let <var>temporary tokens</var> be the new <a for=Attr>value</a>,
- <a lt="ordered set parser">parsed</a>.
-
- <li><p>For each <var>token</var> in <var>temporary tokens</var>, run
- <a>validation steps</a> with <var>token</var>. If the return value is true, append <var>token</var>
- to <a>tokens</a>.
-</ol>
+<a lt="attribute is set">set</a>, set <a>tokens</a> to the new <a for=Attr>value</a>,
+<a lt="ordered set parser">parsed</a>.
 
 <p>When an associated <a for="/">element</a>'s
 <a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
@@ -8623,11 +8616,10 @@ associated <a for="/">element</a>'s
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="add()">add(<var>tokens</var>&hellip;)</a></code>
  <dd>
-  <p>Adds all valid arguments passed, except those already present.
+  <p>Adds all arguments passed, except those already present.
   <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
   <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
-  <p>Returns false if any invalid arguments passed, true otherwise.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
@@ -8639,8 +8631,8 @@ associated <a for="/">element</a>'s
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="toggle()">toggle(<var>token</var> [, <var>force</var>])</a></code>
  <dd>
   <p>If <var>force</var> is not given, "toggles" <var>token</var>, removing it if it's present and
-  adding it if it's not present and is valid. If <var>force</var> is true, adds <var>token</var>
-  if it is valid (same as {{add()}}). If <var>force</var> is false, removes <var>token</var> (same
+  adding it if it's not present. If <var>force</var> is true, adds <var>token</var>
+  (same as {{add()}}). If <var>force</var> is false, removes <var>token</var> (same
   as {{DOMTokenList/remove()}}).
   <p>Returns true if <var>token</var> is now present, and false otherwise.
   <p>Throws a {{SyntaxError}} exception if <var>token</var> is empty.
@@ -8652,6 +8644,12 @@ associated <a for="/">element</a>'s
   <p>Throws a {{SyntaxError}} exception if one if the arguments is the empty string.
   <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
   <a>ASCII whitespace</a>.
+
+ <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="supports()">supports(<var>token</var>)</a></code>
+ <dd>
+  <p>Returns true if <var>token</var> is in the associated attribute's supported tokens. Returns
+  false otherwise.
+  <p>Throws a <code>TypeError</code> exception if the associated attribute has no supported tokens defined.
 </dl>
 
 <p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return the
@@ -8698,15 +8696,10 @@ method, when invoked, must run these steps:
    {{InvalidCharacterError}} exception.
   </ol>
 
- <li>Let <var>valid</var> be true.
-
  <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
- <a>tokens</a>, run <a>validation steps</a> with <var>token</var>. If the return value is false,
- set <var>valid</var> to false. Otherwise, append <var>token</var> to <a>tokens</a>.
+ <a>tokens</a>, append <var>token</var> to <a>tokens</a>.
 
  <li><p>Run the <a>update steps</a>.
-
- <li><p>Return <var>valid</var>.
 </ol>
 
 <p>The
@@ -8754,9 +8747,6 @@ method, when invoked, must run these steps:
   <ol>
    <li><p>If <var>force</var> is passed and is false, return false.
 
-   <li><p>Otherwise, run <a>validation steps</a> with <var>token</var>. If the return value is
-   false, return false.
-
    <li><p>Otherwise, append <var>token</var> to <a>tokens</a>, run the <a>update steps</a>, and
    return true.
   </ol>
@@ -8774,12 +8764,22 @@ method, when invoked, must run these steps:
  <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>,
  <a>throw</a> an {{InvalidCharacterError}} exception.
 
- <li><p>If <var>token</var> is not in <a>tokens</a> or running the <a>validation steps</a> for
- <var>newToken</var> return false, terminate these steps.
+ <li><p>If <var>token</var> is not in <a>tokens</a>, terminate these steps.
 
  <li><p>Replace <var>token</var> in <a>tokens</a> with <var>newToken</var>.
 
  <li><p>Run the <a>update steps</a>.
+</ol>
+
+<p>The
+<dfn method for="DOMTokenList" lt="supports(token)"><code>supports(<var>token</var>&hellip;)</code></dfn>
+method, when invoked, must run these steps:
+
+<ol>
+ <li><p>Let <var>result</var> be the return value of <a>validation steps</a> called with
+ <var>token</var>. Rethrow any exceptions.
+
+ <li><p>Return <var>result</var>.
 </ol>
 
 <p>The <dfn export for=DOMTokenList id=dom-domtokenlist-stringifier>stringification behavior</dfn>
