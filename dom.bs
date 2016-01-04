@@ -30,7 +30,7 @@ urlPrefix: https://encoding.spec.whatwg.org/
         text: ascii whitespace
         text: utf-8
         text: encoding
-        text: encoding name
+        text: name
         text: big5
         text: euc-jp
         text: euc-kr
@@ -59,6 +59,7 @@ urlPrefix: http://www.w3.org/TR/xml/#NT-
     type: type
         text: Name; url: Name
         text: Char; url: Char
+        text: PubidChar; url: PubidChar
 urlPrefix: http://www.w3.org/TR/xml-names/#NT-
     type: type
         text: QName; url: QName
@@ -102,7 +103,7 @@ urlPrefix: https://html.spec.whatwg.org/multipage/
             text: origin
             text: effective script origin
             text: origin alias; url: #concept-origin-alias
-            text: Unicode serialization of an origin
+            text: Unicode serialization of an origin; url: #unicode-serialisation-of-an-origin
 urlPrefix: https://w3c.github.io/webcomponents/spec/shadow/
 	type: dfn; urlPrefix: #dfn-
 		text: shadow root
@@ -3988,10 +3989,10 @@ interface XMLDocument : Document {};
 known as <dfn export id=concept-document lt="document">documents</dfn>.
 
 Each <a>document</a> has an associated
-<dfn export for=Document id=concept-document-base-url>base URL</dfn> (a <a spec=url>URL</a>),
+<dfn export for=Document id=concept-document-base-url>base URL</dfn> (a <a for=url>URL</a>),
 <dfn export for=Document id=concept-document-encoding>encoding</dfn> (an <a for="/">encoding</a>),
 <dfn export for=Document id=concept-document-content-type>content type</dfn> (a string),
-<dfn export for=Document id=concept-document-url>URL</dfn> (a <a spec=url>URL</a>),
+<dfn export for=Document id=concept-document-url>URL</dfn> (a <a for=url>URL</a>),
 <dfn export for=Document id=concept-document-type>type</dfn> ("<code>xml</code>" or "<code>html</code>"), and
 <dfn export for=Document id=concept-document-mode>mode</dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>").
 [[!ENCODING]]
@@ -4102,9 +4103,7 @@ The <dfn attribute for=Document><code>characterSet</code></dfn> attribute's gett
 steps:
 
 <ol>
- <li>Let <var>name</var> be
- <a for=Document>encoding</a>'s
- <a lt="encoding name">name</a>.
+ <li>Let <var>name</var> be <a for=Document>encoding</a>'s <a for=/>name</a>.
 
  <li>
   If <var>name</var> is in the first column in the table below, set
@@ -4470,14 +4469,14 @@ invoked, must return a new {{Text}} <a>node</a> with its <a>data</a> set to <var
 <a>node document</a> set to the <a>context object</a>.
 
 <p class="note no-backref">No check is performed that <var>data</var> consists of
-characters that match the <a type>Char</a> production.
+characters that match the <code><a type>Char</a></code> production.
 
 The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method, when invoked,
 must return a new {{Comment}} <a>node</a> with its <a>data</a> set to <var>data</var> and
 <a>node document</a> set to the <a>context object</a>.
 
 <p class="note no-backref">No check is performed that <var>data</var> consists of
-characters that match the <a type>Char</a> production
+characters that match the <code><a type>Char</a></code> production
 or that it contains two adjacent hyphens or ends with a hyphen.
 
 The
@@ -4511,7 +4510,7 @@ method, when invoked, must run these steps:
 <p class="note no-backref">No check is performed that <var>target</var> contains
 "<code>xml</code>" or "<code>:</code>", or that
 <var>data</var> contains characters that match the
-<a type>Char</a> production.
+<code><a type>Char</a></code> production.
 
 <hr>
 
@@ -4765,33 +4764,20 @@ interface DOMImplementation {
 <div class=impl>
 
 The
-<dfn method for="DOMImplementation">createDocumentType(<var>qualifiedName</var>, <var>publicId</var>, <var>systemId</var>)</dfn>
-method must run these steps:
+<dfn method for="DOMImplementation"><code>createDocumentType(<var>qualifiedName</var>, <var>publicId</var>, <var>systemId</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
- <li><a>Validate</a> <var>qualifiedName</var>. Rethrow any exceptions.
- <!-- <li>If <var>publicId</var> contains a character that does not
- match the <code><a>PubidChar</a></code> production in XML,
- <a>throw</a> an
- {{InvalidCharacterError}}
- exception. --> <!-- DOM3 didn't check this -->
- <!--<li>If <var>systemId</var> contains both a U+0022 QUOTATION MARK ('"') and a U+0027 APOSTROPHE ("'") character,
- <a>throw</a> an
- {{InvalidCharacterError}}
- exception.--> <!-- DOM3 didn't check this -->
- <li>Return a new <a>doctype</a>, with
- <var>qualifiedName</var> as its
- <a for=DocumentType>name</a>, <var>publicId</var> as
- its <a>public ID</a>, and
- <var>systemId</var> as its
- <a>system ID</a>, and with its
- <a>node document</a> set to the
- associated <a>document</a> of the
- <a>context object</a>.
+ <li><p><a>Validate</a> <var>qualifiedName</var>. Rethrow any exceptions.
+
+ <li><p>Return a new <a>doctype</a>, with <var>qualifiedName</var> as its
+ <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
+ as its <a>system ID</a>, and with its <a>node document</a> set to the associated <a>document</a> of
+ the <a>context object</a>.
 </ol>
 
-<p class=note>No check is performed that <var>publicId</var> matches the
-<code>PublicChar</code> production or that <var>systemId</var> does not contain both a
+<p class=note>No check is performed that <var>publicId</var> code points match the
+<code><a type>PubidChar</a></code> production or that <var>systemId</var> does not contain both a
 '<code>"</code>' and a "<code>'</code>".
 
 The
@@ -9045,6 +9031,7 @@ Elliott Sprehn,
 Erik Arvidsson,
 Gavin Nicol,
 Geoffrey Sneddon,
+Giorgio Liscio,
 Glen Huang,
 Glenn Maynard,
 Harald Alvestrand,
