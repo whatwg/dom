@@ -115,9 +115,10 @@
       <li><a href="#constructing-events"><span class="secno">3.4</span> <span class="content">Constructing events</span></a>
       <li><a href="#defining-event-interfaces"><span class="secno">3.5</span> <span class="content">Defining event interfaces</span></a>
       <li><a href="#interface-eventtarget"><span class="secno">3.6</span> <span class="content">Interface <code class="idl"><span>EventTarget</span></code></span></a>
-      <li><a href="#dispatching-events"><span class="secno">3.7</span> <span class="content">Dispatching events</span></a>
-      <li><a href="#firing-events"><span class="secno">3.8</span> <span class="content">Firing events</span></a>
-      <li><a href="#action-versus-occurance"><span class="secno">3.9</span> <span class="content">Action versus occurrence</span></a>
+      <li><a href="#observing-event-listeners"><span class="secno">3.7</span> <span class="content">Observing event listeners</span></a>
+      <li><a href="#dispatching-events"><span class="secno">3.8</span> <span class="content">Dispatching events</span></a>
+      <li><a href="#firing-events"><span class="secno">3.9</span> <span class="content">Firing events</span></a>
+      <li><a href="#action-versus-occurance"><span class="secno">3.10</span> <span class="content">Action versus occurrence</span></a>
      </ul>
     <li>
      <a href="#nodes"><span class="secno">4</span> <span class="content">Nodes</span></a>
@@ -451,7 +452,7 @@ but now in reverse <a data-link-type="dfn" href="#concept-tree-order">tree order
    <span class="kd">function</span> <span class="nx">test</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
      <span class="nx">debug</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">eventPhase</span><span class="p">)</span>
    <span class="p">}</span>
-   <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="nx">test</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+   <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="nx">test</span><span class="p">,</span> <span class="p">{</span><span class="nx">capture</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="nx">test</span><span class="p">)</span>
    <span class="kd">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Event</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="p">{</span><span class="nx">bubbles</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"x"</span><span class="p">).</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span>
@@ -531,13 +532,12 @@ inherits from the <code class="idl"><a data-link-type="idl" href="#event">Event<
  value does not always carry meaning, but true can indicate that part of the operation
  during which <var>event</var> was <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a>, can be canceled by invoking the <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> method. 
     <dt><code><var>event</var> . <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>()</code> 
-    <dd>If invoked when the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is true,
+    <dd>If invoked when the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is true, and while executing a listener
+ for the <var>event</var> with <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> set to false,
  signals to the operation that caused <var>event</var> to be <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> that it needs to be
  canceled. 
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-defaultprevented">defaultPrevented</a></code></code> 
-    <dd>Returns true if <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> was invoked
- while the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute
- value is true, and false otherwise. 
+    <dd>Returns true if <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> was invoked successfully to indicate cancellation, and false otherwise. 
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code></code> 
     <dd>Returns true if <var>event</var> was <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> by the user agent, and
  false otherwise. 
@@ -575,12 +575,17 @@ flags that are all initially unset:</p>
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="canceled-flag">canceled flag<a class="self-link" href="#canceled-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="initialized-flag">initialized flag<a class="self-link" href="#initialized-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="dispatch-flag">dispatch flag<a class="self-link" href="#dispatch-flag"></a></dfn> 
+    <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="in-passive-listener-flag">in passive listener flag<a class="self-link" href="#in-passive-listener-flag"></a></dfn> 
    </ul>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="method" data-export="" id="dom-event-stoppropagation">stopPropagation()<a class="self-link" href="#dom-event-stoppropagation"></a></dfn> method must set the <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="method" data-export="" id="dom-event-stopimmediatepropagation">stopImmediatePropagation()<a class="self-link" href="#dom-event-stopimmediatepropagation"></a></dfn> method must set both the <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> and <a data-link-type="dfn" href="#stop-immediate-propagation-flag">stop immediate propagation flag</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-bubbles">bubbles<a class="self-link" href="#dom-event-bubbles"></a></dfn> and <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-cancelable">cancelable<a class="self-link" href="#dom-event-cancelable"></a></dfn> attributes
 must return the values they were initialized to.</p>
-   <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="method" data-export="" id="dom-event-preventdefault">preventDefault()<a class="self-link" href="#dom-event-preventdefault"></a></dfn> method must set the <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> if the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is true.</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="method" data-export="" id="dom-event-preventdefault">preventDefault()<a class="self-link" href="#dom-event-preventdefault"></a></dfn> method must set the <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> if the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is true and
+the <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a> is unset.</p>
+   <p class="note no-backref" role="note"> This means there are scenarios where invoking <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> has no effect.
+ User agents are encouraged to log the precise cause in a developer console,
+ to aid debugging </p>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-defaultprevented">defaultPrevented<a class="self-link" href="#dom-event-defaultprevented"></a></dfn> attribute must return true if the <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set and
 false otherwise.</p>
    <hr>
@@ -672,49 +677,74 @@ for historical reasons.</p>
    <h3 class="heading settled" data-level="3.6" id="interface-eventtarget"><span class="secno">3.6. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code></span><a class="self-link" href="#interface-eventtarget"></a></h3>
 <pre class="idl">[Exposed=(Window,Worker)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="eventtarget">EventTarget<a class="self-link" href="#eventtarget"></a></dfn> {
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, capture), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-capture-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-capture-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, capture), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-capture-capture">capture<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-capture-capture"></a></dfn> = false);
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, capture), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-capture-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-capture-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, capture), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-capture-capture">capture<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-capture-capture"></a></dfn> = false);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-options"></a></dfn>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-options"></a></dfn>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <dfn class="idl-code" data-dfn-for="EventTarget/dispatchEvent(event)" data-dfn-type="argument" data-export="" id="dom-eventtarget-dispatchevent-event-event">event<a class="self-link" href="#dom-eventtarget-dispatchevent-event-event"></a></dfn>);
 };
 
 callback interface <dfn class="idl-code" data-dfn-type="callback" data-export="" id="callbackdef-eventlistener">EventListener<a class="self-link" href="#callbackdef-eventlistener"></a></dfn> {
   void <dfn class="idl-code" data-dfn-for="EventListener" data-dfn-type="method" data-export="" data-lt="handleEvent(event)" id="dom-eventlistener-handleevent">handleEvent<a class="self-link" href="#dom-eventlistener-handleevent"></a></dfn>(<a data-link-type="idl-name" href="#event">Event</a> <dfn class="idl-code" data-dfn-for="EventListener/handleEvent(event)" data-dfn-type="argument" data-export="" id="dom-eventlistener-handleevent-event-event">event<a class="self-link" href="#dom-eventlistener-handleevent-event-event"></a></dfn>);
 };
+
+dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-eventlisteneroptions">EventListenerOptions<a class="self-link" href="#dictdef-eventlisteneroptions"></a></dfn> {
+  boolean <dfn class="idl-code" data-dfn-for="EventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventlisteneroptions-capture">capture<a class="self-link" href="#dom-eventlisteneroptions-capture"></a></dfn>;
+  boolean <dfn class="idl-code" data-dfn-for="EventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventlisteneroptions-passive">passive<a class="self-link" href="#dom-eventlisteneroptions-passive"></a></dfn>;
+};
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> is an object to which an <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> when something has
 occurred. Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> has an associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>.</p>
    <p>An <dfn data-dfn-type="dfn" data-export="" id="concept-event-listener">event listener<a class="self-link" href="#concept-event-listener"></a></dfn> can be used to observe a specific <a data-link-type="dfn" href="#concept-event">event</a>. </p>
-   <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b>, <b>callback</b>, and <b>capture</b>. An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> also has an associated <b>removed flag</b>, which is initially unset. </p>
+   <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b>, <b>callback</b>, <b>capture</b> and <b>passive</b>. An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> also has an associated <b>removed flag</b>, which is initially unset. </p>
    <p class="note no-backref" role="note">The callback is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code> for historical reasons. As can be
 seen from the definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a more broad concept. </p>
    <dl class="domintro">
-    <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>capture</var> = false])</code> 
+    <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
     <dd>
       Appends an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> for <a data-link-type="dfn" href="#concept-event">events</a> whose <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value
   is <var>type</var>. The <var>callback</var> argument sets the <b>callback</b> that will
-  be invoked when the <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a>. When set to true,
-  the <var>capture</var> argument prevents <b>callback</b> from being invoked when
+  be invoked when the <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a>. 
+     <p>The <var>options</var> argument sets listener-specific options. For compatibility this can be
+  just a boolean, in which case the method behaves exactly as if the value was
+  specified as <var>options</var>’ <code>capture</code> member.</p>
+     <p>When set to true, <var>options</var>’ <code>capture</code> member prevents <b>callback</b> from being invoked when
   the <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>.
-  When false, <b>callback</b> will not be invoked when <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. Either way, <b>callback</b> will be
-  invoked if <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. 
-     <p>The <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is appended to <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> and is not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and <b>capture</b> values.</p>
-    <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>capture</var> = false])</code> 
-    <dd>Remove the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with the same <var>type</var>, <var>callback</var>, and <var>capture</var>. 
+  When false (or not present), <b>callback</b> will not be invoked when <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. Either way, <b>callback</b> will be
+  invoked if <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>.</p>
+     <p>When set to true, <var>options</var>’ <code>passive</code> member indicates that the <b>callback</b> will not cancel the event by invoking <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code>.
+  This is used to enable performance optimizations described in <a href="#observing-event-listeners">§3.7 Observing event listeners</a>.</p>
+     <p>The <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is appended to <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> and is not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, <b>capture</b> and <b>passive</b> values.</p>
+    <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
+    <dd>Remove the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with the same <var>type</var>, <var>callback</var>, and <var>options</var>. 
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<var>event</var>)</code> 
     <dd><a data-link-type="dfn" href="#concept-event-dispatch">Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns
  true if either <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is false or its <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> method was not invoked, and false otherwise. 
    </dl>
-   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="addEventListener(type, callback, capture)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistener"><code>addEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)</code><a class="self-link" href="#dom-eventtarget-addeventlistener"></a></dfn> method, when invoked, must run these steps: </p>
+   <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-flatten-options">flatten<a class="self-link" href="#concept-flatten-options"></a></dfn> <var>options</var> run these steps: </p>
+   <ol>
+    <li>Let <var>capture</var> and <var>passive</var> be false. 
+    <li>If <var>options</var> is a boolean, set <var>capture</var> to <var>options</var>. 
+    <li>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-capture">capture</a></code></code> is
+ present in <var>options</var> with value true, then set <var>capture</var> to true. 
+    <li>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code></code> is
+ present in <var>options</var> with value true, then set <var>passive</var> to true. 
+    <li>Return <var>capture</var> and <var>passive</var>. 
+   </ol>
+   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="addEventListener(type, callback, options)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistener"><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code><a class="self-link" href="#dom-eventtarget-addeventlistener"></a></dfn> method, when invoked, must run these steps: </p>
    <ol>
     <li>
      <p>If <var>callback</var> is null, terminate these steps. </p>
+    <li>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. 
     <li>
-     <p>Append an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with <b>type</b> set to <var>type</var>, <b>callback</b> set to <var>callback</var>, and <b>capture</b> set to <var>capture</var>, unless there already is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in that list with the
- same <b>type</b>, <b>callback</b>, and <b>capture</b>. </p>
+     <p>Append an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with <b>type</b> set to <var>type</var>, <b>callback</b> set to <var>callback</var>, <b>capture</b> set to <var>capture</var>, and <b>passive</b> set to <var>passive</var> unless there
+ already is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in that list with the same <b>type</b>, <b>callback</b>, <b>capture</b>, and <b>passive</b>. </p>
    </ol>
-   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, capture)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener"><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>capture</var>)</code><a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method, when invoked, must, if there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
-and <b>capture</b> is <var>capture</var>, set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed flag</b> and
-remove it from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
+   <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, options)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener"><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code><a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method, when invoked, must, run these steps </p>
+   <ol>
+    <li>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. 
+    <li>If there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var> then
+ set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed flag</b> and remove it from the
+ associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. 
+   </ol>
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" id="dom-eventtarget-dispatchevent"><code>dispatchEvent(<var>event</var>)</code><a class="self-link" href="#dom-eventtarget-dispatchevent"></a></dfn> method, when
 invoked, must run these steps: </p>
    <ol>
@@ -726,7 +756,24 @@ invoked, must run these steps: </p>
     <li>
      <p><a data-link-type="dfn" href="#concept-event-dispatch">Dispatch</a> the <var>event</var> and return the value that returns. </p>
    </ol>
-   <h3 class="heading settled" data-level="3.7" id="dispatching-events"><span class="secno">3.7. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
+   <h3 class="heading settled" data-level="3.7" id="observing-event-listeners"><span class="secno">3.7. </span><span class="content">Observing event listeners</span><a class="self-link" href="#observing-event-listeners"></a></h3>
+   <p>In general, developers do not expect the presence of an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to be
+observable. The impact of an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is determined by its <b>callback</b>.
+That is, a developer adding a no-op <a data-link-type="dfn" href="#concept-event-listener">event listener</a> would not expect it to have
+any side effects. </p>
+   <p>Unfortunately, some event APIs have been designed such that implementing them
+efficiently requires observing <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. This can make the presence
+of listeners observable in that even empty listeners can have a dramatic performance impact
+on the behavior of the application. For example, touch and wheel events which can be used to block
+asynchronous scrolling. In some cases this problem can be mitigated by specifying
+the event to be <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> only when there is at least one
+non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listener. For example, non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> listeners must block scrolling, but if all listeners are <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> then
+scrolling can be allowed to start <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a> by making the <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> uncancelable (so that calls to <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> are ignored). So code
+dispatching an event is able to observe the absence of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listeners, and use that to clear the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> property of the event
+being dispatched. </p>
+   <p>Ideally, any new event APIs are defined such that they do not need this
+property (use <a href="https://lists.w3.org/Archives/Public/public-script-coord/">public-scrip-coord@w3.org</a> for discussion). </p>
+   <h3 class="heading settled" data-level="3.8" id="dispatching-events"><span class="secno">3.8. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
    <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <var>event</var> to a <var>target</var>, with an optional <var>target override</var>, run these steps: </p>
    <ol>
     <li>
@@ -785,18 +832,20 @@ invoked, must run these steps: </p>
    next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
       <li>
        <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is true, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+      <li>If <var>listener</var>’s <b>passive</b> is true, set <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. 
       <li>
        <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with <var>event</var> as argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
+      <li>Clear <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. 
      </ol>
    </ol>
-   <h3 class="heading settled" data-level="3.8" id="firing-events"><span class="secno">3.8. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
+   <h3 class="heading settled" data-level="3.9" id="firing-events"><span class="secno">3.9. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
    <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="fire an event" id="concept-event-fire">fire an event named <var>e</var><a class="self-link" href="#concept-event-fire"></a></dfn> means that a new <a data-link-type="dfn" href="#concept-event">event</a> using the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, with its <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute initialized to <var>e</var>, and its <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute initialized to <code>true</code>, is to be <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> to the given object.</p>
    <p class="note no-backref" role="note">Fire in the context of DOM is short for creating, initializing,
 and <a data-link-type="dfn" href="#concept-event-dispatch">dispatching</a> an <a data-link-type="dfn" href="#concept-event">event</a>. <a data-link-type="dfn" href="#concept-event-fire">Fire an event</a> makes that process easier to write
 down. If the <a data-link-type="dfn" href="#concept-event">event</a> needs its <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute initialized, one could write
 "<a data-link-type="dfn" href="#concept-event-fire">fire an event</a> named <code>submit</code> with its <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute
 initialized to true". </p>
-   <h3 class="heading settled" data-level="3.9" id="action-versus-occurance"><span class="secno">3.9. </span><span class="content">Action versus occurrence</span><a class="self-link" href="#action-versus-occurance"></a></h3>
+   <h3 class="heading settled" data-level="3.10" id="action-versus-occurance"><span class="secno">3.10. </span><span class="content">Action versus occurrence</span><a class="self-link" href="#action-versus-occurance"></a></h3>
    <p>An <a data-link-type="dfn" href="#concept-event">event</a> signifies an occurrence, not an action. Phrased differently, it
 represents a notification from an algorithm and can be used to influence the future course
 of that algorithm (e.g., through invoking <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code>). <a data-link-type="dfn" href="#concept-event">Events</a> must not be
@@ -4513,6 +4562,7 @@ Peter Sharpe,
 Philip Jägenstedt,
 Philippe Le Hégaret,
 Rafael Weinstein,
+Rick Byers,
 Rick Waldron,
 Robbert Broersma,
 Robin Berjon,
@@ -4551,7 +4601,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-domtokenlist-add">add()</a><span>, in §7.1</span>
    <li><a href="#dom-mutationrecord-addednodes">addedNodes</a><span>, in §4.3.3</span>
    <li><a href="#dom-eventtarget-addeventlistener">addEventListener(type, callback)</a><span>, in §3.6</span>
-   <li><a href="#dom-eventtarget-addeventlistener">addEventListener(type, callback, capture)</a><span>, in §3.6</span>
+   <li><a href="#dom-eventtarget-addeventlistener">addEventListener(type, callback, options)</a><span>, in §3.6</span>
    <li><a href="#dom-domtokenlist-add">add(tokens)</a><span>, in §7.1</span>
    <li><a href="#concept-node-adopt">adopt</a><span>, in §4.5</span>
    <li><a href="#concept-node-adopt-ext">adopting steps</a><span>, in §4.5</span>
@@ -4614,6 +4664,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-event-cancelable">attribute for Event</a><span>, in §3.2</span>
     </ul>
    <li><a href="#canceled-flag">canceled flag</a><span>, in §3.2</span>
+   <li><a href="#dom-eventlisteneroptions-capture">capture</a><span>, in §3.6</span>
    <li><a href="#dom-event-capturing_phase">CAPTURING_PHASE</a><span>, in §3.2</span>
    <li><a href="#case-sensitive">case-sensitive</a><span>, in §2.2</span>
    <li><a href="#case-sensitive">case-sensitively</a><span>, in §2.2</span>
@@ -4723,7 +4774,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-customevent-detail">attribute for CustomEvent</a><span>, in §3.3</span>
     </ul>
    <li><a href="#dom-mutationobserver-disconnect">disconnect()</a><span>, in §4.3.1</span>
-   <li><a href="#concept-event-dispatch">dispatch</a><span>, in §3.7</span>
+   <li><a href="#concept-event-dispatch">dispatch</a><span>, in §3.8</span>
    <li><a href="#dom-eventtarget-dispatchevent">dispatchEvent(event)</a><span>, in §3.6</span>
    <li><a href="#dispatch-flag">dispatch flag</a><span>, in §3.2</span>
    <li>
@@ -4796,6 +4847,7 @@ neighboring rights to this work.</p>
    <li><a href="#dictdef-eventinit">EventInit</a><span>, in §3.2</span>
    <li><a href="#concept-event-listener">event listener</a><span>, in §3.6</span>
    <li><a href="#callbackdef-eventlistener">EventListener</a><span>, in §3.6</span>
+   <li><a href="#dictdef-eventlisteneroptions">EventListenerOptions</a><span>, in §3.6</span>
    <li><a href="#dom-event-eventphase">eventPhase</a><span>, in §3.2</span>
    <li><a href="#eventtarget">EventTarget</a><span>, in §3.6</span>
    <li><a href="#dom-event-event">Event(type, eventInitDict)</a><span>, in §3.2</span>
@@ -4814,11 +4866,12 @@ neighboring rights to this work.</p>
    <li><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a><span>, in §6.3</span>
    <li><a href="#dom-nodefilter-filter_reject">FILTER_REJECT</a><span>, in §6.3</span>
    <li><a href="#dom-nodefilter-filter_skip">FILTER_SKIP</a><span>, in §6.3</span>
-   <li><a href="#concept-event-fire">fire an event</a><span>, in §3.8</span>
+   <li><a href="#concept-event-fire">fire an event</a><span>, in §3.9</span>
    <li><a href="#dom-treewalker-firstchild">firstChild()</a><span>, in §6.2</span>
    <li><a href="#dom-node-firstchild">firstChild</a><span>, in §4.4</span>
    <li><a href="#concept-tree-first-child">first child</a><span>, in §2.1</span>
    <li><a href="#dom-parentnode-firstelementchild">firstElementChild</a><span>, in §4.2.3</span>
+   <li><a href="#concept-flatten-options">flatten</a><span>, in §3.6</span>
    <li><a href="#concept-tree-following">following</a><span>, in §2.1</span>
    <li><a href="#concept-element-attributes-get-by-name">get an attribute by name</a><span>, in §4.8</span>
    <li><a href="#concept-element-attributes-get-by-namespace">get an attribute by namespace and local name</a><span>, in §4.8</span>
@@ -4886,6 +4939,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-event-initevent">initEvent(type, bubbles, cancelable)</a><span>, in §3.2</span>
    <li><a href="#concept-event-initialize">initialize</a><span>, in §3.2</span>
    <li><a href="#initialized-flag">initialized flag</a><span>, in §3.2</span>
+   <li><a href="#in-passive-listener-flag">in passive listener flag</a><span>, in §3.2</span>
    <li><a href="#dom-document-inputencoding">inputEncoding</a><span>, in §4.5</span>
    <li>
     insert
@@ -4899,7 +4953,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-range-insertnode">insertNode(node)</a><span>, in §5.2</span>
    <li><a href="#dom-documenttype-internalsubset">internalSubset</a><span>, in §8.2</span>
    <li><a href="#dom-range-intersectsnode">intersectsNode(node)</a><span>, in §5.2</span>
-   <li><a href="#concept-event-listener-invoke">invoke</a><span>, in §3.7</span>
+   <li><a href="#concept-event-listener-invoke">invoke</a><span>, in §3.8</span>
    <li><a href="#dom-node-isdefaultnamespace">isDefaultNamespace(namespace)</a><span>, in §4.4</span>
    <li><a href="#dom-text-iselementcontentwhitespace">isElementContentWhitespace</a><span>, in §8.2</span>
    <li><a href="#dom-node-isequalnode">isEqualNode(otherNode)</a><span>, in §4.4</span>
@@ -5054,6 +5108,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-treewalker-parentnode">parentNode()</a><span>, in §6.2</span>
    <li><a href="#partially-contained">partially contained</a><span>, in §5.2</span>
    <li><a href="#concept-tree-participate">participate</a><span>, in §2.1</span>
+   <li><a href="#dom-eventlisteneroptions-passive">passive</a><span>, in §3.6</span>
    <li><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a><span>, in §6.1</span>
    <li><a href="#concept-range-bp-position">position</a><span>, in §5.2</span>
    <li><a href="#concept-tree-preceding">preceding</a><span>, in §2.1</span>
@@ -5109,8 +5164,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#queue-a-mutation-observer-compound-microtask">queue a mutation observer compound microtask</a><span>, in §4.3</span>
    <li><a href="#queue-a-mutation-record">queue a mutation record</a><span>, in §4.3.2</span>
    <li><a href="#concept-document-quirks">quirks mode</a><span>, in §4.5</span>
-   <li><a href="#range">Range</a><span>, in §5.2</span>
    <li><a href="#dom-range-range">Range()</a><span>, in §5.2</span>
+   <li><a href="#range">Range</a><span>, in §5.2</span>
    <li><a href="#concept-range">range</a><span>, in §5.2</span>
    <li><a href="#rangeexception">RangeException</a><span>, in §8.3</span>
    <li><a href="#concept-mo-queue">record queue</a><span>, in §4.3.1</span>
@@ -5133,7 +5188,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-node-removechild">removeChild(child)</a><span>, in §4.4</span>
    <li><a href="#dom-mutationrecord-removednodes">removedNodes</a><span>, in §4.3.3</span>
    <li><a href="#dom-eventtarget-removeeventlistener">removeEventListener(type, callback)</a><span>, in §3.6</span>
-   <li><a href="#dom-eventtarget-removeeventlistener">removeEventListener(type, callback, capture)</a><span>, in §3.6</span>
+   <li><a href="#dom-eventtarget-removeeventlistener">removeEventListener(type, callback, options)</a><span>, in §3.6</span>
    <li><a href="#dom-namednodemap-removenameditemns">removeNamedItemNS(namespace, localName)</a><span>, in §4.8.1</span>
    <li><a href="#dom-namednodemap-removenameditem">removeNamedItem(qualifiedName)</a><span>, in §4.8.1</span>
    <li><a href="#dom-domtokenlist-remove">remove(tokens)</a><span>, in §7.1</span>
@@ -5206,8 +5261,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-range-start">start</a><span>, in §5.2</span>
    <li><a href="#dom-range-startcontainer">startContainer</a><span>, in §5.2</span>
    <li><a href="#concept-range-start-node">start node</a><span>, in §5.2</span>
-   <li><a href="#concept-range-start-offset">start offset</a><span>, in §5.2</span>
    <li><a href="#dom-range-startoffset">startOffset</a><span>, in §5.2</span>
+   <li><a href="#concept-range-start-offset">start offset</a><span>, in §5.2</span>
    <li><a href="#dom-range-start_to_end">START_TO_END</a><span>, in §5.2</span>
    <li><a href="#dom-range-start_to_start">START_TO_START</a><span>, in §5.2</span>
    <li><a href="#concept-collection-static">static collection</a><span>, in §4.2.7</span>
@@ -5439,13 +5494,18 @@ dictionary <a href="#dictdef-customeventinit">CustomEventInit</a> : <a data-link
 
 [Exposed=(Window,Worker)]
 interface <a href="#eventtarget">EventTarget</a> {
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <a href="#dom-eventtarget-addeventlistener-type-callback-capture-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a href="#dom-eventtarget-addeventlistener-type-callback-capture-capture">capture</a> = false);
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <a href="#dom-eventtarget-removeeventlistener-type-callback-capture-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional boolean <a href="#dom-eventtarget-removeeventlistener-type-callback-capture-capture">capture</a> = false);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <a href="#dom-eventtarget-addeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <a href="#dom-eventtarget-addeventlistener-type-callback-options-options">options</a>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <a href="#dom-eventtarget-removeeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <a href="#dom-eventtarget-removeeventlistener-type-callback-options-options">options</a>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <a href="#dom-eventtarget-dispatchevent-event-event">event</a>);
 };
 
 callback interface <a href="#callbackdef-eventlistener">EventListener</a> {
   void <a href="#dom-eventlistener-handleevent">handleEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <a href="#dom-eventlistener-handleevent-event-event">event</a>);
+};
+
+dictionary <a href="#dictdef-eventlisteneroptions">EventListenerOptions</a> {
+  boolean <a data-type="boolean " href="#dom-eventlisteneroptions-capture">capture</a>;
+  boolean <a data-type="boolean " href="#dom-eventlisteneroptions-passive">passive</a>;
 };
 
 [NoInterfaceObject,
