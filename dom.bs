@@ -8724,6 +8724,28 @@ associated <a for="/">element</a>'s
   <p>Throws a <code>TypeError</code> exception if the associated attribute has no supported tokens defined.
 </dl>
 
+<p>The <a method for=DOMTokenList lt="supports()">supports()</a> method can be used to detect support for {{DOMTokenList}} tokens:
+<pre class=lang-javascript>
+var DOMTokenListSupports = function(tokenList, token) {
+      if (!tokenList || !tokenList.supports) {
+          return false;
+      }
+      try {
+          return tokenList.supports(token);
+      } catch (e) {
+          if (e instanceof TypeError) {
+            console.log("The DOMTokenList doesn't have a supported tokens list");
+          } else {
+            console.error("That shouldn't have happened");
+          }
+      }
+};
+
+var linkSupportsPreload = tokenListSupports(document.createElement("link").relList, "preload"); // true
+var classListSupportsFoo = tokenListSupports(document.createElement("div").classList, "foo"); // undefined + console.log
+var linkSupportsFoo = tokenListSupports(document.createElement("link").relList, "foo"); // false
+</pre>
+
 <p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return the
 number of tokens in the <a>tokens</a>.
 
