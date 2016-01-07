@@ -5752,11 +5752,30 @@ when invoked, must run these steps:
 </ol>
 
 <p>A {{NamedNodeMap}} object's <a>supported property names</a>, all <a>unenumerable</a>, are the
-<a for=Attr>qualified names</a> of the <a>attributes</a> in the
-<a for=NamedNodeMap>attribute list</a>, with duplicates omitted, in order.
-<!-- Even though not all names that map to an attribute are listed, due to lowercasing, ECMAScript
-     invariants are not violated. https://github.com/whatwg/dom/issues/141#issuecomment-168753410
-     has details. -->
+return value of running these steps:
+
+<ol>
+ <li><p>Let <var>names</var> be the <a for=Attr>qualified names</a> of the <a>attributes</a> in this
+ {{NamedNodeMap}} object's <a for=NamedNodeMap>attribute list</a>, with duplicates omitted, in
+ order.
+ <!-- Even though not all names that map to an attribute are listed, due to lowercasing, ECMAScript
+      invariants are not violated. https://github.com/whatwg/dom/issues/141#issuecomment-168753410
+      has details. -->
+
+ <li>
+  <p>If this {{NamedNodeMap}} object's <a for=NamedNodeMap>element</a> is in the
+  <a>HTML namespace</a> and its <a>node document</a> is an <a>HTML document</a>, then for each
+  <var>name</var> in <var>names</var>, run these substeps:
+
+  <ol>
+   <li><p>Let <var>lowercaseName</var> be <var>name</var>, <a>converted to ASCII lowercase</a>.
+
+   <li><p>If <var>lowercaseName</var> is not equal to <var>name</var>, remove <var>name</var> from
+   <var>names</var>.
+  </ol>
+
+ <li><p>Return <var>names</var>.
+</ol>
 
 The <dfn method for="NamedNodeMap"><code>getNamedItem(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the result of

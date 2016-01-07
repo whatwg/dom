@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-01-06">6 January 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-01-07">7 January 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -3073,7 +3073,23 @@ when invoked, must run these steps:</p>
     <li>If <var>index</var> is equal to or greater than the number of <a data-link-type="dfn" href="#concept-attribute">attributes</a> in the <a data-link-type="dfn" href="#concept-namednodemap-attribute">attribute list</a>, return null. 
     <li>Otherwise, return the <var>index</var>th <a data-link-type="dfn" href="#concept-attribute">attribute</a> in the <a data-link-type="dfn" href="#concept-namednodemap-attribute">attribute list</a>. 
    </ol>
-   <p>A <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code> object’s <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-supported-property-names">supported property names</a>, all <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-unenumerable">unenumerable</a>, are the <a data-link-type="dfn" href="#concept-attribute-qualified-name">qualified names</a> of the <a data-link-type="dfn" href="#concept-attribute">attributes</a> in the <a data-link-type="dfn" href="#concept-namednodemap-attribute">attribute list</a>, with duplicates omitted, in order. </p>
+   <p>A <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code> object’s <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-supported-property-names">supported property names</a>, all <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-unenumerable">unenumerable</a>, are the
+return value of running these steps: </p>
+   <ol>
+    <li>
+     <p>Let <var>names</var> be the <a data-link-type="dfn" href="#concept-attribute-qualified-name">qualified names</a> of the <a data-link-type="dfn" href="#concept-attribute">attributes</a> in this <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code> object’s <a data-link-type="dfn" href="#concept-namednodemap-attribute">attribute list</a>, with duplicates omitted, in
+ order. </p>
+    <li>
+     <p>If this <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code> object’s <a data-link-type="dfn" href="#concept-namednodemap-element">element</a> is in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a> and its <a data-link-type="dfn" href="#concept-node-document">node document</a> is an <a data-link-type="dfn" href="#html-document">HTML document</a>, then for each <var>name</var> in <var>names</var>, run these substeps: </p>
+     <ol>
+      <li>
+       <p>Let <var>lowercaseName</var> be <var>name</var>, <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. </p>
+      <li>
+       <p>If <var>lowercaseName</var> is not equal to <var>name</var>, remove <var>name</var> from <var>names</var>. </p>
+     </ol>
+    <li>
+     <p>Return <var>names</var>. </p>
+   </ol>
    <p>The <dfn class="idl-code" data-dfn-for="NamedNodeMap" data-dfn-type="method" data-export="" id="dom-namednodemap-getnameditem"><code>getNamedItem(<var>qualifiedName</var>)</code><a class="self-link" href="#dom-namednodemap-getnameditem"></a></dfn> method, when invoked, must return the result of <a data-link-type="dfn" href="#concept-element-attributes-get-by-name">getting an attribute</a> given <var>qualifiedName</var> and <a data-link-type="dfn" href="#concept-namednodemap-element">element</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="NamedNodeMap" data-dfn-type="method" data-export="" id="dom-namednodemap-getnameditemns">getNamedItemNS(<var>namespace</var>, <var>localName</var>)<a class="self-link" href="#dom-namednodemap-getnameditemns"></a></dfn> method, when invoked, must return the result of <a data-link-type="dfn" href="#concept-element-attributes-get-by-namespace">getting an attribute</a> given <var>namespace</var>, <var>localName</var>, and <a data-link-type="dfn" href="#concept-namednodemap-element">element</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="NamedNodeMap" data-dfn-type="method" data-export="" id="dom-namednodemap-setnameditem"><code>setNamedItem(<var>attr</var>)</code><a class="self-link" href="#dom-namednodemap-setnameditem"></a></dfn> and <dfn class="idl-code" data-dfn-for="NamedNodeMap" data-dfn-type="method" data-export="" id="dom-namednodemap-setnameditemns"><code>setNamedItemNS(<var>attr</var>)</code><a class="self-link" href="#dom-namednodemap-setnameditemns"></a></dfn> methods, when invoked, must return the result of <a data-link-type="dfn" href="#concept-element-attributes-set">setting an attribute</a> given <var>attr</var> and <a data-link-type="dfn" href="#concept-namednodemap-element">element</a>. Rethrow any exceptions.</p>
