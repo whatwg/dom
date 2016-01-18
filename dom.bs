@@ -3895,47 +3895,36 @@ method must return the result of
 
 <hr><!-- Collections -->
 
-The
-<dfn export id=concept-getelementsbytagname>list of elements with local name <var>localName</var></dfn>
-for a <a>node</a> <var>root</var> is the
-{{HTMLCollection}} returned by the following algorithm:
+<p>The
+<dfn export id=concept-getelementsbytagname>list of elements with qualified name <var>qualifiedName</var></dfn>
+for a <a>node</a> <var>root</var> is the {{HTMLCollection}} returned by the following algorithm:
+
 <ol>
- <li>If <var>localName</var> is "<code>*</code>" (U+002A),
- return a {{HTMLCollection}} rooted at <var>root</var>,
- whose filter matches only <a>descendant</a> <a for="/">elements</a>.
+ <li><p>If <var>qualifiedName</var> is "<code>*</code>" (U+002A), return a {{HTMLCollection}} rooted
+ at <var>root</var>, whose filter matches only <a>descendant</a> <a for="/">elements</a>.
 
  <li>
-  Otherwise, if <var>root</var>'s
-  <a>node document</a> is an
-  <a>HTML document</a>, return a {{HTMLCollection}} rooted at
-  <var>root</var>, whose filter matches the following
-  <a>descendant</a>
+  <p>Otherwise, if <var>root</var>'s <a>node document</a> is an <a>HTML document</a>, return a
+  {{HTMLCollection}} rooted at <var>root</var>, whose filter matches the following <a>descendant</a>
   <a for="/">elements</a>:
 
   <ul>
-   <li>Whose <a for=Element>namespace</a> is the
-   <a>HTML namespace</a> and whose
-   <a for=Element>local name</a> is
-   <var>localName</var> <a>converted to ASCII lowercase</a>.
+   <li><p>Whose <a for=Element>namespace</a> is the <a>HTML namespace</a> and whose
+   <a for=Element>qualified name</a> is <var>qualifiedName</var>,
+   <a>converted to ASCII lowercase</a>.
 
-   <li>Whose <a for=Element>namespace</a> is
-   <em>not</em> the <a>HTML namespace</a> and whose
-   <a for=Element>local name</a> is
-   <var>localName</var>.
+   <li><p>Whose <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a> and whose
+   <a for=Element>qualified name</a> is <var>qualifiedName</var>.
   </ul>
 
- <li>Otherwise, return a {{HTMLCollection}} rooted at
- <var>root</var>, whose filter matches
- <a>descendant</a>
- <a for="/">elements</a> whose
- <a for=Element>local name</a> is
- <var>localName</var>.
+ <li><p>Otherwise, return a {{HTMLCollection}} rooted at <var>root</var>, whose filter matches
+ <a>descendant</a> <a for="/">elements</a> whose <a for=Element>qualified name</a> is
+ <var>qualifiedName</var>.
 </ol>
 
-When invoked with the same argument, and as long as <var>root</var>'s <a>node document</a>'s
+<p>When invoked with the same argument, and as long as <var>root</var>'s <a>node document</a>'s
 <a for=Document>type</a> has not changed, the same {{HTMLCollection}} object may be returned as
 returned by an earlier call.
-
 
 The
 <dfn export id=concept-getelementsbytagnamens>list of elements with namespace
@@ -4029,7 +4018,7 @@ interface Document : Node {
 
   readonly attribute DocumentType? doctype;
   readonly attribute Element? documentElement;
-  HTMLCollection getElementsByTagName(DOMString localName);
+  HTMLCollection getElementsByTagName(DOMString qualifiedName);
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 
@@ -4285,21 +4274,15 @@ The <dfn attribute for=Document><code>contentType</code></dfn> attribute's gette
  <dt><var>document</var> . {{Document/documentElement}}
  <dd>Returns the <a>document element</a>.
 
- <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByTagName(localName)}}</code>
+ <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByTagName(qualifiedName)}}</code>
 
  <dd>
-  If <var>localName</var> is "<code>*</code>" returns a
-  {{HTMLCollection}} of all
-  <a>descendant</a>
-  <a for="/">elements</a>.
+  <p>If <var>qualifiedName</var> is "<code>*</code>" returns a {{HTMLCollection}} of all
+  <a>descendant</a> <a for="/">elements</a>.
 
-  Otherwise, returns a {{HTMLCollection}} of all
-  <a>descendant</a>
-  <a for="/">elements</a> whose
-  <a for=Element>local name</a> is
-  <var>localName</var>. (Matches case-insensitively against
-  <a for="/">elements</a> in the
-  <a>HTML namespace</a> within an <a>HTML document</a>.)
+  <p>Otherwise, returns a {{HTMLCollection}} of all <a>descendant</a> <a for="/">elements</a> whose
+  <a for=Element>qualified name</a> is <var>qualifiedName</var>. (Matches case-insensitively against
+  <a for="/">elements</a> in the <a>HTML namespace</a> within an <a>HTML document</a>.)
 
  <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByTagNameNS(namespace, localName)}}</code>
 
@@ -4349,9 +4332,9 @@ The <dfn attribute for=Document><code>doctype</code></dfn> attribute's getter mu
 The <dfn attribute for=Document><code>documentElement</code></dfn> attribute's getter must return
 the <a>document element</a>.
 
-The <dfn method for=Document><code>getElementsByTagName(<var>localName</var>)</code></dfn>
-method, when invoked, must return the <a>list of elements with local name <var>localName</var></a>
-for the <a>context object</a>.
+The <dfn method for=Document><code>getElementsByTagName(<var>qualifiedName</var>)</code></dfn>
+method, when invoked, must return the
+<a>list of elements with qualified name <var>qualifiedName</var></a> for the <a>context object</a>.
 
 <p class="note no-backref">Thus, in an <a>HTML document</a>,
 <code class='lang-javascript'>document.getElementsByTagName("FOO")</code> will match
@@ -5079,7 +5062,7 @@ interface Element : Node {
   boolean matches(DOMString selectors);
   boolean webkitMatchesSelector(DOMString selectors); // historical alias of .matches
 
-  HTMLCollection getElementsByTagName(DOMString localName);
+  HTMLCollection getElementsByTagName(DOMString qualifiedName);
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 };</pre>
@@ -5098,6 +5081,14 @@ Unless explicitly given when an <a for="/">element</a>
 is created, its <a for=Element>namespace</a> and
 <a for=Element>namespace prefix</a> are
 null.
+
+<p>An <a for=/>element</a>'s <dfn id=concept-element-qualified-name for=Element>qualified name</dfn>
+is its <a for=Element>local name</a> if its <a for=Element>namespace prefix</a> is null, and its
+<a for=Element>namespace prefix</a>, followed by "<code>:</code>", followed by its
+<a for=Element>local name</a>, otherwise.
+
+<p class=note>User agents could have this as an internal slot as an optimization, but are not
+required to do so. The standard has this concept for readability.
 
 <a for="/">Elements</a> also have an ordered
 <dfn export id=concept-element-attribute for=Element>attribute list</dfn> exposed through a
@@ -5387,42 +5378,27 @@ When an <a for="/">element</a> or one of its
  <a for=Element>local name</a>.
 
  <dt><var>qualifiedName</var> = <var>element</var> . {{Element/tagName}}
- <dd>If
- <a for=Element>namespace prefix</a> is not
- null, returns the concatenation of
- <a for=Element>namespace prefix</a>,
- "<code>:</code>", and
- <a for=Element>local name</a>. Otherwise it
- returns the <a for=Element>local name</a>.
- (The return value is uppercased in an <a>HTML document</a>.)
+ <dd>Returns the <a for=Element>qualified name</a>. (The return value is uppercased in an
+ <a>HTML document</a>.)
 </dl>
 
-The <dfn attribute for="Element">namespaceURI</dfn>
-attribute must return the <a>context object</a>'s
-<a for=Element>namespace</a>.
+<p>The <dfn attribute for="Element"><code>namespaceURI</code></dfn> attribute's getter must return
+the <a>context object</a>'s <a for=Element>namespace</a>.
 
-The <dfn attribute for="Element">prefix</dfn> attribute must return the <a>context object</a>'s
-<a for=Element>namespace prefix</a>.
+<p>The <dfn attribute for="Element"><code>prefix</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=Element>namespace prefix</a>.
 
-The <dfn attribute for="Element">localName</dfn>
-attribute must return the <a>context object</a>'s
-<a for=Element>local name</a>.
+<p>The <dfn attribute for="Element"><code>localName</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=Element>local name</a>.
 
-The <dfn attribute for="Element">tagName</dfn> attribute
-must run these steps:
+<p>The <dfn attribute for="Element"><code>tagName</code></dfn> attribute's getter must run these
+steps:
+
 <ol>
- <li>If <a>context object</a>'s
- <a for=Element>namespace prefix</a> is not
- null, let <var>qualified name</var> be its
- <a for=Element>namespace prefix</a>, followed
- by a "<code>:</code>" (U+003A), followed by its
- <a for=Element>local name</a>. Otherwise, let
- <var>qualified name</var> be its
- <a for=Element>local name</a>.
+ <li><p>Let <var>qualifiedName</var> be <a>context object</a>'s <a for=Element>qualified name</a>.
 
- <li>If the <a>context object</a> is in the <a>HTML namespace</a> and
- its <a>node document</a> is an
- <a>HTML document</a>, let <var>qualified name</var> be
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a>node document</a> is
+ an <a>HTML document</a>, let <var>qualified name</var> be
  <span>converted to ASCII uppercase</span>.
 
  <li>Return <var>qualified name</var>.
@@ -5680,11 +5656,9 @@ invoked, must run these steps:
 
 <hr>
 
-The
-<dfn method for="Element">getElementsByTagName(<var>localName</var>)</dfn>
-method must return the
-<a>list of elements with local name <var>localName</var></a>
-for the <a>context object</a>.
+<p>The <dfn method for="Element"><code>getElementsByTagName(<var>qualifiedName</var>)</code></dfn>
+method, when invoked, must return the
+<a>list of elements with qualified name <var>qualifiedName</var></a> for the <a>context object</a>.
 
 The
 <dfn method for="Element">getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</dfn>
