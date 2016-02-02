@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-01-28">28 January 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-02-05">5 February 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -377,8 +377,8 @@ added. </p>
    <p>The <dfn data-dfn-type="dfn" data-export="" id="xmlns-namespace">XMLNS namespace<a class="self-link" href="#xmlns-namespace"></a></dfn> is <code>http://www.w3.org/2000/xmlns/</code>.</p>
    <p>To <dfn data-dfn-type="dfn" data-export="" id="validate">validate<a class="self-link" href="#validate"></a></dfn> a <var>qualifiedName</var>, run these steps:</p>
    <ol>
-    <li>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
-    <li>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a></code> exception. 
+    <li>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
+    <li>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a></code> exception. 
    </ol>
    <p>To <dfn data-dfn-type="dfn" data-export="" id="validate-and-extract">validate and extract<a class="self-link" href="#validate-and-extract"></a></dfn> a <var>namespace</var> and <var>qualifiedName</var>,
 run these steps:</p>
@@ -667,7 +667,7 @@ invoked, these steps must be run:</p>
    </ol>
    <h3 class="heading settled" data-level="3.5" id="defining-event-interfaces"><span class="secno">3.5. </span><span class="content">Defining event interfaces</span><a class="self-link" href="#defining-event-interfaces"></a></h3>
    <p>In general, when defining a new interface that inherits from <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> please always ask
-feedback from the <a href="https://whatwg.org/">WHATWG</a> or the <a href="http://www.w3.org/2008/webapps/">W3C WebApps WG</a> community.</p>
+feedback from the <a href="https://whatwg.org/">WHATWG</a> or the <a href="https://www.w3.org/2008/webapps/">W3C WebApps WG</a> community.</p>
    <p>The <code class="idl"><a data-link-type="idl" href="#customevent">CustomEvent</a></code> interface can be used as starting point.
 However, do not introduce any <code>init<var>*</var>Event()</code> methods as they are redundant with constructors. Interfaces that inherit
 from the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface that have such a method only have it
@@ -734,6 +734,13 @@ seen from the definition above, an <a data-link-type="dfn" href="#concept-event-
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="addEventListener(type, callback, options)|addEventListener(type, callback)" id="dom-eventtarget-addeventlistener"><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code><a class="self-link" href="#dom-eventtarget-addeventlistener"></a></dfn> method, when invoked, must run these steps: </p>
    <ol>
     <li>
+     <p>If the <a data-link-type="dfn" href="#context-object">context object</a>’s global object is a <code class="idl"><a data-link-type="idl" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#service-worker-global-scope-interface">ServiceWorkerGlobalScope</a></code> object and its
+  associated <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-service-worker">service worker</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-script-resource">script resource</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-has-ever-been-evaluated-flag">has ever been evaluated flag</a> is
+  set, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code>TypeError</code>. <a data-link-type="biblio" href="#biblio-service-workers">[SERVICE-WORKERS]</a> </p>
+     <p class="note no-backref" role="note">To optimize storing the event types allowed for the service worker and
+  to avoid non-deterministic changes to the event listeners, invocation of the method is allowed
+  only during the very first evaluation of the service worker script. </p>
+    <li>
      <p>If <var>callback</var> is null, terminate these steps. </p>
     <li>
      <p>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
@@ -742,6 +749,9 @@ seen from the definition above, an <a data-link-type="dfn" href="#concept-event-
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, options)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener"><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code><a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method, when invoked, must, run these steps </p>
    <ol>
+    <li>
+     <p>If the <a data-link-type="dfn" href="#context-object">context object</a>’s global object is a <code class="idl"><a data-link-type="idl" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#service-worker-global-scope-interface">ServiceWorkerGlobalScope</a></code> object and
+ its associated <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-service-worker">service worker</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-script-resource">script resource</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-has-ever-been-evaluated-flag">has ever been evaluated flag</a> is set, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code>TypeError</code>. <a data-link-type="biblio" href="#biblio-service-workers">[SERVICE-WORKERS]</a> </p>
     <li>
      <p>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
     <li>
@@ -768,8 +778,8 @@ that even empty listeners can have a dramatic performance impact on the behavior
 For example, touch and wheel events which can be used to block asynchronous scrolling. In some cases
 this problem can be mitigated by specifying the event to be <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> only when there is
 at least one non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listener. For example,
-non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> listeners must block scrolling, but if all
-listeners are <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> then scrolling can be allowed to start <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a> by making the <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> uncancelable (so that calls to <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> are ignored). So code dispatching an event is able to observe the absence
+non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> listeners must block scrolling, but if all
+listeners are <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> then scrolling can be allowed to start <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a> by making the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> uncancelable (so that calls to <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> are ignored). So code dispatching an event is able to observe the absence
 of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listeners, and use that to clear the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> property of the event being dispatched. </p>
    <p>Ideally, any new event APIs are defined such that they do not need this property (use <a href="https://lists.w3.org/Archives/Public/public-script-coord/">public-scrip-coord@w3.org</a> for discussion). </p>
    <h3 class="heading settled" data-level="3.8" id="dispatching-events"><span class="secno">3.8. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
@@ -2420,17 +2430,17 @@ the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
     <dt><var>element</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createelement">createElement(localName)</a></code> 
     <dd>
       Returns an <a data-link-type="dfn" href="#concept-element">element</a> in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a> with <var>localName</var> as <a data-link-type="dfn" href="#concept-element-local-name">local name</a>. (In an <a data-link-type="dfn" href="#html-document">HTML document</a> <var>localName</var> is lowercased.) 
-     <p>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.</p>
+     <p>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.</p>
     <dt><var>element</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createelementns">createElementNS(namespace, qualifiedName)</a></code> 
     <dd>
       Returns an <a data-link-type="dfn" href="#concept-element">element</a> with <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> <var>namespace</var>. Its <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> will
   be everything before "<code>:</code>" (U+003E) in <var>qualifiedName</var> or null. Its <a data-link-type="dfn" href="#concept-element-local-name">local name</a> will be
   everything after "<code>:</code>" (U+003E) in <var>qualifiedName</var> or <var>qualifiedName</var>. 
-     <p>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.</p>
+     <p>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.</p>
      <p>If one of the following conditions is true a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a></code> exception
   will be thrown:</p>
      <ul>
-      <li><var>localName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production. 
+      <li><var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production. 
       <li><a data-link-type="dfn" href="#concept-element-namespace-prefix">Namespace prefix</a> is not null and <var>namespace</var> is the empty string. 
       <li><a data-link-type="dfn" href="#concept-element-namespace-prefix">Namespace prefix</a> is "<code>xml</code>" and <var>namespace</var> is not the <a data-link-type="dfn" href="#xml-namespace">XML namespace</a>. 
       <li><var>qualifiedName</var> or <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> is "<code>xmlns</code>" and <var>namespace</var> is not the <a data-link-type="dfn" href="#xmlns-namespace">XMLNS namespace</a>. 
@@ -2445,7 +2455,7 @@ the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
     <dd>Returns a <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>. 
     <dt><var>processingInstruction</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createprocessinginstruction">createProcessingInstruction(target, data)</a></code> 
     <dd> Returns a <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-pi-target">target</a> is <var>target</var> and <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>.
-  If <var>target</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.
+  If <var>target</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.
   If <var>data</var> contains "<code>?></code>" an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown. 
    </dl>
    <p>The <dfn data-dfn-type="dfn" data-export="" id="concept-element-interface">element interface<a class="self-link" href="#concept-element-interface"></a></dfn> for any <var>name</var> and <var>namespace</var> is <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>, unless
@@ -2454,7 +2464,7 @@ stated otherwise.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createelement"><code>createElement(<var>localName</var>)</code><a class="self-link" href="#dom-document-createelement"></a></dfn> method, when
 invoked, must run the these steps:</p>
    <ol>
-    <li>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
+    <li>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
     <li>If the <a data-link-type="dfn" href="#context-object">context object</a> is an <a data-link-type="dfn" href="#html-document">HTML document</a>,
  let <var>localName</var> be <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. 
     <li>Let <var>interface</var> be the <a data-link-type="dfn" href="#concept-element-interface">element interface</a> for <var>localName</var> and the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>. 
@@ -2474,21 +2484,21 @@ must return a new <code class="idl"><a data-link-type="idl" href="#documentfragm
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createtextnode"><code>createTextNode(<var>data</var>)</code><a class="self-link" href="#dom-document-createtextnode"></a></dfn> method, when
 invoked, must return a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> with its <a data-link-type="dfn" href="#concept-cd-data">data</a> set to <var>data</var> and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p class="note no-backref" role="note">No check is performed that <var>data</var> consists of
-characters that match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production. </p>
+characters that match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Char">Char</a></code> production. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createcomment"><code>createComment(<var>data</var>)</code><a class="self-link" href="#dom-document-createcomment"></a></dfn> method, when invoked,
 must return a new <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> <a data-link-type="dfn" href="#concept-node">node</a> with its <a data-link-type="dfn" href="#concept-cd-data">data</a> set to <var>data</var> and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p class="note no-backref" role="note">No check is performed that <var>data</var> consists of
-characters that match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production
+characters that match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Char">Char</a></code> production
 or that it contains two adjacent hyphens or ends with a hyphen. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createprocessinginstruction"><code>createProcessingInstruction(<var>target</var>, <var>data</var>)</code><a class="self-link" href="#dom-document-createprocessinginstruction"></a></dfn> method, when invoked, must run these steps:</p>
    <ol>
-    <li>If <var>target</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
+    <li>If <var>target</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
     <li>If <var>data</var> contains the string
  "<code>?></code>", <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
     <li>Return a new <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> <a data-link-type="dfn" href="#concept-node">node</a>, with <a data-link-type="dfn" href="#concept-pi-target">target</a> set to <var>target</var>, <a data-link-type="dfn" href="#concept-cd-data">data</a> set to <var>data</var>, and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>. 
    </ol>
    <p class="note no-backref" role="note">No check is performed that <var>target</var> contains
-"<code>xml</code>" or "<code>:</code>", or that <var>data</var> contains characters that match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Char">Char</a></code> production. </p>
+"<code>xml</code>" or "<code>:</code>", or that <var>data</var> contains characters that match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Char">Char</a></code> production. </p>
    <hr>
    <dl class="domintro">
     <dt><var>clone</var> = <var>document</var> . <a class="idl-code" data-link-type="method" href="#dom-document-importnode">importNode(<var>node</var> [, <var>deep</var> = false])</a> 
@@ -2536,7 +2546,7 @@ must run these steps:</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createattribute"><code>createAttribute(<var>localName</var>)</code><a class="self-link" href="#dom-document-createattribute"></a></dfn> method, when
 invoked, must run these steps:</p>
    <ol>
-    <li>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
+    <li>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in XML, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
     <li>If the <a data-link-type="dfn" href="#context-object">context object</a> is an <a data-link-type="dfn" href="#html-document">HTML document</a>, let <var>localName</var> be <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. 
     <li>Return a new <a data-link-type="dfn" href="#concept-attribute">attribute</a> whose <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> is <var>localName</var>. 
    </ol>
@@ -2594,7 +2604,7 @@ invoked, must run these steps:</p>
         <td>"<code>mouseevents</code>" 
        <tr>
         <td>"<code>touchevent</code>"
-        <td><code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code>
+        <td><code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code>
         <td><a data-link-type="biblio" href="#biblio-touch-events">[TOUCH-EVENTS]</a> 
        <tr>
         <td>"<code>uievent</code>"
@@ -2648,7 +2658,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="dom
    <dl class="domintro">
     <dt><code><var>doctype</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-implementation">implementation</a></code> . <code class="idl"><a data-link-type="idl" href="#dom-domimplementation-createdocumenttype">createDocumentType(qualifiedName, publicId, systemId)</a></code></code> 
     <dd> Returns a <a data-link-type="dfn" href="#concept-doctype">doctype</a>, with the given <var>qualifiedName</var>, <var>publicId</var>, and <var>systemId</var>. If <var>qualifiedName</var> does not
-  match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception is thrown, and if it does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production, a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a></code> exception
+  match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception is thrown, and if it does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml-names/#NT-QName">QName</a></code> production, a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a></code> exception
   is thrown. 
     <dt><code><var>doc</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-implementation">implementation</a></code> . <a class="idl-code" data-link-type="method" href="#dom-domimplementation-createdocument">createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code> 
     <dd>
@@ -2668,7 +2678,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="dom
       <p>Return a new <a data-link-type="dfn" href="#concept-doctype">doctype</a>, with <var>qualifiedName</var> as its <a data-link-type="dfn" href="#concept-doctype-name">name</a>, <var>publicId</var> as its <a data-link-type="dfn" href="#concept-doctype-publicid">public ID</a>, and <var>systemId</var> as its <a data-link-type="dfn" href="#concept-doctype-systemid">system ID</a>, and with its <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the associated <a data-link-type="dfn" href="#concept-document">document</a> of
  the <a data-link-type="dfn" href="#context-object">context object</a>. </p>
     </ol>
-    <p class="note" role="note">No check is performed that <var>publicId</var> code points match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-PubidChar">PubidChar</a></code> production or that <var>systemId</var> does not contain both a
+    <p class="note" role="note">No check is performed that <var>publicId</var> code points match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-PubidChar">PubidChar</a></code> production or that <var>systemId</var> does not contain both a
 '<code>"</code>' and a "<code>'</code>". </p>
     <p>The <dfn class="idl-code" data-dfn-for="DOMImplementation" data-dfn-type="method" data-export="" data-lt="createDocument(namespace, qualifiedName, doctype)|createDocument(namespace, qualifiedName)" id="dom-domimplementation-createdocument">createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)<a class="self-link" href="#dom-domimplementation-createdocument"></a></dfn> method must run these steps:</p>
     <ol>
@@ -2973,7 +2983,7 @@ invoked, must run these steps:</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-setattribute"><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code><a class="self-link" href="#dom-element-setattribute"></a></dfn> method, when invoked, must run these steps:</p>
    <ol>
     <li>
-     <p>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="http://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in
+     <p>If <var>qualifiedName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production in
  XML, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. </p>
     <li>
      <p>If the <a data-link-type="dfn" href="#context-object">context object</a> is in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a> and its <a data-link-type="dfn" href="#concept-node-document">node document</a> is
@@ -4558,6 +4568,7 @@ Jonas Sicking,
 Jonathan Robie,
 Joris van der Wel,
 Joshua Bell,
+Jungkee Song,
 Justin Summerlin,
 呂康豪 (Kang-Hao Lu),
 Kevin Sweeney,
@@ -5442,6 +5453,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <dd>Selectors Level 4 URL: <a href="https://drafts.csswg.org/selectors-4/">https://drafts.csswg.org/selectors-4/</a>
    <dt id="biblio-selectors4"><a class="self-link" href="#biblio-selectors4"></a>[SELECTORS4]
    <dd>Elika Etemad; Tab Atkins Jr.. <a href="http://www.w3.org/TR/selectors4/">Selectors Level 4</a>. 2 May 2013. WD. URL: <a href="http://www.w3.org/TR/selectors4/">http://www.w3.org/TR/selectors4/</a>
+   <dt id="biblio-service-workers"><a class="self-link" href="#biblio-service-workers"></a>[SERVICE-WORKERS]
+   <dd>Alex Russell; Jungkee Song; Jake Archibald. <a href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/">Service Workers</a>. 25 June 2015. WD. URL: <a href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/">https://slightlyoff.github.io/ServiceWorker/spec/service_worker/</a>
    <dt id="biblio-touch-events"><a class="self-link" href="#biblio-touch-events"></a>[TOUCH-EVENTS]
    <dd>Doug Schepers; et al. <a href="http://dvcs.w3.org/hg/webevents/raw-file/v1/touchevents.html">Touch Events</a>. 10 October 2013. REC. URL: <a href="http://dvcs.w3.org/hg/webevents/raw-file/v1/touchevents.html">http://dvcs.w3.org/hg/webevents/raw-file/v1/touchevents.html</a>
    <dt id="biblio-uievents"><a class="self-link" href="#biblio-uievents"></a>[UIEVENTS]

@@ -55,12 +55,12 @@ urlPrefix: https://encoding.spec.whatwg.org/
         text: shift_jis
         text: utf-16be
         text: utf-16le
-urlPrefix: http://www.w3.org/TR/xml/#NT-
+urlPrefix: https://www.w3.org/TR/xml/#NT-
     type: type
         text: Name; url: Name
         text: Char; url: Char
         text: PubidChar; url: PubidChar
-urlPrefix: http://www.w3.org/TR/xml-names/#NT-
+urlPrefix: https://www.w3.org/TR/xml-names/#NT-
     type: type
         text: QName; url: QName
 urlPrefix: https://heycam.github.io/webidl/
@@ -116,10 +116,16 @@ type: interface
         text: KeyboardEvent
         text: MouseEvent
         text: UIEvent
-    url: http://www.w3.org/TR/touch-events/#touchevent-interface
+    url: https://www.w3.org/TR/touch-events/#touchevent-interface
         text: TouchEvent
     url: https://w3c.github.io/webcomponents/spec/shadow/#the-shadowroot-interface
         text: ShadowRoot
+urlPrefix: https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#
+    type: interface; text: ServiceWorkerGlobalScope; url: service-worker-global-scope-interface
+    type: dfn; urlPrefix: dfn-
+        text: service worker
+        text: script resource
+        text: has ever been evaluated flag
 </pre>
 
 <pre class='link-defaults'>
@@ -240,7 +246,7 @@ readonly attributes when it is language for implementors -->
 A <dfn export id=concept-tree>tree</dfn> is a finite hierarchical tree structure. In
 <dfn export id=concept-tree-order>tree order</dfn> is preorder, depth-first
 traversal of a <a>tree</a>.
-<!-- http://en.wikipedia.org/wiki/Tree_traversal#Depth-first_Traversal -->
+<!-- https://en.wikipedia.org/wiki/Depth-first_search -->
 
 An object that <dfn export for=tree id=concept-tree-participate lt="participate">participates</dfn> in
 a <a>tree</a> has a
@@ -960,7 +966,7 @@ invoked, these steps must be run:
 
 In general, when defining a new interface that inherits from {{Event}} please always ask
 feedback from the <a href=https://whatwg.org/>WHATWG</a> or the
-<a href=http://www.w3.org/2008/webapps/>W3C WebApps WG</a> community.
+<a href=https://www.w3.org/2008/webapps/>W3C WebApps WG</a> community.
 
 The {{CustomEvent}} interface can be used as starting point.
 However, do not introduce any <code>init<var>*</var>Event()</code>
@@ -1065,6 +1071,15 @@ seen from the definition above, an <a>event listener</a> is a more broad concept
 method, when invoked, must run these steps:
 
 <ol>
+ <li>
+  <p>If the <a>context object</a>'s global object is a {{ServiceWorkerGlobalScope}} object and its
+  associated <a>service worker</a>'s <a>script resource</a>'s <a>has ever been evaluated flag</a> is
+  set, <a>throw</a> a <code>TypeError</code>. [[!SERVICE-WORKERS]]
+
+  <p class="note no-backref">To optimize storing the event types allowed for the service worker and
+  to avoid non-deterministic changes to the event listeners, invocation of the method is allowed
+  only during the very first evaluation of the service worker script.
+
  <li><p>If <var>callback</var> is null, terminate these steps.
 
  <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
@@ -1082,6 +1097,10 @@ method, when invoked, must run these steps:
 method, when invoked, must, run these steps
 
 <ol>
+ <li><p>If the <a>context object</a>'s global object is a {{ServiceWorkerGlobalScope}} object and
+ its associated <a>service worker</a>'s <a>script resource</a>'s <a>has ever been evaluated flag</a>
+ is set, <a>throw</a> a <code>TypeError</code>. [[!SERVICE-WORKERS]]
+
  <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
  <var>options</var>.
 
@@ -9105,6 +9124,7 @@ Jonas Sicking,
 Jonathan Robie,
 Joris van der Wel,
 Joshua Bell,
+Jungkee Song,
 Justin Summerlin,
 呂康豪 (Kang-Hao Lu),
 Kevin Sweeney,
