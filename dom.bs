@@ -1192,8 +1192,32 @@ for discussion).
    <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set, terminate the
    <a>invoke</a> algorithm.
 
-   <li><p>If <var>event</var>'s {{Event/type}} attribute value is not <var>listener</var>'s
-   <b>type</b>, terminate these substeps (and run them for the next <a>event listener</a>).
+   <li><p>Let <var>original event type</var> be <var>event</var>'s {{Event/type}} attribute value.
+
+   <li>
+    <p>If <var>original event type</var> is not <var>listener</var>'s <b>type</b>, run these
+    subsubsteps:
+
+    <ol>
+     <li>
+      <p>If <var>original event type</var> is an <a>ASCII case-insensitive</a> match for any of the
+      strings in the first column in the following table, set <var>event</var>'s {{Event/type}}
+      attribute value to the string in the second column on the same row as the matching string:
+
+      <table>
+       <thead>
+        <tr><th>Event Type<th>Legacy Event Type
+       <tbody>
+        <tr><td>"<code>animationend</code>"<td>"<code>webkitAnimationEnd</code>"
+        <tr><td>"<code>animationiteration</code>"<td>"<code>webkitAnimationIteration</code>"
+        <tr><td>"<code>animationstart</code>"<td>"<code>webkitAnimationStart</code>"
+        <tr><td>"<code>transitionend</code>"<td>"<code>webkitTransitionEnd</code>"
+      </table>
+
+     <li><p>If <var>event</var>'s {{Event/type}} attribute value is <var>listener</var>'s
+     <b>type</b>, continue, else terminate these substeps (and run them for the next
+     <a>event listener</a>).
+    </ol>
 
    <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}
    and <var>listener</var>'s <b>capture</b> is false, terminate these substeps (and run them for the
@@ -1211,6 +1235,10 @@ for discussion).
    <a>callback this value</a>. If this throws any exception, <a>report the exception</a>.
 
    <li><p>Clear <var>event</var>'s <a>in passive listener flag</a>.
+
+   <li>If <var>event</var>'s {{Event/type}} attribute value is not equal to
+   <var>original event type</var>, set <var>event</var>'s {{Event/type}} attribute value to
+   <var>original event type</var>.
   </ol>
 </ol>
 
