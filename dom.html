@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-02-18">18 February 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-02-19">19 February 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -836,14 +836,57 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
     <li>
      <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to <var>object</var>. </p>
     <li>
-     <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
-  these substeps: </p>
+     <p>Let <var>found</var> be the result of running <a data-link-type="dfn" href="#concept-event-listener-inner-invoke">inner invoke</a> <var>object</var> with <var>event</var>. </p>
+    <li>
+     <p>If <var>found</var> is false, run these substeps: </p>
      <ol>
       <li>
-       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is not <var>listener</var>’s <b>type</b>, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+       <p>Let <var>originalEventType</var> be <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value. </p>
+      <li>
+       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is a match for any of the strings in the
+    first column in the following table, set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value to
+    the string in the second column on the same row as the matching string, and terminate these
+    substeps otherwise. </p>
+       <table>
+        <thead>
+         <tr>
+          <th>Event type
+          <th>Legacy event type 
+        <tbody>
+         <tr>
+          <td>"<code>animationend</code>"
+          <td>"<code>webkitAnimationEnd</code>" 
+         <tr>
+          <td>"<code>animationiteration</code>"
+          <td>"<code>webkitAnimationIteration</code>" 
+         <tr>
+          <td>"<code>animationstart</code>"
+          <td>"<code>webkitAnimationStart</code>" 
+         <tr>
+          <td>"<code>transitionend</code>"
+          <td>"<code>webkitTransitionEnd</code>" 
+       </table>
+      <li>
+       <p><a data-link-type="dfn" href="#concept-event-listener-inner-invoke">Inner invoke</a> <var>object</var> with <var>event</var>. </p>
+      <li>
+       <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value to <var>originalEventType</var>. </p>
+     </ol>
+   </ol>
+   <p>To <dfn data-dfn-for="event listener" data-dfn-type="dfn" data-noexport="" id="concept-event-listener-inner-invoke">inner invoke<a class="self-link" href="#concept-event-listener-inner-invoke"></a></dfn> an <var>object</var> with <var>event</var>, run these steps: </p>
+   <ol>
+    <li>
+     <p>Let <var>found</var> be false. </p>
+    <li>
+     <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset,
+ run these substeps: </p>
+     <ol>
+      <li>
+       <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is not <var>listener</var>’s <b>type</b>,  terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+      <li>
+       <p>Set <var>found</var> to true. </p>
       <li>
        <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is false, terminate these substeps (and run them for the
-   next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
+  next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
       <li>
        <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute value is <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code> and <var>listener</var>’s <b>capture</b> is true, terminate these substeps (and run them for the next <a data-link-type="dfn" href="#concept-event-listener">event listener</a>). </p>
       <li>
@@ -851,8 +894,10 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
       <li>
        <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with <var>event</var> as argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws any exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
       <li>
-       <p>Clear <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
+       <p>Unset <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
      </ol>
+    <li>
+     <p>Return <var>found</var>. </p>
    </ol>
    <h3 class="heading settled" data-level="3.9" id="firing-events"><span class="secno">3.9. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
    <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="fire an event" id="concept-event-fire">fire an event named <var>e</var><a class="self-link" href="#concept-event-fire"></a></dfn> means that a new <a data-link-type="dfn" href="#concept-event">event</a> using the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, with its <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute initialized to <var>e</var>, and its <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute initialized to <code>true</code>, is to be <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> to the given object.</p>
@@ -4887,6 +4932,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-event-initevent">initEvent(type, bubbles, cancelable)</a><span>, in §3.2</span>
    <li><a href="#concept-event-initialize">initialize</a><span>, in §3.2</span>
    <li><a href="#initialized-flag">initialized flag</a><span>, in §3.2</span>
+   <li><a href="#concept-event-listener-inner-invoke">inner invoke</a><span>, in §3.8</span>
    <li><a href="#in-passive-listener-flag">in passive listener flag</a><span>, in §3.2</span>
    <li><a href="#dom-document-inputencoding">inputEncoding</a><span>, in §4.5</span>
    <li>
