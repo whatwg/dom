@@ -75,6 +75,8 @@ urlPrefix: https://html.spec.whatwg.org/multipage/
             text: html parser
             text: html parsing; url: #html-parser
         urlPrefix: browsers.html
+            text: concept-document-bc
+            text: concept-document-window
             text: unit of related similar-origin browsing contexts
             text: origin
             text: effective script origin
@@ -971,11 +973,10 @@ dictionary EventListenerOptions {
 };
 </pre>
 
-{{EventTarget}} is an object to which an
-<a>event</a> is
-<a>dispatched</a> when something has
-occurred. Each {{EventTarget}} has an associated list of
-<a>event listeners</a>.
+<p>The {{EventTarget}} object represents the target to which an <a>event</a> is <a>dispatched</a>
+when something has occurred.
+
+<p>Each {{EventTarget}} object has an associated list of <a>event listeners</a>.
 
 <p>An <dfn export id=concept-event-listener>event listener</dfn> can be used to observe a specific
 <a>event</a>.
@@ -984,8 +985,15 @@ occurred. Each {{EventTarget}} has an associated list of
 <b>passive</b>. An <a>event listener</a> also has an associated <b>removed flag</b>, which is
 initially unset.
 
-<p class="note no-backref">The callback is named {{EventListener}} for historical reasons. As can be
-seen from the definition above, an <a>event listener</a> is a more broad concept.
+<p class="note no-backref">Although the callback is named {{EventListener}}, as can be seen from the
+definition above, an <a>event listener</a> is a broader concept.
+
+<p>Each {{EventTarget}} object also has an associated <dfn export>get the parent</dfn> algorithm,
+which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
+specified otherwise it returns null.
+
+<p class="note no-backref"><a>Nodes</a> and <a>documents</a> override the
+<span>get the parent</span> algorithm.
 
 <dl class=domintro>
  <dt><code><var>target</var> . <a method lt="addEventListener()">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
@@ -1134,13 +1142,14 @@ for discussion).
  <li><p>Initialize <var>event</var>'s {{Event/target}} attribute to
  <var>target override</var>, if it is given, and <var>target</var> otherwise.
 
- <li><p>Let <var>event path</var> be a static ordered list of all <var>target</var>'s
- <a>ancestors</a> in <a>tree order</a>, if <var>target</var> is <a>participating</a> in a
- <a>tree</a>, and the empty list otherwise.
+ <li><p>Let <var>eventPath</var> be a list containing <var>target</var>.
+
+ <li><p>While invoking <a>get the parent</a>, given <var>event</var>, on <var>eventPath</var>'s
+ last item, does not return null, append the return value to <var>eventPath</var>.
 
  <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
 
- <li><p>For each <var>object</var> in <var>event path</var>, if <var>event</var>'s
+ <li><p>For each <var>object</var> in <var>eventPath</var>, in reverse order, if <var>event</var>'s
  <a>stop propagation flag</a> is unset, <a>invoke</a> <var>object</var> with <var>event</var>.
 
  <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
@@ -1152,11 +1161,9 @@ for discussion).
   <p>If <var>event</var>'s {{Event/bubbles}} attribute value is true, run these substeps:
 
   <ol>
-   <li><p>Reverse the order of <var>event path</var>.
-
    <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/BUBBLING_PHASE}}.
 
-   <li><p>For each <var>object</var> in <var>event path</var>, if <var>event</var>'s
+   <li><p>For each <var>object</var> in <var>eventPath</var>, if <var>event</var>'s
    <a>stop propagation flag</a> is unset, <a>invoke</a> <var>object</var> with <var>event</var>.
   </ol>
 
@@ -2953,6 +2960,9 @@ that is a <a>document</a>.
 <p class="note no-backref">A <a>node</a>'s <a>node document</a> can be changed by the
 <a>adopt</a> algorithm.
 
+<p>A <a>node</a>'s <span>get the parent</span> algorithm, given an <var>event</var>, returns the
+<a>node</a>'s <a>parent</a>.
+
 <hr>
 
 <dl class=domintro>
@@ -4087,6 +4097,11 @@ is "<code>quirks</code>", and
  renamed because their details are now defined by standards. (And because Ian Hickson
  vetoed their original names on the basis that they are nonsensical.)
 </div>
+
+<p>A <a>document</a>'s <span>get the parent</span> algorithm, given an <var>event</var>, returns
+null if <var>event</var>'s <code for=Event>type</code> attribute value is "<code>load</code>" or
+<a>document</a> does not have a <a lt=concept-document-bc>browsing context</a>, and the
+<a>document</a>'s <a lt=concept-document-window>associated</a> {{Window}} object otherwise.
 
 <hr>
 

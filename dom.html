@@ -69,7 +69,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-02-15">15 February 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-02-18">18 February 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Participate:
@@ -689,13 +689,17 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="d
   boolean <dfn class="idl-code" data-dfn-for="EventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventlisteneroptions-passive">passive<a class="self-link" href="#dom-eventlisteneroptions-passive"></a></dfn>;
 };
 </pre>
-   <p><code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> is an object to which an <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> when something has
-occurred. Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> has an associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object represents the target to which an <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> when something has occurred. </p>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object has an associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
    <p>An <dfn data-dfn-type="dfn" data-export="" id="concept-event-listener">event listener<a class="self-link" href="#concept-event-listener"></a></dfn> can be used to observe a specific <a data-link-type="dfn" href="#concept-event">event</a>. </p>
    <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b>, <b>callback</b>, <b>capture</b> and <b>passive</b>. An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> also has an associated <b>removed flag</b>, which is
 initially unset. </p>
-   <p class="note no-backref" role="note">The callback is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code> for historical reasons. As can be
-seen from the definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a more broad concept. </p>
+   <p class="note no-backref" role="note">Although the callback is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code>, as can be seen from the
+definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a broader concept. </p>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object also has an associated <dfn data-dfn-type="dfn" data-export="" id="get-the-parent">get the parent<a class="self-link" href="#get-the-parent"></a></dfn> algorithm,
+which takes an <a data-link-type="dfn" href="#concept-event">event</a> <var>event</var>, and returns an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object. Unless
+specified otherwise it returns null. </p>
+   <p class="note no-backref" role="note"><a data-link-type="dfn" href="#concept-node">Nodes</a> and <a data-link-type="dfn" href="#concept-document">documents</a> override the <span>get the parent</span> algorithm. </p>
    <dl class="domintro">
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
     <dd>
@@ -790,11 +794,14 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
     <li>
      <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute to <var>target override</var>, if it is given, and <var>target</var> otherwise. </p>
     <li>
-     <p>Let <var>event path</var> be a static ordered list of all <var>target</var>’s <a data-link-type="dfn" href="#concept-tree-ancestor">ancestors</a> in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, if <var>target</var> is <a data-link-type="dfn" href="#concept-tree-participate">participating</a> in a <a data-link-type="dfn" href="#concept-tree">tree</a>, and the empty list otherwise. </p>
+     <p>Let <var>eventPath</var> be a list containing <var>target</var>. </p>
+    <li>
+     <p>While invoking <a data-link-type="dfn" href="#get-the-parent">get the parent</a>, given <var>event</var>, on <var>eventPath</var>’s
+ last item, does not return null, append the return value to <var>eventPath</var>. </p>
     <li>
      <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
     <li>
-     <p>For each <var>object</var> in <var>event path</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
+     <p>For each <var>object</var> in <var>eventPath</var>, in reverse order, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
     <li>
      <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. </p>
     <li>
@@ -803,11 +810,9 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
      <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute value is true, run these substeps: </p>
      <ol>
       <li>
-       <p>Reverse the order of <var>event path</var>. </p>
-      <li>
        <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. </p>
       <li>
-       <p>For each <var>object</var> in <var>event path</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
+       <p>For each <var>object</var> in <var>eventPath</var>, if <var>event</var>’s <a data-link-type="dfn" href="#stop-propagation-flag">stop propagation flag</a> is unset, <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>object</var> with <var>event</var>. </p>
      </ol>
     <li>
      <p>Unset <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. </p>
@@ -1725,6 +1730,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nod
    <p>Each <a data-link-type="dfn" href="#concept-node">node</a> has an associated <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" id="concept-node-document">node document<a class="self-link" href="#concept-node-document"></a></dfn>, set upon creation,
 that is a <a data-link-type="dfn" href="#concept-document">document</a>.</p>
    <p class="note no-backref" role="note">A <a data-link-type="dfn" href="#concept-node">node</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a> can be changed by the <a data-link-type="dfn" href="#concept-node-adopt">adopt</a> algorithm. </p>
+   <p>A <a data-link-type="dfn" href="#concept-node">node</a>’s <span>get the parent</span> algorithm, given an <var>event</var>, returns the <a data-link-type="dfn" href="#concept-node">node</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>. </p>
    <hr>
    <dl class="domintro">
     <dt><code><var>node</var> . <code class="idl"><a data-link-type="idl" href="#dom-node-nodetype">nodeType</a></code></code> 
@@ -2257,6 +2263,8 @@ and its <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/bro
  renamed because their details are now defined by standards. (And because Ian Hickson
  vetoed their original names on the basis that they are nonsensical.) </p>
    </div>
+   <p>A <a data-link-type="dfn" href="#concept-document">document</a>’s <span>get the parent</span> algorithm, given an <var>event</var>, returns
+null if <var>event</var>’s <code for="Event">type</code> attribute value is "<code>load</code>" or <a data-link-type="dfn" href="#concept-document">document</a> does not have a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-bc">browsing context</a>, and the <a data-link-type="dfn" href="#concept-document">document</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated</a> <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a></code> object otherwise. </p>
    <hr>
    <dl class="domintro">
     <dt><code><var>document</var> = new <code class="idl"><a data-link-type="idl" href="#dom-document-document">Document()</a></code></code> 
@@ -4846,6 +4854,7 @@ neighboring rights to this work.</p>
     </ul>
    <li><a href="#dom-namednodemap-getnameditemns">getNamedItemNS(namespace, localName)</a><span>, in §4.8.1</span>
    <li><a href="#dom-namednodemap-getnameditem">getNamedItem(qualifiedName)</a><span>, in §4.8.1</span>
+   <li><a href="#get-the-parent">get the parent</a><span>, in §3.6</span>
    <li><a href="#dom-node-getuserdata">getUserData()</a><span>, in §8.2</span>
    <li><a href="#dom-eventlistener-handleevent">handleEvent(event)</a><span>, in §3.6</span>
    <li><a href="#concept-element-attribute-has">has an attribute</a><span>, in §4.8</span>
@@ -5316,6 +5325,7 @@ namespace and local name localName</a><span>, in §4.4</span>
     <ul>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#htmlhtmlelement">HTMLHtmlElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/comms.html#messageevent">MessageEvent</a>
+     <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#the-body-element">body</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#the-head-element">head</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#the-html-element">html</a>
