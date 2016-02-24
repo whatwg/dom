@@ -981,12 +981,18 @@ when something has occurred.
 <p>An <dfn export id=concept-event-listener>event listener</dfn> can be used to observe a specific
 <a>event</a>.
 
-<p>An <a>event listener</a> consists of a <b>type</b>, <b>callback</b>, <b>capture</b> and
-<b>passive</b>. An <a>event listener</a> also has an associated <b>removed flag</b>, which is
-initially unset.
+<p>An <a>event listener</a> consists of these fields:</p>
 
-<p class="note no-backref">Although the callback is named {{EventListener}}, as can be seen from the
-definition above, an <a>event listener</a> is a broader concept.
+<ul class="brief">
+ <li><b>type</b> (a string)
+ <li><b>callback</b> (an {{EventListener}}
+ <li><b>capture</b> (a boolean, initially false)
+ <li><b>passive</b> (a boolean, initially false)
+ <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
+</ul>
+
+<p class="note no-backref">Although <b>callback</b> is an {{EventListener}}, as can be seen from the
+fields above, an <a>event listener</a> is a broader concept.
 
 <p>Each {{EventTarget}} object also has an associated <dfn export>get the parent</dfn> algorithm,
 which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
@@ -1091,7 +1097,7 @@ method, when invoked, must, run these steps
  <li><p>If there is an <a>event listener</a> in the associated list of <a>event listeners</a> whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
  <var>capture</var>, and <b>passive</b> is <var>passive</var> then set that <a>event listener</a>'s
- <b>removed flag</b> and remove it from the associated list of <a>event listeners</a>.
+ <b>removed</b> to true and remove it from the associated list of <a>event listeners</a>.
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
@@ -1191,7 +1197,7 @@ for discussion).
   <a>event listener</a> to <var>listeners</var>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
-  run. Note that removal still has an affect due to the <b>removed flag</b>.
+  run. Note that removal still has an affect due to the <b>removed</b> field.
 
  <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>object</var>.
 
@@ -1233,7 +1239,7 @@ an <var>object</var> with <var>event</var>, run these steps:
  <li><p>Let <var>found</var> be false.
 
  <li>
-  <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
+  <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed</b> is false, run
   these substeps:
 
   <ol>

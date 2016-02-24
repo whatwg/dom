@@ -692,10 +692,16 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="d
    <p>The <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object represents the target to which an <a data-link-type="dfn" href="#concept-event">event</a> is <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> when something has occurred. </p>
    <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object has an associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
    <p>An <dfn data-dfn-type="dfn" data-export="" id="concept-event-listener">event listener<a class="self-link" href="#concept-event-listener"></a></dfn> can be used to observe a specific <a data-link-type="dfn" href="#concept-event">event</a>. </p>
-   <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of a <b>type</b>, <b>callback</b>, <b>capture</b> and <b>passive</b>. An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> also has an associated <b>removed flag</b>, which is
-initially unset. </p>
-   <p class="note no-backref" role="note">Although the callback is named <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code>, as can be seen from the
-definition above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a broader concept. </p>
+   <p>An <a data-link-type="dfn" href="#concept-event-listener">event listener</a> consists of these fields:</p>
+   <ul class="brief">
+    <li><b>type</b> (a string) 
+    <li><b>callback</b> (an <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code> 
+    <li><b>capture</b> (a boolean, initially false) 
+    <li><b>passive</b> (a boolean, initially false) 
+    <li><b>removed</b> (a boolean for bookkeeping purposes, initially false) 
+   </ul>
+   <p class="note no-backref" role="note">Although <b>callback</b> is an <code class="idl"><a data-link-type="idl" href="#callbackdef-eventlistener">EventListener</a></code>, as can be seen from the
+fields above, an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is a broader concept. </p>
    <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object also has an associated <dfn data-dfn-type="dfn" data-export="" id="get-the-parent">get the parent<a class="self-link" href="#get-the-parent"></a></dfn> algorithm,
 which takes an <a data-link-type="dfn" href="#concept-event">event</a> <var>event</var>, and returns an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object. Unless
 specified otherwise it returns null. </p>
@@ -759,7 +765,7 @@ specified otherwise it returns null. </p>
     <li>
      <p>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
     <li>
-     <p>If there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var> then set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed flag</b> and remove it from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
+     <p>If there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var> then set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed</b> to true and remove it from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" id="dom-eventtarget-dispatchevent"><code>dispatchEvent(<var>event</var>)</code><a class="self-link" href="#dom-eventtarget-dispatchevent"></a></dfn> method, when
 invoked, must run these steps: </p>
@@ -832,7 +838,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
     <li>
      <p>For each <a data-link-type="dfn" href="#concept-event-listener">event listener</a> associated with <var>object</var>, append a pointer to the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to <var>listeners</var>. </p>
      <p class="note no-backref" role="note">This avoids <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> added after this point from being
-  run. Note that removal still has an affect due to the <b>removed flag</b>. </p>
+  run. Note that removal still has an affect due to the <b>removed</b> field. </p>
     <li>
      <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to <var>object</var>. </p>
     <li>
@@ -877,7 +883,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions
     <li>
      <p>Let <var>found</var> be false. </p>
     <li>
-     <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed flag</b> is unset, run
+     <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed</b> is false, run
   these substeps: </p>
      <ol>
       <li>
