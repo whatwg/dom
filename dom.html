@@ -1640,22 +1640,28 @@ previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</va
  of <code class="idl"><a data-link-type="idl" href="#mutationobserver">MutationObserver</a></code> objects optionally paired with a string. 
     <li>Let <var>nodes</var> be the <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestors</a> of <var>target</var>. 
     <li>
-      Then, for each <var>node</var> in <var>nodes</var>, and
-  then for each <var>registered observer</var> (with <var>registered observer</var>’s <b>options</b> as <var>options</var>) in <var>node</var>’s list of <a data-link-type="dfn" href="#registered-observer">registered observers</a>: 
+     <p>Then, for each <var>node</var> in <var>nodes</var>, and then for each <var>registered observer</var> (with <var>registered observer</var>’s <b>options</b> as <var>options</var>) in <var>node</var>’s list of <a data-link-type="dfn" href="#registered-observer">registered observers</a>, run these substeps: </p>
      <ol>
-      <li>If <var>node</var> is not <var>target</var> and <var>options</var>’ <code>subtree</code> is false, continue. 
-      <li>If <var>type</var> is "<code>attributes</code>" and <var>options</var>’ <code>attributes</code> is not true, continue. 
-      <li>If <var>type</var> is "<code>attributes</code>", <var>options</var>’ <code>attributeFilter</code> is present, and either <var>options</var>’ <code>attributeFilter</code> does not contain <var>name</var> or <var>namespace</var> is non-null, continue. 
-      <li>If <var>type</var> is "<code>characterData</code>" and <var>options</var>’ <code>characterData</code> is not true, continue. 
-      <li>If <var>type</var> is "<code>childList</code>" and <var>options</var>’ <code>childList</code> is false, continue. 
-      <li>If <var>registered observer</var>’s <b>observer</b> is
-   not in <var>interested observers</var>, append <var>registered observer</var>’s <b>observer</b> to <var>interested observers</var>. 
-      <li>If either <var>type</var> is "<code>attributes</code>"
-   and <var>options</var>’ <code>attributeOldValue</code> is true, or <var>type</var> is "<code>characterData</code>" and <var>options</var>’ <code>characterDataOldValue</code> is true,
-   set the paired string of <var>registered observer</var>’s <b>observer</b> in <var>interested observers</var> to <var>oldValue</var>. 
+      <li>
+       <p>If none of the following are true </p>
+       <ul class="brief">
+        <li><var>node</var> is not <var>target</var> and <var>options</var>’ <code>subtree</code> is
+     false 
+        <li><var>type</var> is "<code>attributes</code>" and <var>options</var>’ <code>attributes</code> is not true 
+        <li><var>type</var> is "<code>attributes</code>", <var>options</var>’ <code>attributeFilter</code> is present, and <var>options</var>’ <code>attributeFilter</code> does not contain <var>name</var> or <var>namespace</var> is non-null 
+        <li><var>type</var> is "<code>characterData</code>" and <var>options</var>’ <code>characterData</code> is not true 
+        <li><var>type</var> is "<code>childList</code>" and <var>options</var>’ <code>childList</code> is false 
+       </ul>
+       <p>then run these subsubsteps: </p>
+       <ol>
+        <li>
+         <p>If <var>registered observer</var>’s <b>observer</b> is not in <var>interested observers</var>, append <var>registered observer</var>’s <b>observer</b> to <var>interested observers</var>. </p>
+        <li>
+         <p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>’ <code>attributeOldValue</code> is true, or <var>type</var> is "<code>characterData</code>" and <var>options</var>’ <code>characterDataOldValue</code> is true, set the paired string of <var>registered observer</var>’s <b>observer</b> in <var>interested observers</var> to <var>oldValue</var>. </p>
+       </ol>
      </ol>
     <li>
-      Then, for each <var>observer</var> in <var>interested observers</var>: 
+     <p>Then, for each <var>observer</var> in <var>interested observers</var>, run these substeps: </p>
      <ol>
       <li>Let <var>record</var> be a new <code class="idl"><a data-link-type="idl" href="#mutationrecord">MutationRecord</a></code> object with its <code class="idl"><a data-link-type="idl" href="#dom-mutationrecord-type">type</a></code> set to <var>type</var> and <code class="idl"><a data-link-type="idl" href="#dom-mutationrecord-target">target</a></code> set to <var>target</var>. 
       <li>If <var>name</var> and <var>namespace</var> are given,
