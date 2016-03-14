@@ -5029,6 +5029,9 @@ interface Element : Node {
   HTMLCollection getElementsByTagName(DOMString qualifiedName);
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
+
+  Element? insertAdjacentElement(DOMString where, Element element); // historical
+  void insertAdjacentText(DOMString where, DOMString data); // historical
 };</pre>
 
 
@@ -5637,6 +5640,54 @@ The
 method must return the
 <a>list of elements with class names <var>classNames</var></a>
 for the <a>context object</a>.
+
+<hr>
+
+<p>To <dfn>insert adjacent</dfn>, given an <a for=/>element</a> <var>element</var>, string
+<var>where</var>, and a <a>node</a> <var>node</var>, run the steps associated with the first
+<a>ASCII case-insensitive</a> match for <var>where</var>:
+
+<dl class=switch>
+ <dt>"<code>beforebegin</code>"
+ <dd>
+  <p>If <var>element</var>'s <a>parent</a> is null, return null.
+
+  <p><a for=Node>Pre-insert</a> <var>node</var> into <var>element</var>'s <a>parent</a> before
+  <var>element</var>. Rethrow any exceptions.
+
+ <dt>"<code>afterbegin</code>"
+ <dd><p><a for=Node>Pre-insert</a> <var>node</var> into <var>element</var> before
+ <var>element</var>'s <a for=tree>first child</a>.
+
+ <dt>"<code>beforeend</code>"
+ <dd><p><a for=Node>Pre-insert</a> <var>node</var> into <var>element</var> before null.
+
+ <dt>"<code>afterend</code>"
+ <dd>
+  <p>If <var>element</var>'s <a>parent</a> is null, return null.
+
+  <p><a for=Node>Pre-insert</a> <var>node</var> into <var>element</var>'s <a>parent</a> before
+  <var>element</var>'s <a for=tree>next sibling</a>. Rethrow any exceptions.
+
+ <dt>Otherwise</dt>
+ <dd><p>Throw a {{SyntaxError}} exception.
+</dl>
+
+<p>The
+<dfn method for=Element><code>insertAdjacentElement(<var>where</var>, <var>element</var>)</code></dfn>
+method, when invoked, must return the result of running <a>insert adjacent</a>, given
+<a>context object</a>, <var>where</var>, and <var>element</var>. Rethrow any exceptions.
+
+<p>The
+<dfn method for=Element><code>insertAdjacentText(<var>where</var>, <var>data</var>)</code></dfn>
+method, when invoked, must run these steps:
+
+<ol>
+ <li><p>Let <var>text</var> be a new <code>Text</code> object whose <a>data</a> is <var>data</var>.
+
+ <li><p>Run <a>insert adjacent</a>, given <a>context object</a>, <var>where</var>, and
+ <var>text</var>. Rethrow any exceptions.
+</ol>
 
 
 <h4 id='interface-namednodemap'>Interface {{NamedNodeMap}}</h4>

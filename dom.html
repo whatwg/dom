@@ -2774,6 +2774,9 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="ele
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbytagname">getElementsByTagName</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/getElementsByTagName(qualifiedName)" data-dfn-type="argument" data-export="" id="dom-element-getelementsbytagname-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-element-getelementsbytagname-qualifiedname-qualifiedname"></a></dfn>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Element/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-element-getelementsbytagnamens-namespace-localname-namespace">namespace<a class="self-link" href="#dom-element-getelementsbytagnamens-namespace-localname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Element/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-element-getelementsbytagnamens-namespace-localname-localname">localName<a class="self-link" href="#dom-element-getelementsbytagnamens-namespace-localname-localname"></a></dfn>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbyclassname">getElementsByClassName</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/getElementsByClassName(classNames)" data-dfn-type="argument" data-export="" id="dom-element-getelementsbyclassname-classnames-classnames">classNames<a class="self-link" href="#dom-element-getelementsbyclassname-classnames-classnames"></a></dfn>);
+
+  <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-element-insertadjacentelement">insertAdjacentElement</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/insertAdjacentElement(where, element)" data-dfn-type="argument" data-export="" id="dom-element-insertadjacentelement-where-element-where">where<a class="self-link" href="#dom-element-insertadjacentelement-where-element-where"></a></dfn>, <a data-link-type="idl-name" href="#element">Element</a> <dfn class="idl-code" data-dfn-for="Element/insertAdjacentElement(where, element)" data-dfn-type="argument" data-export="" id="dom-element-insertadjacentelement-where-element-element">element<a class="self-link" href="#dom-element-insertadjacentelement-where-element-element"></a></dfn>); // historical
+  void <a class="idl-code" data-link-type="method" href="#dom-element-insertadjacenttext">insertAdjacentText</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/insertAdjacentText(where, data)" data-dfn-type="argument" data-export="" id="dom-element-insertadjacenttext-where-data-where">where<a class="self-link" href="#dom-element-insertadjacenttext-where-data-where"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Element/insertAdjacentText(where, data)" data-dfn-type="argument" data-export="" id="dom-element-insertadjacenttext-where-data-data">data<a class="self-link" href="#dom-element-insertadjacenttext-where-data-data"></a></dfn>); // historical
 };</pre>
    <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are simply
 known as <dfn data-dfn-type="dfn" data-export="" data-lt="element" id="concept-element">elements<a class="self-link" href="#concept-element"></a></dfn>.</p>
@@ -3057,6 +3060,35 @@ invoked, must run these steps:</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-getelementsbytagname"><code>getElementsByTagName(<var>qualifiedName</var>)</code><a class="self-link" href="#dom-element-getelementsbytagname"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbytagname">list of elements with qualified name <var>qualifiedName</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-getelementsbytagnamens">getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)<a class="self-link" href="#dom-element-getelementsbytagnamens"></a></dfn> method must return the <a data-link-type="dfn" href="#concept-getelementsbytagnamens">list of elements with namespace <var>namespace</var> and local name <var>localName</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-getelementsbyclassname">getElementsByClassName(<var title="">classNames</var>)<a class="self-link" href="#dom-element-getelementsbyclassname"></a></dfn> method must return the <a data-link-type="dfn" href="#concept-getelementsbyclassname">list of elements with class names <var>classNames</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
+   <hr>
+   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="insert-adjacent">insert adjacent<a class="self-link" href="#insert-adjacent"></a></dfn>, given an <a data-link-type="dfn" href="#concept-element">element</a> <var>element</var>, string <var>where</var>, and a <a data-link-type="dfn" href="#concept-node">node</a> <var>node</var>, run the steps associated with the first <a data-link-type="dfn" href="#ascii-case-insensitive">ASCII case-insensitive</a> match for <var>where</var>: </p>
+   <dl class="switch">
+    <dt>"<code>beforebegin</code>" 
+    <dd>
+     <p>If <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is null, return null. </p>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> before <var>element</var>. Rethrow any exceptions. </p>
+    <dt>"<code>afterbegin</code>" 
+    <dd>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>element</var> before <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-first-child">first child</a>. </p>
+    <dt>"<code>beforeend</code>" 
+    <dd>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>element</var> before null. </p>
+    <dt>"<code>afterend</code>" 
+    <dd>
+     <p>If <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is null, return null. </p>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> before <var>element</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>. Rethrow any exceptions. </p>
+    <dt>Otherwise
+    <dd>
+     <p>Throw a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a></code> exception. </p>
+   </dl>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-insertadjacentelement"><code>insertAdjacentElement(<var>where</var>, <var>element</var>)</code><a class="self-link" href="#dom-element-insertadjacentelement"></a></dfn> method, when invoked, must return the result of running <a data-link-type="dfn" href="#insert-adjacent">insert adjacent</a>, given <a data-link-type="dfn" href="#context-object">context object</a>, <var>where</var>, and <var>element</var>. Rethrow any exceptions. </p>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-insertadjacenttext"><code>insertAdjacentText(<var>where</var>, <var>data</var>)</code><a class="self-link" href="#dom-element-insertadjacenttext"></a></dfn> method, when invoked, must run these steps: </p>
+   <ol>
+    <li>
+     <p>Let <var>text</var> be a new <code>Text</code> object whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>. </p>
+    <li>
+     <p>Run <a data-link-type="dfn" href="#insert-adjacent">insert adjacent</a>, given <a data-link-type="dfn" href="#context-object">context object</a>, <var>where</var>, and <var>text</var>. Rethrow any exceptions. </p>
+   </ol>
    <h4 class="heading settled" data-level="4.8.1" id="interface-namednodemap"><span class="secno">4.8.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code></span><a class="self-link" href="#interface-namednodemap"></a></h4>
 <pre class="idl def">[Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="namednodemap">NamedNodeMap<a class="self-link" href="#namednodemap"></a></dfn> {
@@ -4975,6 +5007,9 @@ neighboring rights to this work.</p>
      <li><a href="#concept-node-insert">dfn for Node</a><span>, in §4.2.1</span>
      <li><a href="#concept-range-insert">dfn for Range</a><span>, in §5.2</span>
     </ul>
+   <li><a href="#insert-adjacent">insert adjacent</a><span>, in §4.8</span>
+   <li><a href="#dom-element-insertadjacentelement">insertAdjacentElement(where, element)</a><span>, in §4.8</span>
+   <li><a href="#dom-element-insertadjacenttext">insertAdjacentText(where, data)</a><span>, in §4.8</span>
    <li><a href="#dom-node-insertbefore">insertBefore(node, child)</a><span>, in §4.4</span>
    <li><a href="#dom-characterdata-insertdata">insertData(offset, data)</a><span>, in §4.9</span>
    <li><a href="#concept-node-insert-ext">insertion steps</a><span>, in §4.2.1</span>
@@ -5808,6 +5843,9 @@ interface <a href="#element">Element</a> : <a data-link-type="idl-name" href="#n
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbytagname">getElementsByTagName</a>(DOMString <a href="#dom-element-getelementsbytagname-qualifiedname-qualifiedname">qualifiedName</a>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <a href="#dom-element-getelementsbytagnamens-namespace-localname-namespace">namespace</a>, DOMString <a href="#dom-element-getelementsbytagnamens-namespace-localname-localname">localName</a>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-element-getelementsbyclassname">getElementsByClassName</a>(DOMString <a href="#dom-element-getelementsbyclassname-classnames-classnames">classNames</a>);
+
+  <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-element-insertadjacentelement">insertAdjacentElement</a>(DOMString <a href="#dom-element-insertadjacentelement-where-element-where">where</a>, <a data-link-type="idl-name" href="#element">Element</a> <a href="#dom-element-insertadjacentelement-where-element-element">element</a>); // historical
+  void <a class="idl-code" data-link-type="method" href="#dom-element-insertadjacenttext">insertAdjacentText</a>(DOMString <a href="#dom-element-insertadjacenttext-where-data-where">where</a>, DOMString <a href="#dom-element-insertadjacenttext-where-data-data">data</a>); // historical
 };
 [Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <a href="#namednodemap">NamedNodeMap</a> {
