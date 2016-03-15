@@ -1600,9 +1600,9 @@ into a <var>parent</var> before a <var>child</var>, with an optional
    <li><p>Insert <var>node</var> into <var>parent</var> before <var>child</var> or at the end of
    <var>parent</var> if <var>child</var> is null.
 
-   <li><p>For each <a>inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>, in
-   <a>tree order</a>, run the <a>insertion steps</a> with <var>inclusiveDescendant</var> and
-   <var>parent</var>.
+   <li><p>For each <a>shadow-root-including inclusive descendant</a> <var>descendant</var> of
+   <var>node</var>, in <a>shadow-root-including tree order</a>, run the <a>insertion steps</a> with
+   <var>descendant</var> and <var>parent</var>.
   </ol>
 
  <li>If <i>suppress observers flag</i> is unset,
@@ -1850,8 +1850,9 @@ steps:
 
  <li>Remove <var>node</var> from its <var>parent</var>.
 
- <li><p>For each <a>inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>, run
- the <a>removing steps</a> with <var>inclusiveDescendant</var> and <var>parent</var>.
+ <li><p>For each <a>shadow-root-including inclusive descendant</a> <var>descendant</var> of
+ <var>node</var>, in <a>shadow-root-including tree order</a>, run the <a>removing steps</a> with
+ <var>descendant</var> and <var>parent</var>.
 
  <li>For each <a>inclusive ancestor</a> <var>inclusiveAncestor</var> of
  <var>parent</var>, if <var>inclusiveAncestor</var> has any <a>registered observers</a>
@@ -4996,6 +4997,26 @@ interface ShadowRoot : DocumentFragment {
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=DocumentFragment>host</a>.
+
+<hr>
+
+<p>In
+<dfn export id=concept-shadow-root-including-tree-order>shadow-root-including tree order</dfn>, is
+<a>shadow-root-including preorder, depth-first traversal</a> of a <a>tree</a>.
+<dfn noexport>shadow-root-including preorder, depth-first traversal</dfn> of a <a>tree</a>
+<var>tree</var> is preorder, depth-first traversal of <var>tree</var>, with for each <a>element</a>
+<var>element</var> encountered in <var>tree</var>, whose <a for=Element>shadow root</a> is non-null,
+<a>shadow-root-including preorder, depth-first traversal</a> of the <a>element</a>'s
+<a for=Element>shadow root</a>'s <a>tree</a> just after it is encountered.
+
+<p>An object <var>A</var> is a
+<dfn export id=concept-shadow-root-including-inclusive-descendant>shadow-root-including inclusive descendant</dfn>
+of an object <var>B</var>, if <var>A</var> is an <a>inclusive descendant</a> of <var>B</var>, or
+<var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> and <var>A</var>'s
+<a for=tree>root</a>'s <a for=DocumentFragment>host</a> is a
+<a>shadow-root-including inclusive descendant</a> of <var>B</var>.
+
+<hr>
 
 <p class="XXX">For now you can find more information about this object in
 <a href="https://w3c.github.io/webcomponents/spec/shadow/">Shadow DOM</a>. The DOM Standard will be
