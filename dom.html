@@ -128,10 +128,10 @@
        <a href="#node-trees"><span class="secno">4.2</span> <span class="content">Node tree</span></a>
        <ol class="toc">
         <li><a href="#mutation-algorithms"><span class="secno">4.2.1</span> <span class="content">Mutation algorithms</span></a>
-        <li><a href="#interface-nonelementparentnode"><span class="secno">4.2.2</span> <span class="content">Interface <code class="idl"><span>NonElementParentNode</span></code></span></a>
-        <li><a href="#interface-parentnode"><span class="secno">4.2.3</span> <span class="content">Interface <code class="idl"><span>ParentNode</span></code></span></a>
-        <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.4</span> <span class="content">Interface <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
-        <li><a href="#interface-childnode"><span class="secno">4.2.5</span> <span class="content">Interface <code class="idl"><span>ChildNode</span></code></span></a>
+        <li><a href="#interface-nonelementparentnode"><span class="secno">4.2.2</span> <span class="content">Mixin <code class="idl"><span>NonElementParentNode</span></code></span></a>
+        <li><a href="#interface-parentnode"><span class="secno">4.2.3</span> <span class="content">Mixin <code class="idl"><span>ParentNode</span></code></span></a>
+        <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.4</span> <span class="content">Mixin <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
+        <li><a href="#interface-childnode"><span class="secno">4.2.5</span> <span class="content">Mixin <code class="idl"><span>ChildNode</span></code></span></a>
         <li><a href="#element-collections"><span class="secno">4.2.6</span> <span class="content">Collections: <code class="idl"><span>Elements</span></code></span></a>
         <li>
          <a href="#old-style-collections"><span class="secno">4.2.7</span> <span class="content">Old-style collections: <code class="idl"><span>NodeList</span></code> and <code class="idl"><span>HTMLCollection</span></code></span></a>
@@ -970,28 +970,34 @@ concept is clear. Markup goes in, a <a data-link-type="dfn" href="#concept-tree"
    <p class="note no-backref" role="note">The most excellent <a href="http://software.hixie.ch/utilities/js/live-dom-viewer/">Live DOM Viewer</a> can be used to explore this matter in more detail. </p>
    <h3 class="heading settled" data-level="4.2" id="node-trees"><span class="secno">4.2. </span><span class="content">Node tree</span><a class="self-link" href="#node-trees"></a></h3>
    <p><code class="idl"><a data-link-type="idl" href="#document">Document</a></code>, <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code>, <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code>, <code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code>, <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>, <code class="idl"><a data-link-type="idl" href="#text">Text</a></code>, <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code>, and <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> objects (simply called <dfn data-dfn-type="dfn" data-export="" id="concept-node">nodes<a class="self-link" href="#concept-node"></a></dfn>) <a data-link-type="dfn" href="#concept-tree-participate">participate</a> in a <a data-link-type="dfn" href="#concept-tree">tree</a>, simply named the <dfn data-dfn-type="dfn" data-export="" id="concept-node-tree">node tree<a class="self-link" href="#concept-node-tree"></a></dfn>. </p>
-   <p>A <a data-link-type="dfn" href="#concept-node-tree">node tree</a> is constrained as
-follows, expressed as a relationship between the type of <a data-link-type="dfn" href="#concept-node">node</a> and its allowed <a data-link-type="dfn" href="#concept-tree-child">children</a>:</p>
+   <p>A <a data-link-type="dfn" href="#concept-node-tree">node tree</a> is constrained as follows, expressed as a relationship between the type of <a data-link-type="dfn" href="#concept-node">node</a> and its allowed <a data-link-type="dfn" href="#concept-tree-child">children</a>: </p>
    <dl>
     <dt><code class="idl"><a data-link-type="idl" href="#document">Document</a></code> 
     <dd>
-      In <a data-link-type="dfn" href="#concept-tree-order">tree order</a>: 
+     <p>In <a data-link-type="dfn" href="#concept-tree-order">tree order</a>: </p>
      <ol>
-      <li>Zero or more nodes each of which is either <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. 
-      <li>Optionally one <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> node. 
-      <li>Zero or more nodes each of which is either <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. 
-      <li>Optionally one <code class="idl"><a data-link-type="idl" href="#element">Element</a></code> node. 
-      <li>Zero or more nodes each of which is either <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. 
+      <li>
+       <p>Zero or more nodes each of which is <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. </p>
+      <li>
+       <p>Optionally one <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> node. </p>
+      <li>
+       <p>Zero or more nodes each of which is <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. </p>
+      <li>
+       <p>Optionally one <code class="idl"><a data-link-type="idl" href="#element">Element</a></code> node. </p>
+      <li>
+       <p>Zero or more nodes each of which is <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. </p>
      </ol>
     <dt><code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> 
-    <dd>Zero or more nodes each of which is one of <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>, <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code>, <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>, or <code class="idl"><a data-link-type="idl" href="#text">Text</a></code>. 
+    <dd>
+     <p>Zero or more nodes each of which is <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>, <code class="idl"><a data-link-type="idl" href="#text">Text</a></code>, <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code>, or <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code>. </p>
     <dt><code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#text">Text</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> 
-    <dd>None. 
+    <dd>
+     <p>None. </p>
    </dl>
    <p>The <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" id="concept-node-length">length<a class="self-link" href="#concept-node-length"></a></dfn> of a <a data-link-type="dfn" href="#concept-node">node</a> <var>node</var> depends on <var>node</var>:</p>
    <dl class="switch">
@@ -1165,11 +1171,9 @@ steps:</p>
     <li>If <i>suppress observers flag</i> is unset, <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for <var>parent</var> with removedNodes a list solely containing <var>node</var>,
  nextSibling <var>oldNextSibling</var>, and previousSibling <var>oldPreviousSibling</var>. 
    </ol>
-   <h4 class="heading settled" data-level="4.2.2" id="interface-nonelementparentnode"><span class="secno">4.2.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nonelementparentnode">NonElementParentNode</a></code></span><a class="self-link" href="#interface-nonelementparentnode"></a></h4>
-   <p class="note no-backref" role="note">The <code class="idl"><a data-link-type="idl" href="#dom-nonelementparentnode-getelementbyid">getElementById()</a></code> method is not
-on <a data-link-type="dfn" href="#concept-element">elements</a> for compatibility with older versions of
-jQuery. If a time comes where that version of jQuery has disappeared, we might be able to
-support it. </p>
+   <h4 class="heading settled" data-level="4.2.2" id="interface-nonelementparentnode"><span class="secno">4.2.2. </span><span class="content">Mixin <code class="idl"><a data-link-type="idl" href="#nonelementparentnode">NonElementParentNode</a></code></span><a class="self-link" href="#interface-nonelementparentnode"></a></h4>
+   <p class="note no-backref" role="note">The <code class="idl"><a data-link-type="idl" href="#dom-nonelementparentnode-getelementbyid">getElementById()</a></code> method is not on <a data-link-type="dfn" href="#concept-element">elements</a> for compatibility with older versions of jQuery. If a time comes where that
+version of jQuery has disappeared, we might be able to support it. </p>
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nonelementparentnode">NonElementParentNode<a class="self-link" href="#nonelementparentnode"></a></dfn> {
@@ -1180,11 +1184,12 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="non
 </pre>
    <dl class="domintro">
     <dt><code><var>node</var> . <a class="idl-code" data-link-type="method" href="#dom-nonelementparentnode-getelementbyid">getElementById</a>(<var>elementId</var>)</code> 
-    <dd>Returns the first <a data-link-type="dfn" href="#concept-element">element</a> within <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-descendant">descendants</a> whose <a data-link-type="dfn" href="#concept-id">ID</a> is <var>elementId</var>. 
+    <dd>
+     <p>Returns the first <a data-link-type="dfn" href="#concept-element">element</a> within <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-descendant">descendants</a> whose <a data-link-type="dfn" href="#concept-id">ID</a> is <var>elementId</var>. </p>
    </dl>
-   <p>The <dfn class="idl-code" data-dfn-for="NonElementParentNode" data-dfn-type="method" data-export="" id="dom-nonelementparentnode-getelementbyid">getElementById(<var>elementId</var>)<a class="self-link" href="#dom-nonelementparentnode-getelementbyid"></a></dfn> method must return the first <a data-link-type="dfn" href="#concept-element">element</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, within <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-descendant">descendants</a>, whose <a data-link-type="dfn" href="#concept-id">ID</a> is <var>elementId</var>, and null if there is no
-such <a data-link-type="dfn" href="#concept-element">element</a> otherwise.</p>
-   <h4 class="heading settled" data-level="4.2.3" id="interface-parentnode"><span class="secno">4.2.3. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#parentnode">ParentNode</a></code></span><a class="self-link" href="#interface-parentnode"></a></h4>
+   <p>The <dfn class="idl-code" data-dfn-for="NonElementParentNode" data-dfn-type="method" data-export="" id="dom-nonelementparentnode-getelementbyid"><code>getElementById(<var>elementId</var>)</code><a class="self-link" href="#dom-nonelementparentnode-getelementbyid"></a></dfn> method, when invoked, must return the first <a data-link-type="dfn" href="#concept-element">element</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, within <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-descendant">descendants</a>, whose <a data-link-type="dfn" href="#concept-id">ID</a> is <var>elementId</var>, and null if
+there is no such <a data-link-type="dfn" href="#concept-element">element</a> otherwise. </p>
+   <h4 class="heading settled" data-level="4.2.3" id="interface-parentnode"><span class="secno">4.2.3. </span><span class="content">Mixin <code class="idl"><a data-link-type="idl" href="#parentnode">ParentNode</a></code></span><a class="self-link" href="#interface-parentnode"></a></h4>
    <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="converting nodes into a node" id="converting-nodes-into-a-node">convert <var>nodes</var> into a node<a class="self-link" href="#converting-nodes-into-a-node"></a></dfn>,
 run these steps:</p>
    <ol>
@@ -1270,10 +1275,10 @@ a set consisting of <a data-link-type="dfn" href="#context-object">context objec
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselector"><code>querySelector(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselector"></a></dfn> method, when invoked, must return the first result of running <a data-link-type="dfn" href="#scope-match-a-selectors-string">scope-match a selectors string</a> <var>selectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list otherwise.</p>
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselectorall"><code>querySelectorAll(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselectorall"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-collection-static">static</a> result of
 running <a data-link-type="dfn" href="#scope-match-a-selectors-string">scope-match a selectors string</a> <var>selectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
-   <h4 class="heading settled" data-level="4.2.4" id="interface-nondocumenttypechildnode"><span class="secno">4.2.4. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></span><a class="self-link" href="#interface-nondocumenttypechildnode"></a></h4>
-   <p class="note no-backref" role="note">The <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code> attributes have been removed from <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> nodes for compatibility
-reasons. If these additions are deemed compatible enough in the future, they could be
-reinstated. </p>
+   <h4 class="heading settled" data-level="4.2.4" id="interface-nondocumenttypechildnode"><span class="secno">4.2.4. </span><span class="content">Mixin <code class="idl"><a data-link-type="idl" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a></code></span><a class="self-link" href="#interface-nondocumenttypechildnode"></a></h4>
+   <p class="note no-backref" role="note">The <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a></code> attributes have
+been removed from <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> nodes for compatibility reasons. If these additions are deemed
+compatible enough in the future, they could be reinstated. </p>
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nondocumenttypechildnode">NonDocumentTypeChildNode<a class="self-link" href="#nondocumenttypechildnode"></a></dfn> {
@@ -1295,7 +1300,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="non
 and null otherwise.</p>
    <p>The <dfn class="idl-code" data-dfn-for="NonDocumentTypeChildNode" data-dfn-type="attribute" data-export="" id="dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling<a class="self-link" href="#dom-nondocumenttypechildnode-nextelementsibling"></a></dfn> attribute must return the first <a data-link-type="dfn" href="#concept-tree-following">following</a> <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> that is an <a data-link-type="dfn" href="#concept-element">element</a>,
 and null otherwise.</p>
-   <h4 class="heading settled" data-level="4.2.5" id="interface-childnode"><span class="secno">4.2.5. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#childnode">ChildNode</a></code></span><a class="self-link" href="#interface-childnode"></a></h4>
+   <h4 class="heading settled" data-level="4.2.5" id="interface-childnode"><span class="secno">4.2.5. </span><span class="content">Mixin <code class="idl"><a data-link-type="idl" href="#childnode">ChildNode</a></code></span><a class="self-link" href="#interface-childnode"></a></h4>
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="childnode">ChildNode<a class="self-link" href="#childnode"></a></dfn> {
@@ -3101,7 +3106,7 @@ invoked, must run these steps: </p>
  "<code>section</code>", or
  "<code>span</code>", then throw a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
     <li>
-     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-element-shadow-root">shadow root</a> is non-null, then throw a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a></code> exception. </p>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-element-shadow-root">shadow root</a> is non-null, then throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a></code> exception. </p>
     <li>
      <p>Let <var>shadow</var> be a new <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> whose <a data-link-type="dfn" href="#concept-node-document">node document</a> is <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>, <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> is <a data-link-type="dfn" href="#context-object">context object</a>, and <a data-link-type="dfn" href="#shadowroot-encapsulation-mode">encapsulation mode</a> is <var>init</var>’s <code class="idl"><a data-link-type="idl" href="#dom-shadowrootinit-mode">mode</a></code>. </p>
     <li>
