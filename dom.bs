@@ -12,7 +12,7 @@ No Editor: true
 Logo: https://resources.whatwg.org/logo-dom.svg
 Abstract: DOM defines a platform-neutral model for events and node trees.
 Ignored Terms: EmptyString, Array, Document
-Ignored Vars: p, documentFragment, ev, oldParent, em, processingInstruction, obj, tree, removedNode, C, *, intersects, collapsed
+Ignored Vars: p, documentFragment, ev, oldParent, em, processingInstruction, obj, tree, insertedNode, removedNode, C, *, intersects, collapsed
 Boilerplate: omit conformance, omit feedback-header
 </pre>
 
@@ -1535,13 +1535,11 @@ To <dfn export for=Node id=concept-node-pre-insert>pre-insert</dfn> a
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Node id=concept-node-insert-ext>insertion steps</dfn> for all or some <a>nodes</a>.
-The algorithm is passed <var>insertedNode</var> and <var>newAncestor</var> as indicated in the
-<a for=Node>insert</a> algorithm below.
+The algorithm is passed <var>insertedNode</var>, as indicated in the <a for=Node>insert</a>
+algorithm below.
 <!-- See https://github.com/whatwg/dom/issues/34#issuecomment-125571750 for why we might need to
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
-
-<p class="note"><var>newAncestor</var> can be <var>insertedNode</var>'s <a>parent</a>.
 
 To <dfn export id=concept-node-insert for=Node>insert</dfn> a <var>node</var>
 into a <var>parent</var> before a <var>child</var>, with an optional
@@ -1600,9 +1598,9 @@ into a <var>parent</var> before a <var>child</var>, with an optional
    <li><p>Insert <var>node</var> into <var>parent</var> before <var>child</var> or at the end of
    <var>parent</var> if <var>child</var> is null.
 
-   <li><p>For each <a>shadow-root-including inclusive descendant</a> <var>descendant</var> of
-   <var>node</var>, in <a>shadow-root-including tree order</a>, run the <a>insertion steps</a> with
-   <var>descendant</var> and <var>parent</var>.
+   <li><p>For each <a>shadow-root-including inclusive descendant</a> <var>inclusiveDescendant</var>
+   of <var>node</var>, in <a>shadow-root-including tree order</a>, run the <a>insertion steps</a>
+   with <var>inclusiveDescendant</var>.
   </ol>
 
  <li>If <i>suppress observers flag</i> is unset,
@@ -1798,10 +1796,8 @@ To <dfn export for=Node id=concept-node-pre-remove>pre-remove</dfn> a
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Node id=concept-node-remove-ext>removing steps</dfn> for all or some <a>nodes</a>.
-The algorithm is passed <var>removedNode</var> and <var>oldAncestor</var>, as indicated in the
-<a>remove</a> algorithm below.
-
-<p class="note"><var>oldAncestor</var> can be <var>removedNode</var>'s former <a>parent</a>.
+The algorithm is passed <var>removedNode</var>, and optionally <var>oldParent</var>, as indicated in
+the <a>remove</a> algorithm below.
 
 To <dfn export for=Node id=concept-node-remove>remove</dfn> a <var>node</var>
 from a <var>parent</var>, with an optional <i>suppress observers flag</i>, run these
@@ -1850,9 +1846,11 @@ steps:
 
  <li>Remove <var>node</var> from its <var>parent</var>.
 
- <li><p>For each <a>shadow-root-including inclusive descendant</a> <var>descendant</var> of
- <var>node</var>, in <a>shadow-root-including tree order</a>, run the <a>removing steps</a> with
- <var>descendant</var> and <var>parent</var>.
+ <li><p>Run the <a>removing steps</a> with <var>node</var> and <var>parent</var>.
+
+ <li><p>For each <a>shadow-root-including descendant</a> <var>descendant</var> of <var>node</var>,
+ in <a>shadow-root-including tree order</a>, run the <a>removing steps</a> with
+ <var>descendant</var>.
 
  <li>For each <a>inclusive ancestor</a> <var>inclusiveAncestor</var> of
  <var>parent</var>, if <var>inclusiveAncestor</var> has any <a>registered observers</a>
@@ -5004,17 +5002,22 @@ interface ShadowRoot : DocumentFragment {
 <dfn export id=concept-shadow-root-including-tree-order>shadow-root-including tree order</dfn>, is
 <a>shadow-root-including preorder, depth-first traversal</a> of a <a>tree</a>.
 <dfn noexport>shadow-root-including preorder, depth-first traversal</dfn> of a <a>tree</a>
-<var>tree</var> is preorder, depth-first traversal of <var>tree</var>, with for each <a>element</a>
-<var>element</var> encountered in <var>tree</var>, whose <a for=Element>shadow root</a> is non-null,
-<a>shadow-root-including preorder, depth-first traversal</a> of the <a>element</a>'s
+<var>tree</var> is preorder, depth-first traversal of <var>tree</var>, with for each
+<a for=/>element</a> <var>element</var> encountered in <var>tree</var>, whose
+<a for=Element>shadow root</a> is non-null,
+<a>shadow-root-including preorder, depth-first traversal</a> of the <a for=/>element</a>'s
 <a for=Element>shadow root</a>'s <a>tree</a> just after it is encountered.
 
 <p>An object <var>A</var> is a
+<dfn export id=concept-shadow-root-including-descendant>shadow-root-including descendant</dfn> of an
+object <var>B</var>, if <var>A</var> is a <a>descendant</a> of <var>B</var>, or <var>A</var>'s
+<a for=tree>root</a> is a <a for=/>shadow root</a> and <var>A</var>'s <a for=tree>root</a>'s
+<a for=DocumentFragment>host</a> is a <a>shadow-root-including inclusive descendant</a> of
+<var>B</var>.
+
+<p>A
 <dfn export id=concept-shadow-root-including-inclusive-descendant>shadow-root-including inclusive descendant</dfn>
-of an object <var>B</var>, if <var>A</var> is an <a>inclusive descendant</a> of <var>B</var>, or
-<var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> and <var>A</var>'s
-<a for=tree>root</a>'s <a for=DocumentFragment>host</a> is a
-<a>shadow-root-including inclusive descendant</a> of <var>B</var>.
+is an object or one of its <a>shadow-root-including descendants</a>.
 
 <hr>
 
