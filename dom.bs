@@ -83,9 +83,6 @@ urlPrefix: https://html.spec.whatwg.org/multipage/
             text: Unicode serialization of an origin; url: #unicode-serialisation-of-an-origin
         urlPrefix: infrastructure.html
             text: in parallel
-urlPrefix: https://w3c.github.io/webcomponents/spec/shadow/
-	type: dfn; urlPrefix: #dfn-
-		text: shadow root
 url: https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
     type: method; text: createContextualFragment(); for: Range;
 type: interface
@@ -95,8 +92,6 @@ type: interface
         text: UIEvent
     url: https://www.w3.org/TR/touch-events/#touchevent-interface
         text: TouchEvent
-    url: https://w3c.github.io/webcomponents/spec/shadow/#the-shadowroot-interface
-        text: ShadowRoot
 urlPrefix: https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#
     type: interface; text: ServiceWorkerGlobalScope; url: service-worker-global-scope-interface
     type: dfn; urlPrefix: dfn-
@@ -1381,13 +1376,9 @@ can be used to explore this matter in more detail.
 
 <h3 id=node-trees>Node tree</h3>
 
-Objects implementing the {{Document}},
-{{DocumentFragment}}, {{DocumentType}},
-{{Element}}, {{Text}}, {{ProcessingInstruction}},
-or {{Comment}} interface (simply called
-<dfn export id=concept-node>nodes</dfn>)
-<a>participate</a> in a
-<a>tree</a>, simply named the
+<p>{{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{ShadowRoot}}, {{Element}}, {{Text}},
+{{ProcessingInstruction}}, and {{Comment}} objects (simply called
+<dfn export id=concept-node>nodes</dfn>) <a>participate</a> in a <a>tree</a>, simply named the
 <dfn export id=concept-node-tree>node tree</dfn>.
 
 A <a>node tree</a> is constrained as
@@ -1409,6 +1400,7 @@ follows, expressed as a relationship between the type of
    {{ProcessingInstruction}} or {{Comment}}.
   </ol>
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dt>{{Element}}
  <dd>Zero or more nodes each of which is one of {{Element}},
  {{ProcessingInstruction}}, {{Comment}}, or
@@ -3005,9 +2997,9 @@ interface Node : EventTarget {
 };
 </pre>
 
-<p class="note no-backref">{{Node}} is an abstract interface and does not exist as
-<a>node</a>. It is used by all <a>nodes</a>
-({{Document}}, {{DocumentFragment}}, {{DocumentType}}, {{Element}}, {{Text}}, {{ProcessingInstruction}}, and {{Comment}}).
+<p class="note no-backref">{{Node}} is an abstract interface and does not exist as <a>node</a>. It
+is used by all <a>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{ShadowRoot}},
+{{Element}}, {{Text}}, {{ProcessingInstruction}}, and {{Comment}}).
 
 Each <a>node</a> has an associated
 <dfn export for=Node id=concept-node-document>node document</dfn>, set upon creation,
@@ -3052,8 +3044,7 @@ that is a <a>document</a>.
    <a>doctype</a>.
 
    <dt><code>{{Node}} . {{Node/DOCUMENT_FRAGMENT_NODE}}</code> (11)
-   <dd><var>node</var> is a {{DocumentFragment}}
-   <a>node</a>.
+   <dd><var>node</var> is a {{DocumentFragment}} or {{ShadowRoot}} <a>node</a>.
   </dl>
 
  <dt><code><var>node</var> . {{Node/nodeName}}</code>
@@ -3081,6 +3072,7 @@ that is a <a>document</a>.
    <dd>Its <a for=DocumentType>name</a>.
 
    <dt>{{DocumentFragment}}
+   <dt>{{ShadowRoot}}
    <dd>"<code>#document-fragment</code>".
   </dl>
 </dl>
@@ -3117,6 +3109,7 @@ the first matching statement, switching on the <a>context object</a>:
  <dd><dfn const for=Node>DOCUMENT_TYPE_NODE</dfn> (10);
 
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dd><dfn const for=Node>DOCUMENT_FRAGMENT_NODE</dfn> (11).
 </dl>
 
@@ -3177,6 +3170,7 @@ the first matching statement, switching on the <a>context object</a>:
  <dd>Its <a for=DocumentType>name</a>.
 
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dd>"<code>#document-fragment</code>".
 </dl>
 
@@ -3285,8 +3279,8 @@ must return the following, depending on the <a>context object</a>:
 <dl class=switch>
  <!--AttrExodus <dt>{{Attr}} -->
  <dt>{{Text}}
- <dt>{{Comment}}
  <dt>{{ProcessingInstruction}}
+ <dt>{{Comment}}
  <dd>The <a>context object</a>'s
  <a>data</a>.
 
@@ -3301,8 +3295,8 @@ instead, and then do as described below, depending on the <a>context object</a>:
 <dl class=switch>
  <!--AttrExodus <dt>{{Attr}} -->
  <dt>{{Text}}
- <dt>{{Comment}}
  <dt>{{ProcessingInstruction}}
+ <dt>{{Comment}}
  <dd><a>Replace data</a> with node
  <a>context object</a>, offset 0, count
  {{CharacterData/length}} attribute value, and
@@ -3312,12 +3306,12 @@ instead, and then do as described below, depending on the <a>context object</a>:
  <dd>Do nothing.
 </dl>
 
-The <dfn attribute for=Node>textContent</dfn>
-attribute must return the following, depending on the
-<a>context object</a>:
+<p>The <dfn attribute for=Node><code>textContent</code></dfn> attribute's getter must return the
+following, switching on <a>context object</a>:
 
 <dl class=switch>
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dt>{{Element}}
  <!--AttrExodus <dt>{{Attr}} -->
  <dd>The concatenation of <a>data</a> of all
@@ -3336,12 +3330,12 @@ attribute must return the following, depending on the
  <dd>Null.
 </dl>
 
-The {{Node/textContent}} attribute must,
-on setting, if the new value is null, act as if it was the empty string
-instead, and then do as described below, depending on the <a>context object</a>:
+<p>The {{Node/textContent}} attribute's setter must, if the new value is null, act as if it was the
+empty string instead, and then do as described below, switching on <a>context object</a>:
 
 <dl class=switch>
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dt>{{Element}}
  <!--AttrExodus <dt>{{Attr}} -->
  <dd>
@@ -3847,6 +3841,7 @@ To <dfn export>locate a namespace</dfn> for a <var>node</var> using
 
  <dt>{{DocumentType}}
  <dt>{{DocumentFragment}}
+ <dt>{{ShadowRoot}}
  <dd>Return null.
 
  <dt>Any other node
@@ -3884,6 +3879,7 @@ method must run these steps:
 
    <dt>{{DocumentType}}
    <dt>{{DocumentFragment}}
+   <dt>{{ShadowRoot}}
    <dd>Return null.
 
    <dt>Any other node
@@ -4979,6 +4975,26 @@ invoked, must return a new {{DocumentFragment}} <a>node</a> whose <a>node docume
 global object's associated <a>document</a>.
 
 
+<h3 id=interface-shadowroot>Interface {{ShadowRoot}}</h3>
+
+<pre class=idl>
+[Exposed=Window]
+interface ShadowRoot : DocumentFragment {
+  readonly attribute Element host;
+};
+</pre>
+
+<p>{{ShadowRoot}} <a>nodes</a> are simply known as
+<dfn export id=concept-shadow-root>shadow roots</dfn>.
+
+<p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=DocumentFragment>host</a>.
+
+<p class="XXX">For now you can find more information about this object in
+<a href="https://w3c.github.io/webcomponents/spec/shadow/">Shadow DOM</a>. The DOM Standard will be
+updated over time to cover more details.
+
+
 <h3 id='interface-element'>Interface {{Element}}</h3>
 
 <pre class=idl>
@@ -5926,10 +5942,8 @@ interface CharacterData : Node {
 };
 </pre>
 
-<p class="note">{{CharacterData}} is an abstract interface and does
-not exist as <a>node</a>. It is used by
-{{Text}}, {{Comment}}, and
-{{ProcessingInstruction}} <a>nodes</a>.
+<p class="note no-backref">{{CharacterData}} is an abstract interface and does not exist as
+<a>node</a>. It is used by {{Text}}, {{ProcessingInstruction}}, and {{Comment}} <a>nodes</a>.
 
 Each <a>node</a> inheriting from the
 {{CharacterData}} interface has an associated mutable string
@@ -9057,6 +9071,7 @@ making this standard what it is today.
 With that, many thanks to
 Adam Klein,
 Adrian Bateman,
+Alex Komoroske,
 Alex Russell,
 Anthony Ramine,
 Arkadiusz Michalski,
@@ -9064,6 +9079,7 @@ Arnaud Le Hors,
 Arun Ranganathan,
 Björn Höhrmann,
 Boris Zbarsky,
+Brandon Payton,
 Brandon Slade,
 Brandon Wallace,
 Brian Kardell,
@@ -9072,9 +9088,12 @@ Chris Dumez,
 Chris Paris,
 Chris Rebert,
 Daniel Glazman,
+Darin Fisher,
 David Bruant,
 David Flanagan,
 David Håsäther,
+David Hyatt,
+Deepak Sherveghar,
 Dethe Elza,
 Dimitri Glazkov,
 Domenic Denicola,
@@ -9082,14 +9101,20 @@ Dominic Cooney,
 Dominique Hazaël-Massieux,
 Don Jordan,
 Doug Schepers,
+Edward O'Connor,
+Elisée Maurer
 Elliott Sprehn,
+Eric Bidelman,
 Erik Arvidsson,
 Gavin Nicol,
 Geoffrey Sneddon,
 Giorgio Liscio,
 Glen Huang,
+Glenn Adams,
 Glenn Maynard,
+Hajime Morrita,
 Harald Alvestrand,
+Hayato Ito,
 Henri Sivonen,
 Hunan Rostomyan,
 Ian Hickson,
@@ -9112,8 +9137,10 @@ Jungkee Song,
 Justin Summerlin,
 呂康豪 (Kang-Hao Lu),
 Kevin Sweeney,
+Koji Ishii,
 Lachlan Hunt,
 Lauren Wood,
+Malte Ubl,
 Manish Goregaokar,
 Manish Tripathi,
 Marcos Caceres,
@@ -9124,26 +9151,34 @@ Michael™ Smith,
 Mike Champion,
 Mike Taylor,
 Ojan Vafai,
+Oliver Nightingale,
 Olli Pettay,
 Ondřej Žára,
 Peter Sharpe,
 Philip Jägenstedt,
 Philippe Le Hégaret,
 Rafael Weinstein,
+Richard Bradshaw,
 Rick Byers,
 Rick Waldron,
 Robbert Broersma,
 Robin Berjon,
+Roland Steiner,
 Rune <span title=Fabulous>F.</span> Halvorsen,
+Ruud Steltenpool,
 Ryosuke Niwa,
+Sam Dutton,
 Samuel Giles,
 Sebastian Mayr,
 Seo Sanghyeon,
+Sergey G. Grekhov,
 Shiki Okasaka,
+Shinya Kawanaka,
 Simon Pieters,
 Steve Byrne,
 Stig Halvorsen,
 Tab Atkins,
+Takashi Sakamoto,
 <i>timeless</i>,
 Timo Tijhof,
 Tobie Langel,
@@ -9154,7 +9189,8 @@ Vidur Apparao,
 Warren He,
 Yehuda Katz,
 Yoav Weiss,
-Yoichi Osato, and
+Yoichi Osato,
+Yoshinori Sano, and
 Zack Weinberg
 for being awesome!
 
