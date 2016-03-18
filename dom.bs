@@ -1450,6 +1450,11 @@ A <a>node</a> is considered
 <p>A <dfn export id=concept-shadow-tree>shadow tree</dfn> is a <a>node tree</a> whose <a>root</a> is
 a <a for=/>shadow root</a>.
 
+<p>A <a for=/>shadow root</a> is always connected to another <a>node tree</a> through its
+<a for=DocumentFragment>host</a>. A <a>shadow tree</a> is therefore never alone. The
+<a>node tree</a> of a <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> is sometimes
+referred to as the <dfn export id=concept-light-tree>light tree</dfn>.</p>
+
 
 <h4 id=mutation-algorithms>Mutation algorithms</h4>
 
@@ -4975,13 +4980,14 @@ interface DocumentFragment : Node {
 };
 </pre>
 
-<p>A {{DocumentFragment}} <a>node</a> can have an associated <a for="/">element</a> named
-<dfn export id=concept-documentfragment-host for=DocumentFragment>host</dfn>.
+<p>A {{DocumentFragment}} <a>node</a> has an associated
+<dfn export id=concept-documentfragment-host for=DocumentFragment>host</dfn> (null or an
+<a for="/">element</a> in a different <a>node tree</a>). It is null unless otherwise stated.
 
 <p>An object <var>A</var> is a
 <dfn export id=concept-tree-host-including-inclusive-ancestor>host-including inclusive ancestor</dfn>
 of an object <var>B</var>, if either <var>A</var> is an <a>inclusive ancestor</a> of <var>B</var>,
-or if <var>B</var>'s <a for=tree>root</a> has an associated <a for=DocumentFragment>host</a> and
+or if <var>B</var>'s <a for=tree>root</a> has a non-null <a for=DocumentFragment>host</a> and
 <var>A</var> is a <a>host-including inclusive ancestor</a> of <var>B</var>'s <a for=tree>root</a>'s
 <a for=DocumentFragment>host</a>.
 
@@ -5013,6 +5019,10 @@ interface ShadowRoot : DocumentFragment {
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>encapsulation mode</dfn>
 ("<code>open</code>" or "<code>closed</code>").</p>
+
+<p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
+<!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
+     consequences for innerHTML. -->
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=DocumentFragment>host</a>.
