@@ -1455,6 +1455,107 @@ A <a>node</a> is considered
 <a>node tree</a> of a <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> is sometimes
 referred to as the <dfn export id=concept-light-tree>light tree</dfn>.</p>
 
+<p class="note">A <a>shadow tree</a>'s corresponding <a>light tree</a> can be a <a>shadow tree</a>
+itself.</p>
+
+<h5 id=shadow-tree-slots>Slots</h5>
+
+<p>A <a>shadow tree</a> contains zero or more <a for=/>elements</a> that are
+<dfn export id=concept-slot lt=slot>slots</dfn>.</p>
+
+<p class="note">A <a>slot</a> can only be created through HTML's <code>slot</code> element.</p>
+<!-- XXX use <{slot}> once defined in the HTML Standard. -->
+
+<p>A <a>slot</a> has an associated <dfn export for=slot>name</dfn> (a string). Unless stated
+otherwise it is the empty string.</p>
+
+<p class="note">The first <a>slot</a> in a <a>shadow tree</a>, in <a>tree order</a>, whose
+<a for=slot>name</a> is the empty string, is sometimes known as the "default slot".</p>
+
+<h5 id=light-tree-slotables>Slotables</h5>
+
+<p>{{Element}} and {{Text}} <a>nodes</a> are <dfn export lt=slotable>slotables</dfn>.</p>
+
+<p>A <a>slotable</a> has a <dfn for=slotable>name</dfn> (a string). Unless stated otherwise it is
+the empty string.</p>
+
+<h5 id=finding-slots-and-slotables>Finding slots and slotables</h5>
+
+<p>To <dfn>find a slot</dfn> for a given <a>slotable</a> <var>slotable</var>, run these steps:</p>
+
+<ol>
+ <li><p>If <var>slotable</var>'s <a>parent</a> is null, then return null.</p></li>
+
+ <li><p>Let <var>shadow</var> be <var>slotable</var>'s <a>parent</a>'s
+ <a for=Element>shadow root</a>.</p></li>
+
+ <li><p>If <var>shadow</var> is null, then return null.</p></li>
+
+ <li><p>Return the first <a>slot</a> in <var>shadow</var>'s <a>tree</a> whose <a for=slot>name</a>
+ is <var>slotable</var>'s <a for=slotable>name</a>, if any, and null otherwise.</p></li>
+</ol>
+
+<p>To <dfn>find slotables</dfn> for a given <a>slot</a> <var>slot</var>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>result</var> be an empty list.</p></li>
+
+ <li><p>If <var>slot</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, then return
+ <var>result</var>.</p></li>
+
+ <li><p>Let <var>host</var> be <var>slot</var>'s <a for=tree>root</a>'s
+ <a for=DocumentFragment>host</a>.</p></li>
+
+ <li>
+  <p>For each <a>slotable</a> <a>child</a> of <var>host</var>, <var>slotable</var>, in
+  <a>tree order</a>, run these substeps:</p>
+
+  <ol>
+   <li><p>Let <var>foundSlot</var> be the result of running <a>find a slot</a> given
+   <var>slotable</var>.</p></li>
+
+   <li><p>If <var>foundSlot</var> is <var>slot</var>, then append <var>slotable</var> to
+   <var>result</var>.</p></li>
+  </ol>
+ </li>
+
+ <li><p>Return <var>result</var>.</p></li>
+</ol>
+
+<p>To <dfn>find distributed slotables</dfn> for a given <a>slot</a> <var>slot</var>, run these
+steps:</p>
+
+<ol>
+ <li><p>Let <var>result</var> be an empty list.</p></li>
+
+ <li><p>Let <var>slotables</var> be the result of running <a>find slotables</a> given
+ <var>slot</var>.</p></li>
+
+ <li><p>If <var>slotables</var> is the empty list, then append each <a>slotable</a>
+ <a for=tree>child</a> of <var>slot</var>, in <a>tree order</a>, to <var>slotables</var>.</p></li>
+
+ <li>
+  <p>For each <var>node</var> in <var>slotables</var>, run these substeps:</p>
+
+  <ol>
+   <li>
+    <p>If <var>node</var> is a <a>slot</a>, run these subsubsteps:</p>
+
+    <ol>
+     <li><p>Let <var>temporaryResult</var> be the result of running
+     <a>find distributed slotables</a> given <var>node</var>.</p></li>
+
+     <li><p>Append each <a>slotable</a> in <var>temporaryResult</var>, in order, to
+     <var>result</var>.</p></li>
+    </ol>
+
+   <li><p>Otherwise, append <var>node</var> to <var>result</var>.</p></li>
+  </ol>
+ </li>
+
+ <li><p>Return <var>result</var>.</p></li>
+</ol>
+
 
 <h4 id=mutation-algorithms>Mutation algorithms</h4>
 

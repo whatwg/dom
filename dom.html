@@ -128,7 +128,13 @@
        <a href="#node-trees"><span class="secno">4.2</span> <span class="content">Node tree</span></a>
        <ol class="toc">
         <li><a href="#document-trees"><span class="secno">4.2.1</span> <span class="content">Document tree</span></a>
-        <li><a href="#shadow-trees"><span class="secno">4.2.2</span> <span class="content">Shadow tree</span></a>
+        <li>
+         <a href="#shadow-trees"><span class="secno">4.2.2</span> <span class="content">Shadow tree</span></a>
+         <ol class="toc">
+          <li><a href="#shadow-tree-slots"><span class="secno">4.2.2.1</span> <span class="content">Slots</span></a>
+          <li><a href="#light-tree-slotables"><span class="secno">4.2.2.2</span> <span class="content">Slotables</span></a>
+          <li><a href="#finding-slots-and-slotables"><span class="secno">4.2.2.3</span> <span class="content">Finding slots and slotables</span></a>
+         </ol>
         <li><a href="#mutation-algorithms"><span class="secno">4.2.3</span> <span class="content">Mutation algorithms</span></a>
         <li><a href="#interface-nonelementparentnode"><span class="secno">4.2.4</span> <span class="content">Mixin <code class="idl"><span>NonElementParentNode</span></code></span></a>
         <li><a href="#mixin-documentorshadowroot"><span class="secno">4.2.5</span> <span class="content">Mixin <code class="idl"><span>DocumentOrShadowRoot</span></code></span></a>
@@ -1024,6 +1030,74 @@ concept is clear. Markup goes in, a <a data-link-type="dfn" href="#concept-tree"
    <p>A <dfn data-dfn-type="dfn" data-export="" id="concept-shadow-tree">shadow tree<a class="self-link" href="#concept-shadow-tree"></a></dfn> is a <a data-link-type="dfn" href="#concept-node-tree">node tree</a> whose <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>. </p>
    <p>A <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> is always connected to another <a data-link-type="dfn" href="#concept-node-tree">node tree</a> through its <a data-link-type="dfn" href="#concept-documentfragment-host">host</a>. A <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a> is therefore never alone. The <a data-link-type="dfn" href="#concept-node-tree">node tree</a> of a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> is sometimes
 referred to as the <dfn data-dfn-type="dfn" data-export="" id="concept-light-tree">light tree<a class="self-link" href="#concept-light-tree"></a></dfn>.</p>
+   <p class="note" role="note">A <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a>’s corresponding <a data-link-type="dfn" href="#concept-light-tree">light tree</a> can be a <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a> itself.</p>
+   <h5 class="heading settled" data-level="4.2.2.1" id="shadow-tree-slots"><span class="secno">4.2.2.1. </span><span class="content">Slots</span><a class="self-link" href="#shadow-tree-slots"></a></h5>
+   <p>A <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a> contains zero or more <a data-link-type="dfn" href="#concept-element">elements</a> that are <dfn data-dfn-type="dfn" data-export="" data-lt="slot" id="concept-slot">slots<a class="self-link" href="#concept-slot"></a></dfn>.</p>
+   <p class="note" role="note">A <a data-link-type="dfn" href="#concept-slot">slot</a> can only be created through HTML’s <code>slot</code> element.</p>
+   <p>A <a data-link-type="dfn" href="#concept-slot">slot</a> has an associated <dfn data-dfn-for="slot" data-dfn-type="dfn" data-export="" id="slot-name">name<a class="self-link" href="#slot-name"></a></dfn> (a string). Unless stated
+otherwise it is the empty string.</p>
+   <p class="note" role="note">The first <a data-link-type="dfn" href="#concept-slot">slot</a> in a <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, whose <a data-link-type="dfn" href="#slot-name">name</a> is the empty string, is sometimes known as the "default slot".</p>
+   <h5 class="heading settled" data-level="4.2.2.2" id="light-tree-slotables"><span class="secno">4.2.2.2. </span><span class="content">Slotables</span><a class="self-link" href="#light-tree-slotables"></a></h5>
+   <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> and <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are <dfn data-dfn-type="dfn" data-export="" data-lt="slotable" id="slotable">slotables<a class="self-link" href="#slotable"></a></dfn>.</p>
+   <p>A <a data-link-type="dfn" href="#slotable">slotable</a> has a <dfn data-dfn-for="slotable" data-dfn-type="dfn" data-noexport="" id="slotable-name">name<a class="self-link" href="#slotable-name"></a></dfn> (a string). Unless stated otherwise it is
+the empty string.</p>
+   <h5 class="heading settled" data-level="4.2.2.3" id="finding-slots-and-slotables"><span class="secno">4.2.2.3. </span><span class="content">Finding slots and slotables</span><a class="self-link" href="#finding-slots-and-slotables"></a></h5>
+   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-a-slot">find a slot<a class="self-link" href="#find-a-slot"></a></dfn> for a given <a data-link-type="dfn" href="#slotable">slotable</a> <var>slotable</var>, run these steps:</p>
+   <ol>
+    <li>
+     <p>If <var>slotable</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is null, then return null.</p>
+    <li>
+     <p>Let <var>shadow</var> be <var>slotable</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>’s <a data-link-type="dfn" href="#concept-element-shadow-root">shadow root</a>.</p>
+    <li>
+     <p>If <var>shadow</var> is null, then return null.</p>
+    <li>
+     <p>Return the first <a data-link-type="dfn" href="#concept-slot">slot</a> in <var>shadow</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> whose <a data-link-type="dfn" href="#slot-name">name</a> is <var>slotable</var>’s <a data-link-type="dfn" href="#slotable-name">name</a>, if any, and null otherwise.</p>
+   </ol>
+   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-slotables">find slotables<a class="self-link" href="#find-slotables"></a></dfn> for a given <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var>, run these steps:</p>
+   <ol>
+    <li>
+     <p>Let <var>result</var> be an empty list.</p>
+    <li>
+     <p>If <var>slot</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is not a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>, then return <var>result</var>.</p>
+    <li>
+     <p>Let <var>host</var> be <var>slot</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a>.</p>
+    <li>
+     <p>For each <a data-link-type="dfn" href="#slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>host</var>, <var>slotable</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, run these substeps:</p>
+     <ol>
+      <li>
+       <p>Let <var>foundSlot</var> be the result of running <a data-link-type="dfn" href="#find-a-slot">find a slot</a> given <var>slotable</var>.</p>
+      <li>
+       <p>If <var>foundSlot</var> is <var>slot</var>, then append <var>slotable</var> to <var>result</var>.</p>
+     </ol>
+    <li>
+     <p>Return <var>result</var>.</p>
+   </ol>
+   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-distributed-slotables">find distributed slotables<a class="self-link" href="#find-distributed-slotables"></a></dfn> for a given <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var>, run these
+steps:</p>
+   <ol>
+    <li>
+     <p>Let <var>result</var> be an empty list.</p>
+    <li>
+     <p>Let <var>slotables</var> be the result of running <a data-link-type="dfn" href="#find-slotables">find slotables</a> given <var>slot</var>.</p>
+    <li>
+     <p>If <var>slotables</var> is the empty list, then append each <a data-link-type="dfn" href="#slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>slot</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, to <var>slotables</var>.</p>
+    <li>
+     <p>For each <var>node</var> in <var>slotables</var>, run these substeps:</p>
+     <ol>
+      <li>
+       <p>If <var>node</var> is a <a data-link-type="dfn" href="#concept-slot">slot</a>, run these subsubsteps:</p>
+       <ol>
+        <li>
+         <p>Let <var>temporaryResult</var> be the result of running <a data-link-type="dfn" href="#find-distributed-slotables">find distributed slotables</a> given <var>node</var>.</p>
+        <li>
+         <p>Append each <a data-link-type="dfn" href="#slotable">slotable</a> in <var>temporaryResult</var>, in order, to <var>result</var>.</p>
+       </ol>
+      <li>
+       <p>Otherwise, append <var>node</var> to <var>result</var>.</p>
+     </ol>
+    <li>
+     <p>Return <var>result</var>.</p>
+   </ol>
    <h4 class="heading settled" data-level="4.2.3" id="mutation-algorithms"><span class="secno">4.2.3. </span><span class="content">Mutation algorithms</span><a class="self-link" href="#mutation-algorithms"></a></h4>
    <p>To <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" id="concept-node-ensure-pre-insertion-validity">ensure pre-insertion validity<a class="self-link" href="#concept-node-ensure-pre-insertion-validity"></a></dfn> of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run these steps:</p>
    <ol>
@@ -5068,6 +5142,9 @@ neighboring rights to this work.</p>
    <li><a href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a><span>, in §6.3</span>
    <li><a href="#dom-nodefilter-filter_reject">FILTER_REJECT</a><span>, in §6.3</span>
    <li><a href="#dom-nodefilter-filter_skip">FILTER_SKIP</a><span>, in §6.3</span>
+   <li><a href="#find-a-slot">find a slot</a><span>, in §4.2.2.3</span>
+   <li><a href="#find-distributed-slotables">find distributed slotables</a><span>, in §4.2.2.3</span>
+   <li><a href="#find-slotables">find slotables</a><span>, in §4.2.2.3</span>
    <li><a href="#concept-event-fire">fire an event</a><span>, in §3.9</span>
    <li><a href="#dom-treewalker-firstchild">firstChild()</a><span>, in §6.2</span>
    <li><a href="#dom-node-firstchild">firstChild</a><span>, in §4.4</span>
@@ -5241,6 +5318,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li>
     name
     <ul>
+     <li><a href="#slot-name">dfn for slot</a><span>, in §4.2.2.1</span>
+     <li><a href="#slotable-name">dfn for slotable</a><span>, in §4.2.2.2</span>
      <li><a href="#concept-doctype-name">dfn for DocumentType</a><span>, in §4.6</span>
      <li><a href="#dom-documenttype-name">attribute for DocumentType</a><span>, in §4.6</span>
      <li><a href="#dom-attr-name">attribute for Attr</a><span>, in §4.9.2</span>
@@ -5500,6 +5579,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-nodefilter-show_text">SHOW_TEXT</a><span>, in §6.3</span>
    <li><a href="#concept-tree-sibling">sibling</a><span>, in §2.1</span>
    <li><a href="#skip-ascii-whitespace">skip ASCII whitespace</a><span>, in §2.3</span>
+   <li><a href="#concept-slot">slot</a><span>, in §4.2.2.1</span>
+   <li><a href="#slotable">slotable</a><span>, in §4.2.2.2</span>
    <li><a href="#dom-attr-specified">specified</a><span>, in §4.9.2</span>
    <li><a href="#concept-text-split">split a Text node</a><span>, in §4.11</span>
    <li><a href="#dom-text-splittext">splitText(offset)</a><span>, in §4.11</span>
