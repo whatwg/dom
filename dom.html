@@ -1040,8 +1040,14 @@ otherwise it is the empty string.</p>
    <p class="note" role="note">The first <a data-link-type="dfn" href="#concept-slot">slot</a> in a <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, whose <a data-link-type="dfn" href="#slot-name">name</a> is the empty string, is sometimes known as the "default slot".</p>
    <h5 class="heading settled" data-level="4.2.2.2" id="light-tree-slotables"><span class="secno">4.2.2.2. </span><span class="content">Slotables</span><a class="self-link" href="#light-tree-slotables"></a></h5>
    <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> and <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are <dfn data-dfn-type="dfn" data-export="" data-lt="slotable" id="concept-slotable">slotables<a class="self-link" href="#concept-slotable"></a></dfn>.</p>
-   <p>A <a data-link-type="dfn" href="#concept-slotable">slotable</a> has a <dfn data-dfn-for="slotable" data-dfn-type="dfn" data-noexport="" id="slotable-name">name<a class="self-link" href="#slotable-name"></a></dfn> (a string). Unless stated otherwise it is
-the empty string.</p>
+   <p>A <a data-link-type="dfn" href="#concept-slotable">slotable</a> has a <dfn data-dfn-for="slotable" data-dfn-type="dfn" data-noexport="" id="slotable-get-name">get name<a class="self-link" href="#slotable-get-name"></a></dfn> algorithm, which runs these steps:</p>
+   <ol>
+    <li>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a> is a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a>, then return the empty string.</p>
+    <li>
+     <p>Return the result of running <a data-link-type="dfn" href="#concept-element-attributes-get-value">get an attribute value</a> given <a data-link-type="dfn" href="#context-object">context object</a> and
+ "<code>slot</code>".</p>
+   </ol>
    <h5 class="heading settled" data-level="4.2.2.3" id="finding-slots-and-slotables"><span class="secno">4.2.2.3. </span><span class="content">Finding slots and slotables</span><a class="self-link" href="#finding-slots-and-slotables"></a></h5>
    <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-a-slot">find a slot<a class="self-link" href="#find-a-slot"></a></dfn> for a given <a data-link-type="dfn" href="#concept-slotable">slotable</a> <var>slotable</var> and an optional <i>open flag</i> (unset unless stated otherwise), run these steps:</p>
    <ol>
@@ -1054,7 +1060,9 @@ the empty string.</p>
     <li>
      <p>If the <i>open flag</i> is set and <var>shadow</var>’s <a data-link-type="dfn" href="#shadowroot-mode">mode</a> is <em>not</em> "<code>open</code>", then return null.</p>
     <li>
-     <p>Return the first <a data-link-type="dfn" href="#concept-slot">slot</a> in <var>shadow</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> whose <a data-link-type="dfn" href="#slot-name">name</a> is <var>slotable</var>’s <a data-link-type="dfn" href="#slotable-name">name</a>, if any, and null otherwise.</p>
+     <p>Let <var>name</var> be the result of running <var>slotable</var>’s <a data-link-type="dfn" href="#slotable-get-name">get name</a>.</p>
+    <li>
+     <p>Return the first <a data-link-type="dfn" href="#concept-slot">slot</a> in <var>shadow</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> whose <a data-link-type="dfn" href="#slot-name">name</a> is <var>name</var>, if any, and null otherwise.</p>
    </ol>
    <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-slotables">find slotables<a class="self-link" href="#find-slotables"></a></dfn> for a given <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var>, run these steps:</p>
    <ol>
@@ -2902,6 +2910,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="ele
            attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-id">id</a>;
            attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-classname">className</a>;
   [SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList " href="#dom-element-classlist">classList</a>;
+           attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-slot">slot</a>;
 
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-hasattributes">hasAttributes</a>();
   [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap " href="#dom-element-attributes">attributes</a>;
@@ -3006,6 +3015,15 @@ run these steps:</p>
     <li>If <var>namespace</var> is the empty string, set it to null. 
     <li>Return the <a data-link-type="dfn" href="#concept-attribute">attribute</a> in <var>element</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a> whose <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a> is <var>namespace</var> and <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> is <var>localName</var>, if any, and null otherwise. 
    </ol>
+   <p>To <dfn data-dfn-type="dfn" data-export="" id="concept-element-attributes-get-value">get an attribute value<a class="self-link" href="#concept-element-attributes-get-value"></a></dfn> given an <a data-link-type="dfn" href="#concept-element">element</a> <var>element</var>, <var>localName</var>, and optionally a <var>namespace</var> (null unless stated otherwise), run these steps:</p>
+   <ol>
+    <li>
+     <p>Let <var>attr</var> be the result of <a data-link-type="dfn" href="#concept-element-attributes-get-by-namespace">getting an attribute</a> given <var>namespace</var>, <var>localName</var>, and <var>element</var>.</p>
+    <li>
+     <p>If <var>attr</var> is null, then return the empty string.</p>
+    <li>
+     <p>Return <var>attr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>.</p>
+   </ol>
    <p>To <dfn data-dfn-type="dfn" data-export="" id="concept-element-attributes-set">set an attribute<a class="self-link" href="#concept-element-attributes-set"></a></dfn> given an <var>attr</var> and <var>element</var>, run these steps:</p>
    <ol>
     <li>
@@ -3092,18 +3110,11 @@ steps:</p>
    <dl>
     <dt>getter 
     <dd>
-     <ol>
-      <li>
-       <p>Let <var>attr</var> be the result of <a data-link-type="dfn" href="#concept-element-attributes-get-by-namespace">getting an attribute</a> given null, <var>name</var>, and the <a data-link-type="dfn" href="#context-object">context object</a>. </p>
-      <li>
-       <p>If <var>attr</var> is null, return the empty string. </p>
-      <li>
-       <p>Return <var>attr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. </p>
-     </ol>
+     <p>Return the result of running <a data-link-type="dfn" href="#concept-element-attributes-get-value">get an attribute value</a> given <a data-link-type="dfn" href="#context-object">context object</a> and <var>name</var>.</p>
     <dt>setter 
     <dd>
-     <p><a data-link-type="dfn" href="#concept-element-attributes-set-value">Set an attribute value</a> for the <a data-link-type="dfn" href="#context-object">context object</a> using <var>name</var> and the given
-  value. </p>
+     <p><a data-link-type="dfn" href="#concept-element-attributes-set-value">Set an attribute value</a> for the <a data-link-type="dfn" href="#context-object">context object</a> using <var>name</var> and the
+ given value.</p>
    </dl>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="attribute" data-export="" id="dom-element-id"><code>id</code><a class="self-link" href="#dom-element-id"></a></dfn> attribute must <a data-link-type="dfn" href="#concept-reflect">reflect</a> the
 "<code>id</code>" content attribute. </p>
@@ -3112,6 +3123,11 @@ steps:</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="attribute" data-export="" id="dom-element-classlist"><code>classList</code><a class="self-link" href="#dom-element-classlist"></a></dfn> attribute’s getter must return a <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object whose associated <a data-link-type="dfn" href="#concept-element">element</a> is the <a data-link-type="dfn" href="#context-object">context object</a> and whose
 associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> is <code>class</code>. The <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> of
 this particular <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object are also known as the <a data-link-type="dfn" href="#concept-element">element</a>’s <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" data-lt="class" id="concept-class">classes<a class="self-link" href="#concept-class"></a></dfn>. </p>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="attribute" data-export="" id="dom-element-slot"><code>slot</code><a class="self-link" href="#dom-element-slot"></a></dfn> attribute must <a data-link-type="dfn" href="#concept-reflect">reflect</a> the
+"<code>slot</code>" content attribute. </p>
+   <p class="note" role="note"><code>id</code>, <code>class</code>, and <code>slot</code> are effectively
+superglobal attributes as they can appear on any element, regardless of that element’s
+namespace.</p>
    <hr>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-hasattributes">hasAttributes()<a class="self-link" href="#dom-element-hasattributes"></a></dfn> method,
 when invoked, must return false if <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a> is empty, and true
@@ -3130,12 +3146,7 @@ invoked, must run these steps:</p>
     <li>
      <p>Return <var>attr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. </p>
    </ol>
-   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-getattributens">getAttributeNS(<var>namespace</var>, <var>localName</var>)<a class="self-link" href="#dom-element-getattributens"></a></dfn> method must run the following steps:</p>
-   <ol>
-    <li>Let <var>attr</var> be the result of <a data-link-type="dfn" href="#concept-element-attributes-get-by-namespace">getting an attribute</a> given <var>namespace</var>, <var>localName</var>, and the <a data-link-type="dfn" href="#context-object">context object</a>. 
-    <li>If <var>attr</var> is null, return null. 
-    <li>Return <var>attr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. 
-   </ol>
+   <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-getattributens"><code>getAttributeNS(<var>namespace</var>, <var>localName</var>)</code><a class="self-link" href="#dom-element-getattributens"></a></dfn> method, when invoked, must return the result of running <a data-link-type="dfn" href="#concept-element-attributes-get-value">get an attribute value</a> given <a data-link-type="dfn" href="#context-object">context object</a>, <var>localName</var>, and <var>namespace</var>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-setattribute"><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code><a class="self-link" href="#dom-element-setattribute"></a></dfn> method, when invoked, must run these steps:</p>
    <ol>
     <li>
@@ -4451,15 +4462,7 @@ associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <
    </ol>
    <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-noexport="" id="concept-dtl-update">update steps<a class="self-link" href="#concept-dtl-update"></a></dfn> are
 to <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for the associated <a data-link-type="dfn" href="#concept-element">element</a> using associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a> and the result of running the <a data-link-type="dfn" href="#concept-ordered-set-serializer">ordered set serializer</a> for <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a>. </p>
-   <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-noexport="" id="concept-dtl-serialize">serialize steps<a class="self-link" href="#concept-dtl-serialize"></a></dfn> are to: </p>
-   <ol>
-    <li>
-     <p>Let <var>attribute</var> be the result of running <a data-link-type="dfn" href="#concept-element-attributes-get-by-namespace">get an attribute by namespace and local name</a> given null, the associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, and the associated <a data-link-type="dfn" href="#concept-element">element</a>. </p>
-    <li>
-     <p>If <var>attribute</var> is null, return the empty string. </p>
-    <li>
-     <p>Return <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. </p>
-   </ol>
+   <p>A <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object’s <dfn data-dfn-for="DOMTokenList" data-dfn-type="dfn" data-noexport="" id="concept-dtl-serialize">serialize steps<a class="self-link" href="#concept-dtl-serialize"></a></dfn> are to return the result of running <a data-link-type="dfn" href="#concept-element-attributes-get-value">get an attribute value</a> given the associated <a data-link-type="dfn" href="#concept-element">element</a> and the associated <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>.</p>
    <hr>
    <p>When a <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> object is created and its associated <a data-link-type="dfn" href="#concept-element">element</a> <a data-link-type="dfn" href="#concept-element-attribute-has">has</a> an <a data-link-type="dfn" href="#concept-named-attribute"><var>associated attribute’s local name</var> attribute</a> or
 associated <a data-link-type="dfn" href="#concept-element">element</a>’s <a data-link-type="dfn" href="#concept-named-attribute"><var>associated attribute’s local name</var> attribute</a> is <a data-link-type="dfn" href="#attribute-is-set">set</a>, set <a data-link-type="dfn" href="#concept-dtl-tokens">tokens</a> to the new <a data-link-type="dfn" href="#concept-attribute-value">value</a>, <a data-link-type="dfn" href="#concept-ordered-set-parser">parsed</a>. </p>
@@ -5171,6 +5174,7 @@ neighboring rights to this work.</p>
    <li><a href="#concept-tree-following">following</a><span>, in §2.1</span>
    <li><a href="#concept-element-attributes-get-by-name">get an attribute by name</a><span>, in §4.9</span>
    <li><a href="#concept-element-attributes-get-by-namespace">get an attribute by namespace and local name</a><span>, in §4.9</span>
+   <li><a href="#concept-element-attributes-get-value">get an attribute value</a><span>, in §4.9</span>
    <li><a href="#dom-element-getattributenames">getAttributeNames()</a><span>, in §4.9</span>
    <li><a href="#dom-element-getattributenodens">getAttributeNodeNS(namespace, localName)</a><span>, in §4.9</span>
    <li><a href="#dom-element-getattributenode">getAttributeNode(qualifiedName)</a><span>, in §4.9</span>
@@ -5201,6 +5205,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-node-getfeature">method for Node</a><span>, in §8.2</span>
      <li><a href="#dom-domimplementation-getfeature">method for DOMImplementation</a><span>, in §8.2</span>
     </ul>
+   <li><a href="#slotable-get-name">get name</a><span>, in §4.2.2.2</span>
    <li><a href="#dom-namednodemap-getnameditemns">getNamedItemNS(namespace, localName)</a><span>, in §4.9.1</span>
    <li><a href="#dom-namednodemap-getnameditem">getNamedItem(qualifiedName)</a><span>, in §4.9.1</span>
    <li><a href="#get-the-parent">get the parent</a><span>, in §3.6</span>
@@ -5338,7 +5343,6 @@ namespace and local name localName</a><span>, in §4.4</span>
     name
     <ul>
      <li><a href="#slot-name">dfn for slot</a><span>, in §4.2.2.1</span>
-     <li><a href="#slotable-name">dfn for slotable</a><span>, in §4.2.2.2</span>
      <li><a href="#concept-doctype-name">dfn for DocumentType</a><span>, in §4.6</span>
      <li><a href="#dom-documenttype-name">attribute for DocumentType</a><span>, in §4.6</span>
      <li><a href="#dom-attr-name">attribute for Attr</a><span>, in §4.9.2</span>
@@ -5598,7 +5602,12 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-nodefilter-show_text">SHOW_TEXT</a><span>, in §6.3</span>
    <li><a href="#concept-tree-sibling">sibling</a><span>, in §2.1</span>
    <li><a href="#skip-ascii-whitespace">skip ASCII whitespace</a><span>, in §2.3</span>
-   <li><a href="#concept-slot">slot</a><span>, in §4.2.2.1</span>
+   <li>
+    slot
+    <ul>
+     <li><a href="#concept-slot">definition of</a><span>, in §4.2.2.1</span>
+     <li><a href="#dom-element-slot">attribute for Element</a><span>, in §4.9</span>
+    </ul>
    <li><a href="#concept-slotable">slotable</a><span>, in §4.2.2.2</span>
    <li><a href="#slotable">Slotable</a><span>, in §4.2.9</span>
    <li><a href="#dom-attr-specified">specified</a><span>, in §4.9.2</span>
@@ -6114,6 +6123,7 @@ interface <a href="#element">Element</a> : <a data-link-type="idl-name" href="#n
            attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-id">id</a>;
            attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-classname">className</a>;
   [SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList " href="#dom-element-classlist">classList</a>;
+           attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-slot">slot</a>;
 
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-hasattributes">hasAttributes</a>();
   [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap " href="#dom-element-attributes">attributes</a>;

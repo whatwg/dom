@@ -1477,8 +1477,14 @@ otherwise it is the empty string.</p>
 <p>{{Element}} and {{Text}} <a>nodes</a> are
 <dfn export id=concept-slotable lt=slotable>slotables</dfn>.</p>
 
-<p>A <a>slotable</a> has a <dfn for=slotable>name</dfn> (a string). Unless stated otherwise it is
-the empty string.</p>
+<p>A <a>slotable</a> has a <dfn for=slotable>get name</dfn> algorithm, which runs these steps:</p>
+
+<ol>
+ <li><p>If <a>context object</a> is a {{Text}} <a>node</a>, then return the empty string.</p></li>
+
+ <li><p>Return the result of running <a>get an attribute value</a> given <a>context object</a> and
+ "<code>slot</code>".</p></li>
+</ol>
 
 <h5 id=finding-slots-and-slotables>Finding slots and slotables</h5>
 
@@ -1496,8 +1502,11 @@ the empty string.</p>
  <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
 
+ <li><p>Let <var>name</var> be the result of running <var>slotable</var>'s
+ <a for=slotable>get name</a>.</p></li>
+
  <li><p>Return the first <a>slot</a> in <var>shadow</var>'s <a>tree</a> whose <a for=slot>name</a>
- is <var>slotable</var>'s <a for=slotable>name</a>, if any, and null otherwise.</p></li>
+ is <var>name</var>, if any, and null otherwise.</p></li>
 </ol>
 
 <p>To <dfn>find slotables</dfn> for a given <a>slot</a> <var>slot</var>, run these steps:</p>
@@ -5196,6 +5205,7 @@ interface Element : Node {
            attribute DOMString id;
            attribute DOMString className;
   [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
+           attribute DOMString slot;
 
   boolean hasAttributes();
   [SameObject] readonly attribute NamedNodeMap attributes;
@@ -5392,6 +5402,20 @@ run these steps:
  <var>localName</var>, if any, and null otherwise.
 </ol>
 
+<p>To <dfn export id=concept-element-attributes-get-value>get an attribute value</dfn> given an
+<a for=/>element</a> <var>element</var>, <var>localName</var>, and optionally a <var>namespace</var>
+(null unless stated otherwise), run these steps:</p>
+
+<ol>
+ <li><p>Let <var>attr</var> be the result of
+ <a lt="get an attribute by namespace and local name">getting an attribute</a> given
+ <var>namespace</var>, <var>localName</var>, and <var>element</var>.</p></li>
+
+ <li><p>If <var>attr</var> is null, then return the empty string.</p></li>
+
+ <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.</p></li>
+</ol>
+
 To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 <var>attr</var> and <var>element</var>, run these steps:
 
@@ -5566,21 +5590,12 @@ steps:</p>
 
 <dl>
  <dt>getter
- <dd>
-  <ol>
-   <li><p>Let <var>attr</var> be the result of
-   <a lt="get an attribute by namespace and local name">getting an attribute</a> given null,
-   <var>name</var>, and the <a>context object</a>.
-
-   <li><p>If <var>attr</var> is null, return the empty string.
-
-   <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.
-  </ol>
+ <dd><p>Return the result of running <a>get an attribute value</a> given <a>context object</a> and
+ <var>name</var>.</p></dd>
 
  <dt>setter
- <dd>
-  <p><a>Set an attribute value</a> for the <a>context object</a> using <var>name</var> and the given
-  value.
+ <dd><p><a>Set an attribute value</a> for the <a>context object</a> using <var>name</var> and the
+ given value.</p></dd>
 </dl>
 
 <p>The <dfn attribute for="Element"><code>id</code></dfn> attribute must <a>reflect</a> the
@@ -5594,6 +5609,13 @@ steps:</p>
 associated <a>attribute</a>'s <a for=Attr>local name</a> is <code>class</code>. The <a>tokens</a> of
 this particular {{DOMTokenList}} object are also known as the <a for="/">element</a>'s
 <dfn export for=Element id=concept-class lt="class">classes</dfn>.
+
+<p>The <dfn attribute for=Element><code>slot</code></dfn> attribute must <a>reflect</a> the
+"<code>slot</code>" content attribute.
+
+<p class="note"><code>id</code>, <code>class</code>, and <code>slot</code> are effectively
+superglobal attributes as they can appear on any element, regardless of that element's
+namespace.</p>
 
 <hr>
 
@@ -5627,20 +5649,10 @@ invoked, must run these steps:
  <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.
 </ol>
 
-The
-<dfn method for="Element">getAttributeNS(<var>namespace</var>, <var>localName</var>)</dfn>
-method must run the following steps:
-
-<ol>
-  <li>Let <var>attr</var> be the result of
-  <a lt="get an attribute by namespace and local name">getting an attribute</a>
-  given <var>namespace</var>, <var>localName</var>, and the
-  <a>context object</a>.
-
-  <li>If <var>attr</var> is null, return null.
-
-  <li>Return <var>attr</var>'s <a for=Attr>value</a>.
-</ol>
+<p>The
+<dfn method for="Element"><code>getAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
+method, when invoked, must return the result of running <a>get an attribute value</a> given
+<a>context object</a>, <var>localName</var>, and <var>namespace</var>.</p>
 
 The
 <dfn method for="Element"><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code></dfn>
@@ -8875,17 +8887,8 @@ to <a>set an attribute value</a> for the associated <a for="/">element</a> using
 <a>ordered set serializer</a> for <a>tokens</a>.
 
 <p>A {{DOMTokenList}} object's <dfn id=concept-dtl-serialize for=DOMTokenList>serialize steps</dfn>
-are to:
-
-<ol>
- <li><p>Let <var>attribute</var> be the result of running
- <a>get an attribute by namespace and local name</a> given null, the associated <a>attribute</a>'s
- <a for=Attr>local name</a>, and the associated <a for="/">element</a>.
-
- <li><p>If <var>attribute</var> is null, return the empty string.
-
- <li><p>Return <var>attribute</var>'s <a for=Attr>value</a>.
-</ol>
+are to return the result of running <a>get an attribute value</a> given the associated
+<a for=/>element</a> and the associated <a>attribute</a>'s <a for=Attr>local name</a>.</p>
 
 <hr>
 
