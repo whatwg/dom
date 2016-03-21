@@ -141,12 +141,13 @@
         <li><a href="#interface-parentnode"><span class="secno">4.2.6</span> <span class="content">Mixin <code class="idl"><span>ParentNode</span></code></span></a>
         <li><a href="#interface-nondocumenttypechildnode"><span class="secno">4.2.7</span> <span class="content">Mixin <code class="idl"><span>NonDocumentTypeChildNode</span></code></span></a>
         <li><a href="#interface-childnode"><span class="secno">4.2.8</span> <span class="content">Mixin <code class="idl"><span>ChildNode</span></code></span></a>
-        <li><a href="#element-collections"><span class="secno">4.2.9</span> <span class="content">Collections: <code class="idl"><span>Elements</span></code></span></a>
+        <li><a href="#mixin-slotable"><span class="secno">4.2.9</span> <span class="content">Mixin: <code class="idl"><span>Slotable</span></code></span></a>
+        <li><a href="#element-collections"><span class="secno">4.2.10</span> <span class="content">Collections: <code class="idl"><span>Elements</span></code></span></a>
         <li>
-         <a href="#old-style-collections"><span class="secno">4.2.10</span> <span class="content">Old-style collections: <code class="idl"><span>NodeList</span></code> and <code class="idl"><span>HTMLCollection</span></code></span></a>
+         <a href="#old-style-collections"><span class="secno">4.2.11</span> <span class="content">Old-style collections: <code class="idl"><span>NodeList</span></code> and <code class="idl"><span>HTMLCollection</span></code></span></a>
          <ol class="toc">
-          <li><a href="#interface-nodelist"><span class="secno">4.2.10.1</span> <span class="content">Interface <code class="idl"><span>NodeList</span></code></span></a>
-          <li><a href="#interface-htmlcollection"><span class="secno">4.2.10.2</span> <span class="content">Interface <code class="idl"><span>HTMLCollection</span></code></span></a>
+          <li><a href="#interface-nodelist"><span class="secno">4.2.11.1</span> <span class="content">Interface <code class="idl"><span>NodeList</span></code></span></a>
+          <li><a href="#interface-htmlcollection"><span class="secno">4.2.11.2</span> <span class="content">Interface <code class="idl"><span>HTMLCollection</span></code></span></a>
          </ol>
        </ol>
       <li>
@@ -1038,11 +1039,11 @@ referred to as the <dfn data-dfn-type="dfn" data-export="" id="concept-light-tre
 otherwise it is the empty string.</p>
    <p class="note" role="note">The first <a data-link-type="dfn" href="#concept-slot">slot</a> in a <a data-link-type="dfn" href="#concept-shadow-tree">shadow tree</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, whose <a data-link-type="dfn" href="#slot-name">name</a> is the empty string, is sometimes known as the "default slot".</p>
    <h5 class="heading settled" data-level="4.2.2.2" id="light-tree-slotables"><span class="secno">4.2.2.2. </span><span class="content">Slotables</span><a class="self-link" href="#light-tree-slotables"></a></h5>
-   <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> and <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are <dfn data-dfn-type="dfn" data-export="" data-lt="slotable" id="slotable">slotables<a class="self-link" href="#slotable"></a></dfn>.</p>
-   <p>A <a data-link-type="dfn" href="#slotable">slotable</a> has a <dfn data-dfn-for="slotable" data-dfn-type="dfn" data-noexport="" id="slotable-name">name<a class="self-link" href="#slotable-name"></a></dfn> (a string). Unless stated otherwise it is
+   <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> and <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are <dfn data-dfn-type="dfn" data-export="" data-lt="slotable" id="concept-slotable">slotables<a class="self-link" href="#concept-slotable"></a></dfn>.</p>
+   <p>A <a data-link-type="dfn" href="#concept-slotable">slotable</a> has a <dfn data-dfn-for="slotable" data-dfn-type="dfn" data-noexport="" id="slotable-name">name<a class="self-link" href="#slotable-name"></a></dfn> (a string). Unless stated otherwise it is
 the empty string.</p>
    <h5 class="heading settled" data-level="4.2.2.3" id="finding-slots-and-slotables"><span class="secno">4.2.2.3. </span><span class="content">Finding slots and slotables</span><a class="self-link" href="#finding-slots-and-slotables"></a></h5>
-   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-a-slot">find a slot<a class="self-link" href="#find-a-slot"></a></dfn> for a given <a data-link-type="dfn" href="#slotable">slotable</a> <var>slotable</var>, run these steps:</p>
+   <p>To <dfn data-dfn-type="dfn" data-noexport="" id="find-a-slot">find a slot<a class="self-link" href="#find-a-slot"></a></dfn> for a given <a data-link-type="dfn" href="#concept-slotable">slotable</a> <var>slotable</var> and an optional <i>open flag</i> (unset unless stated otherwise), run these steps:</p>
    <ol>
     <li>
      <p>If <var>slotable</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is null, then return null.</p>
@@ -1050,6 +1051,8 @@ the empty string.</p>
      <p>Let <var>shadow</var> be <var>slotable</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>’s <a data-link-type="dfn" href="#concept-element-shadow-root">shadow root</a>.</p>
     <li>
      <p>If <var>shadow</var> is null, then return null.</p>
+    <li>
+     <p>If the <i>open flag</i> is set and <var>shadow</var>’s <a data-link-type="dfn" href="#shadowroot-encapsulation-mode">encapsulation mode</a> is <em>not</em> "<code>open</code>", then return null.</p>
     <li>
      <p>Return the first <a data-link-type="dfn" href="#concept-slot">slot</a> in <var>shadow</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> whose <a data-link-type="dfn" href="#slot-name">name</a> is <var>slotable</var>’s <a data-link-type="dfn" href="#slotable-name">name</a>, if any, and null otherwise.</p>
    </ol>
@@ -1062,7 +1065,7 @@ the empty string.</p>
     <li>
      <p>Let <var>host</var> be <var>slot</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a>.</p>
     <li>
-     <p>For each <a data-link-type="dfn" href="#slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>host</var>, <var>slotable</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, run these substeps:</p>
+     <p>For each <a data-link-type="dfn" href="#concept-slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>host</var>, <var>slotable</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, run these substeps:</p>
      <ol>
       <li>
        <p>Let <var>foundSlot</var> be the result of running <a data-link-type="dfn" href="#find-a-slot">find a slot</a> given <var>slotable</var>.</p>
@@ -1080,7 +1083,7 @@ steps:</p>
     <li>
      <p>Let <var>slotables</var> be the result of running <a data-link-type="dfn" href="#find-slotables">find slotables</a> given <var>slot</var>.</p>
     <li>
-     <p>If <var>slotables</var> is the empty list, then append each <a data-link-type="dfn" href="#slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>slot</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, to <var>slotables</var>.</p>
+     <p>If <var>slotables</var> is the empty list, then append each <a data-link-type="dfn" href="#concept-slotable">slotable</a> <a data-link-type="dfn" href="#concept-tree-child">child</a> of <var>slot</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>, to <var>slotables</var>.</p>
     <li>
      <p>For each <var>node</var> in <var>slotables</var>, run these substeps:</p>
      <ol>
@@ -1090,7 +1093,7 @@ steps:</p>
         <li>
          <p>Let <var>temporaryResult</var> be the result of running <a data-link-type="dfn" href="#find-distributed-slotables">find distributed slotables</a> given <var>node</var>.</p>
         <li>
-         <p>Append each <a data-link-type="dfn" href="#slotable">slotable</a> in <var>temporaryResult</var>, in order, to <var>result</var>.</p>
+         <p>Append each <a data-link-type="dfn" href="#concept-slotable">slotable</a> in <var>temporaryResult</var>, in order, to <var>result</var>.</p>
        </ol>
       <li>
        <p>Otherwise, append <var>node</var> to <var>result</var>.</p>
@@ -1483,7 +1486,18 @@ these steps:</p>
     <li>
      <p><a data-link-type="dfn" href="#concept-node-remove">Remove</a> the <a data-link-type="dfn" href="#context-object">context object</a> from <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>. </p>
    </ol>
-   <h4 class="heading settled" data-level="4.2.9" id="element-collections"><span class="secno">4.2.9. </span><span class="content">Collections: <code class="idl"><a data-link-type="idl" href="#elements">Elements</a></code></span><a class="self-link" href="#element-collections"></a></h4>
+   <h4 class="heading settled" data-level="4.2.9" id="mixin-slotable"><span class="secno">4.2.9. </span><span class="content">Mixin: <code class="idl"><a data-link-type="idl" href="#slotable">Slotable</a></code></span><a class="self-link" href="#mixin-slotable"></a></h4>
+<pre class="idl def">[NoInterfaceObject,
+ Exposed=Window]
+interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="slotable">Slotable<a class="self-link" href="#slotable"></a></dfn> {
+  readonly attribute <a data-link-type="idl-name">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement? " href="#dom-slotable-assignedslot">assignedSlot</a>;
+};
+<a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
+<a data-link-type="idl-name" href="#text">Text</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
+</pre>
+   <p>The <dfn class="idl-code" data-dfn-for="Slotable" data-dfn-type="attribute" data-export="" id="dom-slotable-assignedslot"><code>assignedSlot</code><a class="self-link" href="#dom-slotable-assignedslot"></a></dfn> attribute’s getter must return
+the result of <a data-link-type="dfn" href="#find-a-slot">find a slot</a> given <a data-link-type="dfn" href="#context-object">context object</a> and with the <i>open flag</i> set.</p>
+   <h4 class="heading settled" data-level="4.2.10" id="element-collections"><span class="secno">4.2.10. </span><span class="content">Collections: <code class="idl"><a data-link-type="idl" href="#elements">Elements</a></code></span><a class="self-link" href="#element-collections"></a></h4>
 <pre class="idl def" data-no-idl="">class <dfn class="idl-code" data-dfn-type="interface" data-export="" id="elements">Elements<a class="self-link" href="#elements"></a></dfn> extends Array {
   Element? <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" data-lt="query(DOMString relativeSelectors)" id="dom-elements-query">query<a class="self-link" href="#dom-elements-query"></a></dfn>(DOMString relativeSelectors);
   Elements <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" data-lt="queryAll(DOMString relativeSelectors)" id="dom-elements-queryall">queryAll<a class="self-link" href="#dom-elements-queryall"></a></dfn>(DOMString relativeSelectors);
@@ -1505,7 +1519,7 @@ than <a data-link-type="dfn" href="#concept-element">elements</a> a simple <code
    </dl>
    <p>The <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-query-relativeselectors"><code>query(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-elements-query-relativeselectors"></a></dfn> method, when invoked, must return the first result of running <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Elements" data-dfn-type="method" data-export="" id="dom-elements-queryall-relativeselectors"><code>queryAll(<var>relativeSelectors</var>)</code><a class="self-link" href="#dom-elements-queryall-relativeselectors"></a></dfn> method, when invoked, must return the result of running <code class="lang-javascript highlight"><span class="k">this</span><span class="p">.</span><span class="nx">constructor</span></code> with the result of running <a data-link-type="dfn" href="#match-a-relative-selectors-string">match a relative selectors string</a> <var>relativeSelectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
-   <h4 class="heading settled" data-level="4.2.10" id="old-style-collections"><span class="secno">4.2.10. </span><span class="content">Old-style collections: <code class="idl"><a data-link-type="idl" href="#nodelist">NodeList</a></code> and <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code></span><a class="self-link" href="#old-style-collections"></a></h4>
+   <h4 class="heading settled" data-level="4.2.11" id="old-style-collections"><span class="secno">4.2.11. </span><span class="content">Old-style collections: <code class="idl"><a data-link-type="idl" href="#nodelist">NodeList</a></code> and <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code></span><a class="self-link" href="#old-style-collections"></a></h4>
    <p>A <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" id="concept-collection">collection<a class="self-link" href="#concept-collection"></a></dfn> is an object that
 represents a lists of DOM nodes. A <a data-link-type="dfn" href="#concept-collection">collection</a> can be either <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" data-local-lt="live" data-lt="live collection" id="concept-collection-live">live<a class="self-link" href="#concept-collection-live"></a></dfn> or <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" data-lt="static collection" id="concept-collection-static">static<a class="self-link" href="#concept-collection-static"></a></dfn>. Unless otherwise stated,
 a <a data-link-type="dfn" href="#concept-collection">collection</a> must be <a data-link-type="dfn" href="#concept-collection-live">live</a>.</p>
@@ -1517,7 +1531,7 @@ filter and a root are associated with it.</p>
    <p>The <a data-link-type="dfn" href="#concept-collection">collection</a> then <dfn data-dfn-for="Node" data-dfn-type="dfn" data-export="" data-lt="represented by the collection" id="represented-by-the-collection">represents<a class="self-link" href="#represented-by-the-collection"></a></dfn> a view of the subtree rooted at the <a data-link-type="dfn" href="#concept-collection">collection’s</a> root, containing only nodes that match the
 given filter. The view is linear. In the absence of specific requirements to the contrary, the nodes
 within the <a data-link-type="dfn" href="#concept-collection">collection</a> must be sorted in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>.</p>
-   <h5 class="heading settled" data-level="4.2.10.1" id="interface-nodelist"><span class="secno">4.2.10.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodelist">NodeList</a></code></span><a class="self-link" href="#interface-nodelist"></a></h5>
+   <h5 class="heading settled" data-level="4.2.11.1" id="interface-nodelist"><span class="secno">4.2.11.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodelist">NodeList</a></code></span><a class="self-link" href="#interface-nodelist"></a></h5>
    <p>A <code class="idl"><a data-link-type="idl" href="#nodelist">NodeList</a></code> object is a <a data-link-type="dfn" href="#concept-collection">collection</a> of <a data-link-type="dfn" href="#concept-node">nodes</a>.</p>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nodelist">NodeList<a class="self-link" href="#nodelist"></a></dfn> {
@@ -1542,7 +1556,7 @@ return the number of nodes <a data-link-type="dfn" href="#represented-by-the-col
 the <var>index</var><sup>th</sup> <a data-link-type="dfn" href="#concept-node">node</a> in the <a data-link-type="dfn" href="#concept-collection">collection</a>. If there is no <var>index</var><sup>th</sup> <a data-link-type="dfn" href="#concept-node">node</a> in the <a data-link-type="dfn" href="#concept-collection">collection</a>, then the method must
 return null.</p>
    </div>
-   <h5 class="heading settled" data-level="4.2.10.2" id="interface-htmlcollection"><span class="secno">4.2.10.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code></span><a class="self-link" href="#interface-htmlcollection"></a></h5>
+   <h5 class="heading settled" data-level="4.2.11.2" id="interface-htmlcollection"><span class="secno">4.2.11.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code></span><a class="self-link" href="#interface-htmlcollection"></a></h5>
 <pre class="idl def">[Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="htmlcollection">HTMLCollection<a class="self-link" href="#htmlcollection"></a></dfn> {
   readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-htmlcollection-length">length</a>;
@@ -4888,6 +4902,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-parentnode-append">append(nodes...)</a><span>, in §4.2.6</span>
    <li><a href="#ascii-case-insensitive">ASCII case-insensitive</a><span>, in §2.2</span>
    <li><a href="#ascii-case-insensitive">ASCII case-insensitively</a><span>, in §2.2</span>
+   <li><a href="#dom-slotable-assignedslot">assignedSlot</a><span>, in §4.2.9</span>
    <li><a href="#dom-element-attachshadow">attachShadow(init)</a><span>, in §4.9</span>
    <li><a href="#dom-event-at_target">AT_TARGET</a><span>, in §3.2</span>
    <li><a href="#attr">Attr</a><span>, in §4.9.2</span>
@@ -4975,7 +4990,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-range-collapsed">collapsed</a><span>, in §5.2</span>
    <li><a href="#dom-range-collapse">collapse(toStart)</a><span>, in §5.2</span>
    <li><a href="#collect-a-code-point-sequence">collect a code point sequence</a><span>, in §2.3</span>
-   <li><a href="#concept-collection">collection</a><span>, in §4.2.10</span>
+   <li><a href="#concept-collection">collection</a><span>, in §4.2.11</span>
    <li><a href="#comment">Comment</a><span>, in §4.13</span>
    <li><a href="#dom-comment-comment">Comment(data)</a><span>, in §4.13</span>
    <li><a href="#dom-node-comment_node">COMMENT_NODE</a><span>, in §4.4</span>
@@ -5098,7 +5113,7 @@ neighboring rights to this work.</p>
    <li><a href="#element">Element</a><span>, in §4.9</span>
    <li><a href="#concept-element-interface">element interface</a><span>, in §4.5</span>
    <li><a href="#dom-node-element_node">ELEMENT_NODE</a><span>, in §4.4</span>
-   <li><a href="#elements">Elements</a><span>, in §4.2.9</span>
+   <li><a href="#elements">Elements</a><span>, in §4.2.10</span>
    <li><a href="#concept-node-empty">empty</a><span>, in §4.2</span>
    <li><a href="#shadowroot-encapsulation-mode">encapsulation mode</a><span>, in §4.8</span>
    <li><a href="#concept-document-encoding">encoding</a><span>, in §4.5</span>
@@ -5207,7 +5222,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-shadowroot-host">attribute for ShadowRoot</a><span>, in §4.8</span>
     </ul>
    <li><a href="#concept-tree-host-including-inclusive-ancestor">host-including inclusive ancestor</a><span>, in §4.7</span>
-   <li><a href="#htmlcollection">HTMLCollection</a><span>, in §4.2.10.2</span>
+   <li><a href="#htmlcollection">HTMLCollection</a><span>, in §4.2.11.2</span>
    <li><a href="#html-document">HTML document</a><span>, in §4.5</span>
    <li><a href="#html-namespace">HTML namespace</a><span>, in §2.5</span>
    <li><a href="#dom-element-id">id</a><span>, in §4.9</span>
@@ -5253,8 +5268,8 @@ neighboring rights to this work.</p>
    <li>
     item(index)
     <ul>
-     <li><a href="#dom-nodelist-item">method for NodeList</a><span>, in §4.2.10.1</span>
-     <li><a href="#dom-htmlcollection-item">method for HTMLCollection</a><span>, in §4.2.10.2</span>
+     <li><a href="#dom-nodelist-item">method for NodeList</a><span>, in §4.2.11.1</span>
+     <li><a href="#dom-htmlcollection-item">method for HTMLCollection</a><span>, in §4.2.11.2</span>
      <li><a href="#dom-namednodemap-item">method for NamedNodeMap</a><span>, in §4.9.1</span>
      <li><a href="#dom-domtokenlist-item">method for DOMTokenList</a><span>, in §7.1</span>
     </ul>
@@ -5267,8 +5282,8 @@ neighboring rights to this work.</p>
     length
     <ul>
      <li><a href="#concept-node-length">dfn for Node</a><span>, in §4.2</span>
-     <li><a href="#dom-nodelist-length">attribute for NodeList</a><span>, in §4.2.10.1</span>
-     <li><a href="#dom-htmlcollection-length">attribute for HTMLCollection</a><span>, in §4.2.10.2</span>
+     <li><a href="#dom-nodelist-length">attribute for NodeList</a><span>, in §4.2.11.1</span>
+     <li><a href="#dom-htmlcollection-length">attribute for HTMLCollection</a><span>, in §4.2.11.2</span>
      <li><a href="#dom-namednodemap-length">attribute for NamedNodeMap</a><span>, in §4.9.1</span>
      <li><a href="#dom-characterdata-length">attribute for CharacterData</a><span>, in §4.10</span>
      <li><a href="#dom-domtokenlist-length">attribute for DOMTokenList</a><span>, in §7.1</span>
@@ -5279,8 +5294,8 @@ neighboring rights to this work.</p>
    <li><a href="#concept-getelementsbytagnamens">list of elements with namespace
 namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-getelementsbytagname">list of elements with qualified name qualifiedName</a><span>, in §4.4</span>
-   <li><a href="#concept-collection-live">live</a><span>, in §4.2.10</span>
-   <li><a href="#concept-collection-live">live collection</a><span>, in §4.2.10</span>
+   <li><a href="#concept-collection-live">live</a><span>, in §4.2.11</span>
+   <li><a href="#concept-collection-live">live collection</a><span>, in §4.2.11</span>
    <li>
     localName
     <ul>
@@ -5325,7 +5340,7 @@ namespace and local name localName</a><span>, in §4.4</span>
      <li><a href="#dom-attr-name">attribute for Attr</a><span>, in §4.9.2</span>
     </ul>
    <li><a href="#concept-named-attribute">named attribute</a><span>, in §4.9.2</span>
-   <li><a href="#dom-htmlcollection-nameditem">namedItem(name)</a><span>, in §4.2.10.2</span>
+   <li><a href="#dom-htmlcollection-nameditem">namedItem(name)</a><span>, in §4.2.11.2</span>
    <li><a href="#namednodemap">NamedNodeMap</a><span>, in §4.9.1</span>
    <li><a href="#namelist">NameList</a><span>, in §8.2</span>
    <li>
@@ -5367,7 +5382,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#callbackdef-nodefilter">NodeFilter</a><span>, in §6.3</span>
    <li><a href="#nodeiterator">NodeIterator</a><span>, in §6.1</span>
    <li><a href="#nodeiterator-pre-removing-steps">NodeIterator pre-removing steps</a><span>, in §6.1</span>
-   <li><a href="#nodelist">NodeList</a><span>, in §4.2.10.1</span>
+   <li><a href="#nodelist">NodeList</a><span>, in §4.2.11.1</span>
    <li>
     nodeName
     <ul>
@@ -5453,19 +5468,19 @@ namespace and local name localName</a><span>, in §4.4</span>
      <li><a href="#concept-element-qualified-name">dfn for Element</a><span>, in §4.9</span>
      <li><a href="#concept-attribute-qualified-name">dfn for Attr</a><span>, in §4.9.2</span>
     </ul>
-   <li><a href="#dom-elements-queryall">queryAll(DOMString relativeSelectors)</a><span>, in §4.2.9</span>
+   <li><a href="#dom-elements-queryall">queryAll(DOMString relativeSelectors)</a><span>, in §4.2.10</span>
    <li>
     queryAll(relativeSelectors)
     <ul>
      <li><a href="#dom-parentnode-queryall">method for ParentNode</a><span>, in §4.2.6</span>
-     <li><a href="#dom-elements-queryall-relativeselectors">method for Elements</a><span>, in §4.2.9</span>
+     <li><a href="#dom-elements-queryall-relativeselectors">method for Elements</a><span>, in §4.2.10</span>
     </ul>
-   <li><a href="#dom-elements-query">query(DOMString relativeSelectors)</a><span>, in §4.2.9</span>
+   <li><a href="#dom-elements-query">query(DOMString relativeSelectors)</a><span>, in §4.2.10</span>
    <li>
     query(relativeSelectors)
     <ul>
      <li><a href="#dom-parentnode-query">method for ParentNode</a><span>, in §4.2.6</span>
-     <li><a href="#dom-elements-query-relativeselectors">method for Elements</a><span>, in §4.2.9</span>
+     <li><a href="#dom-elements-query-relativeselectors">method for Elements</a><span>, in §4.2.10</span>
     </ul>
    <li><a href="#dom-parentnode-queryselectorall">querySelectorAll(selectors)</a><span>, in §4.2.6</span>
    <li><a href="#dom-parentnode-queryselector">querySelector(selectors)</a><span>, in §4.2.6</span>
@@ -5512,7 +5527,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-text-replacewholetext">replaceWholeText()</a><span>, in §8.2</span>
    <li><a href="#dom-childnode-replacewith">replaceWith(nodes...)</a><span>, in §4.2.8</span>
    <li><a href="#dom-childnode-replacewith">replaceWith(nodes)</a><span>, in §4.2.8</span>
-   <li><a href="#represented-by-the-collection">represented by the collection</a><span>, in §4.2.10</span>
+   <li><a href="#represented-by-the-collection">represented by the collection</a><span>, in §4.2.11</span>
    <li>
     root
     <ul>
@@ -5580,7 +5595,8 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-tree-sibling">sibling</a><span>, in §2.1</span>
    <li><a href="#skip-ascii-whitespace">skip ASCII whitespace</a><span>, in §2.3</span>
    <li><a href="#concept-slot">slot</a><span>, in §4.2.2.1</span>
-   <li><a href="#slotable">slotable</a><span>, in §4.2.2.2</span>
+   <li><a href="#concept-slotable">slotable</a><span>, in §4.2.2.2</span>
+   <li><a href="#slotable">Slotable</a><span>, in §4.2.9</span>
    <li><a href="#dom-attr-specified">specified</a><span>, in §4.9.2</span>
    <li><a href="#concept-text-split">split a Text node</a><span>, in §4.11</span>
    <li><a href="#dom-text-splittext">splitText(offset)</a><span>, in §4.11</span>
@@ -5591,7 +5607,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-range-start-offset">start offset</a><span>, in §5.2</span>
    <li><a href="#dom-range-start_to_end">START_TO_END</a><span>, in §5.2</span>
    <li><a href="#dom-range-start_to_start">START_TO_START</a><span>, in §5.2</span>
-   <li><a href="#concept-collection-static">static collection</a><span>, in §4.2.10</span>
+   <li><a href="#concept-collection-static">static collection</a><span>, in §4.2.11</span>
    <li><a href="#dom-event-stopimmediatepropagation">stopImmediatePropagation()</a><span>, in §3.2</span>
    <li><a href="#stop-immediate-propagation-flag">stop immediate propagation flag</a><span>, in §3.2</span>
    <li><a href="#dom-event-stoppropagation">stopPropagation()</a><span>, in §3.2</span>
@@ -5894,6 +5910,14 @@ interface <a href="#childnode">ChildNode</a> {
 <a data-link-type="idl-name" href="#documenttype">DocumentType</a> implements <a data-link-type="idl-name" href="#childnode">ChildNode</a>;
 <a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#childnode">ChildNode</a>;
 <a data-link-type="idl-name" href="#characterdata">CharacterData</a> implements <a data-link-type="idl-name" href="#childnode">ChildNode</a>;
+
+[NoInterfaceObject,
+ Exposed=Window]
+interface <a href="#slotable">Slotable</a> {
+  readonly attribute <a data-link-type="idl-name">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement? " href="#dom-slotable-assignedslot">assignedSlot</a>;
+};
+<a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
+<a data-link-type="idl-name" href="#text">Text</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
 
 class <a href="#elements">Elements</a> extends Array {
   Element? <a href="#dom-elements-query">query</a>(DOMString relativeSelectors);

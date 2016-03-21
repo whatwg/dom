@@ -1464,7 +1464,7 @@ itself.</p>
 <dfn export id=concept-slot lt=slot>slots</dfn>.</p>
 
 <p class="note">A <a>slot</a> can only be created through HTML's <code>slot</code> element.</p>
-<!-- XXX use <{slot}> once defined in the HTML Standard. -->
+<!-- XXX HTML slot: use <{slot}> -->
 
 <p>A <a>slot</a> has an associated <dfn export for=slot>name</dfn> (a string). Unless stated
 otherwise it is the empty string.</p>
@@ -1474,14 +1474,16 @@ otherwise it is the empty string.</p>
 
 <h5 id=light-tree-slotables>Slotables</h5>
 
-<p>{{Element}} and {{Text}} <a>nodes</a> are <dfn export lt=slotable>slotables</dfn>.</p>
+<p>{{Element}} and {{Text}} <a>nodes</a> are
+<dfn export id=concept-slotable lt=slotable>slotables</dfn>.</p>
 
 <p>A <a>slotable</a> has a <dfn for=slotable>name</dfn> (a string). Unless stated otherwise it is
 the empty string.</p>
 
 <h5 id=finding-slots-and-slotables>Finding slots and slotables</h5>
 
-<p>To <dfn>find a slot</dfn> for a given <a>slotable</a> <var>slotable</var>, run these steps:</p>
+<p>To <dfn>find a slot</dfn> for a given <a>slotable</a> <var>slotable</var> and an optional
+<i>open flag</i> (unset unless stated otherwise), run these steps:</p>
 
 <ol>
  <li><p>If <var>slotable</var>'s <a>parent</a> is null, then return null.</p></li>
@@ -1490,6 +1492,9 @@ the empty string.</p>
  <a for=Element>shadow root</a>.</p></li>
 
  <li><p>If <var>shadow</var> is null, then return null.</p></li>
+
+ <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a>encapsulation mode</a> is
+ <em>not</em> "<code>open</code>", then return null.</p></li>
 
  <li><p>Return the first <a>slot</a> in <var>shadow</var>'s <a>tree</a> whose <a for=slot>name</a>
  is <var>slotable</var>'s <a for=slotable>name</a>, if any, and null otherwise.</p></li>
@@ -2372,6 +2377,22 @@ these steps:
  <li><p><a>Remove</a> the <a>context object</a> from <a>context object</a>'s
  <a>parent</a>.
 </ol>
+
+
+<h4 id=mixin-slotable>Mixin: {{Slotable}}</h4>
+
+<pre class=idl>
+[NoInterfaceObject,
+ Exposed=Window]
+interface Slotable {
+  readonly attribute HTMLSlotElement? assignedSlot;
+};
+Element implements Slotable;
+Text implements Slotable;
+</pre><!-- XXX HTML slot -->
+
+<p>The <dfn attribute for=Slotable><code>assignedSlot</code></dfn> attribute's getter must return
+the result of <a>find a slot</a> given <a>context object</a> and with the <i>open flag</i> set.</p>
 
 
 <h4 id=element-collections>Collections: {{Elements}}</h4>
