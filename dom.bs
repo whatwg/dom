@@ -1493,7 +1493,7 @@ the empty string.</p>
 
  <li><p>If <var>shadow</var> is null, then return null.</p></li>
 
- <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a>encapsulation mode</a> is
+ <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
 
  <li><p>Return the first <a>slot</a> in <var>shadow</var>'s <a>tree</a> whose <a for=slot>name</a>
@@ -5132,19 +5132,25 @@ global object's associated <a>document</a>.
 <pre class=idl>
 [Exposed=Window]
 interface ShadowRoot : DocumentFragment {
+  readonly attribute ShadowRootMode mode;
   readonly attribute Element host;
 };
+
+enum ShadowRootMode { "open", "closed" };
 </pre>
 
 <p>{{ShadowRoot}} <a>nodes</a> are simply known as
 <dfn export id=concept-shadow-root lt="shadow root">shadow roots</dfn>.
 
-<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>encapsulation mode</dfn>
-("<code>open</code>" or "<code>closed</code>").</p>
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>mode</dfn> ("<code>open</code>"
+or "<code>closed</code>").</p>
 
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
+
+<p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=DocumentFragment>host</a>.
@@ -5227,8 +5233,6 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
 };
-
-enum ShadowRootMode { "open", "closed" };
 </pre>
 
 <p>{{Element}} <a>nodes</a> are simply known as
@@ -5757,8 +5761,7 @@ method, when invoked, must run these steps:
 
  <dt><code>var shadow = <var>element</var> . {{shadowRoot}}</code>
  <dd><p>Returns <var>element</var>'s <a for=Element>shadow root</a>, if any, and if
- <a for=/>shadow root</a>'s <a for=ShadowRoot>encapsulation mode</a> is "<code>open</code>", and
- null otherwise.
+ <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is "<code>open</code>", and null otherwise.
 </dl>
 
 <p>The <dfn method for=Element><code>attachShadow(<var>init</var>)</code></dfn> method, when
@@ -5791,8 +5794,7 @@ invoked, must run these steps:
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a>node document</a> is
  <a>context object</a>'s <a>node document</a>, <a for=DocumentFragment>host</a> is
- <a>context object</a>, and <a for=ShadowRoot>encapsulation mode</a> is <var>init</var>'s
- {{ShadowRootInit/mode}}.
+ <a>context object</a>, and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
 
  <li><p>Set <a>context object</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
@@ -5805,8 +5807,8 @@ steps:
 <ol>
  <li><p>Let <var>shadow</var> be <a>context object</a>'s <a for=Element>shadow root</a>.
 
- <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>encapsulation mode</a> is
- "<code>closed</code>", then return null.
+ <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
+ then return null.</p></li>
 
  <li><p>Return <var>shadow</var>.
 </ol>
@@ -9420,6 +9422,7 @@ Steve Byrne,
 Stig Halvorsen,
 Tab Atkins,
 Takashi Sakamoto,
+Takayoshi Kochi,
 <i>timeless</i>,
 Timo Tijhof,
 Tobie Langel,
