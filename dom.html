@@ -71,7 +71,7 @@
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-04-06">6 April 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-04-07">7 April 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -223,6 +223,7 @@
   </nav>
   <main>
 <script async="" src="https://resources.whatwg.org/file-issue.js"></script>
+<script defer="" id="head" src="https://resources.whatwg.org/dfn.js"></script>
    <h2 class="no-num heading settled" id="goals"><span class="content">Goals</span></h2>
    <p>This specification standardizes the DOM. It does so as follows:</p>
    <ol>
@@ -1173,7 +1174,21 @@ The algorithm is passed <var>insertedNode</var>, as indicated in the <a data-lin
       <li>
        <p>Insert <var>node</var> into <var>parent</var> before <var>child</var> or at the end of <var>parent</var> if <var>child</var> is null. </p>
       <li>
-       <p>For each <a data-link-type="dfn" href="#concept-shadow-including-inclusive-descendant">shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>, in <a data-link-type="dfn" href="#concept-shadow-including-tree-order">shadow-including tree order</a>, run the <a data-link-type="dfn" href="#concept-node-insert-ext">insertion steps</a> with <var>inclusiveDescendant</var>. </p>
+       <p>For each <a data-link-type="dfn" href="#concept-shadow-including-inclusive-descendant">shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>, in <a data-link-type="dfn" href="#concept-shadow-including-tree-order">shadow-including tree order</a>, run these subsubsteps: </p>
+       <ol>
+        <li>
+         <p>Run the <a data-link-type="dfn" href="#concept-node-insert-ext">insertion steps</a> with <var>inclusiveDescendant</var>. </p>
+        <li>
+         <p>If <var>inclusiveDescendant</var> is <a data-link-type="dfn" href="#in-a-shadow-including-document">in a shadow-including document</a>, then: </p>
+         <ol>
+          <li>
+           <p>If <var>inclusiveDescendant</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>,
+       callback name "<code>connectedCallback</code>", and an empty argument list. </p>
+          <li>
+           <p>Otherwise, <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-try-upgrade">try to upgrade</a> <var>inclusiveDescendant</var>. </p>
+           <p class="note" role="note">If this successfully upgrades <var>inclusiveDescendant</var>, its <code>connectedCallback</code> will be enqueued automatically during the <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-upgrade-a-custom-element">upgrade an element</a> algorithm. </p>
+         </ol>
+       </ol>
      </ol>
     <li>If <i>suppress observers flag</i> is unset, <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for <var>parent</var> with addedNodes <var>nodes</var>, nextSibling <var>child</var>, and previousSibling <var>child</var>’s <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> or <var>parent</var>’s <a data-link-type="dfn" href="#concept-tree-last-child">last child</a> if <var>child</var> is null. 
    </ol>
@@ -1263,7 +1278,18 @@ steps:</p>
     <li>
      <p>Run the <a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with <var>node</var> and <var>parent</var>. </p>
     <li>
-     <p>For each <a data-link-type="dfn" href="#concept-shadow-including-descendant">shadow-including descendant</a> <var>descendant</var> of <var>node</var>, in <a data-link-type="dfn" href="#concept-shadow-including-tree-order">shadow-including tree order</a>, run the <a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with <var>descendant</var>. </p>
+     <p>If <var>node</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>node</var>, callback name "<code>disconnectedCallback</code>", and an empty argument
+  list. </p>
+     <p class="note" role="note">It is intentional for now that <a data-link-type="dfn" href="#concept-element-custom">custom</a> <a data-link-type="dfn" href="#concept-element">elements</a> do not get <var>parent</var> passed. This might change in the future if there is a need. </p>
+    <li>
+     <p>For each <a data-link-type="dfn" href="#concept-shadow-including-descendant">shadow-including descendant</a> <var>descendant</var> of <var>node</var>, in <a data-link-type="dfn" href="#concept-shadow-including-tree-order">shadow-including tree order</a>, run these substeps: </p>
+     <ol>
+      <li>
+       <p>Run the <a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with <var>descendant</var>. </p>
+      <li>
+       <p>If <var>descendant</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>descendant</var>, callback name
+   "<code>disconnectedCallback</code>", and an empty argument list. </p>
+     </ol>
     <li>For each <a data-link-type="dfn" href="#concept-tree-inclusive-ancestor">inclusive ancestor</a> <var>inclusiveAncestor</var> of <var>parent</var>, if <var>inclusiveAncestor</var> has any <a data-link-type="dfn" href="#registered-observer">registered observers</a> whose <b>options</b>' <code class="idl"><a data-link-type="idl" href="#dom-mutationobserverinit-subtree">subtree</a></code> is true, then for each
  such <a data-link-type="dfn" href="#registered-observer">registered observer</a> <var>registered</var>, append a <a data-link-type="dfn" href="#transient-registered-observer">transient registered observer</a> whose <b>observer</b> and <b>options</b> are identical to those of <var>registered</var> and <b>source</b> which is <var>registered</var> to <var>node</var>’s list of <a data-link-type="dfn" href="#registered-observer">registered observers</a>. 
     <li>If <i>suppress observers flag</i> is unset, <a data-link-type="dfn" href="#queue-a-mutation-record">queue a mutation record</a> of "<code>childList</code>" for <var>parent</var> with removedNodes a list solely containing <var>node</var>,
@@ -2127,18 +2153,12 @@ run these steps:</p>
      <li>
       <p>If <var>document</var> is not given, let <var>document</var> be <var>node</var>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. </p>
      <li>
-      <p>Let <var>copy</var> be a <a data-link-type="dfn" href="#concept-node">node</a> that implements the same interfaces as <var>node</var>, and fulfills these additional requirements, switching on <var>node</var>: </p>
-      <dl class="switch">
-       <dt><code class="idl"><a data-link-type="idl" href="#document">Document</a></code> 
-       <dd>
-        <p>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-document-encoding">encoding</a>, <a data-link-type="dfn" href="#concept-document-content-type">content type</a>, <a data-link-type="dfn" href="#concept-document-url">URL</a>, <a data-link-type="dfn" href="#concept-document-type">type</a>,
-    and <a data-link-type="dfn" href="#concept-document-mode">mode</a>, to those of <var>node</var>. </p>
-       <dt><code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> 
-       <dd>
-        <p>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-doctype-name">name</a>, <a data-link-type="dfn" href="#concept-doctype-publicid">public ID</a>, and <a data-link-type="dfn" href="#concept-doctype-systemid">system ID</a>, to those of <var>node</var>. </p>
-       <dt><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> 
-       <dd>
-        <p>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-element-namespace">namespace</a>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a>, and <a data-link-type="dfn" href="#concept-element-local-name">local name</a>, to those of <var>node</var>. </p>
+      <p>If <var>node</var> is an <a data-link-type="dfn" href="#concept-element">element</a>, then: </p>
+      <ol>
+       <li>
+        <p>Let <var>copy</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a>, given <var>document</var>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-local-name">local name</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace">namespace</a>, and the
+   value of <var>node</var>’s <code>is</code> attribute if present (or null if not). The <var>synchronous custom elements flag</var> should be unset. </p>
+       <li>
         <p>For each <var>attribute</var> in <var>node</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>, in order, run these substeps: </p>
         <ol>
          <li>
@@ -2147,8 +2167,19 @@ run these steps:</p>
           <p>Set <var>copyAttribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>, <a data-link-type="dfn" href="#concept-attribute-namespace-prefix">namespace prefix</a>, <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>,
      and <a data-link-type="dfn" href="#concept-attribute-value">value</a>, to those of <var>attribute</var>. </p>
          <li>
-          <p><a data-link-type="dfn" href="#concept-element-attributes-append">Append</a> <var>copyAttribute</var> to <var>copy</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>. </p>
+          <p><a data-link-type="dfn" href="#concept-element-attributes-append">Append</a> <var>copyAttribute</var> to <var>copy</var>. </p>
         </ol>
+      </ol>
+     <li>
+      <p>Otherwise, let <var>copy</var> be a <a data-link-type="dfn" href="#concept-node">node</a> that implements the same interfaces as <var>node</var>, and fulfills these additional requirements, switching on <var>node</var>: </p>
+      <dl class="switch">
+       <dt><code class="idl"><a data-link-type="idl" href="#document">Document</a></code> 
+       <dd>
+        <p>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-document-encoding">encoding</a>, <a data-link-type="dfn" href="#concept-document-content-type">content type</a>, <a data-link-type="dfn" href="#concept-document-url">URL</a>, <a data-link-type="dfn" href="#concept-document-type">type</a>,
+    and <a data-link-type="dfn" href="#concept-document-mode">mode</a>, to those of <var>node</var>. </p>
+       <dt><code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> 
+       <dd>
+        <p>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-doctype-name">name</a>, <a data-link-type="dfn" href="#concept-doctype-publicid">public ID</a>, and <a data-link-type="dfn" href="#concept-doctype-systemid">system ID</a>, to those of <var>node</var>. </p>
        <dt><code class="idl"><a data-link-type="idl" href="#text">Text</a></code> 
        <dt><code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> 
        <dd>Set <var>copy</var>’s <a data-link-type="dfn" href="#concept-cd-data">data</a>, to that of <var>node</var>. 
@@ -2397,8 +2428,8 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="doc
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Document/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbytagnamens-namespace-localname-namespace">namespace<a class="self-link" href="#dom-document-getelementsbytagnamens-namespace-localname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Document/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbytagnamens-namespace-localname-localname">localName<a class="self-link" href="#dom-document-getelementsbytagnamens-namespace-localname-localname"></a></dfn>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbyclassname">getElementsByClassName</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/getElementsByClassName(classNames)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbyclassname-classnames-classnames">classNames<a class="self-link" href="#dom-document-getelementsbyclassname-classnames-classnames"></a></dfn>);
 
-  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelement">createElement</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createElement(localName)" data-dfn-type="argument" data-export="" id="dom-document-createelement-localname-localname">localName<a class="self-link" href="#dom-document-createelement-localname-localname"></a></dfn>);
-  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelementns">createElementNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Document/createElementNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createelementns-namespace-qualifiedname-namespace">namespace<a class="self-link" href="#dom-document-createelementns-namespace-qualifiedname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Document/createElementNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createelementns-namespace-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-document-createelementns-namespace-qualifiedname-qualifiedname"></a></dfn>);
+  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelement">createElement</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createElement(localName, options), Document/createElement(localName)" data-dfn-type="argument" data-export="" id="dom-document-createelement-localname-options-localname">localName<a class="self-link" href="#dom-document-createelement-localname-options-localname"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-elementcreationoptions">ElementCreationOptions</a> <dfn class="idl-code" data-dfn-for="Document/createElement(localName, options), Document/createElement(localName)" data-dfn-type="argument" data-export="" id="dom-document-createelement-localname-options-options">options<a class="self-link" href="#dom-document-createelement-localname-options-options"></a></dfn>);
+  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelementns">createElementNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Document/createElementNS(namespace, qualifiedName, options), Document/createElementNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createelementns-namespace-qualifiedname-options-namespace">namespace<a class="self-link" href="#dom-document-createelementns-namespace-qualifiedname-options-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Document/createElementNS(namespace, qualifiedName, options), Document/createElementNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createelementns-namespace-qualifiedname-options-qualifiedname">qualifiedName<a class="self-link" href="#dom-document-createelementns-namespace-qualifiedname-options-qualifiedname"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-elementcreationoptions">ElementCreationOptions</a> <dfn class="idl-code" data-dfn-for="Document/createElementNS(namespace, qualifiedName, options), Document/createElementNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createelementns-namespace-qualifiedname-options-options">options<a class="self-link" href="#dom-document-createelementns-namespace-qualifiedname-options-options"></a></dfn>);
   [NewObject] <a data-link-type="idl-name" href="#documentfragment">DocumentFragment</a> <a class="idl-code" data-link-type="method" href="#dom-document-createdocumentfragment">createDocumentFragment</a>();
   [NewObject] <a data-link-type="idl-name" href="#text">Text</a> <a class="idl-code" data-link-type="method" href="#dom-document-createtextnode">createTextNode</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createTextNode(data)" data-dfn-type="argument" data-export="" id="dom-document-createtextnode-data-data">data<a class="self-link" href="#dom-document-createtextnode-data-data"></a></dfn>);
   [NewObject] <a data-link-type="idl-name" href="#comment">Comment</a> <a class="idl-code" data-link-type="method" href="#dom-document-createcomment">createComment</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createComment(data)" data-dfn-type="argument" data-export="" id="dom-document-createcomment-data-data">data<a class="self-link" href="#dom-document-createcomment-data-data"></a></dfn>);
@@ -2421,6 +2452,10 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="doc
 
 [Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="xmldocument">XMLDocument<a class="self-link" href="#xmldocument"></a></dfn> : <a data-link-type="idl-name" href="#document">Document</a> {};
+
+dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-elementcreationoptions">ElementCreationOptions<a class="self-link" href="#dictdef-elementcreationoptions"></a></dfn> {
+  DOMString <dfn class="idl-code" data-dfn-for="ElementCreationOptions" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-elementcreationoptions-is">is<a class="self-link" href="#dom-elementcreationoptions-is"></a></dfn>;
+};
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#document">Document</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are simply
 known as <dfn data-dfn-type="dfn" data-export="" data-lt="document" id="concept-document">documents<a class="self-link" href="#concept-document"></a></dfn>.</p>
@@ -2509,25 +2544,25 @@ that are in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-getelementsbytagnamens"><code>getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</code><a class="self-link" href="#dom-document-getelementsbytagnamens"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbytagnamens">list of elements with namespace <var>namespace</var> and local name <var>localName</var></a> for
 the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-getelementsbyclassname"><code>getElementsByClassName(<var>classNames</var>)</code><a class="self-link" href="#dom-document-getelementsbyclassname"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbyclassname">list of elements with class names <var>classNames</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
-   <div class="example" id="example-04d99d7d">
-    <a class="self-link" href="#example-04d99d7d"></a> Given the following XHTML fragment: 
-<pre>&lt;div id="example">
-  &lt;p id="p1" class="aaa bbb"/>
-  &lt;p id="p2" class="aaa ccc"/>
-  &lt;p id="p3" class="bbb ccc"/>
-&lt;/div>
-</pre>
+   <div class="example" id="example-5ffcda00">
+    <a class="self-link" href="#example-5ffcda00"></a> Given the following XHTML fragment: 
+<pre><code class="lang-html highlight"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"example"</span><span class="nt">></span>
+  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p1"</span> <span class="na">class=</span><span class="s">"aaa bbb"</span><span class="nt">/></span>
+  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p2"</span> <span class="na">class=</span><span class="s">"aaa ccc"</span><span class="nt">/></span>
+  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p3"</span> <span class="na">class=</span><span class="s">"bbb ccc"</span><span class="nt">/></span>
+<span class="nt">&lt;/div></span></code></pre>
     <p>A call to <code class="lang-javascript highlight"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa"</span><span class="p">)</span></code> would return a <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code> with the two paragraphs <code>p1</code> and <code>p2</code> in it.</p>
     <p>A call to <code class="lang-javascript highlight"><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"ccc bbb"</span><span class="p">)</span></code> would only return one node, however, namely <code>p3</code>. A call to <code class="lang-javascript highlight"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"bbb  ccc "</span><span class="p">)</span></code> would return the same thing.</p>
     <p>A call to <code class="lang-javascript highlight"><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa,bbb"</span><span class="p">)</span></code> would return no nodes; none of the elements above are in the <code>aaa,bbb</code> class.</p>
    </div>
    <hr>
    <dl class="domintro">
-    <dt><var>element</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createelement">createElement(localName)</a></code> 
+    <dt><code><var>element</var> = <var>document</var> . <a class="idl-code" data-link-type="method" href="#dom-document-createelement">createElement(localName [, options])</a></code> 
     <dd>
       Returns an <a data-link-type="dfn" href="#concept-element">element</a> in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a> with <var>localName</var> as <a data-link-type="dfn" href="#concept-element-local-name">local name</a>. (In an <a data-link-type="dfn" href="#html-document">HTML document</a> <var>localName</var> is lowercased.) 
      <p>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.</p>
-    <dt><var>element</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createelementns">createElementNS(namespace, qualifiedName)</a></code> 
+     <p>When supplied, <var>options</var>’ <code>is</code> member can be used to create a <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-type-extension">type extension</a>.</p>
+    <dt><code><var>element</var> = <var>document</var> . <a class="idl-code" data-link-type="method" href="#dom-document-createelementns">createElementNS(namespace, qualifiedName [, options])</a></code> 
     <dd>
       Returns an <a data-link-type="dfn" href="#concept-element">element</a> with <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> <var>namespace</var>. Its <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> will
   be everything before "<code>:</code>" (U+003E) in <var>qualifiedName</var> or null. Its <a data-link-type="dfn" href="#concept-element-local-name">local name</a> will be
@@ -2543,13 +2578,14 @@ the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
       <li><var>namespace</var> is the <a data-link-type="dfn" href="#xmlns-namespace">XMLNS namespace</a> and
    neither <var>qualifiedName</var> nor <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> is "<code>xmlns</code>". 
      </ul>
-    <dt><var>documentFragment</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createdocumentfragment">createDocumentFragment()</a></code> 
+     <p>When supplied, <var>options</var>’ <code>is</code> member can be used to create a <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-type-extension">type extension</a>.</p>
+    <dt><code><var>documentFragment</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createdocumentfragment">createDocumentFragment()</a></code></code> 
     <dd>Returns a <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> <a data-link-type="dfn" href="#concept-node">node</a>. 
-    <dt><var>text</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createtextnode">createTextNode(data)</a></code> 
+    <dt><code><var>text</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createtextnode">createTextNode(data)</a></code></code> 
     <dd>Returns a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>. 
-    <dt><var>comment</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createcomment">createComment(data)</a></code> 
+    <dt><code><var>comment</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createcomment">createComment(data)</a></code></code> 
     <dd>Returns a <code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>. 
-    <dt><var>processingInstruction</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createprocessinginstruction">createProcessingInstruction(target, data)</a></code> 
+    <dt><code><var>processingInstruction</var> = <var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-createprocessinginstruction">createProcessingInstruction(target, data)</a></code></code> 
     <dd> Returns a <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-pi-target">target</a> is <var>target</var> and <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>.
   If <var>target</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown.
   If <var>data</var> contains "<code>?></code>" an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception will be thrown. 
@@ -2557,23 +2593,34 @@ the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p>The <dfn data-dfn-type="dfn" data-export="" id="concept-element-interface">element interface<a class="self-link" href="#concept-element-interface"></a></dfn> for any <var>name</var> and <var>namespace</var> is <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>, unless
 stated otherwise.</p>
    <p class="note no-backref" role="note">The HTML Standard will e.g. define that for <code>html</code> and the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/semantics.html#htmlhtmlelement">HTMLHtmlElement</a></code> interface is used. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
-   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createelement"><code>createElement(<var>localName</var>)</code><a class="self-link" href="#dom-document-createelement"></a></dfn> method, when
+   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" data-lt="createElement(localName, options)|createElement(localName)" id="dom-document-createelement"><code>createElement(<var>localName</var>)</code><a class="self-link" href="#dom-document-createelement"></a></dfn> method, when
 invoked, must run these steps:</p>
    <ol>
     <li>If <var>localName</var> does not match the <code><a class="css" data-link-type="type" href="https://www.w3.org/TR/xml/#NT-Name">Name</a></code> production, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a></code> exception. 
     <li>If the <a data-link-type="dfn" href="#context-object">context object</a> is an <a data-link-type="dfn" href="#html-document">HTML document</a>,
  let <var>localName</var> be <a data-link-type="dfn" href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a>. 
-    <li>Let <var>interface</var> be the <a data-link-type="dfn" href="#concept-element-interface">element interface</a> for <var>localName</var> and the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>. 
-    <li>Return a new <a data-link-type="dfn" href="#concept-element">element</a> that implements <var>interface</var>,
- with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set to <var>localName</var>, and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>. 
+    <li>Let <var>is</var> be the value of <code>is</code> member of <var>options</var>, or null if no
+ such member exists. 
+    <li>Let <var>definition</var> be the result of <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-look-up-custom-element-definition">looking up a custom element definition</a>, given the <a data-link-type="dfn" href="#context-object">context object</a>, the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <var>localName</var>, and <var>is</var>. 
+    <li>If <var>is</var> is non-null and <var>definition</var> is null, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a></code>. 
+    <li>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>localName</var>, null, the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <var>is</var>, and
+ with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions. 
+    <li>If <var>is</var> is non-null, then <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for <var>element</var> using
+ "<code>is</code>" and <var>is</var>. 
+    <li>Return <var>element</var>. 
    </ol>
-   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createelementns"><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>)</code><a class="self-link" href="#dom-document-createelementns"></a></dfn> method, when invoked, must run these steps:</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" data-lt="createElementNS(namespace, qualifiedName, options)|createElementNS(namespace, qualifiedName)" id="dom-document-createelementns"><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>)</code><a class="self-link" href="#dom-document-createelementns"></a></dfn> method, when invoked, must run these steps:</p>
    <ol>
     <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing <var>namespace</var> and <var>qualifiedName</var> to <a data-link-type="dfn" href="#validate-and-extract">validate and extract</a>. Rethrow any
  exceptions. 
-    <li>Let <var>interface</var> be the <a data-link-type="dfn" href="#concept-element-interface">element interface</a> for <var>localName</var> and <var>namespace</var>. 
-    <li>Return a new <a data-link-type="dfn" href="#concept-element">element</a> that implements <var>interface</var>,
- with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to <var>namespace</var>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> set to <var>prefix</var>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set to <var>localName</var>, and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>. 
+    <li>Let <var>is</var> be the value of <code>is</code> member of <var>options</var>, or null if no
+ such member exists. 
+    <li>Let <var>definition</var> be the result of <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-look-up-custom-element-definition">looking up a custom element definition</a>, given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>namespace</var>, <var>localName</var>, and <var>is</var>. 
+    <li>If <var>is</var> is non-null and <var>definition</var> is null, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a></code>. 
+    <li>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>localName</var>, <var>prefix</var>, <var>namespace</var>, <var>is</var>, and with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions. 
+    <li>If <var>is</var> is non-null, then <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for <var>element</var> using
+ "<code>is</code>" and <var>is</var>. 
+    <li>Return <var>element</var>. 
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-createdocumentfragment"><code>createDocumentFragment()</code><a class="self-link" href="#dom-document-createdocumentfragment"></a></dfn> method, when invoked,
 must return a new <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> <a data-link-type="dfn" href="#concept-node">node</a> with its <a data-link-type="dfn" href="#concept-node-document">node document</a> set to the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
@@ -2925,12 +2972,123 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="d
 };
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are simply known as <dfn data-dfn-type="dfn" data-export="" data-lt="element" id="concept-element">elements<a class="self-link" href="#concept-element"></a></dfn>. </p>
-   <p><a data-link-type="dfn" href="#concept-element">Elements</a> have an associated <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-namespace">namespace<a class="self-link" href="#concept-element-namespace"></a></dfn>, <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-namespace-prefix">namespace prefix<a class="self-link" href="#concept-element-namespace-prefix"></a></dfn>, and <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-local-name">local name<a class="self-link" href="#concept-element-local-name"></a></dfn>. When an <a data-link-type="dfn" href="#concept-element">element</a> is created, its <a data-link-type="dfn" href="#concept-element-local-name">local name</a> is always given. Unless
-explicitly given when an <a data-link-type="dfn" href="#concept-element">element</a> is created, its <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> and <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> are null. </p>
-   <p><a data-link-type="dfn" href="#concept-element">Elements</a> also have an associated <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-shadow-root">shadow root<a class="self-link" href="#concept-element-shadow-root"></a></dfn> (null or a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>). Null unless otherwise stated. </p>
+   <p><a data-link-type="dfn" href="#concept-element">Elements</a> have an associated <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-namespace">namespace<a class="self-link" href="#concept-element-namespace"></a></dfn>, <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-namespace-prefix">namespace prefix<a class="self-link" href="#concept-element-namespace-prefix"></a></dfn>, <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-local-name">local name<a class="self-link" href="#concept-element-local-name"></a></dfn>, and <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-custom-element-state">custom element state<a class="self-link" href="#concept-element-custom-element-state"></a></dfn>. When an <a data-link-type="dfn" href="#concept-element">element</a> is <a data-link-type="dfn" href="#concept-create-element">created</a>, all of these values are
+initialized. </p>
+   <p>An <a data-link-type="dfn" href="#concept-element">element</a>’s <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> is one of "<code>undefined</code>",
+"<code>uncustomized</code>", or "<code>custom</code>". An <a data-link-type="dfn" href="#concept-element">element</a> whose <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> is "<code>uncustomized</code>" or "<code>custom</code>" is said to be <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-defined">defined<a class="self-link" href="#concept-element-defined"></a></dfn>. An <a data-link-type="dfn" href="#concept-element">element</a> whose <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> is "<code>custom</code>", is said to be <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-custom">custom<a class="self-link" href="#concept-element-custom"></a></dfn>. </p>
+   <p class="note" role="note">Whether or not an element is <a data-link-type="dfn" href="#concept-element-defined">defined</a> is used to determine the behavior of the <a class="css" data-link-type="maybe" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-defined">:defined</a> pseudo-class. Whether or not an element is <a data-link-type="dfn" href="#concept-element-custom">custom</a> is used to determine the
+behavior of the <a href="#mutation-algorithms">mutation algorithms</a>.</p>
+   <div class="example" id="example-f7401fd0">
+    <a class="self-link" href="#example-f7401fd0"></a> 
+    <p>The following code illustrates elements in each of these three states:</p>
+<pre><code class="lang-html highlight"><span class="cp">&lt;!DOCTYPE html></span>
+<span class="nt">&lt;script></span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-rey"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{})</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-finn"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{},</span> <span class="p">{</span> <span class="kr">extends</span><span class="o">:</span> <span class="s2">"p"</span> <span class="p">})</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-kylo"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kr">super</span><span class="p">()</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">"The droid... stole a freighter?"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="nt">&lt;/script></span>
+
+<span class="c">&lt;!-- "undefined" (not defined, not custom) --></span>
+<span class="nt">&lt;sw-han>&lt;/sw-han></span>
+<span class="nt">&lt;sw-kylo>&lt;/sw-kylo></span>
+<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"sw-luke"</span><span class="nt">>&lt;/p></span>
+<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"asdf"</span><span class="nt">>&lt;/p></span>
+
+<span class="c">&lt;!-- "uncustomized" (defined, not custom) --></span>
+<span class="nt">&lt;p>&lt;/p></span>
+<span class="nt">&lt;asdf>&lt;/asdf></span>
+
+<span class="c">&lt;!-- "custom" (defined, custom) --></span>
+<span class="nt">&lt;sw-rey>&lt;/sw-rey></span>
+<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"sw-finn"</span><span class="nt">>&lt;/p></span></code></pre>
+   </div>
+   <p><a data-link-type="dfn" href="#concept-element">Elements</a> also have an associated <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-shadow-root">shadow root<a class="self-link" href="#concept-element-shadow-root"></a></dfn> (null or a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>). It is null unless otherwise stated. </p>
    <p>An <a data-link-type="dfn" href="#concept-element">element</a>’s <dfn data-dfn-for="Element" data-dfn-type="dfn" data-noexport="" id="concept-element-qualified-name">qualified name<a class="self-link" href="#concept-element-qualified-name"></a></dfn> is its <a data-link-type="dfn" href="#concept-element-local-name">local name</a> if its <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> is null, and its <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a>, followed by "<code>:</code>", followed by its <a data-link-type="dfn" href="#concept-element-local-name">local name</a>, otherwise. </p>
    <p class="note" role="note">User agents could have this as an internal slot as an optimization, but are not
 required to do so. The standard has this concept for readability. </p>
+   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="create an element|creating an element" id="concept-create-element">create an element<a class="self-link" href="#concept-create-element"></a></dfn>,
+given a <var>document</var>, <var>prefix</var>, <var>localName</var>, <var>namespace</var>, <var>is</var>, and optional <var>synchronous custom elements flag</var>, run these steps: </p>
+   <ol>
+    <li>
+     <p>Let <var>result</var> be null. </p>
+    <li>
+     <p>Let <var>definition</var> be the result of <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-look-up-custom-element-definition">looking up a custom element definition</a> given <var>document</var>, <var>namespace</var>, <var>localName</var>, and <var>is</var>. </p>
+    <li>
+     <p>If <var>definition</var> is non-null, and <var>definition</var>’s <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-element-definition-name">name</a> is not equal to its <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-element-definition-local-name">local name</a> (i.e., <var>definition</var> represents a <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-type-extension">type extension</a>), then: </p>
+     <ol>
+      <li>
+       <p>Let <var>interface</var> be the <a data-link-type="dfn" href="#concept-element-interface">element interface</a> for <var>localName</var> and the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>. </p>
+      <li>
+       <p>Set <var>result</var> to a new <a data-link-type="dfn" href="#concept-element">element</a> that implements <var>interface</var>,
+   with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> set to <var>prefix</var>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set
+   to <var>localName</var>, <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> set to "<code>undefined</code>", and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to <var>document</var>. </p>
+      <li>
+       <p>If the <var>synchronous custom elements flag</var> is set, <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-upgrade-a-custom-element">upgrade</a> <var>element</var> using <var>definition</var>. </p>
+      <li>
+       <p>Otherwise, <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-upgrade">enqueue a custom element upgrade reaction</a> given <var>result</var> and <var>definition</var>. </p>
+     </ol>
+    <li>
+     <p>Otherwise, if <var>definition</var> is non-null, then: </p>
+     <ol>
+      <li>
+       <p>If the <var>synchronous custom elements flag</var> is set: </p>
+       <ol>
+        <li>
+         <p>Let <var>C</var> be <var>definition</var>’s <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-element-definition-constructor">constructor</a>. </p>
+        <li>
+         <p>Set <var>result</var> to <a data-link-type="abstract-op" href="https://tc39.github.io/ecma262/#sec-construct">Construct</a>(<var>C</var>). Rethrow any
+     exceptions. </p>
+        <li>
+         <p>If <var>result</var> does not implement the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://tc39.github.io/ecma262/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a></code> exception. </p>
+         <p class="note" role="note">This is meant to be a brand check to ensure that the object was allocated by the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> constructor. See <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
+      precise. </p>
+        <li>
+         <p>If <var>result</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a> is not empty, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>If <var>result</var> has <a data-link-type="dfn" href="#concept-tree-child">children</a>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>If <var>result</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is not null, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>If <var>result</var>’s <a data-link-type="dfn" href="#concept-node-document">node document</a> is not <var>document</var>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>If <var>result</var>’s <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> is not the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>If <var>result</var>’s <a data-link-type="dfn" href="#concept-element-local-name">local name</a> is not equal to <var>localName</var>, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> exception. </p>
+        <li>
+         <p>Set <var>result</var>’s <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> to <var>prefix</var>. </p>
+        <li>
+         <p>Set <var>result</var>’s <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> to "<code>custom</code>". </p>
+       </ol>
+      <li>
+       <p>Otherwise: </p>
+       <ol>
+        <li>
+         <p>Set <var>result</var> to a new <a data-link-type="dfn" href="#concept-element">element</a> that implements the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> set to <var>prefix</var>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set
+     to <var>localName</var>, <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> set to "<code>undefined</code>", and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to <var>document</var>. </p>
+        <li>
+         <p><a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-upgrade">Enqueue a custom element upgrade reaction</a> given <var>result</var> and <var>definition</var>. </p>
+       </ol>
+     </ol>
+    <li>
+     <p>Otherwise: </p>
+     <ol>
+      <li>
+       <p>Let <var>interface</var> be the <a data-link-type="dfn" href="#concept-element-interface">element interface</a> for <var>localName</var> and <var>namespace</var>. </p>
+      <li>
+       <p>Set <var>result</var> to a new <a data-link-type="dfn" href="#concept-element">element</a> that implements <var>interface</var>,
+   with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to <var>namespace</var>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> set to <var>prefix</var>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set
+   to <var>localName</var>, <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> set to "<code>uncustomized</code>", and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to <var>document</var>. </p>
+      <li>
+       <p>If <var>document</var> has a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-bc">browsing context</a>, and <var>namespace</var> is the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, and either <var>localName</var> is a <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-valid-custom-element-name">valid custom element name</a> or <var>is</var> is is non-null, set <var>result</var>’s <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> to "<code>undefined</code>". </p>
+     </ol>
+    <li>
+     <p>Return <var>result</var>. </p>
+   </ol>
    <p><a data-link-type="dfn" href="#concept-element">Elements</a> also have an ordered <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-attribute">attribute list<a class="self-link" href="#concept-element-attribute"></a></dfn> exposed through a <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code>. Unless explicitly given when an <a data-link-type="dfn" href="#concept-element">element</a> is created, its <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a> is empty. An <a data-link-type="dfn" href="#concept-element">element</a> <dfn data-dfn-type="dfn" data-export="" data-lt="has an attribute" id="concept-element-attribute-has">has<a class="self-link" href="#concept-element-attribute-has"></a></dfn> an <a data-link-type="dfn" href="#concept-attribute">attribute</a> <var>A</var> if <var>A</var> is in its <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>.</p>
    <p>This specification uses and <a data-link-type="dfn" href="#other-applicable-specifications">applicable specifications</a> can use the hooks an <dfn data-dfn-type="dfn" data-export="" id="attribute-is-set">attribute is set<a class="self-link" href="#attribute-is-set"></a></dfn>, an <dfn data-dfn-type="dfn" data-export="" id="attribute-is-changed">attribute is changed<a class="self-link" href="#attribute-is-changed"></a></dfn>, an <dfn data-dfn-type="dfn" data-export="" id="attribute-is-added">attribute is added<a class="self-link" href="#attribute-is-added"></a></dfn>, and an <dfn data-dfn-type="dfn" data-export="" id="attribute-is-removed">attribute is removed<a class="self-link" href="#attribute-is-removed"></a></dfn>, for
 further processing of the <a data-link-type="dfn" href="#concept-attribute">attribute</a>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>.</p>
@@ -2938,6 +3096,8 @@ further processing of the <a data-link-type="dfn" href="#concept-attribute">attr
    <ol>
     <li><a data-link-type="dfn" href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
  for <var>element</var> with name <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, namespace <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>, and oldValue <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. 
+    <li>If <var>element</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>element</var>, callback name "<code>attributeChangedCallback</code>", and an argument
+ list containing <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>, <var>value</var>, and <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>. 
     <li>Set <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a> to <var>value</var>. 
     <li>An <a data-link-type="dfn" href="#attribute-is-set">attribute is set</a> and an <a data-link-type="dfn" href="#attribute-is-changed">attribute is changed</a>. 
    </ol>
@@ -2948,6 +3108,8 @@ run these steps:</p>
     <li><a data-link-type="dfn" href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
  for <var>element</var> with name <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, namespace <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>, and oldValue
  null. 
+    <li>If <var>element</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>element</var>, callback name "<code>attributeChangedCallback</code>", and an argument
+ list containing <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, null, <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>, and <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>. 
     <li>Append the <var>attribute</var> to the <var>element</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>. 
     <li>Set <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-element">element</a> to <var>element</var>. 
     <li>An <a data-link-type="dfn" href="#attribute-is-set">attribute is set</a> and an <a data-link-type="dfn" href="#attribute-is-added">attribute is added</a>. 
@@ -2957,6 +3119,8 @@ run these steps:</p>
    <ol>
     <li><a data-link-type="dfn" href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>"
  for <var>element</var> with name <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, namespace <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>, and oldValue <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. 
+    <li>If <var>element</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>element</var>, callback name "<code>attributeChangedCallback</code>", and an argument
+ list containing <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>, null, and <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>. 
     <li>Remove <var>attribute</var> from the <var>element</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>. 
     <li>Set <var>attribute</var>’s <a data-link-type="dfn" href="#concept-attribute-element">element</a> to null. 
     <li>An <a data-link-type="dfn" href="#attribute-is-removed">attribute is removed</a>. 
@@ -2967,6 +3131,8 @@ run these steps:</p>
      <p><a data-link-type="dfn" href="#queue-a-mutation-record">Queue a mutation record</a> of "<code>attributes</code>" for <var>element</var> with name <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>,
  namespace <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>,
  and oldValue <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>. </p>
+    <li>If <var>element</var> is <a data-link-type="dfn" href="#concept-element-custom">custom</a>, then <a data-link-type="dfn" href="https://rawgit.com/w3c/webcomponents/15a203c8393aef0df7223ab1d43406aa11a7e71e/spec/custom/index.html#dfn-enqueue-lifecycle-callback">enqueue a custom element callback reaction</a> with <var>element</var>, callback name "<code>attributeChangedCallback</code>", and an argument
+ list containing <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-local-name">local name</a>, <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>, <var>newAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-value">value</a>, and <var>oldAttr</var>’s <a data-link-type="dfn" href="#concept-attribute-namespace">namespace</a>. 
     <li>
      <p>Replace <var>oldAttr</var> by <var>newAttr</var> in the <var>element</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>. </p>
     <li>
@@ -4854,10 +5020,12 @@ for being awesome!</p>
    <p>This standard is written by <a href="//annevankesteren.nl/" lang="nl">Anne van Kesteren</a> (<a href="//www.mozilla.org/">Mozilla</a>, <a href="mailto:annevk@annevk.nl">annevk@annevk.nl</a>) with substantial contributions from
 Aryeh Gregor (<a href="//www.mozilla.org/">Mozilla</a>, <a href="mailto:ayg@aryeh.name">ayg@aryeh.name</a>)
 and Ms2ger (<a href="//www.mozilla.org/">Mozilla</a>, <a href="mailto:ms2ger@gmail.com">ms2ger@gmail.com</a>).</p>
+   <p>Part of the revision history of the integration points related to <a data-link-type="dfn" href="#concept-element-custom">custom</a> elements can be
+found in <a href="https://github.com/w3c/webcomponents">the w3c/webcomponents repository</a>, which
+is available under the <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Permissive Document License</a>.</p>
    <p>Per <a href="//creativecommons.org/publicdomain/zero/1.0/" rel="license">CC0</a>, to
 the extent possible under law, the editors have waived all copyright and related or
 neighboring rights to this work.</p>
-<script id="head" src="//resources.whatwg.org/dfn.js"></script>
   </main>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
@@ -4991,6 +5159,7 @@ neighboring rights to this work.</p>
    <li><a href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a><span>, in §2.2</span>
    <li><a href="#converted-to-ascii-uppercase">converted to ASCII uppercase</a><span>, in §2.2</span>
    <li><a href="#converting-nodes-into-a-node">converting nodes into a node</a><span>, in §4.2.6</span>
+   <li><a href="#concept-create-element">create an element</a><span>, in §4.9</span>
    <li><a href="#dom-document-createattribute">createAttribute(localName)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createattributens">createAttributeNS(namespace, qualifiedName)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createcdatasection">createCDATASection()</a><span>, in §8.2</span>
@@ -5000,7 +5169,9 @@ neighboring rights to this work.</p>
    <li><a href="#dom-domimplementation-createdocument">createDocument(namespace, qualifiedName, doctype)</a><span>, in §4.5.1</span>
    <li><a href="#dom-domimplementation-createdocumenttype">createDocumentType(qualifiedName, publicId, systemId)</a><span>, in §4.5.1</span>
    <li><a href="#dom-document-createelement">createElement(localName)</a><span>, in §4.5</span>
+   <li><a href="#dom-document-createelement">createElement(localName, options)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createelementns">createElementNS(namespace, qualifiedName)</a><span>, in §4.5</span>
+   <li><a href="#dom-document-createelementns">createElementNS(namespace, qualifiedName, options)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createentityreference">createEntityReference()</a><span>, in §8.2</span>
    <li><a href="#dom-document-createevent">createEvent(interface)</a><span>, in §4.5</span>
    <li><a href="#dom-domimplementation-createhtmldocument">createHTMLDocument()</a><span>, in §4.5.1</span>
@@ -5014,8 +5185,11 @@ neighboring rights to this work.</p>
    <li><a href="#dom-document-createtreewalker">createTreeWalker(root)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createtreewalker">createTreeWalker(root, whatToShow)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createtreewalker">createTreeWalker(root, whatToShow, filter)</a><span>, in §4.5</span>
+   <li><a href="#concept-create-element">creating an element</a><span>, in §4.9</span>
    <li><a href="#dom-treewalker-currentnode">currentNode</a><span>, in §6.2</span>
    <li><a href="#dom-event-currenttarget">currentTarget</a><span>, in §3.2</span>
+   <li><a href="#concept-element-custom">custom</a><span>, in §4.9</span>
+   <li><a href="#concept-element-custom-element-state">custom element state</a><span>, in §4.9</span>
    <li><a href="#customevent">CustomEvent</a><span>, in §3.3</span>
    <li><a href="#dictdef-customeventinit">CustomEventInit</a><span>, in §3.3</span>
    <li><a href="#dom-customevent-customevent">CustomEvent(type)</a><span>, in §3.3</span>
@@ -5027,6 +5201,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-characterdata-data">attribute for CharacterData</a><span>, in §4.10</span>
     </ul>
    <li><a href="#dom-event-defaultprevented">defaultPrevented</a><span>, in §3.2</span>
+   <li><a href="#concept-element-defined">defined</a><span>, in §4.9</span>
    <li><a href="#dom-range-deletecontents">deleteContents()</a><span>, in §5.2</span>
    <li><a href="#dom-characterdata-deletedata">deleteData(offset, count)</a><span>, in §4.10</span>
    <li><a href="#concept-tree-descendant">descendant</a><span>, in §2.1</span>
@@ -5092,6 +5267,7 @@ neighboring rights to this work.</p>
      <li><a href="#concept-attribute-element">dfn for Attr</a><span>, in §4.9.2</span>
     </ul>
    <li><a href="#element">Element</a><span>, in §4.9</span>
+   <li><a href="#dictdef-elementcreationoptions">ElementCreationOptions</a><span>, in §4.5</span>
    <li><a href="#concept-element-interface">element interface</a><span>, in §4.5</span>
    <li><a href="#dom-node-element_node">ELEMENT_NODE</a><span>, in §4.4</span>
    <li><a href="#concept-node-empty">empty</a><span>, in §4.2</span>
@@ -5240,6 +5416,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-documenttype-internalsubset">internalSubset</a><span>, in §8.2</span>
    <li><a href="#dom-range-intersectsnode">intersectsNode(node)</a><span>, in §5.2</span>
    <li><a href="#concept-event-listener-invoke">invoke</a><span>, in §3.8</span>
+   <li><a href="#dom-elementcreationoptions-is">is</a><span>, in §4.5</span>
    <li><a href="#dom-node-isconnected">isConnected</a><span>, in §4.4</span>
    <li><a href="#dom-node-isdefaultnamespace">isDefaultNamespace(namespace)</a><span>, in §4.4</span>
    <li><a href="#dom-text-iselementcontentwhitespace">isElementContentWhitespace</a><span>, in §8.2</span>
@@ -5680,6 +5857,12 @@ namespace and local name localName</a><span>, in §4.4</span>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
+    <a data-link-type="biblio">[ECMASCRIPT]</a> defines the following terms:
+    <ul>
+     <li><a href="https://tc39.github.io/ecma262/#sec-construct">Construct</a>
+     <li><a href="https://tc39.github.io/ecma262/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a>
+    </ul>
+   <li>
     <a data-link-type="biblio">[CSSOM-VIEW]</a> defines the following terms:
     <ul>
      <li><a href="https://drafts.csswg.org/cssom-view-1/#dom-range-getboundingclientrect">getBoundingClientRect()</a>
@@ -5688,6 +5871,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li>
     <a data-link-type="biblio">[HTML]</a> defines the following terms:
     <ul>
+     <li><a href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#htmlhtmlelement">HTMLHtmlElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/comms.html#messageevent">MessageEvent</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a>
@@ -5728,6 +5912,8 @@ namespace and local name localName</a><span>, in §4.4</span>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
+   <dt id="biblio-ecmascript">[ECMASCRIPT]
+   <dd><a href="https://tc39.github.io/ecma262/">ECMAScript Language Specification</a>. URL: <a href="https://tc39.github.io/ecma262/">https://tc39.github.io/ecma262/</a>
    <dt id="biblio-encoding">[ENCODING]
    <dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/">Encoding Standard</a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
    <dt id="biblio-html">[HTML]
@@ -6016,8 +6202,8 @@ interface <a href="#document">Document</a> : <a data-link-type="idl-name" href="
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <a href="#dom-document-getelementsbytagnamens-namespace-localname-namespace">namespace</a>, DOMString <a href="#dom-document-getelementsbytagnamens-namespace-localname-localname">localName</a>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbyclassname">getElementsByClassName</a>(DOMString <a href="#dom-document-getelementsbyclassname-classnames-classnames">classNames</a>);
 
-  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelement">createElement</a>(DOMString <a href="#dom-document-createelement-localname-localname">localName</a>);
-  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelementns">createElementNS</a>(DOMString? <a href="#dom-document-createelementns-namespace-qualifiedname-namespace">namespace</a>, DOMString <a href="#dom-document-createelementns-namespace-qualifiedname-qualifiedname">qualifiedName</a>);
+  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelement">createElement</a>(DOMString <a href="#dom-document-createelement-localname-options-localname">localName</a>, optional <a data-link-type="idl-name" href="#dictdef-elementcreationoptions">ElementCreationOptions</a> <a href="#dom-document-createelement-localname-options-options">options</a>);
+  [NewObject] <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="method" href="#dom-document-createelementns">createElementNS</a>(DOMString? <a href="#dom-document-createelementns-namespace-qualifiedname-options-namespace">namespace</a>, DOMString <a href="#dom-document-createelementns-namespace-qualifiedname-options-qualifiedname">qualifiedName</a>, optional <a data-link-type="idl-name" href="#dictdef-elementcreationoptions">ElementCreationOptions</a> <a href="#dom-document-createelementns-namespace-qualifiedname-options-options">options</a>);
   [NewObject] <a data-link-type="idl-name" href="#documentfragment">DocumentFragment</a> <a class="idl-code" data-link-type="method" href="#dom-document-createdocumentfragment">createDocumentFragment</a>();
   [NewObject] <a data-link-type="idl-name" href="#text">Text</a> <a class="idl-code" data-link-type="method" href="#dom-document-createtextnode">createTextNode</a>(DOMString <a href="#dom-document-createtextnode-data-data">data</a>);
   [NewObject] <a data-link-type="idl-name" href="#comment">Comment</a> <a class="idl-code" data-link-type="method" href="#dom-document-createcomment">createComment</a>(DOMString <a href="#dom-document-createcomment-data-data">data</a>);
@@ -6040,6 +6226,10 @@ interface <a href="#document">Document</a> : <a data-link-type="idl-name" href="
 
 [Exposed=Window]
 interface <a href="#xmldocument">XMLDocument</a> : <a data-link-type="idl-name" href="#document">Document</a> {};
+
+dictionary <a href="#dictdef-elementcreationoptions">ElementCreationOptions</a> {
+  DOMString <a data-type="DOMString " href="#dom-elementcreationoptions-is">is</a>;
+};
 
 [Exposed=Window]
 interface <a href="#domimplementation">DOMImplementation</a> {
