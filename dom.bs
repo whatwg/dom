@@ -4699,9 +4699,8 @@ invoked, must run these steps:
  <li>Return <var>element</var>.
 </ol>
 
-The
-<dfn method for=Document><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>, <var>options</var>)</code></dfn>
-method, when invoked, must run these steps:
+<p>The <dfn>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
+<var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>, are as follows:
 
 <ol>
  <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
@@ -4718,15 +4717,21 @@ method, when invoked, must run these steps:
  <li>If <var>is</var> is non-null and <var>definition</var> is null, then <a>throw</a> a
  {{NotFoundError}}.
 
- <li>Let <var>element</var> be the result of <a>creating an element</a> given the
- <a>context object</a>, <var>localName</var>, <var>prefix</var>, <var>namespace</var>,
- <var>is</var>, and with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions.
+ <li><p>Let <var>element</var> be the result of <a>creating an element</a> given
+ <var>document</var>, <var>localName</var>, <var>prefix</var>, <var>namespace</var>, <var>is</var>,
+ and with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions.
 
  <li>If <var>is</var> is non-null, then <a>set an attribute value</a> for <var>element</var> using
  "<code>is</code>" and <var>is</var>.
 
  <li>Return <var>element</var>.
 </ol>
+
+<p>The
+<dfn method for=Document><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>, <var>options</var>)</code></dfn>
+method, when invoked, must return the result of running the
+<a>internal <code>createElementNS</code> steps</a>, given <a>context object</a>,
+<var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>.
 
 The <dfn method for=Document><code>createDocumentFragment()</code></dfn> method, when invoked,
 must return a new {{DocumentFragment}} <a>node</a> with its <a>node document</a> set to the
@@ -5023,7 +5028,7 @@ interface DOMImplementation {
   <a>doctype</a>.
 
   This method throws the same exceptions as the {{createElementNS()}} method, when
-  invoked with the same arguments.
+  invoked with <var>namespace</var> and <var>qualifiedName</var>.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a lt="createHTMLDocument()">createHTMLDocument([<var>title</var>])</a></code>
 
@@ -5053,40 +5058,34 @@ method, when invoked, must run these steps:
 <code><a type>PubidChar</a></code> production or that <var>systemId</var> does not contain both a
 '<code>"</code>' and a "<code>'</code>".
 
-The
-<dfn method for="DOMImplementation">createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)</dfn>
-method must run these steps:
+<p>The
+<dfn method for=DOMImplementation><code>createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)</code></dfn>
+method, when invoked, must run these steps:
 
 <ol>
  <li>
-  Let <var>document</var> be a new {{XMLDocument}}.
+  <p>Let <var>document</var> be a new {{XMLDocument}}.
 
   <p class="note no-backref">This method creates an {{XMLDocument}} rather than a normal
   <a>document</a>. They are identical except for the addition of the
   {{XMLDocument/load()}} method deployed content relies upon.
   [[!HTML]]
 
- <li>Let <var>element</var> be null.
+ <li><p>Let <var>element</var> be null.
 
- <li>If <var>qualifiedName</var> is not the empty string, set
- <var>element</var> to the result of invoking the
- {{Document/createElementNS()}} method
- with the arguments <var>namespace</var> and
- <var>qualifiedName</var> on <var>document</var>. Rethrow any exceptions.
- <!-- XXX needs cleanup -->
+ <li><p>If <var>qualifiedName</var> is not the empty string, then set <var>element</var> to the
+ result of running the <a>internal <code>createElementNS</code> steps</a>, given
+ <var>document</var>, <var>namespace</var>, <var>qualifiedName</var>, and an empty dictionary.
+ Rethrow any exceptions.
 
- <li>If <var>doctype</var> is not null,
- <a>append</a>
- <var>doctype</var> to <var>document</var>.
+ <li><p>If <var>doctype</var> is non-null, <a>append</a> <var>doctype</var> to <var>document</var>.
 
- <li>If <var>element</var> is not null,
- <a>append</a>
- <var>element</var> to <var>document</var>.
+ <li><p>If <var>element</var> is non-null, <a>append</a> <var>element</var> to <var>document</var>.
 
- <li><var>document</var>'s <a>origin</a> is the <a>origin</a> of the <a>context object</a>'s
+ <li><p><var>document</var>'s <a>origin</a> is the <a>origin</a> of the <a>context object</a>'s
  associated <a>document</a>. [[!HTML]]
 
- <li>Return <var>document</var>.
+ <li><p>Return <var>document</var>.
 </ol>
 
 The
