@@ -966,7 +966,7 @@ for historical reasons.
 <pre class=idl>
 [Exposed=(Window,Worker)]
 interface EventTarget {
-  void addEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
+  void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
   void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
   boolean dispatchEvent(Event event);
 };
@@ -978,6 +978,10 @@ callback interface EventListener {
 dictionary EventListenerOptions {
   boolean capture;
   boolean passive;
+};
+
+dictionary AddEventListenerOptions : EventListenerOptions {
+  boolean once;
 };
 </pre>
 
@@ -996,6 +1000,7 @@ when something has occurred.
  <li><b>callback</b> (an {{EventListener}})
  <li><b>capture</b> (a boolean, initially false)
  <li><b>passive</b> (a boolean, initially false)
+ <li><b>once</b> (a boolean, initially false)
  <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
@@ -1031,6 +1036,9 @@ specified otherwise it returns null.
   <b>callback</b> will not cancel the event by invoking {{preventDefault()}}. This is used to enable
   performance optimizations described in [[#observing-event-listeners]].
 
+  When set to true, <var>options</var>'s <code>once</code> member indicates that the <b>callback</b>
+  will only be invoked once after which the event listener will be removed.
+
   The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
   not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>,
   <b>capture</b> and <b>passive</b> values.
@@ -1048,7 +1056,8 @@ specified otherwise it returns null.
  {{Event/preventDefault()}} method was not invoked, and false otherwise.
 </dl>
 
-<p>To <dfn export for=Event id=concept-flatten-options>flatten</dfn> <var>options</var> run these steps:
+<p>To <dfn export for=Event id=concept-flatten-options>flatten</dfn> <var>options</var>, run these
+steps:
 
 <ol>
  <li><p>Let <var>capture</var> and <var>passive</var> be false.
@@ -1062,6 +1071,21 @@ specified otherwise it returns null.
  present in <var>options</var> with value true, then set <var>passive</var> to true.
 
  <li><p>Return <var>capture</var> and <var>passive</var>.
+</ol>
+
+<p>To <dfn export for=Event>flatten more</dfn><!-- sorry --> <var>options</var>, run these
+steps:
+
+<ol>
+ <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
+ <var>options</var>.
+
+ <li><p>Let <var>once</var> be false.
+
+ <li><p>If <var>options</var> is a dictionary and <code>{{AddEventListenerOptions/once}}</code> is
+ present in <var>options</var> with value true, then set <var>once</var> to true.
+
+ <li><p>Return <var>capture</var>, <var>passive</var>, and <var>once</var>.
 </ol>
 
 <p>The
@@ -1080,14 +1104,15 @@ method, when invoked, must run these steps:
 
  <li><p>If <var>callback</var> is null, terminate these steps.
 
- <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
- <var>options</var>.
+ <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
+ <a lt="flatten more">flattening more</a> <var>options</var>.
 
- <li><p>Append an <a>event listener</a> to the associated list of <a>event listeners</a> with
- <b>type</b> set to <var>type</var>, <b>callback</b> set to <var>callback</var>, <b>capture</b>
- set to <var>capture</var>, and <b>passive</b> set to <var>passive</var> unless there already is an
- <a>event listener</a> in that list with the same <b>type</b>, <b>callback</b>, <b>capture</b>, and
- <b>passive</b>.
+ <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
+ <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
+ <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var>, then append a new
+ <a>event listener</a> to it, whose <b>type</b> is <var>type</var>, <b>callback</b> is
+ <var>callback</var>, <b>capture</b> is <var>capture</var>, <b>passive</b> is <var>passive</var>,
+ and <b>once</b> is <var>once</var>.
 </ol>
 
 <p>The
@@ -1270,6 +1295,10 @@ an <var>object</var> with <var>event</var>, run these steps:
    <a>callback this value</a>. If this throws any exception, <a>report the exception</a>.
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
+
+   <li><p>If <var>listener</var>'s <b>once</b> is true, then set <var>listener</var>'s
+   <b>removed</b> to true and remove it from <var>object</var>'s associated list of
+   <a>event listeners</a>.
 
    <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set,
    return <var>found</var>.
