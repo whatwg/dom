@@ -2141,22 +2141,21 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
-To
-<dfn export lt="converting nodes into a node">convert <var>nodes</var> into a node</dfn>,
-run these steps:
+To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
+<var>nodes</var> and <var>document</var>, run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be null.
 
- <li><p>Replace each string in <var>nodes</var> with a {{Text}} <a>node</a> whose
- <a>data</a> is the string.
+ <li><p>Replace each string in <var>nodes</var> with a new {{Text}} <a>node</a> whose <a>data</a> is
+ the string and <a>node document</a> is <var>document</var>.
 
  <li><p>If <var>nodes</var> contains one <a>node</a>, set <var>node</var> to that
  <a>node</a>.
 
- <li><p>Otherwise, set <var>node</var> to a new {{DocumentFragment}}, and then
- <a>append</a> each <a>node</a> in <var>nodes</var>, if any, to it. Rethrow any
- exceptions.
+ <li><p>Otherwise, set <var>node</var> to a new {{DocumentFragment}} whose <a>node document</a> is
+ <var>document</var>, and then <a>append</a> each <a>node</a> in <var>nodes</var>, if any, to it.
+ Rethrow any exceptions.
 
  <li><p>Return <var>node</var>.
 </ol>
@@ -2272,10 +2271,11 @@ The
 method must run these steps:
 
 <ol>
- <li>Let <var>node</var> be the result of <a>converting <var>nodes</var> into a node</a>.
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <var>nodes</var> and <a>context object</a>'s <a>node document</a>. Rethrow any exceptions.
 
- <li><a>Pre-insert</a> <var>node</var> into the <a>context object</a>
-  before the <a>context object</a>'s <a>first child</a>.
+ <li><p><a>Pre-insert</a> <var>node</var> into <a>context object</a> before the
+ <a>context object</a>'s <a>first child</a>. Rethrow any exceptions.
 </ol>
 
 The
@@ -2283,10 +2283,10 @@ The
 method must run these steps:
 
 <ol>
- <li>Let <var>node</var> be the result of <a>converting <var>nodes</var> into a node</a>.
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <var>nodes</var> and <a>context object</a>'s <a>node document</a>. Rethrow any exceptions.
 
- <li><a>Append</a>
- <var>node</var> to the <a>context object</a>.
+ <li><p><a>Append</a> <var>node</var> to <a>context object</a>. Rethrow any exceptions.
 </ol>
 
 <!--The <dfn method for=ParentNode><code>query(<var>relativeSelectors</var>)</code></dfn>
@@ -2412,15 +2412,15 @@ invoked, must run these steps:
  <li><p>Let <var>viablePreviousSibling</var> be <a>context object</a>'s first
  <a>preceding</a> <a>sibling</a> not in <var>nodes</var>, and null otherwise.
 
- <li><p>Let <var>node</var> be the result of
- <a>converting <var>nodes</var> into a node</a>.
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
+ <var>nodes</var> and <a>context object</a>'s <a>node document</a>. Rethrow any exceptions.
 
  <li><p>If <var>viablePreviousSibling</var> is non-null, set it to
  <var>viablePreviousSibling</var>'s <a>next sibling</a>, and to <var>parent</var>'s
  <a>first child</a> otherwise.
 
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
- <var>viablePreviousSibling</var>.
+ <var>viablePreviousSibling</var>. Rethrow any exceptions.
 </ol>
 
 The <dfn method for=ChildNode><code>after(<var>nodes</var>)</code></dfn> method, when
@@ -2434,11 +2434,11 @@ invoked, must run these steps:
  <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
  <a>sibling</a> not in <var>nodes</var>, and null otherwise.
 
- <li><p>Let <var>node</var> be the result of
- <a>converting <var>nodes</var> into a node</a>.
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
+ <var>nodes</var> and <a>context object</a>'s <a>node document</a>. Rethrow any exceptions.
 
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
- <var>viableNextSibling</var>.
+ <var>viableNextSibling</var>. Rethrow any exceptions.
 </ol>
 
 The <dfn method for=ChildNode><code>replaceWith(<var>nodes</var>)</code></dfn> method,
@@ -2452,17 +2452,17 @@ when invoked, must run these steps:
  <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
  <a>sibling</a> not in <var>nodes</var>, and null otherwise.
 
- <li><p>Let <var>node</var> be the result of
- <a>converting <var>nodes</var> into a node</a>.
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
+ <var>nodes</var> and <a>context object</a>'s <a>node document</a>. Rethrow any exceptions.
 
  <li>
   <p>If <a>context object</a>'s <a>parent</a> is <var>parent</var>, <a>replace</a> the
-  <a>context object</a> with <var>node</var> within <var>parent</var>.
+  <a>context object</a> with <var>node</var> within <var>parent</var>. Rethrow any exceptions.
 
   <p class=note><a>Context object</a> could have been inserted into <var>node</var>.
 
  <li><p>Otherwise, <a>pre-insert</a> <var>node</var> into <var>parent</var> before
- <var>viableNextSibling</var>.
+ <var>viableNextSibling</var>. Rethrow any exceptions.
 </ol>
 
 The <dfn method for=ChildNode><code>remove()</code></dfn> method, when invoked, must run
@@ -3585,8 +3585,8 @@ following, switching on <a>context object</a>:
  <dd>Null.
 </dl>
 
-<p>The {{Node/textContent}} attribute's setter must, if the new value is null, act as if it was the
-empty string instead, and then do as described below, switching on <a>context object</a>:
+<p>The {{Node/textContent}} attribute's setter must, if the given value is null, act as if it was
+the empty string instead, and then do as described below, switching on <a>context object</a>:
 
 <dl class=switch>
  <dt>{{DocumentFragment}}
@@ -3595,26 +3595,23 @@ empty string instead, and then do as described below, switching on <a>context ob
  <!--AttrExodus <dt>{{Attr}} -->
  <dd>
   <ol>
-   <li>Let <var>node</var> be null.
+   <li><p>Let <var>node</var> be null.
 
-   <li>If new value is not the empty string, set <var>node</var> to
-   a new {{Text}} <a>node</a> whose
-   <a>data</a> is new value.
+   <li><p>If the given value is not the empty string, set <var>node</var> to a new {{Text}}
+   <a>node</a> whose <a>data</a> is the given value and <a>node document</a> is
+   <a>context object</a>'s <a>node document</a>.
 
-   <li><a>Replace all</a> with
-   <var>node</var> within the <a>context object</a>.
+   <li><p><a>Replace all</a> with <var>node</var> within the <a>context object</a>.
   </ol>
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd><a>Replace data</a> with node
- <a>context object</a>, offset 0, count
- {{CharacterData/length}} attribute value, and
- data new value.
+ <dd><p><a>Replace data</a> with node <a>context object</a>, offset 0, count
+ {{CharacterData/length}} attribute value, and data the given value.
 
  <dt>Any other node
- <dd>Do nothing.
+ <dd><p>Do nothing.
 </dl>
 
 <hr>
@@ -6273,7 +6270,8 @@ method, when invoked, must return the result of running <a>insert adjacent</a>, 
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>Let <var>text</var> be a new <code>Text</code> object whose <a>data</a> is <var>data</var>.
+ <li><p>Let <var>text</var> be a new {{Text}} <a>node</a>  whose <a>data</a> is <var>data</var> and
+ <a>node document</a> is <a>context object</a>'s <a>node document</a>.
 
  <li><p>Run <a>insert adjacent</a>, given <a>context object</a>, <var>where</var>, and
  <var>text</var>. Rethrow any exceptions.

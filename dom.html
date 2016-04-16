@@ -1346,18 +1346,18 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="doc
    <p class="note no-backref" role="note">The <code class="idl"><a data-link-type="idl" href="#documentorshadowroot">DocumentOrShadowRoot</a></code> mixin is expected to be used by other
 standards that want to define APIs shared between <a data-link-type="dfn" href="#concept-document">documents</a> and <a data-link-type="dfn" href="#concept-shadow-root">shadow roots</a>. </p>
    <h4 class="heading settled" data-level="4.2.6" id="interface-parentnode"><span class="secno">4.2.6. </span><span class="content">Mixin <code class="idl"><a data-link-type="idl" href="#parentnode">ParentNode</a></code></span><a class="self-link" href="#interface-parentnode"></a></h4>
-   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="converting nodes into a node" id="converting-nodes-into-a-node">convert <var>nodes</var> into a node<a class="self-link" href="#converting-nodes-into-a-node"></a></dfn>,
-run these steps:</p>
+   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="converting nodes into a node" id="converting-nodes-into-a-node">convert nodes into a node<a class="self-link" href="#converting-nodes-into-a-node"></a></dfn>, given <var>nodes</var> and <var>document</var>, run these steps:</p>
    <ol>
     <li>
      <p>Let <var>node</var> be null. </p>
     <li>
-     <p>Replace each string in <var>nodes</var> with a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is the string. </p>
+     <p>Replace each string in <var>nodes</var> with a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is
+ the string and <a data-link-type="dfn" href="#concept-node-document">node document</a> is <var>document</var>. </p>
     <li>
      <p>If <var>nodes</var> contains one <a data-link-type="dfn" href="#concept-node">node</a>, set <var>node</var> to that <a data-link-type="dfn" href="#concept-node">node</a>. </p>
     <li>
-     <p>Otherwise, set <var>node</var> to a new <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code>, and then <a data-link-type="dfn" href="#concept-node-append">append</a> each <a data-link-type="dfn" href="#concept-node">node</a> in <var>nodes</var>, if any, to it. Rethrow any
- exceptions. </p>
+     <p>Otherwise, set <var>node</var> to a new <code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> whose <a data-link-type="dfn" href="#concept-node-document">node document</a> is <var>document</var>, and then <a data-link-type="dfn" href="#concept-node-append">append</a> each <a data-link-type="dfn" href="#concept-node">node</a> in <var>nodes</var>, if any, to it.
+ Rethrow any exceptions. </p>
     <li>
      <p>Return <var>node</var>. </p>
    </ol>
@@ -1407,13 +1407,17 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="par
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="attribute" data-export="" id="dom-parentnode-childelementcount">childElementCount<a class="self-link" href="#dom-parentnode-childelementcount"></a></dfn> attribute must return the number of <a data-link-type="dfn" href="#concept-tree-child">children</a> of the <a data-link-type="dfn" href="#context-object">context object</a> that are <a data-link-type="dfn" href="#concept-element">elements</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" data-lt="prepend(nodes...)|prepend(nodes)" id="dom-parentnode-prepend">prepend(<var>nodes</var>)<a class="self-link" href="#dom-parentnode-prepend"></a></dfn> method must run these steps:</p>
    <ol>
-    <li>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>. 
-    <li><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into the <a data-link-type="dfn" href="#context-object">context object</a> before the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-first-child">first child</a>. 
+    <li>
+     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting nodes into a node</a> given <var>nodes</var> and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. Rethrow any exceptions. </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <a data-link-type="dfn" href="#context-object">context object</a> before the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-first-child">first child</a>. Rethrow any exceptions. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" data-lt="append(nodes...)|append(nodes)" id="dom-parentnode-append">append(<var>nodes</var>)<a class="self-link" href="#dom-parentnode-append"></a></dfn> method must run these steps:</p>
    <ol>
-    <li>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>. 
-    <li><a data-link-type="dfn" href="#concept-node-append">Append</a> <var>node</var> to the <a data-link-type="dfn" href="#context-object">context object</a>. 
+    <li>
+     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting nodes into a node</a> given <var>nodes</var> and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. Rethrow any exceptions. </p>
+    <li>
+     <p><a data-link-type="dfn" href="#concept-node-append">Append</a> <var>node</var> to <a data-link-type="dfn" href="#context-object">context object</a>. Rethrow any exceptions. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselector"><code>querySelector(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselector"></a></dfn> method, when invoked, must return the first result of running <a data-link-type="dfn" href="#scope-match-a-selectors-string">scope-match a selectors string</a> <var>selectors</var> against the <a data-link-type="dfn" href="#context-object">context object</a>, and null if the result is an empty list otherwise.</p>
    <p>The <dfn class="idl-code" data-dfn-for="ParentNode" data-dfn-type="method" data-export="" id="dom-parentnode-queryselectorall"><code>querySelectorAll(<var>selectors</var>)</code><a class="self-link" href="#dom-parentnode-queryselectorall"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-collection-static">static</a> result of
@@ -1483,11 +1487,11 @@ invoked, must run these steps:</p>
     <li>
      <p>Let <var>viablePreviousSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first <a data-link-type="dfn" href="#concept-tree-preceding">preceding</a> <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise. </p>
     <li>
-     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>. </p>
+     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting nodes into a node</a>, given <var>nodes</var> and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. Rethrow any exceptions. </p>
     <li>
      <p>If <var>viablePreviousSibling</var> is non-null, set it to <var>viablePreviousSibling</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>, and to <var>parent</var>’s <a data-link-type="dfn" href="#concept-tree-first-child">first child</a> otherwise. </p>
     <li>
-     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before <var>viablePreviousSibling</var>. </p>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before <var>viablePreviousSibling</var>. Rethrow any exceptions. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="after(nodes...)|after(nodes)" id="dom-childnode-after"><code>after(<var>nodes</var>)</code><a class="self-link" href="#dom-childnode-after"></a></dfn> method, when
 invoked, must run these steps:</p>
@@ -1499,9 +1503,9 @@ invoked, must run these steps:</p>
     <li>
      <p>Let <var>viableNextSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first <a data-link-type="dfn" href="#concept-tree-following">following</a> <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise. </p>
     <li>
-     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>. </p>
+     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting nodes into a node</a>, given <var>nodes</var> and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. Rethrow any exceptions. </p>
     <li>
-     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before <var>viableNextSibling</var>. </p>
+     <p><a data-link-type="dfn" href="#concept-node-pre-insert">Pre-insert</a> <var>node</var> into <var>parent</var> before <var>viableNextSibling</var>. Rethrow any exceptions. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" data-lt="replaceWith(nodes...)|replaceWith(nodes)" id="dom-childnode-replacewith"><code>replaceWith(<var>nodes</var>)</code><a class="self-link" href="#dom-childnode-replacewith"></a></dfn> method,
 when invoked, must run these steps:</p>
@@ -1513,12 +1517,12 @@ when invoked, must run these steps:</p>
     <li>
      <p>Let <var>viableNextSibling</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s first <a data-link-type="dfn" href="#concept-tree-following">following</a> <a data-link-type="dfn" href="#concept-tree-sibling">sibling</a> not in <var>nodes</var>, and null otherwise. </p>
     <li>
-     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting <var>nodes</var> into a node</a>. </p>
+     <p>Let <var>node</var> be the result of <a data-link-type="dfn" href="#converting-nodes-into-a-node">converting nodes into a node</a>, given <var>nodes</var> and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. Rethrow any exceptions. </p>
     <li>
-     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is <var>parent</var>, <a data-link-type="dfn" href="#concept-node-replace">replace</a> the <a data-link-type="dfn" href="#context-object">context object</a> with <var>node</var> within <var>parent</var>. </p>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> is <var>parent</var>, <a data-link-type="dfn" href="#concept-node-replace">replace</a> the <a data-link-type="dfn" href="#context-object">context object</a> with <var>node</var> within <var>parent</var>. Rethrow any exceptions. </p>
      <p class="note" role="note"><a data-link-type="dfn" href="#context-object">Context object</a> could have been inserted into <var>node</var>. </p>
     <li>
-     <p>Otherwise, <a data-link-type="dfn" href="#concept-node-pre-insert">pre-insert</a> <var>node</var> into <var>parent</var> before <var>viableNextSibling</var>. </p>
+     <p>Otherwise, <a data-link-type="dfn" href="#concept-node-pre-insert">pre-insert</a> <var>node</var> into <var>parent</var> before <var>viableNextSibling</var>. Rethrow any exceptions. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="ChildNode" data-dfn-type="method" data-export="" id="dom-childnode-remove"><code>remove()</code><a class="self-link" href="#dom-childnode-remove"></a></dfn> method, when invoked, must run
 these steps:</p>
@@ -2104,26 +2108,29 @@ following, switching on <a data-link-type="dfn" href="#context-object">context o
     <dt>Any other node 
     <dd>Null. 
    </dl>
-   <p>The <code class="idl"><a data-link-type="idl" href="#dom-node-textcontent">textContent</a></code> attribute’s setter must, if the new value is null, act as if it was the
-empty string instead, and then do as described below, switching on <a data-link-type="dfn" href="#context-object">context object</a>: </p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-node-textcontent">textContent</a></code> attribute’s setter must, if the given value is null, act as if it was
+the empty string instead, and then do as described below, switching on <a data-link-type="dfn" href="#context-object">context object</a>: </p>
    <dl class="switch">
     <dt><code class="idl"><a data-link-type="idl" href="#documentfragment">DocumentFragment</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#element">Element</a></code> 
     <dd>
      <ol>
-      <li>Let <var>node</var> be null. 
-      <li>If new value is not the empty string, set <var>node</var> to
-   a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is new value. 
-      <li><a data-link-type="dfn" href="#concept-node-replace-all">Replace all</a> with <var>node</var> within the <a data-link-type="dfn" href="#context-object">context object</a>. 
+      <li>
+       <p>Let <var>node</var> be null. </p>
+      <li>
+       <p>If the given value is not the empty string, set <var>node</var> to a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is the given value and <a data-link-type="dfn" href="#concept-node-document">node document</a> is <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. </p>
+      <li>
+       <p><a data-link-type="dfn" href="#concept-node-replace-all">Replace all</a> with <var>node</var> within the <a data-link-type="dfn" href="#context-object">context object</a>. </p>
      </ol>
     <dt><code class="idl"><a data-link-type="idl" href="#text">Text</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> 
     <dt><code class="idl"><a data-link-type="idl" href="#comment">Comment</a></code> 
-    <dd><a data-link-type="dfn" href="#concept-cd-replace">Replace data</a> with node <a data-link-type="dfn" href="#context-object">context object</a>, offset 0, count <code class="idl"><a data-link-type="idl" href="#dom-characterdata-length">length</a></code> attribute value, and
- data new value. 
+    <dd>
+     <p><a data-link-type="dfn" href="#concept-cd-replace">Replace data</a> with node <a data-link-type="dfn" href="#context-object">context object</a>, offset 0, count <code class="idl"><a data-link-type="idl" href="#dom-characterdata-length">length</a></code> attribute value, and data the given value. </p>
     <dt>Any other node 
-    <dd>Do nothing. 
+    <dd>
+     <p>Do nothing. </p>
    </dl>
    <hr>
    <dl class="domintro">
@@ -3576,7 +3583,7 @@ invoked, must run these steps:</p>
    <p>The <dfn class="idl-code" data-dfn-for="Element" data-dfn-type="method" data-export="" id="dom-element-insertadjacenttext"><code>insertAdjacentText(<var>where</var>, <var>data</var>)</code><a class="self-link" href="#dom-element-insertadjacenttext"></a></dfn> method, when invoked, must run these steps: </p>
    <ol>
     <li>
-     <p>Let <var>text</var> be a new <code>Text</code> object whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var>. </p>
+     <p>Let <var>text</var> be a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var> and <a data-link-type="dfn" href="#concept-node-document">node document</a> is <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a>. </p>
     <li>
      <p>Run <a data-link-type="dfn" href="#insert-adjacent">insert adjacent</a>, given <a data-link-type="dfn" href="#context-object">context object</a>, <var>where</var>, and <var>text</var>. Rethrow any exceptions. </p>
    </ol>
