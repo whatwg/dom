@@ -5573,11 +5573,10 @@ given a <var>document</var>, <var>localName</var>, <var>prefix</var>, <var>names
 <var>A</var> is in its
 <a for=Element>attribute list</a>.
 
-This specification uses and
-<a lt="other applicable specifications">applicable specifications</a> can use the hooks an
-<dfn export>attribute is set</dfn>, an <dfn export>attribute is changed</dfn>, an
-<dfn export>attribute is added</dfn>, and an <dfn export>attribute is removed</dfn>, for
-further processing of the <a>attribute</a>'s <a for=Attr>value</a>.
+This and <a lt="other applicable specifications">other specifications</a> may define
+<dfn id=concept-element-attributes-change-ext>attribute change steps</dfn> for
+<a for=/>elements</a>. The algorithm is passed <var>element</var>, <var>localName</var>,
+<var>oldValue</var>, <var>value</var>, and <var>namespace</var>.
 
 To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
 <a>attribute</a> <var>attribute</var>
@@ -5598,11 +5597,12 @@ to <var>value</var>, run these steps:
  list containing <var>attribute</var>'s <a for=Attr>local name</a>, <var>attribute</var>'s
  <a for=Attr>value</a>, <var>value</var>, and <var>attribute</var>'s <a for=Attr>namespace</a>.
 
+ <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, <var>value</var>, and
+ <var>attribute</var>'s <a for=Attr>namespace</a>.
+
  <li>Set <var>attribute</var>'s
  <a for=Attr>value</a> to <var>value</var>.
-
- <li>An <a>attribute is set</a> and an
- <a>attribute is changed</a>.
 </ol>
 
 To <dfn export id=concept-element-attributes-append lt="append an attribute">append</dfn> an
@@ -5623,14 +5623,15 @@ run these steps:
  list containing <var>attribute</var>'s <a for=Attr>local name</a>, null, <var>attribute</var>'s
  <a for=Attr>value</a>, and <var>attribute</var>'s <a for=Attr>namespace</a>.
 
+ <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
+ <a for=Attr>local name</a>, null, <var>attribute</var>'s <a for=Attr>value</a>, and
+ <var>attribute</var>'s <a for=Attr>namespace</a>.
+
  <li>Append the <var>attribute</var> to the <var>element</var>'s
  <a for=Element>attribute list</a>.
 
  <li>Set <var>attribute</var>'s
  <a for=Attr>element</a> to <var>element</var>.
-
- <li>An <a>attribute is set</a> and an
- <a>attribute is added</a>.
 </ol>
 
 To <dfn export id=concept-element-attributes-remove lt="remove an attribute">remove</dfn> an
@@ -5652,14 +5653,16 @@ run these steps:
  list containing <var>attribute</var>'s <a for=Attr>local name</a>, <var>attribute</var>'s
  <a for=Attr>value</a>, null, and <var>attribute</var>'s <a for=Attr>namespace</a>.
 
+ <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, null, and
+ <var>attribute</var>'s <a for=Attr>namespace</a>.
+
  <li>Remove <var>attribute</var> from the
  <var>element</var>'s
  <a for=Element>attribute list</a>.
 
  <li>Set <var>attribute</var>'s
  <a for=Attr>element</a> to null.
-
- <li>An <a>attribute is removed</a>.
 </ol>
 
 To <dfn export id=concept-element-attributes-replace lt="replace an attribute">replace</dfn> an
@@ -5678,14 +5681,16 @@ in an <a for="/">element</a> <var>element</var>, run these steps:
  <a for=Attr>value</a>, <var>newAttr</var>'s <a for=Attr>value</a>, and <var>oldAttr</var>'s
  <a for=Attr>namespace</a>.
 
+ <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>oldAttr</var>'s
+ <a for=Attr>local name</a>, <var>oldAttr</var>'s <a for=Attr>value</a>, <var>newAttr</var>'s
+ <a for=Attr>value</a>, and <var>oldAttr</var>'s <a for=Attr>namespace</a>.
+
  <li><p>Replace <var>oldAttr</var> by <var>newAttr</var> in the <var>element</var>'s
  <a for=Element>attribute list</a>.
 
  <li><p>Set <var>oldAttr</var>'s <a for=Attr>element</a> to null.
 
  <li><p>Set <var>newAttr</var>'s <a for=Attr>element</a> to <var>element</var>.
-
- <li><p>An <a>attribute is set</a> and an <a>attribute is changed</a>.
 </ol>
 
 <hr>
@@ -5825,24 +5830,15 @@ the HTML <code>id</code> <a>attribute</a> and a DTD. This specification makes <a
 concept of the DOM and allows for only one per <a for="/">element</a>, given by an
 <a lt="named attribute"><code>id</code> attribute</a>.
 
-When an <a for="/">element</a> is created that
-<a lt="has an attribute">has</a> an
-<a lt="named attribute"><code>id</code> attribute</a> whose
-<a for=Attr>value</a> is not the empty string or
-when an <a for="/">element</a>'s
-<a lt="named attribute"><code>id</code> attribute</a> is
-<a lt="attribute is set">set</a> to a
-<a for=Attr>value</a> other than the empty
-string, set the <a for="/">element</a>'s
-<a>ID</a> to the new
-<a for=Attr>value</a>.
+<p>Use these <a>attribute change steps</a> to update an <a for=/>element</a>'s <a>ID</a>:
 
-When an <a for="/">element</a>'s
-<a lt="named attribute"><code>id</code> attribute</a> is
-<a lt="attribute is removed">removed</a> or
-<a lt="attribute is set">set</a> to the empty string, unset the
-<a for="/">element</a>'s
-<a>ID</a>.
+<ol>
+ <li><p>If <var>localName</var> is <code>id</code>, <var>namespace</var> is null, and
+ <var>value</var> is null or the empty string, then unset <var>element</var>'s <a>ID</a>.
+
+ <li><p>Otherwise, if <var>localName</var> is <code>id</code>, <var>namespace</var> is null, then
+ set <var>element</var>'s <a>ID</a> to <var>value</var>.
+</ol>
 
 <p class="note no-backref">While this specification defines requirements for <code>class</code>,
 <code>id</code>, and <code>slot</code> <a>attributes</a> on any <a for="/">element</a>, it makes no
@@ -9203,17 +9199,33 @@ are to return the result of running <a>get an attribute value</a> given the asso
 
 <hr>
 
-<p>When a {{DOMTokenList}} object is created and its associated <a for="/">element</a>
-<a lt="has an attribute">has</a> an
-<a lt="named attribute"><var>associated attribute's local name</var> attribute</a> or
-associated <a for="/">element</a>'s
-<a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
-<a lt="attribute is set">set</a>, set <a>tokens</a> to the new <a for=Attr>value</a>,
-<a lt="ordered set parser">parsed</a>.
+<p>A {{DOMTokenList}} object has these <a>attribute change steps</a> for its associated
+<a for=/>element</a>:
 
-<p>When an associated <a for="/">element</a>'s
-<a lt="named attribute"><var>associated attribute's local name</var> attribute</a> is
-<a lt="attribute is removed">removed</a>, set <a>tokens</a> to the empty set.
+<ol>
+ <li><p>If <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
+ <var>namespace</var> is null, and <var>value</var> is null, then set <a>tokens</a> to the empty
+ set.
+
+ <li><p>Otherwise, <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
+ <var>namespace</var> is null, then set <a>tokens</a> to <var>value</var>,
+ <a lt="ordered set parser">parsed</a>.
+</ol>
+
+<p>When a {{DOMTokenList}} object is created, run these substeps:
+
+<ol>
+ <li><p>Let <var>element</var> be associated <a for=/>element</a>.
+
+ <li><p>Let <var>localName</var> be associated attribute's <a for=Attr>local name</a>.
+
+ <li><p>Let <var>value</var> be the result of
+ <a lt="get an attribute by namespace and local name">getting an attribute</a> given null,
+ <var>localName</var>, and <var>element</var>.
+
+ <li><p>Run the <a>attribute change steps</a> for <var>element</var>, <var>localName</var>,
+ <var>value</var>, <var>value</var>, and null.
+</ol>
 
 <dl class="domintro">
  <dt><code><var>tokenlist</var> . {{DOMTokenList/length}}</code>
