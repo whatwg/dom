@@ -1574,14 +1574,8 @@ otherwise it is the empty string.</p>
 
    <li><p>Let <var>assignedSlot</var> be <var>element</var>'s <a for=slotable>assigned slot</a>.
 
-   <li>
-    <p>If <var>assignedSlot</var> is non-null, then:
-
-    <ol>
-     <li><p>Run <a>signal a slot change</a> for <var>assignedSlot</var>.
-
-     <li><p>Run <a>assign slotables</a> for <var>assignedSlot</var>.
-    </ol>
+   <li><p>If <var>assignedSlot</var> is non-null, then run <a>signal a slot change</a> for
+   <var>assignedSlot</var> run <a>assign slotables</a> for <var>assignedSlot</var>.
 
    <li><p>Run <a>assign a slot</a> for <var>element</var>.
   </ol>
@@ -1707,14 +1701,8 @@ list of <a>slots</a> <var>newSlots</var> (empty unless stated otherwise), run th
 <ol>
  <li><p>Let <var>slot</var> be the result of <a>finding a slot</a>, given <a>slotable</a>.
 
- <li>
-  <p>If <var>slot</var> is non-null, then:
-
-  <ol>
-   <li><p>Run <a>assign slotables</a> for <var>slot</var>.
-
-   <li><p>Run <a>signal a slot change</a> for <var>slot</var>.
-  </ol>
+ <li><p>If <var>slot</var> is non-null, then run <a>assign slotables</a> for <var>slot</var> and run
+ <a>signal a slot change</a> for <var>slot</var>.
 </ol>
 
 <h5 id=signaling-slot-change>Signaling slot change</h5>
@@ -1726,7 +1714,9 @@ list of <a>slots</a> <var>newSlots</var> (empty unless stated otherwise), run th
 <p>To <dfn>signal a slot change</dfn>, for a <a>slot</a> <var>slot</var>, run these steps:
 
 <ol>
- <li><p>Append <var>slot</var> to <a>signal slot list</a>.
+ <li><p>If <var>slot</var> is not in <a>unit of related similar-origin browsing contexts</a>'
+ <a>signal slot list</a>, append <var>slot</var> to
+ <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
 
  <li><p>Let <var>assigned</var> be <var>slot</var>'s <a>assigned slot</a>.
 
@@ -2905,6 +2895,8 @@ To <dfn export>notify mutation observers</dfn>, run these steps:
 
  <li><p>Let <var>signalList</var> be a copy of
  <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+
+ <li><p>Empty <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
 
  <li><p>For each <a>slot</a> <var>slot</var> in <var>signalList</var>, in order,
  <a>fire an event</a> named <code>slotchange</code>, with its {{Event/bubbles}} attribute set to
