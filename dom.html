@@ -2292,7 +2292,7 @@ run these steps:</p>
       <p>If <var>node</var> is an <a data-link-type="dfn" href="#concept-element">element</a>, then: </p>
       <ol>
        <li>
-        <p>Let <var>copy</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a>, given <var>document</var>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-local-name">local name</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace">namespace</a>, and the
+        <p>Let <var>copy</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a>, given <var>document</var>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-local-name">local name</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace">namespace</a>, <var>node</var>’s <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a>, and the
    value of <var>node</var>’s <code>is</code> attribute if present (or null if not). The <var>synchronous custom elements flag</var> should be unset. </p>
        <li>
         <p>For each <var>attribute</var> in <var>node</var>’s <a data-link-type="dfn" href="#concept-element-attribute">attribute list</a>, in order, run these substeps: </p>
@@ -2741,8 +2741,8 @@ invoked, must run these steps:</p>
     <li>If <var>is</var> is non-null and <var>definition</var> is null, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a></code>. 
     <li>Let <var>namespace</var> be the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, if the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-document-content-type">content type</a> is "<code>text/html</code>" or
  "<code>application/xhtml+xml</code>", and null otherwise. 
-    <li>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>localName</var>, null, <var>namespace</var>, <var>is</var>, and
- with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions. 
+    <li>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>localName</var>, <var>namespace</var>, null, <var>is</var>, and with
+ the <var>synchronous custom elements</var> flag set. Rethrow any exceptions. 
     <li>If <var>is</var> is non-null, then <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for <var>element</var> using
  "<code>is</code>" and <var>is</var>. 
     <li>Return <var>element</var>. 
@@ -2756,7 +2756,7 @@ invoked, must run these steps:</p>
     <li>Let <var>definition</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/scripting.html#look-up-a-custom-element-definition">looking up a custom element definition</a>, given the <a data-link-type="dfn" href="#context-object">context object</a>, <var>namespace</var>, <var>localName</var>, and <var>is</var>. 
     <li>If <var>is</var> is non-null and <var>definition</var> is null, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a></code>. 
     <li>
-     <p>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given <var>document</var>, <var>localName</var>, <var>prefix</var>, <var>namespace</var>, <var>is</var>,
+     <p>Let <var>element</var> be the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given <var>document</var>, <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>,
  and with the <var>synchronous custom elements</var> flag set. Rethrow any exceptions. </p>
     <li>If <var>is</var> is non-null, then <a data-link-type="dfn" href="#concept-element-attributes-set-value">set an attribute value</a> for <var>element</var> using
  "<code>is</code>" and <var>is</var>. 
@@ -3268,8 +3268,12 @@ behavior of the <a href="#mutation-algorithms">mutation algorithms</a>.</p>
    <p class="note" role="note">User agents could have this as an internal slot as an optimization, but are not
 required to do so. The standard has this concept for readability. </p>
    <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="create an element|creating an element" id="concept-create-element">create an element<a class="self-link" href="#concept-create-element"></a></dfn>,
-given a <var>document</var>, <var>localName</var>, <var>prefix</var>, <var>namespace</var>, <var>is</var>, and optional <var>synchronous custom elements flag</var>, run these steps: </p>
+given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and optional <var>prefix</var>, <var>is</var>, and <var>synchronous custom elements flag</var>, run these steps: </p>
    <ol>
+    <li>
+     <p>If <var>prefix</var> was not given, let <var>prefix</var> be null. </p>
+    <li>
+     <p>If <var>is</var> was not given, let <var>is</var> be null. </p>
     <li>
      <p>Let <var>result</var> be null. </p>
     <li>
