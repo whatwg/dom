@@ -1685,12 +1685,12 @@ a given <a>slot</a> <var>slot</var>, run these steps:</p>
 </ol>
 
 <p>To <dfn>assign slotables for a tree</dfn>, given a <a>tree</a> <var>tree</var> and an optional
-list of <a>slots</a> <var>newSlots</var> (empty unless stated otherwise), run these steps for each
-<a>slot</a> <var>slot</var> in <var>tree</var>, in <a>tree order</a>:
+set of <a>slots</a> <var>noSignalSlots</var> (empty unless stated otherwise), run these steps for
+each <a>slot</a> <var>slot</var> in <var>tree</var>, in <a>tree order</a>:
 
 <ol>
- <li><p>Let <var>suppress signaling flag</var> be set, if <var>slot</var> is in <var>newSlots</var>,
- and unset otherwise.</p></li>
+ <li><p>Let <var>suppress signaling flag</var> be set, if <var>slot</var> is in
+ <var>noSignalSlots</var>, and unset otherwise.</p></li>
 
  <li><p>Run <a>assign slotables</a> for <var>slot</var> with <var>suppress signaling flag</var>.
 </ol>
@@ -1901,13 +1901,8 @@ into a <var>parent</var> before a <var>child</var>, with an optional
    <li><p>If <var>parent</var> is a <a>slot</a> whose <a>assigned nodes</a> is the empty list, then
    run <a>signal a slot change</a> for <var>parent</var>.
 
-   <li><p>Let <var>newSlots</var> be a new empty list.
-
-   <li><p>Append each <a>inclusive descendant</a> of <var>node</var> that is a <a>slot</a>, to
-   <var>newSlots</var>.
-
-   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a> and
-   <var>newSlots</var>.
+   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a> and a set
+   containing each <a>inclusive descendant</a> of <var>node</var> that is a <a>slot</a>.
 
    <li>
     <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
@@ -2186,9 +2181,14 @@ steps:
  <li><p>If <var>parent</var> is a <a>slot</a> whose <a>assigned nodes</a> is the empty list, then
  run <a>signal a slot change</a> for <var>parent</var>.
 
- <li><p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then run
- <a>assign slotables for a tree</a> with <var>parent</var>'s <a>tree</a> and run
- <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a>.
+ <li><p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
+
+  <ol>
+   <li><p>Run <a>assign slotables for a tree</a> with <var>parent</var>'s <a>tree</a>.
+
+   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a> and a set
+   containing each <a>inclusive descendant</a> of <var>node</var> that is a <a>slot</a>.
+  </ol>
 
  <li><p>Run the <a>removing steps</a> with <var>node</var> and <var>parent</var>.
 

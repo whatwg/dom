@@ -71,7 +71,7 @@
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-04-18">18 April 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-04-19">19 April 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -1185,11 +1185,11 @@ a given <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var>, r
      <p>For each <var>slotable</var> in <var>slotables</var>, set <var>slotable</var>’s <a data-link-type="dfn" href="#slotable-assigned-slot">assigned slot</a> to <var>slot</var>. </p>
    </ol>
    <p>To <dfn data-dfn-type="dfn" data-noexport="" id="assign-slotables-for-a-tree">assign slotables for a tree<a class="self-link" href="#assign-slotables-for-a-tree"></a></dfn>, given a <a data-link-type="dfn" href="#concept-tree">tree</a> <var>tree</var> and an optional
-list of <a data-link-type="dfn" href="#concept-slot">slots</a> <var>newSlots</var> (empty unless stated otherwise), run these steps for each <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var> in <var>tree</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>: </p>
+set of <a data-link-type="dfn" href="#concept-slot">slots</a> <var>noSignalSlots</var> (empty unless stated otherwise), run these steps for
+each <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var> in <var>tree</var>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>: </p>
    <ol>
     <li>
-     <p>Let <var>suppress signaling flag</var> be set, if <var>slot</var> is in <var>newSlots</var>,
- and unset otherwise.</p>
+     <p>Let <var>suppress signaling flag</var> be set, if <var>slot</var> is in <var>noSignalSlots</var>, and unset otherwise.</p>
     <li>
      <p>Run <a data-link-type="dfn" href="#assign-slotables">assign slotables</a> for <var>slot</var> with <var>suppress signaling flag</var>. </p>
    </ol>
@@ -1281,11 +1281,8 @@ The algorithm is passed <var>insertedNode</var>, as indicated in the <a data-lin
        <p>If <var>parent</var> is a <a data-link-type="dfn" href="#concept-slot">slot</a> whose <a data-link-type="dfn" href="#slot-assigned-nodes">assigned nodes</a> is the empty list, then
    run <a data-link-type="dfn" href="#signal-a-slot-change">signal a slot change</a> for <var>parent</var>. </p>
       <li>
-       <p>Let <var>newSlots</var> be a new empty list. </p>
-      <li>
-       <p>Append each <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>node</var> that is a <a data-link-type="dfn" href="#concept-slot">slot</a>, to <var>newSlots</var>. </p>
-      <li>
-       <p>Run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>node</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> and <var>newSlots</var>. </p>
+       <p>Run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>node</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> and a set
+   containing each <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>node</var> that is a <a data-link-type="dfn" href="#concept-slot">slot</a>. </p>
       <li>
        <p>For each <a data-link-type="dfn" href="#concept-shadow-including-inclusive-descendant">shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>, in <a data-link-type="dfn" href="#concept-shadow-including-tree-order">shadow-including tree order</a>, run these subsubsteps: </p>
        <ol>
@@ -1394,7 +1391,14 @@ steps:</p>
      <p>If <var>parent</var> is a <a data-link-type="dfn" href="#concept-slot">slot</a> whose <a data-link-type="dfn" href="#slot-assigned-nodes">assigned nodes</a> is the empty list, then
  run <a data-link-type="dfn" href="#signal-a-slot-change">signal a slot change</a> for <var>parent</var>. </p>
     <li>
-     <p>If <var>node</var> has an <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> that is a <a data-link-type="dfn" href="#concept-slot">slot</a>, then run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>parent</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> and run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>node</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a>. </p>
+     <p>If <var>node</var> has an <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> that is a <a data-link-type="dfn" href="#concept-slot">slot</a>, then: </p>
+     <ol>
+      <li>
+       <p>Run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>parent</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a>. </p>
+      <li>
+       <p>Run <a data-link-type="dfn" href="#assign-slotables-for-a-tree">assign slotables for a tree</a> with <var>node</var>’s <a data-link-type="dfn" href="#concept-tree">tree</a> and a set
+   containing each <a data-link-type="dfn" href="#concept-tree-inclusive-descendant">inclusive descendant</a> of <var>node</var> that is a <a data-link-type="dfn" href="#concept-slot">slot</a>. </p>
+     </ol>
     <li>
      <p>Run the <a data-link-type="dfn" href="#concept-node-remove-ext">removing steps</a> with <var>node</var> and <var>parent</var>. </p>
     <li>
@@ -3276,7 +3280,7 @@ given a <var>document</var>, <var>localName</var>, <var>prefix</var>, <var>names
          <p>Set <var>result</var> to <a data-link-type="abstract-op" href="https://tc39.github.io/ecma262/#sec-construct">Construct</a>(<var>C</var>). Rethrow any
      exceptions. </p>
         <li>
-         <p>If <var>result</var> does not implement the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://tc39.github.io/ecma262/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a></code> exception. </p>
+         <p>If <var>result</var> does not implement the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl">TypeError</a></code> exception. </p>
          <p class="note" role="note">This is meant to be a brand check to ensure that the object was allocated by the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> constructor. See <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
       precise. </p>
         <li>
@@ -5022,7 +5026,7 @@ other chapters are defined by the <cite>UI Events</cite> specification. <a data-
    </ul>
    <h3 class="heading settled" data-level="8.2" id="dom-core-changes"><span class="secno">8.2. </span><span class="content">DOM Core</span><a class="self-link" href="#dom-core-changes"></a></h3>
    <p>These are the changes made to the features described in <cite>DOM Level 3 Core</cite>.</p>
-   <p><code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-domexception">DOMException</a></code>, and <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a></code> are now defined in Web IDL.</p>
+   <p><code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code>, and <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a></code> are now defined in Web IDL.</p>
    <p><code class="idl"><a data-link-type="idl" href="#node">Node</a></code> now inherits from <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code>.</p>
    <p><a data-link-type="dfn" href="#concept-node">Nodes</a> are implicitly <a data-link-type="dfn" href="#concept-node-adopt">adopted</a> across <a data-link-type="dfn" href="#concept-document">document</a> boundaries.</p>
    <p><a data-link-type="dfn" href="#concept-doctype">Doctypes</a> now always have a <a data-link-type="dfn" href="#concept-node-document">node document</a> and can be moved
@@ -6122,7 +6126,6 @@ namespace and local name localName</a><span>, in §4.4</span>
     <a data-link-type="biblio">[ECMASCRIPT]</a> defines the following terms:
     <ul>
      <li><a href="https://tc39.github.io/ecma262/#sec-construct">Construct</a>
-     <li><a href="https://tc39.github.io/ecma262/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a>
     </ul>
    <li>
     <a data-link-type="biblio">[css-animations-1]</a> defines the following terms:
@@ -6192,7 +6195,19 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li>
     <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
     <ul>
+     <li><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a>
      <li><a href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a>
+     <li><a href="https://heycam.github.io/webidl/#hierarchyrequesterror">HierarchyRequestError</a>
+     <li><a href="https://heycam.github.io/webidl/#inuseattributeerror">InUseAttributeError</a>
+     <li><a href="https://heycam.github.io/webidl/#indexsizeerror">IndexSizeError</a>
+     <li><a href="https://heycam.github.io/webidl/#invalidcharactererror">InvalidCharacterError</a>
+     <li><a href="https://heycam.github.io/webidl/#invalidnodetypeerror">InvalidNodeTypeError</a>
+     <li><a href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a>
+     <li><a href="https://heycam.github.io/webidl/#namespaceerror">NamespaceError</a>
+     <li><a href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a>
+     <li><a href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a>
+     <li><a href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a>
+     <li><a href="https://heycam.github.io/webidl/#wrongdocumenterror">WrongDocumentError</a>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
