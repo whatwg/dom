@@ -49,19 +49,6 @@ urlPrefix: https://heycam.github.io/webidl/
         text: supported property indices
         text: supported property names
         text: code unit
-    type: exception
-        text: HierarchyRequestError
-        text: IndexSizeError
-        text: InUseAttributeError
-        text: InvalidCharacterError
-        text: InvalidNodeTypeError
-        text: InvalidStateError
-        text: NamespaceError
-        text: NotFoundError
-        text: NotSupportedError
-        text: SyntaxError
-        text: WrongDocumentError
-        text: DOMException; urlPrefix: #dfn-
     type: interface;
         text: DOMTimeStamp; urlPrefix: #common-
 urlPrefix: https://html.spec.whatwg.org/multipage/
@@ -98,7 +85,6 @@ urlPrefix: https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#
         text: has ever been evaluated flag
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Construct; url: sec-construct; type: abstract-op
-    text: TypeError; url: sec-native-error-types-used-in-this-standard-typeerror; type: exception
 </pre>
 
 <pre class='link-defaults'>
@@ -442,13 +428,11 @@ The <dfn export>XMLNS namespace</dfn> is
 To <dfn export>validate</dfn> a <var>qualifiedName</var>, run these steps:
 
 <ol>
- <li>If <var>qualifiedName</var> does not match the
- <code><a type>Name</a></code> production, <a>throw</a>
- an {{InvalidCharacterError}} exception.
+ <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production,
+ then <a>throw</a> an {{InvalidCharacterError}}.
 
- <li>If <var>qualifiedName</var> does not match the
- <code><a type>QName</a></code> production,
- <a>throw</a> a {{NamespaceError}} exception.
+ <li><p>If <var>qualifiedName</var> does not match the <code><a type>QName</a></code> production,
+ then <a>throw</a> a {{NamespaceError}}.
 </ol>
 
 To <dfn export>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>,
@@ -467,21 +451,19 @@ run these steps:
  string on it and set <var>prefix</var> to the part before and <var>localName</var> to
  the part after.
 
- <li>If <var>prefix</var> is non-null and <var>namespace</var> is null,
- <a>throw</a> a {{NamespaceError}} exception.
+ <li>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
+ {{NamespaceError}}.
 
- <li>If <var>prefix</var> is "<code>xml</code>" and <var>namespace</var> is
- not the <a>XML namespace</a>, <a>throw</a> a
- {{NamespaceError}} exception.
+ <li>If <var>prefix</var> is "<code>xml</code>" and <var>namespace</var> is not the
+ <a>XML namespace</a>, then <a>throw</a> a {{NamespaceError}}.
 
  <li>If either <var>qualifiedName</var> or <var>prefix</var> is
  "<code>xmlns</code>" and <var>namespace</var> is not the
- <a>XMLNS namespace</a>, <a>throw</a> a
- {{NamespaceError}} exception.
+ <a>XMLNS namespace</a>, then <a>throw</a> a
+ {{NamespaceError}}.
 
- <li>If <var>namespace</var> is the <a>XMLNS namespace</a> and neither
- <var>qualifiedName</var> nor <var>prefix</var> is "<code>xmlns</code>",
- <a>throw</a> a {{NamespaceError}} exception.
+ <li>If <var>namespace</var> is the <a>XMLNS namespace</a> and neither <var>qualifiedName</var>
+ nor <var>prefix</var> is "<code>xmlns</code>", then <a>throw</a> a {{NamespaceError}}.
 
  <li>Return <var>namespace</var>, <var>prefix</var>, and <var>localName</var>.
 </ol>
@@ -1128,7 +1110,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <var>event</var>'s <a>dispatch flag</a> is set, or if its <a>initialized flag</a> is not
- set, <a>throw</a> an {{InvalidStateError}} exception.
+ set, then <a>throw</a> an {{InvalidStateError}}.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to false.
 
@@ -1282,7 +1264,7 @@ an <var>object</var> with <var>event</var>, run these steps:
 
    <li><p>Call <var>listener</var>'s <b>callback</b>'s {{EventListener/handleEvent()}}, with
    <var>event</var> as argument and <var>event</var>'s {{Event/currentTarget}} attribute value as
-   <a>callback this value</a>. If this throws any exception, <a>report the exception</a>.
+   <a>callback this value</a>. If this throws an exception, <a>report the exception</a>.
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
 
@@ -1735,10 +1717,8 @@ of a <var>node</var> into a <var>parent</var> before a
  of <var>parent</var>, <a>throw</a> a
  {{HierarchyRequestError}}.
 
- <li>If <var>child</var> is not null and its
- <a>parent</a> is not
- <var>parent</var>, <a>throw</a> a
- {{NotFoundError}} exception.
+ <li>If <var>child</var> is not null and its <a>parent</a> is not <var>parent</var>, then
+ <a>throw</a> a {{NotFoundError}}.
 
  <li>If <var>node</var> is not a
  {{DocumentFragment}}, {{DocumentType}},
@@ -1957,10 +1937,8 @@ steps:
  of <var>parent</var>, <a>throw</a> a
  {{HierarchyRequestError}}.
 
- <li>If <var>child</var>'s
- <a>parent</a> is not
- <var>parent</var>, <a>throw</a> a
- {{NotFoundError}} exception.
+ <li>If <var>child</var>'s <a>parent</a> is not <var>parent</var>, then <a>throw</a> a
+ {{NotFoundError}}.
 
  <li>If <var>node</var> is not a
  {{DocumentFragment}}, {{DocumentType}},
@@ -2100,10 +2078,8 @@ To <dfn export for=Node id=concept-node-pre-remove>pre-remove</dfn> a
 <var>child</var> from a <var>parent</var>, run these steps:
 
 <ol>
- <li>If <var>child</var>'s
- <a>parent</a> is not
- <var>parent</var>, <a>throw</a> a
- {{NotFoundError}} exception.
+ <li>If <var>child</var>'s <a>parent</a> is not <var>parent</var>, then <a>throw</a> a
+ {{NotFoundError}}.
 
  <li><a>Remove</a> <var>child</var>
  from <var>parent</var>.
@@ -3962,8 +3938,8 @@ dom-Range-extractContents, dom-Range-cloneContents -->
 invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a> is a <a for=/>shadow root</a>, <a>throw</a> a {{NotSupportedError}}
- exception.
+ <li><p>If <a>context object</a> is a <a for=/>shadow root</a>, then <a>throw</a> a
+ {{NotSupportedError}}.
 
  <li><p>Return a <a lt="clone a node">clone</a> of the <a>context object</a>, with the
  <i>clone children flag</i> set if <var>deep</var> is true.
@@ -4739,8 +4715,7 @@ for the <a>context object</a>.
 
   If <var>localName</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}}
-  exception will be thrown.
+  {{InvalidCharacterError}} will be thrown.
 
   When supplied, <var>options</var>' <code>is</code> member can be used to create a
   <a>customized built-in element</a>.
@@ -4761,12 +4736,10 @@ for the <a>context object</a>.
 
   If <var>localName</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}}
-  exception will be thrown.
+  {{InvalidCharacterError}} will be thrown.
 
   If one of the following conditions is true a
-  {{NamespaceError}} exception
-  will be thrown:
+  {{NamespaceError}} will be thrown:
 
   <ul>
    <li><var>localName</var> does not match the
@@ -4809,11 +4782,9 @@ for the <a>context object</a>.
   <a>data</a> is <var>data</var>.
   If <var>target</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}}
-  exception will be thrown.
+  {{InvalidCharacterError}} will be thrown.
   If <var>data</var> contains "<code>?></code>" an
-  {{InvalidCharacterError}}
-  exception will be thrown.
+  {{InvalidCharacterError}} will be thrown.
 </dl>
 
 The <dfn export id=concept-element-interface>element interface</dfn> for any
@@ -4828,10 +4799,8 @@ The <dfn method for=Document><code>createElement(<var>localName</var>, <var>opti
 invoked, must run these steps:
 
 <ol>
- <li>If <var>localName</var> does not match the
- <code><a type>Name</a></code> production,
- <a>throw</a> an
- {{InvalidCharacterError}} exception.
+ <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
+ <a>throw</a> an {{InvalidCharacterError}}.
 
  <li>If the <a>context object</a> is an <a>HTML document</a>,
  let <var>localName</var> be
@@ -4923,17 +4892,11 @@ method, when invoked, must run these steps:
  <li>If <var>target</var> does not match the
  <!--<code data-anolis-type>PITarget</code>-->
  <code><a type>Name</a></code> production,
- <a>throw</a> an
- {{InvalidCharacterError}} exception. <!-- DOM3 does not check for "xml" -->
+ then <a>throw</a> an {{InvalidCharacterError}}. <!-- DOM3 does not check for "xml" -->
 
  <li>If <var>data</var> contains the string
- "<code>?></code>", <a>throw</a> an
- {{InvalidCharacterError}} exception. <!-- Gecko does this. -->
-
- <!--<li>If <var>target</var> contains a U+003A COLON (":")
- character, <a>throw</a> a
- {{NamespaceError}} exception.-->
- <!-- DOM3 didn't check this -->
+ "<code>?></code>", then <a>throw</a> an
+ {{InvalidCharacterError}}. <!-- Gecko does this. -->
 
  <li>Return a new {{ProcessingInstruction}}
  <a>node</a>, with
@@ -4959,7 +4922,7 @@ method, when invoked, must run these steps:
   <var>node</var>'s <a>descendants</a>.
 
   If <var>node</var> is a <a>document</a> or a <a for=/>shadow root</a>, throws a
-  {{NotSupportedError}} exception.
+  {{NotSupportedError}}.
 
  <dt><var>node</var> = <var>document</var> . {{adoptNode(node)}}
 
@@ -4968,19 +4931,18 @@ method, when invoked, must run these steps:
   <a>document</a> and returns it.
 
   If <var>node</var> is a <a>document</a>, throws a {{NotSupportedError}} or, if
-  <var>node</var> is a <a for=/>shadow root</a>, throws a {{HierarchyRequestError}} exception.
+  <var>node</var> is a <a for=/>shadow root</a>, throws a {{HierarchyRequestError}}.
 </dl>
 
 The <dfn method for=Document><code>importNode(<var>node</var>, <var>deep</var>)</code></dfn> method,
 when invoked, must run these steps:
 
 <ol>
- <li>If <var>node</var> is a <a>document</a> or <a for=/>shadow root</a>, <a>throw</a> a
- {{NotSupportedError}} exception.
+ <li><p>If <var>node</var> is a <a>document</a> or <a for=/>shadow root</a>, then <a>throw</a> a
+ {{NotSupportedError}}.
 
- <li>Return a <a lt="clone a node">clone</a> of
- <var>node</var>, with <a>context object</a> and the
- <i>clone children flag</i> set if <var>deep</var> is true.
+ <li><p>Return a <a lt="clone a node">clone</a> of <var>node</var>, with <a>context object</a> and
+ the <i>clone children flag</i> set if <var>deep</var> is true.
 </ol>
 
 <a lt="Other applicable specifications">Specifications</a> may define
@@ -5017,11 +4979,10 @@ The <dfn method for=Document><code>adoptNode(<var>node</var>)</code></dfn> metho
 must run these steps:
 
 <ol>
- <li>If <var>node</var> is a <a>document</a>, <a>throw</a> a {{NotSupportedError}}
- exception.
+ <li>If <var>node</var> is a <a>document</a>, then <a>throw</a> a {{NotSupportedError}}.
 
- <li>If <var>node</var> is a <a for=/>shadow root</a>, <a>throw</a> a {{HierarchyRequestError}}
- exception.
+ <li>If <var>node</var> is a <a for=/>shadow root</a>, then <a>throw</a> a
+ {{HierarchyRequestError}}.
 
  <li><a>Adopt</a> <var>node</var>
  into the <a>context object</a>.
@@ -5035,9 +4996,8 @@ The <dfn method for=Document><code>createAttribute(<var>localName</var>)</code><
 invoked, must run these steps:
 
 <ol>
- <li>If <var>localName</var> does not match the <code><a type>Name</a></code>
- production in XML, <a>throw</a> an
- {{InvalidCharacterError}} exception.
+ <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
+ then <a>throw</a> an {{InvalidCharacterError}}.
 
  <li>If the <a>context object</a> is an <a>HTML document</a>, let
  <var>localName</var> be <a>converted to ASCII lowercase</a>.
@@ -5199,11 +5159,9 @@ interface DOMImplementation {
   <var>qualifiedName</var>, <var>publicId</var>, and
   <var>systemId</var>. If <var>qualifiedName</var> does not
   match the <code><a type>Name</a></code> production, an
-  {{InvalidCharacterError}}
-  exception is thrown, and if it does not match the
+  {{InvalidCharacterError}} is thrown, and if it does not match the
   <code><a type>QName</a></code> production, a
-  {{NamespaceError}} exception
-  is thrown.
+  {{NamespaceError}} is thrown.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a method lt="createDocument()">createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code>
 
@@ -5647,7 +5605,7 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
 
      <li>
       <p>If <var>result</var> does not implement the {{HTMLElement}} interface, <a>throw</a> a
-      {{TypeError}} exception.
+      <code>TypeError</code>.
 
       <p class=note>This is meant to be a brand check to ensure that the object was allocated by the
       {{HTMLElement}} constructor. See
@@ -5655,23 +5613,22 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
       precise.
      </li>
 
-     <li><p>If <var>result</var>'s <a for=Element>attribute list</a> is not empty, <a>throw</a> a
-     {{NotSupportedError}} exception.
+     <li><p>If <var>result</var>'s <a for=Element>attribute list</a> is not empty, then <a>throw</a>
+     a {{NotSupportedError}}.
 
-     <li><p>If <var>result</var> has <a>children</a>, <a>throw</a> a {{NotSupportedError}}
-     exception.
+     <li><p>If <var>result</var> has <a>children</a>, then <a>throw</a> a {{NotSupportedError}}.
 
-     <li><p>If <var>result</var>'s <a>parent</a> is not null, <a>throw</a> a {{NotSupportedError}}
-     exception.
+     <li><p>If <var>result</var>'s <a>parent</a> is not null, then <a>throw</a> a
+     {{NotSupportedError}}.
 
-     <li><p>If <var>result</var>'s <a>node document</a> is not <var>document</var>, <a>throw</a> a
-     {{NotSupportedError}} exception.
+     <li><p>If <var>result</var>'s <a>node document</a> is not <var>document</var>, then
+     <a>throw</a> a {{NotSupportedError}}.
 
      <li><p>If <var>result</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
-     <a>throw</a> a {{NotSupportedError}} exception.
+     then <a>throw</a> a {{NotSupportedError}}.
 
      <li><p>If <var>result</var>'s <a for=Element>local name</a> is not equal to
-     <var>localName</var>, <a>throw</a> a {{NotSupportedError}} exception.
+     <var>localName</var>, then <a>throw</a> a {{NotSupportedError}}.
 
      <li><p>Set <var>result</var>'s <a for=Element>namespace prefix</a> to <var>prefix</var>.
 
@@ -6137,7 +6094,7 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
- XML, <a>throw</a> an {{InvalidCharacterError}} exception.
+ XML, then <a>throw</a> an {{InvalidCharacterError}}.
 
  <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a>node document</a> is
  an <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
@@ -6232,14 +6189,12 @@ The
 method, when invoked, must run these steps:
 
 <ol>
- <li>If <var>attr</var> is not in <a>context object</a>'s
- <a for=Element>attribute list</a>,
- <a>throw</a> a {{NotFoundError}} exception.
+ <li><p>If <var>attr</var> is not in <a>context object</a>'s <a for=Element>attribute list</a>, then
+ <a>throw</a> a {{NotFoundError}}.
 
- <li><a lt="remove an attribute">Remove</a> <var>attr</var>
- from <a>context object</a>.
+ <li><p><a lt="remove an attribute">Remove</a> <var>attr</var> from <a>context object</a>.
 
- <li>Return <var>attr</var>.
+ <li><p>Return <var>attr</var>.
 </ol>
 
 <hr>
@@ -6258,7 +6213,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <a>context object</a>'s <a for=Element>namespace</a> is <em>not</em> the
- <a>HTML namespace</a>, then throw a {{NotSupportedError}} exception.
+ <a>HTML namespace</a>, then <a>throw</a> a {{NotSupportedError}}.
 
  <li><p>If <a>context object</a>'s <a for=Element>local name</a> is <em>not</em> a
  <a>valid custom element name</a>,
@@ -6278,10 +6233,10 @@ invoked, must run these steps:
  "<code>nav</code>",
  "<code>p</code>",
  "<code>section</code>", or
- "<code>span</code>", then throw a {{NotSupportedError}} exception.
+ "<code>span</code>", then <a>throw</a> a {{NotSupportedError}}.
 
- <li><p>If <a>context object</a>'s <a for=Element>shadow root</a> is non-null, then throw an
- {{InvalidStateError}} exception.
+ <li><p>If <a>context object</a>'s <a for=Element>shadow root</a> is non-null, then <a>throw</a> an
+ {{InvalidStateError}}.
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a>node document</a> is
  <a>context object</a>'s <a>node document</a>, <a for=DocumentFragment>host</a> is
@@ -6410,7 +6365,7 @@ for the <a>context object</a>.
   <a>parent</a> before <var>element</var>'s <a for=tree>next sibling</a>. Rethrow any exceptions.
 
  <dt>Otherwise</dt>
- <dd><p>Throw a {{SyntaxError}} exception.
+ <dd><p><a>Throw</a> a {{SyntaxError}}.
 </dl>
 
 <p>The
@@ -6531,8 +6486,7 @@ method, when invoked, must run these steps:
  <a lt="remove an attribute by name">removing an attribute</a> given
  <var>qualifiedName</var> and <a for=NamedNodeMap>element</a>.
 
- <li><p>If <var>attr</var> is null, <a>throw</a> a
- {{NotFoundError}} exception.
+ <li><p>If <var>attr</var> is null, then <a>throw</a> a {{NotFoundError}}.
 
  <li><p>Return <var>attr</var>.
 </ol>
@@ -6546,7 +6500,7 @@ method, when invoked, must run these steps:
  <a lt="remove an attribute by namespace and local name">removing an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <a for=NamedNodeMap>element</a>.
 
- <li><p>If <var>attr</var> is null, <a>throw</a> a {{NotFoundError}} exception.
+ <li><p>If <var>attr</var> is null, then <a>throw</a> a {{NotFoundError}}.
 
  <li><p>Return <var>attr</var>.
 </ol>
@@ -6688,9 +6642,8 @@ To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=conc
  <li>Let <var>length</var> be <var>node</var>'s
  {{CharacterData/length}} attribute value.
 
- <li>If <var>offset</var> is greater than <var>length</var>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ {{IndexSizeError}}.
 
  <li>If <var>offset</var> plus <var>count</var> is greater
  than <var>length</var> let <var>count</var> be
@@ -6787,9 +6740,8 @@ To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=conc
  <li>Let <var>length</var> be <var>node</var>'s
  {{CharacterData/length}} attribute value.
 
- <li>If <var>offset</var> is greater than <var>length</var>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ {{IndexSizeError}}.
 
  <li>If <var>offset</var> plus <var>count</var> is
  greater than <var>length</var>, return a string whose value is the
@@ -6881,9 +6833,8 @@ To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text
  <li>Let <var>length</var> be <var>node</var>'s
  {{CharacterData/length}} attribute value.
 
- <li>If <var>offset</var> is greater than <var>length</var>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ {{IndexSizeError}}.
 
  <li>Let <var>count</var> be <var>length</var> minus
  <var>offset</var>.
@@ -7447,15 +7398,10 @@ To <dfn export id=concept-range-bp-set lt="set the start|set the end" for=Range>
 (<var>node</var>, <var>offset</var>), run these steps:
 
 <ol>
- <li>If <var>node</var> is a
- <a>doctype</a>,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
 
- <li>If <var>offset</var> is greater than
- <var>node</var>'s <a>length</a>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
+ {{IndexSizeError}}.
 
  <li>Let <var>bp</var> be the
  <a>boundary point</a>
@@ -7518,9 +7464,7 @@ method must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a>parent</a>.
 
- <li>If <var>parent</var> is null,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
 
  <li><a>Set the start</a> of the
  <a>context object</a> to
@@ -7537,9 +7481,7 @@ method must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a>parent</a>.
 
- <li>If <var>parent</var> is null,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
 
  <li><a>Set the start</a> of the
  <a>context object</a> to
@@ -7556,9 +7498,7 @@ method must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a>parent</a>.
 
- <li>If <var>parent</var> is null,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
 
  <li><a>Set the end</a> of the
  <a>context object</a> to
@@ -7574,9 +7514,7 @@ method must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a>parent</a>.
 
- <li>If <var>parent</var> is null,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
 
  <li><a>Set the end</a> of the
  <a>context object</a> to
@@ -7644,15 +7582,16 @@ method must run these steps:
 
 <ol>
  <li>
-  If <var>how</var> is not one of
-  <ul>
+  <p>If <var>how</var> is not one of
+
+  <ul class=brief>
    <li>{{Range/START_TO_START}},
    <li>{{Range/START_TO_END}},
    <li>{{Range/END_TO_END}}, and
    <li>{{Range/END_TO_START}},
   </ul>
-  <a>throw</a> a
-  {{NotSupportedError}} exception.
+
+  <p>then <a>throw</a> a {{NotSupportedError}}.
  <!--
  Apparent behaviors from black-box testing:
 
@@ -7674,11 +7613,8 @@ method must run these steps:
  Opera) instead of a nonstandard exception type.
  -->
 
- <li>If <a>context object</a>'s
- <a for=Range>root</a> is not the same as
- <var>sourceRange</var>'s <a for=Range>root</a>,
- <a>throw</a> a
- {{WrongDocumentError}} exception.
+ <li>If <a>context object</a>'s <a for=Range>root</a> is not the same as <var>sourceRange</var>'s
+ <a for=Range>root</a>, then <a>throw</a> a {{WrongDocumentError}}.
 
  <li>
   If <var>how</var> is:
@@ -7925,9 +7861,8 @@ To <dfn export id=concept-range-extract lt="extract a range" local-lt="extract">
  <var>range</var>, in <a>tree order</a>.
 
  <li>
-  If any member of <var>contained children</var> is a
-  <a>doctype</a>, <a>throw</a> a
-  {{HierarchyRequestError}} exception.
+  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
+  {{HierarchyRequestError}}.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
   doesn't throw. I go with IE9 and Chrome 12 dev, which don't remove any
@@ -8189,9 +8124,8 @@ of a <a>range</a> <var>range</var>, run these steps:
  <var>range</var>, in <a>tree order</a>.
 
  <li>
-  If any member of <var>contained children</var> is a
-  <a>doctype</a>, <a>throw</a> a
-  {{HierarchyRequestError}} exception.
+  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
+  {{HierarchyRequestError}}.
 
   <p class="note no-backref">We do not have to worry about the first or last partially
   contained node, because a <a>doctype</a> can never be
@@ -8320,10 +8254,9 @@ To <dfn export id=concept-range-insert for=Range>insert</dfn> a <a>node</a>
 <var>range</var>, run these steps:
 
 <ol>
- <li>If <var>range</var>'s <a>start node</a>
- is a {{ProcessingInstruction}} or {{Comment}} <a>node</a>, is a {{Text}}
- <a>node</a> whose <a>parent</a> is null, or is <var>node</var>, <a>throw</a>
- an {{HierarchyRequestError}} exception.
+ <li>If <var>range</var>'s <a>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
+ <a>node</a>, is a {{Text}} <a>node</a> whose <a>parent</a> is null, or is <var>node</var>, then
+ <a>throw</a> a {{HierarchyRequestError}}.
 
  <!--
  Behavior for Text node with null parent:
@@ -8446,8 +8379,7 @@ check first thing, which matches everyone but Firefox.
 <ol>
  <li>If a non-{{Text}} <a>node</a> is
  <a>partially contained</a> in the <a>context object</a>,
- <a>throw</a> an
- {{InvalidStateError}} exception.
+ then <a>throw</a> an {{InvalidStateError}}.
  <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
  unexpected. -->
  <!-- XXX Could we rephrase this condition to be more algorithmic and less
@@ -8456,8 +8388,7 @@ check first thing, which matches everyone but Firefox.
  <li>If <var>newParent</var> is a {{Document}},
  {{DocumentType}}, or {{DocumentFragment}}
  <a>node</a>,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ then <a>throw</a> an {{InvalidNodeTypeError}}.
  <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
  and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
  absolutely no sense, but it's what DOM 2 Range specifies, and it's what
@@ -8539,20 +8470,15 @@ must run these steps:
  <!-- This happens even if the offset is negative or too large, or if the node
  is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
- <li>If <var>node</var> is a
- <a>doctype</a>,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
  <!-- Firefox 9.0a2 doesn't throw.  It ignores the offset and returns true or
  false depending on whether the doctype itself is in the range.  This makes
  some sense, but it doesn't match how other Range APIs handle doctypes, and
  having the second argument mandatory but ignored is just weird.  Thus I go
  with Chrome 16 dev, although I can see the merit in how Gecko works here. -->
 
- <li>If <var>offset</var> is greater than
- <var>node</var>'s <a>length</a>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
+ {{IndexSizeError}}.
  <!-- Firefox 9.0a2 doesn't throw.  It seems to return true if the node is
  completely contained in the range, like with selectNode(), and false otherwise -
  even if all boundary points in the node are contained in the range, like
@@ -8577,26 +8503,18 @@ method must run these steps:
 and Opera Next 12.00 alpha all do. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a> is
- different from the <a>context object</a>'s
- <a for=Range>root</a>,
- <a>throw</a> a {{WrongDocumentError}}
- exception.
+ <li>If <var>node</var>'s <a for=tree>root</a> is different from the <a>context object</a>'s
+ <a for=Range>root</a>, then <a>throw</a> a {{WrongDocumentError}}.
  <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
  Firefox 12.0a1 and Chrome 17 dev. -->
 
- <li>If <var>node</var> is a
- <a>doctype</a>,
- <a>throw</a> an
- {{InvalidNodeTypeError}} exception.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw and seem to just ignore the offset instead.  See
  comment for isPointInRange(). -->
 
- <li>If <var>offset</var> is greater than
- <var>node</var>'s <a>length</a>,
- <a>throw</a> an
- {{IndexSizeError}} exception.
+ <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
+ {{IndexSizeError}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw.  See comment for isPointInRange(). -->
 
@@ -9398,15 +9316,15 @@ are to return the result of running <a>get an attribute value</a> given the asso
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="add()">add(<var>tokens</var>&hellip;)</a></code>
  <dd>
   <p>Adds all arguments passed, except those already present.
-  <p>Throws a {{SyntaxError}} exception if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
+  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
   <p>Removes arguments passed, if they are present.
-  <p>Throws a {{SyntaxError}} exception if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
+  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="toggle()">toggle(<var>token</var> [, <var>force</var>])</a></code>
@@ -9416,21 +9334,21 @@ are to return the result of running <a>get an attribute value</a> given the asso
   (same as {{add()}}). If <var>force</var> is false, removes <var>token</var> (same
   as {{DOMTokenList/remove()}}).
   <p>Returns true if <var>token</var> is now present, and false otherwise.
-  <p>Throws a {{SyntaxError}} exception if <var>token</var> is empty.
-  <p>Throws an {{InvalidCharacterError}} exception if <var>token</var> contains any spaces.
+  <p>Throws a {{SyntaxError}} if <var>token</var> is empty.
+  <p>Throws an {{InvalidCharacterError}} if <var>token</var> contains any spaces.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt=replace()>replace(<var>token</var>, <var>newToken</var>)</a></code>
  <dd>
   <p>Replaces <var>token</var> with <var>newToken</var>.
-  <p>Throws a {{SyntaxError}} exception if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} exception if one of the arguments contains any
+  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
+  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
   <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="supports()">supports(<var>token</var>)</a></code>
  <dd>
   <p>Returns true if <var>token</var> is in the associated attribute's supported tokens. Returns
   false otherwise.
-  <p>Throws a <code>TypeError</code> exception if the associated attribute has no supported tokens defined.
+  <p>Throws a <code>TypeError</code> if the associated attribute has no supported tokens defined.
 
  <dt><code><var>tokenlist</var> . {{DOMTokenList/value}}</code>
  <dd>
@@ -9467,10 +9385,10 @@ method, when invoked, must run these steps:
   <p>For each <var>token</var> in <var>tokens</var>, run these substeps:
 
   <ol>
-   <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
+   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
 
-   <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, <a>throw</a> an
-   {{InvalidCharacterError}} exception.
+   <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
+   {{InvalidCharacterError}}.
   </ol>
 
  <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
@@ -9488,10 +9406,10 @@ method, when invoked, must run these steps:
   <p>For each <var>token</var> in <var>tokens</var>, run these substeps:
 
   <ol>
-   <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
+   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
 
-   <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, <a>throw</a> an
-   {{InvalidCharacterError}} exception.
+   <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
+   {{InvalidCharacterError}}.
   </ol>
 
  <li><p>For each <var>token</var> in <var>tokens</var>, remove <var>token</var> from <a>tokens</a>.
@@ -9503,10 +9421,10 @@ method, when invoked, must run these steps:
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
+ <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
 
- <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, <a>throw</a> an
- {{InvalidCharacterError}} exception.
+ <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
+ {{InvalidCharacterError}}.
 
  <li>
   <p>If <var>token</var> is in <a>tokens</a>, run these substeps:
@@ -9535,11 +9453,11 @@ method, when invoked, must run these steps:
 <!-- Argument order based on String.prototype.replace(), not replaceChild() -->
 
 <ol>
- <li><p>If either <var>token</var> or <var>newToken</var> is the empty string, <a>throw</a> a
- {{SyntaxError}} exception.
+ <li><p>If either <var>token</var> or <var>newToken</var> is the empty string, then <a>throw</a> a
+ {{SyntaxError}}.
 
- <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>,
- <a>throw</a> an {{InvalidCharacterError}} exception.
+ <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>, then
+ <a>throw</a> an {{InvalidCharacterError}}.
 
  <li><p>If <var>token</var> is not in <a>tokens</a>, terminate these steps.
 
