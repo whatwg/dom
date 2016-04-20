@@ -1544,15 +1544,16 @@ otherwise it is the empty string.</p>
 
    <li><p>Otherwise, set <var>element</var>'s <a for=slotable>name</a> to <var>value</var>.
 
-   <li><p>If <var>element</var>'s <a for=slotable>assigned slot</a> is non-null, then run
-   <a>assign slotables</a> for <var>element</var>'s <a for=slotable>assigned slot</a>.
+   <li><p>If <var>element</var> is <a for=slotable>assigned</a>, then run <a>assign slotables</a>
+   for <var>element</var>'s <a for=slotable>assigned slot</a>.
 
    <li><p>Run <a>assign a slot</a> for <var>element</var>.
   </ol>
 </ol>
 
 <p>A <a>slotable</a> has an associated <dfn export for=slotable>assigned slot</dfn> (null or a
-<a>slot</a>). Unless stated otherwise it is null.</p>
+<a>slot</a>). Unless stated otherwise it is null. A <a>slotable</a> is
+<dfn export for=slotable>assigned</dfn> if its <a>assigned slot</a> is non-null.</p>
 
 <h5 id=finding-slots-and-slotables>Finding slots and slotables</h5>
 
@@ -1689,8 +1690,8 @@ steps:
  <a>signal slot list</a>, append <var>slot</var> to
  <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
 
- <li><p>If <var>slot</var>'s <a>assigned slot</a> is non-null, then run <a>signal a slot change</a>
- for <var>slot</var>'s <a>assigned slot</a>.
+ <li><p>If <var>slot</var> is <a for=slotable>assigned</a>, then run <a>signal a slot change</a> for
+ <var>slot</var>'s <a>assigned slot</a>.
 
  <li><p>Otherwise, if <var>slot</var>'s <a>parent</a> is a <a>slot</a> and <var>slot</var>'s
  <a>parent</a>'s <a>assigned nodes</a> is the empty list, then run <a>signal a slot change</a> for
@@ -1866,7 +1867,7 @@ into a <var>parent</var> before a <var>child</var>, with an optional
    <li><p>Insert <var>node</var> into <var>parent</var> before <var>child</var> or at the end of
    <var>parent</var> if <var>child</var> is null.
 
-   <li><p>If <var>parent</var>'s <a for=Element>shadow root</a> is non-null and <var>node</var> is a
+   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var> is a <a>slot</a> whose <a>assigned nodes</a> is the empty list, then
@@ -2142,7 +2143,7 @@ steps:
 
  <li>Remove <var>node</var> from its <var>parent</var>.
 
- <li><p>If <var>node</var>'s <a>assigned slot</a> is non-null, then run <a>assign slotables</a> for
+ <li><p>If <var>node</var> is <a for=slotable>assigned</a>, then run <a>assign slotables</a> for
  <var>node</var>'s <a>assigned slot</a>.
 
  <li><p>If <var>parent</var> is a <a>slot</a> whose <a>assigned nodes</a> is the empty list, then
@@ -5404,10 +5405,9 @@ or "<code>closed</code>").</p>
 <a>shadow-including preorder, depth-first traversal</a> of a <a>node tree</a>.
 <dfn noexport>shadow-including preorder, depth-first traversal</dfn> of a <a>node tree</a>
 <var>tree</var> is preorder, depth-first traversal of <var>tree</var>, with for each
-<a for=/>element</a> <var>element</var> encountered in <var>tree</var> with a non-null
-<a for=Element>shadow root</a>, <a>shadow-including preorder, depth-first traversal</a> of that
-<a for=/>element</a>'s <a for=Element>shadow root</a>'s <a>node tree</a> just after it is
-encountered.
+<a for=Element>shadow host</a> encountered in <var>tree</var>,
+<a>shadow-including preorder, depth-first traversal</a> of that <a for=/>element</a>'s
+<a for=Element>shadow root</a>'s <a>node tree</a> just after it is encountered.
 
 <p>The <dfn export id=concept-shadow-including-root>shadow-including root</dfn> of an object is its
 <a for=tree>root</a>'s <a for=DocumentFragment>host</a>'s <a>shadow-including root</a>, if the
@@ -5548,7 +5548,8 @@ behavior of the <a href=#mutation-algorithms>mutation algorithms</a>.</p>
 
 <p><a for=/>Elements</a> also have an associated
 <dfn export id=concept-element-shadow-root for=Element>shadow root</dfn> (null or a
-<a for=/>shadow root</a>). It is null unless otherwise stated.
+<a for=/>shadow root</a>). It is null unless otherwise stated. An <a for=/>element</a> is a
+<dfn export for=Element>shadow host</dfn> if its <a for=Element>shadow root</a> is non-null.
 
 <p>An <a for=/>element</a>'s
 <dfn export id=concept-element-qualified-name for=Element>qualified name</dfn> is its
@@ -6245,7 +6246,7 @@ invoked, must run these steps:
  "<code>section</code>", or
  "<code>span</code>", then <a>throw</a> a {{NotSupportedError}}.
 
- <li><p>If <a>context object</a>'s <a for=Element>shadow root</a> is non-null, then <a>throw</a> an
+ <li><p>If <a>context object</a> is a <a for=Element>shadow host</a>, then <a>throw</a> an
  {{InvalidStateError}}.
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a>node document</a> is
