@@ -2270,8 +2270,8 @@ interface ParentNode {
   readonly attribute Element? lastElementChild;
   readonly attribute unsigned long childElementCount;
 
-  [Unscopable] void prepend((Node or DOMString)... nodes);
-  [Unscopable] void append((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void prepend((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void append((Node or DOMString)... nodes);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -2457,10 +2457,10 @@ and null otherwise.
 [NoInterfaceObject,
  Exposed=Window]
 interface ChildNode {
-  [Unscopable] void before((Node or DOMString)... nodes);
-  [Unscopable] void after((Node or DOMString)... nodes);
-  [Unscopable] void replaceWith((Node or DOMString)... nodes);
-  [Unscopable] void remove();
+  [CEReactions, Unscopable] void before((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void after((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void replaceWith((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void remove();
 };
 DocumentType implements ChildNode;
 Element implements ChildNode;
@@ -3327,11 +3327,11 @@ interface Node : EventTarget {
   readonly attribute Node? previousSibling;
   readonly attribute Node? nextSibling;
 
-           attribute DOMString? nodeValue;
-           attribute DOMString? textContent;
-  void normalize();
+  [CEReactions] attribute DOMString? nodeValue;
+  [CEReactions] attribute DOMString? textContent;
+  [CEReactions] void normalize();
 
-  [NewObject] Node cloneNode(optional boolean deep = false);
+  [CEReactions, NewObject] Node cloneNode(optional boolean deep = false);
   boolean isEqualNode(Node? otherNode);
   boolean isSameNode(Node? otherNode); // historical alias of ===
 
@@ -3348,10 +3348,10 @@ interface Node : EventTarget {
   DOMString? lookupNamespaceURI(DOMString? prefix);
   boolean isDefaultNamespace(DOMString? namespace);
 
-  Node insertBefore(Node node, Node? child);
-  Node appendChild(Node node);
-  Node replaceChild(Node node, Node child);
-  Node removeChild(Node child);
+  [CEReactions] Node insertBefore(Node node, Node? child);
+  [CEReactions] Node appendChild(Node node);
+  [CEReactions] Node replaceChild(Node node, Node child);
+  [CEReactions] Node removeChild(Node child);
 };
 </pre>
 
@@ -4448,8 +4448,8 @@ interface Document : Node {
   [NewObject] Comment createComment(DOMString data);
   [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
-  [NewObject] Node importNode(Node node, optional boolean deep = false);
-  Node adoptNode(Node node);
+  [CEReactions, NewObject] Node importNode(Node node, optional boolean deep = false);
+  [CEReactions] Node adoptNode(Node node);
 
   [NewObject] Attr createAttribute(DOMString localName);
   [NewObject] Attr createAttributeNS(DOMString? namespace, DOMString qualifiedName);
@@ -5447,28 +5447,28 @@ interface Element : Node {
   readonly attribute DOMString localName;
   readonly attribute DOMString tagName;
 
-           attribute DOMString id;
-           attribute DOMString className;
-  [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
-           attribute DOMString slot;
+  [CEReactions] attribute DOMString id;
+  [CEReactions] attribute DOMString className;
+  [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
+  [CEReactions] attribute DOMString slot;
 
   boolean hasAttributes();
   [SameObject] readonly attribute NamedNodeMap attributes;
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  void setAttribute(DOMString qualifiedName, DOMString value);
-  void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
-  void removeAttribute(DOMString qualifiedName);
-  void removeAttributeNS(DOMString? namespace, DOMString localName);
+  [CEReactions] void setAttribute(DOMString qualifiedName, DOMString value);
+  [CEReactions] void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
+  [CEReactions] void removeAttribute(DOMString qualifiedName);
+  [CEReactions] void removeAttributeNS(DOMString? namespace, DOMString localName);
   boolean hasAttribute(DOMString qualifiedName);
   boolean hasAttributeNS(DOMString? namespace, DOMString localName);
 
   Attr? getAttributeNode(DOMString qualifiedName);
   Attr? getAttributeNodeNS(DOMString? namespace, DOMString localName);
-  Attr? setAttributeNode(Attr attr);
-  Attr? setAttributeNodeNS(Attr attr);
-  Attr removeAttributeNode(Attr attr);
+  [CEReactions] Attr? setAttributeNode(Attr attr);
+  [CEReactions] Attr? setAttributeNodeNS(Attr attr);
+  [CEReactions] Attr removeAttributeNode(Attr attr);
 
   ShadowRoot attachShadow(ShadowRootInit init);
   readonly attribute ShadowRoot? shadowRoot;
@@ -5481,8 +5481,8 @@ interface Element : Node {
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 
-  Element? insertAdjacentElement(DOMString where, Element element); // historical
-  void insertAdjacentText(DOMString where, DOMString data); // historical
+  [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // historical
+  [CEReactions] void insertAdjacentText(DOMString where, DOMString data); // historical
 };
 
 dictionary ShadowRootInit {
@@ -6406,10 +6406,10 @@ interface NamedNodeMap {
   getter Attr? item(unsigned long index);
   getter Attr? getNamedItem(DOMString qualifiedName);
   Attr? getNamedItemNS(DOMString? namespace, DOMString localName);
-  Attr? setNamedItem(Attr attr);
-  Attr? setNamedItemNS(Attr attr);
-  Attr removeNamedItem(DOMString qualifiedName);
-  Attr removeNamedItemNS(DOMString? namespace, DOMString localName);
+  [CEReactions] Attr? setNamedItem(Attr attr);
+  [CEReactions] Attr? setNamedItemNS(Attr attr);
+  [CEReactions] Attr removeNamedItem(DOMString qualifiedName);
+  [CEReactions] Attr removeNamedItemNS(DOMString? namespace, DOMString localName);
 };
 </pre>
 
@@ -6525,9 +6525,9 @@ interface Attr {
   readonly attribute DOMString localName;
   readonly attribute DOMString name;
   readonly attribute DOMString nodeName; // historical alias of .name
-           attribute DOMString value;
-  [TreatNullAs=EmptyString] attribute DOMString nodeValue; // historical alias of .value
-  [TreatNullAs=EmptyString] attribute DOMString textContent; // historical alias of .value
+  [CEReactions] attribute DOMString value;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString nodeValue; // historical alias of .value
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString textContent; // historical alias of .value
 
   readonly attribute Element? ownerElement;
 
@@ -7113,11 +7113,11 @@ interface Range {
   const unsigned short END_TO_START = 3;
   short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-  void deleteContents();
-  [NewObject] DocumentFragment extractContents();
-  [NewObject] DocumentFragment cloneContents();
-  void insertNode(Node node);
-  void surroundContents(Node newParent);
+  [CEReactions] void deleteContents();
+  [CEReactions, NewObject] DocumentFragment extractContents();
+  [CEReactions, NewObject] DocumentFragment cloneContents();
+  [CEReactions] void insertNode(Node node);
+  [CEReactions] void surroundContents(Node newParent);
 
   [NewObject] Range cloneRange();
   void detach();
@@ -9235,12 +9235,12 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  void add(DOMString... tokens);
-  void remove(DOMString... tokens);
-  boolean toggle(DOMString token, optional boolean force);
-  void replace(DOMString token, DOMString newToken);
+  [CEReactions] void add(DOMString... tokens);
+  [CEReactions] void remove(DOMString... tokens);
+  [CEReactions] boolean toggle(DOMString token, optional boolean force);
+  [CEReactions] void replace(DOMString token, DOMString newToken);
   boolean supports(DOMString token);
-           attribute DOMString value;
+  [CEReactions] attribute DOMString value;
   stringifier;
   iterable&lt;DOMString>;
 };
