@@ -550,7 +550,7 @@ inherits from the <code class="idl"><a data-link-type="idl" href="#event">Event<
  during which <var>event</var> was <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a>, can be canceled by invoking the <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> method. 
     <dt><code><var>event</var> . <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>()</code> 
     <dd>If invoked when the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute value is true, and while executing a
- listener for the <var>event</var> with <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> set to false, signals to
+ listener for the <var>event</var> with <code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> set to false, signals to
  the operation that caused <var>event</var> to be <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> that it needs to be canceled. 
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-defaultprevented">defaultPrevented</a></code></code> 
     <dd>Returns true if <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> was invoked successfully to indicate cancellation,
@@ -704,10 +704,10 @@ callback interface <dfn class="idl-code" data-dfn-type="callback" data-export=""
 
 dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-eventlisteneroptions">EventListenerOptions<a class="self-link" href="#dictdef-eventlisteneroptions"></a></dfn> {
   boolean <dfn class="idl-code" data-dfn-for="EventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventlisteneroptions-capture">capture<a class="self-link" href="#dom-eventlisteneroptions-capture"></a></dfn>;
-  boolean <dfn class="idl-code" data-dfn-for="EventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventlisteneroptions-passive">passive<a class="self-link" href="#dom-eventlisteneroptions-passive"></a></dfn>;
 };
 
 dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-addeventlisteneroptions">AddEventListenerOptions<a class="self-link" href="#dictdef-addeventlisteneroptions"></a></dfn> : <a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> {
+  boolean <dfn class="idl-code" data-dfn-for="AddEventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-addeventlisteneroptions-passive">passive<a class="self-link" href="#dom-addeventlisteneroptions-passive"></a></dfn>;
   boolean <dfn class="idl-code" data-dfn-for="AddEventListenerOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-addeventlisteneroptions-once">once<a class="self-link" href="#dom-addeventlisteneroptions-once"></a></dfn>;
 };
 </pre>
@@ -743,7 +743,7 @@ specified otherwise it returns null. </p>
   performance optimizations described in <a href="#observing-event-listeners">§3.7 Observing event listeners</a>.</p>
      <p>When set to true, <var>options</var>’s <code>once</code> member indicates that the <b>callback</b> will only be invoked once after which the event listener will be removed.</p>
      <p>The <a data-link-type="dfn" href="#concept-event-listener">event listener</a> is appended to <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> and is
-  not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, <b>capture</b> and <b>passive</b> values.</p>
+  not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and <b>capture</b> values.</p>
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
     <dd>Remove the <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in <var>target</var>’s list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> with the same <var>type</var>, <var>callback</var>, and <var>options</var>. 
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<var>event</var>)</code> 
@@ -754,25 +754,24 @@ specified otherwise it returns null. </p>
 steps: </p>
    <ol>
     <li>
-     <p>Let <var>capture</var> and <var>passive</var> be false. </p>
+     <p>Let <var>capture</var> be false. </p>
     <li>
      <p>If <var>options</var> is a boolean, set <var>capture</var> to <var>options</var>. </p>
     <li>
      <p>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-capture">capture</a></code></code> is
  present in <var>options</var> with value true, then set <var>capture</var> to true. </p>
     <li>
-     <p>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code></code> is
- present in <var>options</var> with value true, then set <var>passive</var> to true. </p>
-    <li>
-     <p>Return <var>capture</var> and <var>passive</var>. </p>
+     <p>Return <var>capture</var>. </p>
    </ol>
    <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="event-flatten-more">flatten more<a class="self-link" href="#event-flatten-more"></a></dfn> <var>options</var>, run these
 steps: </p>
    <ol>
     <li>
-     <p>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
+     <p>Let <var>capture</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
     <li>
-     <p>Let <var>once</var> be false. </p>
+     <p>Let <var>once</var> and <var>passive</var> be false. </p>
+    <li>
+     <p>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code></code> is present in <var>options</var> with value true, then set <var>passive</var> to true. </p>
     <li>
      <p>If <var>options</var> is a dictionary and <code><code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-once">once</a></code></code> is
  present in <var>options</var> with value true, then set <var>once</var> to true. </p>
@@ -793,8 +792,8 @@ steps: </p>
     <li>
      <p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of <a data-link-type="dfn" href="#event-flatten-more">flattening more</a> <var>options</var>. </p>
     <li>
-     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s associated list of <a data-link-type="dfn" href="#concept-event-listener">event listener</a> does not contain an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var>, then append a new <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to it, whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, <b>passive</b> is <var>passive</var>,
- and <b>once</b> is <var>once</var>. </p>
+     <p>If <a data-link-type="dfn" href="#context-object">context object</a>’s associated list of <a data-link-type="dfn" href="#concept-event-listener">event listener</a> does not contain an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
+ and <b>capture</b> is <var>capture</var>, then append a new <a data-link-type="dfn" href="#concept-event-listener">event listener</a> to it, whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, <b>passive</b> is <var>passive</var>, and <b>once</b> is <var>once</var>. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" data-lt="removeEventListener(type, callback, options)|removeEventListener(type, callback)" id="dom-eventtarget-removeeventlistener"><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code><a class="self-link" href="#dom-eventtarget-removeeventlistener"></a></dfn> method, when invoked, must, run these steps </p>
    <ol>
@@ -802,9 +801,10 @@ steps: </p>
      <p>If the <a data-link-type="dfn" href="#context-object">context object</a>’s global object is a <code class="idl"><a data-link-type="idl" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#service-worker-global-scope-interface">ServiceWorkerGlobalScope</a></code> object and
  its associated <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-service-worker">service worker</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-script-resource">script resource</a>’s <a data-link-type="dfn" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#dfn-has-ever-been-evaluated-flag">has ever been evaluated flag</a> is set, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code>TypeError</code>. <a data-link-type="biblio" href="#biblio-service-workers">[SERVICE-WORKERS]</a> </p>
     <li>
-     <p>Let <var>capture</var> and <var>passive</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
+     <p>Let <var>capture</var> be the result of <a data-link-type="dfn" href="#concept-flatten-options">flattening</a> <var>options</var>. </p>
     <li>
-     <p>If there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var> then set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed</b> to true and remove it from the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
+     <p>If there is an <a data-link-type="dfn" href="#concept-event-listener">event listener</a> in the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is <var>capture</var>, then set that <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>removed</b> to true and remove it from
+ the associated list of <a data-link-type="dfn" href="#concept-event-listener">event listeners</a>. </p>
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="EventTarget" data-dfn-type="method" data-export="" id="dom-eventtarget-dispatchevent"><code>dispatchEvent(<var>event</var>)</code><a class="self-link" href="#dom-eventtarget-dispatchevent"></a></dfn> method, when
 invoked, must run these steps: </p>
@@ -826,10 +826,10 @@ requires observing <a data-link-type="dfn" href="#concept-event-listener">event 
 that even empty listeners can have a dramatic performance impact on the behavior of the application.
 For example, touch and wheel events which can be used to block asynchronous scrolling. In some cases
 this problem can be mitigated by specifying the event to be <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> only when there is
-at least one non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listener. For example,
-non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> listeners must block scrolling, but if all
-listeners are <code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> then scrolling can be allowed to start <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a> by making the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> uncancelable (so that calls to <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> are ignored). So code dispatching an event is able to observe the absence
-of non-<code class="idl"><a data-link-type="idl" href="#dom-eventlisteneroptions-passive">passive</a></code> listeners, and use that to clear the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> property of the event being dispatched. </p>
+at least one non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> listener. For example,
+non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> listeners must block scrolling, but if all
+listeners are <code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> then scrolling can be allowed to start <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a> by making the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> uncancelable (so that calls to <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> are ignored). So code dispatching an event is able to observe the absence
+of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> listeners, and use that to clear the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> property of the event being dispatched. </p>
    <p>Ideally, any new event APIs are defined such that they do not need this property (use <a href="https://lists.w3.org/Archives/Public/public-script-coord/">public-scrip-coord@w3.org</a> for discussion). </p>
    <h3 class="heading settled" data-level="3.8" id="dispatching-events"><span class="secno">3.8. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
    <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <var>event</var> to a <var>target</var>, with an optional <var>target override</var>, run these steps: </p>
@@ -5904,7 +5904,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#concept-tree-participate">participate</a><span>, in §2.1</span>
    <li><a href="#concept-tree-participate">participate in a tree</a><span>, in §2.1</span>
    <li><a href="#concept-tree-participate">participates in a tree</a><span>, in §2.1</span>
-   <li><a href="#dom-eventlisteneroptions-passive">passive</a><span>, in §3.6</span>
+   <li><a href="#dom-addeventlisteneroptions-passive">passive</a><span>, in §3.6</span>
    <li><a href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a><span>, in §6.1</span>
    <li><a href="#concept-range-bp-position">position</a><span>, in §5.2</span>
    <li><a href="#concept-tree-preceding">preceding</a><span>, in §2.1</span>
@@ -6403,10 +6403,10 @@ callback interface <a href="#callbackdef-eventlistener">EventListener</a> {
 
 dictionary <a href="#dictdef-eventlisteneroptions">EventListenerOptions</a> {
   boolean <a data-type="boolean " href="#dom-eventlisteneroptions-capture">capture</a>;
-  boolean <a data-type="boolean " href="#dom-eventlisteneroptions-passive">passive</a>;
 };
 
 dictionary <a href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a> : <a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> {
+  boolean <a data-type="boolean " href="#dom-addeventlisteneroptions-passive">passive</a>;
   boolean <a data-type="boolean " href="#dom-addeventlisteneroptions-once">once</a>;
 };
 

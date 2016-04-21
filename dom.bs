@@ -694,7 +694,7 @@ inherits from the {{Event}} interface.
 
  <dt><code><var>event</var> . <a method for=Event lt="preventDefault()">preventDefault</a>()</code>
  <dd>If invoked when the {{Event/cancelable}} attribute value is true, and while executing a
- listener for the <var>event</var> with {{EventListenerOptions/passive}} set to false, signals to
+ listener for the <var>event</var> with {{AddEventListenerOptions/passive}} set to false, signals to
  the operation that caused <var>event</var> to be <a>dispatched</a> that it needs to be canceled.
 
  <dt><code><var>event</var> . {{Event/defaultPrevented}}</code>
@@ -949,10 +949,10 @@ callback interface EventListener {
 
 dictionary EventListenerOptions {
   boolean capture;
-  boolean passive;
 };
 
 dictionary AddEventListenerOptions : EventListenerOptions {
+  boolean passive;
   boolean once;
 };
 </pre>
@@ -1012,8 +1012,8 @@ specified otherwise it returns null.
   will only be invoked once after which the event listener will be removed.
 
   The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
-  not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>,
-  <b>capture</b> and <b>passive</b> values.
+  not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and
+  <b>capture</b> values.
 
  <dt><code><var>target</var> . <a method lt="removeEventListener()">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
  <dd>Remove the <a>event listener</a>
@@ -1032,27 +1032,26 @@ specified otherwise it returns null.
 steps:
 
 <ol>
- <li><p>Let <var>capture</var> and <var>passive</var> be false.
+ <li><p>Let <var>capture</var> be false.
 
  <li><p>If <var>options</var> is a boolean, set <var>capture</var> to <var>options</var>.
 
  <li><p>If <var>options</var> is a dictionary and <code>{{EventListenerOptions/capture}}</code> is
  present in <var>options</var> with value true, then set <var>capture</var> to true.
 
- <li><p>If <var>options</var> is a dictionary and <code>{{EventListenerOptions/passive}}</code> is
- present in <var>options</var> with value true, then set <var>passive</var> to true.
-
- <li><p>Return <var>capture</var> and <var>passive</var>.
+ <li><p>Return <var>capture</var>.
 </ol>
 
 <p>To <dfn export for=Event>flatten more</dfn><!-- sorry --> <var>options</var>, run these
 steps:
 
 <ol>
- <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
- <var>options</var>.
+ <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var> be false.
+ <li><p>Let <var>once</var> and <var>passive</var> be false.
+
+ <li><p>If <var>options</var> is a dictionary and <code>{{AddEventListenerOptions/passive}}</code>
+ is present in <var>options</var> with value true, then set <var>passive</var> to true.
 
  <li><p>If <var>options</var> is a dictionary and <code>{{AddEventListenerOptions/once}}</code> is
  present in <var>options</var> with value true, then set <var>once</var> to true.
@@ -1081,10 +1080,9 @@ method, when invoked, must run these steps:
 
  <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
  <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
- <b>capture</b> is <var>capture</var>, and <b>passive</b> is <var>passive</var>, then append a new
- <a>event listener</a> to it, whose <b>type</b> is <var>type</var>, <b>callback</b> is
- <var>callback</var>, <b>capture</b> is <var>capture</var>, <b>passive</b> is <var>passive</var>,
- and <b>once</b> is <var>once</var>.
+ and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
+ <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
+ <var>capture</var>, <b>passive</b> is <var>passive</var>, and <b>once</b> is <var>once</var>.
 </ol>
 
 <p>The
@@ -1096,13 +1094,12 @@ method, when invoked, must, run these steps
  its associated <a>service worker</a>'s <a>script resource</a>'s <a>has ever been evaluated flag</a>
  is set, <a>throw</a> a <code>TypeError</code>. [[!SERVICE-WORKERS]]
 
- <li><p>Let <var>capture</var> and <var>passive</var> be the result of <a>flattening</a>
- <var>options</var>.
+ <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
  <li><p>If there is an <a>event listener</a> in the associated list of <a>event listeners</a> whose
- <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
- <var>capture</var>, and <b>passive</b> is <var>passive</var> then set that <a>event listener</a>'s
- <b>removed</b> to true and remove it from the associated list of <a>event listeners</a>.
+ <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is
+ <var>capture</var>, then set that <a>event listener</a>'s <b>removed</b> to true and remove it from
+ the associated list of <a>event listeners</a>.
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
@@ -1129,12 +1126,12 @@ requires observing <a>event listeners</a>. This can make the presence of listene
 that even empty listeners can have a dramatic performance impact on the behavior of the application.
 For example, touch and wheel events which can be used to block asynchronous scrolling. In some cases
 this problem can be mitigated by specifying the event to be {{Event/cancelable}} only when there is
-at least one non-{{EventListenerOptions/passive}} listener. For example,
-non-{{EventListenerOptions/passive}} {{TouchEvent}} listeners must block scrolling, but if all
-listeners are {{EventListenerOptions/passive}} then scrolling can be allowed to start
+at least one non-{{AddEventListenerOptions/passive}} listener. For example,
+non-{{AddEventListenerOptions/passive}} {{TouchEvent}} listeners must block scrolling, but if all
+listeners are {{AddEventListenerOptions/passive}} then scrolling can be allowed to start
 <a>in parallel</a> by making the {{TouchEvent}} uncancelable (so that calls to
 {{Event/preventDefault()}} are ignored). So code dispatching an event is able to observe the absence
-of non-{{EventListenerOptions/passive}} listeners, and use that to clear the {{Event/cancelable}}
+of non-{{AddEventListenerOptions/passive}} listeners, and use that to clear the {{Event/cancelable}}
 property of the event being dispatched.
 
 <p>Ideally, any new event APIs are defined such that they do not need this property (use
