@@ -627,23 +627,28 @@ interface Event {
   readonly attribute boolean cancelable;
   void preventDefault();
   readonly attribute boolean defaultPrevented;
+  readonly attribute boolean scoped;
 
   [Unforgeable] readonly attribute boolean isTrusted;
   readonly attribute DOMTimeStamp timeStamp;
 
-  void initEvent(DOMString type, boolean bubbles, boolean cancelable);
+  void initEvent(DOMString type, boolean bubbles, boolean cancelable); // historical
 };
 
 dictionary EventInit {
   boolean bubbles = false;
   boolean cancelable = false;
+  boolean scoped = false;
 };
 </pre>
 
-An <dfn export id=concept-event>event</dfn> allows for signaling that
-something has occurred, e.g. that an image has completed downloading. It is
-represented by the {{Event}} interface or an interface that
-inherits from the {{Event}} interface.
+<p>An {{Event}} object is simply named an <dfn export id=concept-event>event</dfn>. It allows for
+signaling that something has occurred, e.g., that an image has completed downloading.</p>
+
+<p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
+list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} object) and a
+<b>target</b> (null or an {{EventTarget}} object). A tuple is formatted as (<b>item</b>,
+<b>target</b>). A <a for=Event>path</a> is initially the empty list.</p>
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -701,6 +706,11 @@ inherits from the {{Event}} interface.
  <dt><code><var>event</var> . {{Event/defaultPrevented}}</code>
  <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancellation,
  and false otherwise.
+
+ <dt><code><var>event</var> . {{Event/scoped}}</code>
+ <dd>Returns true or false depending on how <var>event</var> was initialized. True if
+ <var>event</var> does not invoke listeners past a {{ShadowRoot}} <a>node</a> that is the
+ <a for=tree>root</a> of its {{Event/target}} attribute value, and false otherwise.
 
  <dt><code><var>event</var> . {{Event/isTrusted}}</code>
  <dd>Returns true if <var>event</var> was
@@ -760,9 +770,10 @@ flags that are all initially unset:
  <li><dfn export for=Event id=stop-propagation-flag>stop propagation flag</dfn>
  <li><dfn export for=Event id=stop-immediate-propagation-flag>stop immediate propagation flag</dfn>
  <li><dfn export for=Event id=canceled-flag>canceled flag</dfn>
+ <li><dfn export for=Event id=in-passive-listener-flag>in passive listener flag</dfn>
+ <li><dfn export for=Event id=scoped-flag>scoped flag</dfn>
  <li><dfn export for=Event id=initialized-flag>initialized flag</dfn>
  <li><dfn export for=Event id=dispatch-flag>dispatch flag</dfn>
- <li><dfn export for=Event id=in-passive-listener-flag>in passive listener flag</dfn>
 </ul>
 
 The
@@ -790,6 +801,9 @@ The
 <dfn attribute for=Event>defaultPrevented</dfn>
 attribute must return true if the <a>canceled flag</a> is set and
 false otherwise.
+
+<p>The <dfn attribute for=Event><code>scoped</code></dfn> attribute's getter must return true if
+<a>context object</a>'s <a>scoped flag</a> is set, and false otherwise.</p>
 
 <hr>
 
@@ -844,9 +858,8 @@ method, when invoked, must run these steps:
  <var>cancelable</var>.
 </ol>
 
-<p class="note no-backref">As <a>events</a> have constructors
-{{Event/initEvent()}} is superfluous. However,
-it has to be supported for legacy content.
+<p class="note no-backref">As <a>events</a> have constructors {{Event/initEvent()}} is redundant and
+incapable of setting {{Event/scoped}}. It has to be supported for legacy content.
 
 
 <h3 id=interface-customevent>Interface {{CustomEvent}}</h3>
@@ -987,8 +1000,8 @@ fields above, an <a>event listener</a> is a broader concept.
 which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
 specified otherwise it returns null.
 
-<p class="note no-backref"><a>Nodes</a> and <a>documents</a> override the
-<a>get the parent</a> algorithm.
+<p class="note no-backref"><a>Nodes</a>, <a for=/>shadow roots</a>, and <a>documents</a> override
+the <a>get the parent</a> algorithm.
 
 <dl class=domintro>
  <dt><code><var>target</var> . <a method lt="addEventListener()">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
@@ -1144,43 +1157,81 @@ for discussion).
 <h3 id=dispatching-events>Dispatching events</h3>
 
 <p>To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an <var>event</var> to a
-<var>target</var>, with an optional <var>target override</var>, run these steps:
+<var>target</var>, with an optional <var>targetOverride</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
 
- <li><p>Initialize <var>event</var>'s {{Event/target}} attribute to
- <var>target override</var>, if it is given, and <var>target</var> otherwise.
+ <li>
+  <p>If <var>targetOverride</var> is not given, let <var>targetOverride</var> be <var>target</var>.
 
- <li><p>Let <var>eventPath</var> be a list containing <var>target</var>.
+  <p class="note">The <var>targetOverride</var> argument is only used by HTML and only under very
+  specific circumstances.
+  <!-- We should consider refactoring it to make it have less of a scope, since we don't really want
+       folks to start using it for non-legacy scenarios. -->
 
- <li><p>While invoking <a>get the parent</a>, given <var>event</var>, on <var>eventPath</var>'s
- last item, does not return null, append the return value to <var>eventPath</var>.
+ <li><p>Append (<var>target</var>, <var>targetOverride</var>) to <var>event</var>'s
+ <a for=Event>path</a>.
 
- <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
-
- <li><p>For each <var>object</var> in <var>eventPath</var>, in reverse order, if <var>object</var>
- is not <var>target</var>, <a>invoke</a> <var>object</var> with <var>event</var>.
-
- <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
-
- <li><p><a>Invoke</a> <var>target</var> with <var>event</var>.
+ <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
+ with <var>event</var>.
 
  <li>
-  <p>If <var>event</var>'s {{Event/bubbles}} attribute value is true, run these substeps:
+  <p>While <var>parent</var> is non-null:</p>
 
   <ol>
-   <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/BUBBLING_PHASE}}.
+   <li><p>If <var>target</var>'s <a for=tree>root</a> is a
+   <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then append
+   (<var>parent</var>, null) to <var>event</var>'s <a for=Event>path</a>.
 
-   <li><p>For each <var>object</var> in <var>eventPath</var>, if <var>object</var> is not
-   <var>target</var>, <a>invoke</a> <var>object</var> with <var>event</var>.
+   <li><p>Otherwise, set <var>target</var> to <var>parent</var> and append
+   (<var>parent</var>, <var>target</var>) to <var>event</var>'s <a for=Event>path</a>.
+
+   <li><p>Set <var>parent</var> to the result of invoking <var>parent</var>'s <a>get the parent</a>
+   with <var>event</var>.
+  </ol>
+
+ <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
+
+ <li>
+  <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
+
+  <ol>
+   <li><p>Set <var>event</var>'s {{Event//target}} attribute to the <b>target</b> of the last tuple
+   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
+   <var>tuple</var>, whose <b>target</b> is non-null.
+
+   <li><p>If <var>tuple</var>'s <b>target</b> is null, then <a>invoke</a> <var>tuple</var>'s
+   <b>item</b> with <var>event</var>.
+  </ol>
+
+ <li>
+  <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in order:
+
+  <ol>
+   <li><p>Set <var>event</var>'s {{Event//target}} attribute to the <b>target</b> of the last tuple
+   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
+   <var>tuple</var>, whose <b>target</b> is non-null.
+
+   <li><p>If <var>tuple</var>'s <b>target</b> is non-null, then set <var>event</var>'s
+   {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+
+   <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
+   {{Event/BUBBLING_PHASE}}.
+
+   <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
+   and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
+   {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> <var>tuple</var>'s
+   <b>item</b> with <var>event</var>.
   </ol>
 
  <li><p>Unset <var>event</var>'s <a>dispatch flag</a>.
 
- <li><p>Initialize <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/NONE}}.
+ <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/NONE}}.
 
- <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to null.
+ <li><p>Set <var>event</var>'s {{Event/currentTarget}} attribute to null.
+
+ <li><p>Set <var>event</var>'s <a for=Event>path</a> to the empty list.
 
  <li><p>Return false if <var>event</var>'s <a>canceled flag</a> is set, and true otherwise.
 </ol>
@@ -3365,7 +3416,8 @@ that is a <a>document</a>.
 <a>adopt</a> algorithm.
 
 <p>A <a>node</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns the
-<a>node</a>'s <a>parent</a>.
+<a>node</a>'s <a>assigned slot</a>, if <a>node</a> is <a>assigned</a>, and <a>node</a>'s
+<a>parent</a> otherwise.
 
 <hr>
 
@@ -5388,6 +5440,11 @@ or "<code>closed</code>").</p>
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
+
+<p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
+null if <var>event</var>'s <a>scoped flag</a> is set and <a for=/>shadow root</a> is the
+<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first tuple's <b>item</b>, and
+<a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> otherwise.
 
 <p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
