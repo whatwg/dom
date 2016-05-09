@@ -627,7 +627,7 @@ interface Event {
   readonly attribute boolean cancelable;
   void preventDefault();
   readonly attribute boolean defaultPrevented;
-  readonly attribute boolean scoped;
+  readonly attribute boolean composed;
 
   [Unforgeable] readonly attribute boolean isTrusted;
   readonly attribute DOMTimeStamp timeStamp;
@@ -638,7 +638,7 @@ interface Event {
 dictionary EventInit {
   boolean bubbles = false;
   boolean cancelable = false;
-  boolean scoped = false;
+  boolean composed = false;
 };
 </pre>
 
@@ -707,9 +707,9 @@ list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} obj
  <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancellation,
  and false otherwise.
 
- <dt><code><var>event</var> . {{Event/scoped}}</code>
+ <dt><code><var>event</var> . {{Event/composed}}</code>
  <dd>Returns true or false depending on how <var>event</var> was initialized. True if
- <var>event</var> does not invoke listeners past a {{ShadowRoot}} <a>node</a> that is the
+ <var>event</var> invokes listeners past a {{ShadowRoot}} <a>node</a> that is the
  <a for=tree>root</a> of its {{Event/target}} attribute value, and false otherwise.
 
  <dt><code><var>event</var> . {{Event/isTrusted}}</code>
@@ -769,7 +769,7 @@ flags that are all initially unset:
  <li><dfn export for=Event id=stop-immediate-propagation-flag>stop immediate propagation flag</dfn>
  <li><dfn export for=Event id=canceled-flag>canceled flag</dfn>
  <li><dfn export for=Event id=in-passive-listener-flag>in passive listener flag</dfn>
- <li><dfn export for=Event id=scoped-flag>scoped flag</dfn>
+ <li><dfn export for=Event id=composed-flag>composed flag</dfn>
  <li><dfn export for=Event id=initialized-flag>initialized flag</dfn>
  <li><dfn export for=Event id=dispatch-flag>dispatch flag</dfn>
 </ul>
@@ -796,8 +796,8 @@ debugging.
 <p>The <dfn attribute for=Event><code>defaultPrevented</code></dfn> attribute's getter must return
 true if <a>context object</a>'s <a>canceled flag</a> is set, and false otherwise.</p>
 
-<p>The <dfn attribute for=Event><code>scoped</code></dfn> attribute's getter must return true if
-<a>context object</a>'s <a>scoped flag</a> is set, and false otherwise.</p>
+<p>The <dfn attribute for=Event><code>composed</code></dfn> attribute's getter must return true if
+<a>context object</a>'s <a>composed flag</a> is set, and false otherwise.</p>
 
 <hr>
 
@@ -851,7 +851,7 @@ method, when invoked, must run these steps:</p>
 </ol>
 
 <p class="note no-backref">As <a>events</a> have constructors {{Event/initEvent()}} is redundant and
-incapable of setting {{Event/scoped}}. It has to be supported for legacy content.
+incapable of setting {{Event/composed}}. It has to be supported for legacy content.
 
 
 <h3 id=interface-customevent>Interface {{CustomEvent}}</h3>
@@ -2902,7 +2902,6 @@ To <dfn export>notify mutation observers</dfn>, run these steps:
  <li><p>For each <a>slot</a> <var>slot</var> in <var>signalList</var>, in order,
  <a>fire an event</a> named <code>slotchange</code>, with its {{Event/bubbles}} attribute set to
  true, at <var>slot</var>.
- <!-- XXX scoped (change this while updating events for shadow trees) -->
 </ol>
 
 <hr>
@@ -5434,7 +5433,7 @@ or "<code>closed</code>").</p>
      consequences for innerHTML. -->
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
-null if <var>event</var>'s <a>scoped flag</a> is set and <a for=/>shadow root</a> is the
+null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first tuple's <b>item</b>, and
 <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> otherwise.
 
