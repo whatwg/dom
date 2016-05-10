@@ -3386,6 +3386,7 @@ interface Node : EventTarget {
 
   readonly attribute boolean isConnected;
   readonly attribute Document? ownerDocument;
+  Node getRootNode(optional GetRootNodeOptions options);
   readonly attribute Node? parentNode;
   readonly attribute Element? parentElement;
   boolean hasChildNodes();
@@ -3420,6 +3421,10 @@ interface Node : EventTarget {
   [CEReactions] Node appendChild(Node node);
   [CEReactions] Node replaceChild(Node node, Node child);
   [CEReactions] Node removeChild(Node child);
+};
+
+dictionary GetRootNodeOptions {
+  boolean composed = false;
 };
 </pre>
 
@@ -3623,6 +3628,12 @@ The <dfn attribute for=Node><code>baseURI</code></dfn> attribute's getter must r
   Returns the <a>node document</a>.
   Returns null for <a>documents</a>.
 
+ <dt><code><var>node</var> . {{Node/getRootNode()}}</code>
+ <dd>Returns <var>node</var>'s <a for=tree>root</a>.
+
+ <dt><code><var>node</var> . <a idl lt=getRootNode()>getRootNode</a>({ composed:true })</code>
+ <dd>Returns <var>node</var>'s <a>shadow-including root</a>.
+
  <dt><code><var>node</var> . {{Node/parentNode}}</code>
  <dd>Returns the <a>parent</a>.
 
@@ -3660,6 +3671,11 @@ if the <a>context object</a> is a <a>document</a>, and the <a>context object</a>
 
 <p class="note">The <a>node document</a> of a <a>document</a> is that <a>document</a> itself. All
 <a>nodes</a> have a <a>node document</a> at all times.
+
+<p>The <dfn method for=Node><code>getRootNode(<var>options</var>)</code></dfn>
+attribute's getter must return <a>context object</a>'s <a>shadow-including root</a> if
+<var>options</var>'s <code for=GetRootNodeOptions>composed</code> is true, and
+<a>context object</a>'s <a for=tree>root</a> otherwise.
 
 <p>The <dfn attribute for=Node><code>parentNode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a>parent</a>.

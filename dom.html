@@ -2065,6 +2065,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nod
 
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-node-isconnected">isConnected</a>;
   readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document?" href="#dom-node-ownerdocument">ownerDocument</a>;
+  <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-getrootnode">getRootNode</a>(optional <a data-link-type="idl-name" href="#dictdef-getrootnodeoptions">GetRootNodeOptions</a> <dfn class="idl-code" data-dfn-for="Node/getRootNode(options), Node/getRootNode()" data-dfn-type="argument" data-export="" id="dom-node-getrootnode-options-options">options<a class="self-link" href="#dom-node-getrootnode-options-options"></a></dfn>);
   readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-parentnode">parentNode</a>;
   readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-node-parentelement">parentElement</a>;
   boolean <a class="idl-code" data-link-type="method" href="#dom-node-haschildnodes">hasChildNodes</a>();
@@ -2099,6 +2100,10 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nod
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-appendchild">appendChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Node/appendChild(node)" data-dfn-type="argument" data-export="" id="dom-node-appendchild-node-node">node<a class="self-link" href="#dom-node-appendchild-node-node"></a></dfn>);
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-replacechild">replaceChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Node/replaceChild(node, child)" data-dfn-type="argument" data-export="" id="dom-node-replacechild-node-child-node">node<a class="self-link" href="#dom-node-replacechild-node-child-node"></a></dfn>, <a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Node/replaceChild(node, child)" data-dfn-type="argument" data-export="" id="dom-node-replacechild-node-child-child">child<a class="self-link" href="#dom-node-replacechild-node-child-child"></a></dfn>);
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-removechild">removeChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Node/removeChild(child)" data-dfn-type="argument" data-export="" id="dom-node-removechild-child-child">child<a class="self-link" href="#dom-node-removechild-child-child"></a></dfn>);
+};
+
+dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-getrootnodeoptions">GetRootNodeOptions<a class="self-link" href="#dictdef-getrootnodeoptions"></a></dfn> {
+  boolean <dfn class="idl-code" data-default="false" data-dfn-for="GetRootNodeOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-getrootnodeoptions-composed">composed<a class="self-link" href="#dom-getrootnodeoptions-composed"></a></dfn> = false;
 };
 </pre>
    <p class="note no-backref" role="note"><code class="idl"><a data-link-type="idl" href="#node">Node</a></code> is an abstract interface and does not exist as <a data-link-type="dfn" href="#concept-node">node</a>. It
@@ -2203,6 +2208,10 @@ the first matching statement, switching on the <a data-link-type="dfn" href="#co
     <dt><code><var>node</var> . <code class="idl"><a data-link-type="idl" href="#dom-node-ownerdocument">ownerDocument</a></code></code> 
     <dd> Returns the <a data-link-type="dfn" href="#concept-node-document">node document</a>.
   Returns null for <a data-link-type="dfn" href="#concept-document">documents</a>. 
+    <dt><code><var>node</var> . <code class="idl"><a data-link-type="idl" href="#dom-node-getrootnode">getRootNode()</a></code></code> 
+    <dd>Returns <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a>. 
+    <dt><code><var>node</var> . <a data-link-type="idl" href="#dom-node-getrootnode">getRootNode</a>({ composed:true })</code> 
+    <dd>Returns <var>node</var>’s <a data-link-type="dfn" href="#concept-shadow-including-root">shadow-including root</a>. 
     <dt><code><var>node</var> . <code class="idl"><a data-link-type="idl" href="#dom-node-parentnode">parentNode</a></code></code> 
     <dd>Returns the <a data-link-type="dfn" href="#concept-tree-parent">parent</a>. 
     <dt><code><var>node</var> . <code class="idl"><a data-link-type="idl" href="#dom-node-parentelement">parentElement</a></code></code> 
@@ -2225,6 +2234,7 @@ if <a data-link-type="dfn" href="#context-object">context object</a> is <a data-
    <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="attribute" data-export="" id="dom-node-ownerdocument"><code>ownerDocument</code><a class="self-link" href="#dom-node-ownerdocument"></a></dfn> attribute’s getter must return null,
 if the <a data-link-type="dfn" href="#context-object">context object</a> is a <a data-link-type="dfn" href="#concept-document">document</a>, and the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-node-document">node document</a> otherwise. </p>
    <p class="note" role="note">The <a data-link-type="dfn" href="#concept-node-document">node document</a> of a <a data-link-type="dfn" href="#concept-document">document</a> is that <a data-link-type="dfn" href="#concept-document">document</a> itself. All <a data-link-type="dfn" href="#concept-node">nodes</a> have a <a data-link-type="dfn" href="#concept-node-document">node document</a> at all times. </p>
+   <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="method" data-export="" data-lt="getRootNode(options)|getRootNode()" id="dom-node-getrootnode"><code>getRootNode(<var>options</var>)</code><a class="self-link" href="#dom-node-getrootnode"></a></dfn> attribute’s getter must return <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-shadow-including-root">shadow-including root</a> if <var>options</var>’s <code for="GetRootNodeOptions">composed</code> is true, and <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> otherwise. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="attribute" data-export="" id="dom-node-parentnode"><code>parentNode</code><a class="self-link" href="#dom-node-parentnode"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="attribute" data-export="" id="dom-node-parentelement"><code>parentElement</code><a class="self-link" href="#dom-node-parentelement"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#parent-element">parent element</a>. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="method" data-export="" id="dom-node-haschildnodes"><code>hasChildNodes()</code><a class="self-link" href="#dom-node-haschildnodes"></a></dfn> method, when invoked, must return
@@ -5521,6 +5531,7 @@ neighboring rights to this work.</p>
     <ul>
      <li><a href="#dom-eventinit-composed">dict-member for EventInit</a><span>, in §3.2</span>
      <li><a href="#dom-event-composed">attribute for Event</a><span>, in §3.2</span>
+     <li><a href="#dom-getrootnodeoptions-composed">dict-member for GetRootNodeOptions</a><span>, in §4.4</span>
     </ul>
    <li><a href="#composed-flag">composed flag</a><span>, in §3.2</span>
    <li><a href="#dom-event-composedpath">composedPath()</a><span>, in §3.2</span>
@@ -5737,6 +5748,9 @@ neighboring rights to this work.</p>
     </ul>
    <li><a href="#dom-namednodemap-getnameditemns">getNamedItemNS(namespace, localName)</a><span>, in §4.9.1</span>
    <li><a href="#dom-namednodemap-getnameditem">getNamedItem(qualifiedName)</a><span>, in §4.9.1</span>
+   <li><a href="#dom-node-getrootnode">getRootNode()</a><span>, in §4.4</span>
+   <li><a href="#dom-node-getrootnode">getRootNode(options)</a><span>, in §4.4</span>
+   <li><a href="#dictdef-getrootnodeoptions">GetRootNodeOptions</a><span>, in §4.4</span>
    <li><a href="#get-the-parent">get the parent</a><span>, in §3.6</span>
    <li><a href="#dom-node-getuserdata">getUserData()</a><span>, in §8.2</span>
    <li><a href="#dom-eventlistener-handleevent">handleEvent(event)</a><span>, in §3.6</span>
@@ -6611,6 +6625,7 @@ interface <a href="#node">Node</a> : <a data-link-type="idl-name" href="#eventta
 
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-node-isconnected">isConnected</a>;
   readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document?" href="#dom-node-ownerdocument">ownerDocument</a>;
+  <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-getrootnode">getRootNode</a>(optional <a data-link-type="idl-name" href="#dictdef-getrootnodeoptions">GetRootNodeOptions</a> <a href="#dom-node-getrootnode-options-options">options</a>);
   readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-parentnode">parentNode</a>;
   readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-node-parentelement">parentElement</a>;
   boolean <a class="idl-code" data-link-type="method" href="#dom-node-haschildnodes">hasChildNodes</a>();
@@ -6645,6 +6660,10 @@ interface <a href="#node">Node</a> : <a data-link-type="idl-name" href="#eventta
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-appendchild">appendChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-node-appendchild-node-node">node</a>);
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-replacechild">replaceChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-node-replacechild-node-child-node">node</a>, <a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-node-replacechild-node-child-child">child</a>);
   [CEReactions] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-removechild">removeChild</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-node-removechild-child-child">child</a>);
+};
+
+dictionary <a href="#dictdef-getrootnodeoptions">GetRootNodeOptions</a> {
+  boolean <a data-default="false" data-type="boolean " href="#dom-getrootnodeoptions-composed">composed</a> = false;
 };
 
 [<a class="idl-code" data-link-type="constructor" href="#dom-document-document">Constructor</a>,
