@@ -492,6 +492,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="eve
   readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-event-type">type</a>;
   readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-target">target</a>;
   readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-currenttarget">currentTarget</a>;
+  sequence&lt;<a data-link-type="idl-name" href="#eventtarget">EventTarget</a>> <a class="idl-code" data-link-type="method" href="#dom-event-composedpath">composedPath</a>();
 
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-none">NONE</a> = 0;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-capturing_phase">CAPTURING_PHASE</a> = 1;
@@ -538,6 +539,9 @@ list of tuples, each of which consists of an <b>item</b> (an <code class="idl"><
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code></code> 
     <dd>Returns the object whose <a data-link-type="dfn" href="#concept-event-listener">event listener</a>’s <b>callback</b> is currently being
  invoked. 
+    <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-composedpath">composedPath()</a></code></code> 
+    <dd>Returns <var>event</var>’s path, which includes objects on which listeners will be invoked,
+ except for any <a data-link-type="dfn" href="#concept-node">nodes</a> in <a data-link-type="dfn" href="#concept-shadow-tree">shadow trees</a> of which the <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>’s <a data-link-type="dfn" href="#shadowroot-mode">mode</a> is "<code>closed</code>". 
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code></code> 
     <dd>Returns the <a data-link-type="dfn" href="#concept-event">event</a>’s phase, which is one of <code class="idl"><a data-link-type="idl" href="#dom-event-none">NONE</a></code>, <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>, <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>, and <code class="idl"><a data-link-type="idl" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a></code>. 
     <dt><code><var>event</var> . <a class="idl-code" data-link-type="method" href="#dom-event-stoppropagation">stopPropagation</a>()</code> 
@@ -573,6 +577,22 @@ return the value it was initialized to. When an <a data-link-type="dfn" href="#c
 initialized to the empty string.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-target"><code>target</code><a class="self-link" href="#dom-event-target"></a></dfn> and <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-currenttarget"><code>currentTarget</code><a class="self-link" href="#dom-event-currenttarget"></a></dfn> attributes must return the values they were initialized to. When an <a data-link-type="dfn" href="#concept-event">event</a> is created the attributes must be
 initialized to null.</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="method" data-export="" id="dom-event-composedpath"><code>composedPath()</code><a class="self-link" href="#dom-event-composedpath"></a></dfn> method, when invoked, must run these
+steps: </p>
+   <ol>
+    <li>
+     <p>Let <var>composedPath</var> be a new empty list. </p>
+    <li>
+     <p>Let <var>currentTarget</var> be <a data-link-type="dfn" href="#context-object">context object</a>’s <code for="Event">currentTarget</code> attribute value. </p>
+    <li>
+     <p>For each <var>tuple</var> in <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#event-path">path</a>: </p>
+     <ol>
+      <li>
+       <p>If <var>currentTarget</var> is a <a data-link-type="dfn" href="#concept-node">node</a> and <var>tuple</var>’s <b>item</b> is an <a data-link-type="dfn" href="#concept-unclosed-node">unclosed node</a> of <var>currentTarget</var>, or <var>currentTarget</var> is <em>not</em> a <a data-link-type="dfn" href="#concept-node">node</a>, then append <var>tuple</var>’s <b>item</b> to <var>composedPath</var>.</p>
+     </ol>
+    <li>
+     <p>Return <var>composedPath</var>. </p>
+   </ol>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-eventphase"><code>eventPhase</code><a class="self-link" href="#dom-event-eventphase"></a></dfn> attribute must return the value it was initialized to, which must be one of
 the following:</p>
    <dl>
@@ -3233,6 +3253,7 @@ object’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a da
    <p>A <dfn data-dfn-type="dfn" data-export="" id="concept-shadow-including-inclusive-descendant">shadow-including inclusive descendant<a class="self-link" href="#concept-shadow-including-inclusive-descendant"></a></dfn> is an object or one of its <a data-link-type="dfn" href="#concept-shadow-including-descendant">shadow-including descendants</a>. </p>
    <p>An object <var>A</var> is a <dfn data-dfn-type="dfn" data-export="" id="concept-shadow-including-ancestor">shadow-including ancestor<a class="self-link" href="#concept-shadow-including-ancestor"></a></dfn> of an object <var>B</var>, if and only if <var>B</var> is a <a data-link-type="dfn" href="#concept-shadow-including-descendant">shadow-including descendant</a> of <var>A</var>. </p>
    <p>A <dfn data-dfn-type="dfn" data-export="" id="concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor<a class="self-link" href="#concept-shadow-including-inclusive-ancestor"></a></dfn> is an object or one of its <a data-link-type="dfn" href="#concept-shadow-including-ancestor">shadow-including ancestors</a>. </p>
+   <p>A <a data-link-type="dfn" href="#concept-node">node</a> <var>A</var> is an <dfn data-dfn-type="dfn" data-export="" id="concept-unclosed-node">unclosed node<a class="self-link" href="#concept-unclosed-node"></a></dfn> of a <a data-link-type="dfn" href="#concept-node">node</a> <var>B</var>, if <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>B</var>, or <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> whose <a data-link-type="dfn" href="#shadowroot-mode">mode</a> is "<code>open</code>" and <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> is an <a data-link-type="dfn" href="#concept-unclosed-node">unclosed node</a> of <var>B</var>. </p>
    <hr>
    <p class="XXX">For now you can find more information about this object in <a href="https://w3c.github.io/webcomponents/spec/shadow/">Shadow DOM</a>. The DOM Standard will be
 updated over time to cover more details. </p>
@@ -5500,6 +5521,7 @@ neighboring rights to this work.</p>
      <li><a href="#dom-event-composed">attribute for Event</a><span>, in §3.2</span>
     </ul>
    <li><a href="#composed-flag">composed flag</a><span>, in §3.2</span>
+   <li><a href="#dom-event-composedpath">composedPath()</a><span>, in §3.2</span>
    <li><a href="#concept-event-constructor">constructor</a><span>, in §3.4</span>
    <li><a href="#contained">contained</a><span>, in §5.2</span>
    <li><a href="#dom-node-contains">contains(other)</a><span>, in §4.4</span>
@@ -6186,6 +6208,7 @@ namespace and local name localName</a><span>, in §4.4</span>
      <li><a href="#concept-document-type">dfn for Document</a><span>, in §4.5</span>
     </ul>
    <li><a href="#typeinfo">TypeInfo</a><span>, in §8.2</span>
+   <li><a href="#concept-unclosed-node">unclosed node</a><span>, in §4.8</span>
    <li><a href="#concept-dtl-update">update steps</a><span>, in §7.1</span>
    <li>
     URL
@@ -6396,6 +6419,7 @@ interface <a href="#event">Event</a> {
   readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-event-type">type</a>;
   readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-target">target</a>;
   readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-currenttarget">currentTarget</a>;
+  sequence&lt;<a data-link-type="idl-name" href="#eventtarget">EventTarget</a>> <a class="idl-code" data-link-type="method" href="#dom-event-composedpath">composedPath</a>();
 
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-none">NONE</a> = 0;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-capturing_phase">CAPTURING_PHASE</a> = 1;
