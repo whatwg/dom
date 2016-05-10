@@ -71,7 +71,7 @@
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-04-30">30 April 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-05-10">10 May 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -506,7 +506,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="eve
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-cancelable">cancelable</a>;
   void <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>();
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-defaultprevented">defaultPrevented</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-scoped">scoped</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-composed">composed</a>;
 
   [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-istrusted">isTrusted</a>;
   readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp " href="#dom-event-timestamp">timeStamp</a>;
@@ -517,7 +517,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="eve
 dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-eventinit">EventInit<a class="self-link" href="#dictdef-eventinit"></a></dfn> {
   boolean <dfn class="idl-code" data-default="false" data-dfn-for="EventInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventinit-bubbles">bubbles<a class="self-link" href="#dom-eventinit-bubbles"></a></dfn> = false;
   boolean <dfn class="idl-code" data-default="false" data-dfn-for="EventInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventinit-cancelable">cancelable<a class="self-link" href="#dom-eventinit-cancelable"></a></dfn> = false;
-  boolean <dfn class="idl-code" data-default="false" data-dfn-for="EventInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventinit-scoped">scoped<a class="self-link" href="#dom-eventinit-scoped"></a></dfn> = false;
+  boolean <dfn class="idl-code" data-default="false" data-dfn-for="EventInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-eventinit-composed">composed<a class="self-link" href="#dom-eventinit-composed"></a></dfn> = false;
 };
 </pre>
    <p>An <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> object is simply named an <dfn data-dfn-type="dfn" data-export="" id="concept-event">event<a class="self-link" href="#concept-event"></a></dfn>. It allows for
@@ -559,8 +559,8 @@ list of tuples, each of which consists of an <b>item</b> (an <code class="idl"><
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-defaultprevented">defaultPrevented</a></code></code> 
     <dd>Returns true if <code class="idl"><a data-link-type="idl" href="#dom-event-preventdefault">preventDefault()</a></code> was invoked successfully to indicate cancellation,
  and false otherwise. 
-    <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-scoped">scoped</a></code></code> 
-    <dd>Returns true or false depending on how <var>event</var> was initialized. True if <var>event</var> does not invoke listeners past a <code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code> <a data-link-type="dfn" href="#concept-node">node</a> that is the <a data-link-type="dfn" href="#concept-tree-root">root</a> of its <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value, and false otherwise. 
+    <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-composed">composed</a></code></code> 
+    <dd>Returns true or false depending on how <var>event</var> was initialized. True if <var>event</var> invokes listeners past a <code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code> <a data-link-type="dfn" href="#concept-node">node</a> that is the <a data-link-type="dfn" href="#concept-tree-root">root</a> of its <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value, and false otherwise. 
     <dt><code><var>event</var> . <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code></code> 
     <dd>Returns true if <var>event</var> was <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> by the user agent, and
  false otherwise. 
@@ -597,7 +597,7 @@ flags that are all initially unset:</p>
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="stop-immediate-propagation-flag">stop immediate propagation flag<a class="self-link" href="#stop-immediate-propagation-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="canceled-flag">canceled flag<a class="self-link" href="#canceled-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="in-passive-listener-flag">in passive listener flag<a class="self-link" href="#in-passive-listener-flag"></a></dfn> 
-    <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="scoped-flag">scoped flag<a class="self-link" href="#scoped-flag"></a></dfn> 
+    <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="composed-flag">composed flag<a class="self-link" href="#composed-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="initialized-flag">initialized flag<a class="self-link" href="#initialized-flag"></a></dfn> 
     <li><dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="dispatch-flag">dispatch flag<a class="self-link" href="#dispatch-flag"></a></dfn> 
    </ul>
@@ -612,7 +612,7 @@ effect. User agents are encouraged to log the precise cause in a developer conso
 debugging. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-defaultprevented"><code>defaultPrevented</code><a class="self-link" href="#dom-event-defaultprevented"></a></dfn> attribute’s getter must return
 true if <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and false otherwise.</p>
-   <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-scoped"><code>scoped</code><a class="self-link" href="#dom-event-scoped"></a></dfn> attribute’s getter must return true if <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#scoped-flag">scoped flag</a> is set, and false otherwise.</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-composed"><code>composed</code><a class="self-link" href="#dom-event-composed"></a></dfn> attribute’s getter must return true if <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#composed-flag">composed flag</a> is set, and false otherwise.</p>
    <hr>
    <p>The <dfn class="idl-code" data-dfn-for="Event" data-dfn-type="attribute" data-export="" id="dom-event-istrusted"><code>isTrusted</code><a class="self-link" href="#dom-event-istrusted"></a></dfn> attribute
 must return the value it was initialized to. When an <a data-link-type="dfn" href="#concept-event">event</a> is created the attribute must be
@@ -645,7 +645,7 @@ Please see <a href="https://github.com/whatwg/dom/issues/23">dom #23</a> for mor
      <p><a data-link-type="dfn" href="#concept-event-initialize">Initialize</a> <a data-link-type="dfn" href="#context-object">context object</a> with <var>type</var>, <var>bubbles</var>, and <var>cancelable</var>. </p>
    </ol>
    <p class="note no-backref" role="note">As <a data-link-type="dfn" href="#concept-event">events</a> have constructors <code class="idl"><a data-link-type="idl" href="#dom-event-initevent">initEvent()</a></code> is redundant and
-incapable of setting <code class="idl"><a data-link-type="idl" href="#dom-event-scoped">scoped</a></code>. It has to be supported for legacy content. </p>
+incapable of setting <code class="idl"><a data-link-type="idl" href="#dom-event-composed">composed</a></code>. It has to be supported for legacy content. </p>
    <h3 class="heading settled" data-level="3.3" id="interface-customevent"><span class="secno">3.3. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#customevent">CustomEvent</a></code></span><a class="self-link" href="#interface-customevent"></a></h3>
 <pre class="idl def">[<dfn class="idl-code" data-dfn-for="CustomEvent" data-dfn-type="constructor" data-export="" data-lt="CustomEvent(type, eventInitDict)|CustomEvent(type)" id="dom-customevent-customevent">Constructor<a class="self-link" href="#dom-customevent-customevent"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="CustomEvent/CustomEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-customevent-customevent-type-eventinitdict-type">type<a class="self-link" href="#dom-customevent-customevent-type-eventinitdict-type"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-customeventinit">CustomEventInit</a> <dfn class="idl-code" data-dfn-for="CustomEvent/CustomEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-customevent-customevent-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-customevent-customevent-type-eventinitdict-eventinitdict"></a></dfn>),
  Exposed=(Window,Worker)]
@@ -3222,7 +3222,7 @@ enum <dfn class="idl-code" data-dfn-type="enum" data-export="" id="enumdef-shado
 or "<code>closed</code>").</p>
    <p><a data-link-type="dfn" href="#concept-shadow-root">Shadow roots</a>’s associated <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> is never null.</p>
    <p>A <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> algorithm, given an <var>event</var>, returns
-null if <var>event</var>’s <a data-link-type="dfn" href="#scoped-flag">scoped flag</a> is set and <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> is the <a data-link-type="dfn" href="#concept-tree-root">root</a> of <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>’s first tuple’s <b>item</b>, and <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> otherwise. </p>
+null if <var>event</var>’s <a data-link-type="dfn" href="#composed-flag">composed flag</a> is unset and <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> is the <a data-link-type="dfn" href="#concept-tree-root">root</a> of <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>’s first tuple’s <b>item</b>, and <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> otherwise. </p>
    <p>The <dfn class="idl-code" data-dfn-for="ShadowRoot" data-dfn-type="attribute" data-export="" id="dom-shadowroot-mode"><code>mode</code><a class="self-link" href="#dom-shadowroot-mode"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#shadowroot-mode">mode</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="ShadowRoot" data-dfn-type="attribute" data-export="" id="dom-shadowroot-host"><code>host</code><a class="self-link" href="#dom-shadowroot-host"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a>. </p>
    <hr>
@@ -5493,6 +5493,13 @@ neighboring rights to this work.</p>
    <li><a href="#dom-node-comparedocumentposition">compareDocumentPosition(other)</a><span>, in §4.4</span>
    <li><a href="#dom-range-comparepoint">comparePoint(node, offset)</a><span>, in §5.2</span>
    <li><a href="#dom-document-compatmode">compatMode</a><span>, in §4.5</span>
+   <li>
+    composed
+    <ul>
+     <li><a href="#dom-eventinit-composed">dict-member for EventInit</a><span>, in §3.2</span>
+     <li><a href="#dom-event-composed">attribute for Event</a><span>, in §3.2</span>
+    </ul>
+   <li><a href="#composed-flag">composed flag</a><span>, in §3.2</span>
    <li><a href="#concept-event-constructor">constructor</a><span>, in §3.4</span>
    <li><a href="#contained">contained</a><span>, in §5.2</span>
    <li><a href="#dom-node-contains">contains(other)</a><span>, in §4.4</span>
@@ -6040,13 +6047,6 @@ namespace and local name localName</a><span>, in §4.4</span>
     </ul>
    <li><a href="#dom-node-rootnode">rootNode</a><span>, in §4.4</span>
    <li><a href="#dom-element-schematypeinfo">schemaTypeInfo</a><span>, in §8.2</span>
-   <li>
-    scoped
-    <ul>
-     <li><a href="#dom-eventinit-scoped">dict-member for EventInit</a><span>, in §3.2</span>
-     <li><a href="#dom-event-scoped">attribute for Event</a><span>, in §3.2</span>
-    </ul>
-   <li><a href="#scoped-flag">scoped flag</a><span>, in §3.2</span>
    <li><a href="#scope-match-a-selectors-string">scope-match a selectors string</a><span>, in §2.4</span>
    <li><a href="#concept-range-select">select</a><span>, in §5.2</span>
    <li><a href="#dom-range-selectnodecontents">selectNodeContents(node)</a><span>, in §5.2</span>
@@ -6410,7 +6410,7 @@ interface <a href="#event">Event</a> {
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-cancelable">cancelable</a>;
   void <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>();
   readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-defaultprevented">defaultPrevented</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-scoped">scoped</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-composed">composed</a>;
 
   [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-istrusted">isTrusted</a>;
   readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp " href="#dom-event-timestamp">timeStamp</a>;
@@ -6421,7 +6421,7 @@ interface <a href="#event">Event</a> {
 dictionary <a href="#dictdef-eventinit">EventInit</a> {
   boolean <a data-default="false" data-type="boolean " href="#dom-eventinit-bubbles">bubbles</a> = false;
   boolean <a data-default="false" data-type="boolean " href="#dom-eventinit-cancelable">cancelable</a> = false;
-  boolean <a data-default="false" data-type="boolean " href="#dom-eventinit-scoped">scoped</a> = false;
+  boolean <a data-default="false" data-type="boolean " href="#dom-eventinit-composed">composed</a> = false;
 };
 
 [<a href="#dom-customevent-customevent">Constructor</a>(DOMString <a href="#dom-customevent-customevent-type-eventinitdict-type">type</a>, optional <a data-link-type="idl-name" href="#dictdef-customeventinit">CustomEventInit</a> <a href="#dom-customevent-customevent-type-eventinitdict-eventinitdict">eventInitDict</a>),
