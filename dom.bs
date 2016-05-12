@@ -613,6 +613,7 @@ interface Event {
   readonly attribute DOMString type;
   readonly attribute EventTarget? target;
   readonly attribute EventTarget? currentTarget;
+  sequence&lt;EventTarget> composedPath();
 
   const unsigned short NONE = 0;
   const unsigned short CAPTURING_PHASE = 1;
@@ -670,6 +671,12 @@ list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} obj
  <dt><code><var>event</var> . {{Event/currentTarget}}</code>
  <dd>Returns the object whose <a>event listener</a>'s <b>callback</b> is currently being
  invoked.
+
+ <dt><code><var>event</var> . {{Event/composedPath()}}</code>
+ <dd>Returns the <b>item</b> objects of <var>event</var>'s <a for=Event>path</a> (objects on which
+ listeners will be invoked), except for any <a>nodes</a> in <a>shadow trees</a> of which the
+ <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is "<code>closed</code>" that are not
+ reachable from <var>event</var>'s {{Event/currentTarget}}.
 
  <dt><code><var>event</var> . {{Event/eventPhase}}</code>
  <dd>Returns the <a>event</a>'s phase, which is one of {{Event/NONE}},
@@ -732,6 +739,29 @@ The <dfn attribute for=Event><code>target</code></dfn> and
 attributes must return the values they were initialized to. When an
 <a>event</a> is created the attributes must be
 initialized to null.
+
+<p>The <dfn method for=Event><code>composedPath()</code></dfn> method, when invoked, must run these
+steps:
+
+<ol>
+ <li><p>Let <var>composedPath</var> be a new empty list.
+
+ <li><p>Let <var>currentTarget</var> be <a>context object</a>'s <code for=Event>currentTarget</code>
+ attribute value.
+
+ <li>
+  <p>For each <var>tuple</var> in <a>context object</a>'s <a for=Event>path</a>:
+
+  <ol><li><p>If <var>currentTarget</var> is a <a>node</a> and <var>tuple</var>'s <b>item</b> is an
+  <a>unclosed node</a> of <var>currentTarget</var>, or <var>currentTarget</var> is <em>not</em> a
+  <a>node</a>, then append <var>tuple</var>'s <b>item</b> to <var>composedPath</var>.</p></li></ol>
+
+ <li><p>Return <var>composedPath</var>.
+</ol>
+
+<p class="note no-backref">This algorithm assumes that when the <var>target</var> argument to the
+<a>dispatch</a> algorithm is not a <a>node</a>, none of the tuples in <var>event</var> argument's
+eventual <a for=Event>path</a> will contain a <a>node</a> either.
 
 The <dfn attribute for=Event><code>eventPhase</code></dfn>
 attribute must return the value it was initialized to, which must be one of
@@ -5475,6 +5505,12 @@ is an object or one of its <a>shadow-including descendants</a>.
 <p>A
 <dfn export id=concept-shadow-including-inclusive-ancestor>shadow-including inclusive ancestor</dfn>
 is an object or one of its <a>shadow-including ancestors</a>.
+
+<p>A <a>node</a> <var>A</var> is an <dfn export id=concept-unclosed-node>unclosed node</dfn> of a
+<a>node</a> <var>B</var>, if <var>A</var>'s <a for=tree>root</a> is a
+<a>shadow-including inclusive ancestor</a> of <var>B</var>, or <var>A</var>'s <a for=tree>root</a>
+is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a> is "<code>open</code>" and
+<a for=DocumentFragment>host</a> is an <a>unclosed node</a> of <var>B</var>.
 
 <hr>
 
