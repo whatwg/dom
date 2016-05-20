@@ -8,7 +8,47 @@
   <link href="https://resources.whatwg.org/bikeshed.css" rel="stylesheet">
   <link href="https://resources.whatwg.org/logo-dom.svg" rel="icon">
   <meta content="Bikeshed 1.0.0" name="generator">
-<style>.highlight .hll { background-color: #ffffcc }
+<style>/* style-md-lists */
+
+            /* This is a weird hack for me not yet following the commonmark spec
+               regarding paragraph and lists. */
+            [data-md] > :first-child {
+                margin-top: 0;
+            }
+            [data-md] > :last-child {
+                margin-bottom: 0;
+            }</style>
+<style>/* style-counters */
+
+            body {
+                counter-reset: example figure issue;
+            }
+            .issue {
+                counter-increment: issue;
+            }
+            .issue:not(.no-marker)::before {
+                content: "Issue " counter(issue);
+            }
+
+            .example {
+                counter-increment: example;
+            }
+            .example:not(.no-marker)::before {
+                content: "Example " counter(example);
+            }
+            .invalid.example:not(.no-marker)::before,
+            .illegal.example:not(.no-marker)::before {
+                content: "Invalid Example" counter(example);
+            }
+
+            figure {
+                counter-increment: figure;
+            }
+            figcaption:not(.no-marker)::before {
+                content: "Figure " counter(figure);
+            }</style>
+<style>/* style-syntax-highlighting */
+.highlight .hll { background-color: #ffffcc }
 .highlight  { background: #ffffff; }
 .highlight .c { color: #708090 } /* Comment */
 .highlight .k { color: #990055 } /* Keyword */
@@ -66,12 +106,120 @@
         code.highlight { padding: .1em; border-radius: .3em; }
         pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
         </style>
+<style>/* style-selflinks */
+
+            .heading, .issue, .note, .example, li, dt {
+                position: relative;
+            }
+            a.self-link {
+                position: absolute;
+                top: 0;
+                left: calc(-1 * (3.5rem - 26px));
+                width: calc(3.5rem - 26px);
+                height: 2em;
+                text-align: center;
+                border: none;
+                transition: opacity .2s;
+                opacity: .5;
+            }
+            a.self-link:hover {
+                opacity: 1;
+            }
+            .heading > a.self-link {
+                font-size: 83%;
+            }
+            li > a.self-link {
+                left: calc(-1 * (3.5rem - 26px) - 2em);
+            }
+            dfn > a.self-link {
+                top: auto;
+                left: auto;
+                opacity: 0;
+                width: 1.5em;
+                height: 1.5em;
+                background: gray;
+                color: white;
+                font-style: normal;
+                transition: opacity .2s, background-color .2s, color .2s;
+            }
+            dfn:hover > a.self-link {
+                opacity: 1;
+            }
+            dfn > a.self-link:hover {
+                color: black;
+            }
+
+            a.self-link::before            { content: "¶"; }
+            .heading > a.self-link::before { content: "§"; }
+            dfn > a.self-link::before      { content: "#"; }</style>
+<style>/* style-autolinks */
+
+            .css.css, .property.property, .descriptor.descriptor {
+                color: #005a9c;
+                font-size: inherit;
+                font-family: inherit;
+            }
+            .css::before, .property::before, .descriptor::before {
+                content: "‘";
+            }
+            .css::after, .property::after, .descriptor::after {
+                content: "’";
+            }
+            .property, .descriptor {
+                /* Don't wrap property and descriptor names */
+                white-space: nowrap;
+            }
+            .type { /* CSS value <type> */
+                font-style: italic;
+            }
+            pre .property::before, pre .property::after {
+                content: "";
+            }
+            [data-link-type="property"]::before,
+            [data-link-type="propdesc"]::before,
+            [data-link-type="descriptor"]::before,
+            [data-link-type="value"]::before,
+            [data-link-type="function"]::before,
+            [data-link-type="at-rule"]::before,
+            [data-link-type="selector"]::before,
+            [data-link-type="maybe"]::before {
+                content: "‘";
+            }
+            [data-link-type="property"]::after,
+            [data-link-type="propdesc"]::after,
+            [data-link-type="descriptor"]::after,
+            [data-link-type="value"]::after,
+            [data-link-type="function"]::after,
+            [data-link-type="at-rule"]::after,
+            [data-link-type="selector"]::after,
+            [data-link-type="maybe"]::after {
+                content: "’";
+            }
+
+            [data-link-type].production::before,
+            [data-link-type].production::after,
+            .prod [data-link-type]::before,
+            .prod [data-link-type]::after {
+                content: "";
+            }
+
+            [data-link-type=element],
+            [data-link-type=element-attr] {
+                font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+                font-size: .9em;
+            }
+            [data-link-type=element]::before { content: "<" }
+            [data-link-type=element]::after  { content: ">" }
+
+            [data-link-type=biblio] {
+                white-space: pre;
+            }</style>
  <body class="h-entry status-LS">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-05-12">12 May 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-05-20">20 May 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -489,28 +637,28 @@ would have been <code class="idl"><a data-link-type="idl" href="#dom-event-at_ta
 <pre class="idl def">[<dfn class="idl-code" data-dfn-for="Event" data-dfn-type="constructor" data-export="" data-lt="Event(type, eventInitDict)|Event(type)" id="dom-event-event">Constructor<a class="self-link" href="#dom-event-event"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="Event/Event(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-event-event-type-eventinitdict-type">type<a class="self-link" href="#dom-event-event-type-eventinitdict-type"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-eventinit">EventInit</a> <dfn class="idl-code" data-dfn-for="Event/Event(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-event-event-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-event-event-type-eventinitdict-eventinitdict"></a></dfn>),
  Exposed=(Window,Worker)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="event">Event<a class="self-link" href="#event"></a></dfn> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-event-type">type</a>;
-  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-target">target</a>;
-  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-currenttarget">currentTarget</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-event-type">type</a>;
+  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget?" href="#dom-event-target">target</a>;
+  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget?" href="#dom-event-currenttarget">currentTarget</a>;
   sequence&lt;<a data-link-type="idl-name" href="#eventtarget">EventTarget</a>> <a class="idl-code" data-link-type="method" href="#dom-event-composedpath">composedPath</a>();
 
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-none">NONE</a> = 0;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-capturing_phase">CAPTURING_PHASE</a> = 1;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-at_target">AT_TARGET</a> = 2;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a> = 3;
-  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short " href="#dom-event-eventphase">eventPhase</a>;
+  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short" href="#dom-event-eventphase">eventPhase</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-event-stoppropagation">stopPropagation</a>();
   void <a class="idl-code" data-link-type="method" href="#dom-event-stopimmediatepropagation">stopImmediatePropagation</a>();
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-bubbles">bubbles</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-cancelable">cancelable</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-bubbles">bubbles</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-cancelable">cancelable</a>;
   void <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>();
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-defaultprevented">defaultPrevented</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-composed">composed</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-defaultprevented">defaultPrevented</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-composed">composed</a>;
 
-  [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-istrusted">isTrusted</a>;
-  readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp " href="#dom-event-timestamp">timeStamp</a>;
+  [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-istrusted">isTrusted</a>;
+  readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-event-initevent">initEvent</a>(DOMString <dfn class="idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-type">type<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-type"></a></dfn>, boolean <dfn class="idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-bubbles">bubbles<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-bubbles"></a></dfn>, boolean <dfn class="idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-cancelable">cancelable<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-cancelable"></a></dfn>); // historical
 };
@@ -673,7 +821,7 @@ incapable of setting <code class="idl"><a data-link-type="idl" href="#dom-event-
 <pre class="idl def">[<dfn class="idl-code" data-dfn-for="CustomEvent" data-dfn-type="constructor" data-export="" data-lt="CustomEvent(type, eventInitDict)|CustomEvent(type)" id="dom-customevent-customevent">Constructor<a class="self-link" href="#dom-customevent-customevent"></a></dfn>(DOMString <dfn class="idl-code" data-dfn-for="CustomEvent/CustomEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-customevent-customevent-type-eventinitdict-type">type<a class="self-link" href="#dom-customevent-customevent-type-eventinitdict-type"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-customeventinit">CustomEventInit</a> <dfn class="idl-code" data-dfn-for="CustomEvent/CustomEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-customevent-customevent-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-customevent-customevent-type-eventinitdict-eventinitdict"></a></dfn>),
  Exposed=(Window,Worker)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="customevent">CustomEvent<a class="self-link" href="#customevent"></a></dfn> : <a data-link-type="idl-name" href="#event">Event</a> {
-  readonly attribute any <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="any " href="#dom-customevent-detail">detail</a>;
+  readonly attribute any <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="any" href="#dom-customevent-detail">detail</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-customevent-initcustomevent">initCustomEvent</a>(DOMString <dfn class="idl-code" data-dfn-for="CustomEvent/initCustomEvent(type, bubbles, cancelable, detail)" data-dfn-type="argument" data-export="" id="dom-customevent-initcustomevent-type-bubbles-cancelable-detail-type">type<a class="self-link" href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-type"></a></dfn>, boolean <dfn class="idl-code" data-dfn-for="CustomEvent/initCustomEvent(type, bubbles, cancelable, detail)" data-dfn-type="argument" data-export="" id="dom-customevent-initcustomevent-type-bubbles-cancelable-detail-bubbles">bubbles<a class="self-link" href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-bubbles"></a></dfn>, boolean <dfn class="idl-code" data-dfn-for="CustomEvent/initCustomEvent(type, bubbles, cancelable, detail)" data-dfn-type="argument" data-export="" id="dom-customevent-initcustomevent-type-bubbles-cancelable-detail-cancelable">cancelable<a class="self-link" href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-cancelable"></a></dfn>, any <dfn class="idl-code" data-dfn-for="CustomEvent/initCustomEvent(type, bubbles, cancelable, detail)" data-dfn-type="argument" data-export="" id="dom-customevent-initcustomevent-type-bubbles-cancelable-detail-detail">detail<a class="self-link" href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-detail"></a></dfn>);
 };
@@ -728,8 +876,8 @@ for historical reasons.</p>
    <h3 class="heading settled" data-level="3.6" id="interface-eventtarget"><span class="secno">3.6. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code></span><a class="self-link" href="#interface-eventtarget"></a></h3>
 <pre class="idl def">[Exposed=(Window,Worker)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="eventtarget">EventTarget<a class="self-link" href="#eventtarget"></a></dfn> {
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-options"></a></dfn>);
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-options"></a></dfn>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-callback">callback<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-callback"></a></dfn>, optional (<a data-link-type="idl-name" href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/addEventListener(type, callback, options), EventTarget/addEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-addeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-addeventlistener-type-callback-options-options"></a></dfn>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-type">type<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-type"></a></dfn>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-callback">callback<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-callback"></a></dfn>, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <dfn class="idl-code" data-dfn-for="EventTarget/removeEventListener(type, callback, options), EventTarget/removeEventListener(type, callback)" data-dfn-type="argument" data-export="" id="dom-eventtarget-removeeventlistener-type-callback-options-options">options<a class="self-link" href="#dom-eventtarget-removeeventlistener-type-callback-options-options"></a></dfn>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <dfn class="idl-code" data-dfn-for="EventTarget/dispatchEvent(event)" data-dfn-type="argument" data-export="" id="dom-eventtarget-dispatchevent-event-event">event<a class="self-link" href="#dom-eventtarget-dispatchevent-event-event"></a></dfn>);
 };
 
@@ -1526,10 +1674,10 @@ standards that want to define APIs shared between <a data-link-type="dfn" href="
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="parentnode">ParentNode<a class="self-link" href="#parentnode"></a></dfn> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCollection " href="#dom-parentnode-children">children</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-parentnode-firstelementchild">firstElementChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-parentnode-lastelementchild">lastElementChild</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-parentnode-childelementcount">childElementCount</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCollection" href="#dom-parentnode-children">children</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-parentnode-firstelementchild">firstElementChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-parentnode-lastelementchild">lastElementChild</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-parentnode-childelementcount">childElementCount</a>;
 
   [CEReactions, Unscopable] void <a class="idl-code" data-link-type="method" href="#dom-parentnode-prepend">prepend</a>((<a data-link-type="idl-name" href="#node">Node</a> or DOMString)... <dfn class="idl-code" data-dfn-for="ParentNode/prepend(nodes...), ParentNode/prepend(nodes)" data-dfn-type="argument" data-export="" id="dom-parentnode-prepend-nodes-nodes">nodes<a class="self-link" href="#dom-parentnode-prepend-nodes-nodes"></a></dfn>);
   [CEReactions, Unscopable] void <a class="idl-code" data-link-type="method" href="#dom-parentnode-append">append</a>((<a data-link-type="idl-name" href="#node">Node</a> or DOMString)... <dfn class="idl-code" data-dfn-for="ParentNode/append(nodes...), ParentNode/append(nodes)" data-dfn-type="argument" data-export="" id="dom-parentnode-append-nodes-nodes">nodes<a class="self-link" href="#dom-parentnode-append-nodes-nodes"></a></dfn>);
@@ -1589,8 +1737,8 @@ running <a data-link-type="dfn" href="#scope-match-a-selectors-string">scope-mat
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nondocumenttypechildnode">NonDocumentTypeChildNode<a class="self-link" href="#nondocumenttypechildnode"></a></dfn> {
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a>;
 };
 <a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;
 <a data-link-type="idl-name" href="#characterdata">CharacterData</a> implements <a data-link-type="idl-name" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;
@@ -1698,7 +1846,7 @@ these steps:</p>
 <pre class="idl def">[NoInterfaceObject,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="slotable">Slotable<a class="self-link" href="#slotable"></a></dfn> {
-  readonly attribute <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement? " href="#dom-slotable-assignedslot">assignedSlot</a>;
+  readonly attribute <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement?" href="#dom-slotable-assignedslot">assignedSlot</a>;
 };
 <a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
 <a data-link-type="idl-name" href="#text">Text</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
@@ -1722,7 +1870,7 @@ within the <a data-link-type="dfn" href="#concept-collection">collection</a> mus
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nodelist">NodeList<a class="self-link" href="#nodelist"></a></dfn> {
   getter <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodelist-item">item</a>(unsigned long <dfn class="idl-code" data-dfn-for="NodeList/item(index)" data-dfn-type="argument" data-export="" id="dom-nodelist-item-index-index">index<a class="self-link" href="#dom-nodelist-item-index-index"></a></dfn>);
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-nodelist-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-nodelist-length">length</a>;
   iterable&lt;<a data-link-type="idl-name" href="#node">Node</a>>;
 };
 </pre>
@@ -1745,7 +1893,7 @@ return null.</p>
    <h5 class="heading settled" data-level="4.2.10.2" id="interface-htmlcollection"><span class="secno">4.2.10.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code></span><a class="self-link" href="#interface-htmlcollection"></a></h5>
 <pre class="idl def">[Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="htmlcollection">HTMLCollection<a class="self-link" href="#htmlcollection"></a></dfn> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-htmlcollection-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-htmlcollection-length">length</a>;
   getter <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-htmlcollection-item">item</a>(unsigned long <dfn class="idl-code" data-dfn-for="HTMLCollection/item(index)" data-dfn-type="argument" data-export="" id="dom-htmlcollection-item-index-index">index<a class="self-link" href="#dom-htmlcollection-item-index-index"></a></dfn>);
   getter <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-htmlcollection-nameditem">namedItem</a>(DOMString <dfn class="idl-code" data-dfn-for="HTMLCollection/namedItem(name)" data-dfn-type="argument" data-export="" id="dom-htmlcollection-nameditem-name-name">name<a class="self-link" href="#dom-htmlcollection-nameditem-name-name"></a></dfn>);
 };
@@ -1842,7 +1990,7 @@ associated list of <code class="idl"><a data-link-type="idl" href="#mutationobse
 mutations within a given <a data-link-type="dfn" href="#concept-node">node</a>’s <a data-link-type="dfn" href="#concept-tree-descendant">descendants</a> after <a data-link-type="dfn" href="#concept-node">node</a> has been
 removed so they do not get lost when <code>subtree</code> is set to true on <a data-link-type="dfn" href="#concept-node">node</a>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a>. </p>
    <h4 class="heading settled" data-level="4.3.1" id="interface-mutationobserver"><span class="secno">4.3.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#mutationobserver">MutationObserver</a></code></span><a class="self-link" href="#interface-mutationobserver"></a></h4>
-<pre class="idl def">[<a class="idl-code" data-link-type="constructor" href="#dom-mutationobserver-mutationobserver">Constructor</a>(<a data-link-type="idl-name" href="#callbackdef-mutationcallback">MutationCallback</a> callback)]
+<pre class="idl def">[<a class="idl-code" data-link-type="constructor" href="#dom-mutationobserver-mutationobserver">Constructor</a>(<a data-link-type="idl-name" href="#callbackdef-mutationcallback">MutationCallback</a> <dfn class="idl-code" data-dfn-for="MutationObserver/MutationObserver(callback)" data-dfn-type="argument" data-export="" id="dom-mutationobserver-mutationobserver-callback-callback">callback<a class="self-link" href="#dom-mutationobserver-mutationobserver-callback-callback"></a></dfn>)]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="mutationobserver">MutationObserver<a class="self-link" href="#mutationobserver"></a></dfn> {
   void <a class="idl-code" data-link-type="method" href="#dom-mutationobserver-observe">observe</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="MutationObserver/observe(target, options)" data-dfn-type="argument" data-export="" id="dom-mutationobserver-observe-target-options-target">target<a class="self-link" href="#dom-mutationobserver-observe-target-options-target"></a></dfn>, <a data-link-type="idl-name" href="#dictdef-mutationobserverinit">MutationObserverInit</a> <dfn class="idl-code" data-dfn-for="MutationObserver/observe(target, options)" data-dfn-type="argument" data-export="" id="dom-mutationobserver-observe-target-options-options">options<a class="self-link" href="#dom-mutationobserver-observe-target-options-options"></a></dfn>);
   void <a class="idl-code" data-link-type="method" href="#dom-mutationobserver-disconnect">disconnect</a>();
@@ -1989,15 +2137,15 @@ previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</va
    <h4 class="heading settled" data-level="4.3.3" id="interface-mutationrecord"><span class="secno">4.3.3. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#mutationrecord">MutationRecord</a></code></span><a class="self-link" href="#interface-mutationrecord"></a></h4>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="mutationrecord">MutationRecord<a class="self-link" href="#mutationrecord"></a></dfn> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-mutationrecord-type">type</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-mutationrecord-target">target</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-mutationrecord-addednodes">addedNodes</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-mutationrecord-removednodes">removedNodes</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-mutationrecord-previoussibling">previousSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-mutationrecord-nextsibling">nextSibling</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-attributename">attributeName</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-attributenamespace">attributeNamespace</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-oldvalue">oldValue</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-mutationrecord-type">type</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-mutationrecord-target">target</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-mutationrecord-addednodes">addedNodes</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-mutationrecord-removednodes">removedNodes</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-mutationrecord-previoussibling">previousSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-mutationrecord-nextsibling">nextSibling</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-attributename">attributeName</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-attributenamespace">attributeNamespace</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-oldvalue">oldValue</a>;
 };
 </pre>
    <dl class="domintro">
@@ -2059,25 +2207,25 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nod
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-node-document_type_node">DOCUMENT_TYPE_NODE</a> = 10;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-node-document_fragment_node">DOCUMENT_FRAGMENT_NODE</a> = 11;
   const unsigned short <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="const" data-export="" id="dom-node-notation_node">NOTATION_NODE<a class="self-link" href="#dom-node-notation_node"></a></dfn> = 12; // historical
-  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short " href="#dom-node-nodetype">nodeType</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-node-nodename">nodeName</a>;
+  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short" href="#dom-node-nodetype">nodeType</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-node-nodename">nodeName</a>;
 
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-node-baseuri">baseURI</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-node-baseuri">baseURI</a>;
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-node-isconnected">isConnected</a>;
-  readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document? " href="#dom-node-ownerdocument">ownerDocument</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-node-rootnode">rootNode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-parentnode">parentNode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-node-parentelement">parentElement</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-node-isconnected">isConnected</a>;
+  readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document?" href="#dom-node-ownerdocument">ownerDocument</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-node-rootnode">rootNode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-parentnode">parentNode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-node-parentelement">parentElement</a>;
   boolean <a class="idl-code" data-link-type="method" href="#dom-node-haschildnodes">hasChildNodes</a>();
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-node-childnodes">childNodes</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-firstchild">firstChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-lastchild">lastChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-previoussibling">previousSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-nextsibling">nextSibling</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-node-childnodes">childNodes</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-firstchild">firstChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-lastchild">lastChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-previoussibling">previousSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-nextsibling">nextSibling</a>;
 
-  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString? " href="#dom-node-nodevalue">nodeValue</a>;
-  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString? " href="#dom-node-textcontent">textContent</a>;
+  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString?" href="#dom-node-nodevalue">nodeValue</a>;
+  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString?" href="#dom-node-textcontent">textContent</a>;
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-node-normalize">normalize</a>();
 
   [CEReactions, NewObject] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-clonenode">cloneNode</a>(optional boolean <dfn class="idl-code" data-dfn-for="Node/cloneNode(deep), Node/cloneNode()" data-dfn-type="argument" data-export="" id="dom-node-clonenode-deep-deep">deep<a class="self-link" href="#dom-node-clonenode-deep-deep"></a></dfn> = false);
@@ -2608,18 +2756,18 @@ returned by an earlier call. </p>
 <pre class="idl def" data-dfn-force="Document">[<a class="idl-code" data-link-type="constructor" href="#dom-document-document">Constructor</a>,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="document">Document<a class="self-link" href="#document"></a></dfn> : <a data-link-type="idl-name" href="#node">Node</a> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#domimplementation">DOMImplementation</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMImplementation " href="#dom-document-implementation">implementation</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-url">URL</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-documenturi">documentURI</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-origin">origin</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-compatmode">compatMode</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-characterset">characterSet</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-charset">charset</a>; // historical alias of .characterSet
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-inputencoding">inputEncoding</a>; // historical alias of .characterSet
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-contenttype">contentType</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#domimplementation">DOMImplementation</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMImplementation" href="#dom-document-implementation">implementation</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-url">URL</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-documenturi">documentURI</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-origin">origin</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-compatmode">compatMode</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-characterset">characterSet</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-charset">charset</a>; // historical alias of .characterSet
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-inputencoding">inputEncoding</a>; // historical alias of .characterSet
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-contenttype">contentType</a>;
 
-  readonly attribute <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DocumentType? " href="#dom-document-doctype">doctype</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-document-documentelement">documentElement</a>;
+  readonly attribute <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DocumentType?" href="#dom-document-doctype">doctype</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-document-documentelement">documentElement</a>;
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagname">getElementsByTagName</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/getElementsByTagName(qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbytagname-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-document-getelementsbytagname-qualifiedname-qualifiedname"></a></dfn>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Document/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbytagnamens-namespace-localname-namespace">namespace<a class="self-link" href="#dom-document-getelementsbytagnamens-namespace-localname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Document/getElementsByTagNameNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbytagnamens-namespace-localname-localname">localName<a class="self-link" href="#dom-document-getelementsbytagnamens-namespace-localname-localname"></a></dfn>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbyclassname">getElementsByClassName</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/getElementsByClassName(classNames)" data-dfn-type="argument" data-export="" id="dom-document-getelementsbyclassname-classnames-classnames">classNames<a class="self-link" href="#dom-document-getelementsbyclassname-classnames-classnames"></a></dfn>);
@@ -2637,7 +2785,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="doc
   [NewObject] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-document-createattribute">createAttribute</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createAttribute(localName)" data-dfn-type="argument" data-export="" id="dom-document-createattribute-localname-localname">localName<a class="self-link" href="#dom-document-createattribute-localname-localname"></a></dfn>);
   [NewObject] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-document-createattributens">createAttributeNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Document/createAttributeNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createattributens-namespace-qualifiedname-namespace">namespace<a class="self-link" href="#dom-document-createattributens-namespace-qualifiedname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Document/createAttributeNS(namespace, qualifiedName)" data-dfn-type="argument" data-export="" id="dom-document-createattributens-namespace-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-document-createattributens-namespace-qualifiedname-qualifiedname"></a></dfn>);
 
-  [NewObject] <a data-link-type="idl-name" href="#event">Event</a> <a class="idl-code" data-link-type="method" href="#dom-document-createevent">createEvent</a>(DOMString interface);
+  [NewObject] <a data-link-type="idl-name" href="#event">Event</a> <a class="idl-code" data-link-type="method" href="#dom-document-createevent">createEvent</a>(DOMString <dfn class="idl-code" data-dfn-for="Document/createEvent(interface)" data-dfn-type="argument" data-export="" id="dom-document-createevent-interface-interface">interface<a class="self-link" href="#dom-document-createevent-interface-interface"></a></dfn>);
 
   [NewObject] <a data-link-type="idl-name" href="#range">Range</a> <a class="idl-code" data-link-type="method" href="#dom-document-createrange">createRange</a>();
 
@@ -3199,9 +3347,9 @@ returns true) so that old pages don’t stop working. </p>
    <h3 class="heading settled" data-level="4.6" id="interface-documenttype"><span class="secno">4.6. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code></span><a class="self-link" href="#interface-documenttype"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="documenttype">DocumentType<a class="self-link" href="#documenttype"></a></dfn> : <a data-link-type="idl-name" href="#node">Node</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-name">name</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-publicid">publicId</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-systemid">systemId</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-name">name</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-publicid">publicId</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-systemid">systemId</a>;
 };
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#documenttype">DocumentType</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are simply known as <dfn data-dfn-type="dfn" data-export="" data-lt="doctype" id="concept-doctype">doctypes<a class="self-link" href="#concept-doctype"></a></dfn>. </p>
@@ -3234,11 +3382,11 @@ global object’s associated <a data-link-type="dfn" href="#concept-document">do
    <h3 class="heading settled" data-level="4.8" id="interface-shadowroot"><span class="secno">4.8. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code></span><a class="self-link" href="#interface-shadowroot"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="shadowroot">ShadowRoot<a class="self-link" href="#shadowroot"></a></dfn> : <a data-link-type="idl-name" href="#documentfragment">DocumentFragment</a> {
-  readonly attribute <a data-link-type="idl-name" href="#enumdef-shadowrootmode">ShadowRootMode</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRootMode " href="#dom-shadowroot-mode">mode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element " href="#dom-shadowroot-host">host</a>;
+  readonly attribute <a data-link-type="idl-name" href="#enumdef-shadowrootmode">ShadowRootMode</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRootMode" href="#dom-shadowroot-mode">mode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element" href="#dom-shadowroot-host">host</a>;
 };
 
-enum <dfn class="idl-code" data-dfn-type="enum" data-export="" id="enumdef-shadowrootmode">ShadowRootMode<a class="self-link" href="#enumdef-shadowrootmode"></a></dfn> { <dfn class="idl-code" data-dfn-for="ShadowRootMode" data-dfn-type="enum-value" data-export="" id="dom-shadowrootmode-open">"open"<a class="self-link" href="#dom-shadowrootmode-open"></a></dfn>, <dfn class="idl-code" data-dfn-for="ShadowRootMode" data-dfn-type="enum-value" data-export="" id="dom-shadowrootmode-closed">"closed"<a class="self-link" href="#dom-shadowrootmode-closed"></a></dfn> };
+enum <dfn class="idl-code" data-dfn-type="enum" data-export="" id="enumdef-shadowrootmode">ShadowRootMode<a class="self-link" href="#enumdef-shadowrootmode"></a></dfn> { <dfn class="idl-code" data-dfn-for="ShadowRootMode" data-dfn-type="enum-value" data-export="" data-lt="&quot;open&quot;|open" id="dom-shadowrootmode-open">"open"<a class="self-link" href="#dom-shadowrootmode-open"></a></dfn>, <dfn class="idl-code" data-dfn-for="ShadowRootMode" data-dfn-type="enum-value" data-export="" data-lt="&quot;closed&quot;|closed" id="dom-shadowrootmode-closed">"closed"<a class="self-link" href="#dom-shadowrootmode-closed"></a></dfn> };
 </pre>
    <p><code class="idl"><a data-link-type="idl" href="#shadowroot">ShadowRoot</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> are simply known as <dfn data-dfn-type="dfn" data-export="" data-lt="shadow root" id="concept-shadow-root">shadow roots<a class="self-link" href="#concept-shadow-root"></a></dfn>. </p>
    <p><a data-link-type="dfn" href="#concept-shadow-root">Shadow roots</a> have an associated <dfn data-dfn-for="ShadowRoot" data-dfn-type="dfn" data-noexport="" id="shadowroot-mode">mode<a class="self-link" href="#shadowroot-mode"></a></dfn> ("<code>open</code>"
@@ -3263,18 +3411,18 @@ updated over time to cover more details. </p>
    <h3 class="heading settled" data-level="4.9" id="interface-element"><span class="secno">4.9. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#element">Element</a></code></span><a class="self-link" href="#interface-element"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="element">Element<a class="self-link" href="#element"></a></dfn> : <a data-link-type="idl-name" href="#node">Node</a> {
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-element-namespaceuri">namespaceURI</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-element-prefix">prefix</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-element-localname">localName</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-element-tagname">tagName</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-element-namespaceuri">namespaceURI</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-element-prefix">prefix</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-element-localname">localName</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-element-tagname">tagName</a>;
 
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-id">id</a>;
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-classname">className</a>;
-  [CEReactions, SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList " href="#dom-element-classlist">classList</a>;
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-slot">slot</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-id">id</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-classname">className</a>;
+  [CEReactions, SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList" href="#dom-element-classlist">classList</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-slot">slot</a>;
 
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-hasattributes">hasAttributes</a>();
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap " href="#dom-element-attributes">attributes</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap" href="#dom-element-attributes">attributes</a>;
   sequence&lt;DOMString> <a class="idl-code" data-link-type="method" href="#dom-element-getattributenames">getAttributeNames</a>();
   DOMString? <a class="idl-code" data-link-type="method" href="#dom-element-getattribute">getAttribute</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/getAttribute(qualifiedName)" data-dfn-type="argument" data-export="" id="dom-element-getattribute-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-element-getattribute-qualifiedname-qualifiedname"></a></dfn>);
   DOMString? <a class="idl-code" data-link-type="method" href="#dom-element-getattributens">getAttributeNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="Element/getAttributeNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-element-getattributens-namespace-localname-namespace">namespace<a class="self-link" href="#dom-element-getattributens-namespace-localname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="Element/getAttributeNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-element-getattributens-namespace-localname-localname">localName<a class="self-link" href="#dom-element-getattributens-namespace-localname-localname"></a></dfn>);
@@ -3292,7 +3440,7 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="ele
   [CEReactions] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-element-removeattributenode">removeAttributeNode</a>(<a data-link-type="idl-name" href="#attr">Attr</a> <dfn class="idl-code" data-dfn-for="Element/removeAttributeNode(attr)" data-dfn-type="argument" data-export="" id="dom-element-removeattributenode-attr-attr">attr<a class="self-link" href="#dom-element-removeattributenode-attr-attr"></a></dfn>);
 
   <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a> <a class="idl-code" data-link-type="method" href="#dom-element-attachshadow">attachShadow</a>(<a data-link-type="idl-name" href="#dictdef-shadowrootinit">ShadowRootInit</a> <dfn class="idl-code" data-dfn-for="Element/attachShadow(init)" data-dfn-type="argument" data-export="" id="dom-element-attachshadow-init-init">init<a class="self-link" href="#dom-element-attachshadow-init-init"></a></dfn>);
-  readonly attribute <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRoot? " href="#dom-element-shadowroot">shadowRoot</a>;
+  readonly attribute <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRoot?" href="#dom-element-shadowroot">shadowRoot</a>;
 
   <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-element-closest">closest</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/closest(selectors)" data-dfn-type="argument" data-export="" id="dom-element-closest-selectors-selectors">selectors<a class="self-link" href="#dom-element-closest-selectors-selectors"></a></dfn>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-matches">matches</a>(DOMString <dfn class="idl-code" data-dfn-for="Element/matches(selectors)" data-dfn-type="argument" data-export="" id="dom-element-matches-selectors-selectors">selectors<a class="self-link" href="#dom-element-matches-selectors-selectors"></a></dfn>);
@@ -3816,7 +3964,7 @@ invoked, must run these steps:</p>
    <h4 class="heading settled" data-level="4.9.1" id="interface-namednodemap"><span class="secno">4.9.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#namednodemap">NamedNodeMap</a></code></span><a class="self-link" href="#interface-namednodemap"></a></h4>
 <pre class="idl def">[Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="namednodemap">NamedNodeMap<a class="self-link" href="#namednodemap"></a></dfn> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-namednodemap-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-namednodemap-length">length</a>;
   getter <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-item">item</a>(unsigned long <dfn class="idl-code" data-dfn-for="NamedNodeMap/item(index)" data-dfn-type="argument" data-export="" id="dom-namednodemap-item-index-index">index<a class="self-link" href="#dom-namednodemap-item-index-index"></a></dfn>);
   getter <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-getnameditem">getNamedItem</a>(DOMString <dfn class="idl-code" data-dfn-for="NamedNodeMap/getNamedItem(qualifiedName)" data-dfn-type="argument" data-export="" id="dom-namednodemap-getnameditem-qualifiedname-qualifiedname">qualifiedName<a class="self-link" href="#dom-namednodemap-getnameditem-qualifiedname-qualifiedname"></a></dfn>);
   <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-getnameditemns">getNamedItemNS</a>(DOMString? <dfn class="idl-code" data-dfn-for="NamedNodeMap/getNamedItemNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-namednodemap-getnameditemns-namespace-localname-namespace">namespace<a class="self-link" href="#dom-namednodemap-getnameditemns-namespace-localname-namespace"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="NamedNodeMap/getNamedItemNS(namespace, localName)" data-dfn-type="argument" data-export="" id="dom-namednodemap-getnameditemns-namespace-localname-localname">localName<a class="self-link" href="#dom-namednodemap-getnameditemns-namespace-localname-localname"></a></dfn>);
@@ -3883,18 +4031,18 @@ steps: </p>
    <h4 class="heading settled" data-level="4.9.2" id="interface-attr"><span class="secno">4.9.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#attr">Attr</a></code></span><a class="self-link" href="#interface-attr"></a></h4>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="attr">Attr<a class="self-link" href="#attr"></a></dfn> {
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-attr-namespaceuri">namespaceURI</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-attr-prefix">prefix</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-localname">localName</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-name">name</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-nodename">nodeName</a>; // historical alias of .name
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-value">value</a>;
-  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-nodevalue">nodeValue</a>; // historical alias of .value
-  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-textcontent">textContent</a>; // historical alias of .value
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-attr-namespaceuri">namespaceURI</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-attr-prefix">prefix</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-localname">localName</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-name">name</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-nodename">nodeName</a>; // historical alias of .name
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-value">value</a>;
+  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-nodevalue">nodeValue</a>; // historical alias of .value
+  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-textcontent">textContent</a>; // historical alias of .value
 
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-attr-ownerelement">ownerElement</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-attr-ownerelement">ownerElement</a>;
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-attr-specified">specified</a>; // useless; always returns true
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-attr-specified">specified</a>; // useless; always returns true
 };</pre>
    <p><code class="idl"><a data-link-type="idl" href="#attr">Attr</a></code> objects are simply known as <dfn data-dfn-type="dfn" data-export="" data-lt="attribute" id="concept-attribute">attributes<a class="self-link" href="#concept-attribute"></a></dfn>. They are sometimes referred
 to as <em>content attributes</em> to avoid confusion with IDL attributes.</p>
@@ -3928,8 +4076,8 @@ handling is required. </p>
    <h3 class="heading settled" data-level="4.10" id="interface-characterdata"><span class="secno">4.10. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#characterdata">CharacterData</a></code></span><a class="self-link" href="#interface-characterdata"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="characterdata">CharacterData<a class="self-link" href="#characterdata"></a></dfn> : <a data-link-type="idl-name" href="#node">Node</a> {
-  [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-characterdata-data">data</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-characterdata-length">length</a>;
+  [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-characterdata-data">data</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-characterdata-length">length</a>;
   DOMString <a class="idl-code" data-link-type="method" href="#dom-characterdata-substringdata">substringData</a>(unsigned long <dfn class="idl-code" data-dfn-for="CharacterData/substringData(offset, count)" data-dfn-type="argument" data-export="" id="dom-characterdata-substringdata-offset-count-offset">offset<a class="self-link" href="#dom-characterdata-substringdata-offset-count-offset"></a></dfn>, unsigned long <dfn class="idl-code" data-dfn-for="CharacterData/substringData(offset, count)" data-dfn-type="argument" data-export="" id="dom-characterdata-substringdata-offset-count-count">count<a class="self-link" href="#dom-characterdata-substringdata-offset-count-count"></a></dfn>);
   void <a class="idl-code" data-link-type="method" href="#dom-characterdata-appenddata">appendData</a>(DOMString <dfn class="idl-code" data-dfn-for="CharacterData/appendData(data)" data-dfn-type="argument" data-export="" id="dom-characterdata-appenddata-data-data">data<a class="self-link" href="#dom-characterdata-appenddata-data-data"></a></dfn>);
   void <a class="idl-code" data-link-type="method" href="#dom-characterdata-insertdata">insertData</a>(unsigned long <dfn class="idl-code" data-dfn-for="CharacterData/insertData(offset, data)" data-dfn-type="argument" data-export="" id="dom-characterdata-insertdata-offset-data-offset">offset<a class="self-link" href="#dom-characterdata-insertdata-offset-data-offset"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="CharacterData/insertData(offset, data)" data-dfn-type="argument" data-export="" id="dom-characterdata-insertdata-offset-data-data">data<a class="self-link" href="#dom-characterdata-insertdata-offset-data-data"></a></dfn>);
@@ -3980,7 +4128,7 @@ invoked, must <a data-link-type="dfn" href="#concept-cd-replace">replace data</a
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="text">Text<a class="self-link" href="#text"></a></dfn> : <a data-link-type="idl-name" href="#characterdata">CharacterData</a> {
   [NewObject] <a data-link-type="idl-name" href="#text">Text</a> <a class="idl-code" data-link-type="method" href="#dom-text-splittext">splitText</a>(unsigned long <dfn class="idl-code" data-dfn-for="Text/splitText(offset)" data-dfn-type="argument" data-export="" id="dom-text-splittext-offset-offset">offset<a class="self-link" href="#dom-text-splittext-offset-offset"></a></dfn>);
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-text-wholetext">wholeText</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-text-wholetext">wholeText</a>;
 };</pre>
    <dl class="domintro">
     <dt><code><var>text</var> = new <a class="idl-code" data-link-type="constructor" href="#dom-text-text">Text([<var>data</var> = ""])</a></code> 
@@ -4029,7 +4177,7 @@ avoiding any duplicates.</p>
    <h3 class="heading settled" data-level="4.12" id="interface-processinginstruction"><span class="secno">4.12. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code></span><a class="self-link" href="#interface-processinginstruction"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="processinginstruction">ProcessingInstruction<a class="self-link" href="#processinginstruction"></a></dfn> : <a data-link-type="idl-name" href="#characterdata">CharacterData</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-processinginstruction-target">target</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-processinginstruction-target">target</a>;
 };</pre>
    <p><code class="idl"><a data-link-type="idl" href="#processinginstruction">ProcessingInstruction</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> have an associated <dfn data-dfn-for="ProcessingInstruction" data-dfn-type="dfn" data-export="" id="concept-pi-target">target<a class="self-link" href="#concept-pi-target"></a></dfn>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="ProcessingInstruction" data-dfn-type="attribute" data-export="" id="dom-processinginstruction-target">target<a class="self-link" href="#dom-processinginstruction-target"></a></dfn> attribute must return the <a data-link-type="dfn" href="#concept-pi-target">target</a>.</p>
@@ -4087,12 +4235,12 @@ details. </p>
 <pre class="idl def">[<a class="idl-code" data-link-type="constructor" href="#dom-range-range">Constructor</a>,
  Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="range">Range<a class="self-link" href="#range"></a></dfn> {
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-startcontainer">startContainer</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-range-startoffset">startOffset</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-endcontainer">endContainer</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-range-endoffset">endOffset</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-range-collapsed">collapsed</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-commonancestorcontainer">commonAncestorContainer</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-startcontainer">startContainer</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-range-startoffset">startOffset</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-endcontainer">endContainer</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-range-endoffset">endOffset</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-range-collapsed">collapsed</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-commonancestorcontainer">commonAncestorContainer</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-range-setstart">setStart</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Range/setStart(node, offset)" data-dfn-type="argument" data-export="" id="dom-range-setstart-node-offset-node">node<a class="self-link" href="#dom-range-setstart-node-offset-node"></a></dfn>, unsigned long <dfn class="idl-code" data-dfn-for="Range/setStart(node, offset)" data-dfn-type="argument" data-export="" id="dom-range-setstart-node-offset-offset">offset<a class="self-link" href="#dom-range-setstart-node-offset-offset"></a></dfn>);
   void <a class="idl-code" data-link-type="method" href="#dom-range-setend">setEnd</a>(<a data-link-type="idl-name" href="#node">Node</a> <dfn class="idl-code" data-dfn-for="Range/setEnd(node, offset)" data-dfn-type="argument" data-export="" id="dom-range-setend-node-offset-node">node<a class="self-link" href="#dom-range-setend-node-offset-node"></a></dfn>, unsigned long <dfn class="idl-code" data-dfn-for="Range/setEnd(node, offset)" data-dfn-type="argument" data-export="" id="dom-range-setend-node-offset-offset">offset<a class="self-link" href="#dom-range-setend-node-offset-offset"></a></dfn>);
@@ -4648,11 +4796,11 @@ these steps:</p>
    <h3 class="heading settled" data-level="6.1" id="interface-nodeiterator"><span class="secno">6.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code></span><a class="self-link" href="#interface-nodeiterator"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="nodeiterator">NodeIterator<a class="self-link" href="#nodeiterator"></a></dfn> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-nodeiterator-root">root</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-nodeiterator-referencenode">referenceNode</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-nodeiterator-whattoshow">whatToShow</a>;
-  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter? " href="#dom-nodeiterator-filter">filter</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-nodeiterator-root">root</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-nodeiterator-referencenode">referenceNode</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-nodeiterator-whattoshow">whatToShow</a>;
+  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter?" href="#dom-nodeiterator-filter">filter</a>;
 
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodeiterator-nextnode">nextNode</a>();
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodeiterator-previousnode">previousNode</a>();
@@ -4725,10 +4873,10 @@ for compatibility.</span></p>
    <h3 class="heading settled" data-level="6.2" id="interface-treewalker"><span class="secno">6.2. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#treewalker">TreeWalker</a></code></span><a class="self-link" href="#interface-treewalker"></a></h3>
 <pre class="idl def">[Exposed=Window]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="treewalker">TreeWalker<a class="self-link" href="#treewalker"></a></dfn> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-treewalker-root">root</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-treewalker-whattoshow">whatToShow</a>;
-  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter? " href="#dom-treewalker-filter">filter</a>;
-           attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-type="Node " href="#dom-treewalker-currentnode">currentNode</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-treewalker-root">root</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-treewalker-whattoshow">whatToShow</a>;
+  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter?" href="#dom-treewalker-filter">filter</a>;
+           attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-type="Node" href="#dom-treewalker-currentnode">currentNode</a>;
 
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-treewalker-parentnode">parentNode</a>();
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-treewalker-firstchild">firstChild</a>();
@@ -4928,7 +5076,7 @@ constants for the <a data-link-type="dfn" href="#concept-traversal-whattoshow">w
    <p class="note no-backref" role="note">Yes, the name <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code> is an unfortunate legacy mishap. </p>
    <h3 class="heading settled" data-level="7.1" id="interface-domtokenlist"><span class="secno">7.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#domtokenlist">DOMTokenList</a></code></span><a class="self-link" href="#interface-domtokenlist"></a></h3>
 <pre class="idl def">interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="domtokenlist">DOMTokenList<a class="self-link" href="#domtokenlist"></a></dfn> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-domtokenlist-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-domtokenlist-length">length</a>;
   getter DOMString? <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-item">item</a>(unsigned long <dfn class="idl-code" data-dfn-for="DOMTokenList/item(index)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-item-index-index">index<a class="self-link" href="#dom-domtokenlist-item-index-index"></a></dfn>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-contains">contains</a>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/contains(token)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-contains-token-token">token<a class="self-link" href="#dom-domtokenlist-contains-token-token"></a></dfn>);
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-add">add</a>(DOMString... <dfn class="idl-code" data-dfn-for="DOMTokenList/add(tokens...), DOMTokenList/add(tokens)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-add-tokens-tokens">tokens<a class="self-link" href="#dom-domtokenlist-add-tokens-tokens"></a></dfn>);
@@ -4936,7 +5084,7 @@ constants for the <a data-link-type="dfn" href="#concept-traversal-whattoshow">w
   [CEReactions] boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-toggle">toggle</a>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle(token, force), DOMTokenList/toggle(token)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-toggle-token-force-token">token<a class="self-link" href="#dom-domtokenlist-toggle-token-force-token"></a></dfn>, optional boolean <dfn class="idl-code" data-dfn-for="DOMTokenList/toggle(token, force), DOMTokenList/toggle(token)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-toggle-token-force-force">force<a class="self-link" href="#dom-domtokenlist-toggle-token-force-force"></a></dfn>);
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-replace">replace</a>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/replace(token, newToken)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-replace-token-newtoken-token">token<a class="self-link" href="#dom-domtokenlist-replace-token-newtoken-token"></a></dfn>, DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/replace(token, newToken)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-replace-token-newtoken-newtoken">newToken<a class="self-link" href="#dom-domtokenlist-replace-token-newtoken-newtoken"></a></dfn>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-supports">supports</a>(DOMString <dfn class="idl-code" data-dfn-for="DOMTokenList/supports(token)" data-dfn-type="argument" data-export="" id="dom-domtokenlist-supports-token-token">token<a class="self-link" href="#dom-domtokenlist-supports-token-token"></a></dfn>);
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-domtokenlist-value">value</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-domtokenlist-value">value</a>;
   <a data-link-type="dfn" href="#dom-domtokenlist-stringifier">stringifier</a>;
   iterable&lt;DOMString>;
 };
@@ -5502,6 +5650,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-range-clonerange">cloneRange()</a><span>, in §5.2</span>
    <li><a href="#concept-range-clone">clone the contents of a range</a><span>, in §5.2</span>
    <li><a href="#concept-node-clone-ext">cloning steps</a><span>, in §4.4</span>
+   <li><a href="#dom-shadowrootmode-closed">closed</a><span>, in §4.8</span>
    <li><a href="#dom-shadowrootmode-closed">"closed"</a><span>, in §4.8</span>
    <li><a href="#dom-element-closest">closest(selectors)</a><span>, in §4.9</span>
    <li><a href="#dom-range-collapse">collapse()</a><span>, in §5.2</span>
@@ -5956,6 +6105,7 @@ namespace and local name localName</a><span>, in §4.4</span>
    <li><a href="#dom-mutationrecord-oldvalue">oldValue</a><span>, in §4.3.3</span>
    <li><a href="#dom-addeventlisteneroptions-once">once</a><span>, in §3.6</span>
    <li><a href="#dom-shadowrootmode-open">"open"</a><span>, in §4.8</span>
+   <li><a href="#dom-shadowrootmode-open">open</a><span>, in §4.8</span>
    <li><a href="#concept-ordered-set-parser">ordered set parser</a><span>, in §2.3</span>
    <li><a href="#concept-ordered-set-serializer">ordered set serializer</a><span>, in §2.3</span>
    <li><a href="#dom-document-origin">origin</a><span>, in §4.5</span>
@@ -6419,28 +6569,28 @@ namespace and local name localName</a><span>, in §4.4</span>
 <pre class="idl def">[<a href="#dom-event-event">Constructor</a>(DOMString <a href="#dom-event-event-type-eventinitdict-type">type</a>, optional <a data-link-type="idl-name" href="#dictdef-eventinit">EventInit</a> <a href="#dom-event-event-type-eventinitdict-eventinitdict">eventInitDict</a>),
  Exposed=(Window,Worker)]
 interface <a href="#event">Event</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-event-type">type</a>;
-  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-target">target</a>;
-  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget? " href="#dom-event-currenttarget">currentTarget</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-event-type">type</a>;
+  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget?" href="#dom-event-target">target</a>;
+  readonly attribute <a data-link-type="idl-name" href="#eventtarget">EventTarget</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="EventTarget?" href="#dom-event-currenttarget">currentTarget</a>;
   sequence&lt;<a data-link-type="idl-name" href="#eventtarget">EventTarget</a>> <a class="idl-code" data-link-type="method" href="#dom-event-composedpath">composedPath</a>();
 
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-none">NONE</a> = 0;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-capturing_phase">CAPTURING_PHASE</a> = 1;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-at_target">AT_TARGET</a> = 2;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-event-bubbling_phase">BUBBLING_PHASE</a> = 3;
-  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short " href="#dom-event-eventphase">eventPhase</a>;
+  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short" href="#dom-event-eventphase">eventPhase</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-event-stoppropagation">stopPropagation</a>();
   void <a class="idl-code" data-link-type="method" href="#dom-event-stopimmediatepropagation">stopImmediatePropagation</a>();
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-bubbles">bubbles</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-cancelable">cancelable</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-bubbles">bubbles</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-cancelable">cancelable</a>;
   void <a class="idl-code" data-link-type="method" href="#dom-event-preventdefault">preventDefault</a>();
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-defaultprevented">defaultPrevented</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-composed">composed</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-defaultprevented">defaultPrevented</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-composed">composed</a>;
 
-  [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-event-istrusted">isTrusted</a>;
-  readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp " href="#dom-event-timestamp">timeStamp</a>;
+  [Unforgeable] readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-istrusted">isTrusted</a>;
+  readonly attribute <a data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-event-initevent">initEvent</a>(DOMString <a href="#dom-event-initevent-type-bubbles-cancelable-type">type</a>, boolean <a href="#dom-event-initevent-type-bubbles-cancelable-bubbles">bubbles</a>, boolean <a href="#dom-event-initevent-type-bubbles-cancelable-cancelable">cancelable</a>); // historical
 };
@@ -6454,7 +6604,7 @@ dictionary <a href="#dictdef-eventinit">EventInit</a> {
 [<a href="#dom-customevent-customevent">Constructor</a>(DOMString <a href="#dom-customevent-customevent-type-eventinitdict-type">type</a>, optional <a data-link-type="idl-name" href="#dictdef-customeventinit">CustomEventInit</a> <a href="#dom-customevent-customevent-type-eventinitdict-eventinitdict">eventInitDict</a>),
  Exposed=(Window,Worker)]
 interface <a href="#customevent">CustomEvent</a> : <a data-link-type="idl-name" href="#event">Event</a> {
-  readonly attribute any <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="any " href="#dom-customevent-detail">detail</a>;
+  readonly attribute any <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="any" href="#dom-customevent-detail">detail</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-customevent-initcustomevent">initCustomEvent</a>(DOMString <a href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-type">type</a>, boolean <a href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-bubbles">bubbles</a>, boolean <a href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-cancelable">cancelable</a>, any <a href="#dom-customevent-initcustomevent-type-bubbles-cancelable-detail-detail">detail</a>);
 };
@@ -6465,8 +6615,8 @@ dictionary <a href="#dictdef-customeventinit">CustomEventInit</a> : <a data-link
 
 [Exposed=(Window,Worker)]
 interface <a href="#eventtarget">EventTarget</a> {
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <a href="#dom-eventtarget-addeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a> or boolean) <a href="#dom-eventtarget-addeventlistener-type-callback-options-options">options</a>);
-  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <a href="#dom-eventtarget-removeeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? callback, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <a href="#dom-eventtarget-removeeventlistener-type-callback-options-options">options</a>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(DOMString <a href="#dom-eventtarget-addeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? <a href="#dom-eventtarget-addeventlistener-type-callback-options-callback">callback</a>, optional (<a data-link-type="idl-name" href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a> or boolean) <a href="#dom-eventtarget-addeventlistener-type-callback-options-options">options</a>);
+  void <a class="idl-code" data-link-type="method" href="#dom-eventtarget-removeeventlistener">removeEventListener</a>(DOMString <a href="#dom-eventtarget-removeeventlistener-type-callback-options-type">type</a>, <a data-link-type="idl-name" href="#callbackdef-eventlistener">EventListener</a>? <a href="#dom-eventtarget-removeeventlistener-type-callback-options-callback">callback</a>, optional (<a data-link-type="idl-name" href="#dictdef-eventlisteneroptions">EventListenerOptions</a> or boolean) <a href="#dom-eventtarget-removeeventlistener-type-callback-options-options">options</a>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-eventtarget-dispatchevent">dispatchEvent</a>(<a data-link-type="idl-name" href="#event">Event</a> <a href="#dom-eventtarget-dispatchevent-event-event">event</a>);
 };
 
@@ -6501,10 +6651,10 @@ interface <a href="#documentorshadowroot">DocumentOrShadowRoot</a> {
 [NoInterfaceObject,
  Exposed=Window]
 interface <a href="#parentnode">ParentNode</a> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCollection " href="#dom-parentnode-children">children</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-parentnode-firstelementchild">firstElementChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-parentnode-lastelementchild">lastElementChild</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-parentnode-childelementcount">childElementCount</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCollection" href="#dom-parentnode-children">children</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-parentnode-firstelementchild">firstElementChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-parentnode-lastelementchild">lastElementChild</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-parentnode-childelementcount">childElementCount</a>;
 
   [CEReactions, Unscopable] void <a class="idl-code" data-link-type="method" href="#dom-parentnode-prepend">prepend</a>((<a data-link-type="idl-name" href="#node">Node</a> or DOMString)... <a href="#dom-parentnode-prepend-nodes-nodes">nodes</a>);
   [CEReactions, Unscopable] void <a class="idl-code" data-link-type="method" href="#dom-parentnode-append">append</a>((<a data-link-type="idl-name" href="#node">Node</a> or DOMString)... <a href="#dom-parentnode-append-nodes-nodes">nodes</a>);
@@ -6519,8 +6669,8 @@ interface <a href="#parentnode">ParentNode</a> {
 [NoInterfaceObject,
  Exposed=Window]
 interface <a href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a> {
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-nondocumenttypechildnode-previouselementsibling">previousElementSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-nondocumenttypechildnode-nextelementsibling">nextElementSibling</a>;
 };
 <a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;
 <a data-link-type="idl-name" href="#characterdata">CharacterData</a> implements <a data-link-type="idl-name" href="#nondocumenttypechildnode">NonDocumentTypeChildNode</a>;
@@ -6540,7 +6690,7 @@ interface <a href="#childnode">ChildNode</a> {
 [NoInterfaceObject,
  Exposed=Window]
 interface <a href="#slotable">Slotable</a> {
-  readonly attribute <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement? " href="#dom-slotable-assignedslot">assignedSlot</a>;
+  readonly attribute <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement">HTMLSlotElement</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLSlotElement?" href="#dom-slotable-assignedslot">assignedSlot</a>;
 };
 <a data-link-type="idl-name" href="#element">Element</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
 <a data-link-type="idl-name" href="#text">Text</a> implements <a data-link-type="idl-name" href="#slotable">Slotable</a>;
@@ -6548,18 +6698,18 @@ interface <a href="#slotable">Slotable</a> {
 [Exposed=Window]
 interface <a href="#nodelist">NodeList</a> {
   getter <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodelist-item">item</a>(unsigned long <a href="#dom-nodelist-item-index-index">index</a>);
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-nodelist-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-nodelist-length">length</a>;
   iterable&lt;<a data-link-type="idl-name" href="#node">Node</a>>;
 };
 
 [Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <a href="#htmlcollection">HTMLCollection</a> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-htmlcollection-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-htmlcollection-length">length</a>;
   getter <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-htmlcollection-item">item</a>(unsigned long <a href="#dom-htmlcollection-item-index-index">index</a>);
   getter <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-htmlcollection-nameditem">namedItem</a>(DOMString <a href="#dom-htmlcollection-nameditem-name-name">name</a>);
 };
 
-[<a class="idl-code" data-link-type="constructor" href="#dom-mutationobserver-mutationobserver">Constructor</a>(<a data-link-type="idl-name" href="#callbackdef-mutationcallback">MutationCallback</a> callback)]
+[<a class="idl-code" data-link-type="constructor" href="#dom-mutationobserver-mutationobserver">Constructor</a>(<a data-link-type="idl-name" href="#callbackdef-mutationcallback">MutationCallback</a> <a href="#dom-mutationobserver-mutationobserver-callback-callback">callback</a>)]
 interface <a href="#mutationobserver">MutationObserver</a> {
   void <a class="idl-code" data-link-type="method" href="#dom-mutationobserver-observe">observe</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-mutationobserver-observe-target-options-target">target</a>, <a data-link-type="idl-name" href="#dictdef-mutationobserverinit">MutationObserverInit</a> <a href="#dom-mutationobserver-observe-target-options-options">options</a>);
   void <a class="idl-code" data-link-type="method" href="#dom-mutationobserver-disconnect">disconnect</a>();
@@ -6580,15 +6730,15 @@ dictionary <a href="#dictdef-mutationobserverinit">MutationObserverInit</a> {
 
 [Exposed=Window]
 interface <a href="#mutationrecord">MutationRecord</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-mutationrecord-type">type</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-mutationrecord-target">target</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-mutationrecord-addednodes">addedNodes</a>;
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-mutationrecord-removednodes">removedNodes</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-mutationrecord-previoussibling">previousSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-mutationrecord-nextsibling">nextSibling</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-attributename">attributeName</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-attributenamespace">attributeNamespace</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-mutationrecord-oldvalue">oldValue</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-mutationrecord-type">type</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-mutationrecord-target">target</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-mutationrecord-addednodes">addedNodes</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-mutationrecord-removednodes">removedNodes</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-mutationrecord-previoussibling">previousSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-mutationrecord-nextsibling">nextSibling</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-attributename">attributeName</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-attributenamespace">attributeNamespace</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-mutationrecord-oldvalue">oldValue</a>;
 };
 
 [Exposed=Window]
@@ -6605,25 +6755,25 @@ interface <a href="#node">Node</a> : <a data-link-type="idl-name" href="#eventta
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-node-document_type_node">DOCUMENT_TYPE_NODE</a> = 10;
   const unsigned short <a class="idl-code" data-link-type="const" href="#dom-node-document_fragment_node">DOCUMENT_FRAGMENT_NODE</a> = 11;
   const unsigned short <a href="#dom-node-notation_node">NOTATION_NODE</a> = 12; // historical
-  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short " href="#dom-node-nodetype">nodeType</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-node-nodename">nodeName</a>;
+  readonly attribute unsigned short <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned short" href="#dom-node-nodetype">nodeType</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-node-nodename">nodeName</a>;
 
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-node-baseuri">baseURI</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-node-baseuri">baseURI</a>;
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-node-isconnected">isConnected</a>;
-  readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document? " href="#dom-node-ownerdocument">ownerDocument</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-node-rootnode">rootNode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-parentnode">parentNode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-node-parentelement">parentElement</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-node-isconnected">isConnected</a>;
+  readonly attribute <a data-link-type="idl-name" href="#document">Document</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Document?" href="#dom-node-ownerdocument">ownerDocument</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-node-rootnode">rootNode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-parentnode">parentNode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-node-parentelement">parentElement</a>;
   boolean <a class="idl-code" data-link-type="method" href="#dom-node-haschildnodes">hasChildNodes</a>();
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList " href="#dom-node-childnodes">childNodes</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-firstchild">firstChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-lastchild">lastChild</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-previoussibling">previousSibling</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node? " href="#dom-node-nextsibling">nextSibling</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#nodelist">NodeList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeList" href="#dom-node-childnodes">childNodes</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-firstchild">firstChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-lastchild">lastChild</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-previoussibling">previousSibling</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node?" href="#dom-node-nextsibling">nextSibling</a>;
 
-  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString? " href="#dom-node-nodevalue">nodeValue</a>;
-  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString? " href="#dom-node-textcontent">textContent</a>;
+  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString?" href="#dom-node-nodevalue">nodeValue</a>;
+  [CEReactions] attribute DOMString? <a class="idl-code" data-link-type="attribute" data-type="DOMString?" href="#dom-node-textcontent">textContent</a>;
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-node-normalize">normalize</a>();
 
   [CEReactions, NewObject] <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="method" href="#dom-node-clonenode">cloneNode</a>(optional boolean <a href="#dom-node-clonenode-deep-deep">deep</a> = false);
@@ -6652,18 +6802,18 @@ interface <a href="#node">Node</a> : <a data-link-type="idl-name" href="#eventta
 [<a class="idl-code" data-link-type="constructor" href="#dom-document-document">Constructor</a>,
  Exposed=Window]
 interface <a href="#document">Document</a> : <a data-link-type="idl-name" href="#node">Node</a> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#domimplementation">DOMImplementation</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMImplementation " href="#dom-document-implementation">implementation</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-url">URL</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-documenturi">documentURI</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-origin">origin</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-compatmode">compatMode</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-characterset">characterSet</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-charset">charset</a>; // historical alias of .characterSet
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-inputencoding">inputEncoding</a>; // historical alias of .characterSet
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-document-contenttype">contentType</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#domimplementation">DOMImplementation</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMImplementation" href="#dom-document-implementation">implementation</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-url">URL</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-documenturi">documentURI</a>;
+  readonly attribute USVString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="USVString" href="#dom-document-origin">origin</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-compatmode">compatMode</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-characterset">characterSet</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-charset">charset</a>; // historical alias of .characterSet
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-inputencoding">inputEncoding</a>; // historical alias of .characterSet
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-document-contenttype">contentType</a>;
 
-  readonly attribute <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DocumentType? " href="#dom-document-doctype">doctype</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-document-documentelement">documentElement</a>;
+  readonly attribute <a data-link-type="idl-name" href="#documenttype">DocumentType</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DocumentType?" href="#dom-document-doctype">doctype</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-document-documentelement">documentElement</a>;
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagname">getElementsByTagName</a>(DOMString <a href="#dom-document-getelementsbytagname-qualifiedname-qualifiedname">qualifiedName</a>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbytagnamens">getElementsByTagNameNS</a>(DOMString? <a href="#dom-document-getelementsbytagnamens-namespace-localname-namespace">namespace</a>, DOMString <a href="#dom-document-getelementsbytagnamens-namespace-localname-localname">localName</a>);
   <a data-link-type="idl-name" href="#htmlcollection">HTMLCollection</a> <a class="idl-code" data-link-type="method" href="#dom-document-getelementsbyclassname">getElementsByClassName</a>(DOMString <a href="#dom-document-getelementsbyclassname-classnames-classnames">classNames</a>);
@@ -6681,7 +6831,7 @@ interface <a href="#document">Document</a> : <a data-link-type="idl-name" href="
   [NewObject] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-document-createattribute">createAttribute</a>(DOMString <a href="#dom-document-createattribute-localname-localname">localName</a>);
   [NewObject] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-document-createattributens">createAttributeNS</a>(DOMString? <a href="#dom-document-createattributens-namespace-qualifiedname-namespace">namespace</a>, DOMString <a href="#dom-document-createattributens-namespace-qualifiedname-qualifiedname">qualifiedName</a>);
 
-  [NewObject] <a data-link-type="idl-name" href="#event">Event</a> <a class="idl-code" data-link-type="method" href="#dom-document-createevent">createEvent</a>(DOMString interface);
+  [NewObject] <a data-link-type="idl-name" href="#event">Event</a> <a class="idl-code" data-link-type="method" href="#dom-document-createevent">createEvent</a>(DOMString <a href="#dom-document-createevent-interface-interface">interface</a>);
 
   [NewObject] <a data-link-type="idl-name" href="#range">Range</a> <a class="idl-code" data-link-type="method" href="#dom-document-createrange">createRange</a>();
 
@@ -6708,9 +6858,9 @@ interface <a href="#domimplementation">DOMImplementation</a> {
 
 [Exposed=Window]
 interface <a href="#documenttype">DocumentType</a> : <a data-link-type="idl-name" href="#node">Node</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-name">name</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-publicid">publicId</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-documenttype-systemid">systemId</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-name">name</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-publicid">publicId</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-documenttype-systemid">systemId</a>;
 };
 
 [<a class="idl-code" data-link-type="constructor" href="#dom-documentfragment-documentfragment">Constructor</a>,
@@ -6720,26 +6870,26 @@ interface <a href="#documentfragment">DocumentFragment</a> : <a data-link-type="
 
 [Exposed=Window]
 interface <a href="#shadowroot">ShadowRoot</a> : <a data-link-type="idl-name" href="#documentfragment">DocumentFragment</a> {
-  readonly attribute <a data-link-type="idl-name" href="#enumdef-shadowrootmode">ShadowRootMode</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRootMode " href="#dom-shadowroot-mode">mode</a>;
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element " href="#dom-shadowroot-host">host</a>;
+  readonly attribute <a data-link-type="idl-name" href="#enumdef-shadowrootmode">ShadowRootMode</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRootMode" href="#dom-shadowroot-mode">mode</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element" href="#dom-shadowroot-host">host</a>;
 };
 
 enum <a href="#enumdef-shadowrootmode">ShadowRootMode</a> { <a href="#dom-shadowrootmode-open">"open"</a>, <a href="#dom-shadowrootmode-closed">"closed"</a> };
 
 [Exposed=Window]
 interface <a href="#element">Element</a> : <a data-link-type="idl-name" href="#node">Node</a> {
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-element-namespaceuri">namespaceURI</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-element-prefix">prefix</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-element-localname">localName</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-element-tagname">tagName</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-element-namespaceuri">namespaceURI</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-element-prefix">prefix</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-element-localname">localName</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-element-tagname">tagName</a>;
 
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-id">id</a>;
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-classname">className</a>;
-  [CEReactions, SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList " href="#dom-element-classlist">classList</a>;
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-element-slot">slot</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-id">id</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-classname">className</a>;
+  [CEReactions, SameObject, PutForwards=<a class="idl-code" data-link-type="attribute" href="#dom-domtokenlist-value">value</a>] readonly attribute <a data-link-type="idl-name" href="#domtokenlist">DOMTokenList</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTokenList" href="#dom-element-classlist">classList</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-element-slot">slot</a>;
 
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-hasattributes">hasAttributes</a>();
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap " href="#dom-element-attributes">attributes</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#namednodemap">NamedNodeMap</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NamedNodeMap" href="#dom-element-attributes">attributes</a>;
   sequence&lt;DOMString> <a class="idl-code" data-link-type="method" href="#dom-element-getattributenames">getAttributeNames</a>();
   DOMString? <a class="idl-code" data-link-type="method" href="#dom-element-getattribute">getAttribute</a>(DOMString <a href="#dom-element-getattribute-qualifiedname-qualifiedname">qualifiedName</a>);
   DOMString? <a class="idl-code" data-link-type="method" href="#dom-element-getattributens">getAttributeNS</a>(DOMString? <a href="#dom-element-getattributens-namespace-localname-namespace">namespace</a>, DOMString <a href="#dom-element-getattributens-namespace-localname-localname">localName</a>);
@@ -6757,7 +6907,7 @@ interface <a href="#element">Element</a> : <a data-link-type="idl-name" href="#n
   [CEReactions] <a data-link-type="idl-name" href="#attr">Attr</a> <a class="idl-code" data-link-type="method" href="#dom-element-removeattributenode">removeAttributeNode</a>(<a data-link-type="idl-name" href="#attr">Attr</a> <a href="#dom-element-removeattributenode-attr-attr">attr</a>);
 
   <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a> <a class="idl-code" data-link-type="method" href="#dom-element-attachshadow">attachShadow</a>(<a data-link-type="idl-name" href="#dictdef-shadowrootinit">ShadowRootInit</a> <a href="#dom-element-attachshadow-init-init">init</a>);
-  readonly attribute <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRoot? " href="#dom-element-shadowroot">shadowRoot</a>;
+  readonly attribute <a data-link-type="idl-name" href="#shadowroot">ShadowRoot</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="ShadowRoot?" href="#dom-element-shadowroot">shadowRoot</a>;
 
   <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="method" href="#dom-element-closest">closest</a>(DOMString <a href="#dom-element-closest-selectors-selectors">selectors</a>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-element-matches">matches</a>(DOMString <a href="#dom-element-matches-selectors-selectors">selectors</a>);
@@ -6777,7 +6927,7 @@ dictionary <a href="#dictdef-shadowrootinit">ShadowRootInit</a> {
 
 [Exposed=Window, LegacyUnenumerableNamedProperties]
 interface <a href="#namednodemap">NamedNodeMap</a> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-namednodemap-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-namednodemap-length">length</a>;
   getter <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-item">item</a>(unsigned long <a href="#dom-namednodemap-item-index-index">index</a>);
   getter <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-getnameditem">getNamedItem</a>(DOMString <a href="#dom-namednodemap-getnameditem-qualifiedname-qualifiedname">qualifiedName</a>);
   <a data-link-type="idl-name" href="#attr">Attr</a>? <a class="idl-code" data-link-type="method" href="#dom-namednodemap-getnameditemns">getNamedItemNS</a>(DOMString? <a href="#dom-namednodemap-getnameditemns-namespace-localname-namespace">namespace</a>, DOMString <a href="#dom-namednodemap-getnameditemns-namespace-localname-localname">localName</a>);
@@ -6789,23 +6939,23 @@ interface <a href="#namednodemap">NamedNodeMap</a> {
 
 [Exposed=Window]
 interface <a href="#attr">Attr</a> {
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-attr-namespaceuri">namespaceURI</a>;
-  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-attr-prefix">prefix</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-localname">localName</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-name">name</a>;
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-attr-nodename">nodeName</a>; // historical alias of .name
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-value">value</a>;
-  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-nodevalue">nodeValue</a>; // historical alias of .value
-  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-attr-textcontent">textContent</a>; // historical alias of .value
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-attr-namespaceuri">namespaceURI</a>;
+  readonly attribute DOMString? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString?" href="#dom-attr-prefix">prefix</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-localname">localName</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-name">name</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-attr-nodename">nodeName</a>; // historical alias of .name
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-value">value</a>;
+  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-nodevalue">nodeValue</a>; // historical alias of .value
+  [CEReactions, TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-attr-textcontent">textContent</a>; // historical alias of .value
 
-  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element? " href="#dom-attr-ownerelement">ownerElement</a>;
+  readonly attribute <a data-link-type="idl-name" href="#element">Element</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Element?" href="#dom-attr-ownerelement">ownerElement</a>;
 
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-attr-specified">specified</a>; // useless; always returns true
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-attr-specified">specified</a>; // useless; always returns true
 };
 [Exposed=Window]
 interface <a href="#characterdata">CharacterData</a> : <a data-link-type="idl-name" href="#node">Node</a> {
-  [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-characterdata-data">data</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-characterdata-length">length</a>;
+  [TreatNullAs=<a data-link-type="idl-name">EmptyString</a>] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-characterdata-data">data</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-characterdata-length">length</a>;
   DOMString <a class="idl-code" data-link-type="method" href="#dom-characterdata-substringdata">substringData</a>(unsigned long <a href="#dom-characterdata-substringdata-offset-count-offset">offset</a>, unsigned long <a href="#dom-characterdata-substringdata-offset-count-count">count</a>);
   void <a class="idl-code" data-link-type="method" href="#dom-characterdata-appenddata">appendData</a>(DOMString <a href="#dom-characterdata-appenddata-data-data">data</a>);
   void <a class="idl-code" data-link-type="method" href="#dom-characterdata-insertdata">insertData</a>(unsigned long <a href="#dom-characterdata-insertdata-offset-data-offset">offset</a>, DOMString <a href="#dom-characterdata-insertdata-offset-data-data">data</a>);
@@ -6817,11 +6967,11 @@ interface <a href="#characterdata">CharacterData</a> : <a data-link-type="idl-na
  Exposed=Window]
 interface <a href="#text">Text</a> : <a data-link-type="idl-name" href="#characterdata">CharacterData</a> {
   [NewObject] <a data-link-type="idl-name" href="#text">Text</a> <a class="idl-code" data-link-type="method" href="#dom-text-splittext">splitText</a>(unsigned long <a href="#dom-text-splittext-offset-offset">offset</a>);
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-text-wholetext">wholeText</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-text-wholetext">wholeText</a>;
 };
 [Exposed=Window]
 interface <a href="#processinginstruction">ProcessingInstruction</a> : <a data-link-type="idl-name" href="#characterdata">CharacterData</a> {
-  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-processinginstruction-target">target</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString" href="#dom-processinginstruction-target">target</a>;
 };
 [<a class="idl-code" data-link-type="constructor" href="#dom-comment-comment">Constructor</a>(optional DOMString <a href="#dom-comment-comment-data-data">data</a> = ""),
  Exposed=Window]
@@ -6831,12 +6981,12 @@ interface <a href="#comment">Comment</a> : <a data-link-type="idl-name" href="#c
 [<a class="idl-code" data-link-type="constructor" href="#dom-range-range">Constructor</a>,
  Exposed=Window]
 interface <a href="#range">Range</a> {
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-startcontainer">startContainer</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-range-startoffset">startOffset</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-endcontainer">endContainer</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-range-endoffset">endOffset</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-range-collapsed">collapsed</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-range-commonancestorcontainer">commonAncestorContainer</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-startcontainer">startContainer</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-range-startoffset">startOffset</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-endcontainer">endContainer</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-range-endoffset">endOffset</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-range-collapsed">collapsed</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-range-commonancestorcontainer">commonAncestorContainer</a>;
 
   void <a class="idl-code" data-link-type="method" href="#dom-range-setstart">setStart</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-range-setstart-node-offset-node">node</a>, unsigned long <a href="#dom-range-setstart-node-offset-offset">offset</a>);
   void <a class="idl-code" data-link-type="method" href="#dom-range-setend">setEnd</a>(<a data-link-type="idl-name" href="#node">Node</a> <a href="#dom-range-setend-node-offset-node">node</a>, unsigned long <a href="#dom-range-setend-node-offset-offset">offset</a>);
@@ -6873,11 +7023,11 @@ interface <a href="#range">Range</a> {
 
 [Exposed=Window]
 interface <a href="#nodeiterator">NodeIterator</a> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-nodeiterator-root">root</a>;
-  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-nodeiterator-referencenode">referenceNode</a>;
-  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-nodeiterator-whattoshow">whatToShow</a>;
-  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter? " href="#dom-nodeiterator-filter">filter</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-nodeiterator-root">root</a>;
+  readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-nodeiterator-referencenode">referenceNode</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-nodeiterator-pointerbeforereferencenode">pointerBeforeReferenceNode</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-nodeiterator-whattoshow">whatToShow</a>;
+  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter?" href="#dom-nodeiterator-filter">filter</a>;
 
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodeiterator-nextnode">nextNode</a>();
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-nodeiterator-previousnode">previousNode</a>();
@@ -6887,10 +7037,10 @@ interface <a href="#nodeiterator">NodeIterator</a> {
 
 [Exposed=Window]
 interface <a href="#treewalker">TreeWalker</a> {
-  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node " href="#dom-treewalker-root">root</a>;
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-treewalker-whattoshow">whatToShow</a>;
-  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter? " href="#dom-treewalker-filter">filter</a>;
-           attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-type="Node " href="#dom-treewalker-currentnode">currentNode</a>;
+  [SameObject] readonly attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="Node" href="#dom-treewalker-root">root</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-treewalker-whattoshow">whatToShow</a>;
+  readonly attribute <a data-link-type="idl-name" href="#callbackdef-nodefilter">NodeFilter</a>? <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="NodeFilter?" href="#dom-treewalker-filter">filter</a>;
+           attribute <a data-link-type="idl-name" href="#node">Node</a> <a class="idl-code" data-link-type="attribute" data-type="Node" href="#dom-treewalker-currentnode">currentNode</a>;
 
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-treewalker-parentnode">parentNode</a>();
   <a data-link-type="idl-name" href="#node">Node</a>? <a class="idl-code" data-link-type="method" href="#dom-treewalker-firstchild">firstChild</a>();
@@ -6926,7 +7076,7 @@ callback interface <a href="#callbackdef-nodefilter">NodeFilter</a> {
 };
 
 interface <a href="#domtokenlist">DOMTokenList</a> {
-  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long " href="#dom-domtokenlist-length">length</a>;
+  readonly attribute unsigned long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-domtokenlist-length">length</a>;
   getter DOMString? <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-item">item</a>(unsigned long <a href="#dom-domtokenlist-item-index-index">index</a>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-contains">contains</a>(DOMString <a href="#dom-domtokenlist-contains-token-token">token</a>);
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-add">add</a>(DOMString... <a href="#dom-domtokenlist-add-tokens-tokens">tokens</a>);
@@ -6934,7 +7084,7 @@ interface <a href="#domtokenlist">DOMTokenList</a> {
   [CEReactions] boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-toggle">toggle</a>(DOMString <a href="#dom-domtokenlist-toggle-token-force-token">token</a>, optional boolean <a href="#dom-domtokenlist-toggle-token-force-force">force</a>);
   [CEReactions] void <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-replace">replace</a>(DOMString <a href="#dom-domtokenlist-replace-token-newtoken-token">token</a>, DOMString <a href="#dom-domtokenlist-replace-token-newtoken-newtoken">newToken</a>);
   boolean <a class="idl-code" data-link-type="method" href="#dom-domtokenlist-supports">supports</a>(DOMString <a href="#dom-domtokenlist-supports-token-token">token</a>);
-  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString " href="#dom-domtokenlist-value">value</a>;
+  [CEReactions] attribute DOMString <a class="idl-code" data-link-type="attribute" data-type="DOMString" href="#dom-domtokenlist-value">value</a>;
   <a data-link-type="dfn" href="#dom-domtokenlist-stringifier">stringifier</a>;
   iterable&lt;DOMString>;
 };
