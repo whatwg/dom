@@ -1331,6 +1331,11 @@ an <var>object</var> with <var>event</var>, run these steps:
    <var>listener</var>'s <b>capture</b> is true, terminate these substeps (and run them for the next
    <a>event listener</a>).
 
+   <li><p>If <var>listener</var>'s <b>once</b> is true, then remove <var>listener</var> from
+   <var>object</var>'s associated list of <a>event listeners</a>.
+   <!-- Do this before invocation to avoid reentrancy issues. No need to set removed to true since
+        each listener in listeners is run once anyway. -->
+
    <li><p>If <var>listener</var>'s <b>passive</b> is true, set <var>event</var>'s
    <a>in passive listener flag</a>.
 
@@ -1339,10 +1344,6 @@ an <var>object</var> with <var>event</var>, run these steps:
    <a>callback this value</a>. If this throws an exception, <a>report the exception</a>.
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
-
-   <li><p>If <var>listener</var>'s <b>once</b> is true, then set <var>listener</var>'s
-   <b>removed</b> to true and remove it from <var>object</var>'s associated list of
-   <a>event listeners</a>.
 
    <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set,
    return <var>found</var>.
