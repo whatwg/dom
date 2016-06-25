@@ -25,9 +25,13 @@ reading through the [WHATWG FAQ](https://wiki.whatwg.org/wiki/FAQ) if you are ne
 Please add your name to the Acknowledgments section in your first pull request, even for trivial
 fixes. The names are sorted lexicographically.
 
-To generate `dom.html`, [bikeshed](https://github.com/tabatkins/bikeshed) can be used. (Do not worry
-if using that tool is too complicated, your pull request does not need to contain the generated HTML
-to be accepted.)
+To generate `dom.html`, [bikeshed](https://github.com/tabatkins/bikeshed) can be used. Do not worry
+if using that tool is too complicated; your pull request does not need to contain the generated HTML
+to be accepted. If you _do_ want to use it, the easiest way is probably via the HTTP API:
+
+```
+curl https://api.csswg.org/bikeshed/ -f -F file=@dom.bs > dom.html
+```
 
 #### Formatting
 
