@@ -5596,18 +5596,21 @@ dictionary ShadowRootInit {
 initialized.
 
 <p>An <a for=/>element</a>'s <a>custom element state</a> is one of "<code>undefined</code>",
-"<code>uncustomized</code>", or "<code>custom</code>". An <a for=/>element</a> whose
-<a>custom element state</a> is "<code>uncustomized</code>" or "<code>custom</code>" is said to be
+"<code>failed</code>", "<code>uncustomized</code>", or "<code>custom</code>". An
+<a for=/>element</a> whose <a>custom element state</a> is "<code>uncustomized</code>" or
+"<code>custom</code>" is said to be
 <dfn export id=concept-element-defined for=Element>defined</dfn>. An <a for=/>element</a> whose
-<a>custom element state</a> is "<code>custom</code>", is said to be
+<a>custom element state</a> is "<code>custom</code>" is said to be
 <dfn export id=concept-element-custom for=Element>custom</dfn>.
 
 <p class=note>Whether or not an element is <a>defined</a> is used to determine the behavior of the
 '':defined'' pseudo-class. Whether or not an element is <a>custom</a> is used to determine the
-behavior of the <a href=#mutation-algorithms>mutation algorithms</a>.</p>
+behavior of the <a href=#mutation-algorithms>mutation algorithms</a>. The "<code>failed</code>"
+state is used to ensure that if a <a>custom element constructor</a> fails to execute correctly the
+first time, it is not executed again by an <a lt="upgrade an element">upgrade</a>.</p>
 
 <div class=example>
- <p>The following code illustrates elements in each of these three states:</p>
+ <p>The following code illustrates elements in each of these four states:</p>
 
  <pre><code class="lang-html">
   &lt;!DOCTYPE html>
@@ -5623,9 +5626,11 @@ behavior of the <a href=#mutation-algorithms>mutation algorithms</a>.</p>
 
   &lt;!-- "undefined" (not defined, not custom) -->
   &lt;sw-han>&lt;/sw-han>
-  &lt;sw-kylo>&lt;/sw-kylo>
   &lt;p is="sw-luke">&lt;/p>
   &lt;p is="asdf">&lt;/p>
+
+  &lt;!-- "failed" (not defined, not custom) -->
+  &lt;sw-kylo>&lt;/sw-kylo>
 
   &lt;!-- "uncustomized" (defined, not custom) -->
   &lt;p>&lt;/p>
@@ -7135,7 +7140,7 @@ for selecting and copying content.
 <ul class="domTree">
  <li class="t1">{{Element}}: <code>p</code>
   <ul>
-   <li class="t1">{{Element}}: <code class='lang-markup'>&lt;img src="insanity-wolf" alt="Little-ending BOM; decode as big-endian!"></code>
+   <li class="t1">{{Element}}: <code class='lang-markup'>&lt;img src="insanity-wolf" alt="Little-endian BOM; decode as big-endian!"></code>
    <li class="t3">{{Text}}: <span>&nbsp;CSS 2.1 syndata is&nbsp;</span>
    <li class="t1">{{Element}}: <code class='lang-markup'>&lt;em></code>
     <ul>
