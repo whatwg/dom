@@ -5043,18 +5043,10 @@ a <var>document</var>, run these steps:
    <a>node document</a> to <var>document</var>.
    <!--AttrExodus as well as any associated {{Attr}} nodes-->
 
-   <li>
-    <p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
-    <a>shadow-including inclusive descendants</a> that is an <a for=/>element</a> with
-    <a>custom element state</a> of "<code>custom</code>", set <var>inclusiveDescendant</var>'s
-    <a>custom element state</a> to "<code>undefined</code>".</p>
-
-    <p class="note">
-     If this adoption is followed by an <a lt="insert" for="Node">insertion</a>, as most are, then
-     the insertion will <a lt="try to upgrade an element">try to upgrade</a>
-     <var>inclusiveDescendant</var>, potentially causing it to become <a>custom</a> again.
-    </p>
-   </li>
+   <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
+   <a>shadow-including inclusive descendants</a> that is a <a>custom</a> <a for=/>element</a>,
+   <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
+   name "<code>adoptedCallback</code>", and an empty argument list.
 
    <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
    <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>, run the
@@ -5590,7 +5582,8 @@ dictionary ShadowRootInit {
 <dfn export id=concept-element-namespace for=Element>namespace</dfn>,
 <dfn export id=concept-element-namespace-prefix for=Element>namespace prefix</dfn>,
 <dfn export id=concept-element-local-name for=Element>local name</dfn>,
-<dfn export id=concept-element-custom-element-state for=Element>custom element state</dfn>, and
+<dfn export id=concept-element-custom-element-state for=Element>custom element state</dfn>,
+<dfn export id=concept-element-custom-element-definition for=Element>custom element definition</dfn>,
 <dfn export id=concept-element-is-value for=Element><code>is</code> value</dfn>. When an
 <a for="/">element</a> is <a lt="create an element">created</a>, all of these values are
 initialized.
@@ -5686,8 +5679,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
    with no attributes, <a for=Element>namespace</a> set to the <a>HTML namespace</a>,
    <a for=Element>namespace prefix</a> set to <var>prefix</var>, <a for=Element>local name</a> set
    to <var>localName</var>, <a>custom element state</a> set to "<code>undefined</code>",
-   <a><code>is</code> value</a> set to <var>is</var>, and <a>node document</a> set to
-   <var>document</var>.
+   <a>custom element definition</a> set to null, <a><code>is</code> value</a> set to <var>is</var>,
+   and <a>node document</a> set to <var>document</var>.
 
    <li><p>If the <var>synchronous custom elements flag</var> is set,
    <a lt="upgrade an element">upgrade</a> <var>element</var> using <var>definition</var>.
@@ -5715,10 +5708,15 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
       <p>If <var>result</var> does not implement the {{HTMLElement}} interface, <a>throw</a> a
       <code>TypeError</code>.
 
-      <p class=note>This is meant to be a brand check to ensure that the object was allocated by the
-      {{HTMLElement}} constructor. See
-      <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
-      precise.
+      <div class=note>
+       <p>This is meant to be a brand check to ensure that the object was allocated by the
+       a HTML element constructor. See
+       <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
+       precise.
+
+       <p>If this check passes, then <var>result</var> will already have its <a>custom element
+       state</a> and <a>custom element definition</a> initialized.
+      </div>
      </li>
 
      <li><p>If <var>result</var>'s <a for=Element>attribute list</a> is not empty, then <a>throw</a>
@@ -5760,7 +5758,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      interface, with no attributes, <a for=Element>namespace</a> set to the <a>HTML namespace</a>,
      <a for=Element>namespace prefix</a> set to <var>prefix</var>, <a for=Element>local name</a> set
      to <var>localName</var>, <a>custom element state</a> set to "<code>undefined</code>",
-     <a><code>is</code> value</a> set to null, and <a>node document</a> set to <var>document</var>.
+     <a>custom element definition</a> set to null, <a><code>is</code> value</a> set to null, and
+     <a>node document</a> set to <var>document</var>.
 
      <li><p><a>Enqueue a custom element upgrade reaction</a> given <var>result</var> and
      <var>definition</var>.
@@ -5780,8 +5779,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
    with no attributes, <a for=Element>namespace</a> set to <var>namespace</var>,
    <a for=Element>namespace prefix</a> set to <var>prefix</var>, <a for=Element>local name</a> set
    to <var>localName</var>, <a>custom element state</a> set to "<code>uncustomized</code>",
-   <a><code>is</code> value</a> set to <var>is</var>, and <a>node document</a> set to
-   <var>document</var>.
+   <a>custom element definition</a> set to null, <a><code>is</code> value</a> set to <var>is</var>,
+   and <a>node document</a> set to <var>document</var>.
 
    <li><p>If <var>document</var> has a <a lt=concept-document-bc>browsing context</a>, and
    <var>namespace</var> is the <a>HTML namespace</a>, and either <var>localName</var> is a
