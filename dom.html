@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-07-21">21 July 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-07-22">22 July 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -521,8 +521,10 @@ would have been <code class="idl"><a data-link-type="idl" href="#dom-event-at_ta
 </pre>
    <p>An <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> object is simply named an <dfn data-dfn-type="dfn" data-export="" id="concept-event">event<a class="self-link" href="#concept-event"></a></dfn>. It allows for
 signaling that something has occurred, e.g., that an image has completed downloading.</p>
+   <p>An <a data-link-type="dfn" href="#concept-event">event</a> has an associated <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="event-relatedtarget">relatedTarget<a class="self-link" href="#event-relatedtarget"></a></dfn> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object). Unless stated otherwise it is null.</p>
+   <p class="note" role="note">Other specifications use <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to define a <code>relatedTarget</code> attribute. <a data-link-type="biblio" href="#biblio-uievents">[UIEVENTS]</a> </p>
    <p>An <a data-link-type="dfn" href="#concept-event">event</a> has an associated <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="event-path">path<a class="self-link" href="#event-path"></a></dfn>. A <a data-link-type="dfn" href="#event-path">path</a> is a
-list of tuples, each of which consists of an <b>item</b> (an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object) and a <b>target</b> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object). A tuple is formatted as (<b>item</b>, <b>target</b>). A <a data-link-type="dfn" href="#event-path">path</a> is initially the empty list.</p>
+list of tuples, each of which consists of an <b>item</b> (an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object), <b>target</b> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object), and a <b>relatedTarget</b> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object). A tuple is formatted as (<b>item</b>, <b>target</b>, <b>relatedTarget</b>). A <a data-link-type="dfn" href="#event-path">path</a> is initially the empty list.</p>
    <dl class="domintro">
     <dt><code><var>event</var> = new <a class="idl-code" data-link-type="constructor" href="#dom-event-event">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code> 
     <dd>Returns a new <var>event</var> whose <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is set to <var>type</var>. The optional <var>eventInitDict</var> argument
@@ -870,21 +872,26 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
      <p>If <var>targetOverride</var> is not given, let <var>targetOverride</var> be <var>target</var>. </p>
      <p class="note" role="note">The <var>targetOverride</var> argument is only used by HTML and only under very
   specific circumstances. </p>
+    <li>Let <var>relatedTarget</var> be the result of invoking <a data-link-type="dfn" href="#retarget">retargeting</a> <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> against <var>target</var> if <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> is
+ non-null, and null otherwise. 
     <li>
-     <p>Append (<var>target</var>, <var>targetOverride</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+     <p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
     <li>
      <p>Let <var>parent</var> be the result of invoking <var>target</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
     <li>
      <p>While <var>parent</var> is non-null:</p>
      <ol>
       <li>
+       <p>Let <var>relatedTarget</var> be the result of invoking <a data-link-type="dfn" href="#retarget">retargeting</a> <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> against <var>parent</var> if <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> is non-null, and null otherwise. </p>
+      <li>
        <p>If <var>target</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>parent</var>, then append
-   (<var>parent</var>, null) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+   (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
       <li>
-       <p>Otherwise, set <var>target</var> to <var>parent</var> and append
-   (<var>parent</var>, <var>target</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+       <p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set <var>parent</var> to null. </p>
       <li>
-       <p>Set <var>parent</var> to the result of invoking <var>parent</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
+       <p>Otherwise, set <var>target</var> to <var>parent</var> and append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+      <li>
+       <p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking <var>parent</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
      </ol>
     <li>
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
@@ -895,6 +902,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
        <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute to the <b>target</b> of the last tuple
    in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, that is either <var>tuple</var> or preceding <var>tuple</var>, whose <b>target</b> is non-null. </p>
       <li>
+       <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to <var>tuple</var>’s <b>relatedTarget</b>. </p>
+      <li>
        <p>If <var>tuple</var>’s <b>target</b> is null, then <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>tuple</var>’s <b>item</b> with <var>event</var>. </p>
      </ol>
     <li>
@@ -903,6 +912,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute to the <b>target</b> of the last tuple
    in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, that is either <var>tuple</var> or preceding <var>tuple</var>, whose <b>target</b> is non-null. </p>
+      <li>
+       <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to <var>tuple</var>’s <b>relatedTarget</b>. </p>
       <li>
        <p>If <var>tuple</var>’s <b>target</b> is non-null, then set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. </p>
       <li>
@@ -3267,6 +3278,13 @@ object’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a da
    <p>A <dfn data-dfn-type="dfn" data-export="" id="concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor<a class="self-link" href="#concept-shadow-including-inclusive-ancestor"></a></dfn> is an object or one of its <a data-link-type="dfn" href="#concept-shadow-including-ancestor">shadow-including ancestors</a>. </p>
    <p>A <a data-link-type="dfn" href="#concept-node">node</a> <var>A</var> is an <dfn data-dfn-type="dfn" data-export="" id="concept-unclosed-node">unclosed node<a class="self-link" href="#concept-unclosed-node"></a></dfn> of a <a data-link-type="dfn" href="#concept-node">node</a> <var>B</var>, if <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is not a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>, <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>B</var>,
 or <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a> whose <a data-link-type="dfn" href="#shadowroot-mode">mode</a> is "<code>open</code>" and <a data-link-type="dfn" href="#concept-documentfragment-host">host</a> is an <a data-link-type="dfn" href="#concept-unclosed-node">unclosed node</a> of <var>B</var>. </p>
+   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="retarget|retargeting" id="retarget">retarget<a class="self-link" href="#retarget"></a></dfn> an object <var>A</var> against an object <var>B</var>, repeat these steps until they return an object:</p>
+   <ol>
+    <li>
+     <p>If <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is not a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>, or <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>B</var>, then return <var>A</var>. </p>
+    <li>
+     <p>Set <var>A</var> to <var>A</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a>’s <a data-link-type="dfn" href="#concept-documentfragment-host">host</a>. </p>
+   </ol>
    <hr>
    <p class="XXX">For now you can find more information about this object in <a href="https://w3c.github.io/webcomponents/spec/shadow/">Shadow DOM</a>. The DOM Standard will be
 updated over time to cover more details. </p>
@@ -6062,6 +6080,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-nodeiterator-referencenode">referenceNode</a><span>, in §6.1</span>
    <li><a href="#concept-reflect">reflect</a><span>, in §4.9</span>
    <li><a href="#registered-observer">registered observer</a><span>, in §4.3</span>
+   <li><a href="#event-relatedtarget">relatedTarget</a><span>, in §3.2</span>
    <li>
     remove()
     <ul>
@@ -6095,6 +6114,8 @@ neighboring rights to this work.</p>
    <li><a href="#dom-childnode-replacewith">replaceWith(nodes...)</a><span>, in §4.2.8</span>
    <li><a href="#dom-childnode-replacewith">replaceWith(nodes)</a><span>, in §4.2.8</span>
    <li><a href="#represented-by-the-collection">represented by the collection</a><span>, in §4.2.10</span>
+   <li><a href="#retarget">retarget</a><span>, in §4.8</span>
+   <li><a href="#retarget">retargeting</a><span>, in §4.8</span>
    <li>
     root
     <ul>

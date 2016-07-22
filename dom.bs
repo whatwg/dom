@@ -639,10 +639,17 @@ dictionary EventInit {
 <p>An {{Event}} object is simply named an <dfn export id=concept-event>event</dfn>. It allows for
 signaling that something has occurred, e.g., that an image has completed downloading.</p>
 
+<p>An <a>event</a> has an associated <dfn export for=Event>relatedTarget</dfn> (null or an
+{{EventTarget}} object). Unless stated otherwise it is null.</p>
+
+<p class="note">Other specifications use <a>relatedTarget</a> to define a <code>relatedTarget</code>
+attribute. [[UIEVENTS]]
+
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
-list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} object) and a
-<b>target</b> (null or an {{EventTarget}} object). A tuple is formatted as (<b>item</b>,
-<b>target</b>). A <a for=Event>path</a> is initially the empty list.</p>
+list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} object), <b>target</b>
+(null or an {{EventTarget}} object), and a <b>relatedTarget</b> (null or an {{EventTarget}}
+object). A tuple is formatted as (<b>item</b>, <b>target</b>, <b>relatedTarget</b>). A <a
+for=Event>path</a> is initially the empty list.</p>
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -1185,7 +1192,11 @@ for discussion).
   <!-- We should consider refactoring it to make it have less of a scope, since we don't really want
        folks to start using it for non-legacy scenarios. -->
 
- <li><p>Append (<var>target</var>, <var>targetOverride</var>) to <var>event</var>'s
+ <li>Let <var>relatedTarget</var> be the result of invoking <a>retargeting</a> <var>event</var>'s
+ <a>relatedTarget</a> against <var>target</var> if <var>event</var>'s <a>relatedTarget</a> is
+ non-null, and null otherwise.
+
+ <li><p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>'s
  <a for=Event>path</a>.
 
  <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
@@ -1195,15 +1206,22 @@ for discussion).
   <p>While <var>parent</var> is non-null:</p>
 
   <ol>
+   <li><p>Let <var>relatedTarget</var> be the result of invoking <a>retargeting</a>
+   <var>event</var>'s <a>relatedTarget</a> against <var>parent</var> if <var>event</var>'s
+   <a>relatedTarget</a> is non-null, and null otherwise.
+
    <li><p>If <var>target</var>'s <a for=tree>root</a> is a
    <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then append
-   (<var>parent</var>, null) to <var>event</var>'s <a for=Event>path</a>.
+   (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>'s <a for=Event>path</a>.
 
-   <li><p>Otherwise, set <var>target</var> to <var>parent</var> and append
-   (<var>parent</var>, <var>target</var>) to <var>event</var>'s <a for=Event>path</a>.
+   <li><p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set
+   <var>parent</var> to null.
 
-   <li><p>Set <var>parent</var> to the result of invoking <var>parent</var>'s <a>get the parent</a>
-   with <var>event</var>.
+   <li><p>Otherwise, set <var>target</var> to <var>parent</var> and append (<var>parent</var>,
+   <var>target</var>, <var>relatedTarget</var>) to <var>event</var>'s <a for=Event>path</a>.
+
+   <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
+   <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
   </ol>
 
  <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
@@ -1216,6 +1234,8 @@ for discussion).
    in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
    <var>tuple</var>, whose <b>target</b> is non-null.
 
+   <li><p>Set <var>event</var>'s <a>relatedTarget</a> to <var>tuple</var>'s <b>relatedTarget</b>.
+
    <li><p>If <var>tuple</var>'s <b>target</b> is null, then <a>invoke</a> <var>tuple</var>'s
    <b>item</b> with <var>event</var>.
   </ol>
@@ -1227,6 +1247,8 @@ for discussion).
    <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <b>target</b> of the last tuple
    in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
    <var>tuple</var>, whose <b>target</b> is non-null.
+
+   <li><p>Set <var>event</var>'s <a>relatedTarget</a> to <var>tuple</var>'s <b>relatedTarget</b>.
 
    <li><p>If <var>tuple</var>'s <b>target</b> is non-null, then set <var>event</var>'s
    {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
@@ -5514,6 +5536,17 @@ is an object or one of its <a>shadow-including ancestors</a>.
 or <var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
 <a for=ShadowRoot>mode</a> is "<code>open</code>" and <a for=DocumentFragment>host</a> is an
 <a>unclosed node</a> of <var>B</var>.
+
+<p>To <dfn export lt="retarget|retargeting">retarget</dfn> an object <var>A</var> against an object
+<var>B</var>, repeat these steps until they return an object:</p>
+
+<ol>
+ <li><p>If <var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, or <var>A</var>'s
+ <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of <var>B</var>, then return
+ <var>A</var>.
+
+ <li><p>Set <var>A</var> to <var>A</var>'s <a for=tree>root</a>'s <a for=DocumentFragment>host</a>.
+</ol>
 
 <hr>
 
