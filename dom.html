@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-07-22">22 July 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-08-04">4 August 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -525,6 +525,8 @@ signaling that something has occurred, e.g., that an image has completed downloa
    <p class="note" role="note">Other specifications use <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to define a <code>relatedTarget</code> attribute. <a data-link-type="biblio" href="#biblio-uievents">[UIEVENTS]</a> </p>
    <p>An <a data-link-type="dfn" href="#concept-event">event</a> has an associated <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="event-path">path<a class="self-link" href="#event-path"></a></dfn>. A <a data-link-type="dfn" href="#event-path">path</a> is a
 list of tuples, each of which consists of an <b>item</b> (an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object), <b>target</b> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object), and a <b>relatedTarget</b> (null or an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object). A tuple is formatted as (<b>item</b>, <b>target</b>, <b>relatedTarget</b>). A <a data-link-type="dfn" href="#event-path">path</a> is initially the empty list.</p>
+   <p><a data-link-type="dfn" href="#other-applicable-specifications">Specifications</a> may define <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="event-retargeting-steps">retargeting steps<a class="self-link" href="#event-retargeting-steps"></a></dfn> for all or some <a data-link-type="dfn" href="#concept-event">events</a>.
+The algorithm is passed <var>event</var>, as indicated in the <a data-link-type="dfn" href="#concept-event-dispatch">dispatch</a> algorithm below. </p>
    <dl class="domintro">
     <dt><code><var>event</var> = new <a class="idl-code" data-link-type="constructor" href="#dom-event-event">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code> 
     <dd>Returns a new <var>event</var> whose <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute value is set to <var>type</var>. The optional <var>eventInitDict</var> argument
@@ -904,6 +906,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to <var>tuple</var>’s <b>relatedTarget</b>. </p>
       <li>
+       <p>Run the <a data-link-type="dfn" href="#event-retargeting-steps">retargeting steps</a> with <var>event</var>. </p>
+      <li>
        <p>If <var>tuple</var>’s <b>target</b> is null, then <a data-link-type="dfn" href="#concept-event-listener-invoke">invoke</a> <var>tuple</var>’s <b>item</b> with <var>event</var>. </p>
      </ol>
     <li>
@@ -914,6 +918,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
    in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, that is either <var>tuple</var> or preceding <var>tuple</var>, whose <b>target</b> is non-null. </p>
       <li>
        <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> to <var>tuple</var>’s <b>relatedTarget</b>. </p>
+      <li>
+       <p>Run the <a data-link-type="dfn" href="#event-retargeting-steps">retargeting steps</a> with <var>event</var>. </p>
       <li>
        <p>If <var>tuple</var>’s <b>target</b> is non-null, then set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-at_target">AT_TARGET</a></code>. </p>
       <li>
@@ -6116,6 +6122,7 @@ neighboring rights to this work.</p>
    <li><a href="#represented-by-the-collection">represented by the collection</a><span>, in §4.2.10</span>
    <li><a href="#retarget">retarget</a><span>, in §4.8</span>
    <li><a href="#retarget">retargeting</a><span>, in §4.8</span>
+   <li><a href="#event-retargeting-steps">retargeting steps</a><span>, in §3.2</span>
    <li>
     root
     <ul>
