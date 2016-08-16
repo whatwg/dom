@@ -3400,7 +3400,7 @@ interface Node : EventTarget {
   const unsigned short ELEMENT_NODE = 1;
   const unsigned short ATTRIBUTE_NODE = 2; // historical
   const unsigned short TEXT_NODE = 3;
-  const unsigned short CDATA_SECTION_NODE = 4; // historical
+  const unsigned short CDATA_SECTION_NODE = 4;
   const unsigned short ENTITY_REFERENCE_NODE = 5; // historical
   const unsigned short ENTITY_NODE = 6; // historical
   const unsigned short PROCESSING_INSTRUCTION_NODE = 7;
@@ -3489,6 +3489,9 @@ that is a <a>document</a>.
    <dd><var>node</var> is a {{Text}}
    <a>node</a>.
 
+   <dt><code>{{Node}} . {{Node/CDATA_SECTION_NODE}}</code> (4)
+   <dd><var>node</var> is a {{CDATASection}} <a>node</a>.
+
    <dt><code>{{Node}} . {{Node/PROCESSING_INSTRUCTION_NODE}}</code> (7)
    <dd><var>node</var> is a {{ProcessingInstruction}}
    <a>node</a>.
@@ -3553,9 +3556,8 @@ the first matching statement, switching on the <a>context object</a>:
  <dt>{{Text}}
  <dd><dfn const for=Node>TEXT_NODE</dfn> (3);
 
- <!-- XXX CDATA
- <dfn const for=Node>CDATA_SECTION_NODE</dfn> (4, historical);
- -->
+ <dt>{{CDATASection}}
+ <dd><dfn const for=Node>CDATA_SECTION_NODE</dfn> (4);
 
  <dt>{{ProcessingInstruction}}
  <dd><dfn const for=Node>PROCESSING_INSTRUCTION_NODE</dfn> (7);
@@ -4546,6 +4548,7 @@ interface Document : Node {
   [NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName, optional ElementCreationOptions options);
   [NewObject] DocumentFragment createDocumentFragment();
   [NewObject] Text createTextNode(DOMString data);
+  [NewObject] CDATASection createCDATASection(DOMString data);
   [NewObject] Comment createComment(DOMString data);
   [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
@@ -4868,6 +4871,9 @@ for the <a>context object</a>.
  <dd>Returns a {{Text}} <a>node</a>
  whose <a>data</a> is <var>data</var>.
 
+ <dt><code><var>text</var> = <var>document</var> . {{createCDATASection(data)}}</code>
+ <dd>Returns a {{CDATASection}} <a>node</a> whose <a>data</a> is <var>data</var>.
+
  <dt><code><var>comment</var> = <var>document</var> . {{createComment(data)}}</code>
  <dd>Returns a {{Comment}} <a>node</a>
  whose <a>data</a> is <var>data</var>.
@@ -4973,6 +4979,20 @@ invoked, must return a new {{Text}} <a>node</a> with its <a>data</a> set to <var
 
 <p class="note no-backref">No check is performed that <var>data</var> consists of
 characters that match the <code><a type>Char</a></code> production.
+
+<p>The <dfn method for=Document><code>createCDATASection(<var>data</var>)</code></dfn> method, when
+invoked, must run these steps:
+
+<ol>
+ <li><p>If <a>context object</a> is an <a>HTML document</a>, then <a>throw</a> a
+ {{NotSupportedError}}.
+
+ <li><p>If <var>data</var> contains the string "<code>]]></code>", then <a>throw</a> an
+ {{InvalidCharacterError}}.
+
+ <li><p>Return a new {{CDATASection}} <a>node</a> with its <a>data</a> set to <var>data</var> and
+ <a>node document</a> set to the <a>context object</a>.
+</ol>
 
 The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method, when invoked,
 must return a new {{Comment}} <a>node</a> with its <a>data</a> set to <var>data</var> and
@@ -7105,6 +7125,15 @@ attribute must return a concatenation of the
 <a>contiguous <code>Text</code> nodes</a> of the
 <a>context object</a>, in
 <a>tree order</a>.
+
+
+
+<h3 id=interface-cdatasection>Interface {{CDATASection}}</h3>
+
+<pre class=idl>
+[Exposed=Window]
+interface CDATASection : Text {
+};</pre>
 
 
 
@@ -9315,7 +9344,7 @@ callback interface NodeFilter {
   const unsigned long SHOW_ELEMENT = 0x1;
   const unsigned long SHOW_ATTRIBUTE = 0x2; // historical
   const unsigned long SHOW_TEXT = 0x4;
-  const unsigned long SHOW_CDATA_SECTION = 0x8; // historical
+  const unsigned long SHOW_CDATA_SECTION = 0x8;
   const unsigned long SHOW_ENTITY_REFERENCE = 0x10; // historical
   const unsigned long SHOW_ENTITY = 0x20; // historical
   const unsigned long SHOW_PROCESSING_INSTRUCTION = 0x40;
@@ -9354,9 +9383,7 @@ These constants can be used for the
  <li><dfn const for="NodeFilter">SHOW_ATTRIBUTE</dfn> (2, historical);
  -->
  <li><dfn const for="NodeFilter">SHOW_TEXT</dfn> (4);
- <!-- XXX still questionable
- <li><dfn const for="NodeFilter">SHOW_CDATA_SECTION</dfn> (8; historical);
- -->
+ <li><dfn const for="NodeFilter">SHOW_CDATA_SECTION</dfn> (8);
  <li><dfn const for="NodeFilter">SHOW_PROCESSING_INSTRUCTION</dfn> (64, 40 in hexadecimal);
  <li><dfn const for="NodeFilter">SHOW_COMMENT</dfn> (128, 80 in hexadecimal);
  <li><dfn const for="NodeFilter">SHOW_DOCUMENT</dfn> (256, 100 in hexadecimal);
@@ -9706,7 +9733,6 @@ some of these features should be reintroduced.
 
 Interfaces:
 <ul class=brief dfn-type="interface">
- <li><dfn><code>CDATASection</code></dfn>
  <li><dfn><code>DOMConfiguration</code></dfn>
  <li><dfn><code>DOMError</code></dfn>
  <li><dfn><code>DOMErrorHandler</code></dfn>
@@ -9738,7 +9764,6 @@ Interface members:
  <dt>{{Document}}
  <dd>
   <ul class=brief>
-   <li><dfn method for=Document>createCDATASection()</dfn>
    <li><dfn method for=Document>createEntityReference()</dfn>
    <li><dfn attribute for=Document>xmlEncoding</dfn>
    <li><dfn attribute for=Document>xmlStandalone</dfn>
