@@ -1490,7 +1490,7 @@ can be used to explore this matter in more detail.
 
 <h3 id=node-trees>Node tree</h3>
 
-<p>{{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{Element}}, {{Text}},
+<p>{{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{Element}}, {{Attr}}, {{Text}},
 {{ProcessingInstruction}}, and {{Comment}} objects (simply called
 <dfn export id=concept-node>nodes</dfn>) <a>participate</a> in a <a>tree</a>, simply named the
 <dfn export id=concept-node-tree>node tree</dfn>.
@@ -1514,12 +1514,12 @@ can be used to explore this matter in more detail.
  <dd><p>Zero or more nodes each of which is {{Element}}, {{Text}}, {{ProcessingInstruction}}, or
  {{Comment}}.
  <dt>{{DocumentType}}
+ <dt>{{Attr}}
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
  <dd><p>None.
 </dl>
-<!--AttrExodus -->
 
 The <dfn export id=concept-node-length for=Node>length</dfn> of a
 <a>node</a> <var>node</var> depends on
@@ -3523,6 +3523,9 @@ that is a <a>document</a>.
    <dt>{{Element}}
    <dd>Its {{Element/tagName}} attribute value.
 
+   <dt>{{Attr}}
+   <dd>Its <a for=Attr>qualified name</a>.
+
    <dt>{{Text}}
    <dd>"<code>#text</code>".
 
@@ -3553,10 +3556,8 @@ the first matching statement, switching on the <a>context object</a>:
  <dt>{{Element}}
  <dd><dfn const for=Node>ELEMENT_NODE</dfn> (1)
 
- <!--AttrExodus
  <dt>{{Attr}}
- <dd><dfn const for=Node>ATTRIBUTE_NODE</dfn> (2, historical);
- -->
+ <dd><dfn const for=Node>ATTRIBUTE_NODE</dfn> (2);
 
  <dt>{{Text}}
  <dd><dfn const for=Node>TEXT_NODE</dfn> (3);
@@ -3615,11 +3616,8 @@ the first matching statement, switching on the <a>context object</a>:
  <dd>Its {{Element/tagName}} attribute value.
  <!-- XXX internal concept -->
 
- <!--AttrExodus
  <dt>{{Attr}}
- <dd>The <a>context object</a>'s
- {{Attr/name}} attribute.
- -->
+ <dd>Its <a for=Attr>qualified name</a>.
 
  <dt>{{Text}}
  <dd>"<code>#text</code>".
@@ -3715,10 +3713,8 @@ attribute's getter must return <a>context object</a>'s <a>shadow-including root<
 
 <p>The <dfn attribute for=Node><code>parentNode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a>parent</a>.
-<!-- AttrExodus
-<li>If the <a>context object</a> is an {{Attr}} node,
-return null.
--->
+
+<p class="note">An {{Attr}} <a>node</a> has no <a>parent</a>.
 
 <p>The <dfn attribute for=Node><code>parentElement</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a>parent element</a>.
@@ -3737,17 +3733,11 @@ true if the <a>context object</a> has <a>children</a>, and false otherwise.
 
 <p>The <dfn attribute for=Node><code>previousSibling</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a>previous sibling</a>.
-<!-- AttrExodus
- <li>If the <a>context object</a> is an {{Attr}} node,
- return null.
--->
+
+<p class="note">An {{Attr}} <a>node</a> has no <a for=tree>siblings</a>.
 
 <p>The <dfn attribute for=Node><code>nextSibling</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a>next sibling</a>.
-<!-- AttrExodus
- <li>If the <a>context object</a> is an {{Attr}} node,
- return null.
--->
 
 <hr>
 
@@ -3757,12 +3747,13 @@ The <dfn attribute for=Node>nodeValue</dfn> attribute
 must return the following, depending on the <a>context object</a>:
 
 <dl class=switch>
- <!--AttrExodus <dt>{{Attr}} -->
+ <dt>{{Attr}}
+ <dd><a>Context object</a>'s <a for=Attr>value</a>.
+
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd>The <a>context object</a>'s
- <a>data</a>.
+ <dd><a>Context object</a>'s <a>data</a>.
 
  <dt>Any other node
  <dd>Null.
@@ -3773,7 +3764,9 @@ on setting, if the new value is null, act as if it was the empty string
 instead, and then do as described below, depending on the <a>context object</a>:
 
 <dl class=switch>
- <!--AttrExodus <dt>{{Attr}} -->
+ <dt>{{Attr}}
+ <dd><p>Set an existing attribute value</a> with <a>context object</a> and new value.
+
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
@@ -3792,18 +3785,19 @@ following, switching on <a>context object</a>:
 <dl class=switch>
  <dt>{{DocumentFragment}}
  <dt>{{Element}}
- <!--AttrExodus <dt>{{Attr}} -->
  <dd>The concatenation of <a>data</a> of all
  the {{Text}} <a>node</a>
  <a>descendants</a> of the
  <a>context object</a>, in
  <a>tree order</a>.
 
+ <dt>{{Attr}}
+ <dd><a>Context object</a>'s <a for=Attr>value</a>.
+
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd>The <a>context object</a>'s
- <a>data</a>.
+ <dd><a>Context object</a>'s <a>data</a>.
 
  <dt>Any other node
  <dd>Null.
@@ -3815,7 +3809,6 @@ the empty string instead, and then do as described below, switching on <a>contex
 <dl class=switch>
  <dt>{{DocumentFragment}}
  <dt>{{Element}}
- <!--AttrExodus <dt>{{Attr}} -->
  <dd>
   <ol>
    <li><p>Let <var>node</var> be null.
@@ -3826,6 +3819,10 @@ the empty string instead, and then do as described below, switching on <a>contex
 
    <li><p><a>Replace all</a> with <var>node</var> within the <a>context object</a>.
   </ol>
+
+ <dt>{{Attr}}
+ <dd>
+ <dd><p>Set an existing attribute value</a> with <a>context object</a> and new value.
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
@@ -3986,14 +3983,9 @@ dom-Range-extractContents, dom-Range-cloneContents -->
     <a for=Element>attribute list</a>, in order, run these substeps:
 
     <ol>
-     <li><p>Let <var>copyAttribute</var> be a new <a>attribute</a>.
+     <li><p>Let <var>copyAttribute</var> be a <a>clone</a> of <var>attribute</var>.
 
-     <li><p>Set <var>copyAttribute</var>'s <a for=Attr>namespace</a>,
-     <a for=Attr>namespace prefix</a>, <a for=Attr>local name</a>,
-     and <a for=Attr>value</a>, to those of <var>attribute</var>.
-
-     <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to
-     <var>copy</var>.
+     <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to <var>copy</var>.
     </ol>
    </li>
   </ol>
@@ -4015,10 +4007,9 @@ dom-Range-extractContents, dom-Range-cloneContents -->
    <dd><p>Set <var>copy</var>'s <a for=DocumentType>name</a>, <a>public ID</a>, and
    <a>system ID</a>, to those of <var>node</var>.
 
-   <!--AttrExodus
    <dt>{{Attr}}
-   <dd>{{Attr/value}}
-   -->
+   <dd><p>Set <var>copy</var>'s <a for=Attr>namespace</a>, <a for=Attr>namespace prefix</a>,
+   <a for=Attr>local name</a>, and <a for=Attr>value</a>, to those of <var>node</var>.
 
    <dt>{{Text}}
    <dt>{{Comment}}
@@ -4081,10 +4072,8 @@ A <a>node</a> <var>A</var>
     number of <a>attributes</a> in its
     <a for=Element>attribute list</a>.
 
-   <!--AttrExodus
    <dt>{{Attr}}
-   <dd>{{Attr/value}}
-   -->
+   <dd>Its <a for=Attr>namespace</a>, <a for=Attr>local name</a>, and <a for=Attr>value</a>.
 
    <dt>{{ProcessingInstruction}}
    <dd>Its <a for=ProcessingInstruction>target</a> and
@@ -4097,14 +4086,9 @@ A <a>node</a> <var>A</var>
    <dt>Any other node
    <dd>&mdash;
   </dl>
- <li>If <var>A</var> is an <a for="/">element</a>, each
- <a>attribute</a> in its
- <a for=Element>attribute list</a> has an
- <a>attribute</a> with the same
- <a for=Attr>namespace</a>,
- <a for=Attr>local name</a>, and
- <a for=Attr>value</a> in <var>B</var>'s
- <a for=Element>attribute list</a>.
+ <li>If <var>A</var> is an <a for="/">element</a>, each <a>attribute</a> in its
+ <a for=Element>attribute list</a> has an <a>attribute</a> that <a for=Node>equals</a> an
+ <a>attribute</a> in <var>B</var>'s <a for=Element>attribute list</a>.
  <li><var>A</var> and <var>B</var> have the same number of
  <a>children</a>.
  <li>Each <a>child</a> of <var>A</var>
@@ -4175,56 +4159,79 @@ returns as mask:
  <li><dfn const for=Node>DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC</dfn> (32, 20 in hexadecimal).
 </ul>
 
-The <dfn method for=Node>compareDocumentPosition(<var>other</var>)</dfn>
-method must run these steps:
+<p>The <dfn method for=Node><code>compareDocumentPosition(<var>other</var>)</code></dfn> method,
+when invoked, must run these steps:
 
 <ol>
- <li>Let <var>reference</var> be the <a>context object</a>.
- <li>If <var>other</var> and <var>reference</var> are the
- same object, return zero.
+ <li><p>If <a>context object</a> is <var>other</var>, then return zero.
+
+ <li><p>Let <var>node1</var> be <var>other</var> and <var>node2</var> be <a>context object</a>.
+
+ <li><p>Let <var>attr1</var> be null.
 
  <li>
-  If <var>other</var> and <var>reference</var> are not
-  in the same <a>tree</a>, return the result of
-  adding
-  {{Node/DOCUMENT_POSITION_DISCONNECTED}},
-  {{Node/DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC}},
-  and either
-  {{Node/DOCUMENT_POSITION_PRECEDING}} or
-  {{Node/DOCUMENT_POSITION_FOLLOWING}},
-  with the constraint that this is to be consistent, together.
+  <p>If <var>node1</var> is an <a>attribute</a>, then:
 
-  <p class="note no-backref">Whether to return
-  {{Node/DOCUMENT_POSITION_PRECEDING}} or
-  {{Node/DOCUMENT_POSITION_FOLLOWING}}
-  is typically implemented via pointer comparison. In JavaScript
-  implementations <code class='lang-javascript'>Math.random()</code> can be used.
+  <ol>
+   <li><p>Set <var>attr1</var> to <var>node1</var>.
 
- <li>If <var>other</var> is an
- <a>ancestor</a> of
- <var>reference</var>, return the result of adding
- {{Node/DOCUMENT_POSITION_CONTAINS}}
- to
+   <li><p>If <var>attr1</var>'s <a for=Attr>element</a> is non-null, then set <var>node1</var> to
+   <var>attr1</var>'s <a for=Attr>element</a>.
+  </ol>
+
+ <li>
+  <p>If <var>node2</var> is an <a>attribute</a>, then:
+
+  <ol>
+   <li><p>Let <var>attr2</var> be <var>node2</var>.
+
+   <li>
+    <p>If <var>attr2</var>'s <a for=Attr>element</a> is <var>node1</var> and <var>attr1</var> is
+    non-null, then:
+
+    <ol>
+     <li>
+      <p>For each <a>attribute</a> <var>node2Attribute</var> in <var>attr2</var>'s
+      <a for=Attr>element</a>'s <a for=Element>attribute list</a>:
+
+      <ol>
+       <li><p>If <var>node2Attribute</var> <a for=Node>equals</a> <var>attr1</var>, then return the
+       result of adding {{Node/DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC}} and
+       {{Node/DOCUMENT_POSITION_PRECEDING}}.
+
+       <li><p>If <var>node2Attribute</var> <a for=Node>equals</a> <var>attr2</var>, then return the
+       result of adding {{Node/DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC}} and
+       {{Node/DOCUMENT_POSITION_FOLLOWING}}.
+      </ol>
+    </ol>
+
+   <li><p>If <var>attr2</var>'s <a for=Attr>element</a> is non-null, then set <var>node2</var> to
+   <var>attr2</var>'s <a for=Attr>element</a>.
+  </ol>
+
+ <li>
+  <p>If <var>node1</var>'s <a for=tree>root</a> is not <var>node2</var>'s <a for=tree>root</a>, then
+  return the result of adding {{Node/DOCUMENT_POSITION_DISCONNECTED}},
+  {{Node/DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC}}, and either
+  {{Node/DOCUMENT_POSITION_PRECEDING}} or {{Node/DOCUMENT_POSITION_FOLLOWING}}, with the constraint
+  that this is to be consistent, together.
+
+  <p class="note no-backref">Whether to return {{Node/DOCUMENT_POSITION_PRECEDING}} or
+  {{Node/DOCUMENT_POSITION_FOLLOWING}} is typically implemented via pointer comparison. In
+  JavaScript implementations a cached <code class='lang-javascript'>Math.random()</code> value can
+  be used.
+
+ <li><p>If <var>node1</var> is an <a>ancestor</a> of <var>node2</var>, then return the result of
+ adding {{Node/DOCUMENT_POSITION_CONTAINS}} to {{Node/DOCUMENT_POSITION_PRECEDING}}.
+
+ <li><p>If <var>node1</var> is a <a>descendant</a> of <var>node2</var>, then return the result of
+ adding {{Node/DOCUMENT_POSITION_CONTAINED_BY}} to {{Node/DOCUMENT_POSITION_FOLLOWING}}.
+
+ <li><p>If <var>node1</var> is <a>preceding</a> <var>node2</var>, then return
  {{Node/DOCUMENT_POSITION_PRECEDING}}.
 
- <li>If <var>other</var> is a
- <a>descendant</a> of
- <var>reference</var>, return the result of adding
- {{Node/DOCUMENT_POSITION_CONTAINED_BY}}
- to
- {{Node/DOCUMENT_POSITION_FOLLOWING}}.
-
- <li>If <var>other</var> is
- <a>preceding</a>
- <var>reference</var> return
- {{Node/DOCUMENT_POSITION_PRECEDING}}.
-
- <li>Return
- {{Node/DOCUMENT_POSITION_FOLLOWING}}.
+ <li><p>Return {{Node/DOCUMENT_POSITION_FOLLOWING}}.
 </ol>
-
-<!-- AttrExodus compareDocumentPosition() works differently if Attr inherits
-     from Node -->
 
 The
 <dfn method for=Node>contains(<var>other</var>)</dfn>
@@ -4312,7 +4319,6 @@ To <dfn export>locate a namespace</dfn> for a <var>node</var> using
    its <a>parent element</a> using <var>prefix</var>.
   </ol>
 
- <!--AttrExodus {{Attr}} -->
  <dt>{{Document}}
  <dd>
   <ol>
@@ -4324,6 +4330,7 @@ To <dfn export>locate a namespace</dfn> for a <var>node</var> using
 
  <dt>{{DocumentType}}
  <dt>{{DocumentFragment}}
+ <dt>{{Attr}}
  <dd>Return null.
 
  <dt>Any other node
@@ -4352,7 +4359,6 @@ method must run these steps:
    <a>locating a namespace prefix</a>
    for the node using <var>namespace</var>.
 
-   <!--AttrExodus {{Attr}} -->
    <dt>{{Document}}
    <dd>Return the result of
    <a>locating a namespace prefix</a>
@@ -4361,6 +4367,7 @@ method must run these steps:
 
    <dt>{{DocumentType}}
    <dt>{{DocumentFragment}}
+   <dt>{{Attr}}
    <dd>Return null.
 
    <dt>Any other node
@@ -5090,10 +5097,17 @@ a <var>document</var>, run these steps:
   <p>If <var>document</var> is not the same as <var>oldDocument</var>, run these substeps:
 
   <ol>
-   <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
-   <a>shadow-including inclusive descendants</a>, set <var>inclusiveDescendant</var>'s
-   <a>node document</a> to <var>document</var>.
-   <!--AttrExodus as well as any associated {{Attr}} nodes-->
+   <li>
+    <p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
+    <a>shadow-including inclusive descendants</a>, run these subsubsteps:
+
+    <ol>
+     <li><p>Set <var>inclusiveDescendant</var>'s <a>node document</a> to <var>document</var>.
+
+     <li><p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>, then set the
+     <a>node document</a> of each <a>attribute</a> in <var>inclusiveDescendant</var>'s
+     <a for=Element>attribute list</a> to <var>document</var>.
+    </ol>
 
    <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
    <a>shadow-including inclusive descendants</a> that is a <a>custom</a> <a for=/>element</a>,
@@ -5134,8 +5148,8 @@ invoked, must run these steps:
  <li>If the <a>context object</a> is an <a>HTML document</a>, let
  <var>localName</var> be <a>converted to ASCII lowercase</a>.
 
- <li>Return a new <a>attribute</a> whose
- <a for=Attr>local name</a> is <var>localName</var>.
+ <li>Return a new <a>attribute</a> whose <a for=Attr>local name</a> is <var>localName</var> and
+ <a>node document</a> is <a>context object</a>.
 </ol>
 
 The
@@ -5148,8 +5162,8 @@ method, when invoked, must run these steps:
  any exceptions.
 
  <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
- <a for=Attr>namespace prefix</a> is <var>prefix</var>, and <a for=Attr>local name</a> is
- <var>localName</var>.
+ <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
+ <var>localName</var>, and <a>node document</a> is <a>context object</a>.
 </ol>
 
 <hr>
@@ -6073,16 +6087,12 @@ using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <var>element</var>.
 
- <li>If <var>attribute</var> is null, create an
- <a>attribute</a> whose
- <a for=Attr>namespace</a> is <var>namespace</var>,
- <a for=Attr>namespace prefix</a> is
- <var>prefix</var>, <a for=Attr>local name</a> is
- <var>localName</var>,
- and <a for=Attr>value</a> is <var>value</var>, and then
- <a lt="append an attribute">append</a> this
- <a>attribute</a> to <var>element</var>
- and terminate these steps.
+ <li>If <var>attribute</var> is null, create an <a>attribute</a> whose <a for=Attr>namespace</a> is
+ <var>namespace</var>, <a for=Attr>namespace prefix</a> is <var>prefix</var>,
+ <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is <var>value</var>, and
+ <a>node document</a> is <var>element</var>'s <a>node document</a>, then
+ <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
+ terminate these steps.
 
  <li><a lt="change an attribute">Change</a>
  <var>attribute</var> from <var>element</var> to
@@ -6231,8 +6241,6 @@ namespace.</p>
 
 <hr>
 
-<!-- all members in this subsection are affected by AttrExodus -->
-
 The <dfn method for="Element">hasAttributes()</dfn> method,
 when invoked, must return false if <a>context object</a>'s
 <a for=Element>attribute list</a> is empty, and true
@@ -6292,9 +6300,10 @@ method, when invoked, must run these steps:
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
  <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
- <a for="Attr">local name</a> is <var>qualifiedName</var> and <a for=Attr>value</a> is
- <var>value</var>, <a lt="append an attribute">append</a> this <a>attribute</a> to the
- <a>context object</a>'s <a for=Element>attribute list</a>, and then terminate these steps.
+ <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
+ <var>value</var>, and <a>node document</a> is <a>context object</a>'s <a>node document</a>, then
+ <a lt="append an attribute">append</a> this <a>attribute</a> to <a>context object</a>, and then
+ terminate these steps.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> from <a>context object</a> to
  <var>value</var>.
@@ -6697,23 +6706,19 @@ method, when invoked, must run these steps:
 
 <pre class=idl>
 [Exposed=Window]
-interface Attr {
+interface Attr : Node {
   readonly attribute DOMString? namespaceURI;
   readonly attribute DOMString? prefix;
   readonly attribute DOMString localName;
   readonly attribute DOMString name;
-  readonly attribute DOMString nodeName; // historical alias of .name
   [CEReactions] attribute DOMString value;
-  [CEReactions, TreatNullAs=EmptyString] attribute DOMString nodeValue; // historical alias of .value
-  [CEReactions, TreatNullAs=EmptyString] attribute DOMString textContent; // historical alias of .value
 
   readonly attribute Element? ownerElement;
 
   readonly attribute boolean specified; // useless; always returns true
 };</pre>
 
-
-{{Attr}} objects are simply known as
+<p>{{Attr}} <a>nodes</a> are simply known as
 <dfn export id=concept-attribute lt="attribute">attributes</dfn>. They are sometimes referred
 to as <em>content attributes</em> to avoid confusion with IDL attributes.
 
@@ -6764,31 +6769,25 @@ null.
 <p>The <dfn attribute for="Attr"><code>localName</code></dfn> attribute's getter must return the
 <a for=Attr>local name</a>.
 
-<p>The <dfn attribute for="Attr"><code>name</code></dfn> attribute's getter, and
-<dfn attribute for="Attr"><code>nodeName</code></dfn> attribute's getter, must return the
+<p>The <dfn attribute for="Attr"><code>name</code></dfn> attribute's getter must return the
 <a for=Attr>qualified name</a>.
 
-<p>The <dfn attribute for="Attr"><code>value</code></dfn> attribute's getter,
-<dfn attribute for="Attr"><code>nodeValue</code></dfn> attribute's getter, and
-<dfn attribute for="Attr"><code>textContent</code></dfn> attribute's getter, must return the
+<p>The <dfn attribute for="Attr"><code>value</code></dfn> attribute's getter must return the
 <a for=Attr>value</a>.
 
-<p>The {{Attr/value}} attribute's setter, {{Attr/nodeValue}} attribute's setter, and
-{{Attr/textContent}} attribute's setter, must run these steps:
+<p>To <dfn>set an existing attribute value</dfn>, given an <a>attribute</a> <var>attribute</var> and
+string <var>value</var>, run these steps:
 
 <ol>
- <li>If <a>context object</a>'s
- <a for=Attr>element</a> is null, set
- <a>context object</a>'s <a for=Attr>value</a> to the
- given value.
+ <li>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
+ <a for=Attr>value</a> to <var>value</var>.
 
- <li>Otherwise, <a lt="change an attribute">change</a> the
- <a>context object</a> from <a>context object</a>'s
- <a for=Attr>element</a> to the given value.
+ <li>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> from
+ <var>attribute</var>'s <a for=Attr>element</a> to <var>value</var>.
 </ol>
 
-<p class="note no-backref">Unlike <a>node</a>'s {{Node/textContent}}, no special null
-handling is required.
+<p>The {{Attr/value}} attribute's setter must <a>set an existing attribute value</a> with
+<a>context object</a> and the given value.
 
 <hr>
 
@@ -9389,9 +9388,7 @@ These constants can be used for the
 <ul class="brief">
  <li><dfn const for="NodeFilter">SHOW_ALL</dfn> (4294967295, FFFFFFFF in hexadecimal);
  <li><dfn const for="NodeFilter">SHOW_ELEMENT</dfn> (1);
- <!-- AttrExodus
- <li><dfn const for="NodeFilter">SHOW_ATTRIBUTE</dfn> (2, historical);
- -->
+ <li><dfn const for="NodeFilter">SHOW_ATTRIBUTE</dfn> (2);
  <li><dfn const for="NodeFilter">SHOW_TEXT</dfn> (4);
  <li><dfn const for="NodeFilter">SHOW_CDATA_SECTION</dfn> (8);
  <li><dfn const for="NodeFilter">SHOW_PROCESSING_INSTRUCTION</dfn> (64, 40 in hexadecimal);
@@ -9792,12 +9789,10 @@ Interface members:
 
  <dt>{{Attr}}
  <dd>
-  No longer inherits from {{Node}} and therefore completely
-  changed.
-  <!--AttrExodus
-  <dfn attribute for="Attr">schemaTypeInfo</dfn>
-  <dfn attribute for="Attr">isId</dfn>
-  -->
+  <ul class=brief>
+   <li><dfn attribute for="Attr">schemaTypeInfo</dfn>
+   <li><dfn attribute for="Attr">isId</dfn>
+  </ul>
 
  <dt>{{Element}}
  <dd>
