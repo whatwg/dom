@@ -757,8 +757,8 @@ steps:
  <li>
   <p>For each <var>tuple</var> in <a>context object</a>'s <a for=Event>path</a>:
 
-  <ol><li><p>If <var>currentTarget</var> is a <a>node</a> and <var>tuple</var>'s <b>item</b> is an
-  <a>unclosed node</a> of <var>currentTarget</var>, or <var>currentTarget</var> is <em>not</em> a
+  <ol><li><p>If <var>currentTarget</var> is a <a>node</a> and <var>tuple</var>'s <b>item</b> is not
+  <a>closed-shadow-hidden</a> from <var>currentTarget</var>, or <var>currentTarget</var> is not a
   <a>node</a>, then append <var>tuple</var>'s <b>item</b> to <var>composedPath</var>.</p></li></ol>
 
  <li><p>Return <var>composedPath</var>.
@@ -5561,12 +5561,20 @@ is an object or one of its <a>shadow-including descendants</a>.
 <dfn export id=concept-shadow-including-inclusive-ancestor>shadow-including inclusive ancestor</dfn>
 is an object or one of its <a>shadow-including ancestors</a>.
 
-<p>A <a>node</a> <var>A</var> is an <dfn export id=concept-unclosed-node>unclosed node</dfn> of a
-<a>node</a> <var>B</var>, if <var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>,
-<var>A</var>'s <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of <var>B</var>,
-or <var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
-<a for=ShadowRoot>mode</a> is "<code>open</code>" and <a for=DocumentFragment>host</a> is an
-<a>unclosed node</a> of <var>B</var>.
+<p>A <a>node</a> <var>A</var> is
+<dfn export id=concept-closed-shadow-hidden>closed-shadow-hidden</dfn> from a <a>node</a>
+<var>B</var> if all of the following conditions are true:
+
+<ul>
+ <li><p><var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>.
+
+ <li><p><var>A</var>'s <a for=tree>root</a> is not a <a>shadow-including inclusive ancestor</a> of
+ <var>B</var>.
+
+ <li><p><var>A</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
+ <a for=ShadowRoot>mode</a> is "<code>closed</code>" or <var>A</var>'s <a for=tree>root</a>'s
+ <a for=DocumentFragment>host</a> is <a>closed-shadow-hidden</a> from <var>B</var>.
+</ul>
 
 <p>To <dfn export lt="retarget|retargeting">retarget</dfn> an object <var>A</var> against an object
 <var>B</var>, repeat these steps until they return an object:</p>
