@@ -2361,28 +2361,34 @@ the empty string instead, and then do as described below, switching on <a data-l
     <dd>Removes <a data-link-type="dfn" href="#concept-node-empty">empty</a> <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">nodes</a> and concatenates
  the <a data-link-type="dfn" href="#concept-cd-data">data</a> of remaining <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a> into the first of their <a data-link-type="dfn" href="#concept-node">nodes</a>. 
    </dl>
+   <p>The <dfn data-dfn-type="dfn" data-export="" id="contiguous-exclusive-text-nodes">contiguous exclusive <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> nodes<a class="self-link" href="#contiguous-exclusive-text-nodes"></a></dfn> of a <a data-link-type="dfn" href="#concept-node">node</a> <var>node</var> are <var>node</var>, <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> <a data-link-type="dfn" href="#exclusive-text-node">exclusive <code>Text</code> node</a>,
+if any, and its <a data-link-type="dfn" href="#contiguous-exclusive-text-nodes">contiguous exclusive <code>Text</code> nodes</a>, and <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a> <a data-link-type="dfn" href="#exclusive-text-node">exclusive <code>Text</code> node</a>, if any, and its <a data-link-type="dfn" href="#contiguous-exclusive-text-nodes">contiguous exclusive <code>Text</code> nodes</a>, avoiding any duplicates. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Node" data-dfn-type="method" data-export="" id="dom-node-normalize"><code>normalize()</code><a class="self-link" href="#dom-node-normalize"></a></dfn> method, when invoked, must run these
-steps for each <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> <a data-link-type="dfn" href="#concept-tree-descendant">descendant</a> of <a data-link-type="dfn" href="#context-object">context object</a>: </p>
+steps for each <a data-link-type="dfn" href="#exclusive-text-node">exclusive <code>Text</code> node</a> <var>node</var> <a data-link-type="dfn" href="#concept-tree-descendant">descendant</a> of <a data-link-type="dfn" href="#context-object">context object</a>: </p>
    <ol>
-    <li>Let <var>node</var> be the <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> <a data-link-type="dfn" href="#concept-tree-descendant">descendant</a>. 
-    <li>Let <var>length</var> be <var>node</var>’s <code class="idl"><a data-link-type="idl" href="#dom-characterdata-length">length</a></code> attribute value. 
-    <li>If <var>length</var> is zero, <a data-link-type="dfn" href="#concept-node-remove">remove</a> <var>node</var> and
- continue with the next <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a>, if any. 
-    <li>Let <var>data</var> be the concatenation of the <a data-link-type="dfn" href="#concept-cd-data">data</a> of <var>node</var>’s <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a> (excluding itself), in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>. 
-    <li><a data-link-type="dfn" href="#concept-cd-replace">Replace data</a> with node <var>node</var>, offset <var>length</var>,
- count 0, and data <var>data</var>. 
-    <li>Let <var>current node</var> be <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>. 
+    <li>Let <var>length</var> be <var>node</var>’s <a data-link-type="dfn" href="#concept-node-length">length</a>. 
+    <li>If <var>length</var> is zero, then <a data-link-type="dfn" href="#concept-node-remove">remove</a> <var>node</var> and continue with the next <a data-link-type="dfn" href="#exclusive-text-node">exclusive <code>Text</code> node</a>, if any. 
+    <li>Let <var>data</var> be the concatenation of the <a data-link-type="dfn" href="#concept-cd-data">data</a> of <var>node</var>’s <a data-link-type="dfn" href="#contiguous-exclusive-text-nodes">contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>. 
+    <li><a data-link-type="dfn" href="#concept-cd-replace">Replace data</a> with node <var>node</var>, offset <var>length</var>, count 0, and data <var>data</var>. 
+    <li>Let <var>currentNode</var> be <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>. 
     <li>
-     While <var>current node</var> is a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> node: 
+     <p>While <var>currentNode</var> is an <a data-link-type="dfn" href="#exclusive-text-node">exclusive <code>Text</code> node</a>: </p>
      <ol>
-      <li>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-start-node">start node</a> is <var>current node</var>, add <var>length</var> to its <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> and set its <a data-link-type="dfn" href="#concept-range-start-node">start node</a> to <var>node</var>. 
-      <li>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-end-node">end node</a> is <var>current node</var>, add <var>length</var> to its <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> and set its <a data-link-type="dfn" href="#concept-range-end-node">end node</a> to <var>node</var>. 
-      <li>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-start-node">start node</a> is <var>current node</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> and <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> is <var>current node</var>’s <a data-link-type="dfn" href="#concept-tree-index">index</a>, set its <a data-link-type="dfn" href="#concept-range-start-node">start node</a> to <var>node</var> and its <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> to <var>length</var>. 
-      <li>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-end-node">end node</a> is <var>current node</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> and <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> is <var>current node</var>’s <a data-link-type="dfn" href="#concept-tree-index">index</a>, set its <a data-link-type="dfn" href="#concept-range-end-node">end node</a> to <var>node</var> and its <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> to <var>length</var>. 
-      <li>Add <var>current node</var>’s <code class="idl"><a data-link-type="idl" href="#dom-characterdata-length">length</a></code> attribute value to <var>length</var>. 
-      <li>Set <var>current node</var> to its <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>. 
+      <li>
+       <p>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-start-node">start node</a> is <var>currentNode</var>, add <var>length</var> to its <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> and set its <a data-link-type="dfn" href="#concept-range-start-node">start node</a> to <var>node</var>. </p>
+      <li>
+       <p>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-end-node">end node</a> is <var>currentNode</var>, add <var>length</var> to its <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> and set its <a data-link-type="dfn" href="#concept-range-end-node">end node</a> to <var>node</var>. </p>
+      <li>
+       <p>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-start-node">start node</a> is <var>currentNode</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> and <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> is <var>currentNode</var>’s <a data-link-type="dfn" href="#concept-tree-index">index</a>, set its <a data-link-type="dfn" href="#concept-range-start-node">start node</a> to <var>node</var> and its <a data-link-type="dfn" href="#concept-range-start-offset">start offset</a> to <var>length</var>. </p>
+      <li>
+       <p>For each <a data-link-type="dfn" href="#concept-range">range</a> whose <a data-link-type="dfn" href="#concept-range-end-node">end node</a> is <var>currentNode</var>’s <a data-link-type="dfn" href="#concept-tree-parent">parent</a> and <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> is <var>currentNode</var>’s <a data-link-type="dfn" href="#concept-tree-index">index</a>, set its <a data-link-type="dfn" href="#concept-range-end-node">end node</a> to <var>node</var> and its <a data-link-type="dfn" href="#concept-range-end-offset">end offset</a> to <var>length</var>. </p>
+      <li>
+       <p>Add <var>currentNode</var>’s <a data-link-type="dfn" href="#concept-node-length">length</a> to <var>length</var>. </p>
+      <li>
+       <p>Set <var>currentNode</var> to its <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a>. </p>
      </ol>
-    <li><a data-link-type="dfn" href="#concept-node-remove">Remove</a> <var>node</var>’s <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a> (excluding itself), in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>. 
+    <li><a data-link-type="dfn" href="#concept-node-remove">Remove</a> <var>node</var>’s <a data-link-type="dfn" href="#contiguous-exclusive-text-nodes">contiguous exclusive <code>Text</code> nodes</a> (excluding
+ itself), in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>. 
    </ol>
    <hr>
    <dl class="domintro">
@@ -4153,6 +4159,7 @@ invoked, must <a data-link-type="dfn" href="#concept-cd-replace">replace data</a
     <dt><code><var>text</var> . <code class="idl"><a data-link-type="idl" href="#dom-text-wholetext">wholeText</a></code></code> 
     <dd>Returns the combined <a data-link-type="dfn" href="#concept-cd-data">data</a> of all direct <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> <a data-link-type="dfn" href="#concept-tree-sibling">siblings</a>. 
    </dl>
+   <p>An <dfn data-dfn-type="dfn" data-export="" id="exclusive-text-node">exclusive <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> node<a class="self-link" href="#exclusive-text-node"></a></dfn> is a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> that is not a <code class="idl"><a data-link-type="idl" href="#cdatasection">CDATASection</a></code> <a data-link-type="dfn" href="#concept-node">node</a>. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Text" data-dfn-type="constructor" data-export="" id="dom-text-text"><code>Text(<var>data</var>)</code><a class="self-link" href="#dom-text-text"></a></dfn> constructor, when invoked,
 must return a new <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> whose <a data-link-type="dfn" href="#concept-cd-data">data</a> is <var>data</var> and <a data-link-type="dfn" href="#concept-node-document">node document</a> is <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#current-global-object">current global object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated <code>Document</code></a>. </p>
    <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="split a Text node" id="concept-text-split">split<a class="self-link" href="#concept-text-split"></a></dfn> a <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a> <var>node</var> with offset <var>offset</var>, run these steps:</p>
@@ -4186,9 +4193,7 @@ must return a new <code class="idl"><a data-link-type="idl" href="#text">Text</a
    </ol>
    <p>The <dfn class="idl-code" data-dfn-for="Text" data-dfn-type="method" data-export="" id="dom-text-splittext"><code>splitText(<var>offset</var>)</code><a class="self-link" href="#dom-text-splittext"></a></dfn> method, when invoked,
 must <a data-link-type="dfn" href="#concept-text-split">split</a> <a data-link-type="dfn" href="#context-object">context object</a> with offset <var>offset</var>. </p>
-   <p>The <dfn data-dfn-type="dfn" data-export="" id="contiguous-text-nodes">contiguous <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> nodes<a class="self-link" href="#contiguous-text-nodes"></a></dfn> of a node are the node
-itself, the <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> node (if any) and its <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a>, and the <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a> <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> node (if any) and its <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a>,
-avoiding any duplicates.</p>
+   <p>The <dfn data-dfn-type="dfn" data-export="" id="contiguous-text-nodes">contiguous <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> nodes<a class="self-link" href="#contiguous-text-nodes"></a></dfn> of a <a data-link-type="dfn" href="#concept-node">node</a> <var>node</var> are <var>node</var>, <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-previous-sibling">previous sibling</a> <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a>, if any, and its <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a>, and <var>node</var>’s <a data-link-type="dfn" href="#concept-tree-next-sibling">next sibling</a> <code class="idl"><a data-link-type="idl" href="#text">Text</a></code> <a data-link-type="dfn" href="#concept-node">node</a>, if any, and its <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a>, avoiding any duplicates. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Text" data-dfn-type="attribute" data-export="" id="dom-text-wholetext"><code>wholeText</code><a class="self-link" href="#dom-text-wholetext"></a></dfn> attribute, when invoked, must return a
 concatenation of the <a data-link-type="dfn" href="#concept-cd-data">data</a> of the <a data-link-type="dfn" href="#contiguous-text-nodes">contiguous <code>Text</code> nodes</a> of <a data-link-type="dfn" href="#context-object">context object</a>, in <a data-link-type="dfn" href="#concept-tree-order">tree order</a>. </p>
    <h3 class="heading settled" data-level="4.12" id="interface-cdatasection"><span class="secno">4.12. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#cdatasection">CDATASection</a></code></span><a class="self-link" href="#interface-cdatasection"></a></h3>
@@ -5719,6 +5724,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-document-contenttype">contentType</a><span>, in §4.5</span>
    <li><a href="#concept-document-content-type">content type</a><span>, in §4.5</span>
    <li><a href="#context-object">context object</a><span>, in §2</span>
+   <li><a href="#contiguous-exclusive-text-nodes">contiguous exclusive Text nodes</a><span>, in §4.4</span>
    <li><a href="#contiguous-text-nodes">contiguous Text nodes</a><span>, in §4.11</span>
    <li><a href="#converted-to-ascii-lowercase">converted to ASCII lowercase</a><span>, in §2.2</span>
    <li><a href="#converted-to-ascii-uppercase">converted to ASCII uppercase</a><span>, in §2.2</span>
@@ -5862,6 +5868,7 @@ neighboring rights to this work.</p>
    <li><a href="#eventtarget">EventTarget</a><span>, in §3.6</span>
    <li><a href="#dom-event-event">Event(type)</a><span>, in §3.2</span>
    <li><a href="#dom-event-event">Event(type, eventInitDict)</a><span>, in §3.2</span>
+   <li><a href="#exclusive-text-node">exclusive Text node</a><span>, in §4.11</span>
    <li><a href="#dom-nodeiterator-expandentityreferences">expandEntityReferences</a><span>, in §8.4</span>
    <li><a href="#concept-range-extract">extract</a><span>, in §5.2</span>
    <li><a href="#concept-range-extract">extract a range</a><span>, in §5.2</span>
