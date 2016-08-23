@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-08-22">22 August 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-08-23">23 August 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -419,7 +419,7 @@ run these steps:</p>
    <h3 class="heading settled" data-level="3.1" id="introduction-to-dom-events"><span class="secno">3.1. </span><span class="content">Introduction to "DOM Events"</span><a class="self-link" href="#introduction-to-dom-events"></a></h3>
    <p>Throughout the web platform <a data-link-type="dfn" href="#concept-event">events</a> are <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> to objects to signal an
 occurrence, such as network activity or user interaction. These objects implement the <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> interface and can therefore add <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> to observe <a data-link-type="dfn" href="#concept-event">events</a> by calling <code class="idl"><a data-link-type="idl" href="#dom-eventtarget-addeventlistener">addEventListener()</a></code>:</p>
-<pre class="lang-javascript highlight"><span class="nx">obj</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"load"</span><span class="p">,</span> <span class="nx">imgFetched</span><span class="p">)</span>
+<pre class="lang-javascript highlight"><span></span><span class="nx">obj</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"load"</span><span class="p">,</span> <span class="nx">imgFetched</span><span class="p">)</span>
 
 <span class="kd">function</span> <span class="nx">imgFetched</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// great success</span>
@@ -434,7 +434,7 @@ passed as argument to <a data-link-type="dfn" href="#concept-event-listener">eve
 object to which the <a data-link-type="dfn" href="#concept-event">event</a> was <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> (<var>obj</var> above).</p>
    <p id="synthetic-events">Now while typically <a data-link-type="dfn" href="#concept-event">events</a> are <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> by the user agent
 as the result of user interaction or the completion of some task, applications can <a data-link-type="dfn" href="#concept-event-dispatch">dispatch</a> <a data-link-type="dfn" href="#concept-event">events</a> themselves, commonly known as synthetic events: </p>
-<pre class="lang-javascript highlight"><span class="c1">// add an appropriate event listener</span>
+<pre class="lang-javascript highlight"><span></span><span class="c1">// add an appropriate event listener</span>
 <span class="nx">obj</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"cat"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="nx">process</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">detail</span><span class="p">)</span> <span class="p">})</span>
 
 <span class="c1">// create and dispatch the event</span>
@@ -448,7 +448,7 @@ operation. For instance as part of form submission an <a data-link-type="dfn" hr
 invoked, form submission will be terminated. Applications who wish to make
 use of this functionality through <a data-link-type="dfn" href="#concept-event">events</a> <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> by the application
 (synthetic events) can make use of the return value of the <code class="idl"><a data-link-type="idl" href="#dom-eventtarget-dispatchevent">dispatchEvent()</a></code> method:</p>
-<pre class="lang-javascript highlight"><span class="k">if</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">))</span> <span class="p">{</span>
+<pre class="lang-javascript highlight"><span></span><span class="k">if</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">))</span> <span class="p">{</span>
   <span class="c1">// event was not canceled, time for some magic</span>
   <span class="err">…</span>
 <span class="p">}</span>
@@ -458,14 +458,14 @@ finally, and only if <a data-link-type="dfn" href="#concept-event">event</a>’s
 object’s <a data-link-type="dfn" href="#concept-tree-ancestor">ancestor</a> <a data-link-type="dfn" href="#concept-event-listener">event listeners</a> are invoked again,
 but now in reverse <a data-link-type="dfn" href="#concept-tree-order">tree order</a>.</p>
    <p>Lets look at an example of how <a data-link-type="dfn" href="#concept-event">events</a> work in a <a data-link-type="dfn" href="#concept-tree">tree</a>:</p>
-<pre class="lang-markup highlight"><span class="cp">&lt;!doctype html></span>
-<span class="nt">&lt;html></span>
- <span class="nt">&lt;head></span>
-  <span class="nt">&lt;title></span>Boring example<span class="nt">&lt;/title></span>
- <span class="nt">&lt;/head></span>
- <span class="nt">&lt;body></span>
-  <span class="nt">&lt;p></span>Hello <span class="nt">&lt;span</span> <span class="na">id=</span><span class="s">x</span><span class="nt">></span>world<span class="nt">&lt;/span></span>!<span class="nt">&lt;/p></span>
-  <span class="nt">&lt;script></span>
+<pre class="lang-markup highlight"><span></span><span class="cp">&lt;!doctype html></span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">></span>
+ <span class="p">&lt;</span><span class="nt">head</span><span class="p">></span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">></span>Boring example<span class="p">&lt;/</span><span class="nt">title</span><span class="p">></span>
+ <span class="p">&lt;/</span><span class="nt">head</span><span class="p">></span>
+ <span class="p">&lt;</span><span class="nt">body</span><span class="p">></span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">></span>Hello <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">x</span><span class="p">></span>world<span class="p">&lt;/</span><span class="nt">span</span><span class="p">></span>!<span class="p">&lt;/</span><span class="nt">p</span><span class="p">></span>
+  <span class="p">&lt;</span><span class="nt">script</span><span class="p">></span>
    <span class="kd">function</span> <span class="nx">test</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
      <span class="nx">debug</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">eventPhase</span><span class="p">)</span>
    <span class="p">}</span>
@@ -473,9 +473,9 @@ but now in reverse <a data-link-type="dfn" href="#concept-tree-order">tree order
    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="nx">test</span><span class="p">)</span>
    <span class="kd">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Event</span><span class="p">(</span><span class="s2">"hey"</span><span class="p">,</span> <span class="p">{</span><span class="nx">bubbles</span><span class="o">:</span><span class="kc">true</span><span class="p">})</span>
    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"x"</span><span class="p">).</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span>
-  <span class="nt">&lt;/script></span>
- <span class="nt">&lt;/body></span>
-<span class="nt">&lt;/html></span>
+  <span class="p">&lt;/</span><span class="nt">script</span><span class="p">></span>
+ <span class="p">&lt;/</span><span class="nt">body</span><span class="p">></span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">></span>
 </pre>
    <p>The <code>debug</code> function will be invoked twice. Each time the <a data-link-type="dfn" href="#concept-event">event</a>’s <code class="idl"><a data-link-type="idl" href="#dom-event-target">target</a></code> attribute value will be the <code>span</code> <a data-link-type="dfn" href="#concept-element">element</a>. The
 first time <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute’s
@@ -1043,11 +1043,11 @@ reports with rich multimedia, as well as to fully-fledged interactive
 applications.</p>
    <p>Each such document is represented as a <a data-link-type="dfn" href="#concept-node-tree">node tree</a>. Some of the <a data-link-type="dfn" href="#concept-node">nodes</a> in a <a data-link-type="dfn" href="#concept-tree">tree</a> can have <a data-link-type="dfn" href="#concept-tree-child">children</a>, while others are always leaves.</p>
    <p>To illustrate, consider this HTML document:</p>
-<pre class="lang-markup highlight"><span class="cp">&lt;!DOCTYPE html></span>
-<span class="nt">&lt;html</span> <span class="na">class=</span><span class="s">e</span><span class="nt">></span>
- <span class="nt">&lt;head>&lt;title></span>Aliens?<span class="nt">&lt;/title>&lt;/head></span>
- <span class="nt">&lt;body></span>Why yes.<span class="nt">&lt;/body></span>
-<span class="nt">&lt;/html></span>
+<pre class="lang-markup highlight"><span></span><span class="cp">&lt;!DOCTYPE html></span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">class</span><span class="o">=</span><span class="s">e</span><span class="p">></span>
+ <span class="p">&lt;</span><span class="nt">head</span><span class="p">>&lt;</span><span class="nt">title</span><span class="p">></span>Aliens?<span class="p">&lt;/</span><span class="nt">title</span><span class="p">>&lt;/</span><span class="nt">head</span><span class="p">></span>
+ <span class="p">&lt;</span><span class="nt">body</span><span class="p">></span>Why yes.<span class="p">&lt;/</span><span class="nt">body</span><span class="p">></span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">></span>
 </pre>
    <p>It is represented as follows:</p>
    <ul class="domTree">
@@ -2553,7 +2553,7 @@ when invoked, must run these steps: </p>
   either <code class="idl"><a data-link-type="idl" href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code>, with the
   constraint that this is to be consistent, together. </p>
      <p class="note no-backref" role="note">Whether to return <code class="idl"><a data-link-type="idl" href="#dom-node-document_position_preceding">DOCUMENT_POSITION_PRECEDING</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-node-document_position_following">DOCUMENT_POSITION_FOLLOWING</a></code> is typically implemented via pointer comparison. In
-  JavaScript implementations a cached <code class="lang-javascript highlight"><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> </code> value can
+  JavaScript implementations a cached <code class="lang-javascript highlight"><span></span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> </code> value can
   be used. </p>
     <li>
      <p>If <var>node1</var> is an <a data-link-type="dfn" href="#concept-tree-ancestor">ancestor</a> of <var>node2</var>, then return the result of
@@ -2776,7 +2776,7 @@ known as <dfn data-dfn-type="dfn" data-export="" data-lt="document" id="concept-
    <p>Each <a data-link-type="dfn" href="#concept-document">document</a> has an associated <dfn data-dfn-for="Document" data-dfn-type="dfn" data-export="" id="concept-document-encoding">encoding<a class="self-link" href="#concept-document-encoding"></a></dfn> (an <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#encoding">encoding</a>), <dfn data-dfn-for="Document" data-dfn-type="dfn" data-export="" id="concept-document-content-type">content type<a class="self-link" href="#concept-document-content-type"></a></dfn> (a string), <dfn data-dfn-for="Document" data-dfn-type="dfn" data-export="" id="concept-document-url">URL<a class="self-link" href="#concept-document-url"></a></dfn> (a <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url">URL</a>), <dfn data-dfn-for="Document" data-dfn-type="dfn" data-export="" id="concept-document-type">type<a class="self-link" href="#concept-document-type"></a></dfn> ("<code>xml</code>" or "<code>html</code>"), and <dfn data-dfn-for="Document" data-dfn-type="dfn" data-export="" id="concept-document-mode">mode<a class="self-link" href="#concept-document-mode"></a></dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>"). <a data-link-type="biblio" href="#biblio-encoding">[ENCODING]</a> <a data-link-type="biblio" href="#biblio-url">[URL]</a></p>
    <p>Unless stated otherwise, a <a data-link-type="dfn" href="#concept-document">document</a>’s <a data-link-type="dfn" href="#concept-document-encoding">encoding</a> is the <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#utf-8">utf-8</a> <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#encoding">encoding</a>, <a data-link-type="dfn" href="#concept-document-content-type">content type</a> is
 "<code>application/xml</code>", <a data-link-type="dfn" href="#concept-document-url">URL</a> is "<code>about:blank</code>", <a data-link-type="dfn" href="#concept-document-type">type</a> is "<code>xml</code>", and its <a data-link-type="dfn" href="#concept-document-mode">mode</a> is "<code>no-quirks</code>".</p>
-   <p>Unless stated otherwise, a <a data-link-type="dfn" href="#concept-document">document</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> is a new <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque">opaque origin</a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a></p>
+   <p>Unless stated otherwise, a <a data-link-type="dfn" href="#concept-document">document</a>’s <dfn data-dfn-for="document" data-dfn-type="dfn" data-noexport="" id="document-origin">origin<a class="self-link" href="#document-origin"></a></dfn> is a new <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque">opaque origin</a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a></p>
    <p>A <a data-link-type="dfn" href="#concept-document">document</a> is said to be an <dfn data-dfn-type="dfn" data-export="" id="xml-document">XML document<a class="self-link" href="#xml-document"></a></dfn> if its <a data-link-type="dfn" href="#concept-document-type">type</a> is "<code>xml</code>", and an <dfn data-dfn-type="dfn" data-export="" id="html-document">HTML document<a class="self-link" href="#html-document"></a></dfn> otherwise. Whether a <a data-link-type="dfn" href="#concept-document">document</a> is an <a data-link-type="dfn" href="#html-document">HTML document</a> or an <a data-link-type="dfn" href="#xml-document">XML document</a> affects the behavior of certain APIs.</p>
    <p>A <a data-link-type="dfn" href="#concept-document">document</a> is said to be in <dfn data-dfn-type="dfn" data-export="" id="concept-document-no-quirks">no-quirks mode<a class="self-link" href="#concept-document-no-quirks"></a></dfn> if its <a data-link-type="dfn" href="#concept-document-mode">mode</a> is "<code>no-quirks</code>", <dfn data-dfn-type="dfn" data-export="" id="concept-document-quirks">quirks mode<a class="self-link" href="#concept-document-quirks"></a></dfn> if its <a data-link-type="dfn" href="#concept-document-mode">mode</a> is "<code>quirks</code>", and <dfn data-dfn-type="dfn" data-export="" id="concept-document-limited-quirks">limited-quirks mode<a class="self-link" href="#concept-document-limited-quirks"></a></dfn> if its <a data-link-type="dfn" href="#concept-document-mode">mode</a> is "<code>limited-quirks</code>".</p>
    <div class="note no-backref" role="note">
@@ -2799,7 +2799,7 @@ null if <var>event</var>’s <code for="Event">type</code> attribute value is "<
     <dt><code><var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-documenturi">documentURI</a></code></code> 
     <dd>Returns <var>document</var>’s <a data-link-type="dfn" href="#concept-document-url">URL</a>. 
     <dt><code><var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-origin">origin</a></code></code> 
-    <dd>Returns <var>document</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a>. 
+    <dd>Returns <var>document</var>’s <a data-link-type="dfn" href="#document-origin">origin</a>. 
     <dt><code><var>document</var> . <code class="idl"><a data-link-type="idl" href="#dom-document-compatmode">compatMode</a></code></code> 
     <dd> Returns the string "<code>BackCompat</code>" if <var>document</var>’s <a data-link-type="dfn" href="#concept-document-mode">mode</a> is "<code>quirks</code>", and "<code>CSS1Compat</code>"
   otherwise. 
@@ -2809,11 +2809,11 @@ null if <var>event</var>’s <code for="Event">type</code> attribute value is "<
     <dd>Returns <var>document</var>’s <a data-link-type="dfn" href="#concept-document-content-type">content type</a>. 
    </dl>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="constructor" data-export="" id="dom-document-document"><code>Document()</code><a class="self-link" href="#dom-document-document"></a></dfn> constructor, when invoked, must
-return a new <a data-link-type="dfn" href="#concept-document">document</a> whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> is the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#current-global-object">current global object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated <code>Document</code></a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
+return a new <a data-link-type="dfn" href="#concept-document">document</a> whose <a data-link-type="dfn" href="#document-origin">origin</a> is the <a data-link-type="dfn" href="#document-origin">origin</a> of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#current-global-object">current global object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated <code>Document</code></a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
    <p class="note no-backref" role="note">Unlike <code class="idl"><a data-link-type="idl" href="#dom-domimplementation-createdocument">createDocument()</a></code>, this constructor does not return an <code class="idl"><a data-link-type="idl" href="#xmldocument">XMLDocument</a></code> object, but a <a data-link-type="dfn" href="#concept-document">document</a> (<code class="idl"><a data-link-type="idl" href="#document">Document</a></code> object). </p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-implementation"><code>implementation</code><a class="self-link" href="#dom-document-implementation"></a></dfn> attribute’s getter must return the <code class="idl"><a data-link-type="idl" href="#domimplementation">DOMImplementation</a></code> object that is associated with the <a data-link-type="dfn" href="#concept-document">document</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-url"><code>URL</code><a class="self-link" href="#dom-document-url"></a></dfn> attribute’s getter and <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-documenturi"><code>documentURI</code><a class="self-link" href="#dom-document-documenturi"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="#concept-document-url">URL</a>, <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-serializer">serialized</a>.</p>
-   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-origin"><code>origin</code><a class="self-link" href="#dom-document-origin"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#unicode-serialisation-of-an-origin">Unicode serialization</a> of <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a>.</p>
+   <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-origin"><code>origin</code><a class="self-link" href="#dom-document-origin"></a></dfn> attribute’s getter must return the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#unicode-serialisation-of-an-origin">Unicode serialization</a> of <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#document-origin">origin</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-compatmode"><code>compatMode</code><a class="self-link" href="#dom-document-compatmode"></a></dfn> attribute’s getter must
 return "<code>BackCompat</code>" if <a data-link-type="dfn" href="#context-object">context object</a>’s <a data-link-type="dfn" href="#concept-document-mode">mode</a> is
 "<code>quirks</code>", and "<code>CSS1Compat</code>" otherwise.</p>
@@ -2850,7 +2850,7 @@ return "<code>BackCompat</code>" if <a data-link-type="dfn" href="#context-objec
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" id="dom-document-documentelement"><code>documentElement</code><a class="self-link" href="#dom-document-documentelement"></a></dfn> attribute’s getter must return
 the <a data-link-type="dfn" href="#document-element">document element</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-getelementsbytagname"><code>getElementsByTagName(<var>qualifiedName</var>)</code><a class="self-link" href="#dom-document-getelementsbytagname"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbytagname">list of elements with qualified name <var>qualifiedName</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
-   <p class="note no-backref" role="note">Thus, in an <a data-link-type="dfn" href="#html-document">HTML document</a>, <code class="lang-javascript highlight"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">"FOO"</span><span class="p">)</span> </code> will match <code>&lt;FOO></code> elements that are not in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, and <code>&lt;foo></code> elements that are in
+   <p class="note no-backref" role="note">Thus, in an <a data-link-type="dfn" href="#html-document">HTML document</a>, <code class="lang-javascript highlight"><span></span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">"FOO"</span><span class="p">)</span> </code> will match <code>&lt;FOO></code> elements that are not in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, and <code>&lt;foo></code> elements that are in
 the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, but not <code>&lt;FOO></code> elements
 that are in the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>. </p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-getelementsbytagnamens"><code>getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</code><a class="self-link" href="#dom-document-getelementsbytagnamens"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbytagnamens">list of elements with namespace <var>namespace</var> and local name <var>localName</var></a> for
@@ -2858,15 +2858,15 @@ the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <p>The <dfn class="idl-code" data-dfn-for="Document" data-dfn-type="method" data-export="" id="dom-document-getelementsbyclassname"><code>getElementsByClassName(<var>classNames</var>)</code><a class="self-link" href="#dom-document-getelementsbyclassname"></a></dfn> method, when invoked, must return the <a data-link-type="dfn" href="#concept-getelementsbyclassname">list of elements with class names <var>classNames</var></a> for the <a data-link-type="dfn" href="#context-object">context object</a>.</p>
    <div class="example" id="example-5ffcda00">
     <a class="self-link" href="#example-5ffcda00"></a> Given the following XHTML fragment: 
-<pre><code class="lang-html highlight"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"example"</span><span class="nt">></span>
-  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p1"</span> <span class="na">class=</span><span class="s">"aaa bbb"</span><span class="nt">/></span>
-  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p2"</span> <span class="na">class=</span><span class="s">"aaa ccc"</span><span class="nt">/></span>
-  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"p3"</span> <span class="na">class=</span><span class="s">"bbb ccc"</span><span class="nt">/></span>
-<span class="nt">&lt;/div></span>
+<pre><code class="lang-html highlight"><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">"example"</span><span class="p">></span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">"p1"</span> <span class="na">class</span><span class="o">=</span><span class="s">"aaa bbb"</span><span class="p">/></span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">"p2"</span> <span class="na">class</span><span class="o">=</span><span class="s">"aaa ccc"</span><span class="p">/></span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">"p3"</span> <span class="na">class</span><span class="o">=</span><span class="s">"bbb ccc"</span><span class="p">/></span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">></span>
 </code></pre>
-    <p>A call to <code class="lang-javascript highlight"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa"</span><span class="p">)</span> </code> would return a <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code> with the two paragraphs <code>p1</code> and <code>p2</code> in it.</p>
-    <p>A call to <code class="lang-javascript highlight"><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"ccc bbb"</span><span class="p">)</span> </code> would only return one node, however, namely <code>p3</code>. A call to <code class="lang-javascript highlight"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"bbb  ccc "</span><span class="p">)</span> </code> would return the same thing.</p>
-    <p>A call to <code class="lang-javascript highlight"><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa,bbb"</span><span class="p">)</span> </code> would return no nodes; none of the elements above are in the <code>aaa,bbb</code> class.</p>
+    <p>A call to <code class="lang-javascript highlight"><span></span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa"</span><span class="p">)</span> </code> would return a <code class="idl"><a data-link-type="idl" href="#htmlcollection">HTMLCollection</a></code> with the two paragraphs <code>p1</code> and <code>p2</code> in it.</p>
+    <p>A call to <code class="lang-javascript highlight"><span></span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"ccc bbb"</span><span class="p">)</span> </code> would only return one node, however, namely <code>p3</code>. A call to <code class="lang-javascript highlight"><span></span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"example"</span><span class="p">).</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"bbb  ccc "</span><span class="p">)</span> </code> would return the same thing.</p>
+    <p>A call to <code class="lang-javascript highlight"><span></span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">"aaa,bbb"</span><span class="p">)</span> </code> would return no nodes; none of the elements above are in the <code>aaa,bbb</code> class.</p>
    </div>
    <hr>
    <dl class="domintro">
@@ -3279,7 +3279,7 @@ with that <a data-link-type="dfn" href="#concept-document">document</a>.</p>
      <li>
       <p>If <var>element</var> is non-null, <a data-link-type="dfn" href="#concept-node-append">append</a> <var>element</var> to <var>document</var>. </p>
      <li>
-      <p><var>document</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> is the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> of the <a data-link-type="dfn" href="#context-object">context object</a>’s
+      <p><var>document</var>’s <a data-link-type="dfn" href="#document-origin">origin</a> is the <a data-link-type="dfn" href="#document-origin">origin</a> of the <a data-link-type="dfn" href="#context-object">context object</a>’s
  associated <a data-link-type="dfn" href="#concept-document">document</a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
      <li>
       <p><var>document</var>’s <a data-link-type="dfn" href="#concept-document-content-type">content type</a> is determined by <var>namespace</var>: </p>
@@ -3321,7 +3321,7 @@ with that <a data-link-type="dfn" href="#concept-document">document</a>.</p>
       <p><a data-link-type="dfn" href="#concept-node-append">Append</a> the result of <a data-link-type="dfn" href="#concept-create-element">creating an element</a> given <var>doc</var>, <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/semantics.html#the-body-element">body</a></code>, and
  the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, to the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/semantics.html#the-html-element">html</a></code> element created earlier.</p>
      <li>
-      <p><var>doc</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> is the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> of the <a data-link-type="dfn" href="#context-object">context object</a>’s
+      <p><var>doc</var>’s <a data-link-type="dfn" href="#document-origin">origin</a> is the <a data-link-type="dfn" href="#document-origin">origin</a> of the <a data-link-type="dfn" href="#context-object">context object</a>’s
  associated <a data-link-type="dfn" href="#concept-document">document</a>. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
      <li>
       <p>Return <var>doc</var>. </p>
@@ -3475,8 +3475,8 @@ first time, it is not executed again by an <a data-link-type="dfn" href="https:/
    <div class="example" id="example-c5b21302">
     <a class="self-link" href="#example-c5b21302"></a> 
     <p>The following code illustrates elements in each of these four states:</p>
-<pre><code class="lang-html highlight"><span class="cp">&lt;!DOCTYPE html></span>
-<span class="nt">&lt;script></span>
+<pre><code class="lang-html highlight"><span></span><span class="cp">&lt;!DOCTYPE html></span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">></span>
   <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-rey"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{})</span>
   <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-finn"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{},</span> <span class="p">{</span> <span class="kr">extends</span><span class="o">:</span> <span class="s2">"p"</span> <span class="p">})</span>
   <span class="nb">window</span><span class="p">.</span><span class="nx">customElements</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">"sw-kylo"</span><span class="p">,</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
@@ -3484,23 +3484,23 @@ first time, it is not executed again by an <a data-link-type="dfn" href="https:/
       <span class="c1">// super() intentionally omitted for this example</span>
     <span class="p">}</span>
   <span class="p">})</span>
-<span class="nt">&lt;/script></span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">></span>
 
 <span class="c">&lt;!-- "undefined" (not defined, not custom) --></span>
-<span class="nt">&lt;sw-han>&lt;/sw-han></span>
-<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"sw-luke"</span><span class="nt">>&lt;/p></span>
-<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"asdf"</span><span class="nt">>&lt;/p></span>
+<span class="p">&lt;</span><span class="nt">sw-han</span><span class="p">>&lt;/</span><span class="nt">sw-han</span><span class="p">></span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">is</span><span class="o">=</span><span class="s">"sw-luke"</span><span class="p">>&lt;/</span><span class="nt">p</span><span class="p">></span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">is</span><span class="o">=</span><span class="s">"asdf"</span><span class="p">>&lt;/</span><span class="nt">p</span><span class="p">></span>
 
 <span class="c">&lt;!-- "failed" (not defined, not custom) --></span>
-<span class="nt">&lt;sw-kylo>&lt;/sw-kylo></span>
+<span class="p">&lt;</span><span class="nt">sw-kylo</span><span class="p">>&lt;/</span><span class="nt">sw-kylo</span><span class="p">></span>
 
 <span class="c">&lt;!-- "uncustomized" (defined, not custom) --></span>
-<span class="nt">&lt;p>&lt;/p></span>
-<span class="nt">&lt;asdf>&lt;/asdf></span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">>&lt;/</span><span class="nt">p</span><span class="p">></span>
+<span class="p">&lt;</span><span class="nt">asdf</span><span class="p">>&lt;/</span><span class="nt">asdf</span><span class="p">></span>
 
 <span class="c">&lt;!-- "custom" (defined, custom) --></span>
-<span class="nt">&lt;sw-rey>&lt;/sw-rey></span>
-<span class="nt">&lt;p</span> <span class="na">is=</span><span class="s">"sw-finn"</span><span class="nt">>&lt;/p></span>
+<span class="p">&lt;</span><span class="nt">sw-rey</span><span class="p">>&lt;/</span><span class="nt">sw-rey</span><span class="p">></span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">is</span><span class="o">=</span><span class="s">"sw-finn"</span><span class="p">>&lt;/</span><span class="nt">p</span><span class="p">></span>
 </code></pre>
    </div>
    <p><a data-link-type="dfn" href="#concept-element">Elements</a> also have an associated <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="concept-element-shadow-root">shadow root<a class="self-link" href="#concept-element-shadow-root"></a></dfn> (null or a <a data-link-type="dfn" href="#concept-shadow-root">shadow root</a>). It is null unless otherwise stated. An <a data-link-type="dfn" href="#concept-element">element</a> is a <dfn data-dfn-for="Element" data-dfn-type="dfn" data-export="" id="element-shadow-host">shadow host<a class="self-link" href="#element-shadow-host"></a></dfn> if its <a data-link-type="dfn" href="#concept-element-shadow-root">shadow root</a> is non-null. </p>
@@ -4229,10 +4229,10 @@ for selecting and copying content.</p>
     <li class="t1">
      <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>: <code>p</code> 
      <ul>
-      <li class="t1"><code class="idl"><a data-link-type="idl" href="#element">Element</a></code>: <code class="lang-markup highlight"><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"insanity-wolf"</span> <span class="na">alt=</span><span class="s">"Little-endian BOM; decode as big-endian!"</span><span class="nt">></span> </code> 
+      <li class="t1"><code class="idl"><a data-link-type="idl" href="#element">Element</a></code>: <code class="lang-markup highlight"><span></span><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">"insanity-wolf"</span> <span class="na">alt</span><span class="o">=</span><span class="s">"Little-endian BOM; decode as big-endian!"</span><span class="p">></span> </code> 
       <li class="t3"><code class="idl"><a data-link-type="idl" href="#text">Text</a></code>: <span> CSS 2.1 syndata is </span> 
       <li class="t1">
-       <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>: <code class="lang-markup highlight"><span class="nt">&lt;em></span> </code> 
+       <code class="idl"><a data-link-type="idl" href="#element">Element</a></code>: <code class="lang-markup highlight"><span></span><span class="p">&lt;</span><span class="nt">em</span><span class="p">></span> </code> 
        <ul>
         <li class="t3"><code class="idl"><a data-link-type="idl" href="#text">Text</a></code>: <span>awesome</span> 
        </ul>
@@ -6146,7 +6146,12 @@ neighboring rights to this work.</p>
    <li><a href="#dom-shadowrootmode-open">open</a><span>, in §4.8</span>
    <li><a href="#concept-ordered-set-parser">ordered set parser</a><span>, in §2.3</span>
    <li><a href="#concept-ordered-set-serializer">ordered set serializer</a><span>, in §2.3</span>
-   <li><a href="#dom-document-origin">origin</a><span>, in §4.5</span>
+   <li>
+    origin
+    <ul>
+     <li><a href="#document-origin">dfn for document</a><span>, in §4.5</span>
+     <li><a href="#dom-document-origin">attribute for Document</a><span>, in §4.5</span>
+    </ul>
    <li><a href="#other-applicable-specifications">other applicable specifications</a><span>, in §1.2</span>
    <li><a href="#dom-node-ownerdocument">ownerDocument</a><span>, in §4.4</span>
    <li><a href="#dom-attr-ownerelement">ownerElement</a><span>, in §4.9.2</span>
