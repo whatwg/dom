@@ -43,15 +43,8 @@ urlPrefix: https://www.w3.org/TR/xml-names/#NT-
         text: QName; url: QName
 urlPrefix: https://heycam.github.io/webidl/
     type: dfn; urlPrefix: #dfn-
-        text: throw
-        text: dictionary member
         text: identifier
-        text: callback this value
-        text: supported property indices
-        text: supported property names
         text: code unit
-    type: interface;
-        text: DOMTimeStamp; urlPrefix: #common-
 urlPrefix: https://html.spec.whatwg.org/multipage/
     type: dfn
         urlPrefix: webappapis.html
@@ -1364,9 +1357,10 @@ an <var>object</var> with <var>event</var>, run these steps:
    <li><p>If <var>listener</var>'s <b>passive</b> is true, set <var>event</var>'s
    <a>in passive listener flag</a>.
 
-   <li><p>Call <var>listener</var>'s <b>callback</b>'s {{EventListener/handleEvent()}}, with
-   <var>event</var> as argument and <var>event</var>'s {{Event/currentTarget}} attribute value as
-   <a>callback this value</a>. If this throws an exception, <a>report the exception</a>.
+   <li><p><a>Call a user object's operation</a> with <var>listener</var>'s <b>callback</b>,
+   "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and
+   <var>event</var>'s {{Event/currentTarget}} attribute value as the <a>callback this value</a>. If
+   this throws an exception, <a>report the exception</a>.
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
 
@@ -2937,12 +2931,9 @@ To <dfn export>notify mutation observers</dfn>, run these steps:
    <li>Remove all <a>transient registered observers</a>
    whose <b>observer</b> is <var>mo</var>.
 
-   <li>If <var>queue</var> is non-empty, call
-   <var>mo</var>'s <a>callback</a>
-   with <var>queue</var> as first argument, and
-   <var>mo</var> (itself) as second argument and
-   <a>callback this value</a>. If this throws an exception,
-   <a>report the exception</a>.
+   <li>If <var>queue</var> is non-empty, <a spec=webidl>invoke</a> <var>mo</var>'s <a>callback</a>
+   with a list of arguments consisting of <var>queue</var> and <var>mo</var>, and <var>mo</var> as
+   the <a>callback this value</a>. If this throws an exception, <a>report the exception</a>.
   </ol>
 
  <li><p>For each <a>slot</a> <var>slot</var> in <var>signalList</var>, in order,
@@ -8715,10 +8706,9 @@ these steps:
  <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
  <li>If <a for=traversal>filter</a> is null,
  return {{NodeFilter/FILTER_ACCEPT}}.
- <li>Let <var>result</var> be the return value of calling
- <a for=traversal>filter</a>'s
- {{NodeFilter/acceptNode()}} with <var>node</var> as
- argument. Rethrow any exceptions.
+ <li>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
+ <a for=traversal>filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of
+ <var>node</var>. Rethrow any exceptions.
  <!-- no need to pass callback this value; it's undefined which becomes the global object -->
  <li>Return <var>result</var>.
 </ol>

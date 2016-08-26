@@ -509,7 +509,7 @@ would have been <code class="idl"><a data-link-type="idl" href="#dom-event-at_ta
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-composed">composed</a>;
 
   [<a class="nv idl-code" data-link-type="extended-attribute">Unforgeable</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-istrusted">isTrusted</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://heycam.github.io/webidl/#DOMTimeStamp">DOMTimeStamp</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
 
   <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-event-initevent">initEvent</a>(<span class="kt">DOMString</span> <dfn class="nv idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-type">type<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-type"></a></dfn>, <span class="kt">boolean</span> <dfn class="nv idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-bubbles">bubbles<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-bubbles"></a></dfn>, <span class="kt">boolean</span> <dfn class="nv idl-code" data-dfn-for="Event/initEvent(type, bubbles, cancelable)" data-dfn-type="argument" data-export="" id="dom-event-initevent-type-bubbles-cancelable-cancelable">cancelable<a class="self-link" href="#dom-event-initevent-type-bubbles-cancelable-cancelable"></a></dfn>); // historical
 };
@@ -1007,7 +1007,9 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>If <var>listener</var>’s <b>passive</b> is true, set <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
       <li>
-       <p>Call <var>listener</var>’s <b>callback</b>’s <code class="idl"><a data-link-type="idl" href="#dom-eventlistener-handleevent">handleEvent()</a></code>, with <var>event</var> as argument and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
+       <p><a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">Call a user object’s operation</a> with <var>listener</var>’s <b>callback</b>,
+   "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If
+   this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
       <li>
        <p>Unset <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
       <li>
@@ -1852,7 +1854,8 @@ associated list of <code class="idl"><a data-link-type="idl" href="#mutationobse
       <li>Let <var>queue</var> be a copy of <var>mo</var>’s <a data-link-type="dfn" href="#concept-mo-queue">record queue</a>. 
       <li>Empty <var>mo</var>’s <a data-link-type="dfn" href="#concept-mo-queue">record queue</a>. 
       <li>Remove all <a data-link-type="dfn" href="#transient-registered-observer">transient registered observers</a> whose <b>observer</b> is <var>mo</var>. 
-      <li>If <var>queue</var> is non-empty, call <var>mo</var>’s <a data-link-type="dfn" href="#concept-mo-callback">callback</a> with <var>queue</var> as first argument, and <var>mo</var> (itself) as second argument and <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. 
+      <li>If <var>queue</var> is non-empty, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#invoke-a-callback-function">invoke</a> <var>mo</var>’s <a data-link-type="dfn" href="#concept-mo-callback">callback</a> with a list of arguments consisting of <var>queue</var> and <var>mo</var>, and <var>mo</var> as
+   the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. 
      </ol>
     <li>
      <p>For each <a data-link-type="dfn" href="#concept-slot">slot</a> <var>slot</var> in <var>signalList</var>, in order, <a data-link-type="dfn" href="#concept-event-fire">fire an event</a> named <code>slotchange</code>, with its <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute set to
@@ -4823,8 +4826,7 @@ these steps:</p>
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_skip">FILTER_SKIP</a></code>. 
     <li>If <a data-link-type="dfn" href="#concept-traversal-filter">filter</a> is null,
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>. 
-    <li>Let <var>result</var> be the return value of calling <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>’s <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-acceptnode">acceptNode()</a></code> with <var>node</var> as
- argument. Rethrow any exceptions. 
+    <li>Let <var>result</var> be the return value of <a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object’s operation</a> with <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of <var>node</var>. Rethrow any exceptions. 
     <li>Return <var>result</var>. 
    </ol>
    <h3 class="heading settled" data-level="6.1" id="interface-nodeiterator"><span class="secno">6.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code></span><a class="self-link" href="#interface-nodeiterator"></a></h3>
@@ -5320,7 +5322,7 @@ other chapters are defined by the <cite>UI Events</cite> specification. <a data-
    </ul>
    <h3 class="heading settled" data-level="8.2" id="dom-core-changes"><span class="secno">8.2. </span><span class="content">DOM Core</span><a class="self-link" href="#dom-core-changes"></a></h3>
    <p>These are the changes made to the features described in <cite>DOM Level 3 Core</cite>.</p>
-   <p><code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code>, and <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a></code> are now defined in Web IDL.</p>
+   <p><code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code>, and <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#DOMTimeStamp">DOMTimeStamp</a></code> are now defined in Web IDL.</p>
    <p><code class="idl"><a data-link-type="idl" href="#node">Node</a></code> now inherits from <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code>.</p>
    <p><a data-link-type="dfn" href="#concept-node">Nodes</a> are implicitly <a data-link-type="dfn" href="#concept-node-adopt">adopted</a> across <a data-link-type="dfn" href="#concept-document">document</a> boundaries.</p>
    <p><a data-link-type="dfn" href="#concept-doctype">Doctypes</a> now always have a <a data-link-type="dfn" href="#concept-node-document">node document</a> and can be moved
@@ -6540,6 +6542,7 @@ neighboring rights to this work.</p>
     <ul>
      <li><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a>
      <li><a href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a>
+     <li><a href="https://heycam.github.io/webidl/#DOMTimeStamp">DOMTimeStamp</a>
      <li><a href="https://heycam.github.io/webidl/#hierarchyrequesterror">HierarchyRequestError</a>
      <li><a href="https://heycam.github.io/webidl/#inuseattributeerror">InUseAttributeError</a>
      <li><a href="https://heycam.github.io/webidl/#indexsizeerror">IndexSizeError</a>
@@ -6551,6 +6554,13 @@ neighboring rights to this work.</p>
      <li><a href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a>
      <li><a href="https://heycam.github.io/webidl/#syntaxerror">SyntaxError</a>
      <li><a href="https://heycam.github.io/webidl/#wrongdocumenterror">WrongDocumentError</a>
+     <li><a href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object's operation</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary members</a>
+     <li><a href="https://heycam.github.io/webidl/#invoke-a-callback-function">invoke</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-supported-property-indices">supported property indices</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-supported-property-names">supported property names</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-throw">throw</a>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -6643,7 +6653,7 @@ neighboring rights to this work.</p>
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-composed">composed</a>;
 
   [<a class="nv idl-code" data-link-type="extended-attribute">Unforgeable</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-event-istrusted">isTrusted</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://heycam.github.io/webidl/#common-domtimestamp">DOMTimeStamp</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://heycam.github.io/webidl/#DOMTimeStamp">DOMTimeStamp</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="DOMTimeStamp" href="#dom-event-timestamp">timeStamp</a>;
 
   <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-event-initevent">initEvent</a>(<span class="kt">DOMString</span> <a class="nv" href="#dom-event-initevent-type-bubbles-cancelable-type">type</a>, <span class="kt">boolean</span> <a class="nv" href="#dom-event-initevent-type-bubbles-cancelable-bubbles">bubbles</a>, <span class="kt">boolean</span> <a class="nv" href="#dom-event-initevent-type-bubbles-cancelable-cancelable">cancelable</a>); // historical
 };
