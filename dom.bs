@@ -3797,94 +3797,54 @@ the empty string instead, and then do as described below, switching on <a>contex
 
 <dl class=domintro>
  <dt><code><var>node</var> . {{Node/normalize()}}</code>
- <dd>Removes <a>empty</a>
- {{Text}} <a>nodes</a> and concatenates
- the <a>data</a> of remaining
- <a>contiguous <code>Text</code> nodes</a> into the first of their
+ <dd>Removes <a>empty</a> <a>exclusive <code>Text</code> nodes</a> and concatenates the <a>data</a>
+ of remaining <a>contiguous exclusive <code>Text</code> nodes</a> into the first of their
  <a>nodes</a>.
 </dl>
 
 <p>The <dfn method for=Node><code>normalize()</code></dfn> method, when invoked, must run these
-steps for each {{Text}} <a>node</a> <a>descendant</a> of <a>context object</a>:
+steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>node</var> of
+<a>context object</a>:
 
 <ol>
- <li>Let <var>node</var> be the {{Text}}
- <a>node</a>
- <a>descendant</a>.
+ <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>Let <var>length</var> be <var>node</var>'s
- {{CharacterData/length}} attribute value.
+ <li>If <var>length</var> is zero, then <a>remove</a> <var>node</var> and continue with the next
+ <a>exclusive <code>Text</code> node</a>, if any.
 
- <li>If <var>length</var> is zero,
- <a>remove</a> <var>node</var> and
- continue with the next {{Text}}
- <a>node</a>, if any.
+ <li>Let <var>data</var> be the concatenation of the <a>data</a> of <var>node</var>'s
+ <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in <a>tree order</a>.
 
- <li>Let <var>data</var> be the concatenation of the
- <a>data</a> of <var>node</var>'s
- <a>contiguous <code>Text</code> nodes</a> (excluding itself), in
- <a>tree order</a>.
+ <li><a>Replace data</a> with node <var>node</var>, offset <var>length</var>, count 0, and data
+ <var>data</var>.
 
- <li><a>Replace data</a> with node
- <var>node</var>, offset <var>length</var>,
- count 0, and data <var>data</var>.
+ <li>Let <var>currentNode</var> be <var>node</var>'s <a>next sibling</a>.
 
- <li>Let <var>current node</var> be <var>node</var>'s
- <a>next sibling</a>.
+ <li>
+  <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
- <li>While <var>current node</var> is a {{Text}} node:
+  <ol>
+   <li><p>For each <a>range</a> whose <a>start node</a> is <var>currentNode</var>, add
+   <var>length</var> to its <a>start offset</a> and set its <a>start node</a> to <var>node</var>.
 
- <ol>
-  <li>For each <a>range</a> whose
-  <a>start node</a> is
-  <var>current node</var>, add <var>length</var> to its
-  <a>start offset</a> and set its
-  <a>start node</a> to
-  <var>node</var>.
+   <li><p>For each <a>range</a> whose <a>end node</a> is <var>currentNode</var>, add
+   <var>length</var> to its <a>end offset</a> and set its <a>end node</a> to <var>node</var>.
 
-  <li>For each <a>range</a> whose
-  <a>end node</a> is
-  <var>current node</var>, add <var>length</var> to its
-  <a>end offset</a> and set its
-  <a>end node</a> to
-  <var>node</var>.
+   <li><p>For each <a>range</a> whose <a>start node</a> is <var>currentNode</var>'s <a>parent</a>
+   and <a>start offset</a> is <var>currentNode</var>'s <a>index</a>, set its <a>start node</a> to
+   <var>node</var> and its <a>start offset</a> to <var>length</var>.
 
-  <li>For each <a>range</a> whose
-  <a>start node</a> is
-  <var>current node</var>'s
-  <a>parent</a> and
-  <a>start offset</a> is
-  <var>current node</var>'s
-  <a>index</a>, set its
-  <a>start node</a> to
-  <var>node</var> and its
-  <a>start offset</a> to
-  <var>length</var>.
+   <li><p>For each <a>range</a> whose <a>end node</a> is <var>currentNode</var>'s <a>parent</a> and
+   <a>end offset</a> is <var>currentNode</var>'s <a>index</a>, set its <a>end node</a> to
+   <var>node</var> and its <a>end offset</a> to <var>length</var>.
 
-  <li>For each <a>range</a> whose
-  <a>end node</a> is
-  <var>current node</var>'s
-  <a>parent</a> and
-  <a>end offset</a> is
-  <var>current node</var>'s
-  <a>index</a>, set its
-  <a>end node</a> to
-  <var>node</var> and its
-  <a>end offset</a> to
-  <var>length</var>.
+   <li><p>Add <var>currentNode</var>'s <a for=Node>length</a> to <var>length</var>.
 
-  <li>Add <var>current node</var>'s
-  {{CharacterData/length}} attribute value to
-  <var>length</var>.
+   <li><p>Set <var>currentNode</var> to its <a>next sibling</a>.
+  </ol>
 
-  <li>Set <var>current node</var> to its
-  <a>next sibling</a>.
- </ol>
-
- <li><a>Remove</a>
- <var>node</var>'s
- <a>contiguous <code>Text</code> nodes</a> (excluding itself), in
- <a>tree order</a>.
+ <li><a>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding
+ itself), in <a>tree order</a>.
 </ol>
 
 <hr>
@@ -6898,7 +6858,6 @@ interface Text : CharacterData {
   readonly attribute DOMString wholeText;
 };</pre>
 
-
 <dl class=domintro>
  <dt><code><var>text</var> = new <a constructor lt=Text()>Text([<var>data</var> = ""])</a></code>
  <dd>Returns a new {{Text}} <a>node</a> whose
@@ -6914,6 +6873,24 @@ interface Text : CharacterData {
  {{Text}} <a>node</a>
  <a>siblings</a>.
 </dl>
+
+<hr>
+
+<p>An <dfn export>exclusive {{Text}} node</dfn> is a {{Text}} <a>node</a> that is not a
+{{CDATASection}} <a>node</a>.
+
+<p>The <dfn export>contiguous {{Text}} nodes</dfn> of a <a>node</a> <var>node</var> are
+<var>node</var>, <var>node</var>'s <a>previous sibling</a> {{Text}} <a>node</a>, if any, and its
+<a>contiguous <code>Text</code> nodes</a>, and <var>node</var>'s <a>next sibling</a> {{Text}}
+<a>node</a>, if any, and its <a>contiguous <code>Text</code> nodes</a>, avoiding any duplicates.
+
+<p>The <dfn export>contiguous exclusive {{Text}} nodes</dfn> of a <a>node</a> <var>node</var> are
+<var>node</var>, <var>node</var>'s <a>previous sibling</a> <a>exclusive <code>Text</code> node</a>,
+if any, and its <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>node</var>'s
+<a>next sibling</a> <a>exclusive <code>Text</code> node</a>, if any, and its
+<a>contiguous exclusive <code>Text</code> nodes</a>, avoiding any duplicates.
+
+<hr>
 
 <p>The <dfn constructor for=Text><code>Text(<var>data</var>)</code></dfn> constructor, when invoked,
 must return a new {{Text}} <a>node</a> whose <a>data</a> is <var>data</var> and <a>node document</a>
@@ -7027,16 +7004,6 @@ To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text
 
 <p>The <dfn method for=Text><code>splitText(<var>offset</var>)</code></dfn> method, when invoked,
 must <a lt="split a Text node">split</a> <a>context object</a> with offset <var>offset</var>.
-
-
-The <dfn export>contiguous {{Text}} nodes</dfn> of a node are the node
-itself, the
-<a>previous sibling</a>
-{{Text}} node (if any) and its
-<a>contiguous <code>Text</code> nodes</a>, and the
-<a>next sibling</a> {{Text}}
-node (if any) and its <a>contiguous <code>Text</code> nodes</a>,
-avoiding any duplicates.
 
 <p>The <dfn attribute for=Text><code>wholeText</code></dfn> attribute, when invoked, must return a
 concatenation of the <a>data</a> of the <a>contiguous <code>Text</code> nodes</a> of
