@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-11">11 October 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-13">13 October 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -775,6 +775,8 @@ which takes an <a data-link-type="dfn" href="#concept-event">event</a> <var>even
 specified otherwise it returns null. </p>
    <p class="note no-backref" role="note"><a data-link-type="dfn" href="#concept-node">Nodes</a>, <a data-link-type="dfn" href="#concept-shadow-root">shadow roots</a>, and <a data-link-type="dfn" href="#concept-document">documents</a> override
 the <a data-link-type="dfn" href="#get-the-parent">get the parent</a> algorithm. </p>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object can have an associated <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-pre-click-dispatch-steps"></a></dfn> algorithm, <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-post-canceled-click-dispatch-steps"></a></dfn> algorithm, and <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-activation-behavior">activation behavior<a class="self-link" href="#eventtarget-activation-behavior"></a></dfn> algorithm. The <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> algorithm is passed an <a data-link-type="dfn" href="#concept-event">event</a>, as indicated in the <a data-link-type="dfn" href="#concept-event-dispatch">dispatch</a> algorithm.</p>
+   <p class="note no-backref" role="note">An <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object that has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a> also has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a> and vice versa. Such an <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object also has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>. Many <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> objects with <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> however do not have <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a> and <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
    <dl class="domintro">
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
     <dd>
@@ -884,6 +886,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
     <li>
+     <p>Let <var>activationTarget</var> be <var>target</var>, if <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, and null otherwise. </p>
+    <li>
      <p>Let <var>parent</var> be the result of invoking <var>target</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
     <li>
      <p>While <var>parent</var> is non-null:</p>
@@ -899,10 +903,19 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>Otherwise, set <var>target</var> to <var>parent</var> and append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
       <li>
-       <p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking <var>parent</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
+       <p>If <var>parent</var> is non-null, then: </p>
+       <ol>
+        <li>
+         <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute is true, <var>activationTarget</var> is null, and <var>parent</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>parent</var>. </p>
+        <li>
+         <p>Set <var>parent</var> to the result of invoking <var>parent</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
+       </ol>
      </ol>
     <li>
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
+    <li>
+     <p>If <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute
+ is "<code>click</code>", <var>activationTarget</var> is non-null, and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>. </p>
     <li>
      <p>For each <var>tuple</var> in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, in reverse order: </p>
      <ol>
@@ -941,6 +954,15 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to null. </p>
     <li>
      <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a> to the empty list. </p>
+    <li>
+     <p>If <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is
+  "<code>click</code>", and <var>activationTarget</var> is non-null, then: </p>
+     <ol>
+      <li>
+       <p>If <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is unset and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> with <var>event</var>. </p>
+      <li>
+       <p>Otherwise, if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
+     </ol>
     <li>
      <p>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. </p>
    </ol>
@@ -1015,7 +1037,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>If <var>listener</var>’s <b>passive</b> is true, set <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
       <li>
-       <p><a data-link-type="dfn">Call a user object’s operation</a> with <var>listener</var>’s <b>callback</b>,
+       <p><a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">Call a user object’s operation</a> with <var>listener</var>’s <b>callback</b>,
    "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If
    this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
       <li>
@@ -4844,7 +4866,7 @@ these steps:</p>
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_skip">FILTER_SKIP</a></code>. 
     <li>If <a data-link-type="dfn" href="#concept-traversal-filter">filter</a> is null,
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>. 
-    <li>Let <var>result</var> be the return value of <a data-link-type="dfn">call a user object’s operation</a> with <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of <var>node</var>. Rethrow any exceptions. 
+    <li>Let <var>result</var> be the return value of <a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object’s operation</a> with <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of <var>node</var>. Rethrow any exceptions. 
     <li>Return <var>result</var>. 
    </ol>
    <h3 class="heading settled" data-level="6.1" id="interface-nodeiterator"><span class="secno">6.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code></span><a class="self-link" href="#interface-nodeiterator"></a></h3>
@@ -5601,6 +5623,7 @@ neighboring rights to this work.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#dom-nodefilter-acceptnode">acceptNode(node)</a><span>, in §6.3</span>
+   <li><a href="#eventtarget-activation-behavior">activation behavior</a><span>, in §3.6</span>
    <li><a href="#dom-domtokenlist-add">add()</a><span>, in §7.1</span>
    <li><a href="#dom-mutationrecord-addednodes">addedNodes</a><span>, in §4.3.3</span>
    <li><a href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a><span>, in §3.6</span>
@@ -6035,6 +6058,8 @@ neighboring rights to this work.</p>
    <li><a href="#dom-treewalker-lastchild">lastChild()</a><span>, in §6.2</span>
    <li><a href="#dom-node-lastchild">lastChild</a><span>, in §4.4</span>
    <li><a href="#dom-parentnode-lastelementchild">lastElementChild</a><span>, in §4.2.6</span>
+   <li><a href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a><span>, in §3.6</span>
+   <li><a href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a><span>, in §3.6</span>
    <li>
     length
     <ul>
@@ -6595,6 +6620,7 @@ neighboring rights to this work.</p>
      <li><a href="https://heycam.github.io/webidl/#Unforgeable">Unforgeable</a>
      <li><a href="https://heycam.github.io/webidl/#Unscopable">Unscopable</a>
      <li><a href="https://heycam.github.io/webidl/#wrongdocumenterror">WrongDocumentError</a>
+     <li><a href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object's operation</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary members</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a>

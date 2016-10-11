@@ -1028,6 +1028,18 @@ specified otherwise it returns null.
 <p class="note no-backref"><a>Nodes</a>, <a for=/>shadow roots</a>, and <a>documents</a> override
 the <a>get the parent</a> algorithm.
 
+<p>Each {{EventTarget}} object can have an associated
+<dfn export for=EventTarget>legacy pre-click-dispatch steps</dfn> algorithm,
+<dfn export for=EventTarget>legacy post-canceled-click-dispatch steps</dfn> algorithm, and
+<dfn export for=EventTarget>activation behavior</dfn> algorithm. The <a>activation behavior</a>
+algorithm is passed an <a>event</a>, as indicated in the <a>dispatch</a> algorithm.</p>
+
+<p class="note no-backref">An {{EventTarget}} object that has <a>legacy pre-click-dispatch steps</a>
+also has <a>legacy post-canceled-click-dispatch steps</a> and vice versa. Such an {{EventTarget}}
+object also has <a>activation behavior</a>. Many {{EventTarget}} objects with
+<a>activation behavior</a> however do not have <a>legacy pre-click-dispatch steps</a> and
+<a>legacy post-canceled-click-dispatch steps</a>.
+
 <dl class=domintro>
  <dt><code><var>target</var> . <a method lt="addEventListener()">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
  <dd>
@@ -1204,6 +1216,9 @@ for discussion).
  <li><p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>'s
  <a for=Event>path</a>.
 
+ <li><p>Let <var>activationTarget</var> be <var>target</var>, if <var>target</var> has
+ <a>activation behavior</a>, and null otherwise.
+
  <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
  with <var>event</var>.
 
@@ -1225,11 +1240,27 @@ for discussion).
    <li><p>Otherwise, set <var>target</var> to <var>parent</var> and append (<var>parent</var>,
    <var>target</var>, <var>relatedTarget</var>) to <var>event</var>'s <a for=Event>path</a>.
 
-   <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
-   <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
+   <li>
+    <p>If <var>parent</var> is non-null, then:
+
+    <ol>
+     <li><p>If <var>event</var>'s {{Event/bubbles}} attribute is true, <var>activationTarget</var>
+     is null, and <var>parent</var> has <a>activation behavior</a>, then set
+     <var>activationTarget</var> to <var>parent</var>.
+     <!-- If an EventTarget object with activation behavior can ever have an associated shadow root
+          we need to complicate this somewhat. -->
+
+     <li><p>Set <var>parent</var> to the result of invoking <var>parent</var>'s
+     <a>get the parent</a> with <var>event</var>.
+    </ol>
   </ol>
 
  <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
+
+ <li><p>If <var>event</var> is a {{MouseEvent}} object, <var>event</var>'s {{Event/type}} attribute
+ is "<code>click</code>", <var>activationTarget</var> is non-null, and <var>activationTarget</var>
+ has <a>legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>'s
+ <a>legacy pre-click-dispatch steps</a>.
 
  <li>
   <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
@@ -1279,6 +1310,20 @@ for discussion).
  <li><p>Set <var>event</var>'s {{Event/currentTarget}} attribute to null.
 
  <li><p>Set <var>event</var>'s <a for=Event>path</a> to the empty list.
+
+ <li>
+  <p>If <var>event</var> is a {{MouseEvent}} object, <var>event</var>'s {{Event/type}} attribute is
+  "<code>click</code>", and <var>activationTarget</var> is non-null, then:
+
+  <ol>
+   <li><p>If <var>event</var>'s <a>canceled flag</a> is unset and <var>activationTarget</var> has
+   <a>activation behavior</a>, then run <var>activationTarget</var>'s <a>activation behavior</a>
+   with <var>event</var>.
+
+   <li><p>Otherwise, if <var>event</var>'s <a>canceled flag</a> is set and
+   <var>activationTarget</var> has <a>legacy post-canceled-click-dispatch steps</a>, then run
+   <var>activationTarget</var>'s <a>legacy post-canceled-click-dispatch steps</a>.
+  </ol>
 
  <li><p>Return false if <var>event</var>'s <a>canceled flag</a> is set, and true otherwise.
 </ol>
