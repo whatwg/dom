@@ -5668,7 +5668,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
 
   <ol>
    <li>
-    <p>If the <var>synchronous custom elements flag</var> is set:
+    <p>If the <var>synchronous custom elements flag</var> is set, then run these subsubsteps while
+    catching any exceptions:
 
     <ol>
      <li><p>Let <var>C</var> be <var>definition</var>'s
@@ -5678,14 +5679,13 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      exceptions.
 
      <li>
-      <p>If <var>result</var> does not implement the {{HTMLElement}} interface, <a>throw</a> a
+      <p>If <var>result</var> does not implement the {{HTMLElement}} interface, then <a>throw</a> a
       <code>TypeError</code>.
 
       <div class=note>
-       <p>This is meant to be a brand check to ensure that the object was allocated by the
-       a HTML element constructor. See
-       <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
-       precise.
+       <p>This is meant to be a brand check to ensure that the object was allocated by the HTML
+       element constructor. See <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a>
+       about making this more precise.
 
        <p>If this check passes, then <var>result</var> will already have its <a>custom element
        state</a> and <a>custom element definition</a> initialized.
@@ -5720,6 +5720,19 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      <li><p>Set <var>result</var>'s <a for=Element>namespace prefix</a> to <var>prefix</var>.
 
      <li><p>Set <var>result</var>'s <a><code>is</code> value</a> to null.
+    </ol>
+
+    <p>If any of these subsubsteps threw an exception, then:</p>
+
+    <ol>
+     <li><p><a>Report the exception</a>.
+
+     <li><p>Set <var>result</var> to a new <a for=/>element</a> that implements the
+     {{HTMLUnknownElement}} interface, with no attributes, <a for=Element>namespace</a> set to the
+     <a>HTML namespace</a>, <a for=Element>namespace prefix</a> set to <var>prefix</var>,
+     <a for=Element>local name</a> set to <var>localName</var>, <a>custom element state</a> set to
+     "<code>failed</code>", <a>custom element definition</a> set to null,
+     <a><code>is</code> value</a> set to null, and <a>node document</a> set to <var>document</var>.
     </ol>
    </li>
 

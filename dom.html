@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-10">10 October 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-11">11 October 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -3544,7 +3544,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      <p>Otherwise, if <var>definition</var> is non-null, then: </p>
      <ol>
       <li>
-       <p>If the <var>synchronous custom elements flag</var> is set: </p>
+       <p>If the <var>synchronous custom elements flag</var> is set, then run these subsubsteps while
+    catching any exceptions: </p>
        <ol>
         <li>
          <p>Let <var>C</var> be <var>definition</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/scripting.html#concept-custom-element-definition-constructor">constructor</a>. </p>
@@ -3552,11 +3553,10 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
          <p>Set <var>result</var> to <a data-link-type="abstract-op" href="https://tc39.github.io/ecma262/#sec-construct">Construct</a>(<var>C</var>). Rethrow any
      exceptions. </p>
         <li>
-         <p>If <var>result</var> does not implement the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code>TypeError</code>. </p>
+         <p>If <var>result</var> does not implement the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a></code> interface, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code>TypeError</code>. </p>
          <div class="note" role="note">
-          <p>This is meant to be a brand check to ensure that the object was allocated by the
-       a HTML element constructor. See <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more
-       precise. </p>
+          <p>This is meant to be a brand check to ensure that the object was allocated by the HTML
+       element constructor. See <a href="https://github.com/heycam/webidl/issues/97">webidl #97</a> about making this more precise. </p>
           <p>If this check passes, then <var>result</var> will already have its <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element
        state</a> and <a data-link-type="dfn" href="#concept-element-custom-element-definition">custom element definition</a> initialized. </p>
          </div>
@@ -3581,6 +3581,14 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
          <p>Set <var>result</var>’s <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> to <var>prefix</var>. </p>
         <li>
          <p>Set <var>result</var>’s <a data-link-type="dfn" href="#concept-element-is-value"><code>is</code> value</a> to null. </p>
+       </ol>
+       <p>If any of these subsubsteps threw an exception, then:</p>
+       <ol>
+        <li>
+         <p><a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">Report the exception</a>. </p>
+        <li>
+         <p>Set <var>result</var> to a new <a data-link-type="dfn" href="#concept-element">element</a> that implements the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#htmlunknownelement">HTMLUnknownElement</a></code> interface, with no attributes, <a data-link-type="dfn" href="#concept-element-namespace">namespace</a> set to the <a data-link-type="dfn" href="#html-namespace">HTML namespace</a>, <a data-link-type="dfn" href="#concept-element-namespace-prefix">namespace prefix</a> set to <var>prefix</var>, <a data-link-type="dfn" href="#concept-element-local-name">local name</a> set to <var>localName</var>, <a data-link-type="dfn" href="#concept-element-custom-element-state">custom element state</a> set to
+     "<code>failed</code>", <a data-link-type="dfn" href="#concept-element-custom-element-definition">custom element definition</a> set to null, <a data-link-type="dfn" href="#concept-element-is-value"><code>is</code> value</a> set to null, and <a data-link-type="dfn" href="#concept-node-document">node document</a> set to <var>document</var>. </p>
        </ol>
       <li>
        <p>Otherwise: </p>
@@ -6494,6 +6502,7 @@ neighboring rights to this work.</p>
      <li><a href="https://html.spec.whatwg.org/multipage/dom.html#htmlelement">HTMLElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#htmlhtmlelement">HTMLHtmlElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/scripting.html#htmlslotelement">HTMLSlotElement</a>
+     <li><a href="https://html.spec.whatwg.org/multipage/dom.html#htmlunknownelement">HTMLUnknownElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#hashchangeevent">HashChangeEvent</a>
      <li><a href="https://html.spec.whatwg.org/multipage/comms.html#messageevent">MessageEvent</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#pagetransitionevent">PageTransitionEvent</a>
