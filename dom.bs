@@ -1184,18 +1184,18 @@ for discussion).
 <h3 id=dispatching-events>Dispatching events</h3>
 
 <p>To <dfn export for=Event id=concept-event-dispatch>dispatch</dfn> an <var>event</var> to a
-<var>target</var>, with an optional <var>targetOverride</var>, run these steps:
+<var>target</var>, with an optional <var>legacy target override flag</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
 
  <li>
-  <p>If <var>targetOverride</var> is not given, let <var>targetOverride</var> be <var>target</var>.
+  <p>Let <var>targetOverride</var> be <var>target</var>, if <var>legacy target override flag</var>
+  is not given, and <var>target</var>'s <a>associated <code>Document</code></a> otherwise.
+  [[!HTML]]
 
-  <p class="note">The <var>targetOverride</var> argument is only used by HTML and only under very
-  specific circumstances.
-  <!-- We should consider refactoring it to make it have less of a scope, since we don't really want
-       folks to start using it for non-legacy scenarios. -->
+  <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
+  <var>target</var> is a {{Window}} object.
 
  <li>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
  <a>relatedTarget</a> against <var>target</var> if <var>event</var>'s <a>relatedTarget</a> is
@@ -1379,14 +1379,25 @@ an <var>object</var> with <var>event</var>, run these steps:
 
 <h3 id=firing-events>Firing events</h3>
 
-To
-<dfn export id=concept-event-fire lt="fire an event">fire an event named <var>e</var></dfn>
-means that a new <a>event</a> using the
-{{Event}} interface, with its
-{{Event/type}} attribute initialized to
-<var>e</var>, and its {{Event/isTrusted}}
-attribute initialized to <code>true</code>, is to be
-<a>dispatched</a> to the given object.
+<p>To <dfn export id=concept-event-fire lt="fire an event">fire an event</dfn> named <var>e</var> at
+<var>target</var>, optionally given an <var>eventClass</var>, a description of how IDL attributes
+are to be initialized, and a <var>legacy target override flag</var>, run these steps:
+
+<ol>
+ <li><p>If <var>eventClass</var> is not given ,let <var>eventClass</var> be {{Event}}.
+
+ <li><p>Let <var>event</var> be a new <a>event</a> using <var>eventClass</var>.
+
+ <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>e</var>.
+
+ <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
+
+ <li><p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of
+ this algorithm.
+
+ <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
+ <var>legacy target override flag</var> set if set.
+</ol>
 
 <p class="note no-backref">Fire in the context of DOM is short for creating, initializing,
 and <a>dispatching</a> an <a>event</a>.
