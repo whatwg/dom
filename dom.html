@@ -891,7 +891,10 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
     <li>
-     <p>Let <var>activationTarget</var> be <var>target</var>, if <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, and null otherwise. </p>
+     <p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is "<code>click</code>", and false otherwise. </p>
+    <li>
+     <p>Let <var>activationTarget</var> be <var>target</var>, if <var>isActivationEvent</var> is
+ true and <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, and null otherwise. </p>
     <li>
      <p>Let <var>parent</var> be the result of invoking <var>target</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
     <li>
@@ -904,7 +907,8 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
        <p>If <var>target</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>parent</var>, then: </p>
        <ol>
         <li>
-         <p>If <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute is true, <var>activationTarget</var> is null, and <var>parent</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>parent</var>. </p>
+         <p>If <var>isActivationEvent</var> is true, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute
+     is true, <var>activationTarget</var> is null, and <var>parent</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>parent</var>. </p>
         <li>
          <p>Append (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
        </ol>
@@ -914,7 +918,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
        <p>Otherwise, set <var>target</var> to <var>parent</var> and then: </p>
        <ol>
         <li>
-         <p>If <var>activationTarget</var> is null, and <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>target</var>. </p>
+         <p>If <var>isActivationEvent</var> is true, <var>activationTarget</var> is null, and <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>target</var>. </p>
         <li>
          <p>Append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
        </ol>
@@ -924,8 +928,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
     <li>
-     <p>If <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute
- is "<code>click</code>", <var>activationTarget</var> is non-null, and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>. </p>
+     <p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>. </p>
     <li>
      <p>For each <var>tuple</var> in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, in reverse order: </p>
      <ol>
@@ -965,13 +968,12 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a> to the empty list. </p>
     <li>
-     <p>If <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is
-  "<code>click</code>", and <var>activationTarget</var> is non-null, then: </p>
+     <p>If <var>activationTarget</var> is non-null, then: </p>
      <ol>
       <li>
-       <p>If <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is unset and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> with <var>event</var>. </p>
+       <p>If <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is unset, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> with <var>event</var>. </p>
       <li>
-       <p>Otherwise, if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
+       <p>Otherwise, if <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
      </ol>
     <li>
      <p>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. </p>
