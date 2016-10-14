@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-11">11 October 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-14">14 October 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -871,14 +871,13 @@ listeners are <code class="idl"><a data-link-type="idl" href="#dom-addeventliste
 of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneroptions-passive">passive</a></code> listeners, and use that to clear the <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> property of the event being dispatched. </p>
    <p>Ideally, any new event APIs are defined such that they do not need this property (use <a href="https://lists.w3.org/Archives/Public/public-script-coord/">public-script-coord@w3.org</a> for discussion). </p>
    <h3 class="heading settled" data-level="3.8" id="dispatching-events"><span class="secno">3.8. </span><span class="content">Dispatching events</span><a class="self-link" href="#dispatching-events"></a></h3>
-   <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <var>event</var> to a <var>target</var>, with an optional <var>targetOverride</var>, run these steps: </p>
+   <p>To <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-dispatch">dispatch<a class="self-link" href="#concept-event-dispatch"></a></dfn> an <var>event</var> to a <var>target</var>, with an optional <var>legacy target override flag</var>, run these steps: </p>
    <ol>
     <li>
      <p>Set <var>event</var>’s <a data-link-type="dfn" href="#dispatch-flag">dispatch flag</a>. </p>
     <li>
-     <p>If <var>targetOverride</var> is not given, let <var>targetOverride</var> be <var>target</var>. </p>
-     <p class="note" role="note">The <var>targetOverride</var> argument is only used by HTML and only under very
-  specific circumstances. </p>
+     <p>Let <var>targetOverride</var> be <var>target</var>, if <var>legacy target override flag</var> is not given, and <var>target</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated <code>Document</code></a> otherwise. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
+     <p class="note" role="note"><var>legacy target override flag</var> is only used by HTML and only when <var>target</var> is a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a></code> object. </p>
     <li>Let <var>relatedTarget</var> be the result of <a data-link-type="dfn" href="#retarget">retargeting</a> <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> against <var>target</var> if <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> is
  non-null, and null otherwise. 
     <li>
@@ -1015,7 +1014,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>If <var>listener</var>’s <b>passive</b> is true, set <var>event</var>’s <a data-link-type="dfn" href="#in-passive-listener-flag">in passive listener flag</a>. </p>
       <li>
-       <p><a data-link-type="dfn">Call a user object’s operation</a> with <var>listener</var>’s <b>callback</b>,
+       <p><a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">Call a user object’s operation</a> with <var>listener</var>’s <b>callback</b>,
    "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute value as the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>. If
    this throws an exception, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception">report the exception</a>. </p>
       <li>
@@ -1028,12 +1027,39 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
      <p>Return <var>found</var>. </p>
    </ol>
    <h3 class="heading settled" data-level="3.9" id="firing-events"><span class="secno">3.9. </span><span class="content">Firing events</span><a class="self-link" href="#firing-events"></a></h3>
-   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="fire an event" id="concept-event-fire">fire an event named <var>e</var><a class="self-link" href="#concept-event-fire"></a></dfn> means that a new <a data-link-type="dfn" href="#concept-event">event</a> using the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, with its <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute initialized to <var>e</var>, and its <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute initialized to <code>true</code>, is to be <a data-link-type="dfn" href="#concept-event-dispatch">dispatched</a> to the given object.</p>
-   <p class="note no-backref" role="note">Fire in the context of DOM is short for creating, initializing,
-and <a data-link-type="dfn" href="#concept-event-dispatch">dispatching</a> an <a data-link-type="dfn" href="#concept-event">event</a>. <a data-link-type="dfn" href="#concept-event-fire">Fire an event</a> makes that process easier to write
-down. If the <a data-link-type="dfn" href="#concept-event">event</a> needs its <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute initialized, one could write
-"<a data-link-type="dfn" href="#concept-event-fire">fire an event</a> named <code>submit</code> with its <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute
-initialized to true". </p>
+   <p>To <dfn data-dfn-type="dfn" data-export="" id="concept-event-fire">fire an event<a class="self-link" href="#concept-event-fire"></a></dfn> named <var>e</var> at <var>target</var>,
+optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
+initialized, and a <var>legacy target override flag</var>, run these steps: </p>
+   <ol>
+    <li>
+     <p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be <code class="idl"><a data-link-type="idl" href="#event">Event</a></code>. </p>
+    <li>
+     <p>Let <var>event</var> be the result of <a data-link-type="dfn" href="#concept-event-constructor">invoking</a> the initial
+ value of <var>eventConstructor</var> with the argument <var>e</var>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to true. </p>
+    <li>
+     <p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of this
+  algorithm. </p>
+     <p class="note" role="note">This also allows for the <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to be set to false. </p>
+    <li>
+     <p>Return the result of <a data-link-type="dfn" href="#concept-event-dispatch">dispatching</a> <var>event</var> at <var>target</var>, with <var>legacy target override flag</var> set if set. </p>
+   </ol>
+   <p class="note no-backref" role="note">Fire in the context of DOM is short for creating, initializing, and <a data-link-type="dfn" href="#concept-event-dispatch">dispatching</a> an <a data-link-type="dfn" href="#concept-event">event</a>. <a data-link-type="dfn" href="#concept-event-fire">Fire an event</a> makes that process easier to write down. </p>
+   <div class="example no-backref" id="firing-events-example">
+    <a class="self-link" href="#firing-events-example"></a> 
+    <p>If the <a data-link-type="dfn" href="#concept-event">event</a> needs its <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute initialized,
+ one could write "<a data-link-type="dfn" href="#concept-event-fire">fire an event</a> named <code>submit</code> at <var>target</var> with its <code class="idl"><a data-link-type="idl" href="#dom-event-cancelable">cancelable</a></code> attribute initialized to true". </p>
+    <p>Or, when a custom constructor is required, "<a data-link-type="dfn" href="#concept-event-fire">fire an event</a> named <code>click</code> at <var>target</var> using <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> with its <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute initialized to
+ false". </p>
+    <p>Ocassionally the return value is important: </p>
+    <ol>
+     <li>
+      <p>Let <var>doAction</var> be the result of <a data-link-type="dfn" href="#concept-event-fire">firing an event</a> named <code>like</code> at <var>target</var>. </p>
+     <li>
+      <p>If <var>doAction</var> is true, then … </p>
+    </ol>
+   </div>
    <h3 class="heading settled" data-level="3.10" id="action-versus-occurance"><span class="secno">3.10. </span><span class="content">Action versus occurrence</span><a class="self-link" href="#action-versus-occurance"></a></h3>
    <p>An <a data-link-type="dfn" href="#concept-event">event</a> signifies an occurrence, not an action. Phrased differently, it
 represents a notification from an algorithm and can be used to influence the future course
@@ -4844,7 +4870,7 @@ these steps:</p>
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_skip">FILTER_SKIP</a></code>. 
     <li>If <a data-link-type="dfn" href="#concept-traversal-filter">filter</a> is null,
  return <code class="idl"><a data-link-type="idl" href="#dom-nodefilter-filter_accept">FILTER_ACCEPT</a></code>. 
-    <li>Let <var>result</var> be the return value of <a data-link-type="dfn">call a user object’s operation</a> with <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of <var>node</var>. Rethrow any exceptions. 
+    <li>Let <var>result</var> be the return value of <a data-link-type="dfn" href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object’s operation</a> with <a data-link-type="dfn" href="#concept-traversal-filter">filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of <var>node</var>. Rethrow any exceptions. 
     <li>Return <var>result</var>. 
    </ol>
    <h3 class="heading settled" data-level="6.1" id="interface-nodeiterator"><span class="secno">6.1. </span><span class="content">Interface <code class="idl"><a data-link-type="idl" href="#nodeiterator">NodeIterator</a></code></span><a class="self-link" href="#interface-nodeiterator"></a></h3>
@@ -6595,6 +6621,7 @@ neighboring rights to this work.</p>
      <li><a href="https://heycam.github.io/webidl/#Unforgeable">Unforgeable</a>
      <li><a href="https://heycam.github.io/webidl/#Unscopable">Unscopable</a>
      <li><a href="https://heycam.github.io/webidl/#wrongdocumenterror">WrongDocumentError</a>
+     <li><a href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object's operation</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary members</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a>
