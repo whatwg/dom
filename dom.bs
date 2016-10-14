@@ -1377,36 +1377,53 @@ an <var>object</var> with <var>event</var>, run these steps:
  <li><p>Return <var>found</var>.
 </ol>
 
+
 <h3 id=firing-events>Firing events</h3>
 
-<p>To <dfn export id=concept-event-fire lt="fire an event">fire an event</dfn> named <var>e</var> at
-<var>target</var>, optionally given an <var>eventClass</var>, a description of how IDL attributes
-are to be initialized, and a <var>legacy target override flag</var>, run these steps:
+<p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
+optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
+initialized, and a <var>legacy target override flag</var>, run these steps:
 
 <ol>
- <li><p>If <var>eventClass</var> is not given ,let <var>eventClass</var> be {{Event}}.
+ <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
+ {{Event}}.
 
- <li><p>Let <var>event</var> be a new <a>event</a> using <var>eventClass</var>.
-
- <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>e</var>.
+ <li><p>Let <var>event</var> be the result of <a for=Event lt=constructor>invoking</a> the initial
+ value of <var>eventConstructor</var> with <var>e</var> as argument.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
 
- <li><p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of
- this algorithm.
+ <li>
+  <p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of this
+  algorithm.
+
+  <p class="note">This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
  <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
  <var>legacy target override flag</var> set if set.
 </ol>
 
-<p class="note no-backref">Fire in the context of DOM is short for creating, initializing,
-and <a>dispatching</a> an <a>event</a>.
-<a>Fire an event</a> makes that process easier to write
-down. If the <a>event</a> needs its {{Event/bubbles}} or
-{{Event/cancelable}} attribute initialized, one could write
-"<a>fire an event</a> named
-<code>submit</code> with its {{Event/cancelable}} attribute
-initialized to true".
+<p class="note no-backref">Fire in the context of DOM is short for creating, initializing, and
+<a>dispatching</a> an <a>event</a>. <a>Fire an event</a> makes that process easier to write down.
+
+<div class="example no-backref" id=firing-events-example>
+ <p>If the <a>event</a> needs its {{Event/bubbles}} or {{Event/cancelable}} attribute initialized,
+ one could write "<a>fire an event</a> named <code>submit</code> at <var>target</var> with its
+ {{Event/cancelable}} attribute initialized to true".
+
+ <p>Or, when a custom constructor is required, "<a>fire an event</a> named <code>click</code> at
+ <var>target</var> using <code>MouseEvent</code> with its {{Event/isTrusted}} attribute initialized
+ to false".
+
+ <p>Ocassionally the return value is important:
+
+ <ol>
+  <li><p>Let <var>doAction</var> be the result of <a lt="fire an event">firing an event</a> named
+  <code>like</code> at <var>target</var>.
+
+  <li><p>If <var>doAction</var> is true, then &hellip;
+ </ol>
+</div>
 
 
 <h3 id=action-versus-occurance>Action versus occurrence</h3>
