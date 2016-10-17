@@ -775,6 +775,13 @@ which takes an <a data-link-type="dfn" href="#concept-event">event</a> <var>even
 specified otherwise it returns null. </p>
    <p class="note no-backref" role="note"><a data-link-type="dfn" href="#concept-node">Nodes</a>, <a data-link-type="dfn" href="#concept-shadow-root">shadow roots</a>, and <a data-link-type="dfn" href="#concept-document">documents</a> override
 the <a data-link-type="dfn" href="#get-the-parent">get the parent</a> algorithm. </p>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object can have an associated <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-activation-behavior">activation behavior<a class="self-link" href="#eventtarget-activation-behavior"></a></dfn> algorithm. The <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> algorithm is passed an <a data-link-type="dfn" href="#concept-event">event</a>, as indicated in the <a data-link-type="dfn" href="#concept-event-dispatch">dispatch</a> algorithm.</p>
+   <p class="note no-backref" role="note">This exists because user agents perform certain actions for certain <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> objects, e.g., the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/embedded-content.html#the-area-element">area</a></code> element, in response to synthetic <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> <a data-link-type="dfn" href="#concept-event">events</a> whose <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is <code>click</code>. Web compatibility prevented it
+from being removed and it is now the enshrined way of defining an activation of something. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object that has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, can additionally have both (not
+either) a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-pre-click-dispatch-steps"></a></dfn> algorithm and a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-post-canceled-click-dispatch-steps"></a></dfn> algorithm. </p>
+   <p class="note no-backref" role="note">These algorithms only exist for checkbox and radio <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/forms.html#the-input-element">input</a></code> elements and
+are not to be used for anything else. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
    <dl class="domintro">
     <dt><code><var>target</var> . <a class="idl-code" data-link-type="method" href="#dom-eventtarget-addeventlistener">addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code> 
     <dd>
@@ -883,6 +890,11 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
     <li>
+     <p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> object and <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is "<code>click</code>", and false otherwise. </p>
+    <li>
+     <p>Let <var>activationTarget</var> be <var>target</var>, if <var>isActivationEvent</var> is
+ true and <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, and null otherwise. </p>
+    <li>
      <p>Let <var>parent</var> be the result of invoking <var>target</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
     <li>
      <p>While <var>parent</var> is non-null:</p>
@@ -891,17 +903,31 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
        <p>Let <var>relatedTarget</var> be the result of <a data-link-type="dfn" href="#retarget">retargeting</a> <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> against <var>parent</var> if <var>event</var>’s <a data-link-type="dfn" href="#event-relatedtarget">relatedTarget</a> is
    non-null, and null otherwise. </p>
       <li>
-       <p>If <var>target</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>parent</var>, then append
-   (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+       <p>If <var>target</var>’s <a data-link-type="dfn" href="#concept-tree-root">root</a> is a <a data-link-type="dfn" href="#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</a> of <var>parent</var>, then: </p>
+       <ol>
+        <li>
+         <p>If <var>isActivationEvent</var> is true, <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-bubbles">bubbles</a></code> attribute
+     is true, <var>activationTarget</var> is null, and <var>parent</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>parent</var>. </p>
+        <li>
+         <p>Append (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+       </ol>
       <li>
        <p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set <var>parent</var> to null. </p>
       <li>
-       <p>Otherwise, set <var>target</var> to <var>parent</var> and append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+       <p>Otherwise, set <var>target</var> to <var>parent</var> and then: </p>
+       <ol>
+        <li>
+         <p>If <var>isActivationEvent</var> is true, <var>activationTarget</var> is null, and <var>target</var> has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, then set <var>activationTarget</var> to <var>target</var>. </p>
+        <li>
+         <p>Append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>. </p>
+       </ol>
       <li>
        <p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking <var>parent</var>’s <a data-link-type="dfn" href="#get-the-parent">get the parent</a> with <var>event</var>. </p>
      </ol>
     <li>
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
+    <li>
+     <p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>. </p>
     <li>
      <p>For each <var>tuple</var> in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, in reverse order: </p>
      <ol>
@@ -940,6 +966,14 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-currenttarget">currentTarget</a></code> attribute to null. </p>
     <li>
      <p>Set <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a> to the empty list. </p>
+    <li>
+     <p>If <var>activationTarget</var> is non-null, then: </p>
+     <ol>
+      <li>
+       <p>If <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is unset, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> with <var>event</var>. </p>
+      <li>
+       <p>Otherwise, if <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
+     </ol>
     <li>
      <p>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. </p>
    </ol>
@@ -5627,6 +5661,7 @@ neighboring rights to this work.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#dom-nodefilter-acceptnode">acceptNode(node)</a><span>, in §6.3</span>
+   <li><a href="#eventtarget-activation-behavior">activation behavior</a><span>, in §3.6</span>
    <li><a href="#dom-domtokenlist-add">add()</a><span>, in §7.1</span>
    <li><a href="#dom-mutationrecord-addednodes">addedNodes</a><span>, in §4.3.3</span>
    <li><a href="#dictdef-addeventlisteneroptions">AddEventListenerOptions</a><span>, in §3.6</span>
@@ -6061,6 +6096,8 @@ neighboring rights to this work.</p>
    <li><a href="#dom-treewalker-lastchild">lastChild()</a><span>, in §6.2</span>
    <li><a href="#dom-node-lastchild">lastChild</a><span>, in §4.4</span>
    <li><a href="#dom-parentnode-lastelementchild">lastElementChild</a><span>, in §4.2.6</span>
+   <li><a href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a><span>, in §3.6</span>
+   <li><a href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a><span>, in §3.6</span>
    <li>
     length
     <ul>
@@ -6536,6 +6573,7 @@ neighboring rights to this work.</p>
      <li><a href="https://html.spec.whatwg.org/multipage/webstorage.html#storageevent">StorageEvent</a>
      <li><a href="https://html.spec.whatwg.org/multipage/embedded-content.html#trackevent">TrackEvent</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a>
+     <li><a href="https://html.spec.whatwg.org/multipage/embedded-content.html#the-area-element">area</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-document-window">associated document</a>
      <li><a href="https://html.spec.whatwg.org/multipage/semantics.html#the-body-element">body</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#browsing-context">browsing context</a>
