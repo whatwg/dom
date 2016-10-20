@@ -713,21 +713,42 @@ must return the value it was initialized to.</p>
     <li>Set <a data-link-type="dfn" href="#context-object">context object</a>’s <code class="idl"><a data-link-type="idl" href="#dom-customevent-detail">detail</a></code> attribute to <var>detail</var>. 
    </ol>
    <h3 class="heading settled" data-level="3.4" id="constructing-events"><span class="secno">3.4. </span><span class="content">Constructing events</span><a class="self-link" href="#constructing-events"></a></h3>
-   <p>When a <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-constructor">constructor<a class="self-link" href="#concept-event-constructor"></a></dfn> of the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, or of an interface that inherits from the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, is
-invoked, these steps must be run:</p>
+   <p>When a <dfn data-dfn-for="Event" data-dfn-type="dfn" data-export="" id="concept-event-constructor">constructor<a class="self-link" href="#concept-event-constructor"></a></dfn> of the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, or of an interface that inherits from the <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> interface, is invoked, these steps
+must be run, given the arguments <var>type</var> and <var>eventInitDict</var>: </p>
    <ol>
     <li>
-     <p>Create an <a data-link-type="dfn" href="#concept-event">event</a> that uses the interface the constructor was invoked upon. </p>
+     <p>Create a new object <var>event</var> using this interface. </p>
     <li>
-     <p>Set its <a data-link-type="dfn" href="#initialized-flag">initialized flag</a>. </p>
+     <p>Set <var>event</var>’s <a data-link-type="dfn" href="#initialized-flag">initialized flag</a>. </p>
     <li>
-     <p>Initialize the <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute to the <var>type</var> argument. </p>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute to <var>type</var>. </p>
     <li>
-     <p>If there is an <var>eventInitDict</var> argument, then for each <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a> present, find the attribute on <a data-link-type="dfn" href="#concept-event">event</a> whose <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a> matches the key of
- the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a> and then set the attribute to the value of that <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a>. </p>
+     <p>For each <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a> present in <var>eventInitDict</var>, find the attribute on <var>event</var> whose <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a> matches the key of the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary
+ member</a> and then set the attribute to the value of that <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a>. </p>
     <li>
-     <p>Return the <a data-link-type="dfn" href="#concept-event">event</a>. </p>
+     <p>Return <var>event</var>. </p>
    </ol>
+   <p>To <dfn data-dfn-type="dfn" data-export="" data-lt="creating an event|create an event" id="concept-event-create">create an
+event<a class="self-link" href="#concept-event-create"></a></dfn> using <var>eventInterface</var>, which must be either <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> or an interface that
+inherits from it, run these steps:</p>
+   <ol>
+    <li>
+     <p>Create a new object <var>event</var> using <var>eventInterface</var>. </p>
+    <li>
+     <p>Set <var>event</var>’s <a data-link-type="dfn" href="#initialized-flag">initialized flag</a>. </p>
+    <li>
+     <p>Let <var>defaultEventInitDict</var> be the result of <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-convert-ecmascript-to-idl-value">converting</a> the JavaScript value undefined to the dictionary
+ type accepted by <var>eventInterface</var>’s constructor. (This dictionary type will either be <code class="idl"><a data-link-type="idl" href="#dictdef-eventinit">EventInit</a></code> or a dictionary that inherits from it.) </p>
+    <li>For each <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a> present in <var>defaultEventInitDict</var>, find the
+ attribute on <var>event</var> whose <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a> matches the key of the <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a> and then set the attribute to the default value of that <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary member</a>. 
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to true. </p>
+    <li>
+     <p>Return <var>event</var>. </p>
+   </ol>
+   <p class="note" role="note"><a data-link-type="dfn" href="#concept-event-create">Create an event</a> is meant to be used by other specifications which need to
+separately <a data-link-type="dfn" href="#concept-event-create">create</a> and <a data-link-type="dfn" href="#concept-event-dispatch">dispatch</a> events, instead of simply <a data-link-type="dfn" href="#concept-event-fire">firing</a> them. It ensures the event’s attributes are initialized to the
+correct defaults.</p>
    <h3 class="heading settled" data-level="3.5" id="defining-event-interfaces"><span class="secno">3.5. </span><span class="content">Defining event interfaces</span><a class="self-link" href="#defining-event-interfaces"></a></h3>
    <p>In general, when defining a new interface that inherits from <code class="idl"><a data-link-type="idl" href="#event">Event</a></code> please always ask
 feedback from the <a href="https://whatwg.org/">WHATWG</a> or the <a href="https://www.w3.org/2008/webapps/">W3C WebApps WG</a> community.</p>
@@ -1070,10 +1091,9 @@ initialized, and a <var>legacy target override flag</var>, run these steps: </p>
     <li>
      <p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be <code class="idl"><a data-link-type="idl" href="#event">Event</a></code>. </p>
     <li>
-     <p>Let <var>event</var> be the result of <a data-link-type="dfn" href="#concept-event-constructor">invoking</a> the initial
- value of <var>eventConstructor</var> with the argument <var>e</var>. </p>
+     <p>Let <var>event</var> be the result of <a data-link-type="dfn" href="#concept-event-create">creating an event</a> given <var>eventConstructor</var>. </p>
     <li>
-     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to true. </p>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute to <var>e</var>. </p>
     <li>
      <p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of this
   algorithm. </p>
@@ -3264,12 +3284,16 @@ invoked, must run these steps: </p>
     <li>
      <p>If <var>constructor</var> is null, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code>. </p>
     <li>
-     <p>If the initial value of <var>constructor</var> is undefined, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code>. </p>
+     <p>If the interface indicated by <var>constructor</var> is not exposed on the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-global">relevant global
+  object</a> of the <a data-link-type="dfn" href="#context-object">context object</a>, then <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code>. </p>
      <p class="note" role="note">Typically user agents disable support for touch events in some configurations, in
-  which case the initial value of <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code> is undefined. </p>
+  which case this clause would be triggered for the interface <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/touch-events/#touchevent-interface">TouchEvent</a></code>. </p>
     <li>
-     <p>Let <var>event</var> be the result of <a data-link-type="dfn" href="#concept-event-constructor">invoking</a> the initial
- value of <var>constructor</var> with the empty string as argument. </p>
+     <p>Let <var>event</var> be the result of <a data-link-type="dfn" href="#concept-event-create">creating an event</a> given <var>constructor</var>. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute to the empty string. </p>
+    <li>
+     <p>Initialize <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-istrusted">isTrusted</a></code> attribute to false. </p>
     <li>
      <p>Unset <var>event</var>’s <a data-link-type="dfn" href="#initialized-flag">initialized flag</a>. </p>
     <li>
@@ -5811,6 +5835,7 @@ neighboring rights to this work.</p>
    <li><a href="#converted-to-ascii-uppercase">converted to ASCII uppercase</a><span>, in §2.2</span>
    <li><a href="#converting-nodes-into-a-node">converting nodes into a node</a><span>, in §4.2.6</span>
    <li><a href="#concept-create-element">create an element</a><span>, in §4.9</span>
+   <li><a href="#concept-event-create">create an event</a><span>, in §3.4</span>
    <li><a href="#dom-document-createattribute">createAttribute(localName)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createattributens">createAttributeNS(namespace, qualifiedName)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createcdatasection">createCDATASection(data)</a><span>, in §4.5</span>
@@ -5837,6 +5862,7 @@ neighboring rights to this work.</p>
    <li><a href="#dom-document-createtreewalker">createTreeWalker(root, whatToShow)</a><span>, in §4.5</span>
    <li><a href="#dom-document-createtreewalker">createTreeWalker(root, whatToShow, filter)</a><span>, in §4.5</span>
    <li><a href="#concept-create-element">creating an element</a><span>, in §4.9</span>
+   <li><a href="#concept-event-create">creating an event</a><span>, in §3.4</span>
    <li><a href="#dom-treewalker-currentnode">currentNode</a><span>, in §6.2</span>
    <li><a href="#dom-event-currenttarget">currentTarget</a><span>, in §3.2</span>
    <li><a href="#concept-element-custom">custom</a><span>, in §4.9</span>
@@ -6665,6 +6691,7 @@ neighboring rights to this work.</p>
      <li><a href="https://heycam.github.io/webidl/#wrongdocumenterror">WrongDocumentError</a>
      <li><a href="https://heycam.github.io/webidl/#call-a-user-objects-operation">call a user object's operation</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-callback-this-value">callback this value</a>
+     <li><a href="https://heycam.github.io/webidl/#dfn-convert-ecmascript-to-idl-value">converted to an idl value</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-dictionary-member">dictionary members</a>
      <li><a href="https://heycam.github.io/webidl/#dfn-identifier">identifier</a>
      <li><a href="https://heycam.github.io/webidl/#invoke-a-callback-function">invoke</a>
