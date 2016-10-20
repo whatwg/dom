@@ -71,7 +71,7 @@ pre.idl.highlight { color: #708090; }
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-dom.svg"> </a> </p>
    <hgroup>
     <h1 class="p-name no-ref allcaps" id="title">DOM</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-18">18 October 2016</time></span></h2>
+    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Living Standard — Last Updated <time class="dt-updated" datetime="2016-10-20">20 October 2016</time></span></h2>
    </hgroup>
    <div data-fill-with="spec-metadata">
     <dl>
@@ -779,7 +779,7 @@ the <a data-link-type="dfn" href="#get-the-parent">get the parent</a> algorithm.
    <p class="note no-backref" role="note">This exists because user agents perform certain actions for certain <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> objects, e.g., the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/embedded-content.html#the-area-element">area</a></code> element, in response to synthetic <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/uievents/#interface-mouseevent">MouseEvent</a></code> <a data-link-type="dfn" href="#concept-event">events</a> whose <code class="idl"><a data-link-type="idl" href="#dom-event-type">type</a></code> attribute is <code>click</code>. Web compatibility prevented it
 from being removed and it is now the enshrined way of defining an activation of something. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
    <p>Each <code class="idl"><a data-link-type="idl" href="#eventtarget">EventTarget</a></code> object that has <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a>, can additionally have both (not
-either) a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-pre-click-dispatch-steps"></a></dfn> algorithm and a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps<a class="self-link" href="#eventtarget-legacy-post-canceled-click-dispatch-steps"></a></dfn> algorithm. </p>
+either) a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior<a class="self-link" href="#eventtarget-legacy-pre-activation-behavior"></a></dfn> algorithm and a <dfn data-dfn-for="EventTarget" data-dfn-type="dfn" data-export="" id="eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior<a class="self-link" href="#eventtarget-legacy-canceled-activation-behavior"></a></dfn> algorithm. </p>
    <p class="note no-backref" role="note">These algorithms only exist for checkbox and radio <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/forms.html#the-input-element">input</a></code> elements and
 are not to be used for anything else. <a data-link-type="biblio" href="#biblio-html">[HTML]</a> </p>
    <dl class="domintro">
@@ -929,7 +929,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
     <li>
      <p>Set <var>event</var>’s <code class="idl"><a data-link-type="idl" href="#dom-event-eventphase">eventPhase</a></code> attribute to <code class="idl"><a data-link-type="idl" href="#dom-event-capturing_phase">CAPTURING_PHASE</a></code>. </p>
     <li>
-     <p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a>. </p>
+     <p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</a>. </p>
     <li>
      <p>For each <var>tuple</var> in <var>event</var>’s <a data-link-type="dfn" href="#event-path">path</a>, in reverse order: </p>
      <ol>
@@ -974,7 +974,7 @@ of non-<code class="idl"><a data-link-type="idl" href="#dom-addeventlisteneropti
       <li>
        <p>If <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is unset, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-activation-behavior">activation behavior</a> with <var>event</var>. </p>
       <li>
-       <p>Otherwise, if <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a>. </p>
+       <p>Otherwise, if <var>activationTarget</var> has <a data-link-type="dfn" href="#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</a>, then run <var>activationTarget</var>’s <a data-link-type="dfn" href="#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</a>. </p>
      </ol>
     <li>
      <p>Return false if <var>event</var>’s <a data-link-type="dfn" href="#canceled-flag">canceled flag</a> is set, and true otherwise. </p>
@@ -3244,7 +3244,7 @@ invoked, must run these steps: </p>
         <td><a data-link-type="biblio" href="#biblio-html">[HTML]</a> 
        <tr>
         <td>"<code>transitionevent</code>"
-        <td><code class="idl"><a data-link-type="idl" href="https://drafts.csswg.org/css-transitions-1/#Events-TransitionEvent">TransitionEvent</a></code>
+        <td><code class="idl"><a data-link-type="idl" href="https://drafts.csswg.org/css-transitions-1/#transitionevent">TransitionEvent</a></code>
         <td><a data-link-type="biblio" href="#biblio-css3-transitions">[CSS3-TRANSITIONS]</a> 
        <tr>
         <td>"<code>uievent</code>"
@@ -6098,8 +6098,8 @@ neighboring rights to this work.</p>
    <li><a href="#dom-treewalker-lastchild">lastChild()</a><span>, in §6.2</span>
    <li><a href="#dom-node-lastchild">lastChild</a><span>, in §4.4</span>
    <li><a href="#dom-parentnode-lastelementchild">lastElementChild</a><span>, in §4.2.6</span>
-   <li><a href="#eventtarget-legacy-post-canceled-click-dispatch-steps">legacy post-canceled-click-dispatch steps</a><span>, in §3.6</span>
-   <li><a href="#eventtarget-legacy-pre-click-dispatch-steps">legacy pre-click-dispatch steps</a><span>, in §3.6</span>
+   <li><a href="#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</a><span>, in §3.6</span>
+   <li><a href="#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</a><span>, in §3.6</span>
    <li>
     length
     <ul>
@@ -6536,7 +6536,7 @@ neighboring rights to this work.</p>
    <li>
     <a data-link-type="biblio">[css-transitions-1]</a> defines the following terms:
     <ul>
-     <li><a href="https://drafts.csswg.org/css-transitions-1/#Events-TransitionEvent">TransitionEvent</a>
+     <li><a href="https://drafts.csswg.org/css-transitions-1/#transitionevent">TransitionEvent</a>
     </ul>
    <li>
     <a data-link-type="biblio">[CSSOM-VIEW]</a> defines the following terms:
@@ -6697,7 +6697,7 @@ neighboring rights to this work.</p>
    <dt id="biblio-selectors4">[SELECTORS4]
    <dd>Elika Etemad; Tab Atkins Jr.. <a href="https://www.w3.org/TR/selectors4/">Selectors Level 4</a>. 2 May 2013. WD. URL: <a href="https://www.w3.org/TR/selectors4/">https://www.w3.org/TR/selectors4/</a>
    <dt id="biblio-service-workers">[SERVICE-WORKERS]
-   <dd>Alex Russell; Jungkee Song; Jake Archibald. <a href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/">Service Workers</a>. 25 June 2015. WD. URL: <a href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/">https://slightlyoff.github.io/ServiceWorker/spec/service_worker/</a>
+   <dd>Alex Russell; et al. <a href="https://w3c.github.io/ServiceWorker/v1/">Service Workers 1</a>. 11 October 2016. WD. URL: <a href="https://w3c.github.io/ServiceWorker/v1/">https://w3c.github.io/ServiceWorker/v1/</a>
    <dt id="biblio-svg">[SVG]
    <dd>Jon Ferraiolo. <a href="https://www.w3.org/TR/SVG/">Scalable Vector Graphics (SVG) 1.0 Specification</a>. 4 September 2001. REC. URL: <a href="https://www.w3.org/TR/SVG/">https://www.w3.org/TR/SVG/</a>
    <dt id="biblio-touch-events">[TOUCH-EVENTS]
