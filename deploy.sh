@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-if [ "$1" != "--local" -a "$DEPLOY_USER" == "" ]; then
-    echo "No deploy credentials present; skipping deploy"
-    exit 0
-fi
-
 DEPLOY_USER="annevankesteren"
 
 TITLE="DOM Standard"
@@ -19,6 +14,11 @@ WEB_ROOT="dom.spec.whatwg.org"
 COMMITS_DIR="commit-snapshots"
 BRANCHES_DIR="branch-snapshots"
 TESTS_DIR="tests"
+
+if [ "$1" != "--local" -a "$DEPLOY_USER" == "" ]; then
+    echo "No deploy credentials present; skipping deploy"
+    exit 0
+fi
 
 if [ "$1" == "--local" ]; then
     echo "Running a local deploy into $WEB_ROOT directory"
