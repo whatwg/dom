@@ -1029,7 +1029,7 @@ dictionary EventListenerOptions {
 };
 
 dictionary AddEventListenerOptions : EventListenerOptions {
-  boolean passive = false;
+  boolean passive;
   boolean once = false;
 };
 </pre>
@@ -1122,6 +1122,9 @@ are not to be used for anything else. [[!HTML]]
  {{Event/preventDefault()}} method was not invoked, and false otherwise.
 </dl>
 
+<p>Each {{EventTarget}} object can have an associated <dfn export for=EventTarget>default passive algorithm</dfn>.
+The <a for=EventTarget>default passive algorithm</a> is passed an event <var>type</var>, as indicated in the <a>flatten more</a> algorithm.
+
 <p>To <dfn export for=Event id=concept-flatten-options>flatten</dfn> <var>options</var>, run these
 steps:
 
@@ -1142,11 +1145,18 @@ steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var> and <var>passive</var> be false.
+ <li><p>Let <var>once</var> be false.
 
- <li><p>If <var>options</var> is a dictionary, then set <var>passive</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/passive}}</code> and <var>once</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/once}}</code>.
+<li><p>If the <a>context object</a> has a <a for="EventTarget">default passive algorithm</a> let <var>passive</var>
+be the result of calling it; otherwise let <var>passive</var> be false.
+
+ <li><p>If <var>options</var> is a dictionary:
+  <ol>
+   <li><p>Set <var>once</var> to <var>options</var>'s <code>{{AddEventListenerOptions/once}}</code>.
+
+   <li><p>If the <code>{{AddEventListenerOptions/passive}}</code> member of <var>options</var> is specified; then set 
+   <var>passive</var> to <var>options</var>'s <code>{{AddEventListenerOptions/passive}}</code>.
+  </ol>
 
  <li><p>Return <var>capture</var>, <var>passive</var>, and <var>once</var>.
 </ol>
@@ -9878,6 +9888,7 @@ Chris Rebert,
 Cyrille Tuzi,
 Daniel Glazman,
 Darin Fisher,
+Dave Tapuska,
 David Bruant,
 David Flanagan,
 David Håsäther,
