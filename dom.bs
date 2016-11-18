@@ -15,7 +15,7 @@ Logo: https://resources.whatwg.org/logo-dom.svg
 Abstract: DOM defines a platform-neutral model for events and node trees.
 Ignored Terms: EmptyString, Array, Document
 Ignored Vars: p, documentFragment, ev, oldParent, em, processingInstruction, obj, tree, insertedNode, removedNode, C, *, intersects, collapsed
-Boilerplate: omit conformance, omit feedback-header
+Boilerplate: omit feedback-header, omit conformance
 </pre>
 
 <!--
@@ -26,13 +26,9 @@ Bikeshed problems:
 
 <script src=https://resources.whatwg.org/file-issue.js async></script>
 <script src=https://resources.whatwg.org/commit-snapshot-shortcut-key.js async></script>
-<script src=https://resources.whatwg.org/dfn.js defer id=head></script>
+<script src=https://resources.whatwg.org/dfn.js defer></script>
 
-<pre class='anchors'>
-urlPrefix: https://encoding.spec.whatwg.org/; spec: ENCODING
-    type: dfn;
-        text: ascii whitespace
-        text: utf-8
+<pre class=anchors>
 urlPrefix: https://www.w3.org/TR/xml/#NT-
     type: type
         text: Name; url: Name
@@ -117,78 +113,27 @@ This specification standardizes the DOM. It does so as follows:
 </ol>
 
 
-<h2 id=conformance>Conformance</h2>
+<h2 id=infrastructure oldids=terminology,dependencies>Infrastructure</h2>
 
-All diagrams, examples, and notes in this specification are
-non-normative, as are all sections explicitly marked non-normative.
-Everything else in this specification is normative.
+<p>This specification depends on the Infra Standard. [[!INFRA]]
 
-The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-"OPTIONAL" in this document are to be interpreted as described in RFC 2119.
-For readability, these words do not appear in all uppercase letters in this
-specification. [[!RFC2119]]
-
-Requirements phrased in the imperative as part of algorithms
-(such as "strip any leading space characters" or "return false and
-terminate these steps") are to be interpreted with the meaning of the
-keyword ("must", "should", "may", etc.) used in introducing the
-algorithm.
-
-Conformance requirements phrased as algorithms or specific steps
-may be implemented in any manner, so long as the end result is
-equivalent. (In particular, the algorithms defined in this
-specification are intended to be easy to follow, and not intended to
-be performant.)
-
-<p id="hardwareLimitations">User agents may impose
-implementation-specific limits on otherwise unconstrained inputs,
-e.g. to prevent denial of service attacks, to guard against running
-out of memory, or to work around platform-specific limitations.
-
-When a method or an attribute is said to call another method or attribute, the user agent must
-invoke its internal API for that attribute or method so that e.g. the author can't change the
-behavior by overriding attributes or methods with custom properties or functions in JavaScript.
-
-Unless otherwise stated, string comparisons are done in a <a>case-sensitive</a> manner.
-
-<h3 id=dependencies>Dependencies</h3>
-
-The IDL fragments in this specification must be interpreted as
-required for conforming IDL fragments, as described in the Web IDL
-specification. [[!WEBIDL]]
-
-Some of the terms used in this specification are defined in
-<cite>Encoding</cite>, <cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
-<cite>Namespaces in XML</cite>.
+<p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
+<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
 
-<h3 id=extensibility>Extensibility</h3>
+<p>The term <dfn export>context object</dfn> means the object on which the algorithm,
+attribute getter, attribute setter, or method being discussed was called. When the
+<a>context object</a> is unambiguous, the term can be omitted.
 
-Vendor-specific proprietary extensions to this specification are
-strongly discouraged. Authors must not use such extensions, as
-doing so reduces interoperability and fragments the user base,
-allowing only users of specific user agents to access the content in
-question.
-
-When extensions are needed, the DOM Standard can be updated accordingly, or a new standard
+<p>When extensions are needed, the DOM Standard can be updated accordingly, or a new standard
 can be written that hooks into the provided extensibility hooks for
 <dfn export lt="other applicable specifications">applicable specifications</dfn>.
 <!-- https://www.w3.org/mid/17E341CD-E790-422C-9F9A-69347EE01CEB@iki.fi -->
 
-
-<h2 id=terminology>Terminology</h2>
-
-The term <dfn export>context object</dfn> means the object on which the algorithm,
-attribute getter, attribute setter, or method being discussed was called. When the
-<a>context object</a> is unambiguous, the term can be omitted.
-
-<!-- XXX we should prolly explain that "set attribute X to Y" works even for
-readonly attributes when it is language for implementors -->
 
 <h3 id=trees>Trees</h3> <!-- Sorry reddit, this is not /r/trees -->
 
@@ -275,32 +220,6 @@ object is its first <a>following</a>
 The <dfn export for=tree id=concept-tree-index>index</dfn> of an object is its number
 of <a>preceding</a>
 <a for=tree>siblings</a>.
-
-
-<h3 id=strings>Strings</h3>
-
-Comparing two strings in a
-<dfn export lt="case-sensitive|case-sensitively">case-sensitive</dfn> manner means
-comparing them exactly, code point for code point.
-
-Comparing two strings in a
-<dfn export lt="ASCII case-insensitive|ASCII case-insensitively">ASCII case-insensitive</dfn>
-manner means comparing them exactly, code point for code point, except that the characters
-in the range U+0041 to U+005A (i.e. LATIN CAPITAL LETTER A to LATIN CAPITAL LETTER Z),
-inclusive, and the corresponding characters in the range U+0061 to U+007A (i.e.
-LATIN SMALL LETTER A to LATIN SMALL LETTER Z), inclusive, are considered to also match.
-
-<dfn export lt="converted to ASCII uppercase">Converting a string to ASCII uppercase</dfn>
-means replacing all characters in the range U+0061 to U+007A, inclusive, with the
-corresponding characters in the range U+0041 to U+005A, inclusive.
-
-<dfn export lt="converted to ASCII lowercase">Converting a string to ASCII lowercase</dfn>
-means replacing all characters in the range U+0041 to U+005A, inclusive, with the
-corresponding characters in the range U+0061 to U+007A, inclusive.
-
-A string <var>pattern</var> is a <dfn export>prefix match</dfn> for a string <var>s</var>
-when <var>pattern</var> is not longer than <var>s</var> and truncating <var>s</var> to
-<var>pattern</var>'s length leaves the two strings as matches of each other.
 
 
 <h3 id="ordered sets">Ordered sets</h3>
@@ -398,18 +317,6 @@ added.
 
 
 <h3 id=namespaces>Namespaces</h3>
-
-The <dfn export>HTML namespace</dfn> is
-<code>http://www.w3.org/1999/xhtml</code>.
-
-The <dfn export>SVG namespace</dfn> is
-<code>http://www.w3.org/2000/svg</code>.
-
-The <dfn export>XML namespace</dfn> is
-<code>http://www.w3.org/XML/1998/namespace</code>.
-
-The <dfn export>XMLNS namespace</dfn> is
-<code>http://www.w3.org/2000/xmlns/</code>.
 
 To <dfn export>validate</dfn> a <var>qualifiedName</var>, run these steps:
 
@@ -4454,8 +4361,7 @@ for a <a>node</a> <var>root</var> is the {{HTMLCollection}} returned by the foll
 
   <ul>
    <li><p>Whose <a for=Element>namespace</a> is the <a>HTML namespace</a> and whose
-   <a for=Element>qualified name</a> is <var>qualifiedName</var>,
-   <a>converted to ASCII lowercase</a>.
+   <a for=Element>qualified name</a> is <var>qualifiedName</var>, in <a>ASCII lowercase</a>.
 
    <li><p>Whose <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a> and whose
    <a for=Element>qualified name</a> is <var>qualifiedName</var>.
@@ -4930,9 +4836,8 @@ invoked, must run these steps:
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
  <a>throw</a> an {{InvalidCharacterError}}.
 
- <li>If the <a>context object</a> is an <a>HTML document</a>,
- let <var>localName</var> be
- <a>converted to ASCII lowercase</a>.
+ <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ <var>localName</var> in <a>ASCII lowercase</a>.
  <!-- XXX why restrict this to HTML documents? -->
 
  <li>Let <var>is</var> be the value of <code>is</code> member of <var>options</var>, or null if no
@@ -5140,8 +5045,8 @@ invoked, must run these steps:
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
  then <a>throw</a> an {{InvalidCharacterError}}.
 
- <li>If the <a>context object</a> is an <a>HTML document</a>, let
- <var>localName</var> be <a>converted to ASCII lowercase</a>.
+ <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ <var>localName</var> in <a>ASCII lowercase</a>.
 
  <li>Return a new <a>attribute</a> whose <a for=Attr>local name</a> is <var>localName</var> and
  <a for=Node>node document</a> is <a>context object</a>.
@@ -6031,8 +5936,9 @@ To <dfn export id=concept-element-attributes-get-by-name>get an attribute by nam
 <var>qualifiedName</var> and <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
- <li><p>If <var>element</var> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
- <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
+ <li><p>If <var>element</var> is in the <a>HTML namespace</a> and its <a for=Node>node document</a>
+ is an <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
+ <a>ASCII lowercase</a>.
 
  <li><p>Return the first <a>attribute</a> in <var>element</var>'s <a for=Element>attribute list</a>
  whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and null otherwise.
@@ -6217,8 +6123,9 @@ steps:
 <ol>
  <li><p>Let <var>qualifiedName</var> be <a>context object</a>'s <a for=Element>qualified name</a>.
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is
- an <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII uppercase</a>.
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
+ <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
+ <var>qualifiedName</var> in <a>ASCII uppercase</a>.
 
  <li>Return <var>qualifiedName</var>.
 </ol>
@@ -6308,8 +6215,9 @@ method, when invoked, must run these steps:
  <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
  XML, then <a>throw</a> an {{InvalidCharacterError}}.
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is
- an <a>HTML document</a>, let <var>qualifiedName</var> be <a>converted to ASCII lowercase</a>.
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
+ <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
+ <var>qualifiedName</var> in <a>ASCII lowercase</a>.
 
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
@@ -6355,8 +6263,8 @@ when invoked, must run these steps:
 
 <ol>
  <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, let <var>qualifiedName</var> be
- <a>converted to ASCII lowercase</a>.
+ <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
+ <var>qualifiedName</var> in <a>ASCII lowercase</a>.
 
  <li><p>Return true if the <a>context object</a> <a lt="has an attribute">has</a> an
  <a>attribute</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and false
@@ -6665,7 +6573,7 @@ steps:
   each <var>name</var> in <var>names</var>, run these substeps:
 
   <ol>
-   <li><p>Let <var>lowercaseName</var> be <var>name</var>, <a>converted to ASCII lowercase</a>.
+   <li><p>Let <var>lowercaseName</var> be <var>name</var>, in <a>ASCII lowercase</a>.
 
    <li><p>If <var>lowercaseName</var> is not equal to <var>name</var>, remove <var>name</var> from
    <var>names</var>.
@@ -9407,8 +9315,7 @@ associated <a>attribute</a>'s <a for=Attr>local name</a>.
  <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
  <a for=Node>supported tokens</a>, <a>throw</a> a <code>TypeError</code>.
 
- <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>,
- <a>converted to ASCII lowercase</a>.
+ <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>, in <a>ASCII lowercase</a>.
 
  <li><p>If <var>lowercase token</var> is present in <a for=Node>supported tokens</a>, return true.
 
