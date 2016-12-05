@@ -2,9 +2,12 @@
 
 This is the repository in which the W3C snapshot version of the DOM Standard is maintained.
 
-If you wish to file issues or provide pull requests against the standard rather than the snapshots
-or the tools that produce them, we recommend you do so against the
+If you wish to file issues or provide pull requests for new features, you are also encouraged to look at the
 [upstream repository](https://github.com/whatwg/dom).
+
+# Plan for DOM 4.1
+
+TBD...
 
 ## How this works
 
