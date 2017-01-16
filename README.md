@@ -7,13 +7,12 @@ If you wish to file issues or provide pull requests for new features, you are al
 
 # Plan for DOM 4.1
 
-TBD...
+The [W3C Web Platform WG](https://www.w3.org/2016/11/webplatform-charter.html) is chartered to update the DOM specification.
+
+The highest priority is issues that are clearly undecided. All inputs are welcome.  
 
 ## How this works
 
-The `master` branch tracks the upstream repository, no local changes are made to it. The `gh-pages`
-branch contains merges from `master`, tools to produce the snapshot, and the snapshot itself as
-`index.html`.
+The `dom4.1` branch maintains the Bikeshed source document. The `gh-pages`
+branch contains a snapshot as `index.html`. Historical files are still available in "dom4" branch.
 
-Where needed, feature branches are used in order to make pull requests against the upstream 
-repository.
