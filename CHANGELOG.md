@@ -1,1 +1,3 @@
-TBD
+* 30 Dec 2016 - file issues...
+* 23 Jan 2017 - converted DOM4 REC into a Bikeshed document.
+* 24 Jan 2017 - FPWD of DOM 4.1.

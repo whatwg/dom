@@ -14,5 +14,5 @@ The highest priority is issues that are clearly undecided. All inputs are welcom
 ## How this works
 
 The `dom4.1` branch maintains the Bikeshed source document. The `gh-pages`
-branch contains a snapshot as `index.html`. Historical files are still available in "dom4" branch.
+branch contains a snapshot as `index.html`. Historical files are still available in `dom4` branch.
 
