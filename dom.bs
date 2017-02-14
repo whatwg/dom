@@ -1158,7 +1158,8 @@ for discussion).
 <h3 id=dispatching-events>Dispatching events</h3>
 
 <p>To <dfn export id=concept-event-dispatch>dispatch</dfn> an <var>event</var> to a
-<var>target</var>, with an optional <var>legacy target override flag</var>, run these steps:
+<var>target</var>, with an optional <var>legacy target override flag</var> and an optional
+<var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
@@ -1250,7 +1251,7 @@ for discussion).
    <li><p>Run the <a>retargeting steps</a> with <var>event</var>.
 
    <li><p>If <var>tuple</var>'s <b>target</b> is null, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var>.
+   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
   </ol>
 
  <li>
@@ -1274,7 +1275,7 @@ for discussion).
    <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
    and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
    {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var>.
+   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
   </ol>
 
  <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
@@ -1302,7 +1303,7 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
-<var>event</var>, run these steps:
+<var>event</var> and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then terminate these steps.
@@ -1319,7 +1320,7 @@ for discussion).
  <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>object</var>.
 
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> <var>object</var> with
- <var>event</var> and <var>listeners</var>.
+ <var>event</var>, <var>listeners</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
 
  <li>
   <p>If <var>found</var> is false and <var>event</var>'s {{Event/isTrusted}} attribute is true, then
@@ -1344,14 +1345,16 @@ for discussion).
       <tr><td>"<code>transitionend</code>"<td>"<code>webkitTransitionEnd</code>"
     </table>
 
-   <li><p><a>Inner invoke</a> <var>object</var> with <var>event</var> and <var>listeners</var>.
+   <li><p><a>Inner invoke</a> <var>object</var> with <var>event</var>, <var>listeners</var>, and
+   <var>legacyOutputDidListenersThrowFlag</var> if given.
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn> an <var>object</var>
-with <var>event</var> and <var>listeners</var>, run these steps:
+with <var>event</var>, <var>listeners</var>, and an optional
+<var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>Let <var>found</var> be false.
@@ -1382,10 +1385,21 @@ with <var>event</var> and <var>listeners</var>, run these steps:
    <li><p>If <var>listener</var>'s <b>passive</b> is true, set <var>event</var>'s
    <a>in passive listener flag</a>.
 
-   <li><p><a>Call a user object's operation</a> with <var>listener</var>'s <b>callback</b>,
-   "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and
-   <var>event</var>'s {{Event/currentTarget}} attribute value as the <a>callback this value</a>. If
-   this throws an exception, <a>report the exception</a>.
+   <li>
+    <p><a>Call a user object's operation</a> with <var>listener</var>'s <b>callback</b>,
+    "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and
+    <var>event</var>'s {{Event/currentTarget}} attribute value as the <a>callback this value</a>. If
+    this throws an exception, then:
+
+    <ol>
+     <li><p><a>Report the exception</a>.
+
+     <li>
+      <p>Set <var>legacyOutputDidListenersThrowFlag</var> if given.
+
+      <p class=note>The <var>legacyOutputDidListenersThrowFlag</var> is only used by Indexed
+      Database API. [[INDEXEDDB]]
+    </ol>
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
 
