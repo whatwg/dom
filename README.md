@@ -90,4 +90,4 @@ space).
 ### Tests
 
 Tests can be found in the `dom/` directory of
-[`w3c/web-platform-tests`](https://github.com/w3c/web-platform-tests).
+[`web-platform-tests`](https://github.com/w3c/web-platform-tests).
