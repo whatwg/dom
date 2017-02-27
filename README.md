@@ -1,9 +1,10 @@
 # DOM Standard
 
-This is the repository in which the W3C snapshot version of the DOM Standard is maintained.
+This is the repository in which the W3C's DOM Core specification is maintained.
 
-If you wish to file issues or provide pull requests for new features, you are also encouraged to look at the
-[upstream repository](https://github.com/whatwg/dom).
+Please feel free to [file issues](https://github.com/w3c/dom/issues). 
+We love pull requests, but please note that you will need to
+[commit to the W3C Patent Policy, and license your content under the W3C Software and Document license](CONTRIBUTORS.md).
 
 # Plan for DOM 4.1
 
