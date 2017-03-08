@@ -70,6 +70,9 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Construct; url: sec-construct; type: abstract-op
     text: Realm; url: realm; type: dfn
+urlPrefix: https://w3c.github.io/hr-time/#
+    type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
+    type:dfn; text: time origin
 </pre>
 
 <pre class='link-defaults'>
@@ -522,7 +525,7 @@ interface Event {
   readonly attribute boolean composed;
 
   [Unforgeable] readonly attribute boolean isTrusted;
-  readonly attribute DOMTimeStamp timeStamp;
+  readonly attribute DOMHighResTimeStamp timeStamp;
 
   void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // historical
 };
@@ -628,8 +631,8 @@ algorithm below.
  false otherwise.
 
  <dt><code><var>event</var> . {{Event/timeStamp}}</code>
- <dd>Returns the creation time of <var>event</var> as the number of milliseconds that
- passed since 00:00:00 UTC on 1 January 1970.
+ <dd>Returns the <var>event</var>'s timestamp as the number of milliseconds measured relative
+ from the <a>time origin</a>.
 </dl>
 
 The <dfn attribute for=Event><code>type</code></dfn> attribute must
@@ -761,15 +764,14 @@ initialized to false.
 the user agent to dispatch an <a>event</a> whose {{Event/isTrusted}} attribute is initialized to
 false.
 
-The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute
-must return the value it was initialized to. When an
-<a>event</a> is created the attribute must be
-initialized to the number of milliseconds that have passed since
-00:00:00 UTC on 1 January 1970, ignoring leap seconds.
-<!-- leap seconds are ignored by JavaScript too -->
+The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute must return the value it was
+initialized to. If available, the attribute should be initialized with the high resolution time of
+the occurrence that the event is signaling, for example the moment when a particular user
+interaction occurred. Otherwise it should be initialized with the time representing the creation
+time of the <var>event</var>.
 
-<p class=XXX>This is highly likely to change and already does not reflect implementations well.
-Please see <a href=https://github.com/whatwg/dom/issues/23>dom #23</a> for more details.
+<p class=note>User agents are encouraged to make the high resolution time occurrence time
+available for as many events as possible in particular those related to user interaction.
 
 <hr>
 
@@ -9569,6 +9571,9 @@ other chapters are defined by the <cite>UI Events</cite> specification.
  <li>The propagation and canceled flags are unset when invoking
  {{Event/initEvent()}} rather than after
  dispatch.
+ <li>{{Event/timeStamp}} is no longer a {{DOMTimeStamp}} representing creation time of event as
+ the number of milliseconds that passed since 00:00:00 UTC on 1 January 1970, but instead a
+ {{DOMHighResTimeStamp}}.
 </ul>
 
 
