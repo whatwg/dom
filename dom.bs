@@ -850,8 +850,7 @@ The
 method must, when invoked, run these steps:
 
 <ol>
- <li>If <a>context object</a>'s <a>dispatch flag</a> is set, terminate
- these steps.
+ <li>If <a>context object</a>'s <a>dispatch flag</a> is set, then return.
 
  <li><a>Initialize</a> the
  <a>context object</a> with <var>type</var>, <var>bubbles</var>, and
@@ -1088,7 +1087,7 @@ method, when invoked, must run these steps:
   to avoid non-deterministic changes to the event listeners, invocation of the method is allowed
   only during the very first evaluation of the service worker script.
 
- <li><p>If <var>callback</var> is null, terminate these steps.
+ <li><p>If <var>callback</var> is null, then return.
 
  <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
  <a lt="flatten more">flattening more</a> <var>options</var>.
@@ -1306,13 +1305,13 @@ for discussion).
 <var>event</var> and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
- <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then terminate these steps.
+ <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Let <var>listeners</var> be the empty list.
+ <li><p>Let <var>listeners</var> be a new <a>list</a>.
 
  <li>
-  <p>For each <a>event listener</a> associated with <var>object</var>, append a pointer to the
-  <a>event listener</a> to <var>listeners</var>.
+  <p>For each <a>event listener</a> associated with <var>object</var>, <a for=list>append</a> a
+  pointer to the <a>event listener</a> to <var>listeners</var>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <b>removed</b> field.
@@ -1332,8 +1331,7 @@ for discussion).
    <li>
     <p>If <var>event</var>'s {{Event/type}} attribute value is a match for any of the strings in the
     first column in the following table, set <var>event</var>'s {{Event/type}} attribute value to
-    the string in the second column on the same row as the matching string, and terminate these
-    substeps otherwise.
+    the string in the second column on the same row as the matching string, and return otherwise.
 
     <table>
      <thead>
@@ -1360,29 +1358,27 @@ with <var>event</var>, <var>listeners</var>, and an optional
  <li><p>Let <var>found</var> be false.
 
  <li>
-  <p>For each <var>listener</var> in <var>listeners</var>, whose <b>removed</b> is false, run
-  these substeps:
+  <p><a for=list>For each</a> <var>listener</var> in <var>listeners</var>, whose <b>removed</b> is
+  false:
 
   <ol>
    <li><p>If <var>event</var>'s {{Event/type}} attribute value is not <var>listener</var>'s
-   <b>type</b>, terminate these substeps (and run them for the next <a>event listener</a>).
+   <b>type</b>, then <a for=iteration>continue</a>.
 
    <li><p>Set <var>found</var> to true.
 
    <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}
-   and <var>listener</var>'s <b>capture</b> is false, terminate these substeps (and run them for the
-   next <a>event listener</a>).
+   and <var>listener</var>'s <b>capture</b> is false, then <a for=iteration>continue</a>.
 
    <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/BUBBLING_PHASE}} and
-   <var>listener</var>'s <b>capture</b> is true, terminate these substeps (and run them for the next
-   <a>event listener</a>).
+   <var>listener</var>'s <b>capture</b> is true, then <a for=iteration>continue</a>.
 
    <li><p>If <var>listener</var>'s <b>once</b> is true, then remove <var>listener</var> from
    <var>object</var>'s associated list of <a>event listeners</a>.
    <!-- Do this before invocation to avoid reentrancy issues. No need to set removed to true since
         each listener in listeners is run once anyway. -->
 
-   <li><p>If <var>listener</var>'s <b>passive</b> is true, set <var>event</var>'s
+   <li><p>If <var>listener</var>'s <b>passive</b> is true, then set <var>event</var>'s
    <a>in passive listener flag</a>.
 
    <li>
@@ -1403,8 +1399,8 @@ with <var>event</var>, <var>listeners</var>, and an optional
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
 
-   <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set,
-   return <var>found</var>.
+   <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set, then return
+   <var>found</var>.
   </ol>
 
  <li><p>Return <var>found</var>.
@@ -2642,7 +2638,7 @@ must run these steps:
 <ol>
  <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, terminate these steps.
+ <li><p>If <var>parent</var> is null, then return.
 
  <li><p>Let <var>viablePreviousSibling</var> be <a>context object</a>'s first
  <a>preceding</a> <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
@@ -2664,7 +2660,7 @@ must run these steps:
 <ol>
  <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, terminate these steps.
+ <li><p>If <var>parent</var> is null, then return.
 
  <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
  <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
@@ -2682,7 +2678,7 @@ invoked, must run these steps:
 <ol>
  <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, terminate these steps.
+ <li><p>If <var>parent</var> is null, then return.
 
  <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
  <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
@@ -2704,7 +2700,7 @@ invoked, must run these steps:
 steps:
 
 <ol>
- <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, terminate these steps.
+ <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, then return.
 
  <li><p><a>Remove</a> the <a>context object</a> from <a>context object</a>'s
  <a for=tree>parent</a>.
@@ -2948,8 +2944,7 @@ associated list of {{MutationObserver}} objects, which is initially empty.
 To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
 
 <ol>
- <li>If <a>mutation observer compound microtask queued flag</a> is set, terminate
- these steps.
+ <li>If <a>mutation observer compound microtask queued flag</a> is set, then return.
 
  <li>Set <a>mutation observer compound microtask queued flag</a>.
 
@@ -6037,7 +6032,7 @@ using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</
  <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is <var>value</var>, and
  <a for=Node>node document</a> is <var>element</var>'s <a for=Node>node document</a>, then
  <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
- terminate these steps.
+ return.
 
  <li><a lt="change an attribute">Change</a>
  <var>attribute</var> from <var>element</var> to
@@ -6250,7 +6245,7 @@ method, when invoked, must run these steps:
  <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
  <var>value</var>, and <a for=Node>node document</a> is <a>context object</a>'s
  <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
- <a>context object</a>, and then terminate these steps.
+ <a>context object</a>, and then return.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> from <a>context object</a> to
  <var>value</var>.
@@ -6878,7 +6873,7 @@ To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=conc
  <var>offset</var><sup>th</sup>
  <a>code unit</a> to the end of
  <var>node</var>'s <a for=CharacterData>data</a>, and then
- terminate these steps.
+ return.
 
  <li>Return a string whose value is the
  <a>code units</a> from the
@@ -7760,7 +7755,7 @@ method, when invoked, must run these steps:
 run these steps:
 
 <ol>
- <li>If <a for=Range>start</a> is <a for=Range>end</a>, terminate these steps.
+ <li>If <a for=Range>start</a> is <a for=Range>end</a>, then return.
  <!-- This might actually make no difference, but it's not immediately
  obvious what would happen otherwise if the start/end were text/comment:
  are all the substeps of the next step actually no-ops, or could some have
@@ -7783,8 +7778,7 @@ run these steps:
  <var>original start node</var>, offset
  <var>original start offset</var>, count
  <var>original end offset</var> minus
- <var>original start offset</var>, and data the empty string, and then
- terminate these steps.
+ <var>original start offset</var>, and data the empty string, and then return.
 
  <li>Let <var>nodes to remove</var> be a list of all the
  <a>nodes</a> that are <a>contained</a> in
@@ -8766,7 +8760,7 @@ The <dfn><code>NodeIterator</code> pre-removing steps</dfn> given a
 
 <ol>
  <li><p>If <var>toBeRemovedNode</var> is not an <a for=tree>inclusive ancestor</a> of the
- {{NodeIterator/referenceNode}} attribute value, terminate these steps.
+ {{NodeIterator/referenceNode}} attribute value, then return.
 
  <li>
   <p>If the {{NodeIterator/pointerBeforeReferenceNode}} attribute value is true, run these
@@ -8778,11 +8772,11 @@ The <dfn><code>NodeIterator</code> pre-removing steps</dfn> given a
    <a for=traversal>root</a> and is not an <a>inclusive descendant</a> of
    <var>toBeRemovedNode</var>, and null if there is no such <a>node</a>.
 
-   <li><p>If <var>next</var> is non-null, set <var>nodeIterator</var>'s
-   {{NodeIterator/referenceNode}} attribute to <var>next</var> and terminate these steps.
+   <li><p>If <var>next</var> is non-null, then set <var>nodeIterator</var>'s
+   {{NodeIterator/referenceNode}} attribute to <var>next</var> and return.
 
    <li>
-    Otherwise, set <var>nodeIterator</var>'s
+    <p>Otherwise, set <var>nodeIterator</var>'s
     {{NodeIterator/pointerBeforeReferenceNode}} attribute to false.
 
     <p class="note no-backref">Steps are not terminated here.
@@ -9518,7 +9512,7 @@ method, when invoked, must run these steps:
  <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>, then
  <a>throw</a> an {{InvalidCharacterError}}.
 
- <li><p>If <var>token</var> is not in <a>tokens</a>, terminate these steps.
+ <li><p>If <var>token</var> is not in <a>tokens</a>, then return.
 
  <li><p>Replace <var>token</var> in <a>tokens</a> with <var>newToken</var>.
 
