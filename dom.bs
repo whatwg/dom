@@ -1419,6 +1419,88 @@ that gave folks all the wrong ideas. <a>Events</a> do not represent or cause act
 can only be used to influence an ongoing one.
 
 
+<h3 id=controlling-promises>Controlling {{Promise}}s</h3>
+
+<p>Though {{Promise}} objects don't have any built-in cancellation mechanism, many
+{{Promise}}-vending APIs require cancellation semantics. {{PromiseController}} is meant to support
+these requirements by providing an {{PromiseController/abort()}} method that toggles the state of
+a corresponding {{PromiseSignal}} object. The API which wishes to support cancelation can accept
+such a {{PromiseSignal}}, and use its state to determine how (not) to proceed.
+
+<div class=note>
+  For example, a hypothetical <code>DoAmazingness({ ... })</code> method could accept a
+  {{PromiseSignal}} object in order to support cancellation as follows:
+
+  <pre class=lang-javascript>
+    const controller = new PromiseController();
+    const signal = controller.signal;
+    DoAmazingness({ ..., signal }).then(result => ...);
+
+    ...
+
+    controller.abort();
+  </pre>
+
+  APIs that require more granular control could extend both {{PromiseController}} and
+  {{PromiseSignal}} according to their needs.
+</div>
+
+<h4 id=interface-promisecontroller>Interface {{PromiseController}}</h3>
+
+<pre class="idl">
+[Constructor(), Exposed=(Window,Worker)]
+interface PromiseController {
+  readonly attribute PromiseSignal signal;
+
+  void abort();
+};
+</pre>
+<dl class=domintro>
+ <dt><code><var>controller</var> = new <a constructor lt="PromiseController()">PromiseController</a>()</code>
+ <dd>Returns a new <var>controller</var> whose {{PromiseController/signal}} attribute value is set
+ to a newly created {{PromiseSignal}} object.
+
+ <dt><code><var>controller</var> . </code>{{PromiseController/signal}}
+ <dd>Returns the {{PromiseSignal}} object associated with this object.
+
+ <dt><code><var>controller</var> . </code>{{PromiseController/abort()}}
+ <dd>Invoking this method will set this object's {{PromiseSignal}}'s [=PromiseSignal/aborted flag=],
+ thereby signaling to any observers that the associated activity should be aborted.
+</dl>
+
+The <dfn attribute for=PromiseController>signal</dfn> attribute must return the value to which it
+was initialized. When a {{PromiseController}} is created, the attribute must be initialized to a
+newly created {{PromiseSignal}} object.
+
+The <dfn method for=PromiseController><code>abort()</code></dfn>, when invoked, must run these
+steps:
+
+<ol>
+ <li>Let <var>signal</var> be this object's {{PromiseController/signal}}.
+ <li>Set <var>signal</var>'s [=PromiseSignal/aborted flag=].
+ <li>[=Fire an event=] named <code>abort</code> at <var>signal</var>.</li>
+</ol>
+
+<h4 id=interface-cancellationcontroller>Interface {{PromiseSignal}}</h4>
+
+<pre class="idl">
+[Exposed=(Window,Worker)]
+interface PromiseSignal : EventTarget {
+  readonly attribute boolean aborted;
+
+  attribute EventHandler onabort;
+};
+</pre>
+<dl class=domintro>
+ <dt><code><var>signal</var> . </code>{{PromiseSignal/aborted}}
+ <dd>Returns true if this {{PromiseSignal}} has been aborted, and false otherwise.
+</dl>
+
+Each {{PromiseSignal}} has an <dfn for=PromiseSignal>aborted flag</dfn> which is unset unless
+otherwise specified.
+
+The <dfn attribute for=PromiseSignal>aborted</dfn> attribute's getter must return true if the
+object's [=PromiseSignal/aborted flag=] is set, and false otherwise.
 
 <h2 id=nodes>Nodes</h2>
 
