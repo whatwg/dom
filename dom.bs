@@ -13,7 +13,7 @@ No Editor: true
 !Tests: <a href=https://github.com/w3c/web-platform-tests/tree/master/dom>web-platform-tests dom/</a> (<a href=https://github.com/w3c/web-platform-tests/labels/dom>ongoing work</a>)
 !Translation (non-normative): <span title=Japanese><a href=https://triple-underscore.github.io/DOM4-ja.html lang=ja hreflang=ja rel=alternate>日本語</a></span>
 Logo: https://resources.whatwg.org/logo-dom.svg
-Abstract: DOM defines a platform-neutral model for events and node trees.
+Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Ignored Terms: EmptyString, Array, Document
 Boilerplate: omit feedback-header, omit conformance
 </pre>
@@ -557,7 +557,7 @@ algorithm below.
  the operation that caused <var>event</var> to be <a>dispatched</a> that it needs to be canceled.
 
  <dt><code><var>event</var> . {{Event/defaultPrevented}}</code>
- <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancellation,
+ <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancelation,
  and false otherwise.
 
  <dt><code><var>event</var> . {{Event/composed}}</code>
@@ -1413,6 +1413,228 @@ can only be used to influence an ongoing one.
 
 
 
+<h2 id=aborting-ongoing-activities>Aborting ongoing activities</h3>
+
+<p>Though promises do not have a built-in aborting mechanism, many APIs using them require abort
+semantics. {{AbortController}} is meant to support these requirements by providing an
+{{AbortController/abort()}} method that toggles the state of a corresponding {{AbortSignal}} object.
+The API which wishes to support aborting can accept an {{AbortSignal}} object, and use its state to
+determine how to proceed.
+
+<p>APIs that rely upon {{AbortController}} are encouraged to respond to {{AbortController/abort()}}
+by rejecting any unsettled promise with a new {{DOMException}} with [=error name=] "{{AbortError}}".
+
+<div class=example id=aborting-ongoing-activities-example>
+ <p>A hypothetical <code>doAmazingness({ ... })</code> method could accept an {{AbortSignal}} object
+ in order to support aborting as follows:
+
+ <pre><code class=lang-javascript>
+const controller = new AbortController();
+const signal = controller.signal;
+
+startSpinner();
+
+doAmazingness({ ..., signal })
+  .then(result => ...)
+  .catch(err => {
+    if (err.name == 'AbortError') return;
+    showUserErrorMessage();
+  })
+  .then(() => stopSpinner());
+
+// &hellip;
+
+controller.abort();</code></pre>
+
+ <p><code>doAmazingness</code> could be implemented as follows:
+
+ <pre><code class=lang-javascript>
+function doAmazingness({signal}) {
+  return new Promise((resolve, reject) => {
+    // Begin doing amazingness, and call resolve(result) when done.
+    // But also, watch for signals:
+    signal.addEventListener('abort', () => {
+      // Stop doing amazingness, and:
+      reject(new DOMException('Aborted', 'AbortError'));
+    });
+  });
+}
+</code></pre>
+
+ <p>APIs that require more granular control could extend both {{AbortController}} and
+ {{AbortSignal}} objects according to their needs.
+</div>
+
+
+<h3 id=interface-abortcontroller>Interface {{AbortController}}</h3>
+
+<pre class="idl">
+[Constructor,
+ Exposed=(Window,Worker)]
+interface AbortController {
+  [SameObject] readonly attribute AbortSignal signal;
+
+  void abort();
+};</pre>
+
+<dl class=domintro>
+ <dt><code><var>controller</var> = new <a constructor lt=AbortController()>AbortController</a>()</code>
+ <dd>Returns a new <var>controller</var> whose {{AbortController/signal}} is set to a newly
+ created {{AbortSignal}} object.
+
+ <dt><code><var>controller</var> . <a attribute for=AbortController>signal</a></code>
+ <dd>Returns the {{AbortSignal}} object associated with this object.
+
+ <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>()</code>
+ <dd>Invoking this method will set this object's {{AbortSignal}}'s [=AbortSignal/aborted flag=] and
+ signal to any observers that the associated activity is to be aborted.
+</dl>
+
+<p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
+{{AbortSignal}} object).
+
+<p>The <dfn constructor for=AbortController><code>AbortController()</code></dfn> constructor, when
+invoked, must run these steps:
+
+<ol>
+ <li><p>Let <var>signal</var> be a new {{AbortSignal}} object.
+
+ <li><p>Let <var>controller</var> be a new {{AbortController}} object whose
+ <a for=AbortController>signal</a> is <var>signal</var>.
+
+ <li><p>Return <var>controller</var>.
+</ol>
+
+<p>The <dfn attribute for=AbortController><code>signal</code></dfn> attribute's getter must return
+<a>context object</a>'s <a for=AbortController>signal</a>.
+
+<p>The <dfn method for=AbortController><code>abort()</code></dfn> method, when invoked, must
+<a for=AbortSignal>signal abort</a> on <a>context object</a>'s <a for=AbortController>signal</a>.
+
+
+<h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
+
+<pre class="idl">
+[Exposed=(Window,Worker)]
+interface AbortSignal : EventTarget {
+  readonly attribute boolean aborted;
+
+  attribute EventHandler onabort;
+};</pre>
+
+<dl class=domintro>
+ <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
+ <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort, and false
+ otherwise.
+</dl>
+
+<p>An {{AbortSignal}} object has an associated <dfn for=AbortSignal>aborted flag</dfn>. It is unset
+unless specified otherwise.
+
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
+<a for=/>set</a> of algorithms which are to be executed when its [=AbortSignal/aborted flag=] is
+set. Unless specified otherwise, its value is the empty set.
+
+<p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
+object <var>signal</var>, run these steps:
+
+<ol>
+ <li><p>If <var>signal</var>'s <a for=AbortSignal>aborted flag</a> is set, then return.
+
+ <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
+ <a for=AbortSignal>abort algorithms</a>.
+</ol>
+
+<p>To <dfn export for=AbortSignal>remove</dfn> an algorithm <var>algorithm</var> from an
+{{AbortSignal}} <var>signal</var>, <a for=set>remove</a> <var>algorithm</var> from
+<var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+
+<p class="note no-backref">The [=AbortSignal/abort algorithms=] enable APIs with complex
+requirements to react in a reasonable way to {{AbortController/abort()}}. For example, a given API's
+[=AbortSignal/aborted flag=] might need to be propagated to a cross-thread environment, such as a
+service worker.
+
+<p>The <dfn attribute for=AbortSignal>aborted</dfn> attribute's getter must return true if
+<a>context object</a>'s [=AbortSignal/aborted flag=] is set, and false otherwise.
+
+<p class=note>Changes to an {{AbortSignal}} object represent the wishes of the corresponding
+{{AbortController}} object, but an API observing the {{AbortSignal}} object can chose to ignore
+them. For instance, if the operation has already completed.
+
+<p>To <dfn export for=AbortSignal>signal abort</dfn>, given a {{AbortSignal}} object
+<var>signal</var>, run these steps:
+
+<ol>
+ <li><p>If <var>signal</var>'s [=AbortSignal/aborted flag=] is set, then return.
+
+ <li><p>Set <var>signal</var>'s [=AbortSignal/aborted flag=].
+
+ <li><p><a for=set>For each</a> <var>algorithm</var> in <var>signal</var>'s
+ [=AbortSignal/abort algorithms=]: run <var>algorithm</var>.
+
+ <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+
+ <li><p>[=Fire an event=] named <code event for=AbortSignal>abort</code> at <var>signal</var>.
+</ol>
+
+
+<h3 id=abortcontroller-api-integration>Using {{AbortController}} and {{AbortSignal}} objects in
+APIs</h3>
+
+<p>Any web platform API using promises to represent operations that can be aborted must adhere to
+the following:
+
+<ul class=brief>
+ <li>Accept {{AbortSignal}} objects through a <code>signal</code> dictionary member.
+ <li>Convey that the operation got aborted by rejecting the promise with an "{{AbortError}}"
+ {{DOMException}}.
+ <li>Reject immediately if the {{AbortSignal}}'s [=AbortSignal/aborted flag=] is already set,
+ otherwise:
+ <li>Use the [=AbortSignal/abort algorithms=] mechanism to observe changes to the {{AbortSignal}}
+ object and do so in a manner that does not lead to clashes with other observers.
+</ul>
+
+<div class=example id=aborting-ongoing-activities-spec-example>
+ <p>The steps for a promise-returning method <code>doAmazingness(options)</code> could be as
+ follows:
+
+ <ol>
+  <li><p>Let |p| be [=a new promise=].
+
+  <li>
+   <p>If |options|' <code>signal</code> member is present, then:
+
+   <ol>
+    <li><p>If |options|' <code>signal</code>'s [=AbortSignal/aborted flag=] is set, then [=reject=]
+    |p| with an "{{AbortError}}" {{DOMException}} and return |p|.
+
+    <li>
+     <p>[=AbortSignal/Add|Add the following abort steps=] to |options|' <code>signal</code>:
+
+     <ol>
+      <li><p>Stop doing amazing things.
+
+      <li><p>[=Reject=] |p| with an "{{AbortError}}" {{DOMException}}.
+     </ol>
+   </ol>
+
+  <li>
+   <p>Run these steps [=in parallel=]:
+
+   <ol>
+    <li><p>Let |amazingResult| be the result of doing some amazing things.
+
+    <li><p>[=Resolve=] |p| with |amazingResult|.
+   </ol>
+
+  <li><p>Return |p|.
+ </ol>
+</div>
+
+<p>APIs not using promises should still adhere to the above as much as possible.
+
+
+
 <h2 id=nodes>Nodes</h2>
 
 <h3 id=introduction-to-the-dom>Introduction to "The DOM"</h3>
@@ -1931,7 +2153,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
  <li>If <var>node</var> is a {{DocumentFragment}}
  <a>node</a>,
- <a>remove</a> its
+ <a for=/>remove</a> its
  <a>children</a> with the
  <i>suppress observers flag</i> set.
 
@@ -2103,7 +2325,7 @@ within a <var>parent</var>, run these steps:
   <ol>
    <li><p>Set <var>removedNodes</var> to a list solely containing <var>child</var>.
 
-   <li><p><a>Remove</a> <var>child</var> from its <var>parent</var> with the
+   <li><p><a for=/>Remove</a> <var>child</var> from its <var>parent</var> with the
    <i>suppress observers flag</i> set.
   </ol>
 
@@ -2144,7 +2366,7 @@ To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
  <a>node</a>, and a list containing <var>node</var>
  otherwise.
 
- <li><a>Remove</a> all
+ <li><a for=/>Remove</a> all
  <var>parent</var>'s <a>children</a>, in
  <a>tree order</a>, with the
  <i>suppress observers flag</i> set.
@@ -2169,8 +2391,7 @@ To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> fr
  <li>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
  {{NotFoundError}}.
 
- <li><a>Remove</a> <var>child</var>
- from <var>parent</var>.
+ <li><a for=/>Remove</a> <var>child</var> from <var>parent</var>.
 
  <li>Return <var>child</var>.
  <!-- technically this is post-remove -->
@@ -2180,7 +2401,7 @@ To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> fr
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-remove-ext>removing steps</dfn> for all or some <a>nodes</a>. The
 algorithm is passed <var ignore>removedNode</var>, and optionally <var ignore>oldParent</var>, as
-indicated in the <a>remove</a> algorithm below.
+indicated in the <a for=/>remove</a> algorithm below.
 
 <p>To <dfn export id=concept-node-remove>remove</dfn> a <var>node</var> from a <var>parent</var>,
 with an optional <i>suppress observers flag</i>, run these steps:
@@ -2651,7 +2872,7 @@ steps:
 <ol>
  <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, then return.
 
- <li><p><a>Remove</a> the <a>context object</a> from <a>context object</a>'s
+ <li><p><a for=/>Remove</a> the <a>context object</a> from <a>context object</a>'s
  <a for=tree>parent</a>.
 </ol>
 
@@ -3810,8 +4031,8 @@ steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>no
 <ol>
  <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>If <var>length</var> is zero, then <a>remove</a> <var>node</var> and continue with the next
- <a>exclusive <code>Text</code> node</a>, if any.
+ <li>If <var>length</var> is zero, then <a for=/>remove</a> <var>node</var> and continue with the
+ next <a>exclusive <code>Text</code> node</a>, if any.
 
  <li>Let <var>data</var> be the concatenation of the <a for=CharacterData>data</a> of
  <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in
@@ -3849,8 +4070,8 @@ steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>no
    <li><p>Set <var>currentNode</var> to its <a for=tree>next sibling</a>.
   </ol>
 
- <li><a>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding
- itself), in <a>tree order</a>.
+ <li><a for=/>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a>
+ (excluding itself), in <a>tree order</a>.
 </ol>
 
 <p class="note">{{Node/normalize()}} does not need to run any
@@ -4955,8 +5176,8 @@ these steps:
 <ol>
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
 
- <li><p>If <var>node</var>'s <a for=tree>parent</a> is not null, <a>remove</a> <var>node</var> from its
- <a for=tree>parent</a>.
+ <li><p>If <var>node</var>'s <a for=tree>parent</a> is not null, <a for=/>remove</a> <var>node</var>
+ from its <a for=tree>parent</a>.
 
  <li>
   <p>If <var>document</var> is not <var>oldDocument</var>, then:
@@ -7124,7 +7345,7 @@ might itself be modified as part of the mutation to the
 <a>node tree</a> when e.g. part of the content
 it represents is mutated.
 
-<p class="note no-backref">See the <a>insert</a> and <a>remove</a> algorithms, the
+<p class="note no-backref">See the <a>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
 algorithms for the hairy details.
 
@@ -7193,7 +7414,7 @@ the <a>boundary point</a>'s
 <a>length</a>, inclusive. Algorithms that
 modify a <a>tree</a> (in particular the
 <a>insert</a>,
-<a>remove</a>,
+<a for=/>remove</a>,
 <a>replace data</a>, and
 <a lt="split a Text node">split</a> algorithms) also modify
 <a>ranges</a> associated with that
@@ -7781,7 +8002,7 @@ run these steps:
 
  <li>For each <var>node</var> in <var>nodes to remove</var>,
  in <a>tree order</a>,
- <a>remove</a> <var>node</var> from
+ <a for=/>remove</a> <var>node</var> from
  its <a for=tree>parent</a>.
 
  <li>If <var>original end node</var> is a {{Text}},
@@ -8349,7 +8570,7 @@ the result of <a lt="clone the contents of a range">cloning the contents</a> of
  <!-- Because we're about to remove node from its parent. -->
 
  <li>If <var>node</var>'s <a for=tree>parent</a> is not
- null, <a>remove</a> <var>node</var> from its
+ null, <a for=/>remove</a> <var>node</var> from its
  <a for=tree>parent</a>.
 
  <!-- Browsers disagree on how to handle the case where the range is
@@ -9772,6 +9993,7 @@ Mounir Lamouri,
 Michael™ Smith,
 Mike Champion,
 Mike Taylor,
+Mike West,
 Ojan Vafai,
 Oliver Nightingale,
 Olli Pettay,
