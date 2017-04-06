@@ -1478,7 +1478,8 @@ steps:
 <ol>
  <li>Let <var>signal</var> be this object's {{PromiseController/signal}}.
  <li>Set <var>signal</var>'s [=PromiseSignal/aborted flag=].
- <li>[=Fire an event=] named <code>abort</code> at <var>signal</var>.</li>
+ <li>[=Fire an event=] named <code>abort</code> at <var>signal</var>.
+ <li>Run <var>signal</var>'s [=PromiseSignal/abort steps=].
 </ol>
 
 <h4 id=interface-cancellationcontroller>Interface {{PromiseSignal}}</h4>
@@ -1498,6 +1499,15 @@ interface PromiseSignal : EventTarget {
 
 Each {{PromiseSignal}} has an <dfn for=PromiseSignal>aborted flag</dfn> which is unset unless
 otherwise specified.
+
+Each {{PromiseSignal}} has an <dfn for=PromiseSignal>abort steps</dfn> algorithm which is
+executed when its [=PromiseSignal/aborted flag=] is set. Unless otherwise specified, this
+algorithm is a no-op.
+
+<p class="note no-backref">The [=PromiseSignal/abort steps=] algorithm enables APIs with more
+complex requirements to react in a reasonable way to {{PromiseController/abort()}}. For example,
+a given API's [=PromiseSignal/aborted flag=] may need to be propagated to a cross-thread
+environment (like a Service Worker).
 
 The <dfn attribute for=PromiseSignal>aborted</dfn> attribute's getter must return true if the
 object's [=PromiseSignal/aborted flag=] is set, and false otherwise.
