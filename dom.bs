@@ -1421,28 +1421,33 @@ can only be used to influence an ongoing one.
 
 <h3 id=controlling-promises>Controlling {{Promise}}s</h3>
 
-<p>Though {{Promise}} objects don't have any built-in cancellation mechanism, many
-{{Promise}}-vending APIs require cancellation semantics. {{PromiseController}} is meant to support
-these requirements by providing an {{PromiseController/abort()}} method that toggles the state of
-a corresponding {{PromiseSignal}} object. The API which wishes to support cancelation can accept
-such a {{PromiseSignal}}, and use its state to determine how (not) to proceed.
+Though {{Promise}} objects don't have any built-in cancellation mechanism, many {{Promise}}-vending
+APIs require cancellation semantics. {{PromiseController}} is meant to support these requirements by
+providing an {{PromiseController/abort()}} method that toggles the state of a corresponding
+{{PromiseSignal}} object. The API which wishes to support cancellation can accept such a
+{{PromiseSignal}}, and use its state to determine how (not) to proceed.
+
+Upon {{PromiseController/abort()}}, the relevant {{Promise}} will reject with an
+<dfn exception>AbortError</dfn> [=simple exception=].
 
 <div class=note>
-  For example, a hypothetical <code>DoAmazingness({ ... })</code> method could accept a
-  {{PromiseSignal}} object in order to support cancellation as follows:
+ For example, a hypothetical <code>DoAmazingness({ ... })</code> method could accept a
+ {{PromiseSignal}} object in order to support cancellation as follows:
 
   <pre class=lang-javascript>
-    const controller = new PromiseController();
-    const signal = controller.signal;
-    DoAmazingness({ ..., signal }).then(result => ...);
+   const controller = new PromiseController();
+   const signal = controller.signal;
+   DoAmazingness({ ..., signal })
+     .then(result => ...)
+     .catch(e => ...);
 
-    ...
+   ...
 
-    controller.abort();
+   controller.abort();
   </pre>
 
-  APIs that require more granular control could extend both {{PromiseController}} and
-  {{PromiseSignal}} according to their needs.
+ APIs that require more granular control could extend both {{PromiseController}} and
+ {{PromiseSignal}} according to their needs.
 </div>
 
 <h4 id=interface-promisecontroller>Interface {{PromiseController}}</h3>
