@@ -124,18 +124,18 @@ can be written that hooks into the provided extensibility hooks for
 
 <h3 id=trees>Trees</h3> <!-- Sorry reddit, this is not /r/trees -->
 
-A <dfn export id=concept-tree>tree</dfn> is a finite hierarchical tree structure. In
-<dfn export id=concept-tree-order>tree order</dfn> is preorder, depth-first
-traversal of a <a>tree</a>.
+<p>A <dfn export id=concept-tree>tree</dfn> is a finite hierarchical tree structure. In
+<dfn export id=concept-tree-order>tree order</dfn> is preorder, depth-first traversal of a
+<a>tree</a>.
 <!-- https://en.wikipedia.org/wiki/Depth-first_search -->
 
-An object that
+<p>An object that
 <dfn export for=tree id=concept-tree-participate lt="participate|participate in a tree|participates in a tree">participates</dfn>
 in a <a>tree</a> has a <dfn export for=tree id=concept-tree-parent>parent</dfn>, which is either
-another object or null, and an ordered list of zero or more
-<dfn export for=tree id=concept-tree-child lt="child|children">child</dfn> objects. An object
-<var>A</var> whose <a for=tree>parent</a> is object <var>B</var> is a <a for=tree>child</a> of
-<var>B</var>.
+null or an object, and has
+<dfn export for=tree id=concept-tree-child lt="child|children">children</dfn>, which is an
+<a>ordered set</a> of objects. An object <var>A</var> whose <a for=tree>parent</a> is object
+<var>B</var> is a <a for=tree>child</a> of <var>B</var>.
 
 <p>The <dfn export for=tree id=concept-tree-root>root</dfn> of an object is itself, if its
 <a for=tree>parent</a> is null, or else it is the <a for=tree>root</a> of its
@@ -204,9 +204,8 @@ object is its first <a>following</a>
 <a>following</a>
 <a for=tree>sibling</a>.
 
-The <dfn export for=tree id=concept-tree-index>index</dfn> of an object is its number
-of <a>preceding</a>
-<a for=tree>siblings</a>.
+<p>The <dfn export for=tree id=concept-tree-index>index</dfn> of an object is its number of
+<a>preceding</a> <a for=tree>siblings</a>, or 0 if it has none.
 
 
 <h3 id="ordered-sets">Ordered sets</h3>
@@ -1953,8 +1952,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
   <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
 
   <ol>
-   <li><p>Insert <var>node</var> into <var>parent</var> before <var>child</var> or at the end of
-   <var>parent</var> if <var>child</var> is null.
+   <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
+   <var>parent</var>'s <a for=tree>children</a>.
+
+   <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
+   <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
@@ -2225,7 +2227,7 @@ with an optional <i>suppress observers flag</i>, run these steps:
 
  <li>Let <var>oldNextSibling</var> be <var>node</var>'s <a for=tree>next sibling</a>.
 
- <li>Remove <var>node</var> from its <var>parent</var>.
+ <li><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
 
  <li><p>If <var>node</var> is <a for=slotable>assigned</a>, then run <a>assign slotables</a> for
  <var>node</var>'s <a>assigned slot</a>.
