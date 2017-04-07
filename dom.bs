@@ -564,7 +564,7 @@ algorithm below.
  the operation that caused <var>event</var> to be <a>dispatched</a> that it needs to be canceled.
 
  <dt><code><var>event</var> . {{Event/defaultPrevented}}</code>
- <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancellation,
+ <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancelation,
  and false otherwise.
 
  <dt><code><var>event</var> . {{Event/composed}}</code>
@@ -1421,22 +1421,22 @@ can only be used to influence an ongoing one.
 
 <h2 id=canceling-ongoing-activities>Canceling Ongoing Activities</h3>
 
-Though {{Promise}} objects don't have any built-in cancellation mechanism, many APIs using these
-concepts require cancellation semantics. {{CancellationController}} is meant to support these
-requirements by providing an {{CancellationController/cancel()}} method that toggles the state of a
-corresponding {{CancellationSignal}} object. The API which wishes to support cancellation can accept
-such a {{CancellationSignal}}, and use its state to determine how (not) to proceed.
+Though {{Promise}} objects don't have any built-in cancelation mechanism, many APIs using these
+concepts require cancelation semantics. {{CancelationController}} is meant to support these
+requirements by providing an {{CancelationController/cancel()}} method that toggles the state of a
+corresponding {{CancelationSignal}} object. The API which wishes to support cancelation can accept
+such a {{CancelationSignal}}, and use its state to determine how (not) to proceed.
 
-APIs that rely upon {{CancellationController}} are encouraged to respond to
-{{CancellationController/cancel()}} by rejecting any unsettled {{Promise}} with a
-<dfn exception>CancellationError</dfn> exception.
+APIs that rely upon {{CancelationController}} are encouraged to respond to
+{{CancelationController/cancel()}} by rejecting any unsettled {{Promise}} with a
+<dfn exception>CancelationError</dfn> exception.
 
 <div class=note>
  For example, a hypothetical <code>doAmazingness({ ... })</code> method could accept a
- {{CancellationSignal}} object in order to support cancellation as follows:
+ {{CancelationSignal}} object in order to support cancelation as follows:
 
  <pre class=lang-javascript>
-  const controller = new CancellationController();
+  const controller = new CancelationController();
   const signal = controller.signal;
   doAmazingness({ ..., signal })
     .then(result => ...)
@@ -1447,77 +1447,77 @@ APIs that rely upon {{CancellationController}} are encouraged to respond to
   controller.cancel();
   </pre>
 
- APIs that require more granular control could extend both {{CancellationController}} and
- {{CancellationSignal}} according to their needs.
+ APIs that require more granular control could extend both {{CancelationController}} and
+ {{CancelationSignal}} according to their needs.
 </div>
 
-<h3 id=interface-cancellationcontroller>Interface {{CancellationController}}</h3>
+<h3 id=interface-cancelationcontroller>Interface {{CancelationController}}</h3>
 
 <pre class="idl">
 [Constructor(), Exposed=(Window,Worker)]
-interface CancellationController {
-  readonly attribute CancellationSignal signal;
+interface CancelationController {
+  readonly attribute CancelationSignal signal;
 
   void cancel();
 };
 </pre>
 <dl class=domintro>
- <dt><code><var>controller</var> = new <a constructor lt="CancellationController()">CancellationController</a>()</code>
- <dd>Returns a new <var>controller</var> whose {{CancellationController/signal}} is set to a newly
- created {{CancellationSignal}} object.
+ <dt><code><var>controller</var> = new <a constructor lt="CancelationController()">CancelationController</a>()</code>
+ <dd>Returns a new <var>controller</var> whose {{CancelationController/signal}} is set to a newly
+ created {{CancelationSignal}} object.
 
- <dt><code><var>controller</var> . </code>{{CancellationController/signal}}
- <dd>Returns the {{CancellationSignal}} object associated with this object.
+ <dt><code><var>controller</var> . </code>{{CancelationController/signal}}
+ <dd>Returns the {{CancelationSignal}} object associated with this object.
 
- <dt><code><var>controller</var> . </code>{{CancellationController/cancel()}}
- <dd>Invoking this method will set this object's {{CancellationSignal}}'s
- [=CancellationSignal/cancelled flag=], thereby signaling to any observers that the associated
- activity should be cancelled.
+ <dt><code><var>controller</var> . </code>{{CancelationController/cancel()}}
+ <dd>Invoking this method will set this object's {{CancelationSignal}}'s
+ [=CancelationSignal/canceled flag=], thereby signaling to any observers that the associated
+ activity should be canceled.
 </dl>
 
-The <dfn attribute for=CancellationController><code>signal</code></dfn> attribute must return the value
-to which it was initialized. When a {{CancellationController}} is created, the attribute must be
-initialized to a newly created {{CancellationSignal}} object.
+The <dfn attribute for=CancelationController><code>signal</code></dfn> attribute must return the value
+to which it was initialized. When a {{CancelationController}} is created, the attribute must be
+initialized to a newly created {{CancelationSignal}} object.
 
-The <dfn method for=CancellationController><code>cancel()</code></dfn> method, when invoked, must run
+The <dfn method for=CancelationController><code>cancel()</code></dfn> method, when invoked, must run
 these steps:
 
 <ol>
- <li>Let <var>signal</var> be this object's {{CancellationController/signal}}.
- <li>Set <var>signal</var>'s [=CancellationSignal/cancelled flag=].
- <li>Run <var>signal</var>'s [=CancellationSignal/cancellation steps=].
+ <li>Let <var>signal</var> be this object's {{CancelationController/signal}}.
+ <li>Set <var>signal</var>'s [=CancelationSignal/canceled flag=].
+ <li>Run <var>signal</var>'s [=CancelationSignal/cancelation steps=].
  <li>[=Fire an event=] named <code>cancel</code> at <var>signal</var>.
 </ol>
 
-<h4 id=interface-cancellationsignal>Interface {{CancellationSignal}}</h4>
+<h4 id=interface-cancelationsignal>Interface {{CancelationSignal}}</h4>
 
 <pre class="idl">
 [Exposed=(Window,Worker)]
-interface CancellationSignal : EventTarget {
-  readonly attribute boolean cancelled;
+interface CancelationSignal : EventTarget {
+  readonly attribute boolean canceled;
 
   attribute EventHandler oncancel;
 };
 </pre>
 <dl class=domintro>
- <dt><code><var>signal</var> . </code>{{CancellationSignal/cancelled}}
- <dd>Returns true if this {{CancellationSignal}} has been cancelled, and false otherwise.
+ <dt><code><var>signal</var> . </code>{{CancelationSignal/canceled}}
+ <dd>Returns true if this {{CancelationSignal}} has been canceled, and false otherwise.
 </dl>
 
-Each {{CancellationSignal}} has an <dfn for=CancellationSignal>cancelled flag</dfn> which is
+Each {{CancelationSignal}} has an <dfn for=CancelationSignal>canceled flag</dfn> which is
 unset unless otherwise specified.
 
-Each {{CancellationSignal}} has an <dfn for=CancellationSignal>cancellation steps</dfn> algorithm
-which is executed when its [=CancellationSignal/cancelled flag=] is set. Unless otherwise
+Each {{CancelationSignal}} has an <dfn for=CancelationSignal>cancelation steps</dfn> algorithm
+which is executed when its [=CancelationSignal/canceled flag=] is set. Unless otherwise
 specified, this algorithm is a no-op.
 
-<p class="note no-backref">The [=CancellationSignal/cancellation steps=] algorithm enables APIs with
-more complex requirements to react in a reasonable way to {{CancellationController/cancel()}}. For
-example, a given API's [=CancellationSignal/cancelled flag=] may need to be propagated to a
+<p class="note no-backref">The [=CancelationSignal/cancelation steps=] algorithm enables APIs with
+more complex requirements to react in a reasonable way to {{CancelationController/cancel()}}. For
+example, a given API's [=CancelationSignal/canceled flag=] may need to be propagated to a
 cross-thread environment (like a Service Worker).
 
-The <dfn attribute for=CancellationSignal>cancelled</dfn> attribute's getter must return true if the
-object's [=CancellationSignal/cancelled flag=] is set, and false otherwise.
+The <dfn attribute for=CancelationSignal>canceled</dfn> attribute's getter must return true if the
+object's [=CancelationSignal/canceled flag=] is set, and false otherwise.
 
 
 
