@@ -1485,7 +1485,14 @@ these steps:
 <ol>
  <li>Let <var>signal</var> be this object's {{CancelationController/signal}}.
  <li>Set <var>signal</var>'s [=CancelationSignal/canceled flag=].
- <li>Run <var>signal</var>'s [=CancelationSignal/cancelation steps=].
+ <li>
+  <p>For each <var>algorithm</var> in <var>signal</var>'s
+  [=CancelationSignal/cancelation callbacks=]:</p>
+
+  <ol>
+   <li>Run <var>algorithm</var>.
+  </ol>
+ </li>
  <li>[=Fire an event=] named <code>cancel</code> at <var>signal</var>.
 </ol>
 
@@ -1507,14 +1514,14 @@ interface CancelationSignal : EventTarget {
 Each {{CancelationSignal}} has an <dfn for=CancelationSignal>canceled flag</dfn> which is
 unset unless otherwise specified.
 
-Each {{CancelationSignal}} has an <dfn for=CancelationSignal>cancelation steps</dfn> algorithm
-which is executed when its [=CancelationSignal/canceled flag=] is set. Unless otherwise
-specified, this algorithm is a no-op.
+Each {{CancelationSignal}} has a <dfn for=CancelationSignal>cancelation callbacks</dfn>, which is
+an [=ordered set=] of algorithms which are to be executed when its
+[=CancelationSignal/canceled flag=] is set. Unless otherwise specified, its value is the empty set.
 
-<p class="note no-backref">The [=CancelationSignal/cancelation steps=] algorithm enables APIs with
-more complex requirements to react in a reasonable way to {{CancelationController/cancel()}}. For
-example, a given API's [=CancelationSignal/canceled flag=] may need to be propagated to a
-cross-thread environment (like a Service Worker).
+<p class="note no-backref">The [=CancelationSignal/cancelation callbacks=] enable APIs with complex
+requirements to react in a reasonable way to {{CancelationController/cancel()}}. For example, a
+given API's [=CancelationSignal/canceled flag=] may need to be propagated to a cross-thread
+environment (like a Service Worker).
 
 The <dfn attribute for=CancelationSignal>canceled</dfn> attribute's getter must return true if the
 object's [=CancelationSignal/canceled flag=] is set, and false otherwise.
