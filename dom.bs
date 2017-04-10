@@ -5480,6 +5480,7 @@ interface Element : Node {
   [CEReactions] attribute DOMString id;
   [CEReactions] attribute DOMString className;
   [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
+  [CEReactions] attribute DOMString nonce;
   [CEReactions, Unscopable] attribute DOMString slot;
 
   boolean hasAttributes();
@@ -5527,6 +5528,7 @@ dictionary ShadowRootInit {
 <dfn export id=concept-element-namespace for=Element>namespace</dfn>,
 <dfn export id=concept-element-namespace-prefix for=Element>namespace prefix</dfn>,
 <dfn export id=concept-element-local-name for=Element>local name</dfn>,
+<dfn export id=concept-element-cryptographic-nonce for=Element>cryptographic nonce</dfn>,
 <dfn export id=concept-element-custom-element-state for=Element>custom element state</dfn>,
 <dfn export id=concept-element-custom-element-definition for=Element>custom element definition</dfn>,
 <dfn export id=concept-element-is-value for=Element><code>is</code> value</dfn>. When an
@@ -5623,7 +5625,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
    <li><p>Set <var>result</var> to a new <a for=/>element</a> that implements <var>interface</var>,
    with no attributes, <a for=Element>namespace</a> set to the <a>HTML namespace</a>,
    <a for=Element>namespace prefix</a> set to <var>prefix</var>, <a for=Element>local name</a> set
-   to <var>localName</var>, <a for=Element>custom element state</a> set to "<code>undefined</code>",
+   to <var>localName</var>, <a for=Element>cryptographic nonce</a> set to the empty string,
+   <a for=Element>custom element state</a> set to "<code>undefined</code>",
    <a for=Element>custom element definition</a> set to null,
    <a for=Element><code>is</code> value</a> set to <var>is</var>, and <a for=Node>node document</a> set to
    <var>document</var>.
@@ -5768,6 +5771,34 @@ This and <a lt="other applicable specifications">other specifications</a> may de
 <dfn id=concept-element-attributes-change-ext>attribute change steps</dfn> for
 <a for=/>elements</a>. The algorithm is passed <var>element</var>, <var>localName</var>,
 <var>oldValue</var>, <var>value</var>, and <var>namespace</var>.
+
+<p>The [=insertion steps=] for an {{Element}} (<var>inserted</var>) are as follows:
+
+<ol>
+ <li>
+  <p>If <var>inserted</var> is [=connected=], and it has a content attribute (<var>attr</var>)
+  [=named attribute|named=] "<code>nonce</code>" whose [=Attr/value=] is not the empty string,
+  then:</p>
+
+  <ol>
+   <li>Let <var>nonce</var> be <var>attr</var>'s [=Attr/value=].</li>
+   <li>Set <var>attr</var>'s [=Attr/value=] to the empty string.</li>
+   <li>Set <var>element</var>'s <span>cryptographic nonce</span> to <var>nonce</var>.</li>
+  </ol>
+ </li>
+</ol>
+
+<p>The [=cloning steps=] for {{Element}} are as follows:
+
+<ol>
+ <li>Set <var>copy</var>'s [=Element/cryptographic nonce=] to a copy of <var>node</var>'s
+ [=Element/cryptographic nonce=].
+</ol>
+
+<p class=note>The [=insertion steps=] and [=cloning steps=] above ensure that elements that have a
+<code>nonce</code> content attribute only expose the value to script (and not to side-channels like
+CSS attribute selectors) by extracting the value from the content attribute upon insertion into a
+document.
 
 To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
 <a>attribute</a> <var>attribute</var>
@@ -6114,12 +6145,16 @@ associated <a>attribute</a>'s <a for=Attr>local name</a> is <code>class</code>. 
 this particular {{DOMTokenList}} object are also known as the <a for="/">element</a>'s
 <dfn export for=Element id=concept-class lt="class">classes</dfn>.
 
+<p>The <dfn attribute for=Element><code>nonce</code></dfn> attribute must, on getting, return the
+value of the element's <span>cryptographic nonce</span>; and on setting, set the element's
+<span>cryptographic nonce</span> to the specified new value.
+
 <p>The <dfn attribute for=Element><code>slot</code></dfn> attribute must <a for=Attr>reflect</a> the
 "<code>slot</code>" content attribute.
 
-<p class="note"><code>id</code>, <code>class</code>, and <code>slot</code> are effectively
-superglobal attributes as they can appear on any element, regardless of that element's
-namespace.</p>
+<p class="note"><code>id</code>, <code>className</code>, <code>classList</code>, <code>nonce</code>,
+and <code>slot</code> are effectively superglobal attributes as they can appear on any element,
+regardless of that element's namespace.</p>
 
 <hr>
 
