@@ -55,6 +55,10 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Construct; url: sec-construct; type: abstract-op
     text: Realm; url: realm; type: dfn
+
+<!-- Remove this once WebIDL takes https://github.com/heycam/webidl/pull/339 -->
+urlPrefix: https://heycam.github.io/webidl/; spec: WEBIDL
+    text: CancelationError; url: cancelationerror; type: exception
 </pre>
 
 <pre class=link-defaults>
@@ -557,7 +561,7 @@ algorithm below.
  the operation that caused <var>event</var> to be <a>dispatched</a> that it needs to be canceled.
 
  <dt><code><var>event</var> . {{Event/defaultPrevented}}</code>
- <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancellation,
+ <dd>Returns true if {{Event/preventDefault()}} was invoked successfully to indicate cancelation,
  and false otherwise.
 
  <dt><code><var>event</var> . {{Event/composed}}</code>
@@ -678,7 +682,7 @@ The <dfn attribute for=Event><code>bubbles</code></dfn> and
 must return the values they were initialized to.
 
 The <dfn method for=Event><code>preventDefault()</code></dfn> method, when invoked, must set the
-<a>canceled flag</a> if the {{Event/cancelable}} attribute value is true and the
+[=Event/canceled flag=] if the {{Event/cancelable}} attribute value is true and the
 <a>in passive listener flag</a> is unset.
 
 <p class="note no-backref">This means there are scenarios where invoking {{Event/preventDefault()}}
@@ -686,7 +690,7 @@ has no effect. User agents are encouraged to log the precise cause in a develope
 debugging.
 
 <p>The <dfn attribute for=Event><code>defaultPrevented</code></dfn> attribute's getter must return
-true if <a>context object</a>'s <a>canceled flag</a> is set, and false otherwise.</p>
+true if <a>context object</a>'s [=Event/canceled flag=] is set, and false otherwise.</p>
 
 <p>The <dfn attribute for=Event><code>composed</code></dfn> attribute's getter must return true if
 <a>context object</a>'s <a>composed flag</a> is set, and false otherwise.</p>
@@ -724,7 +728,7 @@ To <dfn export for=Event id=concept-event-initialize>initialize</dfn> an
  <li>Set the <a>initialized flag</a>.
  <li>Unset the <a>stop propagation flag</a>,
  <a>stop immediate propagation flag</a>, and
- <a>canceled flag</a>.
+ [=Event/canceled flag=].
  <li>Set the {{Event/isTrusted}} attribute
  to false.
  <li>Set the {{Event/target}} attribute to
@@ -1233,7 +1237,7 @@ for discussion).
   <p>If <var>activationTarget</var> is non-null, then:
 
   <ol>
-   <li><p>If <var>event</var>'s <a>canceled flag</a> is unset, then run
+   <li><p>If <var>event</var>'s [=Event/canceled flag=] is unset, then run
    <var>activationTarget</var>'s <a for=EventTarget>activation behavior</a> with <var>event</var>.
 
    <li><p>Otherwise, if <var>activationTarget</var> has
@@ -1241,7 +1245,7 @@ for discussion).
    <var>activationTarget</var>'s <a for=EventTarget>legacy-canceled-activation behavior</a>.
   </ol>
 
- <li><p>Return false if <var>event</var>'s <a>canceled flag</a> is set, and true otherwise.
+ <li><p>Return false if <var>event</var>'s [=Event/canceled flag=] is set, and true otherwise.
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
@@ -1410,6 +1414,114 @@ they are for.
 iterations of the DOM had a concept of "default actions" associated with <a>events</a>
 that gave folks all the wrong ideas. <a>Events</a> do not represent or cause actions, they
 can only be used to influence an ongoing one.
+
+
+<h2 id=canceling-ongoing-activities>Canceling Ongoing Activities</h3>
+
+Though {{Promise}} objects don't have any built-in cancelation mechanism, many APIs using these
+concepts require cancelation semantics. {{CancelationController}} is meant to support these
+requirements by providing an {{CancelationController/cancel()}} method that toggles the state of a
+corresponding {{CancelationSignal}} object. The API which wishes to support cancelation can accept
+such a {{CancelationSignal}}, and use its state to determine how (not) to proceed.
+
+APIs that rely upon {{CancelationController}} are encouraged to respond to
+{{CancelationController/cancel()}} by rejecting any unsettled {{Promise}} with a new
+{{DOMException}} with [=error name=] "{{CancelationError}}".
+
+<div class=note>
+ For example, a hypothetical <code>doAmazingness({ ... })</code> method could accept a
+ {{CancelationSignal}} object in order to support cancelation as follows:
+
+ <pre class=lang-javascript>
+  const controller = new CancelationController();
+  const signal = controller.signal;
+  doAmazingness({ ..., signal })
+    .then(result => ...)
+    .catch(e => ...);
+
+  ...
+
+  controller.cancel();
+  </pre>
+
+ APIs that require more granular control could extend both {{CancelationController}} and
+ {{CancelationSignal}} according to their needs.
+</div>
+
+<h3 id=interface-cancelationcontroller>Interface {{CancelationController}}</h3>
+
+<pre class="idl">
+[Constructor(), Exposed=(Window,Worker)]
+interface CancelationController {
+  [SameObject] readonly attribute CancelationSignal signal;
+
+  void cancel();
+};
+</pre>
+<dl class=domintro>
+ <dt><code><var>controller</var> = new <a constructor lt="CancelationController()">CancelationController</a>()</code>
+ <dd>Returns a new <var>controller</var> whose {{CancelationController/signal}} is set to a newly
+ created {{CancelationSignal}} object.
+
+ <dt><code><var>controller</var> . </code>{{CancelationController/signal}}
+ <dd>Returns the {{CancelationSignal}} object associated with this object.
+
+ <dt><code><var>controller</var> . </code>{{CancelationController/cancel()}}
+ <dd>Invoking this method will set this object's {{CancelationSignal}}'s
+ [=CancelationSignal/canceled flag=], thereby signaling to any observers that the associated
+ activity should be canceled.
+</dl>
+
+The <dfn attribute for=CancelationController><code>signal</code></dfn> attribute must return the value
+to which it was initialized. When a {{CancelationController}} is created, the attribute must be
+initialized to a newly created {{CancelationSignal}} object.
+
+The <dfn method for=CancelationController><code>cancel()</code></dfn> method, when invoked, must run
+these steps:
+
+<ol>
+ <li>Let <var>signal</var> be this object's {{CancelationController/signal}}.
+ <li>Set <var>signal</var>'s [=CancelationSignal/canceled flag=].
+ <li>
+  <p>For each <var>algorithm</var> in <var>signal</var>'s
+  [=CancelationSignal/cancelation callbacks=]:</p>
+
+  <ol>
+   <li>Run <var>algorithm</var>.
+  </ol>
+ </li>
+ <li>[=Fire an event=] named <code>cancel</code> at <var>signal</var>.
+</ol>
+
+<h4 id=interface-cancelationsignal>Interface {{CancelationSignal}}</h4>
+
+<pre class="idl">
+[Exposed=(Window,Worker)]
+interface CancelationSignal : EventTarget {
+  readonly attribute boolean canceled;
+
+  attribute EventHandler oncancel;
+};
+</pre>
+<dl class=domintro>
+ <dt><code><var>signal</var> . </code>{{CancelationSignal/canceled}}
+ <dd>Returns true if this {{CancelationSignal}} has been canceled, and false otherwise.
+</dl>
+
+Each {{CancelationSignal}} has an <dfn for=CancelationSignal>canceled flag</dfn> which is
+unset unless otherwise specified.
+
+Each {{CancelationSignal}} has a <dfn for=CancelationSignal>cancelation callbacks</dfn>, which is
+an [=ordered set=] of algorithms which are to be executed when its
+[=CancelationSignal/canceled flag=] is set. Unless otherwise specified, its value is the empty set.
+
+<p class="note no-backref">The [=CancelationSignal/cancelation callbacks=] enable APIs with complex
+requirements to react in a reasonable way to {{CancelationController/cancel()}}. For example, a
+given API's [=CancelationSignal/canceled flag=] may need to be propagated to a cross-thread
+environment (like a Service Worker).
+
+The <dfn attribute for=CancelationSignal>canceled</dfn> attribute's getter must return true if the
+object's [=CancelationSignal/canceled flag=] is set, and false otherwise.
 
 
 
