@@ -1708,6 +1708,9 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
 <ol>
  <li><p>Let <var>result</var> be an empty list.</p></li>
 
+ <li><p>If <var>slot</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, then return
+ <var>result</var>.</p></li>
+
  <li><p>Let <var>slotables</var> be the result of <a>finding slotables</a> given
  <var>slot</var>.</p></li>
 
@@ -1719,7 +1722,8 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
 
   <ol>
    <li>
-    <p>If <var>node</var> is a <a>slot</a>, then:
+    <p>If <var>node</var> is a <a>slot</a> whose <a for=tree>root</a> is a <a for=/>shadow root</a>,
+    then:
 
     <ol>
      <li><p>Let <var>temporaryResult</var> be the result of <a>finding flattened slotables</a> given
@@ -1738,15 +1742,13 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
 
 <h5 id=assigning-slotables-and-slots>Assigning slotables and slots</h5>
 
-<p>To <dfn noexport>assign slotables</dfn>, for a <a>slot</a> <var>slot</var> with an optional
-<var>suppress signaling flag</var> (unset unless stated otherwise), run these steps:
+<p>To <dfn noexport>assign slotables</dfn> for a <a>slot</a> <var>slot</var>, run these steps:
 
 <ol>
  <li><p>Let <var>slotables</var> be the result of <a>finding slotables</a> for <var>slot</var>.
 
- <li><p>If <var>suppress signaling flag</var> is unset, and <var>slotables</var> and
- <var>slot</var>'s <a for=slot>assigned nodes</a> are not identical, then run
- <a>signal a slot change</a> for <var>slot</var>.
+ <li><p>If <var>slotables</var> and <var>slot</var>'s <a for=slot>assigned nodes</a> are not
+ identical, then run <a>signal a slot change</a> for <var>slot</var>.
 
  <li><p>Set <var>slot</var>'s <a for=slot>assigned nodes</a> to <var>slotables</var>.
 
@@ -1754,16 +1756,9 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
  <a>assigned slot</a> to <var>slot</var>.
 </ol>
 
-<p>To <dfn noexport>assign slotables for a tree</dfn>, given a <a>tree</a> <var>tree</var> and an
-optional set of <a>slots</a> <var>noSignalSlots</var> (empty unless stated otherwise), run these
-steps for each <a>slot</a> <var>slot</var> in <var>tree</var>, in <a>tree order</a>:
-
-<ol>
- <li><p>Let <var>suppress signaling flag</var> be set, if <var>slot</var> is in
- <var>noSignalSlots</var>, and unset otherwise.</p></li>
-
- <li><p>Run <a>assign slotables</a> for <var>slot</var> with <var>suppress signaling flag</var>.
-</ol>
+<p>To <dfn noexport>assign slotables for a tree</dfn>, given a <a>tree</a>
+<var>tree</var>, run <a>assign slotables</a> for each <a>slot</a> <var>slot</var> in
+<var>tree</var>, in <a>tree order</a>.
 
 <p>To <dfn noexport>assign a slot</dfn>, given a <a>slotable</a> <var>slotable</var>, run these
 steps:
@@ -1967,11 +1962,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
    <var>parent</var>.
 
-   <li><p>If <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty
-   list, then run <a>signal a slot change</a> for <var>parent</var>.
+   <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+   <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
+   then run <a>signal a slot change</a> for <var>parent</var>.
 
-   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a> and a set
-   containing each <a>inclusive descendant</a> of <var>node</var> that is a <a>slot</a>.
+   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a>.
 
    <li>
     <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
@@ -2236,16 +2231,16 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <li><p>If <var>node</var> is <a for=slotable>assigned</a>, then run <a>assign slotables</a> for
  <var>node</var>'s <a>assigned slot</a>.
 
- <li><p>If <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty
- list, then run <a>signal a slot change</a> for <var>parent</var>.
+ <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+ <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
+ then run <a>signal a slot change</a> for <var>parent</var>.
 
  <li><p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
 
   <ol>
    <li><p>Run <a>assign slotables for a tree</a> with <var>parent</var>'s <a>tree</a>.
 
-   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a> and a set
-   containing each <a>inclusive descendant</a> of <var>node</var> that is a <a>slot</a>.
+   <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a>.
   </ol>
 
  <li><p>Run the <a>removing steps</a> with <var>node</var> and <var>parent</var>.
