@@ -70,9 +70,11 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Construct; url: sec-construct; type: abstract-op
     text: Realm; url: realm; type: dfn
-urlPrefix: https://w3c.github.io/hr-time/#
+urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
     type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
     type:dfn; text: time origin
+    type:dfn; text: clock resolution
+
 </pre>
 
 <pre class='link-defaults'>
@@ -765,13 +767,13 @@ the user agent to dispatch an <a>event</a> whose {{Event/isTrusted}} attribute i
 false.
 
 The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute must return the value it was
-initialized to. If available, the attribute should be initialized with the high resolution time of
-the occurrence that the event is signaling, for example the moment when a particular user
-interaction occurred. Otherwise it should be initialized with the creation time of the
-<var>event</var>.
+initialized to. When an <a>event</a> is created the attribute must be initialized with a
+{{DOMHighResTimeStamp}} representing the high resolution time in milliseconds that has passed
+since the <a>time origin</a>.
 
-<p class=note>User agents are encouraged to make the high resolution occurrence time available
-for as many events as possible, in particular those related to user interaction.
+<p class=warning> User agents are strongly encouraged to set minimum resolution of the
+{{Event/timeStamp}} attribute to 5 microseconds following existing <a>clock resolution</a>
+recommendation. [[!HR-TIME]]
 
 <hr>
 
@@ -877,6 +879,10 @@ must be run, given the arguments <var>type</var> and <var>eventInitDict</var>:
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>type</var>.
 
+ <li><p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+ representing the <var>event</var>'s <dfn>construction time</dfn> which is the high resolution
+ time from the <a>time origin</a> to the occurrence of the call to the <a>constructor</a>.
+
  <li><p>For each <a>dictionary member</a> present in <var>eventInitDict</var>, find the attribute on
  <var>event</var> whose <a spec=webidl>identifier</a> matches the key of the
  <a>dictionary member</a> and then set the attribute to the value of that <a>dictionary member</a>.
@@ -908,6 +914,14 @@ it, and optionally given a <a>Realm</a> <var>realm</var>, run these steps:</p>
  attribute on <var>event</var> whose <a spec=webidl>identifier</a> matches the key of the
  <a>dictionary member</a> and then set the attribute to the default value of that
  <a>dictionary member</a>.
+
+ <li><p>If available, set <var>event</var>'s {{Event/timeStamp}} attribute to a
+ {{DOMHighResTimeStamp}} representing the <var>event</var>'s <dfn>occurence time</dfn> which is
+ the high resolution time from the <a>time origin</a> to the occurrence that the event is
+ signaling, for example the moment when a particular user interaction occurred.
+
+ <p class=note>User agents are encouraged to make the high resolution occurrence time available
+ for as many events as possible, in particular those related to user interaction.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
 
@@ -5155,6 +5169,11 @@ invoked, must run these steps:
  <li><p>Let <var>event</var> be the result of <a>creating an event</a> given <var>constructor</var>.
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to the empty string.
+
+ <li><p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+ which is the high resolution time from the <a>time origin</a> to the occurrence of the call to
+ {{Document/createEvent()}}.
+
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to false.
 
