@@ -53,8 +53,8 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
         text: script resource; for: service worker
         text: has ever been evaluated flag; for: service worker
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
-    text: Construct; url: sec-construct; type: abstract-op
     text: Realm; url: realm; type: dfn
+    text: SameValueZero; url: sec-samevaluezero; type: abstract-op
 </pre>
 
 <pre class=link-defaults>
@@ -314,7 +314,7 @@ run these steps:
 Throughout the web platform <a>events</a> are <a>dispatched</a> to objects to signal an
 occurrence, such as network activity or user interaction. These objects implement the
 {{EventTarget}} interface and can therefore add <a>event listeners</a> to observe
-<a>events</a> by calling {{EventTarget/addEventListener()}}:
+<a>events</a> by calling {{EventTarget/addEventListener(type, callback, options)}}:
 
 <pre class=lang-javascript>
 obj.addEventListener("load", imgFetched)
@@ -325,10 +325,23 @@ function imgFetched(ev) {
 }
 </pre>
 
-<a>Event listeners</a> can be removed
-by utilizing the
-{{EventTarget/removeEventListener()}}
-method, passing the same arguments.
+<a>Event listeners</a> can be removed by utilizing the
+{{EventTarget/removeEventListener(type, callback, options)}} method, passing the same arguments.
+
+Once can also provide a <em>group</em> when adding an <a>event listener</a>. This can be any value,
+including a simple string. Then later, the same group value can be provided to
+{{EventTarget/removeEventListener(type, options)}} or {{EventTarget/removeEventListener(options)}},
+to remove all event listeners in that group:
+
+<pre class=lang-javascript>
+oven.addEventListener("turnon", () => { &hellip; }, { group: "cookies" })
+oven.addEventListener("heat", () => { &hellip; }, { group: "cookies" })
+oven.addEventListener("turnoff", () => { &hellip; }, { group: "cookies" })
+
+oven.removeEventListener({ group: "cookies" })
+</pre>
+
+<hr>
 
 <a>Events</a> are objects too and implement the
 {{Event}} interface (or a derived interface). In the example above
@@ -879,7 +892,11 @@ for historical reasons.
 [Exposed=(Window,Worker)]
 interface EventTarget {
   void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
+
   void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
+  void removeEventListener(DOMString type, RemoveEventListenerGroupOptions options);
+  void removeEventListener(RemoveEventListenerGroupOptions options);
+
   boolean dispatchEvent(Event event);
 };
 
@@ -891,9 +908,14 @@ dictionary EventListenerOptions {
   boolean capture = false;
 };
 
+dictionary RemoveEventListenerGroupOptions {
+ required any group;
+};
+
 dictionary AddEventListenerOptions : EventListenerOptions {
   boolean passive = false;
   boolean once = false;
+  any group;
 };
 </pre>
 
@@ -913,6 +935,8 @@ when something has occurred.
  <li><b>capture</b> (a boolean, initially false)
  <li><b>passive</b> (a boolean, initially false)
  <li><b>once</b> (a boolean, initially false)
+ <li><b>is grouped</b> (a boolean, initially false)
+ <li><b>group</b> (any Web IDL value, initially null)
  <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
@@ -952,32 +976,42 @@ are not to be used for anything else. [[!HTML]]
 
   The <var>options</var> argument sets listener-specific options. For compatibility this can be just
   a boolean, in which case the method behaves exactly as if the value was specified as
-  <var>options</var>' <code>capture</code> member.
+  <var>options</var>'s {{EventListenerOptions/capture}} member.
 
-  When set to true, <var>options</var>' <code>capture</code> member prevents <b>callback</b> from
-  being invoked when the <a>event</a>'s {{Event/eventPhase}} attribute value is
+  When set to true, <var>options</var>'s {{EventListenerOptions/capture}} member prevents
+  <b>callback</b> from being invoked when the <a>event</a>'s {{Event/eventPhase}} attribute value is
   {{Event/BUBBLING_PHASE}}. When false (or not present), <b>callback</b> will not be invoked when
   <a>event</a>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}. Either way,
   <b>callback</b> will be invoked if <a>event</a>'s {{Event/eventPhase}} attribute value is
   {{Event/AT_TARGET}}.
 
-  When set to true, <var>options</var>' <code>passive</code> member indicates that the
-  <b>callback</b> will not cancel the event by invoking {{Event/preventDefault()}}. This is used to
-  enable performance optimizations described in [[#observing-event-listeners]].
+  When set to true, <var>options</var>' {{AddEventListenerOptions/passive}} member indicates that
+  the <b>callback</b> will not cancel the event by invoking {{Event/preventDefault()}}. This is used
+  to enable performance optimizations described in [[#observing-event-listeners]].
 
-  When set to true, <var>options</var>'s <code>once</code> member indicates that the <b>callback</b>
-  will only be invoked once after which the event listener will be removed.
+  When set to true, <var>options</var>'s {{AddEventListenerOptions/once}} member indicates that the
+  <b>callback</b> will only be invoked once after which the event listener will be removed.
+
+  When provided, <var>options</var>'s {{AddEventListenerOptions/group}} member is stored so that
+  later calls to {{EventTarget/removeEventListener(type, options)}} or
+  {{EventTarget/removeEventListener(options)}} can remove all event listeners that provided the same
+  group value.
 
   The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
   not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and
   <b>capture</b> values.
 
- <dt><code><var>target</var> . <a method for=EventTarget lt=removeEventListener()>removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
- <dd>Remove the <a>event listener</a>
- in <var>target</var>'s list of
- <a>event listeners</a> with the same
- <var>type</var>, <var>callback</var>, and
- <var>options</var>.
+ <dt><code><var>target</var> . <a method for=EventTarget lt="removeEventListener(type, callback, options)">removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
+ <dd>Remove the <a>event listener</a> in <var>target</var>'s list of <a>event listeners</a> with the
+ same <var>type</var>, <var>callback</var>, and <var>options</var>.
+
+ <dt><code><var>target</var> . <a method for=EventTarget lt="removeEventListener(type, options)">removeEventListener</a>(<var>type</var>, { <var>group</var> })</code>
+ <dd>Remove all <a>event listeners</a> in <var>target</var>'s list of <a>event listeners</a> with
+ the same <var>type</var> and <var>group</var>.
+
+ <dt><code><var>target</var> . <a method for=EventTarget lt=removeEventListener(options)>removeEventListener</a>({ <var>group</var> })</code>
+ <dd>Remove all <a>event listeners</a> in <var>target</var>'s list of <a>event listeners</a> with
+ the same <var>group</var> (regardless of their type).
 
  <dt><code><var>target</var> . <a method for=EventTarget lt=dispatchEvent()>dispatchEvent</a>(<var>event</var>)</code>
  <dd><a>Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns
@@ -993,8 +1027,8 @@ steps:
 
  <li><p>If <var>options</var> is a boolean, set <var>capture</var> to <var>options</var>.
 
- <li><p>If <var>options</var> is a dictionary, then set <var>capture</var> to <var>options</var>'s
- <code>{{EventListenerOptions/capture}}</code>.
+ <li><p>If <var>options</var> is a dictionary, then set <var>capture</var> to
+ <var>options</var>["{{EventListenerOptions/capture}}"].
 
  <li><p>Return <var>capture</var>.
 </ol>
@@ -1005,52 +1039,64 @@ steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var> and <var>passive</var> be false.
+ <li><p>Let <var>once</var>, <var>passive</var>, and <var>is grouped</var> be false, and let <var>group</var> be null.
 
- <li><p>If <var>options</var> is a dictionary, then set <var>passive</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/passive}}</code> and <var>once</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/once}}</code>.
+ <li>
+  <p>If <var>options</var> is a dictionary, then:
+  <ol>
+   <li><p>Set <var>passive</var> to <var>options</var>["{{AddEventListenerOptions/passive}}"] and
+   <var>once</var> to <var>options</var>["{{AddEventListenerOptions/once}}"].
 
- <li><p>Return <var>capture</var>, <var>passive</var>, and <var>once</var>.
+   <li><p>If {{AddEventListenerOptions/group}} is <a>present</a> in <var>options</var>, set
+   <var>is grouped</var> to true and set <var>group</var> to
+   <var>options</var>["{{AddEventListenerOptions/group}}"].
+  </ol>
+
+ <li><p>Return the <a>tuple</a> (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>is grouped</var>,
+ <var>group</var>).
 </ol>
+
+<p>To <dfn export for=EventTarget>perform a service worker check</dfn> on <var>eventTarget</var>,
+<a>throw</a> a {{TypeError}} if <var>eventTarget</var>'s <a>relevant global object</a> is a
+{{ServiceWorkerGlobalScope}} object and its associated <a>service worker</a>'s
+<a for="service worker">script resource</a>'s
+<a for="service worker">has ever been evaluated flag</a> is set. [[!SERVICE-WORKERS]]
+
+<p class="note no-backref">To optimize storing the event types allowed for the service worker and to
+avoid non-deterministic changes to the event listeners, invocation of certain {{EventTarget}}
+methods is allowed only during the very first evaluation of the service worker script.
+
+<p>Two Web IDL values are <dfn for="event listener">equal for grouping purposes</dfn> if, when
+<a>converted to ECMAScript values</a>, the results are equivalent according to
+<a abstract-op>SameValueZero</a>. [[!ECMASCRIPT]]
 
 <p>The
 <dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
- <li>
-  <p>If <a>context object</a>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
-  object and its associated <a>service worker</a>'s <a for="service worker">script resource</a>'s
-  <a for="service worker">has ever been evaluated flag</a> is set, then <a>throw</a> a
-  <code>TypeError</code>.
-  [[!SERVICE-WORKERS]]
-
-  <p class="note no-backref">To optimize storing the event types allowed for the service worker and
-  to avoid non-deterministic changes to the event listeners, invocation of the method is allowed
-  only during the very first evaluation of the service worker script.
+ <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
  <li><p>If <var>callback</var> is null, then return.
 
- <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
- <a lt="flatten more">flattening more</a> <var>options</var>.
+ <li><p>Let (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>is grouped</var>,
+ <var>group</var>) be the result of <a lt="flatten more">flattening more</a> <var>options</var>.
 
  <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
  <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
- and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
+ <b>capture</b> is <var>capture</var>, <b>is grouped</b> is <var>is grouped</var>, and <b>group</b>
+ is equal to <var>group</var>, then append a new <a>event listener</a> to it, whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
- <var>capture</var>, <b>passive</b> is <var>passive</var>, and <b>once</b> is <var>once</var>.
+ <var>capture</var>, <b>passive</b> is <var>passive</var>, <b>once</b> is <var>once</var>,
+ <b>is grouped</b> is <var>is grouped</var>, and <b>group</b> is <var>group</var>.
 </ol>
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
-method, when invoked, must, run these steps
+method overload, when invoked, must run these steps
 
 <ol>
- <li><p>If <a>context object</a>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
- object and its associated <a>service worker</a>'s <a for="service worker">script resource</a>'s
- <a for="service worker">has ever been evaluated flag</a> is set, then <a>throw</a> a
- <code>TypeError</code>. [[!SERVICE-WORKERS]]
+ <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
@@ -1058,6 +1104,31 @@ method, when invoked, must, run these steps
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is
  <var>capture</var>, then set that <a>event listener</a>'s <b>removed</b> to true and remove it from
  the associated list of <a>event listeners</a>.
+</ol>
+
+<p>The
+<dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>options</var>)</code></dfn>
+method overload, when invoked, must run these steps
+
+<ol>
+ <li><p><a>Perform a service worker check</a> on <a>context object</a>.
+
+ <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
+ <b>type</b> is <var>type</var>, <b>is grouped</b> is true, and <b>group</b> is
+ <a>equal for grouping purposes</a> to
+ <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
+</ol>
+
+<p>The
+<dfn method for=EventTarget><code>removeEventListener(<var>options</var>)</code></dfn>
+method overload, when invoked, must run these steps
+
+<ol>
+ <li><p><a>Perform a service worker check</a> on <a>context object</a>.
+
+ <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
+ <b>is grouped</b> is true and <b>group</b> is <a>equal for grouping purposes</a> to
+ <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
