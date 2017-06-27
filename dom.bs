@@ -1961,6 +1961,9 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
 
+   <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
+   <var>parent</var>.
+
    <li><p>If <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty
    list, then run <a>signal a slot change</a> for <var>parent</var>.
 
@@ -2281,6 +2284,9 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <var>parent</var> with removedNodes a list solely containing <var>node</var>,
  nextSibling <var>oldNextSibling</var>, and previousSibling
  <var>oldPreviousSibling</var>.
+
+ <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
+ <var>parent</var>.
 </ol>
 
 
@@ -3850,6 +3856,10 @@ steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>no
  <li><a>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding
  itself), in <a>tree order</a>.
 </ol>
+
+<p class="note">{{Node/normalize()}} does not need to run any
+<a>child text content change steps</a>, since although it messes with {{Text}} nodes extensively, it
+does so specifically in a way that preserves the <a>child text content</a>.
 
 <hr>
 
@@ -6761,6 +6771,9 @@ To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> 
  <a>end offset</a> by the number of
  <a>code units</a> in
  <var>data</var>, then decrease it by <var>count</var>.
+
+ <li>If <var>node</var> is a {{Text}} node and its <a>parent</a> is not null, run the
+ <a>child text content change steps</a> for <var>node</var>'s <a>parent</a>.
 </ol>
 <!-- delete happens after insert for better cursor positioning with editing
 https://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
@@ -6890,6 +6903,13 @@ interface Text : CharacterData {
 if any, and its <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>node</var>'s
 <a for=tree>next sibling</a> <a>exclusive <code>Text</code> node</a>, if any, and its
 <a>contiguous exclusive <code>Text</code> nodes</a>, avoiding any duplicates.
+
+<p>The <dfn export id=concept-child-text-content>child text content</dfn> of a <a>node</a>
+<var>node</var> is the concatenation of the <a for=CharacterData>data</a> of all the {{Text}} node
+<a>children</a> of <var>node</var>, in <a>tree order</a>.
+
+<p>This and <a lt="other applicable specifications">other specifications</a> may define
+<dfn export id=concept-node-text-change-ext>child text content change steps</dfn> for <a>nodes</a>.
 
 <hr>
 
