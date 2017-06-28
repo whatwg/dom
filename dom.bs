@@ -334,7 +334,7 @@ to remove all event listeners in that group:
 
 <pre class=lang-javascript>
 oven.addEventListener("turnon", () => { &hellip; }, { group: "brownies" })
-oven.addEventListener("heat", () => { &hellip; }, { group: "brownies" })
+oven.addEventListener("heat", () => { &hellip; }, { group: ["brownies", "adjustments"] })
 oven.addEventListener("turnoff", () => { &hellip; }, { group: "brownies" })
 
 oven.removeEventListener({ group: "brownies" })
@@ -916,7 +916,7 @@ dictionary RemoveEventListenerGroupOptions {
 dictionary AddEventListenerOptions : EventListenerOptions {
   boolean passive = false;
   boolean once = false;
-  EventGroup group;
+  (EventGroup or sequence&lt;EventGroup>) group;
 };
 </pre>
 
@@ -936,7 +936,7 @@ when something has occurred.
  <li><b>capture</b> (a boolean, initially false)
  <li><b>passive</b> (a boolean, initially false)
  <li><b>once</b> (a boolean, initially false)
- <li><b>group</b> (an {{EventGroup}} or null)
+ <li><b>groups</b> (a <a>list</a> of {{EventGroup}}s, initially empty)
  <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
@@ -995,7 +995,9 @@ are not to be used for anything else. [[!HTML]]
   When provided, <var>options</var>'s {{AddEventListenerOptions/group}} member is stored so that
   later calls to {{EventTarget/removeEventListener(type, options)}} or
   {{EventTarget/removeEventListener(options)}} can remove all event listeners that provided the same
-  group value. It can be either a string or a symbol.
+  group value. It can be either a string or a symbol. It can also be an iterable containing strings
+  or symbols, to attach multiple group values to the listener, any one of which can be used for
+  later removal.
 
   The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
   not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and
@@ -1039,7 +1041,8 @@ steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var> and <var>passive</var>, and let <var>group</var> be null.
+ <li><p>Let <var>once</var> and <var>passive</var>, and let <var>groups</var> be an empty
+ <a>list</a>.
 
  <li>
   <p>If <var>options</var> is a dictionary, then:
@@ -1047,23 +1050,32 @@ steps:
    <li><p>Set <var>passive</var> to <var>options</var>["{{AddEventListenerOptions/passive}}"] and
    <var>once</var> to <var>options</var>["{{AddEventListenerOptions/once}}"].
 
-   <li><p>If {{AddEventListenerOptions/group}} is <a>present</a> in <var>options</var>, set
-   <var>group</var> to <var>options</var>["{{AddEventListenerOptions/group}}"].
+   <li><p>If {{AddEventListenerOptions/group}} is <a>present</a> in <var>options</var> and is an
+   {{EventGroup}}, set <var>groups</var> to a <a>list</a> containing the single item given by
+   <var>options</var>["{{AddEventListenerOptions/group}}"].
+
+   <li><p>Otherwise, if {{AddEventListenerOptions/group}} is <a>present</a> in <var>options</var>,
+   set <var>groups</var> to <var>options</var>["{{AddEventListenerOptions/group}}"].
   </ol>
 
  <li><p>Return the <a>tuple</a> (<var>capture</var>, <var>passive</var>, <var>once</var>,
- <var>group</var>).
+ <var>groups</var>).
 </ol>
 
-<p>To <dfn export for=EventTarget>perform a service worker check</dfn> on <var>eventTarget</var>,
-<a>throw</a> a {{TypeError}} if <var>eventTarget</var>'s <a>relevant global object</a> is a
-{{ServiceWorkerGlobalScope}} object and its associated <a>service worker</a>'s
-<a for="service worker">script resource</a>'s
+<p>To <dfn for=EventTarget>perform a service worker check</dfn> on an {{EventTarget}}
+<var>eventTarget</var>, <a>throw</a> a {{TypeError}} if <var>eventTarget</var>'s
+<a>relevant global object</a> is a {{ServiceWorkerGlobalScope}} object and its associated
+<a>service worker</a>'s <a for="service worker">script resource</a>'s
 <a for="service worker">has ever been evaluated flag</a> is set. [[!SERVICE-WORKERS]]
 
 <p class="note no-backref">To optimize storing the event types allowed for the service worker and to
 avoid non-deterministic changes to the event listeners, invocation of certain {{EventTarget}}
 methods is allowed only during the very first evaluation of the service worker script.
+
+<p>To <dfn for=EventTarget lt="remove an event listener">remove</dfn> an <a>event listener</a>
+<var>listener</var> from an {{EventTarget}} <var>eventTarget</var>, set <var>listener</var>'s
+<b>removed</b> to true and <a for=list>remove</a> it from <var>eventTarget</var>'s associated list
+of <a>event listeners</a>.
 
 <p>The
 <dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
@@ -1074,7 +1086,7 @@ method, when invoked, must run these steps:
 
  <li><p>If <var>callback</var> is null, then return.
 
- <li><p>Let (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>group</var>) be the
+ <li><p>Let (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>groups</var>) be the
  result of <a lt="flatten more">flattening more</a> <var>options</var>.
 
  <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
@@ -1082,7 +1094,7 @@ method, when invoked, must run these steps:
  and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
  <var>capture</var>, <b>passive</b> is <var>passive</var>, <b>once</b> is <var>once</var>, and
- <b>group</b> is <var>group</var>.
+ <b>groups</b> is <var>groups</var>.
 </ol>
 
 <p>The
@@ -1096,8 +1108,7 @@ method overload, when invoked, must run these steps:
 
  <li><p>If there is an <a>event listener</a> in the associated list of <a>event listeners</a> whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is
- <var>capture</var>, then set that <a>event listener</a>'s <b>removed</b> to true and remove it from
- the associated list of <a>event listeners</a>.
+ <var>capture</var>, then <a lt="remove an event listener">remove</a> it.
 </ol>
 
 <p>The
@@ -1107,8 +1118,8 @@ method overload, when invoked, must run these steps:
 <ol>
  <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
- <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
- <b>type</b> is <var>type</var> and <b>group</b> is
+ <li><p><a lt="remove an event listener">Remove</a> all <a>event listeners</a> whose <b>type</b> is
+ <var>type</var> and <b>groups</b> <a for=list>contains</a>
  <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
 </ol>
 
@@ -1119,8 +1130,8 @@ method overload, when invoked, must run these steps:
 <ol>
  <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
- <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
- <b>group</b> is <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
+ <li><p><a lt="remove an event listener">Remove</a> all <a>event listeners</a> whose <b>groups</b>
+ <a for=list>contains</a> <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
