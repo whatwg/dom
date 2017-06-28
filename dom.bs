@@ -54,7 +54,6 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
         text: has ever been evaluated flag; for: service worker
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Realm; url: realm; type: dfn
-    text: SameValueZero; url: sec-samevaluezero; type: abstract-op
 </pre>
 
 <pre class=link-defaults>
@@ -328,17 +327,17 @@ function imgFetched(ev) {
 <a>Event listeners</a> can be removed by utilizing the
 {{EventTarget/removeEventListener(type, callback, options)}} method, passing the same arguments.
 
-Once can also provide a <em>group</em> when adding an <a>event listener</a>. This can be any value,
-including a simple string. Then later, the same group value can be provided to
+Once can also provide a <em>group</em> when adding an <a>event listener</a>. This can be either a
+string or a JavaScript symbol value. Then later, the same group value can be provided to
 {{EventTarget/removeEventListener(type, options)}} or {{EventTarget/removeEventListener(options)}},
 to remove all event listeners in that group:
 
 <pre class=lang-javascript>
-oven.addEventListener("turnon", () => { &hellip; }, { group: "cookies" })
-oven.addEventListener("heat", () => { &hellip; }, { group: "cookies" })
-oven.addEventListener("turnoff", () => { &hellip; }, { group: "cookies" })
+oven.addEventListener("turnon", () => { &hellip; }, { group: "brownies" })
+oven.addEventListener("heat", () => { &hellip; }, { group: "brownies" })
+oven.addEventListener("turnoff", () => { &hellip; }, { group: "brownies" })
 
-oven.removeEventListener({ group: "cookies" })
+oven.removeEventListener({ group: "brownies" })
 </pre>
 
 <hr>
@@ -900,6 +899,8 @@ interface EventTarget {
   boolean dispatchEvent(Event event);
 };
 
+typedef (DOMString or symbol) EventGroup;
+
 callback interface EventListener {
   void handleEvent(Event event);
 };
@@ -909,13 +910,13 @@ dictionary EventListenerOptions {
 };
 
 dictionary RemoveEventListenerGroupOptions {
- required any group;
+ required EventGroup group;
 };
 
 dictionary AddEventListenerOptions : EventListenerOptions {
   boolean passive = false;
   boolean once = false;
-  any group;
+  EventGroup group;
 };
 </pre>
 
@@ -935,8 +936,7 @@ when something has occurred.
  <li><b>capture</b> (a boolean, initially false)
  <li><b>passive</b> (a boolean, initially false)
  <li><b>once</b> (a boolean, initially false)
- <li><b>is grouped</b> (a boolean, initially false)
- <li><b>group</b> (any Web IDL value, initially null)
+ <li><b>group</b> (an {{EventGroup}} or null)
  <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
@@ -995,7 +995,7 @@ are not to be used for anything else. [[!HTML]]
   When provided, <var>options</var>'s {{AddEventListenerOptions/group}} member is stored so that
   later calls to {{EventTarget/removeEventListener(type, options)}} or
   {{EventTarget/removeEventListener(options)}} can remove all event listeners that provided the same
-  group value.
+  group value. It can be either a string or a symbol.
 
   The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
   not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and
@@ -1039,7 +1039,7 @@ steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var>, <var>passive</var>, and <var>is grouped</var> be false, and let <var>group</var> be null.
+ <li><p>Let <var>once</var> and <var>passive</var>, and let <var>group</var> be null.
 
  <li>
   <p>If <var>options</var> is a dictionary, then:
@@ -1048,11 +1048,10 @@ steps:
    <var>once</var> to <var>options</var>["{{AddEventListenerOptions/once}}"].
 
    <li><p>If {{AddEventListenerOptions/group}} is <a>present</a> in <var>options</var>, set
-   <var>is grouped</var> to true and set <var>group</var> to
-   <var>options</var>["{{AddEventListenerOptions/group}}"].
+   <var>group</var> to <var>options</var>["{{AddEventListenerOptions/group}}"].
   </ol>
 
- <li><p>Return the <a>tuple</a> (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>is grouped</var>,
+ <li><p>Return the <a>tuple</a> (<var>capture</var>, <var>passive</var>, <var>once</var>,
  <var>group</var>).
 </ol>
 
@@ -1066,10 +1065,6 @@ steps:
 avoid non-deterministic changes to the event listeners, invocation of certain {{EventTarget}}
 methods is allowed only during the very first evaluation of the service worker script.
 
-<p>Two Web IDL values are <dfn for="event listener">equal for grouping purposes</dfn> if, when
-<a>converted to ECMAScript values</a>, the results are equivalent according to
-<a abstract-op>SameValueZero</a>. [[!ECMASCRIPT]]
-
 <p>The
 <dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
 method, when invoked, must run these steps:
@@ -1079,21 +1074,20 @@ method, when invoked, must run these steps:
 
  <li><p>If <var>callback</var> is null, then return.
 
- <li><p>Let (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>is grouped</var>,
- <var>group</var>) be the result of <a lt="flatten more">flattening more</a> <var>options</var>.
+ <li><p>Let (<var>capture</var>, <var>passive</var>, <var>once</var>, <var>group</var>) be the
+ result of <a lt="flatten more">flattening more</a> <var>options</var>.
 
  <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
  <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
- <b>capture</b> is <var>capture</var>, <b>is grouped</b> is <var>is grouped</var>, and <b>group</b>
- is equal to <var>group</var>, then append a new <a>event listener</a> to it, whose
+ and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
- <var>capture</var>, <b>passive</b> is <var>passive</var>, <b>once</b> is <var>once</var>,
- <b>is grouped</b> is <var>is grouped</var>, and <b>group</b> is <var>group</var>.
+ <var>capture</var>, <b>passive</b> is <var>passive</var>, <b>once</b> is <var>once</var>, and
+ <b>group</b> is <var>group</var>.
 </ol>
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
-method overload, when invoked, must run these steps
+method overload, when invoked, must run these steps:
 
 <ol>
  <li><p><a>Perform a service worker check</a> on <a>context object</a>.
@@ -1108,27 +1102,25 @@ method overload, when invoked, must run these steps
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>options</var>)</code></dfn>
-method overload, when invoked, must run these steps
+method overload, when invoked, must run these steps:
 
 <ol>
  <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
  <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
- <b>type</b> is <var>type</var>, <b>is grouped</b> is true, and <b>group</b> is
- <a>equal for grouping purposes</a> to
+ <b>type</b> is <var>type</var> and <b>group</b> is
  <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
 </ol>
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>options</var>)</code></dfn>
-method overload, when invoked, must run these steps
+method overload, when invoked, must run these steps:
 
 <ol>
  <li><p><a>Perform a service worker check</a> on <a>context object</a>.
 
  <li><p>Remove all <a>event listeners</a> in the associated list of event listeners whose
- <b>is grouped</b> is true and <b>group</b> is <a>equal for grouping purposes</a> to
- <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
+ <b>group</b> is <var>options</var>["{{RemoveEventListenerGroupOptions/group}}"].
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
