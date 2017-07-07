@@ -876,7 +876,7 @@ for historical reasons.
 <h3 id=interface-eventtarget>Interface {{EventTarget}}</h3>
 
 <pre class=idl>
-[Exposed=(Window,Worker)]
+[Constructor, Exposed=(Window,Worker)]
 interface EventTarget {
   void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
   void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
@@ -944,6 +944,11 @@ and a <dfn export for=EventTarget>legacy-canceled-activation behavior</dfn> algo
 are not to be used for anything else. [[!HTML]]
 
 <dl class=domintro>
+ <dt><code><var>target</var> = new <a constructor for=EventTarget lt=EventTarget()>EventTarget</a>();</code>
+ <dd>
+  Creates a new {{EventTarget}} object, which can be used by developers to <a>dispatch</a> and listen for
+  <a>events</a>.
+
  <dt><code><var>target</var> . <a method for=EventTarget lt=addEventListener()>addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
  <dd>
   Appends an <a>event listener</a> for <a>events</a> whose {{Event/type}} attribute value
@@ -1013,6 +1018,17 @@ steps:
 
  <li><p>Return <var>capture</var>, <var>passive</var>, and <var>once</var>.
 </ol>
+
+<p>The <dfn constructor for=EventTarget><code>EventTarget()</code></dfn> constructor, when invoked,
+must return a new {{EventTarget}}.
+
+<p class="note">Because of the defaults stated elsewhere, the returned {{EventTarget}}'s
+<a>get the parent</a> algorithm will return null, and it will have no <a>activation behavior</a>,
+<a>legacy-pre-activation behavior</a>, or <a>legacy-canceled-activation behavior</a>.
+
+<p class="note">In the future we could allow custom <a>get the parent</a> algorithms. Let us know
+if this would be useful for your programs. For now, all author-created {{EventTarget}}s do not
+participate in a tree structure.</p>
 
 <p>The
 <dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
