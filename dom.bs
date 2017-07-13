@@ -55,6 +55,11 @@ urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
     text: Construct; url: sec-construct; type: abstract-op
     text: Realm; url: realm; type: dfn
+urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
+    type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
+    type:dfn; text: time origin
+    type:dfn; text: clock resolution
+
 </pre>
 
 <pre class=link-defaults>
@@ -465,7 +470,7 @@ interface Event {
   readonly attribute boolean composed;
 
   [Unforgeable] readonly attribute boolean isTrusted;
-  readonly attribute DOMTimeStamp timeStamp;
+  readonly attribute DOMHighResTimeStamp timeStamp;
 
   void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // historical
 };
@@ -571,8 +576,8 @@ algorithm below.
  false otherwise.
 
  <dt><code><var>event</var> . {{Event/timeStamp}}</code>
- <dd>Returns the creation time of <var>event</var> as the number of milliseconds that
- passed since 00:00:00 UTC on 1 January 1970.
+ <dd>Returns the <var>event</var>'s timestamp as the number of milliseconds measured relative to
+ the <a>time origin</a>.
 </dl>
 
 The <dfn attribute for=Event><code>type</code></dfn> attribute must
@@ -704,15 +709,12 @@ initialized to false.
 the user agent to dispatch an <a>event</a> whose {{Event/isTrusted}} attribute is initialized to
 false.
 
-The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute
-must return the value it was initialized to. When an
-<a>event</a> is created the attribute must be
-initialized to the number of milliseconds that have passed since
-00:00:00 UTC on 1 January 1970, ignoring leap seconds.
-<!-- leap seconds are ignored by JavaScript too -->
+The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute must return the value it was
+initialized to.
 
-<p class=XXX>This is highly likely to change and already does not reflect implementations well.
-Please see <a href=https://github.com/whatwg/dom/issues/23>dom #23</a> for more details.
+<p class=warning> User agents are strongly encouraged to set minimum resolution of the
+{{Event/timeStamp}} attribute to 5 microseconds following the existing <a>clock resolution</a>
+recommendation. [[!HR-TIME]]
 
 <hr>
 
@@ -817,6 +819,10 @@ must be run, given the arguments <var>type</var> and <var>eventInitDict</var>:
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>type</var>.
 
+ <li><p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+ representing the high resolution time from the <a>time origin</a> to the occurrence of the call
+ to the <var>event</var>'s <a>constructor</a>.
+
  <li><p>For each <a>dictionary member</a> present in <var>eventInitDict</var>, find the attribute on
  <var>event</var> whose <a spec=webidl>identifier</a> matches the key of the
  <a>dictionary member</a> and then set the attribute to the value of that <a>dictionary member</a>.
@@ -848,6 +854,16 @@ it, and optionally given a <a>Realm</a> <var>realm</var>, run these steps:</p>
  attribute on <var>event</var> whose <a spec=webidl>identifier</a> matches the key of the
  <a>dictionary member</a> and then set the attribute to the default value of that
  <a>dictionary member</a>.
+
+ <li><p>Set <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+ representing the high resolution time from the <a>time origin</a> to the occurrence that the
+ event is signaling.
+
+ <p class=note>For example, in macOS the occurrence time for input actions are available via the
+ timestamp property of corresponding <code>NSEvent</code> objects. So in this case, the
+ {{Event/timeStamp}} value should be equivalent to the <code>NSEvent</code>'s timestamp offset by
+ <a>time origin</a>, translated in milliseconds, and with its precision adjusted to meet the
+ recommended minimum <a>clock resolution</a>.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
 
@@ -5110,6 +5126,9 @@ invoked, must run these steps:
  <li><p>Let <var>event</var> be the result of <a>creating an event</a> given <var>constructor</var>.
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to the empty string.
+
+ <li><p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+ representing the high resolution time from the <a>time origin</a> to now.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to false.
 
@@ -9517,6 +9536,9 @@ other chapters are defined by the <cite>UI Events</cite> specification.
  <li>The propagation and canceled flags are unset when invoking
  {{Event/initEvent()}} rather than after
  dispatch.
+ <li>{{Event/timeStamp}} is no longer a {{DOMTimeStamp}} representing creation time of event as
+ the number of milliseconds that passed since 00:00:00 UTC on 1 January 1970, but instead a
+ {{DOMHighResTimeStamp}}.
 </ul>
 
 
@@ -9778,6 +9800,7 @@ Kirill Topolyan,
 Koji Ishii,
 Lachlan Hunt,
 Lauren Wood,
+Majid Valipour,
 Malte Ubl,
 Manish Goregaokar,
 Manish Tripathi,
