@@ -8893,27 +8893,29 @@ has an associated <dfn export id=concept-traversal-root for=traversal>root</dfn>
 <dfn export id=concept-traversal-whattoshow for=traversal>whatToShow</dfn> bitmask, and
 <dfn export id=concept-traversal-filter for=traversal>filter</dfn> callback.
 
-To <dfn export id=concept-node-filter for=Node>filter</dfn> <var>node</var> run
-these steps:
+<p>To <dfn export id=concept-node-filter for=Node>filter</dfn> <var>node</var> run these steps:
 
 <ol>
- <li>If the <a for=traversal>active flag</a> is set, throw an {{InvalidStateError}}.
- <li>Let <var>n</var> be <var>node</var>'s
- {{Node/nodeType}} attribute value minus 1.
- <li>If the <var>n</var><sup>th</sup> bit (where 0 is the least
- significant bit) of
- <a for=traversal>whatToShow</a> is not set,
- return {{NodeFilter/FILTER_SKIP}}.
+ <li><p>If the <a for=traversal>active flag</a> is set, throw an {{InvalidStateError}}.
+
+ <li><p>Let <var>n</var> be <var>node</var>'s {{Node/nodeType}} attribute value minus 1.
+
+ <li><p>If the <var>n</var><sup>th</sup> bit (where 0 is the least significant bit) of
+ <a for=traversal>whatToShow</a> is not set, then return {{NodeFilter/FILTER_SKIP}}.
  <!-- !((1 << (node.nodeType - 1)) & whatToShow) -->
- <li>If <a for=traversal>filter</a> is null,
- return {{NodeFilter/FILTER_ACCEPT}}.
- <li>Set the <a for=traversal>active flag</a>.
- <li>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
+
+ <li><p>If <a for=traversal>filter</a> is null, then return {{NodeFilter/FILTER_ACCEPT}}.
+
+ <li><p>Set the <a for=traversal>active flag</a>.
+
+ <li><p>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
  <a for=traversal>filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of
- <var>node</var>.
- <li>Unset the <a for=traversal>active flag</a>.
- <!-- no need to pass callback this value; it's undefined which becomes the global object -->
- <li>Return <var>result</var>.
+ <var>node</var>. If that throws an exception, then unset the <a for=traversal>active flag</a> and
+ rethrow the exception.
+
+ <li><p>Unset the <a for=traversal>active flag</a>.
+
+ <li><p>Return <var>result</var>.
 </ol>
 
 
