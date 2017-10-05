@@ -31,6 +31,8 @@ Bikeshed problems:
 <pre class=anchors>
 urlPrefix: https://www.w3.org/TR/xml/#NT-
     type: type
+        text: Prefix; url: Prefix
+        text: LocalPart; url: LocalPart
         text: Name; url: Name
         text: Char; url: Char
         text: PubidChar; url: PubidChar
@@ -271,41 +273,111 @@ against a <var>set</var>, run these steps:
 added.
 
 
-<h3 id=namespaces>Namespaces</h3>
+<h3 id=name-validation oldids=namespaces>Name validation</h3>
 
-<p>To <dfn export>validate</dfn> a <var>qualifiedName</var>, <a>throw</a> an
-{{InvalidCharacterError}} if <var>qualifiedName</var> does not match the
-<code><a type>Name</a></code> or <code><a type>QName</a></code> production.
-
-To <dfn export>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>,
-run these steps:
+<p>To <dfn>validate and canonicalize the HTML element local name</dfn> <var>localName</var>:</p>
 
 <ol>
- <li>If <var>namespace</var> is the empty string, set it to null.
+ <li><p>If <var>localName</var>'s <a for="string">length</a> is 0, then <a>throw</a> an
+ {{InvalidCharacterError}}.</p></li>
 
- <li><a>Validate</a> <var>qualifiedName</var>.
+ <li><p><a>ASCII lowercase</a> <var>localName</var>.</p></li>
 
- <li>Let <var>prefix</var> be null.
+ <li><p>If <var>localName</var>'s first character is not an <a>ASCII lower alpha</a>, then
+ <a>throw</a> an {{InvalidCharacterError}}.</p></li>
 
- <li>Let <var>localName</var> be <var>qualifiedName</var>.
+ <li><p>If <var>localName</var> contains <a>ASCII whitespace</a>, U+002F (/), or U+003E (>), then
+ <a>throw</a> an {{InvalidCharacterError}}.</p></li>
 
- <li>If <var>qualifiedName</var> contains a "<code>:</code>" (U+003E), then split the
- string on it and set <var>prefix</var> to the part before and <var>localName</var> to
- the part after.
+ <li><p>Replace any instances of U+0000 NULL within <var>localName</var> with U+FFFD.</p></li>
 
- <li>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
+ <li><p>Return <var>localName</var>.</p></li>
+</ol>
+
+<p class="note">The <a>validate and canonicalize the HTML element local name</a> algorithm throws in
+the cases where the <a>HTML parser</a> would not create an element, and otherwise canonicalizes the
+given string to equal the local name of the element the HTML parser would create.</p>
+
+<p>To <dfn>validate and canonicalize the HTML attribute local name</dfn> <var>localName</var>:</p>
+
+<ol>
+ <li><p>If <var>localName</var>'s <a for="string">length</a> is 0, then <a>throw</a> an
+ {{InvalidCharacterError}}.</p></li>
+
+ <li><p><a>ASCII lowercase</a> <var>localName</var>.</p></li>
+
+ <li><p>If <var>localName</var> contains <a>ASCII whitespace</a>, U+002F (/), or U+003E (>), then
+ <a>throw</a> an {{InvalidCharacterError}}.</p></li>
+
+ <li><p>If <var>localName</var>'s contains U+003D (=) in any position except the first character,
+ then <a>throw</a> an {{InvalidCharacterError}}.</p></li>
+
+ <li><p>Replace any instances of U+0000 NULL within <var>localName</var> with U+FFFD.</p></li>
+
+ <li><p>Return <var>localName</var>.</p></li>
+</ol>
+
+<p class="note">The <a>validate and canonicalize the HTML attribute local name</a> algorithm throws
+in the cases where the <a>HTML parser</a> would not create an attribute, and otherwise canonicalizes
+the given string to equal the local name of the attribute the HTML parser would create.</p>
+
+<p>To <dfn>validate the XML local name</dfn> <var>localName</var>:</p>
+
+<ol>
+ <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
+ <a>throw</a> an {{InvalidCharacterError}}.
+</ol>
+
+<p>To <dfn>validate the XML qualified name</dfn> <var>qualifiedName</var>:
+
+<ol>
+ <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> or
+ <code><a type>QName</a></code> production, then <a>throw</a> an {{InvalidCharacterError}}.</p></li>
+</ol>
+
+<p>To <dfn>canonicalize a namespace and qualified name</dfn>, given <var>namespace</var>,
+<var>qualifiedName</var>, and a <var>mode</var> which is either "<code>attribute</code>" or
+"<code>element</code>":
+
+<ol>
+ <li><p>If <var>namespace</var> is the empty string, set it to null.
+
+ <li><p>Let <var>prefix</var> be null.
+
+ <li><p>Let <var>localName</var> be <var>qualifiedName</var>.
+
+ <li><p>If <var>qualifiedName</var> contains a "<code>:</code>" (U+003E), then split
+ <var>qualifiedName</var> on that first occurrence of "<code>:</code>" and set <var>prefix</var> to
+ the part before and <var>localName</var> to the part after.
+
+ <li><p>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
  {{NamespaceError}}.
 
- <li>If <var>prefix</var> is "<code>xml</code>" and <var>namespace</var> is not the
+ <li><p>If <var>prefix</var> is "<code>xml</code>" and <var>namespace</var> is not the
  <a>XML namespace</a>, then <a>throw</a> a {{NamespaceError}}.
 
- <li>If either <var>qualifiedName</var> or <var>prefix</var> is
- "<code>xmlns</code>" and <var>namespace</var> is not the
- <a>XMLNS namespace</a>, then <a>throw</a> a
- {{NamespaceError}}.
+ <li><p>If either <var>qualifiedName</var> or <var>prefix</var> is "<code>xmlns</code>" and
+ <var>namespace</var> is not the <a>XMLNS namespace</a>, then <a>throw</a> a {{NamespaceError}}.
 
- <li>If <var>namespace</var> is the <a>XMLNS namespace</a> and neither <var>qualifiedName</var>
+ <li><p>If <var>namespace</var> is the <a>XMLNS namespace</a> and neither <var>qualifiedName</var>
  nor <var>prefix</var> is "<code>xmlns</code>", then <a>throw</a> a {{NamespaceError}}.
+
+ <li>
+  <p>If <var>namespace</var> is the <a>HTML namespace</a>, then:
+  <ol>
+   <li><p>If <var>prefix</var> is non-null and does not match the <code><a type>Prefix</a></code>
+   production, then <a>throw</a> an {{InvalidCharacterError}}.</p></li>
+
+   <li><p>If <var>mode</var> is "<code>attribute</code>", set <var>localName</var> to
+   the result of <a lt="validate and canonicalize the HTML attribute local name">validating and
+   canonicalizing the HTML attribute local name</a> <var>localName</var>.
+
+   <li><p>Otherwise, <var>mode</var> must be "<code>element</code>". Set <var>localName</var> to
+   the result of <a lt="validate and canonicalize the HTML element local name">validating and
+   canonicalizing the HTML element local name</a> <var>localName</var>.
+  </ol>
+
+ <li><p>Otherwise, <a>validate the XML qualified name</a> <var>qualifiedName</var>.
 
  <li>Return <var>namespace</var>, <var>prefix</var>, and <var>localName</var>.
 </ol>
@@ -4966,8 +5038,7 @@ for the <a>context object</a>.
   <var>document</var> is an <a>HTML document</a> or <var>document</var>'s
   <a for=Document>content type</a> is "<code>application/xhtml+xml</code>", and null otherwise.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
+  If <var>localName</var> is not a name that can be created by the <a>HTML parser</a>, an
   {{InvalidCharacterError}} will be thrown.
 
   When supplied, <var>options</var>' <code>is</code> member can be used to create a
@@ -4987,32 +5058,11 @@ for the <a>context object</a>.
   everything after "<code>:</code>" (U+003E) in
   <var>qualifiedName</var> or <var>qualifiedName</var>.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}} will be thrown.
+  If the derived <a for=Element>namespace prefix</a> or <a for=Element>local name</a> are invalid,
+  an {{InvalidCharacterError}} will be thrown. If they are in conflict with the <var>namespace</var>
+  argument, a {{NamespaceError}} will be thrown.
 
-  If one of the following conditions is true a
-  {{NamespaceError}} will be thrown:
-
-  <ul>
-   <li><var>localName</var> does not match the
-   <code><a type>QName</a></code> production.
-   <li><a for=Element>Namespace prefix</a>
-   is not null and <var>namespace</var> is the empty string.
-   <li><a for=Element>Namespace prefix</a>
-   is "<code>xml</code>" and <var>namespace</var> is not the
-   <a>XML namespace</a>.
-   <li><var>qualifiedName</var> or
-   <a for=Element>namespace prefix</a>
-   is "<code>xmlns</code>" and <var>namespace</var> is not the
-   <a>XMLNS namespace</a>.
-   <li><var>namespace</var> is the <a>XMLNS namespace</a> and
-   neither <var>qualifiedName</var> nor
-   <a for=Element>namespace prefix</a>
-   is "<code>xmlns</code>".
-  </ul>
-
-  When supplied, <var>options</var>' <code>is</code> member can be used to create a
+  When supplied, <var>options</var>'s <code>is</code> member can be used to create a
   <a>customized built-in element</a>.
 
  <dt><code><var ignore>documentFragment</var> = <var>document</var> . {{createDocumentFragment()}}</code>
@@ -5055,12 +5105,11 @@ The <dfn method for=Document><code>createElement(<var>localName</var>, <var>opti
 invoked, must run these steps:
 
 <ol>
- <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
- <a>throw</a> an {{InvalidCharacterError}}.
+ <li><p>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ the result of <a lt="validate and canonicalize the HTML element local name">validating and
+ canonicalizing the HTML element local name</a> <var>localName</var>.</p></li>
 
- <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
- <var>localName</var> in <a>ASCII lowercase</a>.
- <!-- XXX why restrict this to HTML documents? -->
+ <li><p>Otherwise, <a>validate the XML local name</a> <var>localName</var>.</p></li>
 
  <li>Let <var>is</var> be the value of <code>is</code> member of <var>options</var>, or null if no
  such member exists.
@@ -5084,7 +5133,8 @@ invoked, must run these steps:
 
 <ol>
  <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
- <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ <var>namespace</var> and <var>qualifiedName</var> to
+ <a>canonicalize a namespace and qualified name</a> with mode "<code>element</code>".
 
  <li>Let <var>is</var> be the value of <code>is</code> member of <var>options</var>, or null if no
  such member exists.
@@ -5263,11 +5313,11 @@ The <dfn method for=Document><code>createAttribute(<var>localName</var>)</code><
 invoked, must run these steps:
 
 <ol>
- <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
- then <a>throw</a> an {{InvalidCharacterError}}.
+ <li><p>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ the result of <a lt="validate and canonicalize the HTML attribute local name">validating and
+ canonicalizing the HTML attribute local name</a> <var>localName</var>.</p></li>
 
- <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
- <var>localName</var> in <a>ASCII lowercase</a>.
+ <li><p>Otherwise, <a>validate the XML local name</a> <var>localName</var>.</p></li>
 
  <li>Return a new <a>attribute</a> whose <a for=Attr>local name</a> is <var>localName</var> and
  <a for=Node>node document</a> is <a>context object</a>.
@@ -5279,7 +5329,8 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ passing <var>namespace</var> and <var>qualifiedName</var> to
+ <a>canonicalize a namespace and qualified name</a> with mode "<code>attribute</code>".
 
  <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
@@ -5412,13 +5463,9 @@ interface DOMImplementation {
  <dt><code><var>doctype</var> = <var>document</var> . {{Document/implementation}} . {{createDocumentType(qualifiedName, publicId, systemId)}}</code>
 
  <dd>
-  Returns a <a>doctype</a>, with the given
-  <var>qualifiedName</var>, <var>publicId</var>, and
-  <var>systemId</var>. If <var>qualifiedName</var> does not
-  match the <code><a type>Name</a></code> production, an
-  {{InvalidCharacterError}} is thrown, and if it does not match the
-  <code><a type>QName</a></code> production, a
-  {{NamespaceError}} is thrown.
+  Returns a <a>doctype</a>, with the given <var>qualifiedName</var>, <var>publicId</var>, and
+  <var>systemId</var>. If <var>qualifiedName</var> does not match the <code><a type>Name</a></code>
+  or <code><a type>QName</a></code> production, an {{InvalidCharacterError}} is thrown.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a method for=DOMImplementation lt=createDocument()>createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code>
 
@@ -5451,7 +5498,7 @@ The
 method, when invoked, must run these steps:
 
 <ol>
- <li><p><a>Validate</a> <var>qualifiedName</var>.
+ <li><p><a>Validate the XML qualified name</a> <var>qualifiedName</var>.
 
  <li><p>Return a new <a>doctype</a>, with <var>qualifiedName</var> as its
  <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
@@ -5738,7 +5785,7 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [CEReactions] void setAttribute(DOMString qualifiedName, DOMString value);
+  [CEReactions] void setAttribute(DOMString name, DOMString value);
   [CEReactions] void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
   [CEReactions] void removeAttribute(DOMString qualifiedName);
   [CEReactions] void removeAttributeNS(DOMString? namespace, DOMString localName);
@@ -6416,24 +6463,24 @@ method, when invoked, must these steps:
 </ol>
 
 <p>The
-<dfn method for=Element><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code></dfn>
+<dfn method for=Element><code>setAttribute(<var>name</var>, <var>value</var>)</code></dfn>
 method, when invoked, must run these steps:
+<!-- name is sometimes treated as a qualified name and sometimes as a local name -->
 
 <ol>
- <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
- XML, then <a>throw</a> an {{InvalidCharacterError}}.
+ <li><p>If the <a>context object</a> is an <a>HTML document</a>, then set <var>name</var> to
+ the result of <a lt="validate and canonicalize the HTML attribute local name">validating and
+ canonicalizing the HTML attribute local name</a> <var>name</var>.</p></li>
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
- <var>qualifiedName</var> in <a>ASCII lowercase</a>.
+ <li><p>Otherwise, <a>validate the XML local name</a> <var>name</var>.</p></li>
 
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
- <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
+ <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>name</var>,
  and null otherwise.
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
  <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
- <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
+ <a for="Attr">local name</a> is <var>name</var>, <a for=Attr>value</a> is
  <var>value</var>, and <a for=Node>node document</a> is <a>context object</a>'s
  <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
  <a>context object</a>, and then return.
@@ -6448,7 +6495,8 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ passing <var>namespace</var> and <var>qualifiedName</var> to
+ <a>canonicalize a namespace and qualified name</a> with mode "<code>attribute</code>".
 
  <li><p><a>Set an attribute value</a> for the <a>context object</a> using <var>localName</var>,
  <var>value</var>, and also <var>prefix</var> and <var>namespace</var>.
