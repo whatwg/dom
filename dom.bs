@@ -247,7 +247,7 @@ against a <var>set</var>, run these steps:
  <var>relativeSelectors</var> against <var>set</var>.
  [[!SELECTORS4]]
 
- <li>If <var>s</var> is failure, <a>throw</a> a {{SyntaxError}}.
+ <li>If <var>s</var> is failure, <a>throw</a> a "{{SyntaxError!!exception}}" {{DOMException}}.
 
  <li>Return the result of <a>evaluate a selector</a> <var>s</var>
   using <a>:scope elements</a> <var>set</var>. [[!SELECTORS4]]
@@ -261,7 +261,8 @@ against a <var>set</var>, run these steps:
  <li><p>Let <var>s</var> be the result of <a>parse a selector</a> <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>s</var> is failure, then <a>throw</a> a {{SyntaxError}}.
+ <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ {{DOMException}}.
 
  <li><p>Return the result of <a>evaluate a selector</a> <var>s</var> against <var>node</var>'s
  <a for=tree>root</a> using <a>scoping root</a> <var>node</var>. [[!SELECTORS4]].
@@ -274,8 +275,8 @@ added.
 <h3 id=namespaces>Namespaces</h3>
 
 <p>To <dfn export>validate</dfn> a <var>qualifiedName</var>, <a>throw</a> an
-{{InvalidCharacterError}} if <var>qualifiedName</var> does not match the
-<code><a type>Name</a></code> or <code><a type>QName</a></code> production.
+"{{InvalidCharacterError!!exception}}" {{DOMException}} if <var>qualifiedName</var> does not match
+the <code><a type>Name</a></code> or <code><a type>QName</a></code> production.
 
 To <dfn export>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>,
 run these steps:
@@ -294,18 +295,19 @@ run these steps:
  the part after.
 
  <li>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
- {{NamespaceError}}.
+ "{{NamespaceError!!exception}}" {{DOMException}}.
 
  <li>If <var>prefix</var> is "<code>xml</code>" and <var>namespace</var> is not the
- <a>XML namespace</a>, then <a>throw</a> a {{NamespaceError}}.
+ <a>XML namespace</a>, then <a>throw</a> a "{{NamespaceError!!exception}}" {{DOMException}}.
 
  <li>If either <var>qualifiedName</var> or <var>prefix</var> is
  "<code>xmlns</code>" and <var>namespace</var> is not the
  <a>XMLNS namespace</a>, then <a>throw</a> a
- {{NamespaceError}}.
+ "{{NamespaceError!!exception}}" {{DOMException}}.
 
  <li>If <var>namespace</var> is the <a>XMLNS namespace</a> and neither <var>qualifiedName</var>
- nor <var>prefix</var> is "<code>xmlns</code>", then <a>throw</a> a {{NamespaceError}}.
+ nor <var>prefix</var> is "<code>xmlns</code>", then <a>throw</a> a "{{NamespaceError!!exception}}"
+ {{DOMException}}.
 
  <li>Return <var>namespace</var>, <var>prefix</var>, and <var>localName</var>.
 </ol>
@@ -1093,7 +1095,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <var>event</var>'s <a>dispatch flag</a> is set, or if its <a>initialized flag</a> is not
- set, then <a>throw</a> an {{InvalidStateError}}.
+ set, then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to false.
 
@@ -1453,7 +1455,7 @@ The API which wishes to support aborting can accept an {{AbortSignal}} object, a
 determine how to proceed.
 
 <p>APIs that rely upon {{AbortController}} are encouraged to respond to {{AbortController/abort()}}
-by rejecting any unsettled promise with a new {{DOMException}} with [=error name=] "{{AbortError}}".
+by rejecting any unsettled promise with a new "{{AbortError!!exception}}" {{DOMException}}.
 
 <div class=example id=aborting-ongoing-activities-example>
  <p>A hypothetical <code>doAmazingness({ ... })</code> method could accept an {{AbortSignal}} object
@@ -1621,8 +1623,8 @@ the following:
 
 <ul class=brief>
  <li>Accept {{AbortSignal}} objects through a <code>signal</code> dictionary member.
- <li>Convey that the operation got aborted by rejecting the promise with an "{{AbortError}}"
- {{DOMException}}.
+ <li>Convey that the operation got aborted by rejecting the promise with an
+ "{{AbortError!!exception}}" {{DOMException}}.
  <li>Reject immediately if the {{AbortSignal}}'s [=AbortSignal/aborted flag=] is already set,
  otherwise:
  <li>Use the [=AbortSignal/abort algorithms=] mechanism to observe changes to the {{AbortSignal}}
@@ -1641,7 +1643,7 @@ the following:
 
    <ol>
     <li><p>If |options|' <code>signal</code>'s [=AbortSignal/aborted flag=] is set, then [=reject=]
-    |p| with an "{{AbortError}}" {{DOMException}} and return |p|.
+    |p| with an "{{AbortError!!exception}}" {{DOMException}} and return |p|.
 
     <li>
      <p>[=AbortSignal/Add|Add the following abort steps=] to |options|' <code>signal</code>:
@@ -1649,7 +1651,7 @@ the following:
      <ol>
       <li><p>Stop doing amazing things.
 
-      <li><p>[=Reject=] |p| with an "{{AbortError}}" {{DOMException}}.
+      <li><p>[=Reject=] |p| with an "{{AbortError!!exception}}" {{DOMException}}.
      </ol>
    </ol>
 
@@ -2054,15 +2056,15 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
  {{DocumentFragment}}, or {{Element}}
  <a>node</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If <var>node</var> is a
  <a>host-including inclusive ancestor</a>
  of <var>parent</var>, <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If <var>child</var> is not null and its <a for=tree>parent</a> is not <var>parent</var>, then
- <a>throw</a> a {{NotFoundError}}.
+ <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
 
  <li>If <var>node</var> is not a
  {{DocumentFragment}}, {{DocumentType}},
@@ -2070,7 +2072,7 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
  {{ProcessingInstruction}}, or {{Comment}}
  <a>node</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If either <var>node</var> is a {{Text}}
  <a>node</a> and <var>parent</var> is a
@@ -2078,13 +2080,13 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
  <a>doctype</a> and <var>parent</var> is
  not a <a>document</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>
   If <var>parent</var> is a
   <a>document</a>, and any of the statements below, switched
   on <var>node</var>, are true, <a>throw</a> a
-  {{HierarchyRequestError}}.
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <dl class=switch>
    <dt>{{DocumentFragment}} <a>node</a>
@@ -2276,15 +2278,15 @@ within a <var>parent</var>, run these steps:
  {{DocumentFragment}}, or {{Element}}
  <a>node</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If <var>node</var> is a
  <a>host-including inclusive ancestor</a>
  of <var>parent</var>, <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
- {{NotFoundError}}.
+ "{{NotFoundError!!exception}}" {{DOMException}}.
 
  <li>If <var>node</var> is not a
  {{DocumentFragment}}, {{DocumentType}},
@@ -2292,7 +2294,7 @@ within a <var>parent</var>, run these steps:
  {{ProcessingInstruction}}, or {{Comment}}
  <a>node</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>If either <var>node</var> is a {{Text}}
  <a>node</a> and <var>parent</var> is a
@@ -2300,13 +2302,13 @@ within a <var>parent</var>, run these steps:
  <a>doctype</a> and <var>parent</var> is
  not a <a>document</a>,
  <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>
   If <var>parent</var> is a
   <a>document</a>, and any of the statements below, switched
   on <var>node</var>, are true, <a>throw</a> a
-  {{HierarchyRequestError}}.
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <dl class=switch>
    <dt>{{DocumentFragment}} <a>node</a>
@@ -2424,7 +2426,7 @@ To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> fr
 
 <ol>
  <li>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
- {{NotFoundError}}.
+ "{{NotFoundError!!exception}}" {{DOMException}}.
 
  <li><a for=/>Remove</a> <var>child</var> from <var>parent</var>.
 
@@ -2651,7 +2653,7 @@ Element implements ParentNode;
   with equivalent {{Text}} <a>nodes</a>.
 
   <a>Throws</a> a
-  {{HierarchyRequestError}} if the constraints of the
+  "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of the
   <a>node tree</a> are violated.
   <!-- "NotFoundError" is impossible -->
 
@@ -2663,7 +2665,7 @@ Element implements ParentNode;
   with equivalent {{Text}} <a>nodes</a>.
 
   <a>Throws</a> a
-  {{HierarchyRequestError}} if the constraints of the
+  "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of the
   <a>node tree</a> are violated.
   <!-- "NotFoundError" is impossible -->
 
@@ -2810,7 +2812,7 @@ CharacterData implements ChildNode;
   {{Text}} <a>nodes</a>.
 
   <a>Throws</a> a
-  {{HierarchyRequestError}} if the constraints of the
+  "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of the
   <a>node tree</a> are violated.
 
  <dt><code><var>node</var> . {{after(...nodes)}}</code>
@@ -2820,7 +2822,7 @@ CharacterData implements ChildNode;
   {{Text}} <a>nodes</a>.
 
   <a>Throws</a> a
-  {{HierarchyRequestError}} if the constraints of the
+  "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of the
   <a>node tree</a> are violated.
 
  <dt><code><var>node</var> . {{replaceWith(...nodes)}}</code>
@@ -2830,7 +2832,7 @@ CharacterData implements ChildNode;
   {{Text}} <a>nodes</a>.
 
   <a>Throws</a> a
-  {{HierarchyRequestError}} if the constraints of the
+  "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of the
   <a>node tree</a> are violated.
 
  <dt><code><var>node</var> . {{ChildNode/remove()}}</code>
@@ -3817,9 +3819,9 @@ The <dfn attribute for=Node>prefix</dfn> attribute must return the prefix that i
    <li>If <var>prefix</var> does not match the
    <code><a type>Name</a></code> production in XML,
    <a>throw</a> an
-   {{InvalidCharacterError}} exception.
+   "{{InvalidCharacterError!!exception}}" {{DOMException}}.
    <li>If <var>prefix</var> does not match the <a type>NCName</a> production in Namespaces in XML, <a>throw</a> a
-   {{NamespaceError}} exception.
+   "{{NamespaceError!!exception}}" {{DOMException}}.
   </ol>
  <li>Actually this does not match any browser. Let's try to drop it instead.
 </ol>- ->
@@ -4221,7 +4223,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <a>context object</a> is a <a for=/>shadow root</a>, then <a>throw</a> a
- {{NotSupportedError}}.
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>Return a <a lt="clone a node">clone</a> of the <a>context object</a>, with the
  <i>clone children flag</i> set if <var>deep</var> is true.
@@ -4968,7 +4970,7 @@ for the <a>context object</a>.
 
   If <var>localName</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}} will be thrown.
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
   When supplied, <var>options</var>' <code>is</code> member can be used to create a
   <a>customized built-in element</a>.
@@ -4989,10 +4991,10 @@ for the <a>context object</a>.
 
   If <var>localName</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}} will be thrown.
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
   If one of the following conditions is true a
-  {{NamespaceError}} will be thrown:
+  "{{NamespaceError!!exception}}" {{DOMException}} will be thrown:
 
   <ul>
    <li><var>localName</var> does not match the
@@ -5038,9 +5040,9 @@ for the <a>context object</a>.
   <a for=CharacterData>data</a> is <var>data</var>.
   If <var>target</var> does not match the
   <code><a type>Name</a></code> production an
-  {{InvalidCharacterError}} will be thrown.
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
   If <var>data</var> contains "<code>?></code>" an
-  {{InvalidCharacterError}} will be thrown.
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 </dl>
 
 The <dfn export id=concept-element-interface>element interface</dfn> for any
@@ -5056,7 +5058,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
- <a>throw</a> an {{InvalidCharacterError}}.
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
@@ -5121,10 +5123,10 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <a>context object</a> is an <a>HTML document</a>, then <a>throw</a> a
- {{NotSupportedError}}.
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>If <var>data</var> contains the string "<code>]]></code>", then <a>throw</a> an
- {{InvalidCharacterError}}.
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li><p>Return a new {{CDATASection}} <a>node</a> with its <a for=CharacterData>data</a> set to <var>data</var> and
  <a for=Node>node document</a> set to the <a>context object</a>.
@@ -5146,11 +5148,11 @@ method, when invoked, must run these steps:
  <li>If <var>target</var> does not match the
  <!--<code data-anolis-type>PITarget</code>-->
  <code><a type>Name</a></code> production,
- then <a>throw</a> an {{InvalidCharacterError}}. <!-- DOM3 does not check for "xml" -->
+ then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- DOM3 does not check for "xml" -->
 
  <li>If <var>data</var> contains the string
  "<code>?></code>", then <a>throw</a> an
- {{InvalidCharacterError}}. <!-- Gecko does this. -->
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
 
  <li>Return a new {{ProcessingInstruction}}
  <a>node</a>, with
@@ -5176,7 +5178,7 @@ method, when invoked, must run these steps:
   <var>node</var>'s <a>descendants</a>.
 
   If <var>node</var> is a <a>document</a> or a <a for=/>shadow root</a>, throws a
-  {{NotSupportedError}}.
+  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <dt><var>node</var> = <var>document</var> . {{adoptNode(node)}}
 
@@ -5184,8 +5186,9 @@ method, when invoked, must run these steps:
   Moves <var>node</var> from another
   <a>document</a> and returns it.
 
-  If <var>node</var> is a <a>document</a>, throws a {{NotSupportedError}} or, if
-  <var>node</var> is a <a for=/>shadow root</a>, throws a {{HierarchyRequestError}}.
+  If <var>node</var> is a <a>document</a>, throws a "{{NotSupportedError!!exception}}"
+  {{DOMException}} or, if <var>node</var> is a <a for=/>shadow root</a>, throws a
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 </dl>
 
 The <dfn method for=Document><code>importNode(<var>node</var>, <var>deep</var>)</code></dfn> method,
@@ -5193,7 +5196,7 @@ when invoked, must run these steps:
 
 <ol>
  <li><p>If <var>node</var> is a <a>document</a> or <a for=/>shadow root</a>, then <a>throw</a> a
- {{NotSupportedError}}.
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>Return a <a lt="clone a node">clone</a> of <var>node</var>, with <a>context object</a> and
  the <i>clone children flag</i> set if <var>deep</var> is true.
@@ -5246,10 +5249,11 @@ The <dfn method for=Document><code>adoptNode(<var>node</var>)</code></dfn> metho
 must run these steps:
 
 <ol>
- <li>If <var>node</var> is a <a>document</a>, then <a>throw</a> a {{NotSupportedError}}.
+ <li>If <var>node</var> is a <a>document</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li>If <var>node</var> is a <a for=/>shadow root</a>, then <a>throw</a> a
- {{HierarchyRequestError}}.
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li><a>Adopt</a> <var>node</var>
  into the <a>context object</a>.
@@ -5264,7 +5268,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
- then <a>throw</a> an {{InvalidCharacterError}}.
+ then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
@@ -5328,11 +5332,13 @@ invoked, must run these steps:
     <tr><td>"<code>uievents</code>"
   </table>
 
- <li><p>If <var>constructor</var> is null, then <a>throw</a> a {{NotSupportedError}}.
+ <li><p>If <var>constructor</var> is null, then <a>throw</a> a "{{NotSupportedError!!exception}}"
+  {{DOMException}}.
 
  <li>
   <p>If the interface indicated by <var>constructor</var> is not exposed on the <a>relevant global
-  object</a> of the <a>context object</a>, then <a>throw</a> a {{NotSupportedError}}.
+  object</a> of the <a>context object</a>, then <a>throw</a> a "{{NotSupportedError!!exception}}"
+  {{DOMException}}.
 
   <p class=note>Typically user agents disable support for touch events in some configurations, in
   which case this clause would be triggered for the interface {{TouchEvent}}.
@@ -5416,9 +5422,9 @@ interface DOMImplementation {
   <var>qualifiedName</var>, <var>publicId</var>, and
   <var>systemId</var>. If <var>qualifiedName</var> does not
   match the <code><a type>Name</a></code> production, an
-  {{InvalidCharacterError}} is thrown, and if it does not match the
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} is thrown, and if it does not match the
   <code><a type>QName</a></code> production, a
-  {{NamespaceError}} is thrown.
+  "{{NamespaceError!!exception}}" {{DOMException}} is thrown.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a method for=DOMImplementation lt=createDocument()>createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code>
 
@@ -5918,19 +5924,20 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      </li>
 
      <li><p>If <var>result</var>'s <a for=Element>attribute list</a> <a for=list>is not empty</a>,
-     then <a>throw</a> a {{NotSupportedError}}.
+     then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
-     <li><p>If <var>result</var> has <a>children</a>, then <a>throw</a> a {{NotSupportedError}}.
+     <li><p>If <var>result</var> has <a>children</a>, then <a>throw</a> a
+     "{{NotSupportedError!!exception}}" {{DOMException}}.
 
      <li><p>If <var>result</var>'s <a for=tree>parent</a> is not null, then <a>throw</a> a
-     {{NotSupportedError}}.
+     "{{NotSupportedError!!exception}}" {{DOMException}}.
 
      <li><p>If <var>result</var>'s <a for=Node>node document</a> is not <var>document</var>, then
-     <a>throw</a> a {{NotSupportedError}}.
+     <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
      <li>
       <p>If <var>result</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
-      then <a>throw</a> a {{NotSupportedError}}.
+      then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
       <p class="note">As of the time of this writing, every element that implements the
       {{HTMLElement}} interface is also in the <a>HTML namespace</a>, so this check is currently
@@ -5940,7 +5947,7 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
      </li>
 
      <li><p>If <var>result</var>'s <a for=Element>local name</a> is not equal to
-     <var>localName</var>, then <a>throw</a> a {{NotSupportedError}}.
+     <var>localName</var>, then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
      <li><p>Set <var>result</var>'s <a for=Element>namespace prefix</a> to <var>prefix</var>.
 
@@ -6186,7 +6193,7 @@ To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 
 <ol>
  <li><p>If <var>attr</var>'s <a for=Attr>element</a> is neither null nor <var>element</var>,
- <a>throw</a> an {{InUseAttributeError}}.
+ <a>throw</a> an "{{InUseAttributeError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>oldAttr</var> be the result of
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
@@ -6421,7 +6428,7 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
- XML, then <a>throw</a> an {{InvalidCharacterError}}.
+ XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
  <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
@@ -6516,7 +6523,8 @@ when invoked, must run these steps:
 
 <ol>
  <li><p>If <a>context object</a>'s <a for=Element>attribute list</a> does not
- <a for=list>contain</a> <var>attr</var>, then <a>throw</a> a {{NotFoundError}}.
+ <a for=list>contain</a> <var>attr</var>, then <a>throw</a> a "{{NotFoundError!!exception}}"
+ {{DOMException}}.
 
  <li><p><a lt="remove an attribute">Remove</a> <var>attr</var> from <a>context object</a>.
 
@@ -6539,7 +6547,7 @@ invoked, must run these steps:
 
 <ol>
  <li><p>If <a>context object</a>'s <a for=Element>namespace</a> is <em>not</em> the
- <a>HTML namespace</a>, then <a>throw</a> a {{NotSupportedError}}.
+ <a>HTML namespace</a>, then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>If <a>context object</a>'s <a for=Element>local name</a> is <em>not</em> a
  <a>valid custom element name</a>,
@@ -6560,10 +6568,10 @@ invoked, must run these steps:
  "<code>nav</code>",
  "<code>p</code>",
  "<code>section</code>", or
- "<code>span</code>", then <a>throw</a> a {{NotSupportedError}}.
+ "<code>span</code>", then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>If <a>context object</a> is a <a for=Element>shadow host</a>, then <a>throw</a> an
- {{InvalidStateError}}.
+ "{{InvalidStateError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
  is <a>context object</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is
@@ -6609,7 +6617,7 @@ method, when invoked, must run these steps:
  [[!SELECTORS4]]
 
  <li>If <var>s</var> is failure, <a>throw</a> a
- {{SyntaxError}}.
+ "{{SyntaxError!!exception}}" {{DOMException}}.
 
  <li>Let <var>elements</var> be <a>context object</a>'s
  <a for=tree>inclusive ancestors</a> that are
@@ -6635,7 +6643,7 @@ invoked, must run these steps:
  [[!SELECTORS4]]
 
  <li>If <var>s</var> is failure, <a>throw</a> a
- {{SyntaxError}}.
+ "{{SyntaxError!!exception}}" {{DOMException}}.
 
  <li>Return true if the result of
  <a>match a selector against an element</a>, using
@@ -6690,7 +6698,7 @@ for <a>context object</a>.
   <a for=tree>parent</a> before <var>element</var>'s <a for=tree>next sibling</a>.
 
  <dt>Otherwise</dt>
- <dd><p><a>Throw</a> a {{SyntaxError}}.
+ <dd><p><a>Throw</a> a "{{SyntaxError!!exception}}" {{DOMException}}.
 </dl>
 
 <p>The
@@ -6812,7 +6820,8 @@ method, when invoked, must run these steps:
  <a lt="remove an attribute by name">removing an attribute</a> given
  <var>qualifiedName</var> and <a for=NamedNodeMap>element</a>.
 
- <li><p>If <var>attr</var> is null, then <a>throw</a> a {{NotFoundError}}.
+ <li><p>If <var>attr</var> is null, then <a>throw</a> a "{{NotFoundError!!exception}}"
+ {{DOMException}}.
 
  <li><p>Return <var>attr</var>.
 </ol>
@@ -6826,7 +6835,8 @@ method, when invoked, must run these steps:
  <a lt="remove an attribute by namespace and local name">removing an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <a for=NamedNodeMap>element</a>.
 
- <li><p>If <var>attr</var> is null, then <a>throw</a> a {{NotFoundError}}.
+ <li><p>If <var>attr</var> is null, then <a>throw</a> a "{{NotFoundError!!exception}}"
+ {{DOMException}}.
 
  <li><p>Return <var>attr</var>.
 </ol>
@@ -6957,7 +6967,7 @@ To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> 
  <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
  <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
 
  <li>If <var>offset</var> plus <var>count</var> is greater than <var>length</var>, then set
  <var>count</var> to <var>length</var> minus <var>offset</var>.
@@ -7056,7 +7066,7 @@ To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=conc
  <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
  <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
 
  <li>If <var>offset</var> plus <var>count</var> is
  greater than <var>length</var>, return a string whose value is the
@@ -7172,7 +7182,7 @@ To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text
  <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
  <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
 
  <li>Let <var>count</var> be <var>length</var> minus
  <var>offset</var>.
@@ -7695,10 +7705,11 @@ of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</
 steps:
 
 <ol>
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
  <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
 
  <li>Let <var>bp</var> be the
  <a>boundary point</a>
@@ -7754,7 +7765,8 @@ invoked, must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ {{DOMException}}.
 
  <li><a>Set the start</a> of the
  <a>context object</a> to
@@ -7770,7 +7782,8 @@ must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ {{DOMException}}.
 
  <li><a>Set the start</a> of the
  <a>context object</a> to
@@ -7786,7 +7799,8 @@ must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ {{DOMException}}.
 
  <li><a>Set the end</a> of the
  <a>context object</a> to
@@ -7801,7 +7815,8 @@ must run these steps:
  <li>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ {{DOMException}}.
 
  <li><a>Set the end</a> of the
  <a>context object</a> to
@@ -7821,7 +7836,7 @@ within a <a>range</a> <var>range</var>, run these steps:
  <a for=tree>parent</a>.
 
  <li>If <var>parent</var> is null, <a>throw</a> an
- {{InvalidNodeTypeError}}.
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
  <li>Let <var>index</var> be <var>node</var>'s
  <a for=tree>index</a>.
@@ -7845,7 +7860,7 @@ invoked, must run these steps:
  <li>If <var>node</var> is a
  <a>doctype</a>,
  <a>throw</a> an
- {{InvalidNodeTypeError}}.
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
  <li>Let <var>length</var> be the
  <a>length</a> of <var>node</var>.
@@ -7876,7 +7891,7 @@ method, when invoked, must run these steps:
    <li>{{Range/END_TO_START}},
   </ul>
 
-  <p>then <a>throw</a> a {{NotSupportedError}}.
+  <p>then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
  <!--
  Apparent behaviors from black-box testing:
 
@@ -7899,7 +7914,7 @@ method, when invoked, must run these steps:
  -->
 
  <li>If <a>context object</a>'s <a for=Range>root</a> is not the same as <var>sourceRange</var>'s
- <a for=Range>root</a>, then <a>throw</a> a {{WrongDocumentError}}.
+ <a for=Range>root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
 
  <li>
   If <var>how</var> is:
@@ -8147,7 +8162,7 @@ To <dfn export id=concept-range-extract lt="extract a range" local-lt="extract">
 
  <li>
   <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
-  {{HierarchyRequestError}}.
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
   doesn't throw. I go with IE9 and Chrome 12 dev, which don't remove any
@@ -8410,7 +8425,7 @@ of a <a>range</a> <var>range</var>, run these steps:
 
  <li>
   <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
-  {{HierarchyRequestError}}.
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <p class="note no-backref">We do not have to worry about the first or last partially
   contained node, because a <a>doctype</a> can never be
@@ -8540,7 +8555,7 @@ the result of <a lt="clone the contents of a range">cloning the contents</a> of
 <ol>
  <li>If <var>range</var>'s <a for=Range>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
  <a>node</a>, is a {{Text}} <a>node</a> whose <a for=tree>parent</a> is null, or is <var>node</var>,
- then <a>throw</a> a {{HierarchyRequestError}}.
+ then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <!--
  Behavior for Text node with null parent:
@@ -8661,7 +8676,7 @@ check first thing, which matches everyone but Firefox.
 <ol>
  <li>If a non-{{Text}} <a>node</a> is
  <a>partially contained</a> in the <a>context object</a>,
- then <a>throw</a> an {{InvalidStateError}}.
+ then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
  <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
  unexpected. -->
  <!-- XXX Could we rephrase this condition to be more algorithmic and less
@@ -8670,7 +8685,7 @@ check first thing, which matches everyone but Firefox.
  <li>If <var>newParent</var> is a {{Document}},
  {{DocumentType}}, or {{DocumentFragment}}
  <a>node</a>,
- then <a>throw</a> an {{InvalidNodeTypeError}}.
+ then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
  and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
  absolutely no sense, but it's what DOM 2 Range specifies, and it's what
@@ -8747,7 +8762,8 @@ method, when invoked, must run these steps:
  <!-- This happens even if the offset is negative or too large, or if the node
  is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- Firefox 9.0a2 doesn't throw.  It ignores the offset and returns true or
  false depending on whether the doctype itself is in the range.  This makes
  some sense, but it doesn't match how other Range APIs handle doctypes, and
@@ -8755,7 +8771,7 @@ method, when invoked, must run these steps:
  with Chrome 16 dev, although I can see the merit in how Gecko works here. -->
 
  <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
  <!-- Firefox 9.0a2 doesn't throw.  It seems to return true if the node is
  completely contained in the range, like with selectNode(), and false otherwise -
  even if all boundary points in the node are contained in the range, like
@@ -8779,17 +8795,18 @@ and Opera Next 12.00 alpha all do. -->
 
 <ol>
  <li>If <var>node</var>'s <a for=tree>root</a> is different from the <a>context object</a>'s
- <a for=Range>root</a>, then <a>throw</a> a {{WrongDocumentError}}.
+ <a for=Range>root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
  <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
  Firefox 12.0a1 and Chrome 17 dev. -->
 
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an {{InvalidNodeTypeError}}.
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw and seem to just ignore the offset instead.  See
  comment for isPointInRange(). -->
 
  <li>If <var>offset</var> is greater than <var>node</var>'s <a>length</a>, then <a>throw</a> an
- {{IndexSizeError}}.
+ "{{IndexSizeError!!exception}}" {{DOMException}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw.  See comment for isPointInRange(). -->
 
@@ -8906,7 +8923,8 @@ has an associated <dfn export id=concept-traversal-root for=traversal>root</dfn>
 <p>To <dfn export id=concept-node-filter for=Node>filter</dfn> <var>node</var> run these steps:
 
 <ol>
- <li><p>If the <a for=traversal>active flag</a> is set, then throw an {{InvalidStateError}}.
+ <li><p>If the <a for=traversal>active flag</a> is set, then throw an
+ "{{InvalidStateError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>n</var> be <var>node</var>'s {{Node/nodeType}} attribute value minus 1.
 
@@ -9573,16 +9591,18 @@ are to return the result of running <a>get an attribute value</a> given the asso
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="add()">add(<var>tokens</var>&hellip;)</a></code>
  <dd>
   <p>Adds all arguments passed, except those already present.
-  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
-  <a>ASCII whitespace</a>.
+  <p>Throws a "{{SyntaxError!!exception}}" {{DOMException}} if one of the arguments is the empty
+  string.
+  <p>Throws an "{{InvalidCharacterError!!exception}}" {{DOMException}} if one of the arguments
+  contains any <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a for=DOMTokenList lt="remove()">remove(<var>tokens</var>&hellip;)</a></code>
  <dd>
   <p>Removes arguments passed, if they are present.
-  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
-  <a>ASCII whitespace</a>.
+  <p>Throws a "{{SyntaxError!!exception}}" {{DOMException}} if one of the arguments is the empty
+  string.
+  <p>Throws an "{{InvalidCharacterError!!exception}}" {{DOMException}} if one of the arguments
+  contains any <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="toggle()">toggle(<var>token</var> [, <var>force</var>])</a></code>
  <dd>
@@ -9591,15 +9611,17 @@ are to return the result of running <a>get an attribute value</a> given the asso
   (same as {{add()}}). If <var>force</var> is false, removes <var>token</var> (same
   as {{DOMTokenList/remove()}}).
   <p>Returns true if <var>token</var> is now present, and false otherwise.
-  <p>Throws a {{SyntaxError}} if <var>token</var> is empty.
-  <p>Throws an {{InvalidCharacterError}} if <var>token</var> contains any spaces.
+  <p>Throws a "{{SyntaxError!!exception}}" {{DOMException}} if <var>token</var> is empty.
+  <p>Throws an "{{InvalidCharacterError!!exception}}" {{DOMException}} if <var>token</var> contains
+  any spaces.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt=replace()>replace(<var>token</var>, <var>newToken</var>)</a></code>
  <dd>
   <p>Replaces <var>token</var> with <var>newToken</var>.
-  <p>Throws a {{SyntaxError}} if one of the arguments is the empty string.
-  <p>Throws an {{InvalidCharacterError}} if one of the arguments contains any
-  <a>ASCII whitespace</a>.
+  <p>Throws a "{{SyntaxError!!exception}}" {{DOMException}} if one of the arguments is the empty
+  string.
+  <p>Throws an "{{InvalidCharacterError!!exception}}" {{DOMException}} if one of the arguments
+  contains any <a>ASCII whitespace</a>.
 
  <dt><code><var>tokenlist</var> . <a method for=DOMTokenList lt="supports()">supports(<var>token</var>)</a></code>
  <dd>
@@ -9643,10 +9665,11 @@ method, when invoked, must run these steps:
   <p><a for=list>For each</a> <var>token</var> in <var>tokens</var>:
 
   <ol>
-   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
+   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a "{{SyntaxError!!exception}}"
+   {{DOMException}}.
 
    <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
-   {{InvalidCharacterError}}.
+   "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
  <li><p><a for=list>For each</a> <var>token</var> in <var>tokens</var>, <a for=set>append</a>
@@ -9664,10 +9687,11 @@ method, when invoked, must run these steps:
   <p><a for=list>For each</a> <var>token</var> in <var>tokens</var>:
 
   <ol>
-   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
+   <li><p>If <var>token</var> is the empty string, then <a>throw</a> a "{{SyntaxError!!exception}}"
+   {{DOMException}}.
 
    <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
-   {{InvalidCharacterError}}.
+   "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
  <li><p>For each <var>token</var> in <var>tokens</var>, <a for=set>remove</a> <var>token</var> from
@@ -9680,10 +9704,11 @@ method, when invoked, must run these steps:
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>If <var>token</var> is the empty string, then <a>throw</a> a {{SyntaxError}}.
+ <li><p>If <var>token</var> is the empty string, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ {{DOMException}}.
 
  <li><p>If <var>token</var> contains any <a>ASCII whitespace</a>, then <a>throw</a> an
- {{InvalidCharacterError}}.
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>
   <p>If <a>context object</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>, then:
@@ -9712,10 +9737,10 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>If either <var>token</var> or <var>newToken</var> is the empty string, then <a>throw</a> a
- {{SyntaxError}}.
+ "{{SyntaxError!!exception}}" {{DOMException}}.
 
  <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>, then
- <a>throw</a> an {{InvalidCharacterError}}.
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li><p>If <a>context object</a>'s <a>token set</a> does not <a for=set>contain</a>
  <var>token</var>, then return.</p>
