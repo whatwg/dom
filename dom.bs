@@ -482,7 +482,8 @@ empty list.
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
 <a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
-<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (a
+<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), an
+<dfn for=Event/path>item-in-shadow-tree</dfn> (a boolean), a <dfn for=Event/path>target</dfn> (a
 <a>potential event target</a>), a
 <dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
 <a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
@@ -749,6 +750,25 @@ method, when invoked, must run these steps:</p>
 
 <p class="note no-backref">As <a>events</a> have constructors {{Event/initEvent()}} is redundant and
 incapable of setting {{Event/composed}}. It has to be supported for legacy content.
+
+
+<h3 id=interface-window-extensions>Legacy extensions to the {{Window}} interface</h3>
+
+<pre class=idl>
+partial interface Window {
+  [Replaceable] readonly attribute any event; // historical
+};
+</pre>
+
+<p>Each {{Window}} object has an associated <dfn for=Window>current event</dfn> (undefined or an
+{{Event}} object). Unless stated otherwise it is undefined.
+
+<p>The <dfn attribute for=Window><code>event</code></dfn> attribute's getter, when invoked, must
+return the <a>context object</a>'s <a for=Window>current event</a>.
+
+<p class=note>Web developers are strongly encouraged to instead rely on {{Event}} object passed to
+event listeners as that will result in more portable code. This attribute is not available in
+workers or worklets, and is inaccurate for events dispatched in <a>shadow trees</a>.
 
 
 <h3 id=interface-customevent>Interface {{CustomEvent}}</h3>
@@ -1366,14 +1386,20 @@ for discussion).
 <var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these steps:</p>
 
 <ol>
+ <li><p>Let <var>item-in-shadow-tree</var> be false.
+
+ <li><p>If <var>target</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
+ <a for=/>shadow root</a>, then set <var>item-in-shadow-tree</var> to true.
+
  <li><p>Let <var>root-of-closed-tree</var> be false.
 
  <li><p>If <var>target</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a> is
  "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
 
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
- whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>target</a> is
- <var>targetOverride</var>, <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
+ whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>item-in-shadow-tree</a> is
+ <var>item-in-shadow-tree</var>, <a for=Event/path>target</a> is <var>targetOverride</var>,
+ <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
  <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
@@ -1395,16 +1421,29 @@ for discussion).
 
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Let <var>object</var> be <var>tuple</var>'s <a for=Event/path>item</a>.
+ <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>tuple</var>'s
+ <a for=Event/path>item</a>.
 
  <li>
-  <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>object</var>'s
-  <a for=EventTarget>event listener list</a>.
+  <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>event</var>'s
+  {{Event/currentTarget}} attribute value's <a for=EventTarget>event listener list</a>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
- <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>object</var>.
+ <li><p>Let <var>global</var> be the <a>current global object</a>.
+
+ <li><p>Let <var>currentEvent</var> be undefined.
+
+ <li>
+  <p>If <var>global</var> is a {{Window}} object, then:
+
+  <ol>
+   <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
+
+   <li><p>If <var>tuple</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
+   <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
+  </ol>
 
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
  <var>listeners</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
@@ -1436,6 +1475,9 @@ for discussion).
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
+
+ <li><p>If <var>global</var> is a {{Window}} object, then set <var>global</var>'s
+ <a for=Window>current event</a> to <var>currentEvent</var>.
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
