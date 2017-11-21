@@ -16,6 +16,7 @@ Logo: https://resources.whatwg.org/logo-dom.svg
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Ignored Terms: EmptyString, Array, Document
 Boilerplate: omit feedback-header, omit conformance
+Indent: 1
 </pre>
 
 <!--
@@ -30,42 +31,42 @@ Bikeshed problems:
 
 <pre class=anchors>
 urlPrefix: https://www.w3.org/TR/xml/#NT-
-    type: type
-        text: Name; url: Name
-        text: Char; url: Char
-        text: PubidChar; url: PubidChar
+ type: type
+  text: Name; url: Name
+  text: Char; url: Char
+  text: PubidChar; url: PubidChar
 urlPrefix: https://www.w3.org/TR/xml-names/#NT-
-    type: type
-        text: QName; url: QName
+ type: type
+  text: QName; url: QName
 url: https://w3c.github.io/DOM-Parsing/#dfn-createcontextualfragment-fragment
-    type: method; text: createContextualFragment(); for: Range
+ type: method; text: createContextualFragment(); for: Range
 type: interface
-    url: https://w3c.github.io/touch-events/#idl-def-touchevent
-        text: TouchEvent
-    url: https://w3c.github.io/deviceorientation/spec-source-orientation.html#devicemotion
-        text: DeviceMotionEvent
-        text: DeviceOrientationEvent
-    url: https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
-        text: WebGLContextEvent
+ url: https://w3c.github.io/touch-events/#idl-def-touchevent
+  text: TouchEvent
+ url: https://w3c.github.io/deviceorientation/spec-source-orientation.html#devicemotion
+  text: DeviceMotionEvent
+  text: DeviceOrientationEvent
+ url: https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
+  text: WebGLContextEvent
 urlPrefix: https://w3c.github.io/ServiceWorker/#; spec: SERVICE-WORKERS
-    type: dfn; urlPrefix: dfn-
-        text: service worker
-        text: script resource; for: service worker
-        text: has ever been evaluated flag; for: service worker
+ type: dfn; urlPrefix: dfn-
+  text: service worker
+  text: script resource; for: service worker
+  text: has ever been evaluated flag; for: service worker
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
-    text: Construct; url: sec-construct; type: abstract-op
-    text: Realm; url: realm; type: dfn
+ text: Construct; url: sec-construct; type: abstract-op
+ text: Realm; url: realm; type: dfn
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
-    type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
-    type:dfn; text: time origin
-    type:dfn; text: clock resolution
+ type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
+ type:dfn; text: time origin
+ type:dfn; text: clock resolution
 
 </pre>
 
 <pre class=link-defaults>
 spec:html; type:element
-    text: title
-    text: script
+ text: title
+ text: script
 spec:infra; type:dfn; text:list
 </pre>
 
@@ -494,10 +495,12 @@ signaling that something has occurred, e.g., that an image has completed downloa
 attribute. [[UIEVENTS]]
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
-list of tuples, each of which consists of an <b>item</b> (an {{EventTarget}} object), <b>target</b>
-(null or an {{EventTarget}} object), and a <b>relatedTarget</b> (null or an {{EventTarget}}
-object). A tuple is formatted as (<b>item</b>, <b>target</b>, <b>relatedTarget</b>). A <a
-for=Event>path</a> is initially the empty list.</p>
+<a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
+<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (null
+or an {{EventTarget}} object), a <dfn for=Event/path>relatedTarget</dfn> (null or an
+{{EventTarget}} object), <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and a
+<dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially the
+empty list.</p>
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Event>retargeting steps</dfn> for all or some <a>events</a>.
@@ -526,10 +529,10 @@ algorithm below.
  invoked.
 
  <dt><code><var>event</var> . {{Event/composedPath()}}</code>
- <dd>Returns the <b>item</b> objects of <var>event</var>'s <a for=Event>path</a> (objects on which
- listeners will be invoked), except for any <a>nodes</a> in <a>shadow trees</a> of which the
- <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is "<code>closed</code>" that are not
- reachable from <var>event</var>'s {{Event/currentTarget}}.
+ <dd>Returns the <a for=Event/path>item</a> objects of <var>event</var>'s <a for=Event>path</a>
+ (objects on which listeners will be invoked), except for any <a>nodes</a> in
+ <a for=/>shadow trees</a> of which the <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is
+ "<code>closed</code>" that are not reachable from <var>event</var>'s {{Event/currentTarget}}.
 
  <dt><code><var>event</var> . {{Event/eventPhase}}</code>
  <dd>Returns the <a>event</a>'s phase, which is one of {{Event/NONE}},
@@ -597,34 +600,39 @@ initialized to null.
 steps:
 
 <ol>
- <li><p>Let <var>composedPath</var> be a new empty list.
+ <li><p>Let <var>reversedComposedPath</var> be an empty <a for=/>list</a>.
+
+ <li><p>Let <var>hiddenSubtreeLevel</var> be 0.
+
+ <li><p>Let <var>hasSeenCurrentTarget</var> be false.
 
  <li><p>Let <var>currentTarget</var> be <a>context object</a>'s {{Event/currentTarget}}
  attribute value.
 
+ <li><p>Let <var>reversedPath</var> be <a>context object</a>'s <a for=Event>path</a>, in reverse
+ order.
+
  <li>
-  <p>For each <var>tuple</var> in <a>context object</a>'s <a for=Event>path</a>:
+  <p><a for=list>For each</a> <var>struct</var> in <var>reversedPath</var>:
 
   <ol>
-   <li>
-    <p>If <var>currentTarget</var> is a {{Window}} object, then:
+   <li><p>If <var>struct</var>'s <a for=Event/path>item</a> is <var>currentTarget</var>, then set
+   <var>hasSeenCurrentTarget</var> to true.
 
-    <ol><li><p>If <var>tuple</var>'s <b>item</b> is not a <a>node</a>, or <var>tuple</var>'s
-    <b>item</b> is not <a>closed-shadow-hidden</a> from <var>tuple</var>'s <b>item</b>'s
-    <a>shadow-including root</a>, then append <var>tuple</var>'s <b>item</b> to
-    <var>composedPath</var>.</p></li></ol>
+   <li><p>Otherwise, if <var>hasSeenCurrentTarget</var> is true and <var>struct</var>'s
+   <a for=Event/path>root-of-closed-tree</a> is true, then increase <var>hiddenSubtreeLevel</var> by
+   1.
 
-   <li><p>Otherwise, if <var>currentTarget</var> is a <a>node</a> and <var>tuple</var>'s <b>item</b>
-   is not <a>closed-shadow-hidden</a> from <var>currentTarget</var>, or <var>currentTarget</var> is
-   not a <a>node</a>, then append <var>tuple</var>'s <b>item</b> to <var>composedPath</var>.
+   <li><p>If <var>hiddenSubtreeLevel</var> is 0, then <a for=list>append</a> <var>struct</var>'s
+   <a for=Event/path>item</a> to <var>reversedComposedPath</var>.
+
+   <li><p>If <var>struct</var>'s <a for=Event/path>slot-in-closed-tree</a> is true and
+   <var>hiddenSubtreeLevel</var> is greater than 0, then decrease <var>hiddenSubtreeLevel</var> by
+   1.
   </ol>
 
- <li><p>Return <var>composedPath</var>.
+ <li><p>Return <var>reversedComposedPath</var>, in reverse order.
 </ol>
-
-<p class="note no-backref">This algorithm assumes that when the <var>target</var> argument to the
-<a>dispatch</a> algorithm is not a <a>node</a>, none of the tuples in <var>event</var> argument's
-eventual <a for=Event>path</a> will contain a <a>node</a> either.
 
 The <dfn attribute for=Event><code>eventPhase</code></dfn>
 attribute must return the value it was initialized to, which must be one of
@@ -1151,14 +1159,19 @@ for discussion).
  <li><p>If <var>target</var> is <var>relatedTarget</var> and <var>target</var> is not
  <var>event</var>'s <a>relatedTarget</a>, then return true.
 
- <li><p>Append (<var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>) to
- <var>event</var>'s <a for=Event>path</a>.
+ <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
+ <var>targetOverride</var>, <var>relatedTarget</var>, and false.
 
  <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object and
  <var>event</var>'s {{Event/type}} attribute is "<code>click</code>", and false otherwise.
 
  <li><p>Let <var>activationTarget</var> be <var>target</var>, if <var>isActivationEvent</var> is
  true and <var>target</var> has <a for=EventTarget>activation behavior</a>, and null otherwise.
+
+ <li><p>Let <var>slotable</var> be <var>target</var>, if <var>target</var> is
+ <a for=slotable>assigned</a>, and null otherwise.
+
+ <li><p>Let <var>slot-in-closed-tree</var> be false.
 
  <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
  with <var>event</var>.
@@ -1167,6 +1180,22 @@ for discussion).
   <p>While <var>parent</var> is non-null:</p>
 
   <ol>
+   <li>
+    <p>If <var>slotable</var> is non-null:
+
+    <ol>
+     <li><p>Assert: <var>parent</var> is a <a for=/>slot</a>.
+
+     <li><p>Set <var>slotable</var> to null.
+
+     <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
+     <a for=ShadowRoot>mode</a> is "<code>closed</code>", then set <var>slot-in-closed-tree</var> to
+     true.
+    </ol>
+
+   <li><p>If <var>parent</var> is <a for=slotable>assigned</a>, then set <var>slotable</var> to
+   <var>parent</var>.
+
    <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
    <a>relatedTarget</a> against <var>parent</var> if <var>event</var>'s <a>relatedTarget</a> is
    non-null, and null otherwise.
@@ -1181,8 +1210,8 @@ for discussion).
      <a for=EventTarget>activation behavior</a>, then set <var>activationTarget</var> to
      <var>parent</var>.
 
-     <li><p>Append (<var>parent</var>, null, <var>relatedTarget</var>) to <var>event</var>'s
-     <a for=Event>path</a>.
+     <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>, null,
+     <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
     </ol>
 
    <li><p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set
@@ -1196,12 +1225,14 @@ for discussion).
      <var>target</var> has <a for=EventTarget>activation behavior</a>, then set
      <var>activationTarget</var> to <var>target</var>.
 
-     <li><p>Append (<var>parent</var>, <var>target</var>, <var>relatedTarget</var>) to
-     <var>event</var>'s <a for=Event>path</a>.
+     <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>,
+     <var>target</var>, <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
     </ol>
 
    <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
    <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
+
+   <li><p>Set <var><var>slot-in-closed-tree</var> to false.
   </ol>
 
  <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
@@ -1275,6 +1306,23 @@ for discussion).
   </ol>
 
  <li><p>Return false if <var>event</var>'s <a>canceled flag</a> is set, and true otherwise.
+</ol>
+
+<p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
+<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>, and a
+<var>slot-in-closed-tree</var>, run these steps:</p>
+
+<ol>
+ <li><p>Let <var>root-of-closed-tree</var> be false.
+
+ <li><p>If <var>target</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a> is
+ "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
+
+ <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
+ whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>target</a> is
+ <var>targetOverride</var>, <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
+ <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
+ <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
