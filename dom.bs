@@ -2598,13 +2598,11 @@ with an optional <i>suppress observers flag</i>, run these steps:
 method from being exposed on <a for="/">elements</a> (and therefore on {{ParentNode}}).
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface NonElementParentNode {
+interface mixin NonElementParentNode {
   Element? getElementById(DOMString elementId);
 };
-Document implements NonElementParentNode;
-DocumentFragment implements NonElementParentNode;
+Document includes NonElementParentNode;
+DocumentFragment includes NonElementParentNode;
 </pre>
 
 <dl class=domintro>
@@ -2622,12 +2620,10 @@ null if there is no such <a for="/">element</a> otherwise.
 <h4 id=mixin-documentorshadowroot>Mixin {{DocumentOrShadowRoot}}</h4>
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface DocumentOrShadowRoot {
+interface mixin DocumentOrShadowRoot {
 };
-Document implements DocumentOrShadowRoot;
-ShadowRoot implements DocumentOrShadowRoot;
+Document includes DocumentOrShadowRoot;
+ShadowRoot includes DocumentOrShadowRoot;
 </pre>
 
 <p class="note no-backref">The {{DocumentOrShadowRoot}} mixin is expected to be used by other
@@ -2658,9 +2654,7 @@ To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>
 </ol>
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface ParentNode {
+interface mixin ParentNode {
   [SameObject] readonly attribute HTMLCollection children;
   readonly attribute Element? firstElementChild;
   readonly attribute Element? lastElementChild;
@@ -2672,9 +2666,9 @@ interface ParentNode {
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
 };
-Document implements ParentNode;
-DocumentFragment implements ParentNode;
-Element implements ParentNode;
+Document includes ParentNode;
+DocumentFragment includes ParentNode;
+Element includes ParentNode;
 </pre>
 <!--
   [Unscopable] Element? query(DOMString relativeSelectors);
@@ -2803,14 +2797,12 @@ method, when invoked, must return the <a lt="static collection">static</a> resul
 {{ChildNode}}).
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface NonDocumentTypeChildNode {
+interface mixin NonDocumentTypeChildNode {
   readonly attribute Element? previousElementSibling;
   readonly attribute Element? nextElementSibling;
 };
-Element implements NonDocumentTypeChildNode;
-CharacterData implements NonDocumentTypeChildNode;
+Element includes NonDocumentTypeChildNode;
+CharacterData includes NonDocumentTypeChildNode;
 </pre>
 
 <dl class=domintro>
@@ -2839,17 +2831,15 @@ getter must return the first <a>following</a> <a for=tree>sibling</a> that is an
 <h4 id=interface-childnode>Mixin {{ChildNode}}</h4>
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface ChildNode {
+interface mixin ChildNode {
   [CEReactions, Unscopable] void before((Node or DOMString)... nodes);
   [CEReactions, Unscopable] void after((Node or DOMString)... nodes);
   [CEReactions, Unscopable] void replaceWith((Node or DOMString)... nodes);
   [CEReactions, Unscopable] void remove();
 };
-DocumentType implements ChildNode;
-Element implements ChildNode;
-CharacterData implements ChildNode;
+DocumentType includes ChildNode;
+Element includes ChildNode;
+CharacterData includes ChildNode;
 </pre>
 
 <dl class=domintro>
@@ -2965,13 +2955,11 @@ steps:
 <h4 id=mixin-slotable>Mixin {{Slotable}}</h4>
 
 <pre class=idl>
-[NoInterfaceObject,
- Exposed=Window]
-interface Slotable {
+interface mixin Slotable {
   readonly attribute HTMLSlotElement? assignedSlot;
 };
-Element implements Slotable;
-Text implements Slotable;
+Element includes Slotable;
+Text includes Slotable;
 </pre>
 
 <p>The <dfn attribute for=Slotable><code>assignedSlot</code></dfn> attribute's getter must return
@@ -10095,6 +10083,7 @@ James Robinson,
 Jeffrey Yasskin,
 Jens Lindström,
 Jesse McCarthy,
+Jinho Bang,
 João Eiras,
 Joe Kesselman,
 John Atkins,
