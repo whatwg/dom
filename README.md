@@ -10,7 +10,7 @@ respect the [WHATWG Code of Conduct](https://whatwg.org/code-of-conduct).
 Folks notice minor and larger issues with the DOM Standard all the time and we'd love your help
 fixing those. Pull requests for typographical and grammar errors are also most welcome.
 
-Issues labeled ["good first bug"](https://github.com/whatwg/dom/labels/good%20first%20bug) are a
+Issues labeled ["good first issue"](https://github.com/whatwg/dom/labels/good%20first%20issue) are a
 good place to get a taste for editing the DOM Standard and providing a pull request.
 
 We'd be happy to mentor you through this process. If you're interested and need help getting
