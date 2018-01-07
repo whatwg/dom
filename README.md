@@ -90,7 +90,7 @@ space).
 ### Merge policy
 
 If you can commit to this repository, see the
-[html repository's TEAM](https://github.com/whatwg/html/blob/master/TEAM.md) for guidelines.
+[maintainer guidelines](https://github.com/whatwg/meta/blob/master/MAINTAINERS.md).
 
 ### Tests
 
