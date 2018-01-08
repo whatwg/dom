@@ -87,6 +87,11 @@ End tags may be included (if done consistently) and attributes may be quoted (us
 though the prevelant theme is to omit end tags and not quote attributes (unless they contain a
 space).
 
+### Merge policy
+
+If you can commit to this repository, see the
+[WHATWG Maintainer Guidelines](https://github.com/whatwg/meta/blob/master/MAINTAINERS.md).
+
 ### Tests
 
 Tests can be found in the `dom/` directory of
