@@ -2274,9 +2274,6 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
 
-   <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
-   <var>parent</var>.
-
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
    <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
    then run <a>signal a slot change</a> for <var>parent</var>.
@@ -2284,31 +2281,39 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>Run <a>assign slotables for a tree</a> with <var>node</var>'s <a>tree</a>.
 
    <li>
+    <p>If <var>node</var> is <a>connected</a>, then for each
+    <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of <var>node</var>,
+    in <a>shadow-including tree order</a>:
+
+    <ol>
+     <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a>, then
+     <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
+     name "<code>connectedCallback</code>", and an empty argument list.
+
+     <li>
+      <p>Otherwise, <a lt="try to upgrade an element">try to upgrade</a>
+      <var>inclusiveDescendant</var>.
+
+      <p class=note>If this successfully upgrades <var>inclusiveDescendant</var>, its
+      <code>connectedCallback</code> will be enqueued automatically during the
+      <a>upgrade an element</a> algorithm.
+    </ol>
+  </ol>
+
+ <li>
+  <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
+
+  <ol>
+   <li><p>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
+   <var>parent</var>.
+
+   <li>
     <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
     <var>node</var>, in <a>shadow-including tree order</a>:
 
     <ol>
      <li><p>Run the <a>insertion steps</a> with <var>inclusiveDescendant</var>.
-
-     <li>
-      <p>If <var>inclusiveDescendant</var> is <a>connected</a>, then:
-
-      <ol>
-       <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a>, then
-       <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>,
-       callback name "<code>connectedCallback</code>", and an empty argument list.
-
-       <li>
-        <p>Otherwise, <a lt="try to upgrade an element">try to upgrade</a>
-        <var>inclusiveDescendant</var>.
-
-        <p class=note>If this successfully upgrades <var>inclusiveDescendant</var>, its
-        <code>connectedCallback</code> will be enqueued automatically during the
-        <a>upgrade an element</a> algorithm.
-      </ol>
-     </li>
     </ol>
-   </li>
   </ol>
 
  <li>If <i>suppress observers flag</i> is unset,
