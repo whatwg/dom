@@ -4741,8 +4741,8 @@ interface Document : Node {
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 
-  [CEReactions, NewObject] Element createElement(DOMString localName, optional ElementCreationOptions options);
-  [CEReactions, NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName, optional ElementCreationOptions options);
+  [CEReactions, NewObject] Element createElement(DOMString localName, optional (DOMString or ElementCreationOptions) options);
+  [CEReactions, NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName, optional (DOMString or ElementCreationOptions) options);
   [NewObject] DocumentFragment createDocumentFragment();
   [NewObject] Text createTextNode(DOMString data);
   [NewObject] CDATASection createCDATASection(DOMString data);
@@ -5104,33 +5104,39 @@ invoked, must run these steps:
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
  <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ <li><p>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
  <!-- XXX why restrict this to HTML documents? -->
 
- <li>Let <var>is</var> be the value of the {{ElementCreationOptions/is}} member of <var>options</var>, or null if no
- such member exists.
+ <li><p>Let <var>is</var> be null.
+
+ <li><p>If <var>options</var> is a <a for=/>dictionary</a> and <var>options</var>'s
+ {{ElementCreationOptions/is}} is present, then set <var>is</var> to it.
 
  <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if the <a>context object</a> is an
  <a>HTML document</a> or <a>context object</a>'s <a for=Document>content type</a> is
  "<code>application/xhtml+xml</code>", and null otherwise.
 
- <li>Return the result of <a>creating an element</a> given the <a>context object</a>, <var>localName</var>,
- <var>namespace</var>, null, <var>is</var>, and with the <var>synchronous custom elements</var> flag set.
+ <li><p>Return the result of <a>creating an element</a> given the <a>context object</a>,
+ <var>localName</var>, <var>namespace</var>, null, <var>is</var>, and with the
+ <var>synchronous custom elements</var> flag set.
 </ol>
 
 <p>The <dfn noexport>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
 <var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>, are as follows:
 
 <ol>
- <li>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of passing
- <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
+ passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
 
- <li>Let <var>is</var> be the value of the {{ElementCreationOptions/is}} member of <var>options</var>, or null if no
- such member exists.
+ <li><p>Let <var>is</var> be null.
 
- <li><p>Return the result of <a>creating an element</a> given <var>document</var>, <var>localName</var>,
- <var>namespace</var>, <var>prefix</var>, <var>is</var>, and with the <var>synchronous custom elements</var> flag set.
+ <li><p>If <var>options</var> is a <a for=/>dictionary</a> and <var>options</var>'s
+ {{ElementCreationOptions/is}} is present, then set <var>is</var> to it.
+
+ <li><p>Return the result of <a>creating an element</a> given <var>document</var>,
+ <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, and with the
+ <var>synchronous custom elements</var> flag set.
 </ol>
 
 <p>The
@@ -5138,6 +5144,9 @@ invoked, must run these steps:
 method, when invoked, must return the result of running the
 <a>internal <code>createElementNS</code> steps</a>, given <a>context object</a>,
 <var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>.
+
+<p class="note">{{Document/createElement()}} and {{Document/createElementNS()}}'s <var>options</var>
+parameter is allowed to be a string for web compatibility.
 
 The <dfn method for=Document><code>createDocumentFragment()</code></dfn> method, when invoked,
 must return a new {{DocumentFragment}} <a>node</a> with its <a for=Node>node document</a> set to the
