@@ -466,24 +466,23 @@ dictionary EventInit {
 <p>An {{Event}} object is simply named an <dfn export id=concept-event>event</dfn>. It allows for
 signaling that something has occurred, e.g., that an image has completed downloading.</p>
 
-<p>An <a>event</a> has an associated <dfn export for=Event>relatedTarget</dfn> (null or an
-{{EventTarget}} object). Unless stated otherwise it is null.</p>
+<p>A <dfn export>potential event target</dfn> is null or an {{EventTarget}} object.
 
-<p class="note">Other specifications use <a for=Event>relatedTarget</a> to define a
-<code>relatedTarget</code> attribute. [[UIEVENTS]]
+<p>An <a>event</a> has associated <dfn id=event-relatedtarget export for=Event>relatedTargets</dfn>
+(a <a for=/>list</a> of <a>potential event targets</a>). Unless stated otherwise it is the empty
+list.
+
+<p class="note">Other specifications use <a for=Event>relatedTargets</a> to define a
+<code>relatedTarget</code> attribute or equivalent functionality. [[UIEVENTS]] [[TOUCH-EVENTS]]
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
 <a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
-<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (null
-or an {{EventTarget}} object), a <dfn for=Event/path>relatedTarget</dfn> (null or an
-{{EventTarget}} object), <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and a
+<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (a
+<a>potential event target</a>), a
+<dfn id=event-path-relatedtarget for=Event/path>relatedTargets</dfn> (a <a for=/>list</a> of
+<a>potential event targets</a>), <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and a
 <dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially the
 empty list.</p>
-
-<p><a lt="Other applicable specifications">Specifications</a> may define
-<dfn export for=Event>retargeting steps</dfn> for all or some <a>events</a>.
-The algorithm is passed <var>event</var>, as indicated in the <a>dispatch</a>
-algorithm below.
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -1154,15 +1153,18 @@ for discussion).
   <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
   <var>target</var> is a {{Window}} object.
 
- <li>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
- <a for=Event>relatedTarget</a> against <var>target</var> if <var>event</var>'s
- <a for=Event>relatedTarget</a> is non-null, and null otherwise.
+ <li><p>Let <var>relatedTargets</var> be a new <a for=/>list</a>.
 
- <li><p>If <var>target</var> is <var>relatedTarget</var> and <var>target</var> is not
- <var>event</var>'s <a for=Event>relatedTarget</a>, then return true.
+ <li><p><a for=list>For each</a> <var>relatedTarget</var> of <var>event</var>'s
+ <a for=Event>relatedTargets</a>, <a for=list>append</a> the result of <a>retargeting</a>
+ <var>relatedTarget</var> against <var>target</var> to <var>relatedTargets</var>.
+
+ <li><p>If <var>relatedTargets</var> <a for=list>contains</a> <var>target</var> and
+ <var>event</var>'s <a for=Event>relatedTargets</a> does not <a for=list>contain</a>
+ <var>target</var>, then return true.
 
  <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
- <var>targetOverride</var>, <var>relatedTarget</var>, and false.
+ <var>targetOverride</var>, <var>relatedTargets</var>, and false.
 
  <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object and
  <var>event</var>'s {{Event/type}} attribute is "<code>click</code>", and false otherwise.
@@ -1198,9 +1200,11 @@ for discussion).
    <li><p>If <var>parent</var> is <a for=slotable>assigned</a>, then set <var>slotable</var> to
    <var>parent</var>.
 
-   <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
-   <a for=Event>relatedTarget</a> against <var>parent</var> if <var>event</var>'s
-   <a for=Event>relatedTarget</a> is non-null, and null otherwise.
+   <li><p>Let <var>relatedTargets</var> be a new <a for=/>list</a>.
+
+   <li><p><a for=list>For each</a> <var>relatedTarget</var> of <var>event</var>'s
+   <a for=Event>relatedTargets</a>, <a for=list>append</a> the result of <a>retargeting</a>
+   <var>relatedTarget</var> against <var>target</var> to <var>relatedTargets</var>.
 
    <li>
     <p>If <var>target</var>'s <a for=tree>root</a> is a
@@ -1213,11 +1217,12 @@ for discussion).
      <var>parent</var>.
 
      <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>, null,
-     <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
+     <var>relatedTargets</var>, and <var>slot-in-closed-tree</var>.
     </ol>
 
-   <li><p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set
-   <var>parent</var> to null.
+   <li><p>Otherwise, if <var>relatedTargets</var> <a for=list>contains</a> <var>parent</var>, then
+   set <var>parent</var> to null.
+   <!-- XXX I'm not sure this is correct now relatedTargets is plural -->
 
    <li>
     <p>Otherwise, set <var>target</var> to <var>parent</var> and then:
@@ -1228,7 +1233,7 @@ for discussion).
      <var>activationTarget</var> to <var>target</var>.
 
      <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>,
-     <var>target</var>, <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
+     <var>target</var>, <var>relatedTargets</var>, and <var>slot-in-closed-tree</var>.
     </ol>
 
    <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
@@ -1247,34 +1252,31 @@ for discussion).
   <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
 
   <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <b>target</b> of the last tuple
-   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
-   <var>tuple</var>, whose <b>target</b> is non-null.
+   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <a for=Event/path>target</a> of
+   the last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
+   preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
 
-   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
-   <b>relatedTarget</b>.
+   <li><p>Set <var>event</var>'s <a for=Event>relatedTargets</a> to <var>tuple</var>'s
+   <a for=Event/path>relatedTargets</a>.
 
-   <li><p>Run the <a>retargeting steps</a> with <var>event</var>.
-
-   <li><p>If <var>tuple</var>'s <b>target</b> is null, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
+   <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is null, then <a>invoke</a>
+   <var>tuple</var>'s <a for=Event/path>item</a> with <var>event</var> and
+   <var>legacyOutputDidListenersThrowFlag</var> if given.
   </ol>
 
  <li>
   <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in order:
 
   <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <b>target</b> of the last tuple
-   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
-   <var>tuple</var>, whose <b>target</b> is non-null.
+   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <a for=Event/path>target</a> of
+   the last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
+   preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
 
-   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
-   <b>relatedTarget</b>.
+   <li><p>Set <var>event</var>'s <a for=Event>relatedTargets</a> to <var>tuple</var>'s
+   <a for=Event/path>relatedTargets</a>.
 
-   <li><p>Run the <a>retargeting steps</a> with <var>event</var>.
-
-   <li><p>If <var>tuple</var>'s <b>target</b> is non-null, then set <var>event</var>'s
-   {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+   <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is non-null, then set
+   <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
    <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
    {{Event/BUBBLING_PHASE}}.
@@ -1282,7 +1284,8 @@ for discussion).
    <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
    and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
    {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
+   <a for=Event/path>item</a> with <var>event</var> and
+   <var>legacyOutputDidListenersThrowFlag</var> if given.
   </ol>
 
  <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
@@ -1314,7 +1317,7 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
-<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>, and a
+<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTargets</var>, and a
 <var>slot-in-closed-tree</var>, run these steps:</p>
 
 <ol>
@@ -1325,7 +1328,7 @@ for discussion).
 
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
  whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>target</a> is
- <var>targetOverride</var>, <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
+ <var>targetOverride</var>, <a for=Event/path>relatedTargets</a> is <var>relatedTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
@@ -5621,6 +5624,8 @@ is an object or one of its <a>shadow-including ancestors</a>.
 <var>B</var>, repeat these steps until they return an object:</p>
 
 <ol>
+ <li><p>If <var>A</var> is null, then return null.
+
  <li><p>If <var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, or <var>A</var>'s
  <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of <var>B</var>, then return
  <var>A</var>.
