@@ -1153,9 +1153,9 @@ for discussion).
   <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
   <var>target</var> is a {{Window}} object.
 
- <li><p>Let <var>clearTargetsPostDispatch</var> be true if <var>target</var>'s or one of
- <var>event</var>'s <a for=Event>relatedTargets</a>' <a for=tree>root</a> is a
- <a for=/>shadow root</a>, and false otherwise.
+ <li><p>Let <var>clearTargetsPostDispatch</var> be true if either <var>target</var> or one of
+ <var>event</var>'s <a for=Event>relatedTargets</a> is a <a>node</a> and its <a for=tree>root</a> is
+ a <a for=/>shadow root</a>, and false otherwise.
 
  <li><p>Let <var>relatedTargets</var> be a new <a for=/>list</a>.
 
@@ -1201,8 +1201,8 @@ for discussion).
      true.
     </ol>
 
-   <li><p>If <var>parent</var> is <a for=slotable>assigned</a>, then set <var>slotable</var> to
-   <var>parent</var>.
+   <li><p>If <var>parent</var> is a <a>slotable</a> and is <a for=slotable>assigned</a>, then set
+   <var>slotable</var> to <var>parent</var>.
 
    <li><p>Let <var>relatedTargets</var> be a new <a for=/>list</a>.
 
@@ -1211,7 +1211,7 @@ for discussion).
    <var>relatedTarget</var> against <var>target</var> to <var>relatedTargets</var>.
 
    <li>
-    <p>If <var>target</var>'s <a for=tree>root</a> is a
+    <p>If <var>parent</var> is a <a>node</a> and <var>target</var>'s <a for=tree>root</a> is a
     <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then:
 
     <ol>
@@ -5627,11 +5627,21 @@ is an object or one of its <a>shadow-including ancestors</a>.
 <var>B</var>, repeat these steps until they return an object:</p>
 
 <ol>
- <li><p>If <var>A</var> is null, then return null.
+ <li><p>If <var>A</var> is a {{Window}} object, then set <var>A</var> to <var>A</var>'s
+ <a>associated <code>Document</code></a>.
 
- <li><p>If <var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, or <var>A</var>'s
- <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of <var>B</var>, then return
- <var>A</var>.
+ <li>
+  <p>If one of the following is true
+
+  <ul class=brief>
+   <li><var>A</var> is not a <a>node</a>
+   <li><var>B</var> is not a <a>node</a>
+   <li><var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>
+   <li><var>A</var>'s <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of
+   <var>B</var>
+  </ul>
+
+  <p>then return <var>A</var>.
 
  <li><p>Set <var>A</var> to <var>A</var>'s <a for=tree>root</a>'s <a for=DocumentFragment>host</a>.
 </ol>
