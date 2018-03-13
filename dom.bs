@@ -1038,13 +1038,13 @@ must return a new {{EventTarget}}.
 if this would be useful for your programs. For now, all author-created {{EventTarget}}s do not
 participate in a tree structure.</p>
 
-<p>The
-<dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
-method, when invoked, must run these steps:
+<p>To <dfn export>add an event listener</dfn> given an <code>EventTarget</code> object
+<var>eventTarget</var>, string <var>type</var>, callback <var>callback</var>, and
+<a for=/>dictionary</a> or boolean <var>options</var>, run these steps:
 
 <ol>
  <li>
-  <p>If <a>context object</a>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
+  <p>If <var>eventTarget</var>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
   object and its associated <a>service worker</a>'s <a for="service worker">script resource</a>'s
   <a for="service worker">has ever been evaluated flag</a> is set, then <a>throw</a> a
   <code>TypeError</code>.
@@ -1059,12 +1059,20 @@ method, when invoked, must run these steps:
  <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
  <a lt="flatten more">flattening more</a> <var>options</var>.
 
- <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
+ <li><p>If <var>eventTarget</var>'s associated list of <a>event listener</a> does not contain an
  <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
  and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
  <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
  <var>capture</var>, <b>passive</b> is <var>passive</var>, and <b>once</b> is <var>once</var>.
 </ol>
+
+<p class=note>The <a>add an event listener</a> concept exists to ensure
+<a>event handler attributes</a> use the same code path. [[HTML]]
+
+<p>The
+<dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
+method, when invoked, must <a>add an event listener</a> with the <a>context object</a>,
+<var>type</var>, <var>callback</var>, and <var>options</var>.
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
