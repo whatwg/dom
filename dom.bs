@@ -8787,15 +8787,16 @@ associated <a for=traversal>active flag</a>,
 <a for=traversal>whatToShow</a> bitmask, and
 <a for=traversal>filter</a> callback as well.
 
-The <dfn><code>NodeIterator</code> pre-removing steps</dfn> given a
-<var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:
+<p>The <dfn><code>NodeIterator</code> pre-removing steps</dfn> given a <var>nodeIterator</var> and
+<var>toBeRemovedNode</var>, are as follows:
 
 <ol>
  <li><p>If <var>toBeRemovedNode</var> is not an <a for=tree>inclusive ancestor</a> of the
- {{NodeIterator/referenceNode}} attribute value, then return.
+ <var>nodeIterator</var>'s {{NodeIterator/referenceNode}} attribute value, then return.
 
  <li>
-  <p>If the {{NodeIterator/pointerBeforeReferenceNode}} attribute value is true, then:
+  <p>If <var>nodeIterator</var>'s {{NodeIterator/pointerBeforeReferenceNode}} attribute value is
+  true, then:
 
   <ol>
    <li><p>Let <var>next</var> be <var>toBeRemovedNode</var>'s first <a>following</a>
@@ -8839,11 +8840,9 @@ attributes must return what they were initialized to.
 <var>direction</var> run these steps:
 
 <ol>
- <li>Let <var>node</var> be the value of the
- {{NodeIterator/referenceNode}} attribute.
+ <li><p>Let <var>node</var> be the value of the {{NodeIterator/referenceNode}} attribute.
 
- <li>Let <var>before node</var> be the value of the
- {{NodeIterator/pointerBeforeReferenceNode}}
+ <li><p>Let <var>beforeNode</var> be the value of the {{NodeIterator/pointerBeforeReferenceNode}}
  attribute.
 
  <li>
@@ -8851,38 +8850,36 @@ attributes must return what they were initialized to.
 
   <ol>
    <li>
+    <p>Branch on <var>direction</var>:
+
     <dl class=switch>
-     <dt>If <var>direction</var> is next
+     <dt>next
      <dd>
-      If <var>before node</var> is false, let <var>node</var>
-      be the first <a>node</a>
-      <a>following</a>
-      <var>node</var> in the <a>iterator collection</a>. If
-      there is no such <a>node</a> return null.
-      If <var>before node</var> is true, set it to false.
-     <dt>If <var>direction</var> is previous
+      <p>If <var>beforeNode</var> is false, then set <var>node</var> to the first <a>node</a>
+      <a>following</a> <var>node</var> in the <a>iterator collection</a>. If there is no such
+      <a>node</a>, then return null.
+
+      <p>If <var>beforeNode</var> is true, then set it to false.
+
+     <dt>previous
      <dd>
-      If <var>before node</var> is true, let <var>node</var>
-      be the first <a>node</a>
-      <a>preceding</a>
-      <var>node</var> in the <a>iterator collection</a>. If
-      there is no such <a>node</a>, then return null.
-      If <var>before node</var> is false, set it to true.
+      <p>If <var>beforeNode</var> is true, then set <var>node</var> to the first <a>node</a>
+      <a>preceding</a> <var>node</var> in the <a>iterator collection</a>. If there is no such
+      <a>node</a>, then return null.
+
+      <p>If <var>beforeNode</var> is false, then set it to true.
     </dl>
 
-   <li><a for=Node>Filter</a>
-   <var>node</var> and let <var>result</var> be the return
-   value.
+   <li><p>Let <var>result</var> be the result of <a for=Node>filtering</a> <var>node</var>.
 
    <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then <a for=iteration>break</a>.
   </ol>
 
- <li>Set the
- {{NodeIterator/referenceNode}} attribute
- to <var>node</var>, set the
- {{NodeIterator/pointerBeforeReferenceNode}}
- attribute to <var>before node</var>, and return
- <var>node</var>.
+ <li><p>Set the {{NodeIterator/referenceNode}} attribute to <var>node</var>.
+
+ <li><p>Set the {{NodeIterator/pointerBeforeReferenceNode}} attribute to <var>beforeNode</var>.
+
+ <li><p>Return <var>node</var>.
 </ol>
 
 <p>The <dfn method for=NodeIterator><code>nextNode()</code></dfn> method, when invoked, must return
@@ -9177,11 +9174,9 @@ these steps:
 steps:
 
 <ol>
- <li>Let <var>node</var> be the value of the
- {{TreeWalker/currentNode}} attribute.
+ <li><p>Let <var>node</var> be the value of the {{TreeWalker/currentNode}} attribute.
 
- <li>Let <var>result</var> be
- {{NodeFilter/FILTER_ACCEPT}}.
+ <li><p>Let <var>result</var> be {{NodeFilter/FILTER_ACCEPT}}.
 
  <li>
   <p>While true:
@@ -9192,38 +9187,23 @@ steps:
     <a for=tree>child</a>:
 
     <ol>
-     <li>Set <var>node</var> to its
-     <a for=tree>first child</a>.
+     <li><p>Set <var>node</var> to its <a for=tree>first child</a>.
 
-     <li><a for=Node>Filter</a>
-     <var>node</var> and set <var>result</var> to the return
-     value.
+     <li><p>Set <var>result</var> to the result of <a for=Node>filtering</a> <var>node</var>.
 
-     <li>If <var>result</var> is
-     {{NodeFilter/FILTER_ACCEPT}}, then set
-     the {{TreeWalker/currentNode}} attribute
-     to <var>node</var> and return <var>node</var>.
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
+     {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
     </ol>
 
-   <li>
-    If a <a>node</a> is
-    <a>following</a>
-    <var>node</var> and is not
-    <a>following</a>
-    <a for=traversal>root</a>, set
-    <var>node</var> to the first such
-    <a>node</a>.
-    Otherwise, return null.
-    <!-- Implemented as iterating over parent/nextSibling -->
+   <li><p>If there is a <a>node</a> that is <a>following</a> <var>node</var> and is not
+   <a>following</a> <a for=traversal>root</a>, then set <var>node</var> to the first such
+   <a>node</a>. Otherwise, return null.
+   <!-- Implemented as iterating over parent/nextSibling -->
 
-   <li><a for=Node>Filter</a>
-   <var>node</var> and set <var>result</var> to the return
-   value.
+   <li><p>Set <var>result</var> to the result of <a for=Node>filtering</a> <var>node</var>.
 
-   <li>If <var>result</var> is
-   {{NodeFilter/FILTER_ACCEPT}}, then set
-   the {{TreeWalker/currentNode}} attribute
-   to <var>node</var> and return <var>node</var>.
+   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
+   {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
   </ol>
 </ol>
 
