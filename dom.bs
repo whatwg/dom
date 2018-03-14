@@ -328,7 +328,7 @@ method, passing the same arguments.
 {{Event}} interface (or a derived interface). In the example above
 <var ignore>ev</var> is the <a>event</a>. It is
 passed as argument to
-<a>event listener</a>'s <b>callback</b>
+<a>event listener</a>'s <a for="event listener">callback</a>
 (typically a JavaScript Function as shown above).
 <a>Event listeners</a> key off the
 <a>event</a>'s
@@ -384,7 +384,7 @@ When an <a>event</a> is
 <a>ancestors</a> too. First all object's
 <a>ancestor</a>
 <a>event listeners</a> whose
-<b>capture</b> variable is set to true are invoked, in
+<a for="event listener">capture</a> variable is set to true are invoked, in
 <a>tree order</a>. Second, object's own
 <a>event listeners</a> are invoked. And
 finally, and only if <a>event</a>'s
@@ -511,7 +511,7 @@ algorithm below.
  <dd>Returns the object to which <var>event</var> is <a>dispatched</a>.
 
  <dt><code><var>event</var> . {{Event/currentTarget}}</code>
- <dd>Returns the object whose <a>event listener</a>'s <b>callback</b> is currently being
+ <dd>Returns the object whose <a>event listener</a>'s <a for="event listener">callback</a> is currently being
  invoked.
 
  <dt><code><var>event</var> . {{Event/composedPath()}}</code>
@@ -910,27 +910,27 @@ dictionary AddEventListenerOptions : EventListenerOptions {
 };
 </pre>
 
-<p>The {{EventTarget}} object represents the target to which an <a>event</a> is <a>dispatched</a>
+<p>An {{EventTarget}} object represents a target to which an <a>event</a> can be <a>dispatched</a>
 when something has occurred.
 
-<p>Each {{EventTarget}} object has an associated list of <a>event listeners</a>.
+<p>Each {{EventTarget}} object has an associated <dfn for=EventTarget>event listener list</dfn> (a
+<a for=/>list</a> of zero or more <a>event listeners</a>). It is initially the empty list.
+<!-- Intentionally not exported. -->
 
 <p>An <dfn export id=concept-event-listener>event listener</dfn> can be used to observe a specific
-<a>event</a>.
-
-<p>An <a>event listener</a> consists of these fields:</p>
+<a>event</a> and consists of:
 
 <ul class="brief">
- <li><b>type</b> (a string)
- <li><b>callback</b> (an {{EventListener}})
- <li><b>capture</b> (a boolean, initially false)
- <li><b>passive</b> (a boolean, initially false)
- <li><b>once</b> (a boolean, initially false)
- <li><b>removed</b> (a boolean for bookkeeping purposes, initially false)
+ <li><dfn for="event listener">type</dfn> (a string)
+ <li><dfn for="event listener">callback</dfn> (null or an {{EventListener}} object)
+ <li><dfn for="event listener">capture</dfn> (a boolean, initially false)
+ <li><dfn for="event listener">passive</dfn> (a boolean, initially false)
+ <li><dfn for="event listener">once</dfn> (a boolean, initially false)
+ <li><dfn for="event listener">removed</dfn> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
-<p class="note no-backref">Although <b>callback</b> is an {{EventListener}}, as can be seen from the
-fields above, an <a>event listener</a> is a broader concept.
+<p class="note no-backref">Although <a for="event listener">callback</a> is an {{EventListener}}
+object, an <a>event listener</a> is a broader concept as can be seen above.
 
 <p>Each {{EventTarget}} object also has an associated <dfn export>get the parent</dfn> algorithm,
 which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
@@ -958,48 +958,48 @@ are not to be used for anything else. [[!HTML]]
 
 <dl class=domintro>
  <dt><code><var>target</var> = new <a constructor for=EventTarget lt=EventTarget()>EventTarget</a>();</code>
- <dd>
-  Creates a new {{EventTarget}} object, which can be used by developers to <a>dispatch</a> and listen for
-  <a>events</a>.
+ <dd><p>Creates a new {{EventTarget}} object, which can be used by developers to <a>dispatch</a> and
+ listen for <a>events</a>.
 
  <dt><code><var>target</var> . <a method for=EventTarget lt=addEventListener()>addEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
  <dd>
-  Appends an <a>event listener</a> for <a>events</a> whose {{Event/type}} attribute value
-  is <var>type</var>. The <var>callback</var> argument sets the <b>callback</b> that will
-  be invoked when the <a>event</a> is <a>dispatched</a>.
+  <p>Appends an <a>event listener</a> for <a>events</a> whose {{Event/type}} attribute value is
+  <var>type</var>. The <var>callback</var> argument sets the <a for="event listener">callback</a>
+  that will be invoked when the <a>event</a> is <a>dispatched</a>.
 
-  The <var>options</var> argument sets listener-specific options. For compatibility this can be just
-  a boolean, in which case the method behaves exactly as if the value was specified as
-  <var>options</var>' <code>capture</code> member.
+  <p>The <var>options</var> argument sets listener-specific options. For compatibility this can be a
+  boolean, in which case the method behaves exactly as if the value was specified as
+  <var>options</var>'s {{EventListenerOptions/capture}}.
 
-  When set to true, <var>options</var>' <code>capture</code> member prevents <b>callback</b> from
-  being invoked when the <a>event</a>'s {{Event/eventPhase}} attribute value is
-  {{Event/BUBBLING_PHASE}}. When false (or not present), <b>callback</b> will not be invoked when
-  <a>event</a>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}. Either way,
-  <b>callback</b> will be invoked if <a>event</a>'s {{Event/eventPhase}} attribute value is
-  {{Event/AT_TARGET}}.
+  <p>When set to true, <var>options</var>'s {{EventListenerOptions/capture}} prevents
+  <a for="event listener">callback</a> from being invoked when the <a>event</a>'s
+  {{Event/eventPhase}} attribute value is {{Event/BUBBLING_PHASE}}. When false (or not present),
+  <a for="event listener">callback</a> will not be invoked when <a>event</a>'s {{Event/eventPhase}}
+  attribute value is {{Event/CAPTURING_PHASE}}. Either way, <a for="event listener">callback</a>
+  will be invoked if <a>event</a>'s {{Event/eventPhase}} attribute value is {{Event/AT_TARGET}}.
 
-  When set to true, <var>options</var>' <code>passive</code> member indicates that the
-  <b>callback</b> will not cancel the event by invoking {{Event/preventDefault()}}. This is used to
-  enable performance optimizations described in [[#observing-event-listeners]].
+  <p>When set to true, <var>options</var>'s {{AddEventListenerOptions/passive}} indicates that the
+  <a for="event listener">callback</a> will not cancel the event by invoking
+  {{Event/preventDefault()}}. This is used to enable performance optimizations described in
+  [[#observing-event-listeners]].
 
-  When set to true, <var>options</var>'s <code>once</code> member indicates that the <b>callback</b>
-  will only be invoked once after which the event listener will be removed.
+  <p>When set to true, <var>options</var>'s {{AddEventListenerOptions/once}} indicates that the
+  <a for="event listener">callback</a> will only be invoked once after which the event listener will
+  be removed.
 
-  The <a>event listener</a> is appended to <var>target</var>'s list of <a>event listeners</a> and is
-  not appended if it is a duplicate, i.e., having the same <b>type</b>, <b>callback</b>, and
-  <b>capture</b> values.
+  <p>The <a>event listener</a> is appended to <var>target</var>'s
+  <a for=EventTarget>event listener list</a> and is not appended if it has the same
+  <a for="event listener">type</a>, <a for="event listener">callback</a>, and
+  <a for="event listener">capture</a>.
 
  <dt><code><var>target</var> . <a method for=EventTarget lt=removeEventListener()>removeEventListener</a>(<var>type</var>, <var>callback</var> [, <var>options</var>])</code>
- <dd>Remove the <a>event listener</a>
- in <var>target</var>'s list of
- <a>event listeners</a> with the same
- <var>type</var>, <var>callback</var>, and
+ <dd><p>Removes the <a>event listener</a> in <var>target</var>'s
+ <a for=EventTarget>event listener list</a> with the same <var>type</var>, <var>callback</var>, and
  <var>options</var>.
 
  <dt><code><var>target</var> . <a method for=EventTarget lt=dispatchEvent()>dispatchEvent</a>(<var>event</var>)</code>
- <dd><a>Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns
- true if either <var>event</var>'s {{Event/cancelable}} attribute value is false or its
+ <dd><p><a>Dispatches</a> a synthetic event <var>event</var> to <var>target</var> and returns true
+ if either <var>event</var>'s {{Event/cancelable}} attribute value is false or its
  {{Event/preventDefault()}} method was not invoked, and false otherwise.
 </dl>
 
@@ -1038,13 +1038,12 @@ must return a new {{EventTarget}}.
 if this would be useful for your programs. For now, all author-created {{EventTarget}}s do not
 participate in a tree structure.</p>
 
-<p>The
-<dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
-method, when invoked, must run these steps:
+<p>To <dfn export>add an event listener</dfn> given an {{EventTarget}} object <var>eventTarget</var>
+and an <a>event listener</a> <var>listener</var>, run these steps:
 
 <ol>
  <li>
-  <p>If <a>context object</a>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
+  <p>If <var>eventTarget</var>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
   object and its associated <a>service worker</a>'s <a for="service worker">script resource</a>'s
   <a for="service worker">has ever been evaluated flag</a> is set, then <a>throw</a> a
   <code>TypeError</code>.
@@ -1054,34 +1053,53 @@ method, when invoked, must run these steps:
   to avoid non-deterministic changes to the event listeners, invocation of the method is allowed
   only during the very first evaluation of the service worker script.
 
- <li><p>If <var>callback</var> is null, then return.
+ <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
+ <li><p>If <var>eventTarget</var>'s <a>event listener list</a> does not <a for=list>contain</a> an
+ <a>event listener</a> whose <a for="event listener">type</a> is <var>listener</var>'s
+ <a for="event listener">type</a>, <a for="event listener">callback</a> is <var>listener</var>'s
+ <a for="event listener">callback</a>, and <a for="event listener">capture</a> is
+ <var>listener</var>'s <a for="event listener">capture</a>, then <a for=list>append</a>
+ <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
+</ol>
+
+<p class=note>The <a>add an event listener</a> concept exists to ensure <a>event handlers</a> use
+the same code path. [[HTML]]
+
+<p>The
+<dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
+method, when invoked, must run these steps:
+
+<ol>
  <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
  <a lt="flatten more">flattening more</a> <var>options</var>.
 
- <li><p>If <a>context object</a>'s associated list of <a>event listener</a> does not contain an
- <a>event listener</a> whose <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>,
- and <b>capture</b> is <var>capture</var>, then append a new <a>event listener</a> to it, whose
- <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, <b>capture</b> is
- <var>capture</var>, <b>passive</b> is <var>passive</var>, and <b>once</b> is <var>once</var>.
+ <li><p><a>Add an event listener</a> with the <a>context object</a> and an <a>event listener</a>
+ whose <a for="event listener">type</a> is <var>type</var>, <a for="event listener">callback</a> is
+ <var>callback</var>, <a for="event listener">capture</a> is <var>capture</var>,
+ <a for="event listener">passive</a> is <var>passive</var>, and <a for="event listener">once</a> is
+ <var>once</var>.
 </ol>
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
-method, when invoked, must, run these steps
+method, when invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a>'s <a>relevant global object</a> is a {{ServiceWorkerGlobalScope}}
- object and its associated <a>service worker</a>'s <a for="service worker">script resource</a>'s
+ <li><p>If the <a>context object</a>'s <a>relevant global object</a> is a
+ {{ServiceWorkerGlobalScope}} object and its associated <a>service worker</a>'s
+ <a for="service worker">script resource</a>'s
  <a for="service worker">has ever been evaluated flag</a> is set, then <a>throw</a> a
  <code>TypeError</code>. [[!SERVICE-WORKERS]]
 
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>If there is an <a>event listener</a> in the associated list of <a>event listeners</a> whose
- <b>type</b> is <var>type</var>, <b>callback</b> is <var>callback</var>, and <b>capture</b> is
- <var>capture</var>, then set that <a>event listener</a>'s <b>removed</b> to true and remove it from
- the associated list of <a>event listeners</a>.
+ <li><p>If the <a>context object</a>'s <a for=EventTarget>event listener list</a>
+ <a for=list>contains</a> an <a>event listener</a> whose <a for="event listener">type</a> is
+ <var>type</var>, <a for="event listener">callback</a> is <var>callback</var>, and
+ <a for="event listener">capture</a> is <var>capture</var>, then set that <a>event listener</a>'s
+ <a for="event listener">removed</a> to true and <a for=list>remove</a> it from the
+ <a>context object</a>'s <a for=EventTarget>event listener list</a>.
 </ol>
 
 <p>The <dfn method for=EventTarget><code>dispatchEvent(<var>event</var>)</code></dfn> method, when
@@ -1100,7 +1118,7 @@ invoked, must run these steps:
 <h3 id=observing-event-listeners>Observing event listeners</h3>
 
 <p>In general, developers do not expect the presence of an <a>event listener</a> to be observable.
-The impact of an <a>event listener</a> is determined by its <b>callback</b>. That is, a developer
+The impact of an <a>event listener</a> is determined by its <a for="event listener">callback</a>. That is, a developer
 adding a no-op <a>event listener</a> would not expect it to have any side effects.
 
 <p>Unfortunately, some event APIs have been designed such that implementing them efficiently
@@ -1320,14 +1338,15 @@ for discussion).
 <ol>
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Let <var>listeners</var> be a new <a>list</a>.
+ <li><p>Let <var>listeners</var> be a new <a for=/>list</a>.
 
  <li>
-  <p>For each <a>event listener</a> associated with <var>object</var>, <a for=list>append</a> a
-  pointer to the <a>event listener</a> to <var>listeners</var>.
+  <p><a for=/>For each</a> <var>listener</var> of <var>object</var>'s
+  <a for=EventTarget>event listener list</a>, <a for=list>append</a> <var>listener</var> to
+  <var>listeners</var>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
-  run. Note that removal still has an effect due to the <b>removed</b> field.
+  run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
  <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>object</var>.
 
@@ -1371,32 +1390,33 @@ with <var>event</var>, <var>listeners</var>, and an optional
  <li><p>Let <var>found</var> be false.
 
  <li>
-  <p><a for=list>For each</a> <var>listener</var> in <var>listeners</var>, whose <b>removed</b> is
-  false:
+  <p><a for=list>For each</a> <var>listener</var> in <var>listeners</var>, whose
+  <a for="event listener">removed</a> is false:
 
   <ol>
    <li><p>If <var>event</var>'s {{Event/type}} attribute value is not <var>listener</var>'s
-   <b>type</b>, then <a for=iteration>continue</a>.
+   <a for="event listener">type</a>, then <a for=iteration>continue</a>.
 
    <li><p>Set <var>found</var> to true.
 
    <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}
-   and <var>listener</var>'s <b>capture</b> is false, then <a for=iteration>continue</a>.
+   and <var>listener</var>'s <a for="event listener">capture</a> is false, then <a for=iteration>continue</a>.
 
    <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/BUBBLING_PHASE}} and
-   <var>listener</var>'s <b>capture</b> is true, then <a for=iteration>continue</a>.
+   <var>listener</var>'s <a for="event listener">capture</a> is true, then <a for=iteration>continue</a>.
 
-   <li><p>If <var>listener</var>'s <b>once</b> is true, then remove <var>listener</var> from
-   <var>object</var>'s associated list of <a>event listeners</a>.
+   <li><p>If <var>listener</var>'s <a for="event listener">once</a> is true, then
+   <a for=list>remove</a> <var>listener</var> from <var>object</var>'s
+   <a for=EventTarget>event listener list</a>.
    <!-- Do this before invocation to avoid reentrancy issues. No need to set removed to true since
         each listener in listeners is run once anyway. -->
 
-   <li><p>If <var>listener</var>'s <b>passive</b> is true, then set <var>event</var>'s
-   <a>in passive listener flag</a>.
+   <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
+   <var>event</var>'s <a>in passive listener flag</a>.
 
    <li>
-    <p><a>Call a user object's operation</a> with <var>listener</var>'s <b>callback</b>,
-    "<code>handleEvent</code>", a list of arguments consisting of <var>event</var>, and
+    <p><a>Call a user object's operation</a> with <var>listener</var>'s
+    <a for="event listener">callback</a>, "<code>handleEvent</code>", « <var>event</var> », and
     <var>event</var>'s {{Event/currentTarget}} attribute value as the <a>callback this value</a>. If
     this throws an exception, then:
 
@@ -3314,65 +3334,46 @@ of {{MutationObserver}} objects, and then return it.
 method, when invoked, must run these steps:
 
 <ol>
- <li>If either <var>options</var>'
- {{MutationObserverInit/attributeOldValue}} or
- {{MutationObserverInit/attributeFilter}} is present
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is omitted, set
- <var>options</var>'
+ <li><p>If either <var>options</var>'s {{MutationObserverInit/attributeOldValue}} or
+ {{MutationObserverInit/attributeFilter}} is present and <var>options</var>'s
+ {{MutationObserverInit/attributes}} is omitted, then set <var>options</var>'s
  {{MutationObserverInit/attributes}} to true.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/characterDataOldValue}}
- is present and <var>options</var>'
- {{MutationObserverInit/characterData}} is omitted, set
- <var>options</var>'
- {{MutationObserverInit/characterData}} to true.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is present and
+ <var>options</var>'s {{MutationObserverInit/characterData}} is omitted, then set
+ <var>options</var>'s {{MutationObserverInit/characterData}} to true.
 
- <li>If none of <var>options</var>'
- {{MutationObserverInit/childList}},
- {{MutationObserverInit/attributes}}, and
- {{MutationObserverInit/characterData}} is true,
+ <li><p>If none of <var>options</var>'s {{MutationObserverInit/childList}},
+ {{MutationObserverInit/attributes}}, and {{MutationObserverInit/characterData}} is true, then
  <a>throw</a> a <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/attributeOldValue}} is true
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/attributeOldValue}} is true and
+ <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/attributeFilter}} is present
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/attributeFilter}} is present and
+ <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/characterDataOldValue}}
- is true and <var>options</var>'
- {{MutationObserverInit/characterData}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is true and
+ <var>options</var>'s {{MutationObserverInit/characterData}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
  <li>
-  For each <a>registered observer</a> <var>registered</var> in
-  <var>target</var>'s list of
-  <a>registered observers</a> whose <b>observer</b> is
-  the <a>context object</a>:
+  <p>For each <a>registered observer</a> <var>registered</var> in <var>target</var>'s list of
+  <a>registered observers</a> whose <b>observer</b> is the <a>context object</a>:
 
   <ol>
-   <li>Remove all
-   <a>transient registered observers</a> whose
-   <b>source</b> is <var>registered</var>.
+   <li><p>Remove all <a>transient registered observers</a> whose <b>source</b> is
+   <var>registered</var>.
 
-   <li>Replace <var>registered</var>'s <b>options</b> with
-   <var>options</var>.
+   <li><p>Replace <var>registered</var>'s <b>options</b> with <var>options</var>.
   </ol>
 
- <li>Otherwise, add a new <a>registered observer</a> to
- <var>target</var>'s list of
- <a>registered observers</a> with the
- <a>context object</a> as the <b>observer</b> and <var>options</var> as the <b>options</b>,
- and add <var>target</var> to <a>context object</a>'s list of <a>nodes</a> on which it is registered.
+ <li><p>Otherwise, add a new <a>registered observer</a> to <var>target</var>'s list of
+ <a>registered observers</a> with the <a>context object</a> as the <b>observer</b> and
+ <var>options</var> as the <b>options</b>, and add <var>target</var> to <a>context object</a>'s list
+ of <a>nodes</a> on which it is registered.
 </ol>
 
 <p>The <dfn method for=MutationObserver><code>disconnect()</code></dfn> method, when invoked, must
@@ -3410,23 +3411,24 @@ previousSibling <var>previousSibling</var>, and nextSibling
     <p>If none of the following are true
 
     <ul class=brief>
-     <li><var>node</var> is not <var>target</var> and <var>options</var>' <code>subtree</code> is
-     false
+     <li><var>node</var> is not <var>target</var> and <var>options</var>'s
+     {{MutationObserverInit/subtree}} is false
 
-     <li><var>type</var> is "<code>attributes</code>" and <var>options</var>'
-     <code>attributes</code> is not true
+     <li><var>type</var> is "<code>attributes</code>" and <var>options</var>'s
+     {{MutationObserverInit/attributes}} is not true
      <!--not true==false||omitted-->
 
-     <li><var>type</var> is "<code>attributes</code>", <var>options</var>'
-     <code>attributeFilter</code> is present, and <var>options</var>' <code>attributeFilter</code>
-     does not contain <var>name</var> or <var>namespace</var> is non-null
+     <li><var>type</var> is "<code>attributes</code>", <var>options</var>'s
+     {{MutationObserverInit/attributeFilter}} is present, and <var>options</var>'s
+     {{MutationObserverInit/attributeFilter}} does not contain <var>name</var> or
+     <var>namespace</var> is non-null
 
-     <li><var>type</var> is "<code>characterData</code>" and <var>options</var>'
-     <code>characterData</code> is not true
+     <li><var>type</var> is "<code>characterData</code>" and <var>options</var>'s
+     {{MutationObserverInit/characterData}} is not true
      <!--not true==false||omitted-->
 
-     <li><var>type</var> is "<code>childList</code>" and <var>options</var>' <code>childList</code>
-     is false
+     <li><var>type</var> is "<code>childList</code>" and <var>options</var>'s
+     {{MutationObserverInit/childList}} is false
     </ul>
 
     <p>then:
@@ -3436,9 +3438,10 @@ previousSibling <var>previousSibling</var>, and nextSibling
      <var>interested observers</var>, append <var>registered observer</var>'s <b>observer</b> to
      <var>interested observers</var>.
 
-     <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'
-     <code>attributeOldValue</code> is true, or <var>type</var> is "<code>characterData</code>" and
-     <var>options</var>' <code>characterDataOldValue</code> is true, set the paired string of
+     <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'s
+     {{MutationObserverInit/attributeOldValue}} is true, or <var>type</var> is
+     "<code>characterData</code>" and <var>options</var>'s
+     {{MutationObserverInit/characterDataOldValue}} is true, set the paired string of
      <var>registered observer</var>'s <b>observer</b> in <var>interested observers</var> to
      <var>oldValue</var>.
     </ol>
@@ -4935,39 +4938,31 @@ for the <a>context object</a>.
 <dl class=domintro>
  <dt><code><var>element</var> = <var>document</var> . <a method for=Document lt=createElement()>createElement(localName [, options])</a></code>
  <dd>
-  Returns an <a for="/">element</a> with <var>localName</var> as <a for=Element>local name</a> (if
-  <var>document</var> is an <a>HTML document</a>, <var>localName</var> gets lowercased). The
+  <p>Returns an <a for="/">element</a> with <var>localName</var> as <a for=Element>local name</a>
+  (if <var>document</var> is an <a>HTML document</a>, <var>localName</var> gets lowercased). The
   <a for="/">element</a>'s <a for=Element>namespace</a> is the <a>HTML namespace</a> when
   <var>document</var> is an <a>HTML document</a> or <var>document</var>'s
   <a for=Document>content type</a> is "<code>application/xhtml+xml</code>", and null otherwise.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
+  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
-  When supplied, <var>options</var>' <code>is</code> member can be used to create a
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
-
 
  <dt><code><var>element</var> = <var>document</var> . <a method for=Document lt=createElementNS()>createElementNS(namespace, qualifiedName [, options])</a></code>
 
  <dd>
-  Returns an <a for="/">element</a> with
-  <a for=Element>namespace</a>
-  <var>namespace</var>. Its
-  <a for=Element>namespace prefix</a> will
-  be everything before "<code>:</code>" (U+003E) in
-  <var>qualifiedName</var> or null. Its
-  <a for=Element>local name</a> will be
-  everything after "<code>:</code>" (U+003E) in
-  <var>qualifiedName</var> or <var>qualifiedName</var>.
+  <p>Returns an <a for="/">element</a> with <a for=Element>namespace</a> <var>namespace</var>. Its
+  <a for=Element>namespace prefix</a> will be everything before "<code>:</code>" (U+003E) in
+  <var>qualifiedName</var> or null. Its <a for=Element>local name</a> will be everything after
+  "<code>:</code>" (U+003E) in <var>qualifiedName</var> or <var>qualifiedName</var>.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
+  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
-  If one of the following conditions is true a
-  "{{NamespaceError!!exception}}" {{DOMException}} will be thrown:
+  <p>If one of the following conditions is true a "{{NamespaceError!!exception}}" {{DOMException}}
+  will be thrown:
 
   <ul>
    <li><var>localName</var> does not match the
@@ -4987,7 +4982,7 @@ for the <a>context object</a>.
    is "<code>xmlns</code>".
   </ul>
 
-  When supplied, <var>options</var>' <code>is</code> member can be used to create a
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
 
  <dt><code><var ignore>documentFragment</var> = <var>document</var> . {{createDocumentFragment()}}</code>
