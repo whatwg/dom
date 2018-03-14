@@ -969,21 +969,21 @@ are not to be used for anything else. [[!HTML]]
 
   <p>The <var>options</var> argument sets listener-specific options. For compatibility this can be a
   boolean, in which case the method behaves exactly as if the value was specified as
-  <var>options</var>' <code>capture</code> member.
+  <var>options</var>'s {{EventListenerOptions/capture}}.
 
-  <p>When set to true, <var>options</var>' <code>capture</code> member prevents
+  <p>When set to true, <var>options</var>'s {{EventListenerOptions/capture}} prevents
   <a for="event listener">callback</a> from being invoked when the <a>event</a>'s
   {{Event/eventPhase}} attribute value is {{Event/BUBBLING_PHASE}}. When false (or not present),
   <a for="event listener">callback</a> will not be invoked when <a>event</a>'s {{Event/eventPhase}}
   attribute value is {{Event/CAPTURING_PHASE}}. Either way, <a for="event listener">callback</a>
   will be invoked if <a>event</a>'s {{Event/eventPhase}} attribute value is {{Event/AT_TARGET}}.
 
-  <p>When set to true, <var>options</var>' <code>passive</code> member indicates that the
+  <p>When set to true, <var>options</var>'s {{AddEventListenerOptions/passive}} indicates that the
   <a for="event listener">callback</a> will not cancel the event by invoking
   {{Event/preventDefault()}}. This is used to enable performance optimizations described in
   [[#observing-event-listeners]].
 
-  <p>When set to true, <var>options</var>'s <code>once</code> member indicates that the
+  <p>When set to true, <var>options</var>'s {{AddEventListenerOptions/once}} indicates that the
   <a for="event listener">callback</a> will only be invoked once after which the event listener will
   be removed.
 
@@ -1038,8 +1038,8 @@ must return a new {{EventTarget}}.
 if this would be useful for your programs. For now, all author-created {{EventTarget}}s do not
 participate in a tree structure.</p>
 
-<p>To <dfn export>add an event listener</dfn> given an <code>EventTarget</code> object
-<var>eventTarget</var> and an <a>event listener</a> <var>listener</var>, run these steps:
+<p>To <dfn export>add an event listener</dfn> given an {{EventTarget}} object <var>eventTarget</var>
+and an <a>event listener</a> <var>listener</var>, run these steps:
 
 <ol>
  <li>
@@ -1063,8 +1063,8 @@ participate in a tree structure.</p>
  <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
 </ol>
 
-<p class=note>The <a>add an event listener</a> concept exists to ensure
-<a>event handler attributes</a> use the same code path. [[HTML]]
+<p class=note>The <a>add an event listener</a> concept exists to ensure <a>event handlers</a> use
+the same code path. [[HTML]]
 
 <p>The
 <dfn method for=EventTarget><code>addEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
@@ -3334,65 +3334,46 @@ of {{MutationObserver}} objects, and then return it.
 method, when invoked, must run these steps:
 
 <ol>
- <li>If either <var>options</var>'
- {{MutationObserverInit/attributeOldValue}} or
- {{MutationObserverInit/attributeFilter}} is present
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is omitted, set
- <var>options</var>'
+ <li><p>If either <var>options</var>'s {{MutationObserverInit/attributeOldValue}} or
+ {{MutationObserverInit/attributeFilter}} is present and <var>options</var>'s
+ {{MutationObserverInit/attributes}} is omitted, then set <var>options</var>'s
  {{MutationObserverInit/attributes}} to true.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/characterDataOldValue}}
- is present and <var>options</var>'
- {{MutationObserverInit/characterData}} is omitted, set
- <var>options</var>'
- {{MutationObserverInit/characterData}} to true.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is present and
+ <var>options</var>'s {{MutationObserverInit/characterData}} is omitted, then set
+ <var>options</var>'s {{MutationObserverInit/characterData}} to true.
 
- <li>If none of <var>options</var>'
- {{MutationObserverInit/childList}},
- {{MutationObserverInit/attributes}}, and
- {{MutationObserverInit/characterData}} is true,
+ <li><p>If none of <var>options</var>'s {{MutationObserverInit/childList}},
+ {{MutationObserverInit/attributes}}, and {{MutationObserverInit/characterData}} is true, then
  <a>throw</a> a <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/attributeOldValue}} is true
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/attributeOldValue}} is true and
+ <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/attributeFilter}} is present
- and <var>options</var>'
- {{MutationObserverInit/attributes}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/attributeFilter}} is present and
+ <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
- <li>If <var>options</var>'
- {{MutationObserverInit/characterDataOldValue}}
- is true and <var>options</var>'
- {{MutationObserverInit/characterData}} is false,
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is true and
+ <var>options</var>'s {{MutationObserverInit/characterData}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
 
  <li>
-  For each <a>registered observer</a> <var>registered</var> in
-  <var>target</var>'s list of
-  <a>registered observers</a> whose <b>observer</b> is
-  the <a>context object</a>:
+  <p>For each <a>registered observer</a> <var>registered</var> in <var>target</var>'s list of
+  <a>registered observers</a> whose <b>observer</b> is the <a>context object</a>:
 
   <ol>
-   <li>Remove all
-   <a>transient registered observers</a> whose
-   <b>source</b> is <var>registered</var>.
+   <li><p>Remove all <a>transient registered observers</a> whose <b>source</b> is
+   <var>registered</var>.
 
-   <li>Replace <var>registered</var>'s <b>options</b> with
-   <var>options</var>.
+   <li><p>Replace <var>registered</var>'s <b>options</b> with <var>options</var>.
   </ol>
 
- <li>Otherwise, add a new <a>registered observer</a> to
- <var>target</var>'s list of
- <a>registered observers</a> with the
- <a>context object</a> as the <b>observer</b> and <var>options</var> as the <b>options</b>,
- and add <var>target</var> to <a>context object</a>'s list of <a>nodes</a> on which it is registered.
+ <li><p>Otherwise, add a new <a>registered observer</a> to <var>target</var>'s list of
+ <a>registered observers</a> with the <a>context object</a> as the <b>observer</b> and
+ <var>options</var> as the <b>options</b>, and add <var>target</var> to <a>context object</a>'s list
+ of <a>nodes</a> on which it is registered.
 </ol>
 
 <p>The <dfn method for=MutationObserver><code>disconnect()</code></dfn> method, when invoked, must
@@ -3430,23 +3411,24 @@ previousSibling <var>previousSibling</var>, and nextSibling
     <p>If none of the following are true
 
     <ul class=brief>
-     <li><var>node</var> is not <var>target</var> and <var>options</var>' <code>subtree</code> is
-     false
+     <li><var>node</var> is not <var>target</var> and <var>options</var>'s
+     {{MutationObserverInit/subtree}} is false
 
-     <li><var>type</var> is "<code>attributes</code>" and <var>options</var>'
-     <code>attributes</code> is not true
+     <li><var>type</var> is "<code>attributes</code>" and <var>options</var>'s
+     {{MutationObserverInit/attributes}} is not true
      <!--not true==false||omitted-->
 
-     <li><var>type</var> is "<code>attributes</code>", <var>options</var>'
-     <code>attributeFilter</code> is present, and <var>options</var>' <code>attributeFilter</code>
-     does not contain <var>name</var> or <var>namespace</var> is non-null
+     <li><var>type</var> is "<code>attributes</code>", <var>options</var>'s
+     {{MutationObserverInit/attributeFilter}} is present, and <var>options</var>'s
+     {{MutationObserverInit/attributeFilter}} does not contain <var>name</var> or
+     <var>namespace</var> is non-null
 
-     <li><var>type</var> is "<code>characterData</code>" and <var>options</var>'
-     <code>characterData</code> is not true
+     <li><var>type</var> is "<code>characterData</code>" and <var>options</var>'s
+     {{MutationObserverInit/characterData}} is not true
      <!--not true==false||omitted-->
 
-     <li><var>type</var> is "<code>childList</code>" and <var>options</var>' <code>childList</code>
-     is false
+     <li><var>type</var> is "<code>childList</code>" and <var>options</var>'s
+     {{MutationObserverInit/childList}} is false
     </ul>
 
     <p>then:
@@ -3456,9 +3438,10 @@ previousSibling <var>previousSibling</var>, and nextSibling
      <var>interested observers</var>, append <var>registered observer</var>'s <b>observer</b> to
      <var>interested observers</var>.
 
-     <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'
-     <code>attributeOldValue</code> is true, or <var>type</var> is "<code>characterData</code>" and
-     <var>options</var>' <code>characterDataOldValue</code> is true, set the paired string of
+     <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'s
+     {{MutationObserverInit/attributeOldValue}} is true, or <var>type</var> is
+     "<code>characterData</code>" and <var>options</var>'s
+     {{MutationObserverInit/characterDataOldValue}} is true, set the paired string of
      <var>registered observer</var>'s <b>observer</b> in <var>interested observers</var> to
      <var>oldValue</var>.
     </ol>
@@ -4955,39 +4938,31 @@ for the <a>context object</a>.
 <dl class=domintro>
  <dt><code><var>element</var> = <var>document</var> . <a method for=Document lt=createElement()>createElement(localName [, options])</a></code>
  <dd>
-  Returns an <a for="/">element</a> with <var>localName</var> as <a for=Element>local name</a> (if
-  <var>document</var> is an <a>HTML document</a>, <var>localName</var> gets lowercased). The
+  <p>Returns an <a for="/">element</a> with <var>localName</var> as <a for=Element>local name</a>
+  (if <var>document</var> is an <a>HTML document</a>, <var>localName</var> gets lowercased). The
   <a for="/">element</a>'s <a for=Element>namespace</a> is the <a>HTML namespace</a> when
   <var>document</var> is an <a>HTML document</a> or <var>document</var>'s
   <a for=Document>content type</a> is "<code>application/xhtml+xml</code>", and null otherwise.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
+  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
-  When supplied, <var>options</var>' <code>is</code> member can be used to create a
-  <a>customized built-in element</a>.
-
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} member can be used to create
+  a <a>customized built-in element</a>.
 
  <dt><code><var>element</var> = <var>document</var> . <a method for=Document lt=createElementNS()>createElementNS(namespace, qualifiedName [, options])</a></code>
 
  <dd>
-  Returns an <a for="/">element</a> with
-  <a for=Element>namespace</a>
-  <var>namespace</var>. Its
-  <a for=Element>namespace prefix</a> will
-  be everything before "<code>:</code>" (U+003E) in
-  <var>qualifiedName</var> or null. Its
-  <a for=Element>local name</a> will be
-  everything after "<code>:</code>" (U+003E) in
-  <var>qualifiedName</var> or <var>qualifiedName</var>.
+  <p>Returns an <a for="/">element</a> with <a for=Element>namespace</a> <var>namespace</var>. Its
+  <a for=Element>namespace prefix</a> will be everything before "<code>:</code>" (U+003E) in
+  <var>qualifiedName</var> or null. Its <a for=Element>local name</a> will be everything after
+  "<code>:</code>" (U+003E) in <var>qualifiedName</var> or <var>qualifiedName</var>.
 
-  If <var>localName</var> does not match the
-  <code><a type>Name</a></code> production an
+  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
-  If one of the following conditions is true a
-  "{{NamespaceError!!exception}}" {{DOMException}} will be thrown:
+  <p>If one of the following conditions is true a "{{NamespaceError!!exception}}" {{DOMException}}
+  will be thrown:
 
   <ul>
    <li><var>localName</var> does not match the
@@ -5007,8 +4982,8 @@ for the <a>context object</a>.
    is "<code>xmlns</code>".
   </ul>
 
-  When supplied, <var>options</var>' <code>is</code> member can be used to create a
-  <a>customized built-in element</a>.
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} member can be used to create
+  a <a>customized built-in element</a>.
 
  <dt><code><var ignore>documentFragment</var> = <var>document</var> . {{createDocumentFragment()}}</code>
  <dd>Returns a {{DocumentFragment}}
