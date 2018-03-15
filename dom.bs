@@ -1164,7 +1164,7 @@ for discussion).
   <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
   <var>target</var> is a {{Window}} object.
 
- <li><p>Let <var>clearTargetsPostDispatch</var> be true if <var>target</var>, <var>event</var>'s
+ <li><p>Let <var>clearTargets</var> be true if <var>target</var>, <var>event</var>'s
  <a for=Event>relatedTarget</a>, or an {{EventTarget}} object in <var>event</var>'s
  <a for=Event>touch target list</a> is a <a>node</a> and its <a for=tree>root</a> is a
  <a for=/>shadow root</a>, and false otherwise.
@@ -1172,9 +1172,15 @@ for discussion).
  <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
  <a for=Event>relatedTarget</a> against <var>target</var>.
 
- <li><p>If <var>target</var> is <var>relatedTarget</var> and <var>target</var> is not
- <var>event</var>'s <a for=Event>relatedTarget</a>, then return true.
- <!-- XXX Since we return early, we might want to unset more flags here. See #402. -->
+ <li>
+  <p>If <var>target</var> is <var>relatedTarget</var> and <var>target</var> is not
+  <var>event</var>'s <a for=Event>relatedTarget</a>, then:
+
+  <ol>
+   <li><p><a>Clear an event</a> with <var>event</var> and <var>clearTargets</var>.
+
+   <li><p>Return true.
+  </ol>
 
  <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
@@ -1294,21 +1300,9 @@ for discussion).
    <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
   </ol>
 
- <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
- <a>stop immediate propagation flag</a>.
+ <li><p><a>Clear an event</a> with <var>event</var> and <var>clearTargets</var>.
 
  <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/NONE}}.
-
- <li>
-  <p>If <var>clearTargetsPostDispatch</var>, then:
-
-  <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to null.
-
-   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to null.
-
-   <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to the empty list.
-  </ol>
 
  <li><p>Set <var>event</var>'s {{Event/currentTarget}} attribute to null.
 
@@ -1345,6 +1339,25 @@ for discussion).
  <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
+</ol>
+
+<p>To <dfn noexport>clear an event</dfn>, given an <a for=/>event</a> <var>event</var> and a boolean
+<var>clearTargets</var>, run these steps:
+
+<ol>
+ <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
+ <a>stop immediate propagation flag</a>.
+
+ <li>
+  <p>If <var>clearTargets</var>, then:
+
+  <ol>
+   <li><p>Set <var>event</var>'s {{Event/target}} attribute to null.
+
+   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to null.
+
+   <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to the empty list.
+  </ol>
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
