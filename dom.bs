@@ -828,8 +828,8 @@ it, and optionally given a <a>Realm</a> <var>realm</var>, run these steps:</p>
   <var>eventInterface</var>, <var>realm</var>, the time of the occurrence that the event is
   signaling, and <var>dictionary</var>.
 
-  <p class=example>In macOS the time of the occurrence for input actions are available via the
-  <code>timestamp</code> property of <code>NSEvent</code> objects.
+  <p class=example id=example-timestamp-initialization>In macOS the time of the occurrence for input
+  actions are available via the <code>timestamp</code> property of <code>NSEvent</code> objects.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
 
@@ -1340,7 +1340,7 @@ for discussion).
  <li><p>Let <var>listeners</var> be a new <a for=/>list</a>.
 
  <li>
-  <p><a for=/>For each</a> <var>listener</var> of <var>object</var>'s
+  <p><a for=list>For each</a> <var>listener</var> of <var>object</var>'s
   <a for=EventTarget>event listener list</a>, <a for=list>append</a> <var>listener</var> to
   <var>listeners</var>.
 
@@ -1416,8 +1416,7 @@ with <var>event</var>, <var>listeners</var>, and an optional
    <li>
     <p><a>Call a user object's operation</a> with <var>listener</var>'s
     <a for="event listener">callback</a>, "<code>handleEvent</code>", « <var>event</var> », and
-    <var>event</var>'s {{Event/currentTarget}} attribute value as the <a>callback this value</a>. If
-    this throws an exception, then:
+    <var>event</var>'s {{Event/currentTarget}} attribute value. If this throws an exception, then:
 
     <ol>
      <li><p><a>Report the exception</a>.
@@ -3135,9 +3134,9 @@ To <dfn export>notify mutation observers</dfn>, run these steps:
    <li>Remove all <a>transient registered observers</a>
    whose <b>observer</b> is <var>mo</var>.
 
-   <li>If <var>queue</var> is non-empty, <a spec=webidl>invoke</a> <var>mo</var>'s <a>callback</a>
-   with a list of arguments consisting of <var>queue</var> and <var>mo</var>, and <var>mo</var> as
-   the <a>callback this value</a>. If this throws an exception, <a>report the exception</a>.
+   <li>If <var>queue</var> is non-empty, then <a spec=webidl>invoke</a> <var>mo</var>'s
+   <a for=MutationObserver>callback</a> with « <var>queue</var>, <var>mo</var> », and <var>mo</var>.
+   If this throws an exception, then <a>report the exception</a>.
   </ol>
 
  <li><p>For each <a>slot</a> <var>slot</var> in <var>signalList</var>, in order,
@@ -3202,13 +3201,10 @@ Each {{MutationObserver}} object has these associated concepts:
 
 <dl class=domintro>
  <dt><code><var>observer</var> = new {{MutationObserver(callback)}}</code>
- <dd>Constructs a {{MutationObserver}} object and sets its
- <a>callback</a> to
- <var>callback</var>. The <var>callback</var> is invoked with a
- list of {{MutationRecord}} objects as first argument and the
- constructed {{MutationObserver}} object as second argument. It is
- invoked after <a for=/>nodes</a> registered with the
- {{MutationObserver/observe()}} method, are
+ <dd>Constructs a {{MutationObserver}} object and sets its <a for=MutationObserver>callback</a> to
+ <var>callback</var>. The <var>callback</var> is invoked with a list of {{MutationRecord}} objects
+ as first argument and the constructed {{MutationObserver}} object as second argument. It is
+ invoked after <a for=/>nodes</a> registered with the {{MutationObserver/observe()}} method, are
  mutated.
 
  <dt><code><var>observer</var> . {{observe(target, options)}}</code>
@@ -3268,10 +3264,8 @@ Each {{MutationObserver}} object has these associated concepts:
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
- <dd>Stops <var>observer</var> from observing any mutations.
- Until the {{observe()}} method
- is used again, <var>observer</var>'s
- <a>callback</a> will not be invoked.
+ <dd>Stops <var>observer</var> from observing any mutations. Until the {{observe()}} method is used
+ again, <var>observer</var>'s <a for=MutationObserver>callback</a> will not be invoked.
 
  <dt><code><var>observer</var> . {{takeRecords()}}</code>
  <dd>Empties the <a>record queue</a> and
@@ -3280,9 +3274,10 @@ Each {{MutationObserver}} object has these associated concepts:
 
 <p>The
 <dfn constructor for=MutationObserver><code>MutationObserver(<var>callback</var>)</code></dfn>
-constructor, when invoked, must create a new {{MutationObserver}} object with <a>callback</a> set to
-<var>callback</var>, append it to the <a>unit of related similar-origin browsing contexts</a>' list
-of {{MutationObserver}} objects, and then return it.
+constructor, when invoked, must create a new {{MutationObserver}} object with its
+<a for=MutationObserver>callback</a> set to <var>callback</var>, append it to the
+<a>unit of related similar-origin browsing contexts</a>' list of {{MutationObserver}} objects, and
+then return it.
 
 <p>The
 <dfn method for=MutationObserver><code>observe(<var>target</var>, <var>options</var>)</code></dfn>
@@ -8750,9 +8745,8 @@ has an associated <dfn export id=concept-traversal-root for=traversal>root</dfn>
  <li><p>Set the <a for=traversal>active flag</a>.
 
  <li><p>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
- <a for=traversal>filter</a>, "<code>acceptNode</code>", and a list of arguments consisting of
- <var>node</var>. If that throws an exception, then unset the <a for=traversal>active flag</a> and
- rethrow the exception.
+ <a for=traversal>filter</a>, "<code>acceptNode</code>", and « <var>node</var> ». If this throws an
+ exception, then unset the <a for=traversal>active flag</a> and rethrow the exception.
 
  <li><p>Unset the <a for=traversal>active flag</a>.
 
