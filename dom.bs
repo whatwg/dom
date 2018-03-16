@@ -708,10 +708,6 @@ false.
 The <dfn attribute for=Event><code>timeStamp</code></dfn> attribute must return the value it was
 initialized to.
 
-<p class=warning> User agents are strongly encouraged to set minimum resolution of the
-{{Event/timeStamp}} attribute to 5 microseconds following the existing <a>clock resolution</a>
-recommendation. [[!HR-TIME]]
-
 <hr>
 
 To <dfn export for=Event id=concept-event-initialize>initialize</dfn> an
@@ -836,14 +832,11 @@ it, and optionally given a <a>Realm</a> <var>realm</var>, run these steps:</p>
 
  <li>
   <p>Let <var>event</var> be the result of running the <a>inner event creation steps</a> with
-  <var>eventInterface</var>, <var>realm</var>, the occurrence that the event is signaling, and
-  <var>dictionary</var>.
+  <var>eventInterface</var>, <var>realm</var>, the time of the occurrence that the event is
+  signaling, and <var>dictionary</var>.
 
-  <p class=note>For example, in macOS the occurrence time for input actions are available via the
-  timestamp property of corresponding <code>NSEvent</code> objects. So in this case, the
-  {{Event/timeStamp}} value will be equivalent to the <code>NSEvent</code>'s timestamp offset by
-  <a>time origin</a>, translated in milliseconds, and with its precision adjusted to meet the
-  minimum <a>clock resolution</a>.
+  <p class=example>In macOS the time of the occurrence for input actions are available via the
+  <code>timestamp</code> property of <code>NSEvent</code> objects.
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to true.
 
@@ -869,8 +862,13 @@ correct defaults.</p>
 
  <li><p>Set <var>event</var>'s <a>initialized flag</a>.
 
- <li><p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
- representing the high resolution time from the <a>time origin</a> to <var>time</var>.
+ <li>
+  <p>Initialize <var>event</var>'s {{Event/timeStamp}} attribute to a {{DOMHighResTimeStamp}}
+  representing the high resolution time from the <a>time origin</a> to <var>time</var>.
+
+  <p class=warning>User agents should set a minimum resolution of <var>event</var>'s
+  {{Event/timeStamp}} attribute to 5 microseconds following the existing <a>clock resolution</a>
+  recommendation. [[!HR-TIME]]
 
  <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> in <var>dictionary</var>, if
  <var>event</var> has an attribute whose <a spec=webidl>identifier</a> is <var>member</var>, then
