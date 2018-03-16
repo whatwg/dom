@@ -3122,76 +3122,79 @@ invoked, must run these steps:
 
 <h3 id=mutation-observers>Mutation observers</h3>
 
-Each
-<a>unit of related similar-origin browsing contexts</a> has a
-<dfn export>mutation observer compound microtask queued flag</dfn>, which is initially unset, and an
-associated list of {{MutationObserver}} objects, which is initially empty.
+<p>Each <a>unit of related similar-origin browsing contexts</a> has a
+<dfn noexport>mutation observer compound microtask queued flag</dfn>, which is initially unset.
 [[!HTML]]
 
-To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
+<p>Each <a>unit of related similar-origin browsing contexts</a> also has a
+<dfn noexport>mutation observer list</dfn> (a <a for=/>list</a> of zero or more {{MutationObserver}}
+objects), which is initially empty.
+
+<p>To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
 
 <ol>
- <li>If <a>mutation observer compound microtask queued flag</a> is set, then return.
+ <li><p>If <a>mutation observer compound microtask queued flag</a> is set, then return.
 
- <li>Set <a>mutation observer compound microtask queued flag</a>.
+ <li><p>Set <a>mutation observer compound microtask queued flag</a>.
 
- <li><a lt="queue a microtask">Queue</a> a
- <a>compound microtask</a> to
+ <li><p><a lt="queue a microtask">Queue</a> a <a>compound microtask</a> to
  <a>notify mutation observers</a>.
 </ol>
 
-To <dfn export>notify mutation observers</dfn>, run these steps:
+<p>To <dfn export>notify mutation observers</dfn>, run these steps:
 
 <ol>
- <li>Unset <a>mutation observer compound microtask queued flag</a>.
+ <li><p>Unset <a>mutation observer compound microtask queued flag</a>.
 
- <li>Let <var>notify list</var> be a copy of
- <a>unit of related similar-origin browsing contexts</a>'
- list of {{MutationObserver}} objects.
+ <li><p>Let <var>notifyList</var> be a <a for=list>clone</a> of
+ <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
 
- <li><p>Let <var>signalList</var> be a copy of
+ <li><p>Let <var>signalList</var> be a <a for=list>clone</a> of
  <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
 
- <li><p>Empty <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+ <li><p><a for=list>Empty</a> <a>unit of related similar-origin browsing contexts</a>'
+ <a>signal slot list</a>.
 
  <li>
-  For each {{MutationObserver}} object <var>mo</var> in <var>notify list</var>,
+  <p><a for=list>For each</a> <var>mo</var> of <var>notifyList</var>,
   <a>execute a compound microtask subtask</a> to run these steps: [[!HTML]]
 
   <ol>
-   <li>Let <var>queue</var> be a copy of <var>mo</var>'s <a>record queue</a>.
+   <li><p>Let <var>records</var> be a <a for=queue>clone</a> of <var>mo</var>'s
+   <a for=MutationObserver>record queue</a>.
 
-   <li>Empty <var>mo</var>'s <a>record queue</a>.
+   <li><p><a for=queue>Empty</a> <var>mo</var>'s <a for=MutationObserver>record queue</a>.
 
-   <li>Remove all <a>transient registered observers</a>
-   whose <b>observer</b> is <var>mo</var>.
+   <li><p>Remove all <a>transient registered observers</a> whose <b>observer</b> is <var>mo</var>.
+   <!-- XXX remove from where? -->
 
-   <li>If <var>queue</var> is non-empty, then <a spec=webidl>invoke</a> <var>mo</var>'s
-   <a for=MutationObserver>callback</a> with « <var>queue</var>, <var>mo</var> », and <var>mo</var>.
-   If this throws an exception, then <a>report the exception</a>.
+   <li><p>If <var>records</var> <a for=queue>is not empty</a>, then <a spec=webidl>invoke</a>
+   <var>mo</var>'s <a for=MutationObserver>callback</a> with « <var>records</var>, <var>mo</var> »,
+   and <var>mo</var>. If this throws an exception, then <a>report the exception</a>.
   </ol>
 
- <li><p>For each <a>slot</a> <var>slot</var> in <var>signalList</var>, in order,
- <a>fire an event</a> named <code>slotchange</code>, with its {{Event/bubbles}} attribute set to
- true, at <var>slot</var>.
+ <li><p><a for=list>For each</a> <var>slot</var> of <var>signalList</var>, <a>fire an event</a>
+ named <code>slotchange</code>, with its {{Event/bubbles}} attribute set to true, at
+ <var>slot</var>.
 </ol>
 
 <hr>
 
-Each <a>node</a> has an associated list of
-<a>registered observers</a>.
+<p>Each <a for=/>node</a> has <dfn noexport>registered observer list</dfn> (a <a for=/>list</a> of
+zero or more <a>registered observers</a>), which is initially empty.
 <!-- XXX also mention this in the {{Node}} section non-normatively? -->
 
-A <dfn export for=MutationObserver id=registered-observer>registered observer</dfn> consists of an
-<b>observer</b> (a {{MutationObserver}} object) and <b>options</b> (a
-{{MutationObserverInit}} dictionary). A
-<dfn export for=MutationObserver id=transient-registered-observer>transient registered observer</dfn>
-is a specific type of <a>registered observer</a> that has a <b>source</b> which is a
-<a>registered observer</a>.
+<p>A <dfn noexport id=registered-observer>registered observer</dfn> consists of an
+<dfn noexport for="registered observer">observer</dfn> (a {{MutationObserver}} object) and
+<dfn noexport for="registered observer">options</dfn> (a {{MutationObserverInit}} dictionary).
 
-<p class="note no-backref"><a>Transient registered observers</a> are used to track
-mutations within a given <a>node</a>'s <a>descendants</a> after <a>node</a> has been
-removed so they do not get lost when <code>subtree</code> is set to true on <a>node</a>'s
+<p>A <dfn noexport id=transient-registered-observer>transient registered observer</dfn> is a
+<a>registered observer</a> that also consists of a
+<dfn for="transient registered observer">source</dfn> (a <a>registered observer</a>).
+
+<p class="note no-backref"><a>Transient registered observers</a> are used to track mutations within
+a given <a for=/>node</a>'s <a for=tree>descendants</a> after <a for=/>node</a> has been removed so
+they do not get lost when {{MutationObserverInit/subtree}} is set to true on <a for=/>node</a>'s
 <a for=tree>parent</a>.
 
 
@@ -3219,16 +3222,17 @@ dictionary MutationObserverInit {
 };
 </pre>
 
-A {{MutationObserver}} object can be used to observe mutations
-to the <a>tree</a> of
+<p>A {{MutationObserver}} object can be used to observe mutations to the <a>tree</a> of
 <a for=/>nodes</a>.
 
-Each {{MutationObserver}} object has these associated concepts:
+<p>Each {{MutationObserver}} object has these associated concepts:
+
 <ul>
- <li>A <dfn export for=MutationObserver id=concept-mo-callback>callback</dfn> set on creation.
- <li>A list of <a for=/>nodes</a> on which it is a <a>registered observer</a>'s <b>observer</b> that is initially empty.
- <li>A list of {{MutationRecord}} objects called the
- <dfn export for=MutationObserver id=concept-mo-queue>record queue</dfn> that is initially empty.
+ <li>A <dfn noexport for=MutationObserver id=concept-mo-callback>callback</dfn> set on creation.
+ <li>A <dfn noexport for=MutationObserver>node list</dfn> (a <a for=/>list</a> of
+ <a for=/>nodes</a>), which is initially empty.
+ <li>A <dfn export for=MutationObserver id=concept-mo-queue>record queue</dfn> (a
+ <a for=queue>queue</a> of {{MutationRecord}} objects), which is initially empty.
 </ul>
 
 <dl class=domintro>
@@ -3306,10 +3310,17 @@ Each {{MutationObserver}} object has these associated concepts:
 
 <p>The
 <dfn constructor for=MutationObserver><code>MutationObserver(<var>callback</var>)</code></dfn>
-constructor, when invoked, must create a new {{MutationObserver}} object with its
-<a for=MutationObserver>callback</a> set to <var>callback</var>, append it to the
-<a>unit of related similar-origin browsing contexts</a>' list of {{MutationObserver}} objects, and
-then return it.
+constructor, when invoked, must run these steps:
+
+<ol>
+ <li><p>Let <var>mo</var> be a new {{MutationObserver}} object whose
+ <a for=MutationObserver>callback</a> is <var>callback</var>.
+
+ <li><p><a for=list>Append</a> <var>mo</var> to
+ <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
+
+ <li><p>Return <var>mo</var>.
+</ol>
 
 <p>The
 <dfn method for=MutationObserver><code>observe(<var>target</var>, <var>options</var>)</code></dfn>
@@ -3342,53 +3353,78 @@ method, when invoked, must run these steps:
  <code>TypeError</code>.
 
  <li>
-  <p>For each <a>registered observer</a> <var>registered</var> in <var>target</var>'s list of
-  <a>registered observers</a> whose <b>observer</b> is the <a>context object</a>:
+  <p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
+  <a>registered observer list</a>, if <var>registered</var>'s
+  <a for="registered observer">observer</a> is the <a>context object</a>:
 
   <ol>
    <li><p>Remove all <a>transient registered observers</a> whose <b>source</b> is
    <var>registered</var>.
+   <!-- XXX remove from where? -->
 
-   <li><p>Replace <var>registered</var>'s <b>options</b> with <var>options</var>.
+   <li><p>Set <var>registered</var>'s <a for="registered observer">options</a> to
+   <var>options</var>.
   </ol>
 
- <li><p>Otherwise, add a new <a>registered observer</a> to <var>target</var>'s list of
- <a>registered observers</a> with the <a>context object</a> as the <b>observer</b> and
- <var>options</var> as the <b>options</b>, and add <var>target</var> to <a>context object</a>'s list
- of <a for=/>nodes</a> on which it is registered.
+ <li>
+  <p>Otherwise:
+
+  <ol>
+   <li><p><a for=list>Append</a> a new <a>registered observer</a> whose
+   <a for="registered observer">observer</a> is the <a>context object</a> and
+   <a for="registered observer">options</a> is <var>options</var> to <var>target</var>'s
+   <a>registered observer list</a>.
+
+   <li><p><a for=list>Append</a> <var>target</var> to the <a>context object</a>'s
+   <a for=MutationObserver>node list</a>.
+  </ol>
 </ol>
 
 <p>The <dfn method for=MutationObserver><code>disconnect()</code></dfn> method, when invoked, must
-for each <a>node</a> <var>node</var> in <a>context object</a>'s list of <a for=/>nodes</a>, remove any
-<a>registered observer</a> on <var>node</var> for which <a>context object</a> is the
-<b>observer</b>, and also empty <a>context object</a>'s <a>record queue</a>.
+run these steps:
+
+<ol>
+ <li><p><a for=list>For each</a> <var>node</var> of the <a>context object</a>'s
+ <a for=MutationObserver>node list</a>, <a for=list>remove</a> any <a>registered observer</a> from
+ <var>node</var>'s <a>registered observer list</a> for which the <a>context object</a> is the
+ <a for="registered observer">observer</a>.
+
+ <li><p><a for=queue>Empty</a> the <a>context object</a>'s <a for=MutationObserver>record queue</a>.
+</ol>
 
 <p>The <dfn method for=MutationObserver><code>takeRecords()</code></dfn> method, when invoked, must
-return a copy of the <a>record queue</a> and then empty the <a>record queue</a>.
+run these steps:
+
+<ol>
+ <li><p>Let <var>records</var> be a <a for=queue>clone</a> of the <a>context object</a>'s
+ <a for=MutationObserver>record queue</a>.
+
+ <li><p><a for=queue>Empty</a> the <a>context object</a>'s <a for=MutationObserver>record queue</a>.
+
+ <li><p>Return <var>records</var>.
+</ol>
 
 
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
-To <dfn export>queue a mutation record</dfn> of <var>type</var> for
-<var>target</var> with one or more of (depends on
-<var>type</var>) name <var>name</var>, namespace
-<var>namespace</var>, oldValue <var>oldValue</var>, addedNodes
-<var>addedNodes</var>, removedNodes <var>removedNodes</var>,
-previousSibling <var>previousSibling</var>, and nextSibling
-<var>nextSibling</var>, run these steps:
+<p>To <dfn export>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with one or
+more of (depends on <var>type</var>) name <var>name</var>, namespace <var>namespace</var>, oldValue
+<var>oldValue</var>, addedNodes <var>addedNodes</var>, removedNodes <var>removedNodes</var>,
+previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</var>, run these steps:
 
 <ol>
- <li>Let <var>interested observers</var> be an initially empty set
- of {{MutationObserver}} objects optionally paired with a string.
+ <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
 
- <li>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
+ <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
 
  <li>
-  <p>For each <var>node</var> in <var>nodes</var>, and then for each <var>registered observer</var>
-  (with <var>registered observer</var>'s <b>options</b> as <var>options</var>) in <var>node</var>'s
-  list of <a>registered observers</a>:
+  <p>For each <var>node</var> in <var>nodes</var>, and then <a for=list>for each</a>
+  <var>registered</var> of <var>node</var>'s <a>registered observer list</a>:
 
   <ol>
+   <li><p>Let <var>options</var> be <var>registered</var>'s
+   <a for="registered observer">options</a>.
+
    <li>
     <p>If none of the following are true
 
@@ -3416,61 +3452,50 @@ previousSibling <var>previousSibling</var>, and nextSibling
     <p>then:
 
     <ol>
-     <li><p>If <var>registered observer</var>'s <b>observer</b> is not in
-     <var>interested observers</var>, append <var>registered observer</var>'s <b>observer</b> to
-     <var>interested observers</var>.
+     <li><p>Let <var>mo</var> be <var>registered</var>'s <a for="registered observer">observer</a>.
+
+     <li><p>If <var>interestedObservers</var>[<var>mo</var>] does not <a for=map>exist</a>, then
+     <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to null.
 
      <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'s
      {{MutationObserverInit/attributeOldValue}} is true, or <var>type</var> is
      "<code>characterData</code>" and <var>options</var>'s
-     {{MutationObserverInit/characterDataOldValue}} is true, set the paired string of
-     <var>registered observer</var>'s <b>observer</b> in <var>interested observers</var> to
-     <var>oldValue</var>.
+     {{MutationObserverInit/characterDataOldValue}} is true, then <a for=map>set</a>
+     <var>interestedObservers</var>[<var>mo</var>] to <var>oldValue</var>.
     </ol>
   </ol>
 
  <li>
-  <p>For each <var>observer</var> in <var>interested observers</var>:
+  <p><a for=map>For each</a> <var>observer</var> → <var>oldValue</var> of
+  <var>interestedObservers</var>:
 
   <ol>
-   <li>Let <var>record</var> be a new {{MutationRecord}}
-   object with its {{MutationRecord/type}} set to
-   <var>type</var> and
-   {{MutationRecord/target}} set to
-   <var>target</var>.
+   <li><p>Let <var>record</var> be a new {{MutationRecord}} object with its {{MutationRecord/type}}
+   set to <var>type</var> and {{MutationRecord/target}} set to <var>target</var>.
 
-   <li>If <var>name</var> and <var>namespace</var> are given,
-   set <var>record</var>'s
-   {{MutationRecord/attributeName}} to
-   <var>name</var>, and <var>record</var>'s
-   {{MutationRecord/attributeNamespace}}
-   to <var>namespace</var>.
+   <li><p>If <var>name</var> and <var>namespace</var> are given, then set <var>record</var>'s
+   {{MutationRecord/attributeName}} to <var>name</var> and <var>record</var>'s
+   {{MutationRecord/attributeNamespace}} to <var>namespace</var>.
 
-   <li>If <var>addedNodes</var> is given, set <var>record</var>'s
-   {{MutationRecord/addedNodes}} to
-   <var>addedNodes</var>.
+   <li><p>If <var>addedNodes</var> is given, then set <var>record</var>'s
+   {{MutationRecord/addedNodes}} to <var>addedNodes</var>.
 
-   <li>If <var>removedNodes</var> is given, set <var>record</var>'s
-   {{MutationRecord/removedNodes}} to
-   <var>removedNodes</var>,
+   <li><p>If <var>removedNodes</var> is given, then set <var>record</var>'s
+   {{MutationRecord/removedNodes}} to <var>removedNodes</var>,
 
-   <li>If <var>previousSibling</var> is given, set <var>record</var>'s
-   {{MutationRecord/previousSibling}} to
-   <var>previousSibling</var>.
+   <li><p>If <var>previousSibling</var> is given, then set <var>record</var>'s
+   {{MutationRecord/previousSibling}} to <var>previousSibling</var>.
 
-   <li>If <var>nextSibling</var> is given, set <var>record</var>'s
-   {{MutationRecord/nextSibling}} to
-   <var>nextSibling</var>.
+   <li><p>If <var>nextSibling</var> is given, then set <var>record</var>'s
+   {{MutationRecord/nextSibling}} to <var>nextSibling</var>.
 
-   <li>If <var>observer</var> has a paired string,
-   set <var>record</var>'s {{MutationRecord/oldValue}}
-   to <var>observer</var>'s paired string.
+   <li><p>Set <var>record</var>'s {{MutationRecord/oldValue}} to <var>oldValue</var>.
 
-   <li>Append <var>record</var> to <var>observer</var>'s
-   <a>record queue</a>.
+   <li><p><a for=queue>Enqueue</a> <var>record</var> to <var>observer</var>'s
+   <a for=MutationObserver>record queue</a>.
   </ol>
 
- <li><a>Queue a mutation observer compound microtask</a>.
+ <li><p><a>Queue a mutation observer compound microtask</a>.
 </ol>
 
 
@@ -3543,33 +3568,30 @@ interface MutationRecord {
  "<code>childList</code>", it is null.
 </dl>
 
-The <dfn attribute for=MutationRecord>type</dfn> and
-<dfn attribute for=MutationRecord>target</dfn>
-attributes must return the values they were initialized to.
+<p>The <dfn attribute for=MutationRecord>type</dfn> and
+<dfn attribute for=MutationRecord>target</dfn> attributes must return the values they were
+initialized to.
 
-The <dfn attribute for="MutationRecord">addedNodes</dfn> and
-<dfn attribute for="MutationRecord">removedNodes</dfn>
-attributes must return the values they were initialized to. Unless stated
-otherwise, when a {{MutationRecord}} object is created, they must
-both be initialized to an empty {{NodeList}}.
+<p>The <dfn attribute for="MutationRecord">addedNodes</dfn> and
+<dfn attribute for="MutationRecord">removedNodes</dfn> attributes must return the values they were
+initialized to. Unless stated otherwise, when a {{MutationRecord}} object is created, they must both
+be initialized to an empty {{NodeList}} object.
 
-The
-<dfn attribute for="MutationRecord">previousSibling</dfn>,
+<p>The <dfn attribute for="MutationRecord">previousSibling</dfn>,
 <dfn attribute for="MutationRecord">nextSibling</dfn>,
 <dfn attribute for="MutationRecord">attributeName</dfn>,
 <dfn attribute for="MutationRecord">attributeNamespace</dfn>, and
-<dfn attribute for="MutationRecord">oldValue</dfn>
-attributes must return the values they were initialized to. Unless stated
-otherwise, when a {{MutationRecord}} object is created, they must
-be initialized to null.
+<dfn attribute for="MutationRecord">oldValue</dfn> attributes must return the values they were
+initialized to. Unless stated otherwise, when a {{MutationRecord}} object is created, they must be
+initialized to null.
 
 <h4 id=garbage-collection>Garbage collection</h4>
 
-<p><a for=/>Nodes</a> have a strong reference to <a>registered observers</a> in their list of
-<a>registered observers</a>.
+<p><a for=/>Nodes</a> have a strong reference to <a>registered observers</a> in their
+<a>registered observer list</a>.
 
-<p><a>Registered observers</a> in a <a for=/>node</a>'s list of <a>registered observers</a> have a
-weak reference to the <a for=/>node</a>.
+<p><a>Registered observers</a> in a <a for=/>node</a>'s <a>registered observer list</a> have a weak
+reference to the <a for=/>node</a>.
 
 
 <h3 id=interface-node>Interface {{Node}}</h3>
