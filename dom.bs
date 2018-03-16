@@ -2291,9 +2291,9 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <i>suppress observers flag</i> set.
 
  <li>
-  If <var>node</var> is a {{DocumentFragment}} <a>node</a>,
-  <a>queue a mutation record</a> of "<code>childList</code>" for
-  <var>node</var> with removedNodes <var>nodes</var>.
+  <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a>, then
+  <a>queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null, and
+  null.
 
   <p class="note no-backref">This step intentionally does not pay attention to the
   <i>suppress observers flag</i>.
@@ -2351,10 +2351,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    </li>
   </ol>
 
- <li>If <i>suppress observers flag</i> is unset,
- <a>queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with addedNodes <var>nodes</var>, nextSibling
- <var>child</var>, and previousSibling <var>previousSibling</var>.
+ <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
+ <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 </ol>
 
 
@@ -2472,12 +2470,10 @@ within a <var>parent</var>, run these steps:
  <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>reference child</var>
  with the <i>suppress observers flag</i> set.
 
- <li><a>Queue a mutation record</a> of "<code>childList</code>" for target
- <var>parent</var> with addedNodes <var>nodes</var>, removedNodes <var>removedNodes</var>,
- nextSibling <var>reference child</var>, and previousSibling
- <var>previousSibling</var>.
+ <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>,
+ <var>removedNodes</var>, <var>previousSibling</var>, and <var>reference child</var>.
 
- <li>Return <var>child</var>.
+ <li><p>Return <var>child</var>.
 </ol>
 
 
@@ -2507,9 +2503,8 @@ To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
  <li><p>If <var>node</var> is not null, then <a for=/>insert</a> <var>node</var> into
  <var>parent</var> before null with the <i>suppress observers flag</i> set.
 
- <li><a>Queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with addedNodes <var>addedNodes</var> and
- removedNodes <var>removedNodes</var>.
+ <li><a>Queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
+ <var>removedNodes</var>, null, and null.
 </ol>
 
 <p class="note no-backref">This algorithm does not make any checks with regards to the
@@ -2606,23 +2601,23 @@ with an optional <i>suppress observers flag</i>, run these steps:
   </ol>
  </li>
 
- <li>For each <a for=tree>inclusive ancestor</a> <var>inclusiveAncestor</var> of
- <var>parent</var>, if <var>inclusiveAncestor</var> has any <a>registered observers</a>
- whose <b>options</b>' {{MutationObserverInit/subtree}} is true, then for each
- such <a>registered observer</a> <var>registered</var>, append a
- <a>transient registered observer</a> whose <b>observer</b> and <b>options</b>
- are identical to those of <var>registered</var> and <b>source</b>  which is
- <var>registered</var> to <var>node</var>'s list of
- <a>registered observers</a>.
+ <li><p>For each <a for=tree>inclusive ancestor</a> <var>inclusiveAncestor</var> of
+ <var>parent</var>, and then <a for=list>for each</a> <var>registered</var> of
+ <var>inclusiveAncestor</var>'s <a>registered observer list</a>, if <var>registered</var>'s
+ <a for="registered observer">options</a>'s {{MutationObserverInit/subtree}} is true, then
+ <a for=list>append</a> a new <a>transient registered observer</a> whose
+ <a for="registered observer">observer</a> is <var>registered</var>'s
+ <a for="registered observer">observer</a>, <a for="registered observer">options</a> is
+ <var>registered</var>'s <a for="registered observer">options</a>, and
+ <a for="transient registered observer">source</a> is <var>registered</var> to <var>node</var>'s
+ <a>registered observer list</a>.
 
- <li>If <i>suppress observers flag</i> is unset,
- <a>queue a mutation record</a> of "<code>childList</code>" for
- <var>parent</var> with removedNodes a list solely containing <var>node</var>,
- nextSibling <var>oldNextSibling</var>, and previousSibling
+ <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
+ <var>parent</var> with « », « <var>node</var> », <var>oldNextSibling</var>, and
  <var>oldPreviousSibling</var>.
 
- <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
- <var>parent</var>.
+ <li><p>If <var>node</var> is a {{Text}} node, then run the <a>child text content change steps</a>
+ for <var>parent</var>.
 </ol>
 
 
@@ -3231,8 +3226,8 @@ dictionary MutationObserverInit {
  <li>A <dfn noexport for=MutationObserver id=concept-mo-callback>callback</dfn> set on creation.
  <li>A <dfn noexport for=MutationObserver>node list</dfn> (a <a for=/>list</a> of
  <a for=/>nodes</a>), which is initially empty.
- <li>A <dfn export for=MutationObserver id=concept-mo-queue>record queue</dfn> (a
- <a for=queue>queue</a> of {{MutationRecord}} objects), which is initially empty.
+ <li>A <dfn export for=MutationObserver id=concept-mo-queue>record queue</dfn> (a <a for=/>queue</a>
+ of zero or more {{MutationRecord}} objects), which is initially empty.
 </ul>
 
 <dl class=domintro>
@@ -3407,10 +3402,9 @@ run these steps:
 
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
-<p>To <dfn export>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with one or
-more of (depends on <var>type</var>) name <var>name</var>, namespace <var>namespace</var>, oldValue
-<var>oldValue</var>, addedNodes <var>addedNodes</var>, removedNodes <var>removedNodes</var>,
-previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</var>, run these steps:
+<p>To <dfn noexport>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
+<var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
+<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, run these steps:
 
 <ol>
  <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
@@ -3466,30 +3460,18 @@ previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</va
   </ol>
 
  <li>
-  <p><a for=map>For each</a> <var>observer</var> → <var>oldValue</var> of
+  <p><a for=map>For each</a> <var>observer</var> → <var>mappedOldValue</var> of
   <var>interestedObservers</var>:
 
   <ol>
    <li><p>Let <var>record</var> be a new {{MutationRecord}} object with its {{MutationRecord/type}}
-   set to <var>type</var> and {{MutationRecord/target}} set to <var>target</var>.
-
-   <li><p>If <var>name</var> and <var>namespace</var> are given, then set <var>record</var>'s
-   {{MutationRecord/attributeName}} to <var>name</var> and <var>record</var>'s
-   {{MutationRecord/attributeNamespace}} to <var>namespace</var>.
-
-   <li><p>If <var>addedNodes</var> is given, then set <var>record</var>'s
-   {{MutationRecord/addedNodes}} to <var>addedNodes</var>.
-
-   <li><p>If <var>removedNodes</var> is given, then set <var>record</var>'s
-   {{MutationRecord/removedNodes}} to <var>removedNodes</var>,
-
-   <li><p>If <var>previousSibling</var> is given, then set <var>record</var>'s
-   {{MutationRecord/previousSibling}} to <var>previousSibling</var>.
-
-   <li><p>If <var>nextSibling</var> is given, then set <var>record</var>'s
-   {{MutationRecord/nextSibling}} to <var>nextSibling</var>.
-
-   <li><p>Set <var>record</var>'s {{MutationRecord/oldValue}} to <var>oldValue</var>.
+   set to <var>type</var>, {{MutationRecord/target}} set to <var>target</var>,
+   {{MutationRecord/attributeName}} set to <var>name</var>, {{MutationRecord/attributeNamespace}}
+   set to <var>namespace</var>, {{MutationRecord/oldValue}} set to <var>mappedOldValue</var>,
+   {{MutationRecord/addedNodes}} set to <var>addedNodes</var>,
+   {{MutationRecord/removedNodes}} set to <var>removedNodes</var>,
+   {{MutationRecord/previousSibling}} set to <var>previousSibling</var>, and
+   {{MutationRecord/nextSibling}} set to <var>nextSibling</var>.
 
    <li><p><a for=queue>Enqueue</a> <var>record</var> to <var>observer</var>'s
    <a for=MutationObserver>record queue</a>.
@@ -3497,6 +3479,17 @@ previousSibling <var>previousSibling</var>, and nextSibling <var>nextSibling</va
 
  <li><p><a>Queue a mutation observer compound microtask</a>.
 </ol>
+
+<p>To <dfn noexport>queue a tree mutation record</dfn> for <var>target</var> with
+<var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, and
+<var>nextSibling</var>, <a>queue a mutation record</a> of "<code>childList</code>" for
+<var>target</var> with null, null, null, <var>addedNodes</var>, <var>removedNodes</var>,
+<var>previousSibling</var>, and <var>nextSibling</var>.
+
+<p>To <dfn noexport>queue an attribute mutation record</dfn> for <var>target</var> with
+<var>name</var>, <var>namespace</var>, and <var>oldValue</var>, <a>queue a mutation record</a> of
+"<code>attributes</code>" for <var>target</var> with <var>name</var>, <var>namespace</var>,
+<var>oldValue</var>, « », « », null, and null.
 
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
@@ -6015,13 +6008,9 @@ from an <a for="/">element</a> <var>element</var>
 to <var>value</var>, run these steps:
 
 <ol>
- <li><a>Queue a mutation record</a> of "<code>attributes</code>"
- for <var>element</var> with name <var>attribute</var>'s
- <a for=Attr>local name</a>, namespace
- <var>attribute</var>'s
- <a for=Attr>namespace</a>, and oldValue
- <var>attribute</var>'s
- <a for=Attr>value</a>.
+ <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and
+ <var>attribute</var>'s <a for=Attr>value</a>.
 
  <li>If <var>element</var> is <a for=Element>custom</a>, then
  <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
@@ -6043,12 +6032,8 @@ an <a for="/">element</a> <var>element</var>,
 run these steps:
 
 <ol>
- <li><a>Queue a mutation record</a> of "<code>attributes</code>"
- for <var>element</var> with name <var>attribute</var>'s
- <a for=Attr>local name</a>, namespace
- <var>attribute</var>'s
- <a for=Attr>namespace</a>, and oldValue
- null.
+ <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and null.
 
  <li>If <var>element</var> is <a for=Element>custom</a>, then
  <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
@@ -6073,13 +6058,9 @@ from an <a for="/">element</a> <var>element</var>,
 run these steps:
 
 <ol>
- <li><a>Queue a mutation record</a> of "<code>attributes</code>"
- for <var>element</var> with name <var>attribute</var>'s
- <a for=Attr>local name</a>, namespace
- <var>attribute</var>'s
- <a for=Attr>namespace</a>, and oldValue
- <var>attribute</var>'s
- <a for=Attr>value</a>.
+ <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and
+ <var>attribute</var>'s <a for=Attr>value</a>.
 
  <li>If <var>element</var> is <a for=Element>custom</a>, then
  <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
@@ -6103,10 +6084,9 @@ To <dfn export id=concept-element-attributes-replace lt="replace an attribute">r
 in an <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
- <li><p><a>Queue a mutation record</a> of "<code>attributes</code>" for <var>element</var>
- with name <var>oldAttr</var>'s <a for=Attr>local name</a>,
- namespace <var>oldAttr</var>'s <a for=Attr>namespace</a>,
- and oldValue <var>oldAttr</var>'s <a for=Attr>value</a>.
+ <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>oldAttr</var>'s
+ <a for=Attr>local name</a>, <var>oldAttr</var>'s <a for=Attr>namespace</a>, and
+ <var>oldAttr</var>'s <a for=Attr>value</a>.
 
  <li>If <var>element</var> is <a for=Element>custom</a>, then
  <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
@@ -6943,9 +6923,8 @@ To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> 
  <li>If <var>offset</var> plus <var>count</var> is greater than <var>length</var>, then set
  <var>count</var> to <var>length</var> minus <var>offset</var>.
 
- <li><a>Queue a mutation record</a> of "<code>characterData</code>"
- for <var>node</var> with oldValue <var>node</var>'s
- <a for=CharacterData>data</a>.
+ <li><a>Queue a mutation record</a> of "<code>characterData</code>" for <var>node</var> with null,
+ null, <var>node</var>'s <a for=CharacterData>data</a>, « », « », null, and null.
 
  <li>Insert <var>data</var> into <var>node</var>'s
  <a for=CharacterData>data</a> after <var>offset</var>
