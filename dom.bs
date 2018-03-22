@@ -3160,8 +3160,10 @@ objects), which is initially empty.
 
    <li><p><a for=queue>Empty</a> <var>mo</var>'s <a for=MutationObserver>record queue</a>.
 
-   <li><p>Remove all <a>transient registered observers</a> whose <b>observer</b> is <var>mo</var>.
-   <!-- XXX remove from where? -->
+   <li><p><a for=list>For each</a> <var>node</var> of <var>mo</var>'s
+   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
+   <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
+   <var>mo</var> from <var>node</var>'s <a>registered observer list</a>.
 
    <li><p>If <var>records</var> <a for=queue>is not empty</a>, then <a spec=webidl>invoke</a>
    <var>mo</var>'s <a for=MutationObserver>callback</a> with « <var>records</var>, <var>mo</var> »,
@@ -3177,7 +3179,6 @@ objects), which is initially empty.
 
 <p>Each <a for=/>node</a> has <dfn noexport>registered observer list</dfn> (a <a for=/>list</a> of
 zero or more <a>registered observers</a>), which is initially empty.
-<!-- XXX also mention this in the {{Node}} section non-normatively? -->
 
 <p>A <dfn noexport id=registered-observer>registered observer</dfn> consists of an
 <dfn noexport for="registered observer">observer</dfn> (a {{MutationObserver}} object) and
@@ -3353,9 +3354,10 @@ method, when invoked, must run these steps:
   <a for="registered observer">observer</a> is the <a>context object</a>:
 
   <ol>
-   <li><p>Remove all <a>transient registered observers</a> whose <b>source</b> is
-   <var>registered</var>.
-   <!-- XXX remove from where? -->
+   <li><p><a for=list>For each</a> <var>node</var> of the <a>context object</a>'s
+   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
+   <a>transient registered observers</a> whose <a for="transient registered observers">source</a> is
+   <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
 
    <li><p>Set <var>registered</var>'s <a for="registered observer">options</a> to
    <var>options</var>.
@@ -3657,9 +3659,9 @@ dictionary GetRootNodeOptions {
 is used by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{Element}},
 {{Text}}, {{ProcessingInstruction}}, and {{Comment}}).
 
-Each <a>node</a> has an associated
-<dfn export for=Node id=concept-node-document>node document</dfn>, set upon creation,
-that is a <a>document</a>.
+<p>Each <a>node</a> has an associated
+<dfn export for=Node id=concept-node-document>node document</dfn>, set upon creation, that is a
+<a>document</a>.
 
 <p class="note no-backref">A <a>node</a>'s <a for=Node>node document</a> can be changed by the
 <a>adopt</a> algorithm.
@@ -3667,6 +3669,8 @@ that is a <a>document</a>.
 <p>A <a>node</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns the
 <a>node</a>'s <a>assigned slot</a>, if <a>node</a> is <a>assigned</a>, and <a>node</a>'s
 <a for=tree>parent</a> otherwise.
+
+<p class="note no-backref">Each <a for=/>node</a> also has a <a>registered observer list</a>.
 
 <hr>
 
