@@ -8489,57 +8489,34 @@ check first thing, which matches everyone but Firefox.
 -->
 
 <ol>
- <li>If a non-{{Text}} <a>node</a> is
- <a for="live range">partially contained</a> in the <a>context object</a>,
- then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
- <!-- Makes some sense: otherwise we'd clone a bunch of containers, which is
- unexpected. -->
+ <li><p>If a non-{{Text}} <a>node</a> is <a for="live range">partially contained</a> in the
+ <a>context object</a>, then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
  <!-- XXX Could we rephrase this condition to be more algorithmic and less
  declarative?-->
 
- <li>If <var>newParent</var> is a {{Document}},
- {{DocumentType}}, or {{DocumentFragment}}
- <a>node</a>,
- then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
- <!-- But for Comment, Text, and ProcessingInstruction, we just fall through
- and throw a HIERARCHY_REQUEST_ERR when we try appendChild(). This makes
- absolutely no sense, but it's what DOM 2 Range specifies, and it's what
- IE9, Chrome 12 dev, and Opera 11.00 implement. Firefox 4.0 only throws
- INVALID_NODE_TYPE_ERR on DocumentFragments, it falls through to
- HIERARCHY_REQUEST_ERR for Documents and DocumentTypes.
+ <li>
+  <p>If <var>newParent</var> is a {{Document}}, {{DocumentType}}, or {{DocumentFragment}}
+  <a for=/>node</a>, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
- Firefox 4.0 does this check later on, so it will do DOM mutations of some
- type if passed a DocumentFragment. We match IE9, Chrome 12 dev, and Opera
- 11.00 in doing the check early.
+  <p class=note>For historical reasons {{Text}}, {{ProcessingInstruction}}, and {{Comment}}
+  <a for=/>nodes</a> are not checked here and end up throwing later on as a side effect.
 
- If newParent is a Document/DocumentType/DocumentFragment, and some node is
- also partially contained, DOM 2 Range doesn't say whether to throw
- BAD_BOUNDARYPOINTS_ERR or INVALID_NODE_TYPE_ERR. IE9 and Chrome 12 dev
- throw INVALID_NODE_TYPE_ERR, while Firefox 4.0 and Opera 11.00 throw
- BAD_BOUNDARYPOINTS_ERR. I chose the latter because it's the first thing I
- happened to write down and it makes no real difference, with the even
- split. -->
-
- <li>Let <var>fragment</var> be the result of
- <a lt="extract a range">extracting</a> <a>context object</a>.
+ <li><p>Let <var>fragment</var> be the result of <a lt="extract a range">extracting</a>
+ <a>context object</a>.
  <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
  immediately throw here. Firefox removes the non-DocumentType nodes and
  throws, Opera removes all nodes and doesn't throw. This applies to
  extractContents() proper, and also affects surroundContents(). I match DOM 2
  Range, IE9, and Chrome 12 dev. -->
 
- <li>If <var>newParent</var> has
- <a>children</a>,
- <a for=Node>replace all</a> with null within
- <var>newParent</var>.
+ <li><p>If <var>newParent</var> has <a>children</a>, then <a for=Node>replace all</a> with null
+ within <var>newParent</var>.
 
  <li><p><a for="live range">Insert</a> <var>newParent</var> into the <a>context object</a>.
 
- <li><a>Append</a> <var>fragment</var> to
- <var>newParent</var>.
+ <li><p><a>Append</a> <var>fragment</var> to <var>newParent</var>.
 
- <li><a for=range>Select</a> <var>newParent</var> within
- <a>context object</a>.
+ <li><p><a for=range>Select</a> <var>newParent</var> within the <a>context object</a>.
  <!-- Generally this isn't needed, because insertNode() will already do it,
  but it makes a difference in at least one corner case (when the original
  range lies in a single text node). -->
