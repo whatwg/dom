@@ -9005,261 +9005,212 @@ interface TreeWalker {
 };</pre>
 
 
-<p class="note no-backref">{{TreeWalker}} objects can be created using the
-{{createTreeWalker()}} method.
+<p class="note no-backref">{{TreeWalker}} objects can be created using the {{createTreeWalker()}}
+method.
 
-<p class="note no-backref">As mentioned earlier {{TreeWalker}} objects have an
-associated <a for=traversal>root</a>
-<a>node</a>,
-<a for=traversal>whatToShow</a> bitmask, and
-<a for=traversal>filter</a> callback.
+<p class="note no-backref">As mentioned earlier {{TreeWalker}} objects have an associated
+<a for=traversal>root</a> (a <a for=/>node</a>), <a for=traversal>whatToShow</a> (a bitmask), and
+<a for=traversal>filter</a> (a callback).
 
-<p>The <dfn attribute for=TreeWalker><code>root</code></dfn> attribute's getter must return
-<a for=traversal>root</a>.
+<p>The <dfn attribute for=TreeWalker><code>root</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=traversal>root</a>.
 
 <p>The <dfn attribute for=TreeWalker><code>whatToShow</code></dfn> attribute's getter must return
-<a for=traversal>whatToShow</a>.
+the <a>context object</a>'s <a for=traversal>whatToShow</a>.
 
-<p>The <dfn attribute for=TreeWalker><code>filter</code></dfn> attribute's getter must return
-<a for=traversal>filter</a>.
+<p>The <dfn attribute for=TreeWalker><code>filter</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=traversal>filter</a>.
 
 <p>The <dfn attribute for=TreeWalker><code>currentNode</code></dfn> attribute must return what it
 was initialized to.
 
 <p>Setting the {{TreeWalker/currentNode}} attribute must set it to the new value.
 
+<hr>
 
 <p>The <dfn method for=TreeWalker><code>parentNode()</code></dfn> method, when invoked, must run
 these steps:
 
 <ol>
- <li>Let <var>node</var> be the value of the
- {{TreeWalker/currentNode}} attribute.
+ <li><p>Let <var>node</var> be the value of the <a>context object</a>'s {{TreeWalker/currentNode}}
+ attribute.
 
  <li>
-  <p>While <var>node</var> is not null and is not <a for=traversal>root</a>:
+  <p>While <var>node</var> is non-null and is not the <a>context object</a>'s
+  <a for=traversal>root</a>:
 
   <ol>
-   <li>Let <var>node</var> be <var>node</var>'s
-   <a for=tree>parent</a>.
+   <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
 
-   <li>If <var>node</var> is not null and
-   <a for=Node>filtering</a> <var>node</var>
-   returns {{NodeFilter/FILTER_ACCEPT}},
-   then set the {{TreeWalker/currentNode}}
-   attribute to <var>node</var>, return <var>node</var>.
+   <li><p>If <var>node</var> is non-null and <a for=Node>filtering</a> <var>node</var> returns
+   {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s {{TreeWalker/currentNode}}
+   attribute to <var>node</var> and return <var>node</var>.
   </ol>
 
- <li>Return null.
+ <li><p>Return null.
 </ol>
 
-To <dfn export for=TreeWalker id=concept-traverse-children>traverse children</dfn> of type
-<var>type</var>, run these steps:
+<p>To <dfn noexport for=TreeWalker id=concept-traverse-children>traverse children</dfn>, given a
+<var>walker</var> and <var>type</var>, run these steps:
 
 <ol>
- <li>Let <var>node</var> be the value
- of the {{TreeWalker/currentNode}} attribute.
+ <li><p>Let <var>node</var> be the value of <var>walker</var>'s {{TreeWalker/currentNode}}
+ attribute.
 
- <li>Set <var>node</var> to <var>node</var>'s
- <a for=tree>first child</a> if
- <var>type</var> is first, and <var>node</var>'s
- <a>last child</a> if
- <var>type</var> is last.
-
- <li>If <var>node</var> is null, return null.
+ <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>first child</a> if <var>type</var> is
+ first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
 
  <li>
-  <p><dfn export id=concept-traverse-children-main lt="Traverse children main step">Main</dfn>:
-  while true:
+  <p>While <var>node</var> is non-null:
 
   <ol>
-   <li><a for=Node>Filter</a>
-   <var>node</var> and let <var>result</var> be the return
-   value.
+   <li><p>Let <var>result</var> be the result of <a for=Node>filtering</a> <var>node</var>.
 
-   <li>If <var>result</var> is
-   {{NodeFilter/FILTER_ACCEPT}}, then set
-   the {{TreeWalker/currentNode}}
-   attribute to <var>node</var> and return <var>node</var>.
+   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set <var>walker</var>'s
+   {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
 
    <li>
     <p>If <var>result</var> is {{NodeFilter/FILTER_SKIP}}, then:
 
     <ol>
-     <li>Let <var>child</var> be <var>node</var>'s
-     <a for=tree>first child</a> if
-     <var>type</var> is first, and <var>node</var>'s
-     <a>last child</a> if
-     <var>type</var> is last.
+     <li><p>Let <var>child</var> be <var>node</var>'s <a for=tree>first child</a> if <var>type</var>
+     is first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
 
-     <li>If <var>child</var> is not null, set <var>node</var>
-     to <var>child</var> and goto
-     <a lt="Traverse children main step">Main</a>.
+     <li><p>If <var>child</var> is non-null, then set <var>node</var> to <var>child</var> and
+     <a for=iteration>continue</a>.
     </ol>
 
    <li>
-    <p>While true:
+    <p>While <var>node</var> is non-null:
 
     <ol>
-     <li>Let <var>sibling</var> be <var>node</var>'s
-     <a for=tree>next sibling</a> if
-     <var>type</var> is first, and <var>node</var>'s
-     <a>previous sibling</a> if
+     <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
+     <var>type</var> is first, and <var>node</var>'s <a for=tree>previous sibling</a> if
      <var>type</var> is last.
 
-     <li>If <var>sibling</var> is not null, set
-     <var>node</var> to <var>sibling</var> and goto
-     <a lt="Traverse children main step">Main</a>.
+     <li><p>If <var>sibling</var> is non-null, then set <var>node</var> to <var>sibling</var> and
+     <a for=iteration>break</a>.
 
-     <li>Let <var>parent</var> be <var>node</var>'s
-     <a for=tree>parent</a>.
+     <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
-     <li>If <var>parent</var> is null, <var>parent</var> is
-     <a for=traversal>root</a>, or
-     <var>parent</var> is
-     {{TreeWalker/currentNode}} attribute's
-     value, return null.
+     <li><p>If <var>parent</var> is null, <var>walker</var>'s <a for=traversal>root</a>, or
+     <var>walker</var>'s  {{TreeWalker/currentNode}} attribute's value, then return null.
 
-     <li>Otherwise, set <var>node</var> to <var>parent</var>.
+     <li><p>Set <var>node</var> to <var>parent</var>.
     </ol>
   </ol>
+
+ <li><p>Return null.
 </ol>
 
 <p>The <dfn method for=TreeWalker><code>firstChild()</code></dfn> method, when invoked, must
-<a>traverse children</a> of type first.
+<a>traverse children</a> with the <a>context object</a> and first.
 
 <p>The <dfn method for=TreeWalker><code>lastChild()</code></dfn> method, when invoked, must
-<a>traverse children</a> of type last.
+<a>traverse children</a> with the <a>context object</a> and last.
 
-<p>To <dfn export id=concept-traverse-siblings>traverse siblings</dfn> of type <var>type</var>, run
-these steps:
+<p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a <var>walker</var>
+and <var>type</var>, run these steps:
 
 <ol>
- <li>Let <var>node</var> be the value of the
- {{TreeWalker/currentNode}} attribute.
+ <li><p>Let <var>node</var> be the value of <var>walker</var>'s {{TreeWalker/currentNode}}
+ attribute.
 
- <li>If <var>node</var> is
- <a for=traversal>root</a>, return null.
+ <li><p>If <var>node</var> is <a for=traversal>root</a>, then return null.
 
  <li>
   <p>While true:
 
   <ol>
-   <li>Let <var>sibling</var> be <var>node</var>'s
-   <a for=tree>next sibling</a> if
-   <var>type</var> is next, and <var>node</var>'s
-   <a>previous sibling</a> if
+   <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
+   <var>type</var> is next, and <var>node</var>'s <a for=tree>previous sibling</a> if
    <var>type</var> is previous.
 
    <li>
-    <p>While <var>sibling</var> is not null:
+    <p>While <var>sibling</var> is non-null:
 
     <ol>
-     <li>Set <var>node</var> to <var>sibling</var>.
+     <li><p>Set <var>node</var> to <var>sibling</var>.
 
-     <li><a for=Node>Filter</a>
-     <var>node</var> and let <var>result</var> be the return
-     value.
+     <li><p>Let <var>result</var> be the result of <a for=Node>filtering</a> <var>node</var>.
 
-     <li>If <var>result</var> is
-     {{NodeFilter/FILTER_ACCEPT}}, then set
-     the {{TreeWalker/currentNode}}
-     attribute to <var>node</var> and return <var>node</var>.
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set <var>walker</var>'s
+     {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
 
-     <li>Set <var>sibling</var> to <var>node</var>'s
-     <a for=tree>first child</a> if
-     <var>type</var> is next, and <var>node</var>'s
-     <a>last child</a> if
-     <var>type</var> is previous.
+     <li><p>Set <var>sibling</var> to <var>node</var>'s <a for=tree>first child</a> if
+     <var>type</var> is next, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is
+     previous.
 
-     <li>If <var>result</var> is
-     {{NodeFilter/FILTER_REJECT}} or
-     <var>sibling</var> is null, then set <var>sibling</var> to
-     <var>node</var>'s
-     <a for=tree>next sibling</a> if
-     <var>type</var> is next, and <var>node</var>'s
-     <a>previous sibling</a> if
-     <var>type</var> is previous.
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_REJECT}} or <var>sibling</var> is null, then
+     set <var>sibling</var> to <var>node</var>'s <a for=tree>next sibling</a> if <var>type</var> is
+     next, and <var>node</var>'s <a for=tree>previous sibling</a> if <var>type</var> is previous.
     </ol>
 
-   <li>Set <var>node</var> to its
-   <a for=tree>parent</a>.
+   <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
 
-   <li>If <var>node</var> is null or is
-   <a for=traversal>root</a>, return null.
+   <li><p>If <var>node</var> is null or <var>walker</var>'s <a for=traversal>root</a>, then return
+   null.
 
-   <li><a for=Node>Filter</a>
-   <var>node</var> and if the return value is
-   {{NodeFilter/FILTER_ACCEPT}}, then
-   return null.
-   <!-- XXX WTF? -->
+   <li><p>If the return value of <a for=Node>filtering</a> <var>node</var> is
+   {{NodeFilter/FILTER_ACCEPT}}, then return null.
   </ol>
 </ol>
 
 <p>The <dfn method for=TreeWalker><code>nextSibling()</code></dfn> method, when invoked, must
-<a>traverse siblings</a> of type next.
+<a>traverse siblings</a> with the <a>context object</a> and next.
 
 <p>The <dfn method for=TreeWalker><code>previousSibling()</code></dfn> method, when invoked, must
-<a>traverse siblings</a> of type previous.
+<a>traverse siblings</a> with the <a>context object</a> and previous.
 
 <p>The <dfn method for=TreeWalker><code>previousNode()</code></dfn> method, when invoked, must run
 these steps:
 
 <ol>
- <li>Let <var>node</var> be the value of the
- {{TreeWalker/currentNode}} attribute.
+ <li><p>Let <var>node</var> be the value of the <a>context object</a>'s {{TreeWalker/currentNode}}
+ attribute.
 
  <li>
-  <p>While <var>node</var> is not <a for=traversal>root</a>:
+  <p>While <var>node</var> is not the <a>context object</a>'s <a for=traversal>root</a>:
 
   <ol>
-   <li>Let <var>sibling</var> be the
-   <a>previous sibling</a> of
-   <var>node</var>.
+   <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>previous sibling</a>.
 
    <li>
-    <p>While <var>sibling</var> is not null:
+    <p>While <var>sibling</var> is non-null:
 
     <ol>
-     <li>Set <var>node</var> to <var>sibling</var>.
+     <li><p>Set <var>node</var> to <var>sibling</var>.
 
-     <li><a for=Node>Filter</a>
-     <var>node</var> and let <var>result</var> be the return
-     value.
+     <li><p>Let <var>result</var> be the result of <a for=Node>filtering</a> <var>node</var>.
 
-     <li>While <var>result</var> is not
-     {{NodeFilter/FILTER_REJECT}} and
-     <var>node</var> has a
-     <a for=tree>child</a>, set <var>node</var>
-     to its <a>last child</a> and then
-     <a for=Node>filter</a> <var>node</var> and
-     set <var>result</var> to the return value.
+     <li>
+      <p>While <var>result</var> is not {{NodeFilter/FILTER_REJECT}} and <var>node</var> has a
+      <a for=tree>child</a>:
 
-     <li>If <var>result</var> is
-     {{NodeFilter/FILTER_ACCEPT}}, then set
-     the {{TreeWalker/currentNode}}
-     attribute to <var>node</var> and return <var>node</var>.
+      <ol>
+       <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>last child</a>.
 
-     <li>Set <var>sibling</var> to the
-     <a>previous sibling</a> of
+       <li><p>Set <var>result</var> to the result of <a for=Node>filtering</a> <var>node</var>.
+      </ol>
+
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
+     <a>context object</a>'s {{TreeWalker/currentNode}} attribute to <var>node</var> and return
      <var>node</var>.
+
+     <li><p>Set <var>sibling</var> to <var>node</var>'s <a for=tree>previous sibling</a>.
     </ol>
 
-   <li>If <var>node</var> is
-   <a for=traversal>root</a> or <var>node</var>'s
-   <a for=tree>parent</a> is null, return null.
+   <li><p>If <var>node</var> is the <a>context object</a>'s <a for=traversal>root</a> or
+   <var>node</var>'s <a for=tree>parent</a> is null, then return null.
 
-   <li>Set <var>node</var> to its
-   <a for=tree>parent</a>.
+   <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
 
-   <li><a for=Node>Filter</a>
-   <var>node</var> and if the return value is
-   {{NodeFilter/FILTER_ACCEPT}}, then set
-   the {{TreeWalker/currentNode}} attribute
-   to <var>node</var> and return <var>node</var>.
+   <li><p>If the return value of <a for=Node>filtering</a> <var>node</var> is
+   {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s {{TreeWalker/currentNode}}
+   attribute to <var>node</var> and return <var>node</var>.
   </ol>
 
- <li>Return null.
+ <li><p>Return null.
 </ol>
 
 <p>The <dfn method for=TreeWalker><code>nextNode()</code></dfn> method, when invoked, must run these
@@ -9284,7 +9235,8 @@ steps:
      <li><p>Set <var>result</var> to the result of <a for=Node>filtering</a> <var>node</var>.
 
      <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
-     {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
+     <a>context object</a>'s {{TreeWalker/currentNode}} attribute to <var>node</var> and return
+     <var>node</var>.
     </ol>
 
    <li><p>Let <var>sibling</var> be null.
@@ -9307,7 +9259,7 @@ steps:
 
    <li><p>Set <var>result</var> to the result of <a for=Node>filtering</a> <var>node</var>.
 
-   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
+   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s
    {{TreeWalker/currentNode}} attribute to <var>node</var> and return <var>node</var>.
   </ol>
 </ol>
