@@ -1164,11 +1164,6 @@ for discussion).
   <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
   <var>target</var> is a {{Window}} object.
 
- <li><p>Let <var>clearTargets</var> be true if <var>target</var>, <var>event</var>'s
- <a for=Event>relatedTarget</a>, or an {{EventTarget}} object in <var>event</var>'s
- <a for=Event>touch target list</a> is a <a>node</a> and its <a for=tree>root</a> is a
- <a for=/>shadow root</a>, and false otherwise.
-
  <li><p>Let <var>activationTarget</var> be null.
 
  <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
@@ -1268,6 +1263,15 @@ for discussion).
      <li><p>Set <var>slot-in-closed-tree</var> to false.
     </ol>
 
+   <li><p>Let <var>clearTargetsTuple</var> be the last tuple in <var>event</var>'s
+   <a for=Event>path</a> whose <a for=Event/path>target</a> is non-null.
+
+   <li><p>Let <var>clearTargets</var> be true if <var>clearTargetsTuple</var>'s
+   <a for=Event/path>target</a>, <var>clearTargetsTuple</var>'s <a for=Event/path>relatedTarget</a>,
+   or an {{EventTarget}} object in <var>clearTargetsTuple</var>'s
+   <a for=Event/path>touch target list</a> is a <a for=/>node</a> and its <a for=tree>root</a> is a
+   <a for=/>shadow root</a>, and false otherwise.
+
    <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
 
    <li><p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has
@@ -1352,12 +1356,10 @@ for discussion).
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
 
-<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
-<var>event</var> and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>tuple</var>,
+<var>event</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
- <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
-
  <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <a for=Event/path>target</a> of the
  last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
  preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
@@ -1368,14 +1370,13 @@ for discussion).
  <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>tuple</var>'s
  <a for=Event/path>touch target list</a>.
 
+ <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
+
  <li><p>Let <var>object</var> be <var>tuple</var>'s <a for=Event/path>item</a>.
 
- <li><p>Let <var>listeners</var> be a new <a for=/>list</a>.
-
  <li>
-  <p><a for=list>For each</a> <var>listener</var> of <var>object</var>'s
-  <a for=EventTarget>event listener list</a>, <a for=list>append</a> <var>listener</var> to
-  <var>listeners</var>.
+  <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>object</var>'s
+  <a for=EventTarget>event listener list</a>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
