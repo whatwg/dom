@@ -466,24 +466,30 @@ dictionary EventInit {
 <p>An {{Event}} object is simply named an <dfn export id=concept-event>event</dfn>. It allows for
 signaling that something has occurred, e.g., that an image has completed downloading.</p>
 
-<p>An <a>event</a> has an associated <dfn export for=Event>relatedTarget</dfn> (null or an
-{{EventTarget}} object). Unless stated otherwise it is null.</p>
+<p>A <dfn export>potential event target</dfn> is null or an {{EventTarget}} object.
 
-<p class="note">Other specifications use <a for=Event>relatedTarget</a> to define a
+<p>An <a>event</a> has an associated <dfn export for=Event>relatedTarget</dfn> (a
+<a>potential event target</a>). Unless stated otherwise it is null.
+
+<p class=note>Other specifications use <a for=Event>relatedTarget</a> to define a
 <code>relatedTarget</code> attribute. [[UIEVENTS]]
+
+<p>An <a>event</a> has an associated <dfn export for=Event>touch target list</dfn> (a
+<a for=/>list</a> of zero or more <a>potential event targets</a>). Unless stated otherwise it is the
+empty list.
+
+<p class=note>The <a for=Event>touch target list</a> is for the exclusive use of defining the
+{{TouchEvent}} interface and related interfaces. [[TOUCH-EVENTS]]
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
 <a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
-<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (null
-or an {{EventTarget}} object), a <dfn for=Event/path>relatedTarget</dfn> (null or an
-{{EventTarget}} object), <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and a
-<dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially the
-empty list.</p>
-
-<p><a lt="Other applicable specifications">Specifications</a> may define
-<dfn export for=Event>retargeting steps</dfn> for all or some <a>events</a>.
-The algorithm is passed <var>event</var>, as indicated in the <a>dispatch</a>
-algorithm below.
+<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), <dfn for=Event/path>target</dfn> (a
+<a>potential event target</a>), a
+<dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
+<a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
+of <a>potential event targets</a>), a <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and
+a <dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially
+the empty list.</p>
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -1154,149 +1160,164 @@ for discussion).
   <p class="note"><var>legacy target override flag</var> is only used by HTML and only when
   <var>target</var> is a {{Window}} object.
 
- <li>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
- <a for=Event>relatedTarget</a> against <var>target</var> if <var>event</var>'s
- <a for=Event>relatedTarget</a> is non-null, and null otherwise.
+ <li><p>Let <var>activationTarget</var> be null.
 
- <li><p>If <var>target</var> is <var>relatedTarget</var> and <var>target</var> is not
- <var>event</var>'s <a for=Event>relatedTarget</a>, then return true.
-
- <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
- <var>targetOverride</var>, <var>relatedTarget</var>, and false.
-
- <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object and
- <var>event</var>'s {{Event/type}} attribute is "<code>click</code>", and false otherwise.
-
- <li><p>Let <var>activationTarget</var> be <var>target</var>, if <var>isActivationEvent</var> is
- true and <var>target</var> has <a for=EventTarget>activation behavior</a>, and null otherwise.
-
- <li><p>Let <var>slotable</var> be <var>target</var>, if <var>target</var> is
- <a for=slotable>assigned</a>, and null otherwise.
-
- <li><p>Let <var>slot-in-closed-tree</var> be false.
-
- <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
- with <var>event</var>.
+ <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
+ <a for=Event>relatedTarget</a> against <var>target</var>.
 
  <li>
-  <p>While <var>parent</var> is non-null:</p>
+  <p>If <var>target</var> is not <var>relatedTarget</var> or <var>target</var> is <var>event</var>'s
+  <a for=Event>relatedTarget</a>, then:
 
   <ol>
-   <li>
-    <p>If <var>slotable</var> is non-null:
+   <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
-    <ol>
-     <li><p>Assert: <var>parent</var> is a <a for=/>slot</a>.
+   <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
+   <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
+   <var>touchTarget</var> against <var>target</var> to <var>touchTargets</var>.
 
-     <li><p>Set <var>slotable</var> to null.
+   <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
+   <var>targetOverride</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and false.
 
-     <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
-     <a for=ShadowRoot>mode</a> is "<code>closed</code>", then set <var>slot-in-closed-tree</var> to
-     true.
-    </ol>
+   <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object
+   and <var>event</var>'s {{Event/type}} attribute is "<code>click</code>", and false otherwise.
 
-   <li><p>If <var>parent</var> is <a for=slotable>assigned</a>, then set <var>slotable</var> to
-   <var>parent</var>.
+   <li><p>If <var>isActivationEvent</var> is true and <var>target</var> has
+   <a for=EventTarget>activation behavior</a>, then set <var>activationTarget</var> to
+   <var>target</var>.
 
-   <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
-   <a for=Event>relatedTarget</a> against <var>parent</var> if <var>event</var>'s
-   <a for=Event>relatedTarget</a> is non-null, and null otherwise.
+   <li><p>Let <var>slotable</var> be <var>target</var>, if <var>target</var> is a <a>slotable</a>
+   and is <a for=slotable>assigned</a>, and null otherwise.
 
-   <li>
-    <p>If <var>target</var>'s <a for=tree>root</a> is a
-    <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then:
+   <li><p>Let <var>slot-in-closed-tree</var> be false.
 
-    <ol>
-     <li><p>If <var>isActivationEvent</var> is true, <var>event</var>'s {{Event/bubbles}} attribute
-     is true, <var>activationTarget</var> is null, and <var>parent</var> has
-     <a for=EventTarget>activation behavior</a>, then set <var>activationTarget</var> to
-     <var>parent</var>.
-
-     <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>, null,
-     <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
-    </ol>
-
-   <li><p>Otherwise, if <var>parent</var> and <var>relatedTarget</var> are identical, then set
-   <var>parent</var> to null.
+   <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
+   with <var>event</var>.
 
    <li>
-    <p>Otherwise, set <var>target</var> to <var>parent</var> and then:
+    <p>While <var>parent</var> is non-null:</p>
 
     <ol>
-     <li><p>If <var>isActivationEvent</var> is true, <var>activationTarget</var> is null, and
-     <var>target</var> has <a for=EventTarget>activation behavior</a>, then set
-     <var>activationTarget</var> to <var>target</var>.
+     <li>
+      <p>If <var>slotable</var> is non-null:
 
-     <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>,
-     <var>target</var>, <var>relatedTarget</var>, and <var>slot-in-closed-tree</var>.
+      <ol>
+       <li><p>Assert: <var>parent</var> is a <a for=/>slot</a>.
+
+       <li><p>Set <var>slotable</var> to null.
+
+       <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
+       <a for=ShadowRoot>mode</a> is "<code>closed</code>", then set <var>slot-in-closed-tree</var>
+       to true.
+      </ol>
+
+     <li><p>If <var>parent</var> is a <a>slotable</a> and is <a for=slotable>assigned</a>, then set
+     <var>slotable</var> to <var>parent</var>.
+
+     <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
+     <a for=Event>relatedTarget</a> against <var>parent</var>.
+
+     <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
+
+     <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
+     <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
+     <var>touchTarget</var> against <var>parent</var> to <var>touchTargets</var>.
+
+     <li>
+      <p>If <var>parent</var> is a <a>node</a> and <var>target</var>'s <a for=tree>root</a> is a
+      <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then:
+
+      <ol>
+       <li><p>If <var>isActivationEvent</var> is true, <var>event</var>'s {{Event/bubbles}}
+       attribute is true, <var>activationTarget</var> is null, and <var>parent</var> has
+       <a for=EventTarget>activation behavior</a>, then set <var>activationTarget</var> to
+       <var>parent</var>.
+
+       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>, null,
+       <var>relatedTarget</var>, <var>touchTargets</var>, and <var>slot-in-closed-tree</var>.
+      </ol>
+
+     <li><p>Otherwise, if <var>parent</var> is <var>relatedTarget</var>, then set <var>parent</var>
+     to null.
+
+     <li>
+      <p>Otherwise, set <var>target</var> to <var>parent</var> and then:
+
+      <ol>
+       <li><p>If <var>isActivationEvent</var> is true, <var>activationTarget</var> is null, and
+       <var>target</var> has <a for=EventTarget>activation behavior</a>, then set
+       <var>activationTarget</var> to <var>target</var>.
+
+       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>,
+       <var>target</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and
+       <var>slot-in-closed-tree</var>.
+      </ol>
+
+     <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
+     <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
+
+     <li><p>Set <var>slot-in-closed-tree</var> to false.
     </ol>
 
-   <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
-   <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
+   <li><p>Let <var>clearTargetsTuple</var> be the last tuple in <var>event</var>'s
+   <a for=Event>path</a> whose <a for=Event/path>target</a> is non-null.
 
-   <li><p>Set <var>slot-in-closed-tree</var> to false.
+   <li><p>Let <var>clearTargets</var> be true if <var>clearTargetsTuple</var>'s
+   <a for=Event/path>target</a>, <var>clearTargetsTuple</var>'s <a for=Event/path>relatedTarget</a>,
+   or an {{EventTarget}} object in <var>clearTargetsTuple</var>'s
+   <a for=Event/path>touch target list</a> is a <a for=/>node</a> and its <a for=tree>root</a> is a
+   <a for=/>shadow root</a>, and false otherwise.
+
+   <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
+
+   <li><p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has
+   <a for=EventTarget>legacy-pre-activation behavior</a>, then run <var>activationTarget</var>'s
+   <a for=EventTarget>legacy-pre-activation behavior</a>.
+
+   <li>
+    <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
+
+    <ol>
+     <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is null, then <a>invoke</a> with
+     <var>tuple</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+    </ol>
+
+   <li>
+    <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in order:
+
+    <ol>
+     <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is non-null, then set
+     <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+
+     <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
+     {{Event/BUBBLING_PHASE}}.
+
+     <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
+     and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
+     {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> with
+     <var>tuple</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+    </ol>
   </ol>
-
- <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
-
- <li><p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has
- <a for=EventTarget>legacy-pre-activation behavior</a>, then run <var>activationTarget</var>'s
- <a for=EventTarget>legacy-pre-activation behavior</a>.
-
- <li>
-  <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
-
-  <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <b>target</b> of the last tuple
-   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
-   <var>tuple</var>, whose <b>target</b> is non-null.
-
-   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
-   <b>relatedTarget</b>.
-
-   <li><p>Run the <a>retargeting steps</a> with <var>event</var>.
-
-   <li><p>If <var>tuple</var>'s <b>target</b> is null, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
-  </ol>
-
- <li>
-  <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in order:
-
-  <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <b>target</b> of the last tuple
-   in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or preceding
-   <var>tuple</var>, whose <b>target</b> is non-null.
-
-   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
-   <b>relatedTarget</b>.
-
-   <li><p>Run the <a>retargeting steps</a> with <var>event</var>.
-
-   <li><p>If <var>tuple</var>'s <b>target</b> is non-null, then set <var>event</var>'s
-   {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
-
-   <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
-   {{Event/BUBBLING_PHASE}}.
-
-   <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
-   and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
-   {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> <var>tuple</var>'s
-   <b>item</b> with <var>event</var> and <var>legacyOutputDidListenersThrowFlag</var> if given.
-  </ol>
-
- <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
- <a>stop immediate propagation flag</a>.
 
  <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/NONE}}.
-
- <li><p>If {{Event/target}}'s <a for=tree>root</a> is a <a for=/>shadow root</a>, then set
- <var>event</var>'s {{Event/target}} attribute and <var>event</var>'s <a for=Event>relatedTarget</a>
- to null.
 
  <li><p>Set <var>event</var>'s {{Event/currentTarget}} attribute to null.
 
  <li><p>Set <var>event</var>'s <a for=Event>path</a> to the empty list.
+
+ <li><p>Unset <var>event</var>'s <a>dispatch flag</a>, <a>stop propagation flag</a>, and
+ <a>stop immediate propagation flag</a>.
+
+ <li>
+  <p>If <var>clearTargets</var>, then:
+
+  <ol>
+   <li><p>Set <var>event</var>'s {{Event/target}} attribute to null.
+
+   <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to null.
+
+   <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to the empty list.
+  </ol>
 
  <li>
   <p>If <var>activationTarget</var> is non-null, then:
@@ -1314,8 +1335,8 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
-<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>, and a
-<var>slot-in-closed-tree</var>, run these steps:</p>
+<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>,
+<var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these steps:</p>
 
 <ol>
  <li><p>Let <var>root-of-closed-tree</var> be false.
@@ -1326,22 +1347,32 @@ for discussion).
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
  whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>target</a> is
  <var>targetOverride</var>, <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
+ <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
 
-<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn> an <var>object</var> with
-<var>event</var> and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>tuple</var>,
+<var>event</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
+ <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <a for=Event/path>target</a> of the
+ last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
+ preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
+
+ <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
+ <a for=Event/path>relatedTarget</a>.
+
+ <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>tuple</var>'s
+ <a for=Event/path>touch target list</a>.
+
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Let <var>listeners</var> be a new <a for=/>list</a>.
+ <li><p>Let <var>object</var> be <var>tuple</var>'s <a for=Event/path>item</a>.
 
  <li>
-  <p><a for=list>For each</a> <var>listener</var> of <var>object</var>'s
-  <a for=EventTarget>event listener list</a>, <a for=list>append</a> <var>listener</var> to
-  <var>listeners</var>.
+  <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>object</var>'s
+  <a for=EventTarget>event listener list</a>.
 
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
@@ -5623,9 +5654,17 @@ is an object or one of its <a>shadow-including ancestors</a>.
 <var>B</var>, repeat these steps until they return an object:</p>
 
 <ol>
- <li><p>If <var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, or <var>A</var>'s
- <a for=tree>root</a> is a <a>shadow-including inclusive ancestor</a> of <var>B</var>, then return
- <var>A</var>.
+ <li>
+  <p>If one of the following is true
+
+  <ul class=brief>
+   <li><var>A</var> is not a <a>node</a>
+   <li><var>A</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>
+   <li><var>B</var> is a <a>node</a> and <var>A</var>'s <a for=tree>root</a> is a
+   <a>shadow-including inclusive ancestor</a> of <var>B</var>
+  </ul>
+
+  <p>then return <var>A</var>.
 
  <li><p>Set <var>A</var> to <var>A</var>'s <a for=tree>root</a>'s <a for=DocumentFragment>host</a>.
 </ol>
@@ -9822,6 +9861,7 @@ Tab Atkins,
 Takashi Sakamoto,
 Takayoshi Kochi,
 Theresa O'Connor,
+Theodore Dubois,
 <i>timeless</i>,
 Timo Tijhof,
 Tobie Langel,
