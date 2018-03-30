@@ -431,6 +431,7 @@ would have been {{Event/AT_TARGET}}.
 interface Event {
   readonly attribute DOMString type;
   readonly attribute EventTarget? target;
+  readonly attribute EventTarget? srcElement; // historical
   readonly attribute EventTarget? currentTarget;
   sequence&lt;EventTarget> composedPath();
 
@@ -446,6 +447,7 @@ interface Event {
 
   readonly attribute boolean bubbles;
   readonly attribute boolean cancelable;
+           attribute boolean returnValue;  // historical
   void preventDefault();
   readonly attribute boolean defaultPrevented;
   readonly attribute boolean composed;
@@ -580,6 +582,9 @@ string.
 <p>The <dfn attribute for=Event><code>target</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=Event>target</a>.
 
+<p>The <dfn attribute for=Event><code>srcElement</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=Event>target</a>.
+
 <p>The <dfn attribute for=Event><code>currentTarget</code></dfn> attribute must return the value it
 was initialized to. When an <a>event</a> is created the attribute must be initialized to null.
 
@@ -675,12 +680,22 @@ The <dfn attribute for=Event><code>bubbles</code></dfn> and
 <dfn attribute for=Event><code>cancelable</code></dfn> attributes
 must return the values they were initialized to.
 
-The <dfn method for=Event><code>preventDefault()</code></dfn> method, when invoked, must set the
-<a>canceled flag</a> if the {{Event/cancelable}} attribute value is true and the
-<a>in passive listener flag</a> is unset.
+<p>To <dfn>set the canceled flag</dfn>, given an <a>event</a> <var>event</var>, if
+<var>event</var>'s {{Event/cancelable}} attribute value is true and <var>event</var>'s
+<a>in passive listener flag</a> is unset, then set <var>event</var>'s <a>canceled flag</a>, and do
+nothing otherwise.
 
-<p class="note no-backref">This means there are scenarios where invoking {{Event/preventDefault()}}
-has no effect. User agents are encouraged to log the precise cause in a developer console, to aid
+<p>The <dfn attribute for=Event><code>returnValue</code></dfn> attribute's getter, when invoked,
+must return false if <a>context object</a>'s <a>canceled flag</a> is set, and true otherwise.
+
+<p>The {{Event/returnValue}} attribute's setter, when invoked, must <a>set the canceled flag</a>
+with the <a>context object</a> if the given value is false, and do nothing otherwise.
+
+<p>The <dfn method for=Event><code>preventDefault()</code></dfn> method, when invoked, must
+<a>set the canceled flag</a> with the <a>context object</a>.
+
+<p class="note no-backref">There are scenarios where invoking {{Event/preventDefault()}} has no
+effect. User agents are encouraged to log the precise cause in a developer console, to aid
 debugging.
 
 <p>The <dfn attribute for=Event><code>defaultPrevented</code></dfn> attribute's getter must return
