@@ -468,6 +468,9 @@ signaling that something has occurred, e.g., that an image has completed downloa
 
 <p>A <dfn export>potential event target</dfn> is null or an {{EventTarget}} object.
 
+<p>An <a>event</a> has an associated <dfn export for=Event>target</dfn> (a
+<a>potential event target</a>). Unless stated otherwise it is null.
+
 <p>An <a>event</a> has an associated <dfn export for=Event>relatedTarget</dfn> (a
 <a>potential event target</a>). Unless stated otherwise it is null.
 
@@ -506,7 +509,8 @@ the empty list.</p>
  "<code>submit</code>".
 
  <dt><code><var>event</var> . {{Event/target}}</code>
- <dd>Returns the object to which <var>event</var> is <a>dispatched</a>.
+ <dd>Returns the object to which <var>event</var> is <a>dispatched</a> (its
+ <a for=Event>target</a>).
 
  <dt><code><var>event</var> . {{Event/currentTarget}}</code>
  <dd>Returns the object whose <a>event listener</a>'s <a for="event listener">callback</a> is currently being
@@ -536,8 +540,8 @@ the empty list.</p>
 
  <dt><code><var>event</var> . {{Event/bubbles}}</code>
  <dd>Returns true or false depending on how <var>event</var> was initialized. True if
- <var>event</var> goes through its {{Event/target}} attribute value's <a>ancestors</a>
- in reverse <a>tree order</a>, and false otherwise.
+ <var>event</var> goes through its <a for=Event>target</a>'s <a for=tree>ancestors</a> in reverse
+ <a>tree order</a>, and false otherwise.
 
  <dt><code><var>event</var> . {{Event/cancelable}}</code>
  <dd>Returns true or false depending on how <var>event</var> was initialized. Its return
@@ -557,7 +561,7 @@ the empty list.</p>
  <dt><code><var>event</var> . {{Event/composed}}</code>
  <dd>Returns true or false depending on how <var>event</var> was initialized. True if
  <var>event</var> invokes listeners past a {{ShadowRoot}} <a>node</a> that is the
- <a for=tree>root</a> of its {{Event/target}} attribute value, and false otherwise.
+ <a for=tree>root</a> of its <a for=Event>target</a>, and false otherwise.
 
  <dt><code><var>event</var> . {{Event/isTrusted}}</code>
  <dd>Returns true if <var>event</var> was
@@ -569,16 +573,15 @@ the empty list.</p>
  the <a>time origin</a>.
 </dl>
 
-The <dfn attribute for=Event><code>type</code></dfn> attribute must
-return the value it was initialized to. When an
-<a>event</a> is created the attribute must be
-initialized to the empty string.
+<p>The <dfn attribute for=Event><code>type</code></dfn> attribute must return the value it was
+initialized to. When an <a>event</a> is created the attribute must be initialized to the empty
+string.
 
-The <dfn attribute for=Event><code>target</code></dfn> and
-<dfn attribute for=Event><code>currentTarget</code></dfn>
-attributes must return the values they were initialized to. When an
-<a>event</a> is created the attributes must be
-initialized to null.
+<p>The <dfn attribute for=Event><code>target</code></dfn> attribute's getter must return the
+<a>context object</a>'s <a for=Event>target</a>.
+
+<p>The <dfn attribute for=Event><code>currentTarget</code></dfn> attribute must return the value it
+was initialized to. When an <a>event</a> is created the attribute must be initialized to null.
 
 <p>The <dfn method for=Event><code>composedPath()</code></dfn> method, when invoked, must run these
 steps:
@@ -618,37 +621,33 @@ steps:
  <li><p>Return <var>reversedComposedPath</var>, in reverse order.
 </ol>
 
-The <dfn attribute for=Event><code>eventPhase</code></dfn>
-attribute must return the value it was initialized to, which must be one of
-the following:
+<p>The <dfn attribute for=Event><code>eventPhase</code></dfn> attribute must return the value it was
+initialized to, which must be one of the following:
+
 <dl>
  <dt><dfn const for=Event>NONE</dfn> (numeric value 0)
  <dd><a>Events</a> not currently
  <a>dispatched</a> are in this phase.
+
  <dt><dfn const for=Event>CAPTURING_PHASE</dfn> (numeric value 1)
- <dd>When an <a>event</a> is
- <a>dispatched</a> to an object that
- <a>participates</a> in a
- <a>tree</a> it will be in this phase before it
- reaches its {{Event/target}} attribute value.
+ <dd>When an <a>event</a> is <a>dispatched</a> to an object that <a>participates</a> in a
+ <a>tree</a> it will be in this phase before it reaches its <a for=Event>target</a>.
+
  <dt><dfn const for=Event>AT_TARGET</dfn> (numeric value 2)
- <dd>When an <a>event</a> is
- <a>dispatched</a> it will be in this
- phase on its {{Event/target}} attribute value.
+ <dd>When an <a>event</a> is <a>dispatched</a> it will be in this phase on its
+ <a for=Event>target</a>.
+
  <dt><dfn const for=Event>BUBBLING_PHASE</dfn> (numeric value 3)
- <dd>When an <a>event</a> is
- <a>dispatched</a> to an object that
- <a>participates</a> in a
- <a>tree</a> it will be in this phase after it
- reaches its {{Event/target}} attribute value.
+ <dd>When an <a>event</a> is <a>dispatched</a> to an object that <a>participates</a> in a
+ <a>tree</a> it will be in this phase after it reaches its <a for=Event>target</a>.
 </dl>
-Initially the attribute must be initialized to
-{{Event/NONE}}.
+
+<p>Initially the attribute must be initialized to {{Event/NONE}}.
 
 <hr>
 
-Each <a>event</a> has the following associated
-flags that are all initially unset:
+<p>Each <a>event</a> has the following associated flags that are all initially unset:
+
 <ul>
  <li><dfn export for=Event id=stop-propagation-flag>stop propagation flag</dfn>
  <li><dfn export for=Event id=stop-immediate-propagation-flag>stop immediate propagation flag</dfn>
@@ -708,25 +707,24 @@ initialized to.
 
 <hr>
 
-To <dfn export for=Event id=concept-event-initialize>initialize</dfn> an
-<var>event</var>, with <var>type</var>,
-<var>bubbles</var>, and <var>cancelable</var>, run these steps:
+<p>To <dfn export for=Event id=concept-event-initialize>initialize</dfn> an <var>event</var>, with
+<var>type</var>, <var>bubbles</var>, and <var>cancelable</var>, run these steps:
 
 <ol>
- <li>Set the <a>initialized flag</a>.
- <li>Unset the <a>stop propagation flag</a>,
- <a>stop immediate propagation flag</a>, and
- <a>canceled flag</a>.
- <li>Set the {{Event/isTrusted}} attribute
- to false.
- <li>Set the {{Event/target}} attribute to
- null.
- <li>Set the {{Event/type}} attribute to
- <var>type</var>.
- <li>Set the {{Event/bubbles}} attribute to
- <var>bubbles</var>.
- <li>Set the {{Event/cancelable}} attribute
- to <var>cancelable</var>.
+ <li><p>Set <var>event</var>'s <a>initialized flag</a>.
+
+ <li><p>Unset <var>event</var>'s <a>stop propagation flag</a>,
+ <a>stop immediate propagation flag</a>, and <a>canceled flag</a>.
+
+ <li><p>Set <var>event</var>'s {{Event/isTrusted}} attribute to false.
+
+ <li><p>Set <var>event</var>'s <a for=Event>target</a> to null.
+
+ <li><p>Set <var>event</var>'s {{Event/type}} attribute to <var>type</var>.
+
+ <li><p>Set <var>event</var>'s {{Event/bubbles}} attribute to <var>bubbles</var>.
+
+ <li><p>Set <var>event</var>'s {{Event/cancelable}} attribute to <var>cancelable</var>.
 </ol>
 
 <p>The
@@ -734,9 +732,9 @@ To <dfn export for=Event id=concept-event-initialize>initialize</dfn> an
 method, when invoked, must run these steps:</p>
 
 <ol>
- <li><p>If <a>context object</a>'s <a>dispatch flag</a> is set, then return.
+ <li><p>If the <a>context object</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> <a>context object</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a>Initialize</a> the <a>context object</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 </ol>
 
@@ -1312,7 +1310,7 @@ for discussion).
   <p>If <var>clearTargets</var>, then:
 
   <ol>
-   <li><p>Set <var>event</var>'s {{Event/target}} attribute to null.
+   <li><p>Set <var>event</var>'s <a for=Event>target</a> to null.
 
    <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to null.
 
@@ -1356,7 +1354,7 @@ for discussion).
 <var>event</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
- <li><p>Set <var>event</var>'s {{Event/target}} attribute to the <a for=Event/path>target</a> of the
+ <li><p>Set <var>event</var>'s <a for=Event>target</a> to the <a for=Event/path>target</a> of the
  last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
  preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
 
