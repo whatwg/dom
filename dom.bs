@@ -7487,6 +7487,19 @@ interface Range : AbstractRange {
 <a for=tree>root</a> of its <a for=range>start node</a>.
 <!-- start and end have an identical root -->
 
+<p>The <dfn for="live range">common ancestor</dfn> of a <a>live range</a> <var>range</var> is the
+return value of running these steps:
+
+<ol>
+ <li><p>Let <var>container</var> be <var>range</var>'s <a for=range>start node</a>.
+
+ <li><p>While <var>container</var> is not an <a for=tree>inclusive ancestor</a> of
+ <var>range</var>'s <a for=range>end node</a>, set <var>container</var> to <var>container</var>'s
+ <a for=tree>parent</a>.
+
+ <li><p>Return <var>container</var>.
+</ol>
+
 <p>A <a for=/>node</a> <var>node</var> is <dfn export for="live range" id=contained>contained</dfn>
 in a <a>live range</a> <var>range</var> if <var>node</var>'s <a for=tree>root</a> is
 <var>range</var>'s <a for="live range">root</a>, and (<var>node</var>, 0) is
@@ -7527,8 +7540,8 @@ but not its <a for=range>end node</a>, or vice versa.
   <li><p>There exists a <a for="live range">partially contained</a> <a for=/>node</a> if and only if
   the <a for=range>start node</a> and <a for=range>end node</a> are different.
 
-  <li><p>The {{Range/commonAncestorContainer}} attribute value is neither
-  <a for="live range">contained</a> nor <a for="live range">partially contained</a>.
+  <li><p>The <a for="live range">common ancestor</a> is neither <a for="live range">contained</a>
+  nor <a for="live range">partially contained</a>.
 
   <li><p>If the <a for=range>start node</a> is an <a>ancestor</a> of the <a for=range>end node</a>,
   the common <a for=tree>inclusive ancestor</a> will be the <a for=range>start node</a>. Exactly one
@@ -7561,30 +7574,14 @@ a new <a>live range</a> with
 <hr>
 
 <dl class=domintro>
- <dt><var>container</var> = <var>range</var> . {{Range/commonAncestorContainer}}
- <dd>Returns the <a>node</a>, furthest away from
- the <a>document</a>, that is an
- <a>ancestor</a> of both
- <var>range</var>'s
- <a for=range>start node</a> and
+ <dt><code><var>container</var> = <var>range</var> . <a attribute for=Range>commonAncestorContainer</a></code>
+ <dd>Returns the <a>node</a>, furthest away from the <a for=tree>root</a>, that is an
+ <a for=tree>ancestor</a> of both <var>range</var>'s <a for=range>start node</a> and
  <a for=range>end node</a>.
 </dl>
 
 <p>The <dfn attribute for=Range><code>commonAncestorContainer</code></dfn> attribute's getter must
-run these steps:
-
-<ol>
- <li>Let <var>container</var> be
- <a for=range>start node</a>.
-
- <li>While <var>container</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <a for=range>end node</a>, let
- <var>container</var> be <var>container</var>'s
- <a for=tree>parent</a>.
-
- <li>Return <var>container</var>.
-</ol>
+return the <a>context object</a>'s <a for="live range">common ancestor</a>.
 
 <hr>
 
@@ -7991,13 +7988,8 @@ run these steps:
    <li>Return <var>fragment</var>.
   </ol>
 
- <li>Let <var>common ancestor</var> be
- <var>original start node</var>.
-
- <li>While <var>common ancestor</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set <var>common ancestor</var> to
- its own <a for=tree>parent</a>.
+ <li><p>Let <var>common ancestor</var> be <var>range</var>'s
+ <a for="live range">common ancestor</a>.
 
  <li>Let <var>first partially contained child</var> be null.
 
@@ -8251,14 +8243,8 @@ of a <a>live range</a> <var>range</var>, run these steps:
    <li>Return <var>fragment</var>.
   </ol>
 
- <li>Let <var>common ancestor</var> be
- <var>original start node</var>.
-
- <li>While <var>common ancestor</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set
- <var>common ancestor</var> to its own
- <a for=tree>parent</a>.
+ <li><p>Let <var>common ancestor</var> be <var>range</var>'s
+ <a for="live range">common ancestor</a>.
 
  <li>Let <var>first partially contained child</var> be null.
 
