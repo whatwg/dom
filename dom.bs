@@ -766,8 +766,8 @@ partial interface Window {
 <p>The <dfn attribute for=Window><code>event</code></dfn> attribute's getter, when invoked, must
 return the <a>context object</a>'s <a for=Window>current event</a>.
 
-<p class=note>Web developers are strongly encouraged to instead rely on {{Event}} object passed to
-event listeners as that will result in more portable code. This attribute is not available in
+<p class=note>Web developers are strongly encouraged to instead rely on the {{Event}} object passed
+to event listeners, as that will result in more portable code. This attribute is not available in
 workers or worklets, and is inaccurate for events dispatched in <a>shadow trees</a>.
 
 
@@ -1431,20 +1431,6 @@ for discussion).
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
- <li><p>Let <var>global</var> be the <a>current global object</a>.
-
- <li><p>Let <var>currentEvent</var> be undefined.
-
- <li>
-  <p>If <var>global</var> is a {{Window}} object, then:
-
-  <ol>
-   <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
-
-   <li><p>If <var>tuple</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
-   <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
-  </ol>
-
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
  <var>listeners</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
 
@@ -1475,9 +1461,6 @@ for discussion).
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
-
- <li><p>If <var>global</var> is a {{Window}} object, then set <var>global</var>'s
- <a for=Window>current event</a> to <var>currentEvent</var>.
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
@@ -1511,6 +1494,21 @@ for discussion).
    <!-- Do this before invocation to avoid reentrancy issues. No need to set removed to true since
         each listener in listeners is run once anyway. -->
 
+   <li><p>Let <var>global</var> be <var>listener</var> <a for="event listener">callback</a>'s
+   <a>associated Realm</a>'s <a for=Realm>global object</a>.
+
+   <li><p>Let <var>currentEvent</var> be undefined.
+
+   <li>
+    <p>If <var>global</var> is a {{Window}} object, then:
+
+    <ol>
+     <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
+
+     <li><p>If <var>tuple</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
+     <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
+    </ol>
+
    <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
    <var>event</var>'s <a>in passive listener flag</a>.
 
@@ -1530,6 +1528,9 @@ for discussion).
     </ol>
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
+
+   <li><p>If <var>global</var> is a {{Window}} object, then set <var>global</var>'s
+   <a for=Window>current event</a> to <var>currentEvent</var>.
 
    <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set, then return
    <var>found</var>.
