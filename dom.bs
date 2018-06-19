@@ -5785,6 +5785,7 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
+  [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
   [CEReactions] void setAttribute(DOMString qualifiedName, DOMString value);
   [CEReactions] void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
   [CEReactions] void removeAttribute(DOMString qualifiedName);
@@ -6447,6 +6448,12 @@ namespace.</p>
  <var>namespace</var> and <a for=Attr>local name</a> is <var>localName</var>, and null if there is
  no such <a>attribute</a> otherwise.
 
+ <dt><code><var>element</var> . <a method for=Element lt=toggleAttribute()>toggleAttribute</a>(<var>qualifiedName</var> [, <var>force</var>])</code>
+ <dd>
+  <p>If <var>force</var> is not given, "toggles" <var>qualifiedName</var>, removing it if it's present and
+  adding it if it's not present. If <var>force</var> is true, adds <var>qualifiedName</var>. If <var>force</var> is false, removes <var>qualifiedName</var>.
+  <p>Returns true if <var>qualifiedName</var> is now present, and false otherwise.
+
  <dt><code><var>element</var> . <a method for=Element lt=setAttribute()>setAttribute</a>(<var>qualifiedName</var>, <var>value</var>)</code>
  <dd><p>Sets the <a for=Attr>value</a> of <var>element</var>'s first <a>attribute</a> whose
  <a for=Attr>qualified name</a> is <var>qualifiedName</var> to <var>value</var>.
@@ -6539,6 +6546,38 @@ method, when invoked, must run these steps:
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> from <a>context object</a> to
  <var>value</var>.
+</ol>
+
+<p>The <dfn method for=Element><code>toggleAttribute(<var>qualifiedName</var>, <var>force</var>)</code></dfn>
+method, when invoked, must run these steps:
+
+<ol>
+ <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
+ XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
+ <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
+ <var>qualifiedName</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Let <var>attribute</var> be the first <a>attribute</a> in the <a>context object</a>'s
+ <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
+ and null otherwise.
+ <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
+
+ <li><p>If <var>attribute</var> is null, then:
+ <ol>
+  <li><p>if <var>force</var> is not given or is true, create an <a>attribute</a> whose <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
+  "the empty string", and <a for=Node>node document</a> is the <a>context object</a>'s
+  <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
+  the <a>context object</a>, and then return true.
+
+  <li><p>Otherwise, return false.
+ </ol>
+
+ <li><p>Otherwise, if <var>force</var> is not given or is false, <a lt="remove an attribute by name">remove an attribute</a> given <var>qualifiedName</var> and the <a>context object</a>,
+ and then return false.
+
+ <li><p>Return true.
 </ol>
 
 <p>The
@@ -9915,6 +9954,7 @@ Joe Kesselman,
 John Atkins,
 John Dai,
 Jonas Sicking,
+Jonathan Kingston,
 Jonathan Robie,
 Joris van der Wel,
 Joshua Bell,
