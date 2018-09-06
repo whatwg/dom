@@ -1315,22 +1315,28 @@ for discussion).
    <var>clearTargetsStruct</var>'s <a for=Event/path>touch target list</a> is a <a for=/>node</a>
    and its <a for=tree>root</a> is a <a for=/>shadow root</a>, and false otherwise.
 
-   <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
-
    <li><p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has
    <a for=EventTarget>legacy-pre-activation behavior</a>, then run <var>activationTarget</var>'s
    <a for=EventTarget>legacy-pre-activation behavior</a>.
 
    <li>
-    <p>For each <var>struct</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
+    <p><a for=list>For each</a> <var>struct</var> in <var>event</var>'s <a for=Event>path</a>, in
+    reverse order:
 
     <ol>
-     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is null, then <a>invoke</a> with
-     <var>struct</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is non-null, then set
+     <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+
+     <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
+     {{Event/CAPTURING_PHASE}}.
+
+     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>capturing</code>", and
+     <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
 
    <li>
-    <p>For each <var>struct</var> in <var>event</var>'s <a for=Event>path</a>, in order:
+    <p>If <var>event</var>'s {{Event/bubbles}} attribute is true, then <a for=list>for each</a>
+    <var>struct</var> in <var>event</var>'s <a for=Event>path</a>:
 
     <ol>
      <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is non-null, then set
@@ -1339,10 +1345,8 @@ for discussion).
      <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
      {{Event/BUBBLING_PHASE}}.
 
-     <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
-     and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
-     {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> with
-     <var>struct</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>bubbling</code>", and
+     <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
   </ol>
 
@@ -1406,7 +1410,8 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>struct</var>,
-<var>event</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<var>event</var>, <var>phase</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>,
+run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a for=Event>target</a> to the <a for=Event/path>target</a> of the
@@ -1432,7 +1437,7 @@ for discussion).
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
- <var>listeners</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+ <var>listeners</var>, <var>phase</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
 
  <li>
   <p>If <var>found</var> is false and <var>event</var>'s {{Event/isTrusted}} attribute is true,
@@ -1456,7 +1461,7 @@ for discussion).
       <tr><td>"<code>transitionend</code>"<td>"<code>webkitTransitionEnd</code>"
     </table>
 
-   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, and
+   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>, and
    <var>legacyOutputDidListenersThrowFlag</var> if given.
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
@@ -1464,7 +1469,7 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
-<var>event</var>, <var>listeners</var>, and an optional
+<var>event</var>, <var>listeners</var>, <var>phase</var>, and an optional
 <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
@@ -1480,13 +1485,11 @@ for discussion).
 
    <li><p>Set <var>found</var> to true.
 
-   <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/CAPTURING_PHASE}}
-   and <var>listener</var>'s <a for="event listener">capture</a> is false, then
-   <a for=iteration>continue</a>.
+   <li><p>If <var>phase</var> is "<code>capturing</code>" and <var>listener</var>'s
+   <a for="event listener">capture</a> is false, then <a for=iteration>continue</a>.
 
-   <li><p>If <var>event</var>'s {{Event/eventPhase}} attribute value is {{Event/BUBBLING_PHASE}} and
-   <var>listener</var>'s <a for="event listener">capture</a> is true, then
-   <a for=iteration>continue</a>.
+   <li><p>If <var>phase</var> is "<code>bubbling</code>" and <var>listener</var>'s
+   <a for="event listener">capture</a> is true, then <a for=iteration>continue</a>.
 
    <li><p>If <var>listener</var>'s <a for="event listener">once</a> is true, then
    <a for=list>remove</a> <var>listener</var> from <var>event</var>'s {{Event/currentTarget}}
@@ -9983,6 +9986,7 @@ Mark Miller,
 Martijn van der Ven,
 Mats Palmgren,
 Mounir Lamouri,
+Michael Stramel,
 Michael™ Smith,
 Mike Champion,
 Mike Taylor,
