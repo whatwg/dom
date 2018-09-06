@@ -1376,14 +1376,14 @@ for discussion).
      <li><p>Set <var>slot-in-closed-tree</var> to false.
     </ol>
 
-   <li><p>Let <var>clearTargetsTuple</var> be the last tuple in <var>event</var>'s
+   <li><p>Let <var>clearTargetsStruct</var> be the last struct in <var>event</var>'s
    <a for=Event>path</a> whose <a for=Event/path>target</a> is non-null.
 
-   <li><p>Let <var>clearTargets</var> be true if <var>clearTargetsTuple</var>'s
-   <a for=Event/path>target</a>, <var>clearTargetsTuple</var>'s <a for=Event/path>relatedTarget</a>,
-   or an {{EventTarget}} object in <var>clearTargetsTuple</var>'s
-   <a for=Event/path>touch target list</a> is a <a for=/>node</a> and its <a for=tree>root</a> is a
-   <a for=/>shadow root</a>, and false otherwise.
+   <li><p>Let <var>clearTargets</var> be true if <var>clearTargetsStruct</var>'s
+   <a for=Event/path>target</a>, <var>clearTargetsStruct</var>'s
+   <a for=Event/path>relatedTarget</a>, or an {{EventTarget}} object in
+   <var>clearTargetsStruct</var>'s <a for=Event/path>touch target list</a> is a <a for=/>node</a>
+   and its <a for=tree>root</a> is a <a for=/>shadow root</a>, and false otherwise.
 
    <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/CAPTURING_PHASE}}.
 
@@ -1392,18 +1392,18 @@ for discussion).
    <a for=EventTarget>legacy-pre-activation behavior</a>.
 
    <li>
-    <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
+    <p>For each <var>struct</var> in <var>event</var>'s <a for=Event>path</a>, in reverse order:
 
     <ol>
-     <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is null, then <a>invoke</a> with
-     <var>tuple</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is null, then <a>invoke</a> with
+     <var>struct</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
 
    <li>
-    <p>For each <var>tuple</var> in <var>event</var>'s <a for=Event>path</a>, in order:
+    <p>For each <var>struct</var> in <var>event</var>'s <a for=Event>path</a>, in order:
 
     <ol>
-     <li><p>If <var>tuple</var>'s <a for=Event/path>target</a> is non-null, then set
+     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is non-null, then set
      <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
      <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
@@ -1412,7 +1412,7 @@ for discussion).
      <li><p>If either <var>event</var>'s {{Event/eventPhase}} attribute is {{Event/BUBBLING_PHASE}}
      and <var>event</var>'s {{Event/bubbles}} attribute is true or <var>event</var>'s
      {{Event/eventPhase}} attribute is {{Event/AT_TARGET}}, then <a>invoke</a> with
-     <var>tuple</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <var>struct</var>, <var>event</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
   </ol>
 
@@ -1475,23 +1475,23 @@ for discussion).
  <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
 
-<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>tuple</var>,
+<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>struct</var>,
 <var>event</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a for=Event>target</a> to the <a for=Event/path>target</a> of the
- last tuple in <var>event</var>'s <a for=Event>path</a>, that is either <var>tuple</var> or
- preceding <var>tuple</var>, whose <a for=Event/path>target</a> is non-null.
+ last struct in <var>event</var>'s <a for=Event>path</a>, that is either <var>struct</var> or
+ preceding <var>struct</var>, whose <a for=Event/path>target</a> is non-null.
 
- <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>tuple</var>'s
+ <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>struct</var>'s
  <a for=Event/path>relatedTarget</a>.
 
- <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>tuple</var>'s
+ <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>struct</var>'s
  <a for=Event/path>touch target list</a>.
 
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>tuple</var>'s
+ <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>struct</var>'s
  <a for=Event/path>item</a>.
 
  <li>
@@ -1575,7 +1575,7 @@ for discussion).
     <ol>
      <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
 
-     <li><p>If <var>tuple</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
+     <li><p>If <var>struct</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
      <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
     </ol>
 
@@ -5751,8 +5751,9 @@ or "<code>closed</code>").</p>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
-<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first tuple's <b>item</b>, and
-<a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> otherwise.
+<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
+<a for=Event/path>item</a>, and <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a>
+otherwise.
 
 <p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
