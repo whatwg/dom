@@ -487,9 +487,8 @@ empty list.
 <a>potential event target</a>), a
 <dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
 <a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
-of <a>potential event targets</a>), a <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and
-a <dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially
-the empty list.</p>
+of <a>potential event targets</a>), and a <dfn for=Event/path>closed-shadow-tree-depth</dfn> (an
+integer). A <a for=Event>path</a> is initially the empty list.</p>
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -587,39 +586,80 @@ was initialized to. When an <a>event</a> is created the attribute must be initia
 steps:
 
 <ol>
- <li><p>Let <var>reversedComposedPath</var> be an empty <a for=/>list</a>.
+ <li><p>Let <var>path</var> be the <a>context object</a>'s <a for=Event>path</a>.
 
- <li><p>Let <var>hiddenSubtreeLevel</var> be 0.
+ <li><p>Let <var>composedPath</var> be an empty <a for=/>list</a>.
 
- <li><p>Let <var>hasSeenCurrentTarget</var> be false.
+ <li><p>Let <var>currentIndex</var> be 0.
 
- <li><p>Let <var>currentTarget</var> be the <a>context object</a>'s {{Event/currentTarget}}
- attribute value.
-
- <li><p>Let <var>reversedPath</var> be the <a>context object</a>'s <a for=Event>path</a>, in reverse
- order.
+ <li><p>Let <var>currentDepth</var> be 0.
 
  <li>
-  <p><a for=list>For each</a> <var>struct</var> in <var>reversedPath</var>:
+  <p><a for=list>For each</a> <var>struct</var> of <var>path</var>:
 
   <ol>
-   <li><p>If <var>struct</var>'s <a for=Event/path>item</a> is <var>currentTarget</var>, then set
-   <var>hasSeenCurrentTarget</var> to true.
+   <li><p>If <var>struct</var>'s <a for=Event/path>item</a> is the <a>context object</a>'s
+   {{Event/currentTarget}} attribute value, then set <var>currentDepth</var> to <var>struct</var>'s
+   <a for=Event/path>closed-shadow-tree-depth</a> and <a for=iteration>break</a>.
 
-   <li><p>Otherwise, if <var>hasSeenCurrentTarget</var> is true and <var>struct</var>'s
-   <a for=Event/path>root-of-closed-tree</a> is true, then increase <var>hiddenSubtreeLevel</var> by
-   1.
-
-   <li><p>If <var>hiddenSubtreeLevel</var> is 0, then <a for=list>append</a> <var>struct</var>'s
-   <a for=Event/path>item</a> to <var>reversedComposedPath</var>.
-
-   <li><p>If <var>struct</var>'s <a for=Event/path>slot-in-closed-tree</a> is true and
-   <var>hiddenSubtreeLevel</var> is greater than 0, then decrease <var>hiddenSubtreeLevel</var> by
-   1.
+   <li><p>Increase <var>currentIndex</var> by 1.
   </ol>
 
- <li><p>Return <var>reversedComposedPath</var>, in reverse order.
+ <li><p>Let <var>currentAllowedDepth</var> be <var>currentDepth</var>.
+
+ <li><p>Let <var>index</var> be <var>currentIndex</var>.
+
+ <li>
+  <p>While <var>index</var> is not 0:
+
+  <ol>
+   <li><p><a>Append if not too deep</a> with <var>path</var>[<var>index</var>],
+   <var>composedPath</var>, and <var>currentAllowedDepth</var>.
+
+   <li><p>Decrease <var>index</var> by 1.
+  </ol>
+
+ <li><p>Set <var>currentAllowedDepth</var> be <var>currentDepth</var>.
+
+ <li><p>Set <var>index</var> to <var>currentIndex</var> + 1.
+
+ <li>
+  <p>While <var>index</var> is not the <a>context object</a>'s <a for=Event>path</a>'s
+  <a for=list>size</a>:
+
+  <ol>
+   <li><p><a>Append if not too deep</a> with <var>path</var>[<var>index</var>],
+   <var>composedPath</var>, and <var>currentAllowedDepth</var>.
+
+   <li><p>Increase <var>index</var> by 1.
+  </ol>
+
+ <li><p>Return <var>composedPath</var>.
 </ol>
+
+<p class=note>Several loops through an <a>event</a>'s <a for=Event>path</a> are needed to avoid
+exposing unrelated <a>shadow trees</a> to each other. An integer is used to calculate what needs to
+be hidden to avoid extensive bookkeeping.
+<!-- https://bug-180378-attachments.webkit.org/attachment.cgi?id=349534 has a more extensive
+     explanation. -->
+
+<p>To <dfn>append if not too deep</dfn>, given a <var>struct</var>, <var>composedPath</var>, and
+<var>currentAllowedDepth</var>, run these steps:
+
+<ol>
+ <li><p>Let <var>depth</var> be <var>struct</var>'s <a for=Event/path>closed-shadow-tree-depth</a>.
+
+ <li><p>If <var>depth</var> is greater than <var>currentAllowedDepth</var>, then return.
+
+ <li><p>If <var>depth</var> is less than <var>currentAllowedDepth</var>, then set
+ <var>currentAllowedDepth</var> to <var>depth</var>.
+
+ <li><p><a for=list>Append</a> <var>struct</var>'s <a for=Event/path>item</a> to
+ <var>composedPath</var>.
+</ol>
+
+<p class=note>Even though <var>currentAllowedDepth</var> is an integer, it is treated here as if it
+were passed by reference.
 
 <p>The <dfn attribute for=Event><code>eventPhase</code></dfn> attribute must return the value it was
 initialized to, which must be one of the following:
@@ -972,11 +1012,15 @@ when something has occurred.
 object, an <a>event listener</a> is a broader concept as can be seen above.
 
 <p>Each {{EventTarget}} object also has an associated <dfn export>get the parent</dfn> algorithm,
-which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
-specified otherwise it returns null.
+which takes an <a>event</a> <var>event</var>, and returns null or a
+<dfn export>parent event target</dfn>, which is a <a for=/>tuple</a> consisting of an
+<dfn export for="parent event target">node</dfn> (an {{EventTarget}} object) and a
+<dfn export for="parent event target">depth change</dfn> (&minus;1, 0, or 1). Unless specified
+otherwise it returns null.
 
 <p class="note no-backref"><a for=/>Nodes</a>, <a for=/>shadow roots</a>, and <a>documents</a>
-override the <a>get the parent</a> algorithm.
+override the <a>get the parent</a> algorithm. <cite>Indexed Database API</cite> also overrides it
+for several objects. [[INDEXEDDB]]
 
 <p>Each {{EventTarget}} object can have an associated
 <dfn export for=EventTarget>activation behavior</dfn> algorithm. The
@@ -1236,74 +1280,61 @@ for discussion).
    <li><p>Let <var>slotable</var> be <var>target</var>, if <var>target</var> is a <a>slotable</a>
    and is <a for=slotable>assigned</a>, and null otherwise.
 
-   <li><p>Let <var>slot-in-closed-tree</var> be false.
+   <li><p>Let <var>closedShadowTreeDepth</var> be 0.
 
    <li><p>Let <var>parent</var> be the result of invoking <var>target</var>'s <a>get the parent</a>
    with <var>event</var>.
 
+   <li><p>Let <var>parentNode</var> be <var>parent</var>'s <a for="parent event target">node</a>.
+
    <li>
-    <p>While <var>parent</var> is non-null:</p>
+    <p>While <var>parentNode</var> is non-null:</p>
 
     <ol>
-     <li>
-      <p>If <var>slotable</var> is non-null:
-
-      <ol>
-       <li><p>Assert: <var>parent</var> is a <a for=/>slot</a>.
-
-       <li><p>Set <var>slotable</var> to null.
-
-       <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
-       <a for=ShadowRoot>mode</a> is "<code>closed</code>", then set <var>slot-in-closed-tree</var>
-       to true.
-      </ol>
-
-     <li><p>If <var>parent</var> is a <a>slotable</a> and is <a for=slotable>assigned</a>, then set
-     <var>slotable</var> to <var>parent</var>.
+     <li><p>Set <var>closedShadowTreeDepth</var> to <var>closedShadowTreeDepth</var> +
+     <var>parent</var>'s <a for="parent event target">depth change</a>.
 
      <li><p>Let <var>relatedTarget</var> be the result of <a>retargeting</a> <var>event</var>'s
-     <a for=Event>relatedTarget</a> against <var>parent</var>.
+     <a for=Event>relatedTarget</a> against <var>parentNode</var>.
 
      <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
      <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
      <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
-     <var>touchTarget</var> against <var>parent</var> to <var>touchTargets</var>.
+     <var>touchTarget</var> against <var>parentNode</var> to <var>touchTargets</var>.
 
      <li>
-      <p>If <var>parent</var> is a <a>node</a> and <var>target</var>'s <a for=tree>root</a> is a
-      <a>shadow-including inclusive ancestor</a> of <var>parent</var>, then:
+      <p>If <var>parentNode</var> is a <a>node</a> and <var>target</var>'s <a for=tree>root</a> is a
+      <a>shadow-including inclusive ancestor</a> of <var>parentNode</var>, then:
 
       <ol>
        <li><p>If <var>isActivationEvent</var> is true, <var>event</var>'s {{Event/bubbles}}
-       attribute is true, <var>activationTarget</var> is null, and <var>parent</var> has
+       attribute is true, <var>activationTarget</var> is null, and <var>parentNode</var> has
        <a for=EventTarget>activation behavior</a>, then set <var>activationTarget</var> to
-       <var>parent</var>.
+       <var>parentNode</var>.
 
-       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>, null,
-       <var>relatedTarget</var>, <var>touchTargets</var>, and <var>slot-in-closed-tree</var>.
+       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parentNode</var>, null,
+       <var>relatedTarget</var>, <var>touchTargets</var>, and <var>closedShadowTreeDepth</var>.
       </ol>
 
-     <li><p>Otherwise, if <var>parent</var> is <var>relatedTarget</var>, then set <var>parent</var>
-     to null.
+     <li><p>Otherwise, if <var>parentNode</var> is <var>relatedTarget</var>, then set
+     <var>parentNode</var> to null.
 
      <li>
-      <p>Otherwise, set <var>target</var> to <var>parent</var> and then:
+      <p>Otherwise, set <var>target</var> to <var>parentNode</var> and then:
 
       <ol>
        <li><p>If <var>isActivationEvent</var> is true, <var>activationTarget</var> is null, and
        <var>target</var> has <a for=EventTarget>activation behavior</a>, then set
        <var>activationTarget</var> to <var>target</var>.
 
-       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parent</var>,
+       <li><p><a>Append to an event path</a> with <var>event</var>, <var>parentNode</var>,
        <var>target</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and
-       <var>slot-in-closed-tree</var>.
+       <var>closedShadowTreeDepth</var>.
       </ol>
 
-     <li><p>If <var>parent</var> is non-null, then set <var>parent</var> to the result of invoking
-     <var>parent</var>'s <a>get the parent</a> with <var>event</var>.
-
-     <li><p>Set <var>slot-in-closed-tree</var> to false.
+     <li><p>If <var>parentNode</var> is non-null, then set <var>parent</var> to the result of
+     invoking <var>parentNode</var>'s <a>get the parent</a> with <var>event</var>.
     </ol>
 
    <li><p>Let <var>clearTargetsTuple</var> be the last tuple in <var>event</var>'s
@@ -1383,7 +1414,7 @@ for discussion).
 
 <p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
 <var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>,
-<var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these steps:</p>
+<var>touchTargets</var>, and a <var>closedShadowTreeDepth</var>, run these steps:</p>
 
 <ol>
  <li><p>Let <var>item-in-shadow-tree</var> be false.
@@ -1391,18 +1422,12 @@ for discussion).
  <li><p>If <var>target</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
  <a for=/>shadow root</a>, then set <var>item-in-shadow-tree</var> to true.
 
- <li><p>Let <var>root-of-closed-tree</var> be false.
-
- <li><p>If <var>target</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a> is
- "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
-
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
  whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>item-in-shadow-tree</a> is
  <var>item-in-shadow-tree</var>, <a for=Event/path>target</a> is <var>targetOverride</var>,
  <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
  <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
- <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
- <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
+ <a for=Event/path>closed-shadow-tree-depth</a> is <var>closedShadowTreeDepth</var>.
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>tuple</var>,
@@ -1523,8 +1548,8 @@ for discussion).
      <li>
       <p>Set <var>legacyOutputDidListenersThrowFlag</var> if given.
 
-      <p class=note>The <var>legacyOutputDidListenersThrowFlag</var> is only used by Indexed
-      Database API. [[INDEXEDDB]]
+      <p class=note>The <var>legacyOutputDidListenersThrowFlag</var> is only used by <cite>Indexed
+      Database API</cite>. [[INDEXEDDB]]
     </ol>
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
@@ -3731,9 +3756,25 @@ is used by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFra
 <p class="note no-backref">A <a>node</a>'s <a for=Node>node document</a> can be changed by the
 <a>adopt</a> algorithm.
 
-<p>A <a>node</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns the
-<a>node</a>'s <a>assigned slot</a>, if <a>node</a> is <a>assigned</a>, and <a>node</a>'s
-<a for=tree>parent</a> otherwise.
+<p>A <a>node</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, is as follows:
+
+<ol>
+ <li><p>Let <var>parent</var> be <a>node</a>'s <a for=tree>parent</a>.
+
+ <li><p>Let <var>depth</var> be 0.
+
+ <li>
+  <p>If <a>node</a> is <a>assigned</a>, then:
+
+  <ol>
+   <li><p>Set <var>parent</var> to <a>node</a>'s <a>assigned slot</a>.
+
+   <li><p>If <var>parent</var>'s <a for=tree>root</a>'s <a for=ShadowRoot>mode</a> is
+   "<code>closed</code>", then set <var>depth</var> to 1.
+  </ol>
+
+ <li><p>Return (<var>parent</var>, <var>depth</var>).
+</ol>
 
 <p class="note no-backref">Each <a for=/>node</a> also has a <a>registered observer list</a>.
 
@@ -4812,10 +4853,14 @@ is "<code>quirks</code>", and
  are nonsensical.)
 </div>
 
-<p>A <a>document</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
-null if <var>event</var>'s {{Event/type}} attribute value is "<code>load</code>" or
-<a>document</a> does not have a <a for=Document>browsing context</a>, and the <a>document</a>'s
-<a>relevant global object</a> otherwise.
+<p>A <a>document</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, is as follows:
+
+<ol>
+ <li><p>If <var>event</var>'s {{Event/type}} attribute value is "<code>load</code>" or
+ <a>document</a> does not have a <a for=Document>browsing context</a>, then return null.
+
+ <li><p>Return (<a>document</a>'s <a>relevant global object</a>, 0).
+</ol>
 
 <hr>
 
@@ -5683,10 +5728,21 @@ or "<code>closed</code>").</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
 
-<p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
-null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
-<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first tuple's <b>item</b>, and
-<a for=/>shadow root</a>'s <a for=DocumentFragment>host</a> otherwise.
+<p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, is as
+follows:
+
+<ol>
+ <li><p>If <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
+ <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first tuple's <b>item</b>, then
+ return null.
+
+ <li><p>Let <var>depth</var> be 0.
+
+ <li><p>If <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is "<code>closed</code>", then set
+ <var>depth</var> to &minus;1.
+
+ <li><p>Return (<a for=/>shadow root</a>'s <a for=DocumentFragment>host</a>, <var>depth</var>).
+</ol>
 
 <p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
