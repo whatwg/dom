@@ -587,38 +587,101 @@ was initialized to. When an <a>event</a> is created the attribute must be initia
 steps:
 
 <ol>
- <li><p>Let <var>reversedComposedPath</var> be an empty <a for=/>list</a>.
+ <li><p>Let <var>composedPath</var> be an empty <a for=/>list</a>.
 
- <li><p>Let <var>hiddenSubtreeLevel</var> be 0.
+ <li><p>Let <var>path</var> be the <a>context object</a>'s <a for=Event>path</a>.
 
- <li><p>Let <var>hasSeenCurrentTarget</var> be false.
+ <li><p>If <var>path</var> <a for=list>is empty</a>, then return <var>composedPath</var>.
 
  <li><p>Let <var>currentTarget</var> be the <a>context object</a>'s {{Event/currentTarget}}
  attribute value.
 
- <li><p>Let <var>reversedPath</var> be the <a>context object</a>'s <a for=Event>path</a>, in reverse
- order.
+ <li><p><a for=list>Append</a> <var>currentTarget</var> to <var>composedPath</var>.
+
+ <li><p>Let <var>currentTargetIndex</var> be 0.
+
+ <li><p>Let <var>currentTargetHiddenSubtreeLevel</var> be 0.
+
+ <li><p>Let <var>index</var> be <var>path</var>'s <a for=list>size</a> &minus; 1.
 
  <li>
-  <p><a for=list>For each</a> <var>struct</var> in <var>reversedPath</var>:
+  <p>While <var>index</var> is greater than or equal to 0:
 
   <ol>
-   <li><p>If <var>struct</var>'s <a for=Event/path>item</a> is <var>currentTarget</var>, then set
-   <var>hasSeenCurrentTarget</var> to true.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
+   then increase <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
-   <li><p>Otherwise, if <var>hasSeenCurrentTarget</var> is true and <var>struct</var>'s
-   <a for=Event/path>root-of-closed-tree</a> is true, then increase <var>hiddenSubtreeLevel</var> by
-   1.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> is
+   <var>currentTarget</var>, then set <var>currentTargetIndex</var> to <var>index</var> and
+   <a for=iteration>break</a>.
 
-   <li><p>If <var>hiddenSubtreeLevel</var> is 0, then <a for=list>append</a> <var>struct</var>'s
-   <a for=Event/path>item</a> to <var>reversedComposedPath</var>.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
+   then decrease <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
-   <li><p>If <var>struct</var>'s <a for=Event/path>slot-in-closed-tree</a> is true and
-   <var>hiddenSubtreeLevel</var> is greater than 0, then decrease <var>hiddenSubtreeLevel</var> by
-   1.
+   <li><p>Decrease <var>index</var> by 1.
   </ol>
 
- <li><p>Return <var>reversedComposedPath</var>, in reverse order.
+ <li><p>Let <var>currentHiddenLevel</var> and <var>maxHiddenLevel</var> be
+ <var>currentTargetHiddenSubtreeLevel</var>.
+
+ <li><p>Set <var>index</var> to <var>currentTargetIndex</var> &minus; 1.
+
+ <li>
+  <p>While <var>index</var> is greater than or equal to 0:
+
+  <ol>
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
+   then increase <var>currentHiddenLevel</var> by 1.
+
+   <li><p>If <var>currentHiddenLevel</var> is less than <var>maxHiddenLevel</var>, then
+   <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> to
+   <var>composedPath</var>.
+
+   <li>
+    <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
+    then:
+
+    <ol>
+     <li><p>Decrease <var>currentHiddenLevel</var> by 1.
+
+     <li><p>If <var>currentHiddenLevel</var> is less than <var>maxHiddenLevel</var>, then set
+     <var>maxHiddenLevel</var> to <var>currentHiddenLevel</var>.
+    </ol>
+
+   <li><p>Decrease <var>index</var> by 1.
+  </ol>
+
+ <li><p>Set <var>currentHiddenLevel</var> and <var>maxHiddenLevel</var> to
+ <var>currentTargetHiddenSubtreeLevel</var>.
+
+ <li><p>Set <var>index</var> to <var>currentTargetIndex</var> + 1.
+
+ <li>
+  <p>While <var>index</var> is less than <var>path</var>'s <a for=list>size</a>:
+
+  <ol>
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
+   then increase <var>currentHiddenLevel</var> by 1.
+
+   <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
+   <a for=list>append</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> to
+   <var>composedPath</var>.
+
+   <li>
+    <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
+    then:
+
+    <ol>
+     <li><p>Decrease <var>currentHiddenLevel</var> by 1.
+
+     <li><p>If <var>currentHiddenLevel</var> is less than <var>maxHiddenLevel</var>, then set
+     <var>maxHiddenLevel</var> to <var>currentHiddenLevel</var>.
+    </ol>
+
+   <li><p>Increase <var>index</var> by 1.
+  </ol>
+
+ <li><p>Return <var>composedPath</var>.
 </ol>
 
 <p>The <dfn attribute for=Event><code>eventPhase</code></dfn> attribute must return the value it was
