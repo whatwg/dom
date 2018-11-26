@@ -2206,16 +2206,17 @@ steps:
 
 <h5 id=signaling-slot-change>Signaling slot change</h5>
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> has a
-<dfn export>signal slot list</dfn> (a list of <a>slots</a>). Unless stated otherwise it is empty.
-[[!HTML]]
+<p>Each <a>similar-origin window agent</a> has a <dfn export>signal slot list</dfn> (a list of
+<a>slots</a>). Unless stated otherwise it is empty. [[!HTML]]
 
 <p>To <dfn noexport>signal a slot change</dfn>, for a <a>slot</a> <var>slot</var>, run these steps:
 
 <ol>
- <li><p>If <var>slot</var> is not in <a>unit of related similar-origin browsing contexts</a>'
- <a>signal slot list</a>, append <var>slot</var> to
- <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+ <li><p>Let <var>agent</var> be the <a>similar-origin window agent</a> to which <var>slot</var>'s
+ <a>relevant Realm</a> belongs.
+
+ <li><p>If <var>slot</var> is not in <var>agent</var>'s <a>signal slot list</a>, then
+ <a for=list>append</a> <var>slot</var> to <var>agent</var>'s <a>signal slot list</a>.
 
  <li><p><a>Queue a mutation observer compound microtask</a>.
 </ol>
@@ -3189,13 +3190,12 @@ invoked, must run these steps:
 
 <h3 id=mutation-observers>Mutation observers</h3>
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> has a
+<p>Each <a>similar-origin window agent</a> has a
 <dfn noexport>mutation observer compound microtask queued flag</dfn>, which is initially unset.
 [[!HTML]]
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> also has a
-<dfn noexport>mutation observer list</dfn> (a <a for=/>list</a> of zero or more {{MutationObserver}}
-objects), which is initially empty.
+<p>Each <a>similar-origin window agent</a> also has a <dfn noexport>mutation observer list</dfn> (a
+<a for=/>list</a> of zero or more {{MutationObserver}} objects), which is initially empty.
 
 <p>To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
 
@@ -3213,14 +3213,16 @@ objects), which is initially empty.
 <ol>
  <li><p>Unset <a>mutation observer compound microtask queued flag</a>.
 
- <li><p>Let <var>notifyList</var> be a <a for=list>clone</a> of
- <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
+ <li><p>Let <var>agent</var> be the <a>similar-origin window agent</a> <a>current Realm</a> belongs
+ to.
 
- <li><p>Let <var>signalList</var> be a <a for=list>clone</a> of
- <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+ <li><p>Let <var>notifyList</var> be a <a for=list>clone</a> of <var>agent</var>'s
+ <a>mutation observer list</a>.
 
- <li><p><a for=list>Empty</a> <a>unit of related similar-origin browsing contexts</a>'
+ <li><p>Let <var>signalList</var> be a <a for=list>clone</a> of <var>agent</var>'s
  <a>signal slot list</a>.
+
+ <li><p><a for=list>Empty</a> <var>agent</var>'s <a>signal slot list</a>.
 
  <li>
   <p><a for=list>For each</a> <var>mo</var> of <var>notifyList</var>,
@@ -3384,8 +3386,10 @@ constructor, when invoked, must run these steps:
  <li><p>Let <var>mo</var> be a new {{MutationObserver}} object whose
  <a for=MutationObserver>callback</a> is <var>callback</var>.
 
- <li><p><a for=list>Append</a> <var>mo</var> to
- <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
+ <li><p>Let <var>agent</var> be the <a>similar-origin window agent</a> <var>mo</var>'s
+ <a>relevant Realm</a> belongs to.
+
+ <li><p><a for=list>Append</a> <var>mo</var> to <var>agent</var>'s <a>mutation observer list</a>.
 
  <li><p>Return <var>mo</var>.
 </ol>
