@@ -30,7 +30,9 @@ type: interface
   text: WebGLContextEvent
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
  text: Construct; url: sec-construct; type: abstract-op
- text: Realm; url: realm; type: dfn
+ type: dfn
+  text: Realm; url: realm
+  text: surrounding agent; url: surrounding-agent
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: time origin; url: dfn-time-origin
@@ -2273,16 +2275,14 @@ steps:
 
 <h5 id=signaling-slot-change>Signaling slot change</h5>
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> has a
-<dfn export>signal slot list</dfn> (a list of <a>slots</a>). Unless stated otherwise it is empty.
-[[!HTML]]
+<p>Each <a>similar-origin window agent</a> has <dfn noexport id=signal-slot-list>signal slots</dfn>
+(a <a for=/>set</a> of <a>slots</a>), which is initially empty. [[!HTML]]
 
 <p>To <dfn noexport>signal a slot change</dfn>, for a <a>slot</a> <var>slot</var>, run these steps:
 
 <ol>
- <li><p>If <var>slot</var> is not in <a>unit of related similar-origin browsing contexts</a>'
- <a>signal slot list</a>, append <var>slot</var> to
- <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+ <li><p><a for=set>Append</a> <var>slot</var> to <var>slot</var>'s <a>relevant agent</a>'s
+ <a>signal slots</a>.
 
  <li><p><a>Queue a mutation observer compound microtask</a>.
 </ol>
@@ -3256,13 +3256,13 @@ invoked, must run these steps:
 
 <h3 id=mutation-observers>Mutation observers</h3>
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> has a
+<p>Each <a>similar-origin window agent</a> has a
 <dfn noexport>mutation observer compound microtask queued flag</dfn>, which is initially unset.
 [[!HTML]]
 
-<p>Each <a>unit of related similar-origin browsing contexts</a> also has a
-<dfn noexport>mutation observer list</dfn> (a <a for=/>list</a> of zero or more {{MutationObserver}}
-objects), which is initially empty.
+<p>Each <a>similar-origin window agent</a> also has
+<dfn noexport id=mutation-observer-list>mutation observers</dfn> (a <a for=/>set</a> of zero or more
+{{MutationObserver}} objects), which is initially empty.
 
 <p>To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
 
@@ -3280,17 +3280,16 @@ objects), which is initially empty.
 <ol>
  <li><p>Unset <a>mutation observer compound microtask queued flag</a>.
 
- <li><p>Let <var>notifyList</var> be a <a for=list>clone</a> of
- <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
+ <li><p>Let <var>notifySet</var> be a <a for=set>clone</a> of the <a>surrounding agent</a>'s
+ <a>mutation observers</a>.
 
- <li><p>Let <var>signalList</var> be a <a for=list>clone</a> of
- <a>unit of related similar-origin browsing contexts</a>' <a>signal slot list</a>.
+ <li><p>Let <var>signalSet</var> be a <a for=set>clone</a> of the <a>surrounding agent</a>'s
+ <a>signal slots</a>.
 
- <li><p><a for=list>Empty</a> <a>unit of related similar-origin browsing contexts</a>'
- <a>signal slot list</a>.
+ <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s <a>signal slots</a>.
 
  <li>
-  <p><a for=list>For each</a> <var>mo</var> of <var>notifyList</var>,
+  <p><a for=set>For each</a> <var>mo</var> of <var>notifySet</var>,
   <a>execute a compound microtask subtask</a> to run these steps: [[!HTML]]
 
   <ol>
@@ -3309,7 +3308,7 @@ objects), which is initially empty.
    and <var>mo</var>. If this throws an exception, then <a>report the exception</a>.
   </ol>
 
- <li><p><a for=list>For each</a> <var>slot</var> of <var>signalList</var>, <a>fire an event</a>
+ <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>, <a>fire an event</a>
  named <code>slotchange</code>, with its {{Event/bubbles}} attribute set to true, at
  <var>slot</var>.
 </ol>
@@ -3451,8 +3450,8 @@ constructor, when invoked, must run these steps:
  <li><p>Let <var>mo</var> be a new {{MutationObserver}} object whose
  <a for=MutationObserver>callback</a> is <var>callback</var>.
 
- <li><p><a for=list>Append</a> <var>mo</var> to
- <a>unit of related similar-origin browsing contexts</a>' <a>mutation observer list</a>.
+ <li><p><a for=set>Append</a> <var>mo</var> to <var>mo</var>'s <a>relevant agent</a>'s
+ <a>mutation observers</a>.
 
  <li><p>Return <var>mo</var>.
 </ol>
