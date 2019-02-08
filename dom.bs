@@ -2389,16 +2389,13 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed <var ignore>insertedNode</var>, as indicated in the <a for=/>insert</a>
-algorithm below.
-<!-- See https://github.com/whatwg/dom/issues/34#issuecomment-125571750 for why we might need to
-     adjust this further based on the requirements of the script element. There might be other ways
-     to define that though as Olli suggests, so leaving that out for now. -->
+algorithm is passed <var ignore>insertedNode</var> and <var ignore>deferredStepsQueue</var>, as
+indicated in the <a for=/>insert</a> algorithm below.
 
 <p><a lt="other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
-<a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a>,
-<a for=/>remove</a>, and <a for=/>replace data</a>.
+<a for=/>nodes</a>. The algorithm is passed <var ignore>deferredStepsQueue</var> and is called from
+<a for=/>insert</a>, <a for=/>remove</a>, and <a for=/>replace data</a>.
 
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <var>node</var> into a <var>parent</var>
 before a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
@@ -2437,8 +2434,10 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
  <var>parent</var>'s <a>last child</a> if <var>child</var> is null.
 
+ <li><p>Let <var>deferredStepsQueue</var> be an empty <a>queue</a>.
+
  <li>
-  <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
+  <p><a for=list>For each</a> <var>node</var> in <var>nodes</var>:
 
   <ol>
    <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
@@ -2461,7 +2460,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
     <var>node</var>, in <a>shadow-including tree order</a>:
 
     <ol>
-     <li><p>Run the <a>insertion steps</a> with <var>inclusiveDescendant</var>.
+     <li><p>Run the <a>insertion steps</a> with <var>inclusiveDescendant</var> and
+     <var>deferredStepsQueue</var>.
 
      <li>
       <p>If <var>inclusiveDescendant</var> is <a>connected</a>, then:
@@ -2487,7 +2487,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
- <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var> with
+ <var>deferredStepsQueue</var>.
+
+ <li><p>While <var>deferredStepsQueue</var> <a for=list>is not empty</a>, run the result of
+ <a>dequeueing</a> <var>deferredStepsQueue</var>.
 </ol>
 
 
