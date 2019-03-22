@@ -2287,7 +2287,7 @@ steps:
  <li><p><a for=set>Append</a> <var>slot</var> to <var>slot</var>'s <a>relevant agent</a>'s
  <a>signal slots</a>.
 
- <li><p><a>Queue a mutation observer compound microtask</a>.
+ <li><p><a>Queue a mutation observer microtask</a>.
 </ol>
 
 
@@ -3260,28 +3260,30 @@ invoked, must run these steps:
 <h3 id=mutation-observers>Mutation observers</h3>
 
 <p>Each <a>similar-origin window agent</a> has a
-<dfn noexport>mutation observer compound microtask queued flag</dfn>, which is initially unset.
-[[!HTML]]
+<dfn noexport id=mutation-observer-compound-microtask-queued-flag>mutation observer microtask queued</dfn>
+(a boolean), which is initially false. [[!HTML]]
 
 <p>Each <a>similar-origin window agent</a> also has
 <dfn noexport id=mutation-observer-list>mutation observers</dfn> (a <a for=/>set</a> of zero or more
 {{MutationObserver}} objects), which is initially empty.
 
-<p>To <dfn export>queue a mutation observer compound microtask</dfn>, run these steps:
+<p>To
+<dfn noexport id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>,
+run these steps:
 
 <ol>
- <li><p>If <a>mutation observer compound microtask queued flag</a> is set, then return.
+ <li><p>If the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> is true, then
+ return.
 
- <li><p>Set <a>mutation observer compound microtask queued flag</a>.
+ <li><p>Set the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> to true.
 
- <li><p><a lt="queue a microtask">Queue</a> a <a>compound microtask</a> to
- <a>notify mutation observers</a>.
+ <li><p><a lt="queue a microtask">Queue</a> a <a>microtask</a> to <a>notify mutation observers</a>.
 </ol>
 
 <p>To <dfn export>notify mutation observers</dfn>, run these steps:
 
 <ol>
- <li><p>Unset <a>mutation observer compound microtask queued flag</a>.
+ <li><p>Set the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> to false.
 
  <li><p>Let <var>notifySet</var> be a <a for=set>clone</a> of the <a>surrounding agent</a>'s
  <a>mutation observers</a>.
@@ -3292,8 +3294,7 @@ invoked, must run these steps:
  <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s <a>signal slots</a>.
 
  <li>
-  <p><a for=set>For each</a> <var>mo</var> of <var>notifySet</var>,
-  <a>execute a compound microtask subtask</a> to run these steps: [[!HTML]]
+  <p><a for=set>For each</a> <var>mo</var> of <var>notifySet</var>:
 
   <ol>
    <li><p>Let <var>records</var> be a <a for=queue>clone</a> of <var>mo</var>'s
@@ -3620,7 +3621,7 @@ run these steps:
    <a for=MutationObserver>record queue</a>.
   </ol>
 
- <li><p><a>Queue a mutation observer compound microtask</a>.
+ <li><p><a>Queue a mutation observer microtask</a>.
 </ol>
 
 <p>To <dfn noexport>queue a tree mutation record</dfn> for <var>target</var> with
