@@ -483,10 +483,10 @@ empty list.
 {{TouchEvent}} interface and related interfaces. [[TOUCH-EVENTS]]
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
-<a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
-<dfn for=Event/path>item</dfn> (an {{EventTarget}} object), an
-<dfn for=Event/path>item-in-shadow-tree</dfn> (a boolean), a <dfn for=Event/path>target</dfn> (a
-<a>potential event target</a>), a
+<a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of a
+<dfn for=Event/path>current target</dfn> (an {{EventTarget}} object), a
+<dfn for=Event/path>current-target-in-shadow-tree</dfn> (a boolean), a
+<dfn for=Event/path>target</dfn> (a <a>potential event target</a>), a
 <dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
 <a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
 of <a>potential event targets</a>), a <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and
@@ -516,10 +516,11 @@ the empty list.</p>
  invoked.
 
  <dt><code><var>event</var> . {{Event/composedPath()}}</code>
- <dd>Returns the <a for=Event/path>item</a> objects of <var>event</var>'s <a for=Event>path</a>
- (objects on which listeners will be invoked), except for any <a for=/>nodes</a> in
- <a for=/>shadow trees</a> of which the <a for=/>shadow root</a>'s <a for=ShadowRoot>mode</a> is
- "<code>closed</code>" that are not reachable from <var>event</var>'s {{Event/currentTarget}}.
+ <dd>Returns the <a for=Event/path>current target</a> objects of <var>event</var>'s
+ <a for=Event>path</a> (objects on which listeners will be invoked), except for any
+ <a for=/>nodes</a> in <a for=/>shadow trees</a> of which the <a for=/>shadow root</a>'s
+ <a for=ShadowRoot>mode</a> is "<code>closed</code>" that are not reachable from <var>event</var>'s
+ {{Event/currentTarget}}.
 
  <dt><code><var>event</var> . {{Event/eventPhase}}</code>
  <dd>Returns the <a>event</a>'s phase, which is one of {{Event/NONE}},
@@ -613,7 +614,7 @@ steps:
    <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
    then increase <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> is
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a> is
    <var>currentTarget</var>, then set <var>currentTargetIndex</var> to <var>index</var> and
    <a for=iteration>break</a>.
 
@@ -636,8 +637,8 @@ steps:
    then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
-   <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> to
-   <var>composedPath</var>.
+   <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a>
+   to <var>composedPath</var>.
 
    <li>
     <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
@@ -666,8 +667,8 @@ steps:
    then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
-   <a for=list>append</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>item</a> to
-   <var>composedPath</var>.
+   <a for=list>append</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a>
+   to <var>composedPath</var>.
 
    <li>
     <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
@@ -1462,23 +1463,24 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
-<var>event</var>, <var>target</var>, <var>targetOverride</var>, <var>relatedTarget</var>,
+<var>event</var>, <var>currentTarget</var>, <var>target</var>, <var>relatedTarget</var>,
 <var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these steps:</p>
 
 <ol>
- <li><p>Let <var>item-in-shadow-tree</var> be false.
+ <li><p>Let <var>current-target-in-shadow-tree</var> be false.
 
- <li><p>If <var>target</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
- <a for=/>shadow root</a>, then set <var>item-in-shadow-tree</var> to true.
+ <li><p>If <var>currentTarget</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
+ <a for=/>shadow root</a>, then set <var>current-target-in-shadow-tree</var> to true.
 
  <li><p>Let <var>root-of-closed-tree</var> be false.
 
- <li><p>If <var>target</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a> is
- "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
+ <li><p>If <var>currentTarget</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a>
+ is "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
 
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
- whose <a for=Event/path>item</a> is <var>target</var>, <a for=Event/path>item-in-shadow-tree</a> is
- <var>item-in-shadow-tree</var>, <a for=Event/path>target</a> is <var>targetOverride</var>,
+ whose <a for=Event/path>current target</a> is <var>currentTarget</var>,
+ <a for=Event/path>current-target-in-shadow-tree</a> is <var>current-target-in-shadow-tree</var>,
+ <a for=Event/path>target</a> is <var>target</var>,
  <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
  <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
@@ -1503,7 +1505,7 @@ run these steps:
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
  <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>struct</var>'s
- <a for=Event/path>item</a>.
+ <a for=Event/path>current target</a>.
 
  <li>
   <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>event</var>'s
@@ -1584,8 +1586,8 @@ run these steps:
     <ol>
      <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
 
-     <li><p>If <var>struct</var>'s <a for=Event/path>item-in-shadow-tree</a> is false, then set
-     <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
+     <li><p>If <var>struct</var>'s <a for=Event/path>current-target-in-shadow-tree</a> is false,
+     then set <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
     </ol>
 
    <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
@@ -5762,8 +5764,8 @@ or "<code>closed</code>").</p>
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
-<a for=Event/path>item</a>, and <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a>
-otherwise.
+<a for=Event/path>current target</a>, and <a for=/>shadow root</a>'s
+<a for=DocumentFragment>host</a> otherwise.
 
 <p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
 <a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
