@@ -2379,8 +2379,6 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
  <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
  <var>node</var>'s <a for=tree>next sibling</a>.
 
- <li><p><a>Adopt</a> <var>node</var> into <var>parent</var>'s <a for=Node>node document</a>.
-
  <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>.
 
  <li><p>Return <var>node</var>.
@@ -2441,6 +2439,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
   <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
 
   <ol>
+   <li><p><a>Adopt</a> <var>node</var> into <var>parent</var>'s <a for=Node>node document</a>.
+
    <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
    <var>parent</var>'s <a for=tree>children</a>.
 
@@ -2553,8 +2553,6 @@ within a <var>parent</var>, run these steps:
 
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a>.
 
- <li><p><a>Adopt</a> <var>node</var> into <var>parent</var>'s <a for=Node>node document</a>.
-
  <li><p>Let <var>removedNodes</var> be the empty list.
 
  <li>
@@ -2587,9 +2585,6 @@ within a <var>parent</var>, run these steps:
 within a <var>parent</var>, run these steps:
 
 <ol>
- <li><p>If <var>node</var> is non-null, then <a>adopt</a> <var>node</var> into <var>parent</var>'s
- <a for=Node>node document</a>.
-
  <li><p>Let <var>removedNodes</var> be <var>parent</var>'s <a>children</a>.
 
  <li><p>Let <var>addedNodes</var> be the empty list.
@@ -5304,16 +5299,18 @@ The <dfn method for=Document><code>adoptNode(<var>node</var>)</code></dfn> metho
 must run these steps:
 
 <ol>
- <li>If <var>node</var> is a <a>document</a>, then <a>throw</a> a
+ <li><p>If <var>node</var> is a <a>document</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li>If <var>node</var> is a <a for=/>shadow root</a>, then <a>throw</a> a
+ <li><p>If <var>node</var> is a <a for=/>shadow root</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
- <li><a>Adopt</a> <var>node</var>
- into the <a>context object</a>.
+ <li><p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a> whose
+ <a for=DocumentFragment>host</a> is non-null, then return.
 
- <li>Return <var>node</var>.
+ <li><p><a>Adopt</a> <var>node</var> into the <a>context object</a>.
+
+ <li><p>Return <var>node</var>.
 </ol>
 
 <hr>
