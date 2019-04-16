@@ -2839,6 +2839,7 @@ interface mixin ParentNode {
 
   [CEReactions, Unscopable] void prepend((Node or DOMString)... nodes);
   [CEReactions, Unscopable] void append((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void replaceContents((Node or DOMString)... nodes);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -2870,6 +2871,15 @@ Element includes ParentNode;
   <!-- "NotFoundError" is impossible -->
 
  <dt><code><var>node</var> . <a method for=ParentNode lt="append()">append</a>(<var>nodes</var>)</code>
+ <dd>
+  <p>Inserts <var>nodes</var> after the <a>last child</a> of <var>node</var>, while replacing
+  strings in <var>nodes</var> with equivalent {{Text}} <a for=/>nodes</a>.
+
+  <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
+  the <a>node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var>node</var> . <a method for=ParentNode lt="replaceContents()">replaceContents</a>(<var>nodes</var>)</code>
  <dd>
   <p>Inserts <var>nodes</var> after the <a>last child</a> of <var>node</var>, while replacing
   strings in <var>nodes</var> with equivalent {{Text}} <a for=/>nodes</a>.
@@ -2923,6 +2933,45 @@ must run these steps:
  <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Append</a> <var>node</var> to <a>context object</a>.
+</ol>
+
+<p>The <dfn method for=ParentNode><code>replaceContents(<var>nodes</var>)</code></dfn> method, when invoked,
+must run these steps:
+
+<ol>
+  <li><a for=/>Remove</a> all
+  <var>parent</var>'s <a>children</a>, in
+  <a>tree order</a>, with the
+  <i>suppress observers flag</i> set.
+
+  <li><p>If <var>node</var> is not null, then <a for=/>insert</a> <var>node</var> into
+  <var>parent</var> before null with the <i>suppress observers flag</i> set.
+
+  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
+  <var>removedNodes</var>, null, and null.
+
+  <li>Let <var>removedNodes</var> be <var>context object</var>'s
+  <a>children</a>.
+
+  <li>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+  <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+
+  <li>Let <var>addedNodes</var> be the empty list if <var>node</var> is
+  null, <var>node</var>'s <a>children</a> if
+  <var>node</var> is a {{DocumentFragment}}
+  <a>node</a>, and a list containing <var>node</var>
+  otherwise.
+
+  <li><a for=/>Remove</a> all
+  <var>context object</var>'s <a>children</a>, in
+  <a>tree order</a>, with the
+  <i>suppress observers flag</i> set.
+
+  <li><p><a>Append</a> <var>addedNodes</var> to <a>context object</a>, with the
+  <i>suppress observers flag</i> set.
+
+  <li><p><a>Queue a tree mutation record</a> for <var>context object</var> with
+  <var>addedNodes</var>, <var>removedNodes</var>, null, and null.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method,
