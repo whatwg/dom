@@ -484,9 +484,9 @@ empty list.
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
 <a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of a
-<dfn for=Event/path>current target</dfn> (an {{EventTarget}} object), a
+<dfn for=Event/path>invocation target</dfn> (an {{EventTarget}} object), a
 <dfn for=Event/path>current-target-in-shadow-tree</dfn> (a boolean), a
-<dfn for=Event/path>target</dfn> (a <a>potential event target</a>), a
+<dfn for=Event/path>shadow-adjusted target</dfn> (a <a>potential event target</a>), a
 <dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
 <a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
 of <a>potential event targets</a>), a <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and
@@ -516,7 +516,7 @@ the empty list.</p>
  invoked.
 
  <dt><code><var>event</var> . {{Event/composedPath()}}</code>
- <dd>Returns the <a for=Event/path>current target</a> objects of <var>event</var>'s
+ <dd>Returns the <a for=Event/path>invocation target</a> objects of <var>event</var>'s
  <a for=Event>path</a> (objects on which listeners will be invoked), except for any
  <a for=/>nodes</a> in <a for=/>shadow trees</a> of which the <a for=/>shadow root</a>'s
  <a for=ShadowRoot>mode</a> is "<code>closed</code>" that are not reachable from <var>event</var>'s
@@ -614,7 +614,7 @@ steps:
    <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
    then increase <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a> is
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>invocation target</a> is
    <var>currentTarget</var>, then set <var>currentTargetIndex</var> to <var>index</var> and
    <a for=iteration>break</a>.
 
@@ -637,8 +637,8 @@ steps:
    then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
-   <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a>
-   to <var>composedPath</var>.
+   <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s
+   <a for=Event/path>invocation target</a> to <var>composedPath</var>.
 
    <li>
     <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
@@ -667,8 +667,8 @@ steps:
    then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
-   <a for=list>append</a> <var>path</var>[<var>index</var>]'s <a for=Event/path>current target</a>
-   to <var>composedPath</var>.
+   <a for=list>append</a> <var>path</var>[<var>index</var>]'s
+   <a for=Event/path>invocation target</a> to <var>composedPath</var>.
 
    <li>
     <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
@@ -1378,10 +1378,10 @@ for discussion).
     </ol>
 
    <li><p>Let <var>clearTargetsStruct</var> be the last struct in <var>event</var>'s
-   <a for=Event>path</a> whose <a for=Event/path>target</a> is non-null.
+   <a for=Event>path</a> whose <a for=Event/path>shadow-adjusted target</a> is non-null.
 
    <li><p>Let <var>clearTargets</var> be true if <var>clearTargetsStruct</var>'s
-   <a for=Event/path>target</a>, <var>clearTargetsStruct</var>'s
+   <a for=Event/path>shadow-adjusted target</a>, <var>clearTargetsStruct</var>'s
    <a for=Event/path>relatedTarget</a>, or an {{EventTarget}} object in
    <var>clearTargetsStruct</var>'s <a for=Event/path>touch target list</a> is a <a for=/>node</a>
    and its <a for=tree>root</a> is a <a for=/>shadow root</a>, and false otherwise.
@@ -1395,8 +1395,8 @@ for discussion).
     reverse order:
 
     <ol>
-     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is non-null, then set
-     <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+     <li><p>If <var>struct</var>'s <a for=Event/path>shadow-adjusted target</a> is non-null, then
+     set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
      <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
      {{Event/CAPTURING_PHASE}}.
@@ -1409,8 +1409,8 @@ for discussion).
     <p><a for=list>For each</a> <var>struct</var> in <var>event</var>'s <a for=Event>path</a>:
 
     <ol>
-     <li><p>If <var>struct</var>'s <a for=Event/path>target</a> is non-null, then set
-     <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
+     <li><p>If <var>struct</var>'s <a for=Event/path>shadow-adjusted target</a> is non-null, then
+     set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
      <li>
       <p>Otherwise:
@@ -1463,24 +1463,25 @@ for discussion).
 </ol>
 
 <p>To <dfn noexport id=concept-event-path-append>append to an event path</dfn>, given an
-<var>event</var>, <var>currentTarget</var>, <var>target</var>, <var>relatedTarget</var>,
-<var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these steps:</p>
+<var>event</var>, <var>invocationTarget</var>, <var>shadowAdjustedTarget</var>,
+<var>relatedTarget</var>, <var>touchTargets</var>, and a <var>slot-in-closed-tree</var>, run these
+steps:</p>
 
 <ol>
  <li><p>Let <var>current-target-in-shadow-tree</var> be false.
 
- <li><p>If <var>currentTarget</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
+ <li><p>If <var>invocationTarget</var> is a <a for=/>node</a> and its <a for=tree>root</a> is a
  <a for=/>shadow root</a>, then set <var>current-target-in-shadow-tree</var> to true.
 
  <li><p>Let <var>root-of-closed-tree</var> be false.
 
- <li><p>If <var>currentTarget</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a>
+ <li><p>If <var>invocationTarget</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a>
  is "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
 
  <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
- whose <a for=Event/path>current target</a> is <var>currentTarget</var>,
+ whose <a for=Event/path>invocation target</a> is <var>invocationTarget</var>,
  <a for=Event/path>current-target-in-shadow-tree</a> is <var>current-target-in-shadow-tree</var>,
- <a for=Event/path>target</a> is <var>target</var>,
+ <a for=Event/path>shadow-adjusted target</a> is <var>shadowAdjustedTarget</var>,
  <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
  <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
  <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
@@ -1492,9 +1493,10 @@ for discussion).
 run these steps:
 
 <ol>
- <li><p>Set <var>event</var>'s <a for=Event>target</a> to the <a for=Event/path>target</a> of the
- last struct in <var>event</var>'s <a for=Event>path</a>, that is either <var>struct</var> or
- preceding <var>struct</var>, whose <a for=Event/path>target</a> is non-null.
+ <li><p>Set <var>event</var>'s <a for=Event>target</a> to the
+ <a for=Event/path>shadow-adjusted target</a> of the last struct in <var>event</var>'s
+ <a for=Event>path</a>, that is either <var>struct</var> or preceding <var>struct</var>, whose
+ <a for=Event/path>shadow-adjusted target</a> is non-null.
 
  <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>struct</var>'s
  <a for=Event/path>relatedTarget</a>.
