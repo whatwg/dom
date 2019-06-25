@@ -5758,6 +5758,9 @@ enum ShadowRootMode { "open", "closed" };
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>mode</dfn> ("<code>open</code>"
 or "<code>closed</code>").</p>
 
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>delegates focus flag</dfn>.
+It is initially unset.</p>
+
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
@@ -5896,6 +5899,7 @@ interface Element : Node {
 
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
+  boolean delegatesFocus;
 };
 </pre>
 
@@ -6793,6 +6797,9 @@ invoked, must run these steps:
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
  is <a>context object</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is
  <a>context object</a>, and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
+
+ <li><p>If <var>init</var>'s {{ShadowRootInit/delegatesFocus}} is set to true,
+ set <var>shadow</var>'s <a for=ShadowRoot>delegates focus flag</a>.
 
  <li><p>Set <a>context object</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
