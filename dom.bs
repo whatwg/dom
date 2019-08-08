@@ -422,7 +422,7 @@ would have been {{Event/AT_TARGET}}.
 <h3 id=interface-event>Interface {{Event}}</h3>
 
 <pre class="idl">
-[Constructor(DOMString type, optional EventInit eventInitDict),
+[Constructor(DOMString type, optional EventInit eventInitDict = {}),
  Exposed=(Window,Worker,AudioWorklet)]
 interface Event {
   readonly attribute DOMString type;
@@ -840,7 +840,7 @@ workers or worklets, and is inaccurate for events dispatched in <a>shadow trees<
 <h3 id=interface-customevent>Interface {{CustomEvent}}</h3>
 
 <pre class=idl>
-[Constructor(DOMString type, optional CustomEventInit eventInitDict),
+[Constructor(DOMString type, optional CustomEventInit eventInitDict = {}),
  Exposed=(Window,Worker)]
 interface CustomEvent : Event {
   readonly attribute any detail;
@@ -996,8 +996,8 @@ for historical reasons.
 [Constructor,
  Exposed=(Window,Worker,AudioWorklet)]
 interface EventTarget {
-  void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
-  void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
+  void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = {});
+  void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = {});
   boolean dispatchEvent(Event event);
 };
 
@@ -3351,7 +3351,7 @@ they do not get lost when {{MutationObserverInit/subtree}} is set to true on <a 
 [Constructor(MutationCallback callback),
  Exposed=Window]
 interface MutationObserver {
-  void observe(Node target, optional MutationObserverInit options);
+  void observe(Node target, optional MutationObserverInit options = {});
   void disconnect();
   sequence&lt;MutationRecord> takeRecords();
 };
@@ -3758,7 +3758,7 @@ interface Node : EventTarget {
 
   readonly attribute boolean isConnected;
   readonly attribute Document? ownerDocument;
-  Node getRootNode(optional GetRootNodeOptions options);
+  Node getRootNode(optional GetRootNodeOptions options = {});
   readonly attribute Node? parentNode;
   readonly attribute Element? parentElement;
   boolean hasChildNodes();
@@ -4816,8 +4816,8 @@ interface Document : Node {
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 
-  [CEReactions, NewObject] Element createElement(DOMString localName, optional (DOMString or ElementCreationOptions) options);
-  [CEReactions, NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName, optional (DOMString or ElementCreationOptions) options);
+  [CEReactions, NewObject] Element createElement(DOMString localName, optional (DOMString or ElementCreationOptions) options = {});
+  [CEReactions, NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName, optional (DOMString or ElementCreationOptions) options = {});
   [NewObject] DocumentFragment createDocumentFragment();
   [NewObject] Text createTextNode(DOMString data);
   [NewObject] CDATASection createCDATASection(DOMString data);
@@ -5879,7 +5879,7 @@ interface Element : Node {
   [CEReactions] Attr? setAttributeNodeNS(Attr attr);
   [CEReactions] Attr removeAttributeNode(Attr attr);
 
-  ShadowRoot attachShadow(ShadowRootInit init);
+  ShadowRoot attachShadow(optional ShadowRootInit init = {});
   readonly attribute ShadowRoot? shadowRoot;
 
   Element? closest(DOMString selectors);
