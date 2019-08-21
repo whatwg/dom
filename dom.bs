@@ -7673,13 +7673,41 @@ false otherwise.
 <h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
 
 <pre class=idl>
-[Exposed=Window]
+dictionary StaticRangeInit {
+  required Node startContainer;
+  required unsigned long startOffset;
+  required Node endContainer;
+  required unsigned long endOffset;
+};
+
+[Constructor(StaticRangeInit staticRangeInitDict),
+ Exposed=Window]
 interface StaticRange : AbstractRange {
 };
 </pre>
 
-<p class=note>A future version of the {{StaticRange}} interface will provide a non-throwing
-constructor.
+<dl class=domintro>
+ <dt><code><var>staticRange</var> = new <a constructor>StaticRange(staticRangeInitDict)</a></code>
+ <dd>Returns a new <a>range</a> object that does not update when the <a>node tree</a> mutates.
+</dl>
+
+<p>The {{StaticRange}} constructor, when invoked, must run the following steps, given the
+<var>staticRangeInitDict</var> argument:
+
+<ol>
+ <li><p>If <var>staticRangeInitDict</var>'s {{StaticRangeInit/startContainer}} or
+ {{StaticRangeInit/endContainer}} is a {{DocumentType}} or {{Attr}} <a for=/>node</a>,
+ then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
+
+ <li><p>Let <var>staticRange</var> be the result of creating a new {{StaticRange}} object.
+
+ <li><p>Initialize <var>staticRange</var>'s {{AbstractRange/startContainer}}, {{AbstractRange/startOffset}},
+ {{AbstractRange/endContainer}} and {{AbstractRange/endOffset}} to <var>staticRangeInitDict</var>'s
+ {{StaticRangeInit/startContainer}}, {{StaticRangeInit/startOffset}}, {{StaticRangeInit/endContainer}} and
+ {{StaticRangeInit/endOffset}} respectively.
+
+ <li><p>Return <var>staticRange</var>.
+</ol>
 
 
 <h3 id=interface-range>Interface {{Range}}</h3>
