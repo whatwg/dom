@@ -9858,11 +9858,12 @@ the given value.
 <h2 id=xpath>XPath</h2>
 
 <p class=XXX><cite>DOM Level 3 XPath</cite> defined an API for evaluating <cite>XPath 1.0</cite>
-expressions. [[DOM-Level-3-XPath]] [[XPath]] These APIs are widely implemented, but
-<cite>DOM Level 3 XPath</cite> is no longer maintained. The DOM Standard does not attempt to
-define any of the behavior, but the interface definitions are maintained here so that they can
-be updated when Web IDL changes. [[WEBIDL]] See
-<a href="https://github.com/whatwg/dom/issues/67">whatwg/dom#67</a> for what remains undefined.
+expressions. These APIs are widely implemented, but have not been maintained. The interface
+definitions are maintained here so that they can be updated when <cite>Web IDL</cite> changes.
+Complete definitions of these APIs remain necessary and such work is tracked and can be contributed
+to in <a href="https://github.com/whatwg/dom/issues/67">whatwg/dom#67</a>. [[DOM-Level-3-XPath]]
+[[XPath]] [[WEBIDL]]
+
 
 <h3 id=interface-xpathresult>Interface {{XPathResult}}</h3>
 
@@ -9893,16 +9894,17 @@ interface XPathResult {
 };
 </pre>
 
+
 <h3 id=interface-xpathexpression>Interface {{XPathExpression}}</h3>
 
 <pre class=idl>
 [Exposed=Window]
 interface XPathExpression {
-  XPathResult evaluate(Node contextNode,
-                       optional unsigned short type = 0 /* ANY_TYPE */,
-                       optional XPathResult? result = null);
+  // XPathResult.ANY_TYPE = 0
+  XPathResult evaluate(Node contextNode, optional unsigned short type = 0, optional XPathResult? result = null);
 };
 </pre>
+
 
 <h3 id=mixin-xpathevaluatorbase>Mixin {{XPathEvaluatorBase}}</h3>
 
@@ -9912,18 +9914,14 @@ callback interface XPathNSResolver {
 };
 
 interface mixin XPathEvaluatorBase {
-  [NewObject] XPathExpression createExpression(DOMString expression,
-                                               optional XPathNSResolver? resolver = null);
+  [NewObject] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver = null);
   XPathNSResolver createNSResolver(Node nodeResolver);
-  XPathResult evaluate(DOMString expression,
-                       Node contextNode,
-                       optional XPathNSResolver? resolver = null,
-                       optional unsigned short type = 0 /* ANY_TYPE */,
-                       optional XPathResult? result = null);
+  // XPathResult.ANY_TYPE = 0
+  XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver = null, optional unsigned short type = 0, optional XPathResult? result = null);
 };
-
 Document includes XPathEvaluatorBase;
 </pre>
+
 
 <h3 id=interface-xpathevaluator>Interface {{XPathEvaluator}}</h3>
 
@@ -9936,6 +9934,7 @@ XPathEvaluator includes XPathEvaluatorBase;
 
 <p class=note>For historical reasons you can both construct {{XPathEvaluator}} and access the same
 methods on {{Document}}.
+
 
 
 <h2 id=historical>Historical</h2>
