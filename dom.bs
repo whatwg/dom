@@ -7553,6 +7553,15 @@ Necessarily, a <a>live range</a> might itself be modified as part of the mutatio
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
 algorithms for the hairy details.
 
+<p>Updating <a>live ranges</a> in response to <a>node tree</a> mutations can be expensive. For every
+<a>node tree</a> change, all affected {{Range}} objects need to be updated. Even if the application
+is uninterested in some <a>live ranges</a>, it still has to pay the cost of keeping them up-to-date
+when a mutation occurs.
+
+<p>A {{StaticRange}} object is a lightweight <a>range</a> that does not update when the
+<a>node tree</a> mutates. It is therefore not subject to the same maintenance cost as
+<a>live ranges</a>.
+
 
 <h3 id=boundary-points>Boundary points</h3>
 
@@ -7673,13 +7682,41 @@ false otherwise.
 <h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
 
 <pre class=idl>
-[Exposed=Window]
+dictionary StaticRangeInit {
+  required Node startContainer;
+  required unsigned long startOffset;
+  required Node endContainer;
+  required unsigned long endOffset;
+};
+
+[Constructor(StaticRangeInit init),
+ Exposed=Window]
 interface StaticRange : AbstractRange {
 };
 </pre>
 
-<p class=note>A future version of the {{StaticRange}} interface will provide a non-throwing
-constructor.
+<dl class=domintro>
+ <dt><code><var>staticRange</var> = new <a constructor lt="StaticRange(init)">StaticRange</a>(init)</code>
+ <dd><p>Returns a new <a>range</a> object that does not update when the <a>node tree</a> mutates.
+</dl>
+
+<p>The <dfn constructor for=StaticRange><code>StaticRange(<var>init</var>)</code></dfn> constructor,
+when invoked, must run these steps:
+
+<ol>
+ <li><p>If <var>init</var>'s {{StaticRangeInit/startContainer}} or {{StaticRangeInit/endContainer}}
+ is a {{DocumentType}} or {{Attr}} <a for=/>node</a>, then <a>throw</a> an
+ "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
+
+ <li><p>Let <var>staticRange</var> be a new {{StaticRange}} object.
+
+ <li><p>Set <var>staticRange</var>'s <a for=range>start</a> to (<var>init</var>'s
+ {{StaticRangeInit/startContainer}}, <var>init</var>'s {{StaticRangeInit/startOffset}}) and
+ <a for=range>end</a> to (<var>init</var>'s {{StaticRangeInit/endContainer}}, <var>init</var>'s
+ {{StaticRangeInit/endOffset}}).
+
+ <li><p>Return <var>staticRange</var>.
+</ol>
 
 
 <h3 id=interface-range>Interface {{Range}}</h3>
@@ -10100,6 +10137,7 @@ Ryosuke Niwa,
 Sam Dutton,
 Sam Sneddon,
 Samuel Giles,
+Sanket Joshi,
 Sebastian Mayr,
 Seo Sanghyeon,
 Sergey G. Grekhov,
