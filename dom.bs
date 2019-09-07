@@ -422,9 +422,10 @@ would have been {{Event/AT_TARGET}}.
 <h3 id=interface-event>Interface {{Event}}</h3>
 
 <pre class="idl">
-[Constructor(DOMString type, optional EventInit eventInitDict = {}),
- Exposed=(Window,Worker,AudioWorklet)]
+[Exposed=(Window,Worker,AudioWorklet)]
 interface Event {
+  constructor(DOMString type, optional EventInit eventInitDict = {});
+
   readonly attribute DOMString type;
   readonly attribute EventTarget? target;
   readonly attribute EventTarget? srcElement; // historical
@@ -840,9 +841,10 @@ workers or worklets, and is inaccurate for events dispatched in <a>shadow trees<
 <h3 id=interface-customevent>Interface {{CustomEvent}}</h3>
 
 <pre class=idl>
-[Constructor(DOMString type, optional CustomEventInit eventInitDict = {}),
- Exposed=(Window,Worker)]
+[Exposed=(Window,Worker)]
 interface CustomEvent : Event {
+  constructor(DOMString type, optional CustomEventInit eventInitDict = {});
+
   readonly attribute any detail;
 
   void initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
@@ -993,9 +995,9 @@ for historical reasons.
 <h3 id=interface-eventtarget>Interface {{EventTarget}}</h3>
 
 <pre class=idl>
-[Constructor,
- Exposed=(Window,Worker,AudioWorklet)]
+[Exposed=(Window,Worker,AudioWorklet)]
 interface EventTarget {
+  constructor();
   void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = {});
   void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = {});
   boolean dispatchEvent(Event event);
@@ -1746,9 +1748,10 @@ function doAmazingness({signal}) {
 <h3 id=interface-abortcontroller>Interface {{AbortController}}</h3>
 
 <pre class="idl">
-[Constructor,
- Exposed=(Window,Worker)]
+[Exposed=(Window,Worker)]
 interface AbortController {
+  constructor();
+
   [SameObject] readonly attribute AbortSignal signal;
 
   void abort();
@@ -3348,9 +3351,9 @@ they do not get lost when {{MutationObserverInit/subtree}} is set to true on <a 
 <h4 id=interface-mutationobserver>Interface {{MutationObserver}}</h4>
 
 <pre class="idl">
-[Constructor(MutationCallback callback),
- Exposed=Window]
+[Exposed=Window]
 interface MutationObserver {
+  constructor(MutationCallback callback);
   void observe(Node target, optional MutationObserverInit options = {});
   void disconnect();
   sequence&lt;MutationRecord> takeRecords();
@@ -4797,9 +4800,10 @@ object may be returned as returned by an earlier call.
 <h3 id=interface-document>Interface {{Document}}</h3>
 
 <pre class=idl force="Document">
-[Constructor,
- Exposed=Window]
+[Exposed=Window]
 interface Document : Node {
+  constructor();
+
   [SameObject] readonly attribute DOMImplementation implementation;
   readonly attribute USVString URL;
   readonly attribute USVString documentURI;
@@ -5709,9 +5713,9 @@ the <a>context object</a>'s <a>system ID</a>.
 <h3 id=interface-documentfragment>Interface {{DocumentFragment}}</h3>
 
 <pre class=idl>
-[Constructor,
- Exposed=Window]
+[Exposed=Window]
 interface DocumentFragment : Node {
+  constructor();
 };
 </pre>
 
@@ -7318,9 +7322,9 @@ method, when invoked, must <a>replace data</a> with node <a>context object</a>, 
 <h3 id=interface-text>Interface {{Text}}</h3>
 
 <pre class=idl>
-[Constructor(optional DOMString data = ""),
- Exposed=Window]
+[Exposed=Window]
 interface Text : CharacterData {
+  constructor(optional DOMString data = "");
   [NewObject] Text splitText(unsigned long offset);
   readonly attribute DOMString wholeText;
 };</pre>
@@ -7476,9 +7480,9 @@ attribute must return the <a for=ProcessingInstruction>target</a>.
 <h3 id=interface-comment>Interface {{Comment}}</h3>
 
 <pre class=idl>
-[Constructor(optional DOMString data = ""),
- Exposed=Window]
+[Exposed=Window]
 interface Comment : CharacterData {
+  constructor(optional DOMString data = "");
 };
 </pre>
 
@@ -7689,9 +7693,9 @@ dictionary StaticRangeInit {
   required unsigned long endOffset;
 };
 
-[Constructor(StaticRangeInit init),
- Exposed=Window]
+[Exposed=Window]
 interface StaticRange : AbstractRange {
+  constructor(StaticRangeInit init);
 };
 </pre>
 
@@ -7722,9 +7726,10 @@ when invoked, must run these steps:
 <h3 id=interface-range>Interface {{Range}}</h3>
 
 <pre class=idl>
-[Constructor,
- Exposed=Window]
+[Exposed=Window]
 interface Range : AbstractRange {
+  constructor();
+
   readonly attribute Node commonAncestorContainer;
 
   void setStart(Node node, unsigned long offset);
