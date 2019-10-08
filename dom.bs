@@ -1151,12 +1151,14 @@ and an <a>event listener</a> <var>listener</var>, run these steps:
 
 <ol>
  <li>
-  <p>If <var>eventTarget</var> is a {{ServiceWorkerGlobalScope}} object and its associated
-  <a>service worker</a>'s <a for="service worker">script resource</a>'s
-  <a for="script resource">has ever been evaluated flag</a> is set, then
-  <a>report a warning to the console</a> with a description explaining that the
-  <a>service worker event</a> is to be added synchronously, otherwise the user agent may not start
-  the <a>service worker</a> for the <a>event</a>. [[!SERVICE-WORKERS]]
+  <p>If <var>eventTarget</var> is a {{ServiceWorkerGlobalScope}} object, its associated
+  <a for="ServiceWorkerGlobalScope">service worker</a>'s <a for="service worker">script
+  resource</a>'s <a for="script resource">has ever been evaluated flag</a> is set, and
+  <var>listener</var>'s <a for="event listener">type</a> matches the {{Event/type}} attribute value
+  of any of the <a>service worker events</a>, then <a>report a warning to the console</a> with a
+  description explaining that the <a>service worker event</a> has to be added before the script
+  evaluation completes, otherwise the user agent might not start the <a>service worker</a> for the
+  <a>event</a>. [[!SERVICE-WORKERS]]
 
   <p class="note no-backref">To avoid unnecessary delays, Service Workers [[!SERVICE-WORKERS]]
   permits skipping event dispatch when no <a>event listeners</a> for the <a>service worker event</a>
@@ -1211,11 +1213,11 @@ and an <a>event listener</a> <var>listener</var>, set <var>listener</var>'s
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>If the <a>context object</a> is a {{ServiceWorkerGlobalScope}} object and its associated
- <a>service worker</a>'s <a for="service worker">script resource</a>'s
- <a for="script resource">has ever been evaluated flag</a> is set, then
- <a>report a warning to the console</a> with a description explaining that the user agent will still
- start the <a>service worker</a> for the <a>service worker event</a> that was synchronously added.
+ <li><p>If the <a>context object</a> is a {{ServiceWorkerGlobalScope}} object, its associated
+ <a for="ServiceWorkerGlobalScope">service worker</a>'s <a for="service worker">set of event types
+ to handle</a> contains <var>type</var>, then <a>report a warning to the console</a> with a
+ description explaining that the user agent will still start the <a>service worker</a> for the
+ <a>service worker event</a> whose {{Event/type}} attribute value matches <var>type</var>.
  [[!SERVICE-WORKERS]]
 
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
