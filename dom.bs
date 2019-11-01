@@ -1151,21 +1151,16 @@ and an <a>event listener</a> <var>listener</var>, run these steps:
 
 <ol>
  <li>
-  <p>If <var>eventTarget</var> is a {{ServiceWorkerGlobalScope}} object, its associated
-  <a for="ServiceWorkerGlobalScope">service worker</a>'s <a for="service worker">script
-  resource</a>'s <a for="script resource">has ever been evaluated flag</a> is set, and
-  <var>listener</var>'s <a for="event listener">type</a> matches the {{Event/type}} attribute value
-  of any of the <a>service worker events</a>, then <a>report a warning to the console</a> with a
-  description explaining that the <a>service worker event</a> has to be added before the script
-  evaluation completes, otherwise the user agent might not start the <a>service worker</a> for the
-  <a>event</a>. [[!SERVICE-WORKERS]]
+  <p>If <var>eventTarget</var> is a {{ServiceWorkerGlobalScope}} object, its
+  <a for="ServiceWorkerGlobalScope">service worker</a>'s
+  <a for="service worker">script resource</a>'s
+  <a for="script resource">has ever been evaluated flag</a> is set, and <var>listener</var>'s
+  <a for="event listener">type</a> matches the {{Event/type}} attribute value of any of the
+  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
+  the expected results. [[!SERVICE-WORKERS]]
 
-  <p class="note no-backref">To avoid unnecessary delays, Service Workers [[!SERVICE-WORKERS]]
-  permits skipping event dispatch when no <a>event listeners</a> for the <a>service worker event</a>
-  have been deterministically added in the <a>service worker</a>’s <a for="service worker">set of
-  event types to handle</a> during the very first script evaluation. The <a>event listener</a> in
-  this step will still be added, but the implementations have to inform developers about this
-  behavior.
+  <p class="note no-backref">Service workers are only started for event listeners added during the
+  first script evaluation.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
@@ -1195,31 +1190,35 @@ method, when invoked, must run these steps:
  <var>once</var>.
 </ol>
 
-<p>To <dfn>remove an event listener</dfn>, given an {{EventTarget}} object <var>eventTarget</var>
-and an <a>event listener</a> <var>listener</var>, set <var>listener</var>'s
-<a for="event listener">removed</a> to true and <a for=list>remove</a> <var>listener</var> from
-<var>eventTarget</var>'s <a for=EventTarget>event listener list</a>.
-<!-- Intentionally not exported. -->
+<p>To <dfn export>remove an event listener</dfn>, given an {{EventTarget}} object
+<var>eventTarget</var> and an <a>event listener</a> <var>listener</var>, run these steps:
+
+<ol>
+ <li><p>If the <a>context object</a> is a {{ServiceWorkerGlobalScope}} object and its
+ <a for="ServiceWorkerGlobalScope">service worker</a>'s
+ <a for="service worker">set of event types to handle</a> contains <var>type</var>, then
+ <a>report a warning to the console</a> that this might not give the expected results.
+ [[!SERVICE-WORKERS]]
+
+ <li><p>Set <var>listener</var>'s <a for="event listener">removed</a> to true and
+ <a for=list>remove</a> <var>listener</var> from <var>eventTarget</var>'s
+ <a for=EventTarget>event listener list</a>.
+</ol>
+
+<p class=note>HTML needs this to define event handlers. [[HTML]]
 
 <p>To <dfn export>remove all event listeners</dfn>, given an {{EventTarget}} object
 <var>eventTarget</var>, <a for=list>for each</a> <var>listener</var> of <var>eventTarget</var>'s
 <a for=EventTarget>event listener list</a>, <a>remove an event listener</a> with
 <var>eventTarget</var> and <var>listener</var>.
 
-<p class="note">HTML needs this to define <code>document.open()</code>. [[HTML]]
+<p class=note>HTML needs this to define <code>document.open()</code>. [[HTML]]
 
 <p>The
 <dfn method for=EventTarget><code>removeEventListener(<var>type</var>, <var>callback</var>, <var>options</var>)</code></dfn>
 method, when invoked, must run these steps:
 
 <ol>
- <li><p>If the <a>context object</a> is a {{ServiceWorkerGlobalScope}} object and its associated
- <a for="ServiceWorkerGlobalScope">service worker</a>'s <a for="service worker">set of event types
- to handle</a> contains <var>type</var>, then <a>report a warning to the console</a> with a
- description explaining that the user agent will still start the <a>service worker</a> for the
- <a>service worker event</a> whose {{Event/type}} attribute value matches <var>type</var>.
- [[!SERVICE-WORKERS]]
-
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
  <li><p>If the <a>context object</a>'s <a for=EventTarget>event listener list</a>
