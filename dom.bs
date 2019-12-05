@@ -2421,6 +2421,11 @@ algorithm below.
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
 
+<p><a lt="other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
+<a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a> and
+<a for=/>remove</a>.
+
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <var>node</var> into a <var>parent</var>
 before a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
 
@@ -2476,8 +2481,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
 
-   <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
-   <var>parent</var>.
+   <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
    <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
@@ -2779,8 +2783,7 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
- <li><p>If <var>node</var> is a {{Text}} node, then run the <a>child text content change steps</a>
- for <var>parent</var>.
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
 
 
@@ -4243,9 +4246,8 @@ steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>no
  (excluding itself), in <a>tree order</a>.
 </ol>
 
-<p class="note">{{Node/normalize()}} does not need to run any
-<a>child text content change steps</a>, since although it messes with {{Text}} nodes extensively, it
-does so specifically in a way that preserves the <a>child text content</a>.
+<p class="note">{{Node/normalize()}} does not need to run any <a>children changed steps</a> as the
+various algorithms it invokes do so already.
 
 <hr>
 
@@ -7252,8 +7254,8 @@ To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> 
  <a for=range>end offset</a> by <var>data</var>'s <a for="JavaScript string">length</a> and decrease
  it by <var>count</var>.
 
- <li>If <var>node</var> is a {{Text}} node and its <a>parent</a> is not null, run the
- <a>child text content change steps</a> for <var>node</var>'s <a>parent</a>.
+ <li>If <var>node</var>'s <a>parent</a> is non-null, then run the <a>children changed steps</a> for
+ <var>node</var>'s <a>parent</a>.
 </ol>
 <!-- delete happens after insert for better cursor positioning with editing
 https://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
@@ -7389,10 +7391,6 @@ if any, and its <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>no
 <p>The <dfn export id=concept-child-text-content>child text content</dfn> of a <a for=/>node</a>
 <var>node</var> is the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
 the {{Text}} <a for=/>node</a> <a>children</a> of <var>node</var>, in <a>tree order</a>.
-
-<p>This and <a lt="other applicable specifications">other specifications</a> may define
-<dfn export id=concept-node-text-change-ext>child text content change steps</dfn> for
-<a for=/>nodes</a>.
 
 <p>The <dfn export id=concept-descendant-text-content>descendant text content</dfn> of a
 <a for=/>node</a> <var>node</var> is the <a for=string>concatenation</a> of the
