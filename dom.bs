@@ -2563,8 +2563,7 @@ within a <var>parent</var>, run these steps:
   <ol>
    <li><p>Set <var>removedNodes</var> to « <var>child</var> ».
 
-   <li><p><a for=/>Remove</a> <var>child</var> from its <var>parent</var> with the
-   <i>suppress observers flag</i> set.
+   <li><p><a for=/>Remove</a> <var>child</var> with the <i>suppress observers flag</i> set.
   </ol>
 
   <p class="note no-backref">The above can only be false if <var>child</var> is <var>node</var>.
@@ -2621,7 +2620,7 @@ within a <var>parent</var>, run these steps:
  <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
  "{{NotFoundError!!exception}}" {{DOMException}}.
 
- <li><p><a for=/>Remove</a> <var>child</var> from <var>parent</var>.
+ <li><p><a for=/>Remove</a> <var>child</var>.
 
  <li><p>Return <var>child</var>.
  <!-- Technically this is post-remove. -->
@@ -2633,10 +2632,14 @@ within a <var>parent</var>, run these steps:
 algorithm is passed <var ignore>removedNode</var>, and optionally <var ignore>oldParent</var>, as
 indicated in the <a for=/>remove</a> algorithm below.
 
-<p>To <dfn export id=concept-node-remove>remove</dfn> a <var>node</var> from a <var>parent</var>,
-with an optional <i>suppress observers flag</i>, run these steps:
+<p>To <dfn export id=concept-node-remove>remove</dfn> a <var>node</var>, with an optional
+<i>suppress observers flag</i>, run these steps:
 
 <ol>
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>
+
+ <li><p>Assert: <var>parent</var> is non-null.
+
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
@@ -3040,8 +3043,7 @@ steps:
 <ol>
  <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, then return.
 
- <li><p><a for=/>Remove</a> the <a>context object</a> from <a>context object</a>'s
- <a for=tree>parent</a>.
+ <li><p><a for=/>Remove</a> the <a>context object</a>.
 </ol>
 
 
@@ -5256,20 +5258,19 @@ when invoked, must run these steps:
  the <i>clone children flag</i> set if <var>deep</var> is true.
 </ol>
 
-<a lt="Other applicable specifications">Specifications</a> may define
-<dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some
-<a for=/>nodes</a>. The algorithm is passed <var>node</var> and
-<var>oldDocument</var>, as indicated in the
-<a>adopt</a> algorithm.
+<p><a lt="Other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some <a for=/>nodes</a>. The
+algorithm is passed <var>node</var> and <var>oldDocument</var>, as indicated in the <a>adopt</a>
+algorithm.
 
-To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
+<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
 these steps:
 
 <ol>
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
 
- <li><p>If <var>node</var>'s <a for=tree>parent</a> is not null, <a for=/>remove</a> <var>node</var>
- from its <a for=tree>parent</a>.
+ <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
+ <var>node</var>.
 
  <li>
   <p>If <var>document</var> is not <var>oldDocument</var>, then:
@@ -7510,7 +7511,7 @@ Necessarily, a <a>live range</a> might itself be modified as part of the mutatio
 
 <p class="note no-backref">See the <a for=/>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
-algorithms for the hairy details.
+algorithms for details.
 
 <p>Updating <a>live ranges</a> in response to <a>node tree</a> mutations can be expensive. For every
 <a>node tree</a> change, all affected {{Range}} objects need to be updated. Even if the application
@@ -8167,10 +8168,8 @@ run these steps:
  <a>length</a> minus
  <var>original start offset</var>, data the empty string.
 
- <li>For each <var>node</var> in <var>nodes to remove</var>,
- in <a>tree order</a>,
- <a for=/>remove</a> <var>node</var> from
- its <a for=tree>parent</a>.
+ <li><p>For each <var>node</var> in <var>nodes to remove</var>, in <a>tree order</a>,
+ <a for=/>remove</a> <var>node</var>.
 
  <li>If <var>original end node</var> is a {{Text}},
  {{ProcessingInstruction}}, or {{Comment}}
@@ -8730,9 +8729,8 @@ the result of <a for="live range">cloning the contents</a> of the <a>context obj
  <a for=tree>next sibling</a>.
  <!-- Because we're about to remove node from its parent. -->
 
- <li>If <var>node</var>'s <a for=tree>parent</a> is not
- null, <a for=/>remove</a> <var>node</var> from its
- <a for=tree>parent</a>.
+ <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
+ <var>node</var>.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
