@@ -33,7 +33,7 @@ urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
  type: dfn
   text: Realm; url: realm
   text: surrounding agent; url: surrounding-agent
-urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
+urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME-2
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: time origin; url: dfn-time-origin
  type:dfn; text: clock resolution
@@ -968,7 +968,7 @@ correct defaults.</p>
 
   <p class=warning>User agents should set a minimum resolution of <var>event</var>'s
   {{Event/timeStamp}} attribute to 5 microseconds following the existing <a>clock resolution</a>
-  recommendation. [[!HR-TIME]]
+  recommendation. [[!HR-TIME-2]]
 
  <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> in <var>dictionary</var>, if
  <var>event</var> has an attribute whose <a spec=webidl>identifier</a> is <var>member</var>, then
@@ -2321,72 +2321,50 @@ steps:
 of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run these steps:
 
 <ol>
- <li>If <var>parent</var> is not a {{Document}},
- {{DocumentFragment}}, or {{Element}}
- <a>node</a>,
- <a>throw</a> a
+ <li><p>If <var>parent</var> is not a {{Document}}, {{DocumentFragment}}, or {{Element}}
+ <a>node</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>parent</var>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <var>parent</var>,
+ then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, {{Text}},
+ {{ProcessingInstruction}}, or {{Comment}} <a>node</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
- <li>If <var>node</var> is a
- <a>host-including inclusive ancestor</a>
- of <var>parent</var>, <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
-
- <li>If <var>child</var> is not null and its <a for=tree>parent</a> is not <var>parent</var>, then
- <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
-
- <li>If <var>node</var> is not a
- {{DocumentFragment}}, {{DocumentType}},
- {{Element}}, {{Text}},
- {{ProcessingInstruction}}, or {{Comment}}
- <a>node</a>,
- <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
-
- <li>If either <var>node</var> is a {{Text}}
- <a>node</a> and <var>parent</var> is a
- <a>document</a>, or <var>node</var> is a
- <a>doctype</a> and <var>parent</var> is
- not a <a>document</a>,
- <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+ <li><p>If either <var>node</var> is a {{Text}} <a>node</a> and <var>parent</var> is a
+ <a>document</a>, or <var>node</var> is a <a>doctype</a> and <var>parent</var> is not a
+ <a>document</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>
-  If <var>parent</var> is a
-  <a>document</a>, and any of the statements below, switched
-  on <var>node</var>, are true, <a>throw</a> a
+  <p>If <var>parent</var> is a <a>document</a>, and any of the statements below, switched on
+  <var>node</var>, are true, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <dl class=switch>
    <dt>{{DocumentFragment}} <a>node</a>
    <dd>
-    If <var>node</var> has more than one
-    <a for="/">element</a> <a for=tree>child</a>
-    or has a {{Text}} <a>node</a>
-    <a for=tree>child</a>.
+    <p>If <var>node</var> has more than one <a for="/">element</a> <a for=tree>child</a> or has a
+    {{Text}} <a>node</a> <a for=tree>child</a>.
 
-    Otherwise, if <var>node</var> has one
-    <a for="/">element</a>
-    <a for=tree>child</a> and either <var>parent</var> has an
-    <a for="/">element</a>
-    <a for=tree>child</a>, <var>child</var> is a
-    <a>doctype</a>, or <var>child</var> is not null and
-    a <a>doctype</a> is
-    <a>following</a> <var>child</var>.
+    <p>Otherwise, if <var>node</var> has one <a for="/">element</a> <a for=tree>child</a> and either
+    <var>parent</var> has an <a for="/">element</a> <a for=tree>child</a>, <var>child</var> is a
+    <a>doctype</a>, or <var>child</var> is non-null and a <a>doctype</a> is <a>following</a>
+    <var>child</var>.
     <!--"inclusively following"-->
 
    <dt><a for="/">element</a>
-   <dd><var>parent</var> has an <a for="/">element</a>
-   <a for=tree>child</a>, <var>child</var> is a
-   <a>doctype</a>, or <var>child</var> is not null and a
-   <a>doctype</a> is
-   <a>following</a> <var>child</var>.
+   <dd><p><var>parent</var> has an <a for="/">element</a> <a for=tree>child</a>, <var>child</var> is
+   a <a>doctype</a>, or <var>child</var> is non-null and a <a>doctype</a> is <a>following</a>
+   <var>child</var>.
    <!--"inclusively following"-->
 
-   <dt><a>doctype</a> <dd><var>parent</var> has a <a>doctype</a> <a for=tree>child</a>,
-   <var>child</var> is non-null and an <a for="/">element</a> is <a>preceding</a> <var>child</var>,
-   or <var>child</var> is null and <var>parent</var> has an <a for="/">element</a>
-   <a for=tree>child</a>.
+   <dt><a>doctype</a>
+   <dd><p><var>parent</var> has a <a>doctype</a> <a for=tree>child</a>, <var>child</var> is non-null
+   and an <a for="/">element</a> is <a>preceding</a> <var>child</var>, or <var>child</var> is null
+   and <var>parent</var> has an <a for="/">element</a> <a for=tree>child</a>.
   </dl>
 </ol>
 
@@ -2394,24 +2372,20 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
 <var>parent</var> before a <var>child</var>, run these steps:
 
 <ol>
- <li><a>Ensure pre-insertion validity</a>
- of <var>node</var> into <var>parent</var> before
+ <li><p><a>Ensure pre-insertion validity</a> of <var>node</var> into <var>parent</var> before
  <var>child</var>.
 
- <li>Let <var>reference child</var> be <var>child</var>.
+ <li><p>Let <var>referenceChild</var> be <var>child</var>.
 
- <li>If <var>reference child</var> is <var>node</var>, set it
- to <var>node</var>'s
- <a for=tree>next sibling</a>.
+ <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
+ <var>node</var>'s <a for=tree>next sibling</a>.
 
- <li><a>Adopt</a>
- <var>node</var> into <var>parent</var>'s
- <a for=Node>node document</a>.
+ <li><p><a>Adopt</a> <var>node</var> into <var>parent</var>'s <a for=Node>node document</a>.
 
- <li><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>reference child</var>.
+ <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>.
 
- <li>Return <var>node</var>.
- <!-- technically this is post-insert -->
+ <li><p>Return <var>node</var>.
+ <!-- Technically this is post-insert. -->
 </ol>
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
@@ -2422,14 +2396,17 @@ algorithm below.
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
 
+<p><a lt="other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
+<a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a>,
+<a for=/>remove</a>, and <a for=/>replace data</a>.
+
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <var>node</var> into a <var>parent</var>
 before a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
 
 <ol>
- <li>Let <var>count</var> be the number of
- <a>children</a> of <var>node</var> if
- it is a {{DocumentFragment}} <a>node</a>,
- and one otherwise.
+ <li><p>Let <var>count</var> be the number of <a>children</a> of <var>node</var> if it is a
+ {{DocumentFragment}} <a>node</a>, and one otherwise.
 
  <li>
   <p>If <var>child</var> is non-null, then:
@@ -2447,11 +2424,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <li><p>Let <var>nodes</var> be <var>node</var>'s <a>children</a>, if <var>node</var> is a
  {{DocumentFragment}} <a>node</a>; otherwise « <var>node</var> ».
 
- <li>If <var>node</var> is a {{DocumentFragment}}
- <a>node</a>,
- <a for=/>remove</a> its
- <a>children</a> with the
- <i>suppress observers flag</i> set.
+ <li><p>If <var>node</var> is a {{DocumentFragment}} <a>node</a>, then <a for=/>remove</a> its
+ <a>children</a> with the <i>suppress observers flag</i> set.
 
  <li>
   <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a>, then
@@ -2476,9 +2450,6 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slotable</a>, then <a>assign a slot</a> for <var>node</var>.
-
-   <li>If <var>node</var> is a {{Text}} node, run the <a>child text content change steps</a> for
-   <var>parent</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
    <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
@@ -2516,6 +2487,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
  <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
+
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
 
 
@@ -2531,96 +2504,67 @@ within a <var>parent</var>, run these steps:
      shared. -->
 
 <ol>
- <li>If <var>parent</var> is not a {{Document}},
- {{DocumentFragment}}, or {{Element}}
- <a>node</a>,
- <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+ <li><p>If <var>parent</var> is not a {{Document}}, {{DocumentFragment}}, or {{Element}}
+ <a>node</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
- <li>If <var>node</var> is a
- <a>host-including inclusive ancestor</a>
- of <var>parent</var>, <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+ <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>parent</var>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
- <li>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
+ <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
  "{{NotFoundError!!exception}}" {{DOMException}}.
 
- <li>If <var>node</var> is not a
- {{DocumentFragment}}, {{DocumentType}},
- {{Element}}, {{Text}},
- {{ProcessingInstruction}}, or {{Comment}}
- <a>node</a>,
- <a>throw</a> a
+ <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, {{Text}},
+ {{ProcessingInstruction}}, or {{Comment}} <a>node</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
- <li>If either <var>node</var> is a {{Text}}
- <a>node</a> and <var>parent</var> is a
- <a>document</a>, or <var>node</var> is a
- <a>doctype</a> and <var>parent</var> is
- not a <a>document</a>,
- <a>throw</a> a
- "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+ <li><p>If either <var>node</var> is a {{Text}} <a>node</a> and <var>parent</var> is a
+ <a>document</a>, or <var>node</var> is a <a>doctype</a> and <var>parent</var> is not a
+ <a>document</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li>
-  If <var>parent</var> is a
-  <a>document</a>, and any of the statements below, switched
-  on <var>node</var>, are true, <a>throw</a> a
+  <p>If <var>parent</var> is a <a>document</a>, and any of the statements below, switched on
+  <var>node</var>, are true, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <dl class=switch>
    <dt>{{DocumentFragment}} <a>node</a>
    <dd>
-    If <var>node</var> has more than one
-    <a for="/">element</a> <a for=tree>child</a>
-    or has a {{Text}} <a>node</a>
-    <a for=tree>child</a>.
+    <p>If <var>node</var> has more than one <a for="/">element</a> <a for=tree>child</a> or has a
+    {{Text}} <a>node</a> <a for=tree>child</a>.
 
-    Otherwise, if <var>node</var> has one
-    <a for="/">element</a> <a for=tree>child</a>
-    and either <var>parent</var> has an <a for="/">element</a>
-    <a for=tree>child</a> that is not <var>child</var> or a
-    <a>doctype</a> is
-    <a>following</a> <var>child</var>.
+    <p>Otherwise, if <var>node</var> has one <a for="/">element</a> <a for=tree>child</a> and either
+    <var>parent</var> has an <a for="/">element</a> <a for=tree>child</a> that is not
+    <var>child</var> or a <a>doctype</a> is <a>following</a> <var>child</var>.
 
    <dt><a for="/">element</a>
-   <dd><var>parent</var> has an <a for="/">element</a>
-   <a for=tree>child</a> that is not <var>child</var> or a
-   <a>doctype</a> is
-   <a>following</a> <var>child</var>.
+   <dd><p><var>parent</var> has an <a for="/">element</a> <a for=tree>child</a> that is not
+   <var>child</var> or a <a>doctype</a> is <a>following</a> <var>child</var>.
 
    <dt><a>doctype</a>
-   <dd><var>parent</var> has a <a>doctype</a>
-   <a for=tree>child</a> that is not <var>child</var>, or an
-   <a for="/">element</a> is
-   <a>preceding</a> <var>child</var>.
+   <dd><p><var>parent</var> has a <a>doctype</a> <a for=tree>child</a> that is not <var>child</var>,
+   or an <a for="/">element</a> is <a>preceding</a> <var>child</var>.
   </dl>
 
-  <p class="note no-backref">The above statements differ from the
-  <a>pre-insert</a> algorithm.
+  <p class="note no-backref">The above statements differ from the <a>pre-insert</a> algorithm.
 
- <li>Let <var>reference child</var> be <var>child</var>'s
- <a for=tree>next sibling</a>.
+ <li><p>Let <var>referenceChild</var> be <var>child</var>'s <a for=tree>next sibling</a>.
 
- <li>If <var>reference child</var> is <var>node</var>, set it
- to <var>node</var>'s
- <a for=tree>next sibling</a>.
+ <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
+ <var>node</var>'s <a for=tree>next sibling</a>.
 
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a>.
 
- <li><a>Adopt</a>
- <var>node</var> into <var>parent</var>'s
- <a for=Node>node document</a>.
+ <li><p><a>Adopt</a> <var>node</var> into <var>parent</var>'s <a for=Node>node document</a>.
 
- <li>Let <var>removedNodes</var> be the empty list.
+ <li><p>Let <var>removedNodes</var> be the empty list.
 
  <li>
-  <p>If <var>child</var>'s <a for=tree>parent</a> is not null, then:
+  <p>If <var>child</var>'s <a for=tree>parent</a> is non-null, then:
 
   <ol>
    <li><p>Set <var>removedNodes</var> to « <var>child</var> ».
 
-   <li><p><a for=/>Remove</a> <var>child</var> from its <var>parent</var> with the
-   <i>suppress observers flag</i> set.
+   <li><p><a for=/>Remove</a> <var>child</var> with the <i>suppress observers flag</i> set.
   </ol>
 
   <p class="note no-backref">The above can only be false if <var>child</var> is <var>node</var>.
@@ -2630,27 +2574,24 @@ within a <var>parent</var>, run these steps:
  <!-- This needs to come before insert as that removes the children of a
       DocumentFragment node. -->
 
- <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>reference child</var>
+ <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>
  with the <i>suppress observers flag</i> set.
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>,
- <var>removedNodes</var>, <var>previousSibling</var>, and <var>reference child</var>.
+ <var>removedNodes</var>, <var>previousSibling</var>, and <var>referenceChild</var>.
 
  <li><p>Return <var>child</var>.
 </ol>
 
 
-To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
-<var>node</var> within a <var>parent</var>, run these steps:
+<p>To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a <var>node</var>
+within a <var>parent</var>, run these steps:
 
 <ol>
- <li>If <var>node</var> is not null,
- <a>adopt</a> <var>node</var> into
- <var>parent</var>'s
+ <li><p>If <var>node</var> is non-null, then <a>adopt</a> <var>node</var> into <var>parent</var>'s
  <a for=Node>node document</a>.
 
- <li>Let <var>removedNodes</var> be <var>parent</var>'s
- <a>children</a>.
+ <li><p>Let <var>removedNodes</var> be <var>parent</var>'s <a>children</a>.
 
  <li><p>Let <var>addedNodes</var> be the empty list.
 
@@ -2659,12 +2600,10 @@ To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
 
  <li><p>Otherwise, if <var>node</var> is non-null, set <var>addedNodes</var> to « <var>node</var> ».
 
- <li><a for=/>Remove</a> all
- <var>parent</var>'s <a>children</a>, in
- <a>tree order</a>, with the
+ <li><p><a for=/>Remove</a> all <var>parent</var>'s <a>children</a>, in <a>tree order</a>, with the
  <i>suppress observers flag</i> set.
 
- <li><p>If <var>node</var> is not null, then <a for=/>insert</a> <var>node</var> into
+ <li><p>If <var>node</var> is non-null, then <a for=/>insert</a> <var>node</var> into
  <var>parent</var> before null with the <i>suppress observers flag</i> set.
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
@@ -2675,17 +2614,17 @@ To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a
 <a>node tree</a> constraints. Specification authors need to use it wisely.
 
 
-To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> from a
+<p>To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> from a
 <var>parent</var>, run these steps:
 
 <ol>
- <li>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
+ <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
  "{{NotFoundError!!exception}}" {{DOMException}}.
 
- <li><a for=/>Remove</a> <var>child</var> from <var>parent</var>.
+ <li><p><a for=/>Remove</a> <var>child</var>.
 
- <li>Return <var>child</var>.
- <!-- technically this is post-remove -->
+ <li><p>Return <var>child</var>.
+ <!-- Technically this is post-remove. -->
 </ol>
 
 
@@ -2694,12 +2633,15 @@ To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> fr
 algorithm is passed <var ignore>removedNode</var>, and optionally <var ignore>oldParent</var>, as
 indicated in the <a for=/>remove</a> algorithm below.
 
-<p>To <dfn export id=concept-node-remove>remove</dfn> a <var>node</var> from a <var>parent</var>,
-with an optional <i>suppress observers flag</i>, run these steps:
+<p>To <dfn export id=concept-node-remove>remove</dfn> a <var>node</var>, with an optional
+<i>suppress observers flag</i>, run these steps:
 
 <ol>
- <li>Let <var>index</var> be <var>node</var>'s
- <a for=tree>index</a>.
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>
+
+ <li><p>Assert: <var>parent</var> is non-null.
+
+ <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
  <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
@@ -2721,11 +2663,11 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-removing steps</a> given
  <var>node</var> and <var>iterator</var>.
 
- <li>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
+ <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
 
- <li>Let <var>oldNextSibling</var> be <var>node</var>'s <a for=tree>next sibling</a>.
+ <li><p>Let <var>oldNextSibling</var> be <var>node</var>'s <a for=tree>next sibling</a>.
 
- <li><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
+ <li><p><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
 
  <li><p>If <var>node</var> is <a for=slotable>assigned</a>, then run <a>assign slotables</a> for
  <var>node</var>'s <a>assigned slot</a>.
@@ -2734,7 +2676,8 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
  then run <a>signal a slot change</a> for <var>parent</var>.
 
- <li><p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
+ <li>
+  <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
 
   <ol>
    <li><p>Run <a>assign slotables for a tree</a> with <var>parent</var>'s <a for=tree>root</a>.
@@ -2780,8 +2723,7 @@ with an optional <i>suppress observers flag</i>, run these steps:
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
- <li><p>If <var>node</var> is a {{Text}} node, then run the <a>child text content change steps</a>
- for <var>parent</var>.
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
 
 
@@ -2826,7 +2768,7 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
-To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
+<p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
 <var>nodes</var> and <var>document</var>, run these steps:
 
 <ol>
@@ -3102,8 +3044,7 @@ steps:
 <ol>
  <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, then return.
 
- <li><p><a for=/>Remove</a> the <a>context object</a> from <a>context object</a>'s
- <a for=tree>parent</a>.
+ <li><p><a for=/>Remove</a> the <a>context object</a>.
 </ol>
 
 
@@ -3168,18 +3109,17 @@ interface NodeList {
 
 <div class=impl>
 
-The object's <a>supported property indices</a>
-are the numbers in the range zero to one less than the number of nodes
-<a for=collection>represented by the collection</a>. If there are no such elements, then
-there are no <a>supported property indices</a>.
+<p>The object's <a>supported property indices</a> are the numbers in the range zero to one less than
+the number of nodes <a for=collection>represented by the collection</a>. If there are no such
+elements, then there are no <a>supported property indices</a>.
 
-The <dfn attribute for=NodeList>length</dfn> attribute must
-return the number of nodes <a for=collection>represented by the collection</a>.
+<p>The <dfn attribute for=NodeList>length</dfn> attribute must return the number of nodes
+<a for=collection>represented by the collection</a>.
 
-The <dfn method for=NodeList><code>item(<var>index</var>)</code></dfn> method must return
-the <var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>. If there is no
-<var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>, then the method must
-return null.
+<p>The <dfn method for=NodeList><code>item(<var>index</var>)</code></dfn> method must return the
+<var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>. If there is no
+<var>index</var><sup>th</sup> <a>node</a> in the <a>collection</a>, then the method must return
+null.
 
 </div>
 
@@ -4244,10 +4184,6 @@ steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>no
  (excluding itself), in <a>tree order</a>.
 </ol>
 
-<p class="note">{{Node/normalize()}} does not need to run any
-<a>child text content change steps</a>, since although it messes with {{Text}} nodes extensively, it
-does so specifically in a way that preserves the <a>child text content</a>.
-
 <hr>
 
 <dl class=domintro>
@@ -4560,7 +4496,7 @@ for an <var>element</var> using <var>namespace</var>, run these steps:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is <var>namespace</var> and its
- <a for=Element>namespace prefix</a> is not null, then return its
+ <a for=Element>namespace prefix</a> is non-null, then return its
  <a for=Element>namespace prefix</a>.
 
  <li><p>If <var>element</var> <a lt="has an attribute">has</a> an <a>attribute</a> whose
@@ -4581,7 +4517,7 @@ for an <var>element</var> using <var>namespace</var>, run these steps:
  <dt>{{Element}}
  <dd>
   <ol>
-   <li><p>If its <a for=Element>namespace</a> is not null and its
+   <li><p>If its <a for=Element>namespace</a> is non-null and its
    <a for=Element>namespace prefix</a> is <var>prefix</var>, then return
    <a for=Element>namespace</a>.
 
@@ -5323,20 +5259,19 @@ when invoked, must run these steps:
  the <i>clone children flag</i> set if <var>deep</var> is true.
 </ol>
 
-<a lt="Other applicable specifications">Specifications</a> may define
-<dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some
-<a for=/>nodes</a>. The algorithm is passed <var>node</var> and
-<var>oldDocument</var>, as indicated in the
-<a>adopt</a> algorithm.
+<p><a lt="Other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some <a for=/>nodes</a>. The
+algorithm is passed <var>node</var> and <var>oldDocument</var>, as indicated in the <a>adopt</a>
+algorithm.
 
-To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
+<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
 these steps:
 
 <ol>
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
 
- <li><p>If <var>node</var>'s <a for=tree>parent</a> is not null, <a for=/>remove</a> <var>node</var>
- from its <a for=tree>parent</a>.
+ <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
+ <var>node</var>.
 
  <li>
   <p>If <var>document</var> is not <var>oldDocument</var>, then:
@@ -7253,8 +7188,8 @@ To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> 
  <a for=range>end offset</a> by <var>data</var>'s <a for="JavaScript string">length</a> and decrease
  it by <var>count</var>.
 
- <li>If <var>node</var> is a {{Text}} node and its <a>parent</a> is not null, run the
- <a>child text content change steps</a> for <var>node</var>'s <a>parent</a>.
+ <li>If <var>node</var>'s <a>parent</a> is non-null, then run the <a>children changed steps</a> for
+ <var>node</var>'s <a>parent</a>.
 </ol>
 <!-- delete happens after insert for better cursor positioning with editing
 https://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
@@ -7390,10 +7325,6 @@ if any, and its <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>no
 <p>The <dfn export id=concept-child-text-content>child text content</dfn> of a <a for=/>node</a>
 <var>node</var> is the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
 the {{Text}} <a for=/>node</a> <a>children</a> of <var>node</var>, in <a>tree order</a>.
-
-<p>This and <a lt="other applicable specifications">other specifications</a> may define
-<dfn export id=concept-node-text-change-ext>child text content change steps</dfn> for
-<a for=/>nodes</a>.
 
 <p>The <dfn export id=concept-descendant-text-content>descendant text content</dfn> of a
 <a for=/>node</a> <var>node</var> is the <a for=string>concatenation</a> of the
@@ -7581,7 +7512,7 @@ Necessarily, a <a>live range</a> might itself be modified as part of the mutatio
 
 <p class="note no-backref">See the <a for=/>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
-algorithms for the hairy details.
+algorithms for details.
 
 <p>Updating <a>live ranges</a> in response to <a>node tree</a> mutations can be expensive. For every
 <a>node tree</a> change, all affected {{Range}} objects need to be updated. Even if the application
@@ -8238,10 +8169,8 @@ run these steps:
  <a>length</a> minus
  <var>original start offset</var>, data the empty string.
 
- <li>For each <var>node</var> in <var>nodes to remove</var>,
- in <a>tree order</a>,
- <a for=/>remove</a> <var>node</var> from
- its <a for=tree>parent</a>.
+ <li><p>For each <var>node</var> in <var>nodes to remove</var>, in <a>tree order</a>,
+ <a for=/>remove</a> <var>node</var>.
 
  <li>If <var>original end node</var> is a {{Text}},
  {{ProcessingInstruction}}, or {{Comment}}
@@ -8801,9 +8730,8 @@ the result of <a for="live range">cloning the contents</a> of the <a>context obj
  <a for=tree>next sibling</a>.
  <!-- Because we're about to remove node from its parent. -->
 
- <li>If <var>node</var>'s <a for=tree>parent</a> is not
- null, <a for=/>remove</a> <var>node</var> from its
- <a for=tree>parent</a>.
+ <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
+ <var>node</var>.
 
  <!-- Browsers disagree on how to handle the case where the range is
  collapsed: do you increment the end offset so the node is now included, or
