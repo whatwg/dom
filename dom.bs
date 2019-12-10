@@ -4228,7 +4228,9 @@ dom-Range-extractContents, dom-Range-cloneContents -->
     <ol>
      <li><p>Let <var>copyAttribute</var> be a <a>clone</a> of <var>attribute</var>.
 
-     <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to <var>copy</var>.
+     <li>
+      <p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to <var>copy</var>
+      with <var>copyAttribute</var>'s <a for="Attr">value</a>.
     </ol>
    </li>
   </ol>
@@ -6101,10 +6103,20 @@ its <a for=Element>attribute list</a> <a for=list>is empty</a>.
 <a for=/>elements</a>. The algorithm is passed <var>element</var>, <var>localName</var>,
 <var>oldValue</var>, <var>value</var>, and <var>namespace</var>.
 
+<p>This and <a lt="other applicable specifications">other specifications</a> may define
+<dfn export id=concept-element-attributes-validation-ext>attribute validation steps</dfn> for
+<a for=/>elements</a>. The algorithm is passed <var>element</var>, <var>localName</var>,
+<var>value</var>, and <var>namespace</var>.
+
 <p>To <dfn noexport>handle attribute changes</dfn> for an <a>attribute</a> <var>attribute</var> with
 <var>element</var>, <var>oldValue</var>, and <var>newValue</var>, run these steps:
 
 <ol>
+ <li><p>Run the <a>attribute validation steps</a> with <var>element</var>,
+ <var>attribute</var>'s <a for=Attr>local name</a>, <var>newValue</var> and
+ <var>attribute</var>'s <a for=Attr>namespace</a>. If this throws an exception, then
+ rethrow the exception and abort further steps.
+
  <li><p><a>Queue a mutation record</a> of "<code>attributes</code>" for <var>element</var> with
  <var>attribute</var>'s <a for=Attr>local name</a>, <var>attribute</var>'s
  <a for=Attr>namespace</a>, <var>oldValue</var>, « », « », null, and null.
@@ -6131,12 +6143,14 @@ its <a for=Element>attribute list</a> <a for=list>is empty</a>.
 </ol>
 
 <p>To <dfn export id=concept-element-attributes-append lt="append an attribute">append</dfn> an
-<a>attribute</a> <var>attribute</var> to an <a for="/">element</a> <var>element</var>, run these
-steps:
+<a>attribute</a> <var>attribute</var> to an <a for="/">element</a> <var>element</var>
+with a <var>value</var>, run these steps:
 
 <ol>
  <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>element</var>, null, and
- <var>attribute</var>'s <a for=Attr>value</a>.
+ <var>value</var>.
+
+ <li><p>Set <var>attribute</var>'s <a for=Attr>value</a> to <var>value</var>.
 
  <li><p><a for=list>Append</a> <var>attribute</var> to <var>element</var>'s
  <a for=Element>attribute list</a>.
@@ -6235,7 +6249,8 @@ run these steps:
  <li><p>If <var>oldAttr</var> is non-null, then <a lt="replace an attribute">replace</a>
  <var>oldAttr</var> with <var>attr</var>.
 
- <li><p>Otherwise, <a lt="append an attribute">append</a> <var>attr</var> to <var>element</var>.
+ <li><p>Otherwise, <a lt="append an attribute">append</a> <var>attr</var> to <var>element</var>
+ with <var>attr</var>'s <a for="Attr">value</a>.
 
  <li><p>Return <var>oldAttr</var>.
 </ol>
@@ -6255,10 +6270,9 @@ optional <var>prefix</var>, and <var>namespace</var>, run these steps:
 
  <li>If <var>attribute</var> is null, create an <a>attribute</a> whose <a for=Attr>namespace</a> is
  <var>namespace</var>, <a for=Attr>namespace prefix</a> is <var>prefix</var>,
- <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is <var>value</var>, and
- <a for=Node>node document</a> is <var>element</var>'s <a for=Node>node document</a>, then
- <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
- return.
+ <a for=Attr>local name</a> is <var>localName</var> and <a for=Node>node document</a> is
+ <var>element</var>'s <a for=Node>node document</a>, then <a lt="append an attribute">append</a>
+ this <a>attribute</a> to <var>element</var> with <var>value</var>, and then return.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
@@ -6521,10 +6535,9 @@ method, when invoked, must run these steps:
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
  <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
- <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
- <var>value</var>, and <a for=Node>node document</a> is <a>context object</a>'s
- <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
- <a>context object</a>, and then return.
+ <a for="Attr">local name</a> is <var>qualifiedName</var> and <a for=Node>node document</a>
+ is <a>context object</a>'s <a for=Node>node document</a>, then <a lt="append an attribute">append</a>
+ this <a>attribute</a> to <a>context object</a> with <var>value</var> and then return.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
@@ -6586,10 +6599,9 @@ method, when invoked, must run these steps:
 
   <ol>
    <li><p>If <var>force</var> is not given or is true, create an <a>attribute</a> whose
-   <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is the empty
-   string, and <a for=Node>node document</a> is the <a>context object</a>'s
-   <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a>
-   to the <a>context object</a>, and then return true.
+   <a for="Attr">local name</a> is <var>qualifiedName</var> and <a for=Node>node document</a>
+   is the <a>context object</a>'s <a for=Node>node document</a>, then <a lt="append an attribute">append</a>
+   this <a>attribute</a> to the <a>context object</a> with an empty string, and then return true.
 
    <li><p>Return false.
   </ol>
