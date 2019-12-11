@@ -33,7 +33,7 @@ urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
  type: dfn
   text: Realm; url: realm
   text: surrounding agent; url: surrounding-agent
-urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME-2
+urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: time origin; url: dfn-time-origin
  type:dfn; text: clock resolution
@@ -967,7 +967,7 @@ correct defaults.</p>
 
   <p class=warning>User agents should set a minimum resolution of <var>event</var>'s
   {{Event/timeStamp}} attribute to 5 microseconds following the existing <a>clock resolution</a>
-  recommendation. [[!HR-TIME-2]]
+  recommendation. [[!HR-TIME]]
 
  <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> in <var>dictionary</var>, if
  <var>event</var> has an attribute whose <a spec=webidl>identifier</a> is <var>member</var>, then
@@ -3591,11 +3591,6 @@ run these steps:
 <var>target</var> with null, null, null, <var>addedNodes</var>, <var>removedNodes</var>,
 <var>previousSibling</var>, and <var>nextSibling</var>.
 
-<p>To <dfn noexport>queue an attribute mutation record</dfn> for <var>target</var> with
-<var>name</var>, <var>namespace</var>, and <var>oldValue</var>, <a>queue a mutation record</a> of
-"<code>attributes</code>" for <var>target</var> with <var>name</var>, <var>namespace</var>,
-<var>oldValue</var>, « », « », null, and null.
-
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
 
@@ -6101,118 +6096,87 @@ its <a for=Element>attribute list</a> <a for=list>is empty</a>.
 <dfn export id=concept-element-attribute-has lt="has an attribute">has</dfn> an <a>attribute</a>
 <var>A</var> if its <a for=Element>attribute list</a> <a for=list>contains</a> <var>A</var>.
 
-This and <a lt="other applicable specifications">other specifications</a> may define
+<p>This and <a lt="other applicable specifications">other specifications</a> may define
 <dfn export id=concept-element-attributes-change-ext>attribute change steps</dfn> for
 <a for=/>elements</a>. The algorithm is passed <var>element</var>, <var>localName</var>,
 <var>oldValue</var>, <var>value</var>, and <var>namespace</var>.
 
-To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
-<a>attribute</a> <var>attribute</var>
-from an <a for="/">element</a> <var>element</var>
-to <var>value</var>, run these steps:
+<p>To <dfn noexport>handle attribute changes</dfn> for an <a>attribute</a> <var>attribute</var> with
+<var>element</var>, <var>oldValue</var>, and <var>newValue</var>, run these steps:
 
 <ol>
- <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and
+ <li><p><a>Queue a mutation record</a> of "<code>attributes</code>" for <var>element</var> with
+ <var>attribute</var>'s <a for=Attr>local name</a>, <var>attribute</var>'s
+ <a for=Attr>namespace</a>, <var>oldValue</var>, « », « », null, and null.
+
+ <li><p>If <var>element</var> is <a for=Element>custom</a>, then
+ <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
+ "<code>attributeChangedCallback</code>", and an argument list containing <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>oldValue</var>, <var>newValue</var>, and <var>attribute</var>'s
+ <a for=Attr>namespace</a>.
+
+ <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>oldValue</var>, <var>newValue</var>, and <var>attribute</var>'s
+ <a for=Attr>namespace</a>.
+</ol>
+
+<p>To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
+<a>attribute</a> <var>attribute</var> to <var>value</var>, run these steps:
+
+<ol>
+ <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>attribute</var>'s
+ <a for=Attr>element</a>, <var>attribute</var>'s <a for=Attr>value</a>, and <var>value</var>.
+
+ <li><p>Set <var>attribute</var>'s <a for=Attr>value</a> to <var>value</var>.
+</ol>
+
+<p>To <dfn export id=concept-element-attributes-append lt="append an attribute">append</dfn> an
+<a>attribute</a> <var>attribute</var> to an <a for="/">element</a> <var>element</var>, run these
+steps:
+
+<ol>
+ <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>element</var>, null, and
  <var>attribute</var>'s <a for=Attr>value</a>.
 
- <li>If <var>element</var> is <a for=Element>custom</a>, then
- <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
- "<code>attributeChangedCallback</code>", and an argument list containing <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, <var>value</var>, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
-
- <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, <var>value</var>, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
-
- <li>Set <var>attribute</var>'s
- <a for=Attr>value</a> to <var>value</var>.
-</ol>
-
-To <dfn export id=concept-element-attributes-append lt="append an attribute">append</dfn> an
-<a>attribute</a> <var>attribute</var> to
-an <a for="/">element</a> <var>element</var>,
-run these steps:
-
-<ol>
- <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and null.
-
- <li>If <var>element</var> is <a for=Element>custom</a>, then
- <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
- "<code>attributeChangedCallback</code>", and an argument list containing <var>attribute</var>'s
- <a for=Attr>local name</a>, null, <var>attribute</var>'s <a for=Attr>value</a>, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
-
- <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
- <a for=Attr>local name</a>, null, <var>attribute</var>'s <a for=Attr>value</a>, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
-
- <li><a for=list>Append</a> <var>attribute</var> to <var>element</var>'s
+ <li><p><a for=list>Append</a> <var>attribute</var> to <var>element</var>'s
  <a for=Element>attribute list</a>.
 
- <li>Set <var>attribute</var>'s
- <a for=Attr>element</a> to <var>element</var>.
+ <li><p>Set <var>attribute</var>'s <a for=Attr>element</a> to <var>element</var>.
 </ol>
 
-To <dfn export id=concept-element-attributes-remove lt="remove an attribute">remove</dfn> an
-<a>attribute</a> <var>attribute</var>
-from an <a for="/">element</a> <var>element</var>,
-run these steps:
+<p>To <dfn export id=concept-element-attributes-remove lt="remove an attribute">remove</dfn> an
+<a>attribute</a> <var>attribute</var>, run these steps:
 
 <ol>
- <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, and
- <var>attribute</var>'s <a for=Attr>value</a>.
+ <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>attribute</var>'s
+ <a for=Attr>element</a>, <var>attribute</var>'s <a for=Attr>value</a>, and null.
 
- <li>If <var>element</var> is <a for=Element>custom</a>, then
- <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
- "<code>attributeChangedCallback</code>", and an argument list containing <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, null, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
+ <li><a for=list>Remove</a> <var>attribute</var> from <var>attribute</var>'s
+ <a for=Attr>element</a>'s <a for=Element>attribute list</a>.
 
- <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>value</a>, null, and
- <var>attribute</var>'s <a for=Attr>namespace</a>.
-
- <li><a for=list>Remove</a> <var>attribute</var> from <var>element</var>'s
- <a for=Element>attribute list</a>.
-
- <li>Set <var>attribute</var>'s
- <a for=Attr>element</a> to null.
+ <li><p>Set <var>attribute</var>'s <a for=Attr>element</a> to null.
 </ol>
 
-To <dfn export id=concept-element-attributes-replace lt="replace an attribute">replace</dfn> an
-<a>attribute</a> <var>oldAttr</var> by an <a>attribute</a> <var>newAttr</var>
-in an <a for="/">element</a> <var>element</var>, run these steps:
+<p>To <dfn export id=concept-element-attributes-replace lt="replace an attribute">replace</dfn> an
+<a>attribute</a> <var>oldAttr</var> with an <a>attribute</a> <var>newAttr</var>, run these steps:
 
 <ol>
- <li><p><a>Queue an attribute mutation record</a> for <var>element</var> with <var>oldAttr</var>'s
- <a for=Attr>local name</a>, <var>oldAttr</var>'s <a for=Attr>namespace</a>, and
- <var>oldAttr</var>'s <a for=Attr>value</a>.
+ <li><p><a>Handle attribute changes</a> for <var>oldAttr</var> with <var>oldAttr</var>'s
+ <a for=Attr>element</a>, <var>oldAttr</var>'s <a for=Attr>value</a>, and <var>newAttr</var>'s
+ <a for=Attr>value</a>.
 
- <li>If <var>element</var> is <a for=Element>custom</a>, then
- <a>enqueue a custom element callback reaction</a> with <var>element</var>, callback name
- "<code>attributeChangedCallback</code>", and an argument list containing <var>oldAttr</var>'s
- <a for=Attr>local name</a>, <var>oldAttr</var>'s <a for=Attr>value</a>, <var>newAttr</var>'s
- <a for=Attr>value</a>, and <var>oldAttr</var>'s <a for=Attr>namespace</a>.
+ <li><p><a for=list>Replace</a> <var>oldAttr</var> by <var>newAttr</var> in <var>oldAttr</var>'s
+ <a for=Attr>element</a>'s <a for=Element>attribute list</a>.
 
- <li><p>Run the <a>attribute change steps</a> with <var>element</var>, <var>oldAttr</var>'s
- <a for=Attr>local name</a>, <var>oldAttr</var>'s <a for=Attr>value</a>, <var>newAttr</var>'s
- <a for=Attr>value</a>, and <var>oldAttr</var>'s <a for=Attr>namespace</a>.
-
- <li><p><a for=list>Replace</a> <var>oldAttr</var> by <var>newAttr</var> in <var>element</var>'s
- <a for=Element>attribute list</a>.
+ <li><p>Set <var>newAttr</var>'s <a for=Attr>element</a> to <var>oldAttr</var>'s
+ <a for=Attr>element</a>.
 
  <li><p>Set <var>oldAttr</var>'s <a for=Attr>element</a> to null.
-
- <li><p>Set <var>newAttr</var>'s <a for=Attr>element</a> to <var>element</var>.
 </ol>
 
 <hr>
 
-To <dfn export id=concept-element-attributes-get-by-name>get an attribute by name</dfn> given a
+<p>To <dfn export id=concept-element-attributes-get-by-name>get an attribute by name</dfn> given a
 <var>qualifiedName</var> and <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
@@ -6224,7 +6188,7 @@ To <dfn export id=concept-element-attributes-get-by-name>get an attribute by nam
  whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and null otherwise.
 </ol>
 
-To
+<p>To
 <dfn export id=concept-element-attributes-get-by-namespace>get an attribute by namespace and local name</dfn>
 given a <var>namespace</var>, <var>localName</var>, and <a for="/">element</a> <var>element</var>,
 run these steps:
@@ -6254,7 +6218,7 @@ run these steps:
  <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.</p></li>
 </ol>
 
-To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
+<p>To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 <var>attr</var> and <var>element</var>, run these steps:
 
 <ol>
@@ -6268,18 +6232,17 @@ To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
 
  <li><p>If <var>oldAttr</var> is <var>attr</var>, return <var>attr</var>.
 
- <li><p>If <var>oldAttr</var> is non-null, <a lt="replace an attribute">replace</a> it
-  by <var>attr</var> in <var>element</var>.
+ <li><p>If <var>oldAttr</var> is non-null, then <a lt="replace an attribute">replace</a>
+ <var>oldAttr</var> with <var>attr</var>.
 
  <li><p>Otherwise, <a lt="append an attribute">append</a> <var>attr</var> to <var>element</var>.
 
  <li><p>Return <var>oldAttr</var>.
 </ol>
 
-To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> for
-an <a for="/">element</a> <var>element</var>
-using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</var>, and
-<var>namespace</var>, run these steps:
+<p>To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> for an
+<a for="/">element</a> <var>element</var>, using a <var>localName</var> and <var>value</var>, and an
+optional <var>prefix</var>, and <var>namespace</var>, run these steps:
 
 <ol>
  <li>If <var>prefix</var> is not given, set it to null.
@@ -6297,46 +6260,40 @@ using a <var>localName</var> and <var>value</var>, and an optional <var>prefix</
  <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
  return.
 
- <li><a lt="change an attribute">Change</a>
- <var>attribute</var> from <var>element</var> to
- <var>value</var>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
 
-To
-<dfn export id=concept-element-attributes-remove-by-name>remove an attribute by name</dfn>
+<p>To <dfn export id=concept-element-attributes-remove-by-name>remove an attribute by name</dfn>
 given a <var>qualifiedName</var> and <a for="/">element</a> <var>element</var>, run these steps:
 
 <ol>
  <li><p>Let <var>attr</var> be the result of
- <a lt="get an attribute by name">getting an attribute</a> given
- <var>qualifiedName</var> and <var>element</var>.
-
- <li><p>If <var>attr</var> is non-null, <a lt="remove an attribute">remove</a> it from
+ <a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and
  <var>element</var>.
+
+ <li><p>If <var>attr</var> is non-null, then <a lt="remove an attribute">remove</a> <var>attr</var>.
 
  <li><p>Return <var>attr</var>.
 </ol>
 
-To
+<p>To
 <dfn export id=concept-element-attributes-remove-by-namespace>remove an attribute by namespace and local name</dfn>
-given a <var>namespace</var>, <var>localName</var>, and
-<a for="/">element</a> <var>element</var>, run these steps:
+given a <var>namespace</var>, <var>localName</var>, and <a for="/">element</a> <var>element</var>,
+run these steps:
 
 <ol>
- <li>Let <var>attr</var> be the result of
+ <li><p>Let <var>attr</var> be the result of
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <var>element</var>.
 
- <li>If <var>attr</var> is non-null,
- <a lt="remove an attribute">remove</a> it from
- <var>element</var>.
+ <li><p>If <var>attr</var> is non-null, then <a lt="remove an attribute">remove</a> <var>attr</var>.
 
- <li>Return <var>attr</var>.
+ <li><p>Return <var>attr</var>.
 </ol>
 
 <hr>
 
-An <a for=/>element</a> can have an associated
+<p>An <a for=/>element</a> can have an associated
 <dfn export for=Element id=concept-id lt="ID">unique identifier (ID)</dfn>
 
 <p class=note>Historically <a for="/">elements</a> could have multiple identifiers e.g., by using
@@ -6569,8 +6526,7 @@ method, when invoked, must run these steps:
  <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
  <a>context object</a>, and then return.
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> from <a>context object</a> to
- <var>value</var>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
 
 <p>The
@@ -6686,7 +6642,7 @@ when invoked, must run these steps:
  <a for=list>contain</a> <var>attr</var>, then <a>throw</a> a "{{NotFoundError!!exception}}"
  {{DOMException}}.
 
- <li><p><a lt="remove an attribute">Remove</a> <var>attr</var> from <a>context object</a>.
+ <li><p><a lt="remove an attribute">Remove</a> <var>attr</var>.
 
  <li><p>Return <var>attr</var>.
 </ol>
@@ -7098,11 +7054,10 @@ null.
 string <var>value</var>, run these steps:
 
 <ol>
- <li>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
+ <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
  <a for=Attr>value</a> to <var>value</var>.
 
- <li>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> from
- <var>attribute</var>'s <a for=Attr>element</a> to <var>value</var>.
+ <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>.
 </ol>
 
 <p>The {{Attr/value}} attribute's setter must <a>set an existing attribute value</a> with
