@@ -2414,7 +2414,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p><a for=/>Remove</a> its <a>children</a> with the <i>suppress observers flag</i> set.
 
    <li>
-    <p><a>queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null, and
+    <p><a>Queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null, and
     null.
 
     <p class="note no-backref">This step intentionally does not pay attention to the
@@ -2602,7 +2602,8 @@ within a <var>parent</var>, run these steps:
  <li><p>If <var>node</var> is non-null, then <a for=/>insert</a> <var>node</var> into
  <var>parent</var> before null with the <i>suppress observers flag</i> set.
 
- <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
+ <li><p>If either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>,
+ then <a>queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
  <var>removedNodes</var>, null, and null.
 </ol>
 
@@ -3585,9 +3586,15 @@ run these steps:
 
 <p>To <dfn noexport>queue a tree mutation record</dfn> for <var>target</var> with
 <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, and
-<var>nextSibling</var>, <a>queue a mutation record</a> of "<code>childList</code>" for
-<var>target</var> with null, null, null, <var>addedNodes</var>, <var>removedNodes</var>,
-<var>previousSibling</var>, and <var>nextSibling</var>.
+<var>nextSibling</var>, run these steps:
+
+<ol>
+ <li><p>Assert: either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>.
+
+ <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
+ null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>,
+ and <var>nextSibling</var>.
+</ol>
 
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
