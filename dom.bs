@@ -94,8 +94,9 @@ This specification standardizes the DOM. It does so as follows:
 [[!XML]]
 [[!XML-NAMES]]
 
-<p>The term <dfn export>context object</dfn> means the object on which the algorithm,
-attribute getter, attribute setter, or method being discussed was called.
+<p>The term <dfn export>context object</dfn> is an alias for <a>this</a>.
+
+<p class="note no-backref">Usage of <a>context object</a> is deprecated in favor of <a>this</a>.
 
 <p>When extensions are needed, the DOM Standard can be updated accordingly, or a new standard
 can be written that hooks into the provided extensibility hooks for
@@ -579,10 +580,10 @@ initialized to. When an <a>event</a> is created the attribute must be initialize
 string.
 
 <p>The <dfn attribute for=Event><code>target</code></dfn> attribute's getter, when invoked, must
-return the <a>context object</a>'s <a for=Event>target</a>.
+return <a>this</a>'s <a for=Event>target</a>.
 
 <p>The <dfn attribute for=Event><code>srcElement</code></dfn> attribute's getter, when invoked, must
-return the <a>context object</a>'s <a for=Event>target</a>.
+return <a>this</a>'s <a for=Event>target</a>.
 
 <p>The <dfn attribute for=Event><code>currentTarget</code></dfn> attribute must return the value it
 was initialized to. When an <a>event</a> is created the attribute must be initialized to null.
@@ -593,12 +594,11 @@ steps:
 <ol>
  <li><p>Let <var>composedPath</var> be an empty <a for=/>list</a>.
 
- <li><p>Let <var>path</var> be the <a>context object</a>'s <a for=Event>path</a>.
+ <li><p>Let <var>path</var> be <a>this</a>'s <a for=Event>path</a>.
 
  <li><p>If <var>path</var> <a for=list>is empty</a>, then return <var>composedPath</var>.
 
- <li><p>Let <var>currentTarget</var> be the <a>context object</a>'s {{Event/currentTarget}}
- attribute value.
+ <li><p>Let <var>currentTarget</var> be <a>this</a>'s {{Event/currentTarget}} attribute value.
 
  <li><p><a for=list>Append</a> <var>currentTarget</var> to <var>composedPath</var>.
 
@@ -725,18 +725,17 @@ initialized to, which must be one of the following:
  <li><dfn export for=Event id=dispatch-flag>dispatch flag</dfn>
 </ul>
 
-<p>The <dfn method for=Event><code>stopPropagation()</code></dfn> method, when invoked, must set the
-<a>context object</a>'s <a>stop propagation flag</a>.</p>
+<p>The <dfn method for=Event><code>stopPropagation()</code></dfn> method, when invoked, must set
+<a>this</a>'s <a>stop propagation flag</a>.</p>
 
 <p>The <dfn attribute for=Event><code>cancelBubble</code></dfn> attribute's getter, when invoked,
-must return true if the <a>context object</a>'s <a>stop propagation flag</a> is set, and false
-otherwise.
+must return true if <a>this</a>'s <a>stop propagation flag</a> is set, and false otherwise.
 
-<p>The {{Event/cancelBubble}} attribute's setter, when invoked, must set the <a>context object</a>'s
+<p>The {{Event/cancelBubble}} attribute's setter, when invoked, must set <a>this</a>'s
 <a>stop propagation flag</a> if the given value is true, and do nothing otherwise.
 
 <p>The <dfn method for=Event><code>stopImmediatePropagation()</code></dfn> method, when invoked,
-must set the <a>context object</a>'s <a>stop propagation flag</a> and the <a>context object</a>'s
+must set <a>this</a>'s <a>stop propagation flag</a> and <a>this</a>'s
 <a>stop immediate propagation flag</a>.</p>
 
 <p>The <dfn attribute for=Event><code>bubbles</code></dfn> and
@@ -749,24 +748,23 @@ initialized to.
 nothing otherwise.
 
 <p>The <dfn attribute for=Event><code>returnValue</code></dfn> attribute's getter, when invoked,
-must return false if <a>context object</a>'s <a>canceled flag</a> is set, and true otherwise.
+must return false if <a>this</a>'s <a>canceled flag</a> is set, and true otherwise.
 
 <p>The {{Event/returnValue}} attribute's setter, when invoked, must <a>set the canceled flag</a>
-with the <a>context object</a> if the given value is false, and do nothing otherwise.
+with <a>this</a> if the given value is false, and do nothing otherwise.
 
 <p>The <dfn method for=Event><code>preventDefault()</code></dfn> method, when invoked, must
-<a>set the canceled flag</a> with the <a>context object</a>.
+<a>set the canceled flag</a> with <a>this</a>.
 
 <p class="note no-backref">There are scenarios where invoking {{Event/preventDefault()}} has no
 effect. User agents are encouraged to log the precise cause in a developer console, to aid
 debugging.
 
 <p>The <dfn attribute for=Event><code>defaultPrevented</code></dfn> attribute's getter, when
-invoked, must return true if the <a>context object</a>'s <a>canceled flag</a> is set, and false
-otherwise.</p>
+invoked, must return true if <a>this</a>'s <a>canceled flag</a> is set, and false otherwise.</p>
 
 <p>The <dfn attribute for=Event><code>composed</code></dfn> attribute's getter, when invoked, must
-return true if the <a>context object</a>'s <a>composed flag</a> is set, and false otherwise.</p>
+return true if <a>this</a>'s <a>composed flag</a> is set, and false otherwise.</p>
 
 <hr>
 
@@ -809,9 +807,9 @@ initialized to.
 method, when invoked, must run these steps:</p>
 
 <ol>
- <li><p>If the <a>context object</a>'s <a>dispatch flag</a> is set, then return.
+ <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> the <a>context object</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 </ol>
 
@@ -831,7 +829,7 @@ partial interface Window {
 {{Event}} object). Unless stated otherwise it is undefined.
 
 <p>The <dfn attribute for=Window><code>event</code></dfn> attribute's getter, when invoked, must
-return the <a>context object</a>'s <a for=Window>current event</a>.
+return <a>this</a>'s <a for=Window>current event</a>.
 
 <p class=note>Web developers are strongly encouraged to instead rely on the {{Event}} object passed
 to event listeners, as that will result in more portable code. This attribute is not available in
@@ -878,12 +876,12 @@ was initialized to.
 method must, when invoked, run these steps:
 
 <ol>
- <li><p>If the <a>context object</a>'s <a>dispatch flag</a> is set, then return.
+ <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> the <a>context object</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 
- <li><p>Set the <a>context object</a>'s {{CustomEvent/detail}} attribute to <var>detail</var>.
+ <li><p>Set <a>this</a>'s {{CustomEvent/detail}} attribute to <var>detail</var>.
 </ol>
 
 
@@ -1177,8 +1175,8 @@ method, when invoked, must run these steps:
  <li><p>Let <var>capture</var>, <var>passive</var>, and <var>once</var> be the result of
  <a lt="flatten more">flattening more</a> <var>options</var>.
 
- <li><p><a>Add an event listener</a> with the <a>context object</a> and an <a>event listener</a>
- whose <a for="event listener">type</a> is <var>type</var>, <a for="event listener">callback</a> is
+ <li><p><a>Add an event listener</a> with <a>this</a> and an <a>event listener</a> whose
+ <a for="event listener">type</a> is <var>type</var>, <a for="event listener">callback</a> is
  <var>callback</var>, <a for="event listener">capture</a> is <var>capture</var>,
  <a for="event listener">passive</a> is <var>passive</var>, and <a for="event listener">once</a> is
  <var>once</var>.
@@ -1188,7 +1186,7 @@ method, when invoked, must run these steps:
 <var>eventTarget</var> and an <a>event listener</a> <var>listener</var>, run these steps:
 
 <ol>
- <li><p>If the <a>context object</a> is a {{ServiceWorkerGlobalScope}} object and its
+ <li><p>If <var>eventTarget</var> is a {{ServiceWorkerGlobalScope}} object and its
  <a for="ServiceWorkerGlobalScope">service worker</a>'s
  <a for="service worker">set of event types to handle</a> contains <var>type</var>, then
  <a>report a warning to the console</a> that this might not give the expected results.
@@ -1215,11 +1213,11 @@ method, when invoked, must run these steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>If the <a>context object</a>'s <a for=EventTarget>event listener list</a>
- <a for=list>contains</a> an <a>event listener</a> whose <a for="event listener">type</a> is
- <var>type</var>, <a for="event listener">callback</a> is <var>callback</var>, and
+ <li><p>If <a>this</a>'s <a for=EventTarget>event listener list</a> <a for=list>contains</a> an
+ <a>event listener</a> whose <a for="event listener">type</a> is <var>type</var>,
+ <a for="event listener">callback</a> is <var>callback</var>, and
  <a for="event listener">capture</a> is <var>capture</var>, then <a>remove an event listener</a>
- with the <a>context object</a> and that <a>event listener</a>.
+ with <a>this</a> and that <a>event listener</a>.
 </ol>
 
 <p class=note>The event listener list will not contain multiple event listeners with equal
@@ -1235,7 +1233,7 @@ invoked, must run these steps:
 
  <li><p>Initialize <var>event</var>'s {{Event/isTrusted}} attribute to false.
 
- <li><p>Return the result of <a>dispatching</a> <var>event</var> to the <a>context object</a>.
+ <li><p>Return the result of <a>dispatching</a> <var>event</var> to <a>this</a>.
 </ol>
 
 
@@ -1788,11 +1786,10 @@ invoked, must run these steps:
 </ol>
 
 <p>The <dfn attribute for=AbortController><code>signal</code></dfn> attribute's getter, when
-invoked, must return the <a>context object</a>'s <a for=AbortController>signal</a>.
+invoked, must return <a>this</a>'s <a for=AbortController>signal</a>.
 
 <p>The <dfn method for=AbortController><code>abort()</code></dfn> method, when invoked, must
-<a for=AbortSignal>signal abort</a> on the <a>context object</a>'s
-<a for=AbortController>signal</a>.
+<a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>.
 
 
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
@@ -1838,7 +1835,7 @@ requirements to react in a reasonable way to {{AbortController/abort()}}. For ex
 service worker.
 
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> attribute's getter, when invoked, must return
-true if the <a>context object</a>'s [=AbortSignal/aborted flag=] is set, and false otherwise.
+true if <a>this</a>'s [=AbortSignal/aborted flag=] is set, and false otherwise.
 
 <p>The <dfn attribute for=AbortSignal><code>onabort</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the <dfn export for=AbortSignal><code>onabort</code></dfn>
@@ -2744,9 +2741,9 @@ DocumentFragment includes NonElementParentNode;
 </dl>
 
 <p>The <dfn method for=NonElementParentNode><code>getElementById(<var>elementId</var>)</code></dfn>
-method, when invoked, must return the first <a for="/">element</a>, in <a>tree order</a>, within the
-<a>context object</a>'s <a>descendants</a>, whose <a for=Element>ID</a> is <var>elementId</var>, and
-null if there is no such <a for="/">element</a> otherwise.
+method, when invoked, must return the first <a for="/">element</a>, in <a>tree order</a>, within
+<a>this</a>'s <a>descendants</a>, whose <a for=Element>ID</a> is <var>elementId</var>, and null if
+there is no such <a for="/">element</a> otherwise.
 
 
 <h4 id=mixin-documentorshadowroot>Mixin {{DocumentOrShadowRoot}}</h4>
@@ -2847,8 +2844,8 @@ Element includes ParentNode;
 </dl>
 
 <p>The <dfn attribute for=ParentNode><code>children</code></dfn> attribute's getter must return an
-{{HTMLCollection}} <a>collection</a> rooted at <a>context object</a> matching only
-<a for="/">element</a> <a>children</a>.
+{{HTMLCollection}} <a>collection</a> rooted at <a>this</a> matching only <a for="/">element</a>
+<a>children</a>.
 
 <p>The <dfn attribute for=ParentNode><code>firstElementChild</code></dfn> attribute's getter must
 return the first <a for=tree>child</a> that is an <a for="/">element</a>, and null otherwise.
@@ -2857,17 +2854,17 @@ return the first <a for=tree>child</a> that is an <a for="/">element</a>, and nu
 return the last <a for=tree>child</a> that is an <a for="/">element</a>, and null otherwise.
 
 <p>The <dfn attribute for=ParentNode><code>childElementCount</code></dfn> attribute's getter must
-return the number of <a>children</a> of <a>context object</a> that are <a for="/">elements</a>.
+return the number of <a>children</a> of <a>this</a> that are <a for="/">elements</a>.
 
 <p>The <dfn method for=ParentNode><code>prepend(<var>nodes</var>)</code></dfn> method, when invoked,
 must run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
- <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
- <li><p><a>Pre-insert</a> <var>node</var> into <a>context object</a> before the
- <a>context object</a>'s <a for=tree>first child</a>.
+ <li><p><a>Pre-insert</a> <var>node</var> into <a>this</a> before <a>this</a>'s
+ <a for=tree>first child</a>.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>append(<var>nodes</var>)</code></dfn> method, when invoked,
@@ -2875,19 +2872,18 @@ must run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
- <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
- <li><p><a>Append</a> <var>node</var> to <a>context object</a>.
+ <li><p><a>Append</a> <var>node</var> to <a>this</a>.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method,
 when invoked, must return the first result of running <a>scope-match a selectors string</a>
-<var>selectors</var> against <a>context object</a>, if the result is not an empty list, and null
-otherwise.
+<var>selectors</var> against <a>this</a>, if the result is not an empty list, and null otherwise.
 
 <p>The <dfn method for=ParentNode><code>querySelectorAll(<var>selectors</var>)</code></dfn>
 method, when invoked, must return the <a lt="static collection">static</a> result of running
-<a>scope-match a selectors string</a> <var>selectors</var> against <a>context object</a>.
+<a>scope-match a selectors string</a> <var>selectors</var> against <a>this</a>.
 
 
 <h4 id=interface-nondocumenttypechildnode>Mixin {{NonDocumentTypeChildNode}}</h4>
@@ -2975,15 +2971,15 @@ CharacterData includes ChildNode;
 must run these steps:
 
 <ol>
- <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <a>this</a>'s <a for=tree>parent</a>.
 
  <li><p>If <var>parent</var> is null, then return.
 
- <li><p>Let <var>viablePreviousSibling</var> be <a>context object</a>'s first
- <a>preceding</a> <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
+ <li><p>Let <var>viablePreviousSibling</var> be <a>this</a>'s first <a>preceding</a>
+ <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p>If <var>viablePreviousSibling</var> is null, set it to <var>parent</var>'s
  <a for=tree>first child</a>, and to <var>viablePreviousSibling</var>'s <a for=tree>next sibling</a>
@@ -2997,15 +2993,15 @@ must run these steps:
 must run these steps:
 
 <ol>
- <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <a>this</a>'s <a for=tree>parent</a>.
 
  <li><p>If <var>parent</var> is null, then return.
 
- <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
+ <li><p>Let <var>viableNextSibling</var> be <a>this</a>'s first <a>following</a>
  <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
@@ -3015,21 +3011,21 @@ must run these steps:
 invoked, must run these steps:
 
 <ol>
- <li><p>Let <var>parent</var> be <a>context object</a>'s <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <a>this</a>'s <a for=tree>parent</a>.
 
  <li><p>If <var>parent</var> is null, then return.
 
- <li><p>Let <var>viableNextSibling</var> be <a>context object</a>'s first <a>following</a>
+ <li><p>Let <var>viableNextSibling</var> be <a>this</a>'s first <a>following</a>
  <a for=tree>sibling</a> not in <var>nodes</var>, and null otherwise.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>context object</a>'s <a for=Node>node document</a>.
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li>
-  <p>If <a>context object</a>'s <a for=tree>parent</a> is <var>parent</var>, <a>replace</a> the
-  <a>context object</a> with <var>node</var> within <var>parent</var>.
+  <p>If <a>this</a>'s <a for=tree>parent</a> is <var>parent</var>, <a>replace</a> <a>this</a> with
+  <var>node</var> within <var>parent</var>.
 
-  <p class=note><a>Context object</a> could have been inserted into <var>node</var>.
+  <p class=note><a>This</a> could have been inserted into <var>node</var>.
 
  <li><p>Otherwise, <a>pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
@@ -3039,9 +3035,9 @@ invoked, must run these steps:
 steps:
 
 <ol>
- <li><p>If <a>context object</a>'s <a for=tree>parent</a> is null, then return.
+ <li><p>If <a>this</a>'s <a for=tree>parent</a> is null, then return.
 
- <li><p><a for=/>Remove</a> the <a>context object</a>.
+ <li><p><a for=/>Remove</a> <a>this</a>.
 </ol>
 
 
@@ -3056,7 +3052,7 @@ Text includes Slotable;
 </pre>
 
 <p>The <dfn attribute for=Slotable><code>assignedSlot</code></dfn> attribute's getter must return
-the result of <a>find a slot</a> given <a>context object</a> and with the <i>open flag</i> set.</p>
+the result of <a>find a slot</a> given <a>this</a> and with the <i>open flag</i> set.</p>
 
 
 <h4 id=old-style-collections>Old-style collections: {{NodeList}} and {{HTMLCollection}}</h4>
@@ -3453,10 +3449,10 @@ method, when invoked, must run these steps:
  <li>
   <p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
   <a>registered observer list</a>, if <var>registered</var>'s
-  <a for="registered observer">observer</a> is the <a>context object</a>:
+  <a for="registered observer">observer</a> is <a>this</a>:
 
   <ol>
-   <li><p><a for=list>For each</a> <var>node</var> of the <a>context object</a>'s
+   <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
    <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="transient registered observer">source</a> is
    <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
@@ -3470,11 +3466,11 @@ method, when invoked, must run these steps:
 
   <ol>
    <li><p><a for=list>Append</a> a new <a>registered observer</a> whose
-   <a for="registered observer">observer</a> is the <a>context object</a> and
+   <a for="registered observer">observer</a> is <a>this</a> and
    <a for="registered observer">options</a> is <var>options</var> to <var>target</var>'s
    <a>registered observer list</a>.
 
-   <li><p><a for=list>Append</a> <var>target</var> to the <a>context object</a>'s
+   <li><p><a for=list>Append</a> <var>target</var> to <a>this</a>'s
    <a for=MutationObserver>node list</a>.
   </ol>
 </ol>
@@ -3483,22 +3479,22 @@ method, when invoked, must run these steps:
 run these steps:
 
 <ol>
- <li><p><a for=list>For each</a> <var>node</var> of the <a>context object</a>'s
+ <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
  <a for=MutationObserver>node list</a>, <a for=list>remove</a> any <a>registered observer</a> from
- <var>node</var>'s <a>registered observer list</a> for which the <a>context object</a> is the
+ <var>node</var>'s <a>registered observer list</a> for which <a>this</a> is the
  <a for="registered observer">observer</a>.
 
- <li><p><a for=queue>Empty</a> the <a>context object</a>'s <a for=MutationObserver>record queue</a>.
+ <li><p><a for=queue>Empty</a> <a>this</a>'s <a for=MutationObserver>record queue</a>.
 </ol>
 
 <p>The <dfn method for=MutationObserver><code>takeRecords()</code></dfn> method, when invoked, must
 run these steps:
 
 <ol>
- <li><p>Let <var>records</var> be a <a for=queue>clone</a> of the <a>context object</a>'s
+ <li><p>Let <var>records</var> be a <a for=queue>clone</a> of <a>this</a>'s
  <a for=MutationObserver>record queue</a>.
 
- <li><p><a for=queue>Empty</a> the <a>context object</a>'s <a for=MutationObserver>record queue</a>.
+ <li><p><a for=queue>Empty</a> <a>this</a>'s <a for=MutationObserver>record queue</a>.
 
  <li><p>Return <var>records</var>.
 </ol>
@@ -3844,7 +3840,7 @@ is used by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFra
 </dl>
 
 The <dfn attribute for=Node>nodeType</dfn> attribute's getter, when invoked, must return
-the first matching statement, switching on the <a>context object</a>:
+the first matching statement, switching on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Element}}
@@ -3903,7 +3899,7 @@ must return the local name that is associated with the node, if it has one,
 and null otherwise.-->
 
 <p>The <dfn attribute for=Node>nodeName</dfn> attribute's getter, when invoked, must return the
-first matching statement, switching on the <a>context object</a>:
+first matching statement, switching on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Element}}
@@ -3990,62 +3986,61 @@ The <dfn attribute for=Node><code>baseURI</code></dfn> attribute's getter must r
 </dl>
 
 <p>The <dfn attribute for=Node><code>isConnected</code></dfn> attribute's getter must return true,
-if <a>context object</a> is <a>connected</a>, and false otherwise.</p>
+if <a>this</a> is <a>connected</a>, and false otherwise.</p>
 
 <p>The <dfn attribute for=Node><code>ownerDocument</code></dfn> attribute's getter must return null,
-if the <a>context object</a> is a <a>document</a>, and the <a>context object</a>'s
-<a for=Node>node document</a> otherwise.
+if <a>this</a> is a <a>document</a>, and <a>this</a>'s <a for=Node>node document</a> otherwise.
 
 <p class="note">The <a for=Node>node document</a> of a <a>document</a> is that <a>document</a> itself. All
 <a for=/>nodes</a> have a <a for=Node>node document</a> at all times.
 
 <p>The <dfn method for=Node><code>getRootNode(<var>options</var>)</code></dfn> method, when invoked,
-must return <a>context object</a>'s <a>shadow-including root</a> if <var>options</var>'s
-{{GetRootNodeOptions/composed}} is true, and <a>context object</a>'s <a for=tree>root</a> otherwise.
+must return <a>this</a>'s <a>shadow-including root</a> if <var>options</var>'s
+{{GetRootNodeOptions/composed}} is true, and <a>this</a>'s <a for=tree>root</a> otherwise.
 
-<p>The <dfn attribute for=Node><code>parentNode</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=tree>parent</a>.
+<p>The <dfn attribute for=Node><code>parentNode</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=tree>parent</a>.
 
 <p class="note">An {{Attr}} <a>node</a> has no <a for=tree>parent</a>.
 
-<p>The <dfn attribute for=Node><code>parentElement</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a>parent element</a>.
+<p>The <dfn attribute for=Node><code>parentElement</code></dfn> attribute's getter must return
+<a>this</a>'s <a>parent element</a>.
 
 <p>The <dfn method for=Node><code>hasChildNodes()</code></dfn> method, when invoked, must return
-true if the <a>context object</a> has <a>children</a>, and false otherwise.
+true if <a>this</a> has <a>children</a>, and false otherwise.
 
 <p>The <dfn attribute for=Node><code>childNodes</code></dfn> attribute's getter must return a
-{{NodeList}} rooted at the <a>context object</a> matching only <a>children</a>.
+{{NodeList}} rooted at <a>this</a> matching only <a>children</a>.
 
-<p>The <dfn attribute for=Node><code>firstChild</code> </dfn> attribute's getter must return the
-<a>context object</a>'s <a for=tree>first child</a>.
+<p>The <dfn attribute for=Node><code>firstChild</code> </dfn> attribute's getter must return
+<a>this</a>'s <a for=tree>first child</a>.
 
-<p>The <dfn attribute for=Node><code>lastChild</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a>last child</a>.
+<p>The <dfn attribute for=Node><code>lastChild</code></dfn> attribute's getter must return
+<a>this</a>'s <a>last child</a>.
 
-<p>The <dfn attribute for=Node><code>previousSibling</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a>previous sibling</a>.
+<p>The <dfn attribute for=Node><code>previousSibling</code></dfn> attribute's getter must return
+<a>this</a>'s <a>previous sibling</a>.
 
 <p class="note">An {{Attr}} <a>node</a> has no <a for=tree>siblings</a>.
 
-<p>The <dfn attribute for=Node><code>nextSibling</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=tree>next sibling</a>.
+<p>The <dfn attribute for=Node><code>nextSibling</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=tree>next sibling</a>.
 
 <hr>
 
 <!-- TODO: domintro -->
 
 The <dfn attribute for=Node>nodeValue</dfn> attribute
-must return the following, depending on the <a>context object</a>:
+must return the following, depending on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Attr}}
- <dd><a>Context object</a>'s <a for=Attr>value</a>.
+ <dd><a>this</a>'s <a for=Attr>value</a>.
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd><a>Context object</a>'s <a for=CharacterData>data</a>.
+ <dd><a>this</a>'s <a for=CharacterData>data</a>.
 
  <dt>Any other node
  <dd>Null.
@@ -4053,16 +4048,16 @@ must return the following, depending on the <a>context object</a>:
 
 The {{Node/nodeValue}} attribute must,
 on setting, if the new value is null, act as if it was the empty string
-instead, and then do as described below, depending on the <a>context object</a>:
+instead, and then do as described below, depending on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <a>context object</a> and new value.
+ <dd><p><a>Set an existing attribute value</a> with <a>this</a> and new value.
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd><p><a>Replace data</a> with node <a>context object</a>, offset 0, count <a>context object</a>'s
+ <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
  <a for=Node>length</a>, and data new value.
 
  <dt>Any other node
@@ -4070,20 +4065,20 @@ instead, and then do as described below, depending on the <a>context object</a>:
 </dl>
 
 <p>The <dfn attribute for=Node><code>textContent</code></dfn> attribute's getter must return the
-following, switching on <a>context object</a>:
+following, switching on <a>this</a>:
 
 <dl class=switch>
  <dt>{{DocumentFragment}}
  <dt>{{Element}}
- <dd>The <a>descendant text content</a> of the <a>context object</a>.
+ <dd>The <a>descendant text content</a> of <a>this</a>.
 
  <dt>{{Attr}}
- <dd><a>Context object</a>'s <a for=Attr>value</a>.
+ <dd><a>this</a>'s <a for=Attr>value</a>.
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd><a>Context object</a>'s <a for=CharacterData>data</a>.
+ <dd><a>this</a>'s <a for=CharacterData>data</a>.
 
  <dt>Any other node
  <dd>Null.
@@ -4103,20 +4098,20 @@ following, switching on <a>context object</a>:
 </ol>
 
 <p>The {{Node/textContent}} attribute's setter must, if the given value is null, act as if it was
-the empty string instead, and then do as described below, switching on <a>context object</a>:
+the empty string instead, and then do as described below, switching on <a>this</a>:
 
 <dl class=switch>
  <dt>{{DocumentFragment}}
  <dt>{{Element}}
- <dd><p><a>String replace all</a> with the given value within the <a>context object</a>.
+ <dd><p><a>String replace all</a> with the given value within <a>this</a>.
 
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <a>context object</a> and new value.
+ <dd><p><a>Set an existing attribute value</a> with <a>this</a> and new value.
 
  <dt>{{Text}}
  <dt>{{ProcessingInstruction}}
  <dt>{{Comment}}
- <dd><p><a>Replace data</a> with node <a>context object</a>, offset 0, count <a>context object</a>'s
+ <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
  <a for=Node>length</a>, and data the given value.
 
  <dt>Any other node
@@ -4134,7 +4129,7 @@ the empty string instead, and then do as described below, switching on <a>contex
 
 <p>The <dfn method for=Node><code>normalize()</code></dfn> method, when invoked, must run these
 steps for each <a>descendant</a> <a>exclusive <code>Text</code> node</a> <var>node</var> of
-<a>context object</a>:
+<a>this</a>:
 
 <ol>
  <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
@@ -4289,10 +4284,10 @@ dom-Range-extractContents, dom-Range-cloneContents -->
 invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a> is a <a for=/>shadow root</a>, then <a>throw</a> a
+ <li><p>If <a>this</a> is a <a for=/>shadow root</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>Return a <a lt="clone a node">clone</a> of the <a>context object</a>, with the
+ <li><p>Return a <a lt="clone a node">clone</a> of <a>this</a>, with the
  <i>clone children flag</i> set if <var>deep</var> is true.
 </ol>
 
@@ -4341,11 +4336,11 @@ A <a>node</a> <var>A</var>
 </ul>
 
 <p>The <dfn method for=Node><code>isEqualNode(<var>otherNode</var>)</code></dfn> method, when
-invoked, must return true if <var>otherNode</var> is non-null and <a>context object</a>
-<a for=Node>equals</a> <var>otherNode</var>, and false otherwise.
+invoked, must return true if <var>otherNode</var> is non-null and <a>this</a> <a for=Node>equals</a>
+<var>otherNode</var>, and false otherwise.
 
 <p>The <dfn method for=Node><code>isSameNode(<var>otherNode</var>)</code></dfn> method, when
-invoked, must return true if <var>otherNode</var> is <a>context object</a>, and false otherwise.
+invoked, must return true if <var>otherNode</var> is <a>this</a>, and false otherwise.
 
 </div>
 
@@ -4406,9 +4401,9 @@ returns as mask:
 when invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a> is <var>other</var>, then return zero.
+ <li><p>If <a>this</a> is <var>other</var>, then return zero.
 
- <li><p>Let <var>node1</var> be <var>other</var> and <var>node2</var> be <a>context object</a>.
+ <li><p>Let <var>node1</var> be <var>other</var> and <var>node2</var> be <a>this</a>.
 
  <li><p>Let <var>attr1</var> and <var>attr2</var> be null.
 
@@ -4475,8 +4470,8 @@ when invoked, must run these steps:
 </ol>
 
 <p>The <dfn method for=Node><code>contains(<var>other</var>)</code></dfn> method, when invoked, must
-return true if <var>other</var> is an <a>inclusive descendant</a> of <a>context object</a>, and
-false otherwise (including when <var>other</var> is null).
+return true if <var>other</var> is an <a>inclusive descendant</a> of <a>this</a>, and false
+otherwise (including when <var>other</var> is null).
 
 <hr>
 
@@ -4572,7 +4567,7 @@ invoked, must run these steps:
  <li><p>If <var>namespace</var> is null or the empty string, then return null.
 
  <li>
-  <p>Switch on the <a>context object</a>:
+  <p>Switch on <a>this</a>:
 
   <dl class=switch>
    <dt>{{Element}}
@@ -4602,7 +4597,7 @@ invoked, must run these steps:
 <ol>
  <li><p>If <var>prefix</var> is the empty string, then set it to null.
 
- <li><p>Return the result of running <a>locate a namespace</a> for the <a>context object</a> using
+ <li><p>Return the result of running <a>locate a namespace</a> for <a>this</a> using
  <var>prefix</var>.
 </ol>
 
@@ -4613,7 +4608,7 @@ invoked, must run these steps:
  <li><p>If <var>namespace</var> is the empty string, then set it to null.
 
  <li><p>Let <var>defaultNamespace</var> be the result of running <a>locate a namespace</a> for
- <a>context object</a> using null.
+ <a>this</a> using null.
 
  <li><p>Return true if <var>defaultNamespace</var> is the same as <var>namespace</var>, and false
  otherwise.
@@ -4623,17 +4618,17 @@ invoked, must run these steps:
 
 <p>The <dfn method for=Node><code>insertBefore(<var>node</var>, <var>child</var>)</code></dfn>
 method, when invoked, must return the result of <a>pre-inserting</a> <var>node</var> into
-<a>context object</a> before <var>child</var>.
+<a>this</a> before <var>child</var>.
 
 <p>The <dfn method for=Node><code>appendChild(<var>node</var>)</code></dfn> method, when invoked,
-must return the result of <a>appending</a> <var>node</var> to <a>context object</a>.
+must return the result of <a>appending</a> <var>node</var> to <a>this</a>.
 
 <p>The <dfn method for=Node><code>replaceChild(<var>node</var>, <var>child</var>)</code></dfn>
 method, when invoked, must return the result of <a>replacing</a> <var>child</var> with
-<var>node</var> within <a>context object</a>.
+<var>node</var> within <a>this</a>.
 
 <p>The <dfn method for=Node><code>removeChild(<var>child</var>)</code></dfn> method, when invoked,
-must return the result of <a>pre-removing</a> <var>child</var> from <a>context object</a>.
+must return the result of <a>pre-removing</a> <var>child</var> from <a>this</a>.
 
 <hr><!-- Collections -->
 
@@ -4889,13 +4884,13 @@ The <dfn attribute for=Document><code>URL</code></dfn> attribute's getter and
 <a for=Document>URL</a>, <a lt="URL serializer" spec=url>serialized</a>.
 
 The <dfn attribute for=Document><code>compatMode</code></dfn> attribute's getter must
-return "<code>BackCompat</code>" if <a>context object</a>'s <a for=Document>mode</a> is
+return "<code>BackCompat</code>" if <a>this</a>'s <a for=Document>mode</a> is
 "<code>quirks</code>", and "<code>CSS1Compat</code>" otherwise.
 
 The <dfn attribute for=Document><code>characterSet</code></dfn> attribute's getter,
 <dfn attribute for=Document><code>charset</code></dfn> attribute's getter, and
 <dfn attribute for=Document><code>inputEncoding</code></dfn> attribute's getter, must return
-<a>context object</a>'s <a for=Document>encoding</a>'s <a for=encoding>name</a>.
+<a>this</a>'s <a for=Document>encoding</a>'s <a for=encoding>name</a>.
 
 The <dfn attribute for=Document><code>contentType</code></dfn> attribute's getter must return the
 <a for=Document>content type</a>.
@@ -4970,7 +4965,7 @@ the <a>document element</a>.
 
 The <dfn method for=Document><code>getElementsByTagName(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the
-<a>list of elements with qualified name <var>qualifiedName</var></a> for the <a>context object</a>.
+<a>list of elements with qualified name <var>qualifiedName</var></a> for <a>this</a>.
 
 <p class="note no-backref">Thus, in an <a>HTML document</a>,
 <code class='lang-javascript'>document.getElementsByTagName("FOO")</code> will match
@@ -4983,11 +4978,11 @@ The
 <dfn method for=Document><code>getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must return the
 <a>list of elements with namespace <var>namespace</var> and local name <var>localName</var></a> for
-the <a>context object</a>.
+<a>this</a>.
 
 The <dfn method for=Document><code>getElementsByClassName(<var>classNames</var>)</code></dfn>
 method, when invoked, must return the <a>list of elements with class names <var>classNames</var></a>
-for the <a>context object</a>.
+for <a>this</a>.
 
 <div class=example id=example-5ffcda00>
  Given the following XHTML fragment:
@@ -5112,7 +5107,7 @@ invoked, must run these steps:
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
  <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ <li><p>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
  <li><p>Let <var>is</var> be null.
@@ -5120,13 +5115,13 @@ invoked, must run these steps:
  <li><p>If <var>options</var> is a <a for=/>dictionary</a> and <var>options</var>'s
  {{ElementCreationOptions/is}} is present, then set <var>is</var> to it.
 
- <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if the <a>context object</a> is an
- <a>HTML document</a> or <a>context object</a>'s <a for=Document>content type</a> is
+ <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if <a>this</a> is an
+ <a>HTML document</a> or <a>this</a>'s <a for=Document>content type</a> is
  "<code>application/xhtml+xml</code>", and null otherwise.
 
- <li><p>Return the result of <a>creating an element</a> given the <a>context object</a>,
- <var>localName</var>, <var>namespace</var>, null, <var>is</var>, and with the
- <var>synchronous custom elements</var> flag set.
+ <li><p>Return the result of <a>creating an element</a> given <a>this</a>, <var>localName</var>,
+ <var>namespace</var>, null, <var>is</var>, and with the <var>synchronous custom elements</var> flag
+ set.
 </ol>
 
 <p>The <dfn noexport>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
@@ -5149,19 +5144,19 @@ invoked, must run these steps:
 <p>The
 <dfn method for=Document><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>, <var>options</var>)</code></dfn>
 method, when invoked, must return the result of running the
-<a>internal <code>createElementNS</code> steps</a>, given <a>context object</a>,
-<var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>.
+<a>internal <code>createElementNS</code> steps</a>, given <a>this</a>, <var>namespace</var>,
+<var>qualifiedName</var>, and <var>options</var>.
 
 <p class="note">{{Document/createElement()}} and {{Document/createElementNS()}}'s <var>options</var>
 parameter is allowed to be a string for web compatibility.
 
 The <dfn method for=Document><code>createDocumentFragment()</code></dfn> method, when invoked,
-must return a new {{DocumentFragment}} <a>node</a> with its <a for=Node>node document</a> set to the
-<a>context object</a>.
+must return a new {{DocumentFragment}} <a>node</a> with its <a for=Node>node document</a> set to
+<a>this</a>.
 
 The <dfn method for=Document><code>createTextNode(<var>data</var>)</code></dfn> method, when
-invoked, must return a new {{Text}} <a>node</a> with its <a for=CharacterData>data</a> set to <var>data</var> and
-<a for=Node>node document</a> set to the <a>context object</a>.
+invoked, must return a new {{Text}} <a>node</a> with its <a for=CharacterData>data</a> set to
+<var>data</var> and <a for=Node>node document</a> set to <a>this</a>.
 
 <p class="note no-backref">No check is performed that <var>data</var> consists of
 characters that match the <code><a type>Char</a></code> production.
@@ -5170,19 +5165,19 @@ characters that match the <code><a type>Char</a></code> production.
 invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a> is an <a>HTML document</a>, then <a>throw</a> a
+ <li><p>If <a>this</a> is an <a>HTML document</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>If <var>data</var> contains the string "<code>]]></code>", then <a>throw</a> an
  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>Return a new {{CDATASection}} <a>node</a> with its <a for=CharacterData>data</a> set to <var>data</var> and
- <a for=Node>node document</a> set to the <a>context object</a>.
+ <li><p>Return a new {{CDATASection}} <a>node</a> with its <a for=CharacterData>data</a> set to
+ <var>data</var> and <a for=Node>node document</a> set to <a>this</a>.
 </ol>
 
 The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method, when invoked,
-must return a new {{Comment}} <a>node</a> with its <a for=CharacterData>data</a> set to <var>data</var> and
-<a for=Node>node document</a> set to the <a>context object</a>.
+must return a new {{Comment}} <a>node</a> with its <a for=CharacterData>data</a> set to
+<var>data</var> and <a for=Node>node document</a> set to <a>this</a>.
 
 <p class="note no-backref">No check is performed that <var>data</var> consists of
 characters that match the <code><a type>Char</a></code> production
@@ -5206,8 +5201,7 @@ method, when invoked, must run these steps:
  <a>node</a>, with
  <a for=ProcessingInstruction>target</a> set to <var>target</var>,
  <a for=CharacterData>data</a> set to <var>data</var>, and
- <a for=Node>node document</a> set to the
- <a>context object</a>.
+ <a for=Node>node document</a> set to <a>this</a>.
 </ol>
 
 <p class="note no-backref">No check is performed that <var>target</var> contains
@@ -5245,8 +5239,8 @@ when invoked, must run these steps:
  <li><p>If <var>node</var> is a <a>document</a> or <a for=/>shadow root</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>Return a <a lt="clone a node">clone</a> of <var>node</var>, with <a>context object</a> and
- the <i>clone children flag</i> set if <var>deep</var> is true.
+ <li><p>Return a <a lt="clone a node">clone</a> of <var>node</var>, with <a>this</a> and the
+ <i>clone children flag</i> set if <var>deep</var> is true.
 </ol>
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
@@ -5304,7 +5298,7 @@ must run these steps:
  <li><p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a> whose
  <a for=DocumentFragment>host</a> is non-null, then return.
 
- <li><p><a>Adopt</a> <var>node</var> into the <a>context object</a>.
+ <li><p><a>Adopt</a> <var>node</var> into <a>this</a>.
 
  <li><p>Return <var>node</var>.
 </ol>
@@ -5318,11 +5312,11 @@ invoked, must run these steps:
  <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
  then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li>If the <a>context object</a> is an <a>HTML document</a>, then set <var>localName</var> to
+ <li>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
  <li>Return a new <a>attribute</a> whose <a for=Attr>local name</a> is <var>localName</var> and
- <a for=Node>node document</a> is <a>context object</a>.
+ <a for=Node>node document</a> is <a>this</a>.
 </ol>
 
 The
@@ -5335,7 +5329,7 @@ method, when invoked, must run these steps:
 
  <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
- <var>localName</var>, and <a for=Node>node document</a> is <a>context object</a>.
+ <var>localName</var>, and <a for=Node>node document</a> is <a>this</a>.
 </ol>
 
 <hr>
@@ -5384,9 +5378,9 @@ invoked, must run these steps:
   {{DOMException}}.
 
  <li>
-  <p>If the interface indicated by <var>constructor</var> is not exposed on the <a>relevant global
-  object</a> of the <a>context object</a>, then <a>throw</a> a "{{NotSupportedError!!exception}}"
-  {{DOMException}}.
+  <p>If the interface indicated by <var>constructor</var> is not exposed on the
+  <a>relevant global object</a> of <a>this</a>, then <a>throw</a> a
+  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
   <p class=note>Typically user agents disable support for touch events in some configurations, in
   which case this clause would be triggered for the interface {{TouchEvent}}.
@@ -5410,8 +5404,7 @@ invoked, must run these steps:
 <hr>
 
 <p>The <dfn method for=Document><code>createRange()</code></dfn> method, when invoked, must return a
-new <a>live range</a> with (<a>context object</a>, 0) as its <a for=range>start</a> and
-<a for=range>end</a>.
+new <a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> an <a for=range>end</a>.
 
 <p class=note>The {{Range/Range()}} constructor can be used instead.
 
@@ -5518,8 +5511,8 @@ method, when invoked, must run these steps:
 
  <li><p>Return a new <a>doctype</a>, with <var>qualifiedName</var> as its
  <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
- as its <a>system ID</a>, and with its <a for=Node>node document</a> set to the associated <a>document</a> of
- the <a>context object</a>.
+ as its <a>system ID</a>, and with its <a for=Node>node document</a> set to the associated
+ <a>document</a> of <a>this</a>.
 </ol>
 
 <p class=note>No check is performed that <var>publicId</var> code points match the
@@ -5543,7 +5536,7 @@ method, when invoked, must run these steps:
 
  <li><p>If <var>element</var> is non-null, <a>append</a> <var>element</var> to <var>document</var>.
 
- <li><p><var>document</var>'s <a for=Document>origin</a> is <a>context object</a>'s associated
+ <li><p><var>document</var>'s <a for=Document>origin</a> is <a>this</a>'s associated
  <a>document</a>'s <a for=Document>origin</a>.
 
  <li>
@@ -5597,8 +5590,8 @@ method, when invoked, must run these steps:
  <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>, <{body}>, and
  the <a>HTML namespace</a>, to the <{html}> element created earlier.</li>
 
- <li><p><var>doc</var>'s <a for=Document>origin</a> is <a>context object</a>'s associated
- <a>document</a>'s <a for=Document>origin</a>.
+ <li><p><var>doc</var>'s <a for=Document>origin</a> is <a>this</a>'s associated <a>document</a>'s
+ <a for=Document>origin</a>.
 
  <li><p>Return <var>doc</var>.
 </ol>
@@ -5638,14 +5631,14 @@ interface DocumentType : Node {
 explicitly given when a <a>doctype</a> is created, its <a>public ID</a> and <a>system ID</a> are the
 empty string.
 
-<p>The <dfn attribute for=DocumentType><code>name</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=DocumentType>name</a>.
+<p>The <dfn attribute for=DocumentType><code>name</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=DocumentType>name</a>.
 
 <p>The <dfn attribute for=DocumentType><code>publicId</code></dfn> attribute's getter must return
-the <a>context object</a>'s <a>public ID</a>.
+<a>this</a>'s <a>public ID</a>.
 
 <p>The <dfn attribute for=DocumentType><code>systemId</code></dfn> attribute's getter must return
-the <a>context object</a>'s <a>system ID</a>.
+<a>this</a>'s <a>system ID</a>.
 
 
 <h3 id=interface-documentfragment>Interface {{DocumentFragment}}</h3>
@@ -5714,11 +5707,11 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <a for=Event/path>invocation target</a>, and <a for=/>shadow root</a>'s
 <a for=DocumentFragment>host</a> otherwise.
 
-<p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=ShadowRoot>mode</a>.</p>
+<p>The <dfn attribute for=ShadowRoot><code>mode</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=ShadowRoot>mode</a>.</p>
 
-<p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=DocumentFragment>host</a>.
+<p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=DocumentFragment>host</a>.
 
 <p>The <dfn attribute for=ShadowRoot><code>onslotchange</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the
@@ -5927,11 +5920,11 @@ execute correctly the first time, it is not executed again by an
 value of these steps:
 
 <ol>
- <li><p>Let <var>qualifiedName</var> be <a>context object</a>'s <a for=Element>qualified name</a>.
+ <li><p>Let <var>qualifiedName</var> be <a>this</a>'s <a for=Element>qualified name</a>.
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
- <var>qualifiedName</var> in <a>ASCII uppercase</a>.
+ <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
+ <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
+ <a>ASCII uppercase</a>.
 
  <li>Return <var>qualifiedName</var>.
 </ol>
@@ -6342,16 +6335,16 @@ A <a>node</a>'s
 </dl>
 
 <p>The <dfn attribute for=Element><code>namespaceURI</code></dfn> attribute's getter must return
-the <a>context object</a>'s <a for=Element>namespace</a>.
+<a>this</a>'s <a for=Element>namespace</a>.
 
-<p>The <dfn attribute for=Element><code>prefix</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=Element>namespace prefix</a>.
+<p>The <dfn attribute for=Element><code>prefix</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=Element>namespace prefix</a>.
 
-<p>The <dfn attribute for=Element><code>localName</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=Element>local name</a>.
+<p>The <dfn attribute for=Element><code>localName</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=Element>local name</a>.
 
-<p>The <dfn attribute for=Element><code>tagName</code></dfn> attribute's getter must return the
-<a>context object</a>'s <a for=Element>HTML-uppercased qualified name</a>.
+<p>The <dfn attribute for=Element><code>tagName</code></dfn> attribute's getter must return
+<a>this</a>'s <a for=Element>HTML-uppercased qualified name</a>.
 
 <hr>
 
@@ -6379,12 +6372,12 @@ steps:</p>
 
 <dl>
  <dt>getter
- <dd><p>Return the result of running <a>get an attribute value</a> given <a>context object</a> and
+ <dd><p>Return the result of running <a>get an attribute value</a> given <a>this</a> and
  <var>name</var>.</p></dd>
 
  <dt>setter
- <dd><p><a>Set an attribute value</a> for the <a>context object</a> using <var>name</var> and the
- given value.</p></dd>
+ <dd><p><a>Set an attribute value</a> for <a>this</a> using <var>name</var> and the given value.
+ </p></dd>
 </dl>
 
 <p>The <dfn attribute for=Element><code>id</code></dfn> attribute must <a for=Attr>reflect</a> the
@@ -6394,9 +6387,9 @@ steps:</p>
 <a for=Attr>reflect</a> the "<code>class</code>" content attribute.
 
 <p>The <dfn attribute for=Element><code>classList</code></dfn> attribute's getter must return a
-{{DOMTokenList}} object whose associated <a for=/>element</a> is the <a>context object</a> and whose
-associated <a>attribute</a>'s <a for=Attr>local name</a> is <code>class</code>. The <a>token set</a>
-of this particular {{DOMTokenList}} object are also known as the <a for="/">element</a>'s
+{{DOMTokenList}} object whose associated <a for=/>element</a> is <a>this</a> and whose associated
+<a>attribute</a>'s <a for=Attr>local name</a> is <code>class</code>. The <a>token set</a> of this
+particular {{DOMTokenList}} object are also known as the <a for="/">element</a>'s
 <dfn export for=Element id=concept-class lt="class">classes</dfn>.
 
 <p>The <dfn attribute for=Element><code>slot</code></dfn> attribute must <a for=Attr>reflect</a> the
@@ -6460,14 +6453,14 @@ namespace.</p>
 </dl>
 
 <p>The <dfn method for=Element><code>hasAttributes()</code></dfn> method, when invoked, must return
-false if <a>context object</a>'s <a for=Element>attribute list</a> <a for=list>is empty</a>, and
-true otherwise.
+false if <a>this</a>'s <a for=Element>attribute list</a> <a for=list>is empty</a>, and true
+otherwise.
 
 <p>The <dfn attribute for=Element><code>attributes</code></dfn> attribute's getter must return the
 associated {{NamedNodeMap}}.
 
 <p>The <dfn method for=Element><code>getAttributeNames()</code></dfn> method, when invoked, must
-return the <a for=Attr>qualified names</a> of the <a>attributes</a> in <a>context object</a>'s
+return the <a for=Attr>qualified names</a> of the <a>attributes</a> in <a>this</a>'s
 <a for=Element>attribute list</a>, in order, and a new <a>list</a> otherwise.
 
 <p class=note>These are not guaranteed to be unique.<!-- A theoretical getAttributeNamesNS() could
@@ -6478,8 +6471,8 @@ when invoked, must run these steps:
 
 <ol>
  <li><p>Let <var>attr</var> be the result of
- <a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and the
- <a>context object</a>.
+ <a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and
+ <a>this</a>.
 
  <li><p>If <var>attr</var> is null, return null.
 
@@ -6493,7 +6486,7 @@ method, when invoked, must these steps:
 <ol>
  <li><p>Let <var>attr</var> be the result of
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
- <var>namespace</var>, <var>localName</var>, and the <a>context object</a>.
+ <var>namespace</var>, <var>localName</var>, and <a>this</a>.
 
  <li><p>If <var>attr</var> is null, return null.
 
@@ -6508,20 +6501,19 @@ method, when invoked, must run these steps:
  <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
  XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
- <var>qualifiedName</var> in <a>ASCII lowercase</a>.
+ <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
+ <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
+ <a>ASCII lowercase</a>.
 
- <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>context object</a>'s
+ <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
  <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
  <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
- <var>value</var>, and <a for=Node>node document</a> is <a>context object</a>'s
- <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
- <a>context object</a>, and then return.
+ <var>value</var>, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>,
+ then <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
@@ -6534,32 +6526,31 @@ method, when invoked, must run these steps:
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
  passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
 
- <li><p><a>Set an attribute value</a> for the <a>context object</a> using <var>localName</var>,
- <var>value</var>, and also <var>prefix</var> and <var>namespace</var>.
+ <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
+ and also <var>prefix</var> and <var>namespace</var>.
 </ol>
 
 <p>The
 <dfn method for=Element><code>removeAttribute(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must <a lt="remove an attribute by name">remove an attribute</a> given
-<var>qualifiedName</var> and the <a>context object</a>, and then return undefined.
+<var>qualifiedName</var> and <a>this</a>, and then return undefined.
 
 <p>The
 <dfn method for=Element><code>removeAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must
 <a lt="remove an attribute by namespace and local name">remove an attribute</a> given
-<var>namespace</var>, <var>localName</var>, and <a>context object</a>, and then return undefined.
+<var>namespace</var>, <var>localName</var>, and <a>this</a>, and then return undefined.
 
 <p>The <dfn method for=Element><code>hasAttribute(<var>qualifiedName</var>)</code></dfn> method,
 when invoked, must run these steps:
 
 <ol>
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
- <var>qualifiedName</var> in <a>ASCII lowercase</a>.
+ <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
+ <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
+ <a>ASCII lowercase</a>.
 
- <li><p>Return true if the <a>context object</a> <a lt="has an attribute">has</a> an
- <a>attribute</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and false
- otherwise.
+ <li><p>Return true if <a>this</a> <a lt="has an attribute">has</a> an <a>attribute</a> whose
+ <a for=Attr>qualified name</a> is <var>qualifiedName</var>, and false otherwise.
 </ol>
 
 <p>The <dfn method for=Element><code>toggleAttribute(<var>qualifiedName</var>, <var>force</var>)</code></dfn>
@@ -6569,11 +6560,11 @@ method, when invoked, must run these steps:
  <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
  XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>If the <a>context object</a> is in the <a>HTML namespace</a> and its
- <a for=Node>node document</a> is an <a>HTML document</a>, then set <var>qualifiedName</var> to
- <var>qualifiedName</var> in <a>ASCII lowercase</a>.
+ <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
+ <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
+ <a>ASCII lowercase</a>.
 
- <li><p>Let <var>attribute</var> be the first <a>attribute</a> in the <a>context object</a>'s
+ <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
  <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
@@ -6584,16 +6575,16 @@ method, when invoked, must run these steps:
   <ol>
    <li><p>If <var>force</var> is not given or is true, create an <a>attribute</a> whose
    <a for="Attr">local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is the empty
-   string, and <a for=Node>node document</a> is the <a>context object</a>'s
-   <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a>
-   to the <a>context object</a>, and then return true.
+   string, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>, then
+   <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return
+   true.
 
    <li><p>Return false.
   </ol>
 
  <li><p>Otherwise, if <var>force</var> is not given or is false,
- <a lt="remove an attribute by name">remove an attribute</a> given <var>qualifiedName</var> and the
- <a>context object</a>, and then return false.
+ <a lt="remove an attribute by name">remove an attribute</a> given <var>qualifiedName</var> and
+ <a>this</a>, and then return false.
 
  <li><p>Return true.
 </ol>
@@ -6605,7 +6596,7 @@ method, when invoked, must run these steps:
 <ol>
  <li>If <var>namespace</var> is the empty string, set it to null.
 
- <li>Return true if the <a>context object</a>
+ <li>Return true if <a>this</a>
  <a lt="has an attribute">has</a> an
  <a>attribute</a> whose
  <a for="Attr">namespace</a> is <var>namespace</var>
@@ -6618,26 +6609,25 @@ method, when invoked, must run these steps:
 <p>The <dfn method for=Element><code>getAttributeNode(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the result of
 <a lt="get an attribute by name">getting an attribute</a> given <var>qualifiedName</var> and
-<a>context object</a>.
+<a>this</a>.
 
 <p>The
 <dfn method for=Element><code>getAttributeNodeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must return the result of
 <a lt="get an attribute by namespace and local name">getting an attribute</a> given
-<var>namespace</var>, <var>localName</var>, and the <a>context object</a>.
+<var>namespace</var>, <var>localName</var>, and <a>this</a>.
 
 <p>The <dfn method for=Element><code>setAttributeNode(<var>attr</var>)</code></dfn> and
 <dfn method for=Element><code>setAttributeNodeNS(<var>attr</var>)</code></dfn> methods, when
 invoked, must return the result of <a lt="set an attribute">setting an attribute</a> given
-<var>attr</var> and the <a>context object</a>.
+<var>attr</var> and <a>this</a>.
 
 <p>The <dfn method for=Element><code>removeAttributeNode(<var>attr</var>)</code></dfn> method,
 when invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a>'s <a for=Element>attribute list</a> does not
- <a for=list>contain</a> <var>attr</var>, then <a>throw</a> a "{{NotFoundError!!exception}}"
- {{DOMException}}.
+ <li><p>If <a>this</a>'s <a for=Element>attribute list</a> does not <a for=list>contain</a>
+ <var>attr</var>, then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
 
  <li><p><a lt="remove an attribute">Remove</a> <var>attr</var>.
 
@@ -6659,11 +6649,11 @@ when invoked, must run these steps:
 invoked, must run these steps:
 
 <ol>
- <li><p>If <a>context object</a>'s <a for=Element>namespace</a> is <em>not</em> the
- <a>HTML namespace</a>, then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+ <li><p>If <a>this</a>'s <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a>,
+ then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>context object</a>'s <a for=Element>local name</a> is <em>not</em> a
- <a>valid custom element name</a>,
+ <li><p>If <a>this</a>'s <a for=Element>local name</a> is <em>not</em> a
+<a>valid custom element name</a>,
  "<code>article</code>",
  "<code>aside</code>",
  "<code>blockquote</code>",
@@ -6684,14 +6674,13 @@ invoked, must run these steps:
  "<code>span</code>", then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li>
-  <p>If <a>context object</a>'s <a for=Element>local name</a> is a
-  <a>valid custom element name</a>, or <a>context object</a>'s
-  <a for=Element><code>is</code> value</a> is not null, then:
+  <p>If <a>this</a>'s <a for=Element>local name</a> is a <a>valid custom element name</a>, or
+  <a>this</a>'s <a for=Element><code>is</code> value</a> is not null, then:
 
   <ol>
    <li><p>Let <var>definition</var> be the result of
    <a lt="look up a custom element definition">looking up a custom element definition</a> given
-   <a>context object</a>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
+   <a>this</a>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
    <a for=Element>local name</a>, and its <a for=Element><code>is</code> value</a>.
 
    <li><p>If <var>definition</var> is not null and <var>definition</var>'s
@@ -6700,17 +6689,17 @@ invoked, must run these steps:
   </ol>
  </li>
 
- <li><p>If <a>context object</a> is a <a for=Element>shadow host</a>, then <a>throw</a> an
+ <li><p>If <a>this</a> is a <a for=Element>shadow host</a>, then <a>throw</a> an
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
- is <a>context object</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is
- <a>context object</a>, and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
+ is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <a>this</a>,
+ and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>init</var>'s
  {{ShadowRootInit/delegatesFocus}}.
 
- <li><p>Set <a>context object</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
+ <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
  <li><p>Return <var>shadow</var>.
 </ol>
@@ -6719,7 +6708,7 @@ invoked, must run these steps:
 steps:
 
 <ol>
- <li><p>Let <var>shadow</var> be <a>context object</a>'s <a for=Element>shadow root</a>.
+ <li><p>Let <var>shadow</var> be <a>this</a>'s <a for=Element>shadow root</a>.
 
  <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
  then return null.</p></li>
@@ -6752,7 +6741,7 @@ method, when invoked, must run these steps:
  <li>If <var>s</var> is failure, <a>throw</a> a
  "{{SyntaxError!!exception}}" {{DOMException}}.
 
- <li>Let <var>elements</var> be <a>context object</a>'s
+ <li>Let <var>elements</var> be <a>this</a>'s
  <a for=tree>inclusive ancestors</a> that are
  <a for="/">elements</a>, in reverse
  <a>tree order</a>.
@@ -6760,7 +6749,7 @@ method, when invoked, must run these steps:
  <li>For each <var>element</var> in <var>elements</var>, if
  <a>match a selector against an element</a>, using
  <var>s</var>, <var>element</var>, and
- <a>:scope element</a> <a>context object</a>,
+ <a>:scope element</a> <a>this</a>,
  returns success, return <var>element</var>. [[!SELECTORS4]]
 
  <li>Return null.
@@ -6781,7 +6770,7 @@ invoked, must run these steps:
  <li>Return true if the result of
  <a>match a selector against an element</a>, using
  <var>s</var>, <var>element</var>, and
- <a>:scope element</a> <a>context object</a>,
+ <a>:scope element</a> <a>this</a>,
  returns success, and false otherwise. [[!SELECTORS4]]
 </ol>
 
@@ -6789,17 +6778,17 @@ invoked, must run these steps:
 
 <p>The <dfn method for=Element><code>getElementsByTagName(<var>qualifiedName</var>)</code></dfn>
 method, when invoked, must return the
-<a>list of elements with qualified name <var>qualifiedName</var></a> for <a>context object</a>.
+<a>list of elements with qualified name <var>qualifiedName</var></a> for <a>this</a>.
 
 <p>The
 <dfn method for=Element><code>getElementsByTagNameNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method, when invoked, must return the
 <a>list of elements with namespace <var>namespace</var> and local name <var>localName</var></a> for
-<a>context object</a>.
+<a>this</a>.
 
 <p>The <dfn method for=Element><code>getElementsByClassName(<var>classNames</var>)</code></dfn>
 method, when invoked, must return the <a>list of elements with class names <var>classNames</var></a>
-for <a>context object</a>.
+for <a>this</a>.
 
 <hr>
 
@@ -6836,8 +6825,8 @@ for <a>context object</a>.
 
 <p>The
 <dfn method for=Element><code>insertAdjacentElement(<var>where</var>, <var>element</var>)</code></dfn>
-method, when invoked, must return the result of running <a>insert adjacent</a>, given
-<a>context object</a>, <var>where</var>, and <var>element</var>.
+method, when invoked, must return the result of running <a>insert adjacent</a>, give <a>this</a>,
+<var>where</var>, and <var>element</var>.
 
 <p>The
 <dfn method for=Element><code>insertAdjacentText(<var>where</var>, <var>data</var>)</code></dfn>
@@ -6845,11 +6834,9 @@ method, when invoked, must run these steps:
 
 <ol>
  <li><p>Let <var>text</var> be a new {{Text}} <a>node</a>  whose <a for=CharacterData>data</a> is
- <var>data</var> and <a for=Node>node document</a> is <a>context object</a>'s
- <a for=Node>node document</a>.
+ <var>data</var> and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
 
- <li><p>Run <a>insert adjacent</a>, given <a>context object</a>, <var>where</var>, and
- <var>text</var>.
+ <li><p>Run <a>insert adjacent</a>, given <a>this</a>, <var>where</var>, and <var>text</var>.
 </ol>
 
 <p class="note">This method returns nothing because it existed before we had a chance to design it.
@@ -6895,11 +6882,10 @@ the <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a>.
 invoked, must run these steps:
 
 <ol>
- <li><p>If <var>index</var> is equal to or greater than <a>context object</a>'s
+ <li><p>If <var>index</var> is equal to or greater than <a>this</a>'s
  <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a>, then return null.
 
- <li><p>Otherwise, return <a>context object</a>'s
- <a for=NamedNodeMap>attribute list</a>[<var>index</var>].
+ <li><p>Otherwise, return <a>this</a>'s <a for=NamedNodeMap>attribute list</a>[<var>index</var>].
 </ol>
 
 <p>A {{NamedNodeMap}} object's <a>supported property names</a> are the return value of running these
@@ -7058,12 +7044,12 @@ string <var>value</var>, run these steps:
 </ol>
 
 <p>The {{Attr/value}} attribute's setter must <a>set an existing attribute value</a> with
-<a>context object</a> and the given value.
+<a>this</a> and the given value.
 
 <hr>
 
 <p>The <dfn attribute for="Attr"><code>ownerElement</code></dfn> attribute's getter must return
-<a>context object</a>'s <a for=Attr>element</a>.
+<a>this</a>'s <a for=Attr>element</a>.
 
 <hr>
 
@@ -7198,36 +7184,35 @@ To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=conc
 </ol>
 
 <p>The <dfn attribute for=CharacterData><code>data</code></dfn> attribute's getter must return
-<a>context object</a>'s <a for=CharacterData>data</a>. Its setter must <a>replace data</a> with node
-<a>context object</a>, offset 0, count <a>context object</a>'s <a for=Node>length</a>, and
-data new value.
+<a>this</a>'s <a for=CharacterData>data</a>. Its setter must <a>replace data</a> with node
+<a>this</a>, offset 0, count <a>this</a>'s <a for=Node>length</a>, and data new value.
 
 <p>The <dfn attribute for=CharacterData><code>length</code></dfn> attribute's getter must return
-<a>context object</a>'s <a for=Node>length</a>.
+<a>this</a>'s <a for=Node>length</a>.
 
 <p>The
 <dfn method for=CharacterData><code>substringData(<var>offset</var>, <var>count</var>)</code></dfn>
-method, when invoked, must return the result of running <a>substring data</a> with node
-<a>context object</a>, offset <var>offset</var>, and count <var>count</var>.
+method, when invoked, must return the result of running <a>substring data</a> with node <a>this</a>,
+offset <var>offset</var>, and count <var>count</var>.
 
 <p>The <dfn method for=CharacterData><code>appendData(<var>data</var>)</code></dfn> method, when
-invoked, must <a>replace data</a> with node <a>context object</a>, offset <a>context object</a>'s
+invoked, must <a>replace data</a> with node <a>this</a>, offset <a>this</a>'s
 <a for=Node>length</a>, count 0, and data <var>data</var>.
 
 <p>The
 <dfn method for=CharacterData><code>insertData(<var>offset</var>, <var>data</var>)</code></dfn>
-method, when invoked, must <a>replace data</a> with node <a>context object</a>, offset
-<var>offset</var>, count 0, and data <var>data</var>.
+method, when invoked, must <a>replace data</a> with node <a>this</a>, offset <var>offset</var>,
+count 0, and data <var>data</var>.
 
 <p>The
 <dfn method for=CharacterData><code>deleteData(<var>offset</var>, <var>count</var>)</code></dfn>
-method, when invoked, must <a>replace data</a> with node <a>context object</a>, offset
-<var>offset</var>, count <var>count</var>, and data the empty string.
+method, when invoked, must <a>replace data</a> with node <a>this</a>, offset <var>offset</var>,
+count <var>count</var>, and data the empty string.
 
 <p>The
 <dfn method for=CharacterData><code>replaceData(<var>offset</var>, <var>count</var>, <var>data</var>)</code></dfn>
-method, when invoked, must <a>replace data</a> with node <a>context object</a>, offset
-<var>offset</var>, count <var>count</var>, and data <var>data</var>.
+method, when invoked, must <a>replace data</a> with node <a>this</a>, offset <var>offset</var>,
+count <var>count</var>, and data <var>data</var>.
 
 
 <h3 id=interface-text>Interface {{Text}}</h3>
@@ -7355,11 +7340,11 @@ To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text
 </ol>
 
 <p>The <dfn method for=Text><code>splitText(<var>offset</var>)</code></dfn> method, when invoked,
-must <a lt="split a Text node">split</a> <a>context object</a> with offset <var>offset</var>.
+must <a lt="split a Text node">split</a> <a>this</a> with offset <var>offset</var>.
 
 <p>The <dfn attribute for=Text><code>wholeText</code></dfn> attribute's getter must return the
 <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of the
-<a>contiguous <code>Text</code> nodes</a> of the <a>context object</a>, in <a>tree order</a>.
+<a>contiguous <code>Text</code> nodes</a> of <a>this</a>, in <a>tree order</a>.
 
 
 <h3 id=interface-cdatasection>Interface {{CDATASection}}</h3>
@@ -7576,20 +7561,20 @@ interface AbstractRange {
 
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-attribute's getter must return the <a>context object</a>'s <a for=range>start node</a>.
+attribute's getter must return <a>this</a>'s <a for=range>start node</a>.
 
 <p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
-attribute's getter must return the <a>context object</a>'s <a for=range>start offset</a>.
+attribute's getter must return <a>this</a>'s <a for=range>start offset</a>.
 
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-attribute's getter must return the <a>context object</a>'s <a for=range>end node</a>.
+attribute's getter must return <a>this</a>'s <a for=range>end node</a>.
 
 <p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
-attribute's getter must return the <a>context object</a>'s <a for=range>end offset</a>.
+attribute's getter must return <a>this</a>'s <a for=range>end offset</a>.
 
 <p>The <dfn id=dom-range-collapsed attribute for=AbstractRange><code>collapsed</code></dfn>
-attribute's getter must return true if the <a>context object</a> is <a for=range>collapsed</a>, and
-false otherwise.
+attribute's getter must return true if <a>this</a> is <a for=range>collapsed</a>, and false
+otherwise.
 
 
 <h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
@@ -7839,11 +7824,11 @@ steps:
 </ol>
 
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method,
-when invoked, must <a>set the start</a> of <a>context object</a> to <a>boundary point</a>
+when invoked, must <a>set the start</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
 
 <p>The <dfn method for=Range><code>setEnd(<var>node</var>, <var>offset</var>)</code></dfn> method,
-when invoked, must <a>set the end</a> of <a>context object</a> to <a>boundary point</a>
+when invoked, must <a>set the end</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
 
 <p>The <dfn method for=Range><code>setStartBefore(<var>node</var>)</code></dfn> method, when
@@ -7856,8 +7841,8 @@ invoked, must run these steps:
  <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><a>Set the start</a> of the
- <a>context object</a> to
+ <li><a>Set the start</a> of
+ <a>this</a> to
  <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s
  <a for=tree>index</a>).
@@ -7872,7 +7857,7 @@ must run these steps:
  <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><p><a>Set the start</a> of the <a>context object</a> to <a>boundary point</a>
+ <li><p><a>Set the start</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
 
@@ -7886,8 +7871,8 @@ must run these steps:
  <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><a>Set the end</a> of the
- <a>context object</a> to
+ <li><a>Set the end</a> of
+ <a>this</a> to
  <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a>).
 </ol>
@@ -7901,7 +7886,7 @@ must run these steps:
  <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><p><a>Set the end</a> of the <a>context object</a> to <a>boundary point</a>
+ <li><p><a>Set the end</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
 
@@ -7928,7 +7913,7 @@ within a <a>range</a> <var>range</var>, run these steps:
 </ol>
 
 <p>The <dfn method for=Range><code>selectNode(<var>node</var>)</code></dfn> method, when invoked,
-must <a for=range>select</a> <var>node</var> within <a>context object</a>.
+must <a for=range>select</a> <var>node</var> within <a>this</a>.
 
 <p>The <dfn method for=Range><code>selectNodeContents(<var>node</var>)</code></dfn> method, when
 invoked, must run these steps:
@@ -7990,7 +7975,7 @@ method, when invoked, must run these steps:
  Opera) instead of a nonstandard exception type.
  -->
 
- <li>If <a>context object</a>'s <a for="live range">root</a> is not the same as <var>sourceRange</var>'s
+ <li>If <a>this</a>'s <a for="live range">root</a> is not the same as <var>sourceRange</var>'s
  <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
 
  <li>
@@ -7998,28 +7983,28 @@ method, when invoked, must run these steps:
   <dl class=switch>
    <dt>{{Range/START_TO_START}}:
    <dd>
-    Let <var>this point</var> be the <a>context object</a>'s
+    Let <var>this point</var> be <a>this</a>'s
     <a for=range>start</a>.
     Let <var>other point</var> be <var>sourceRange</var>'s
     <a for=range>start</a>.
 
    <dt>{{Range/START_TO_END}}:
    <dd>
-    Let <var>this point</var> be the <a>context object</a>'s
+    Let <var>this point</var> be <a>this</a>'s
     <a for=range>end</a>.
     Let <var>other point</var> be <var>sourceRange</var>'s
     <a for=range>start</a>.
 
     <dt>{{Range/END_TO_END}}:
     <dd>
-     Let <var>this point</var> be the <a>context object</a>'s
+     Let <var>this point</var> be <a>this</a>'s
      <a for=range>end</a>.
      Let <var>other point</var> be <var>sourceRange</var>'s
      <a for=range>end</a>.
 
     <dt>{{Range/END_TO_START}}:
     <dd>
-     Let <var>this point</var> be the <a>context object</a>'s
+     Let <var>this point</var> be <a>this</a>'s
      <a for=range>start</a>.
      Let <var>other point</var> be <var>sourceRange</var>'s
      <a for=range>end</a>.
@@ -8045,7 +8030,7 @@ method, when invoked, must run these steps:
 run these steps:
 
 <ol>
- <li><p>If the <a>context object</a> is <a for=range>collapsed</a>, then return.
+ <li><p>If <a>this</a> is <a for=range>collapsed</a>, then return.
  <!-- This might actually make no difference, but it's not immediately
  obvious what would happen otherwise if the start/end were text/comment:
  are all the substeps of the next step actually no-ops, or could some have
@@ -8053,8 +8038,7 @@ run these steps:
 
  <li>Let <var>original start node</var>,
  <var>original start offset</var>, <var>original end node</var>,
- and <var>original end offset</var> be the
- <a>context object</a>'s
+ and <var>original end offset</var> be <a>this</a>'s
  <a for=range>start node</a>,
  <a for=range>start offset</a>,
  <a for=range>end node</a>, and
@@ -8072,11 +8056,11 @@ run these steps:
 
  <li>Let <var>nodes to remove</var> be a list of all the
  <a for=/>nodes</a> that are <a for="live range">contained</a> in
- the <a>context object</a>, in
+ <a>this</a>, in
  <a>tree order</a>, omitting any
  <a>node</a> whose
  <a for=tree>parent</a> is also
- <a for="live range">contained</a> in the <a>context object</a>.
+ <a for="live range">contained</a> in <a>this</a>.
 
  <li>If <var>original start node</var> is an
  <a for=tree>inclusive ancestor</a> of
@@ -8105,8 +8089,8 @@ run these steps:
 
     <p class="note no-backref">If <var>reference node</var>'s
     <a for=tree>parent</a> were null, it would be the
-    <a for="live range">root</a> of the
-    <a>context object</a>, so would be an
+    <a for="live range">root</a> of
+    <a>this</a>, so would be an
     <a for=tree>inclusive ancestor</a> of
     <var>original end node</var>, and we could not reach this point.
   </ol>
@@ -8276,8 +8260,8 @@ run these steps:
     <var>original end node</var>, and we could not reach this point.
   </ol>
 
-  <!-- Now we start with mutations, so we can't refer to the context object
-  anymore unless we carefully consider how it will have mutated. -->
+  <!-- Now we start with mutations, so we can't refer to this anymore unless we carefully consider
+  how it will have mutated. -->
 
  <li>
   If <var>first partially contained child</var> is a
@@ -8400,7 +8384,7 @@ run these steps:
 </ol>
 
 <p>The <dfn method for=Range><code>extractContents()</code></dfn> method, when invoked, must return
-the result of <a for="live range">extracting</a> the <a>context object</a>.
+the result of <a for="live range">extracting</a> <a>this</a>.
 
 <p>To
 <dfn export id=concept-range-clone for="live range" lt="clone the contents|cloning the contents">clone the contents</dfn>
@@ -8616,7 +8600,7 @@ of a <a>live range</a> <var>range</var>, run these steps:
 </ol>
 
 <p>The <dfn method for=Range><code>cloneContents()</code></dfn> method, when invoked, must return
-the result of <a for="live range">cloning the contents</a> of the <a>context object</a>.
+the result of <a for="live range">cloning the contents</a> of <a>this</a>.
 
 <p>To <dfn export id=concept-range-insert for="live range">insert</dfn> a <a for=/>node</a>
 <var>node</var> into a <a>live range</a> <var>range</var>, run these steps:
@@ -8723,7 +8707,7 @@ the result of <a for="live range">cloning the contents</a> of the <a>context obj
 </ol>
 
 <p>The <dfn method for=Range><code>insertNode(<var>node</var>)</code></dfn> method, when invoked,
-must <a for="live range">insert</a> <var>node</var> into the <a>context object</a>.
+must <a for="live range">insert</a> <var>node</var> into <a>this</a>.
 
 <p>The <dfn method for=Range><code>surroundContents(<var>newParent</var>)</code></dfn> method, when
 invoked, must run these steps:
@@ -8740,8 +8724,8 @@ check first thing, which matches everyone but Firefox.
 -->
 
 <ol>
- <li><p>If a non-{{Text}} <a>node</a> is <a for="live range">partially contained</a> in the
- <a>context object</a>, then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
+ <li><p>If a non-{{Text}} <a>node</a> is <a for="live range">partially contained</a> in
+ <a>this</a>, then <a>throw</a> an "{{InvalidStateError!!exception}}" {{DOMException}}.
  <!-- XXX Could we rephrase this condition to be more algorithmic and less
  declarative?-->
 
@@ -8752,8 +8736,7 @@ check first thing, which matches everyone but Firefox.
   <p class=note>For historical reasons {{Text}}, {{ProcessingInstruction}}, and {{Comment}}
   <a for=/>nodes</a> are not checked here and end up throwing later on as a side effect.
 
- <li><p>Let <var>fragment</var> be the result of <a lt="live range">extracting</a> the
- <a>context object</a>.
+ <li><p>Let <var>fragment</var> be the result of <a lt="live range">extracting</a> <a>this</a>.
  <!-- If the range contains a DocumentType, Firefox 4.0 and Opera 11.00 don't
  immediately throw here. Firefox removes the non-DocumentType nodes and
  throws, Opera removes all nodes and doesn't throw. This applies to
@@ -8763,19 +8746,18 @@ check first thing, which matches everyone but Firefox.
  <li><p>If <var>newParent</var> has <a>children</a>, then <a for=Node>replace all</a> with null
  within <var>newParent</var>.
 
- <li><p><a for="live range">Insert</a> <var>newParent</var> into the <a>context object</a>.
+ <li><p><a for="live range">Insert</a> <var>newParent</var> into <a>this</a>.
 
  <li><p><a>Append</a> <var>fragment</var> to <var>newParent</var>.
 
- <li><p><a for=range>Select</a> <var>newParent</var> within the <a>context object</a>.
+ <li><p><a for=range>Select</a> <var>newParent</var> within <a>this</a>.
  <!-- Generally this isn't needed, because insertNode() will already do it,
  but it makes a difference in at least one corner case (when the original
  range lies in a single text node). -->
 </ol>
 
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method, when invoked, must return a new
-<a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as the
-<a>context object</a>.
+<a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as <a>this</a>.
 
 <p>The <dfn method for=Range><code>detach()</code></dfn> method, when invoked, must do nothing.
 <span class=note>Its functionality (disabling a {{Range}} object) was removed, but the method itself
@@ -8801,8 +8783,8 @@ method, when invoked, must run these steps:
 11.50 don't support the method. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a> is
- different from the <a>context object</a>'s <a for="live range">root</a>, return false.
+ <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
+ <a for="live range">root</a>, return false.
  <!-- This happens even if the offset is negative or too large, or if the node
  is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
@@ -8838,7 +8820,7 @@ method, when invoked, must run these steps:
 and Opera Next 12.00 alpha all do. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a> is different from the <a>context object</a>'s
+ <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
  <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
  <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
  Firefox 12.0a1 and Chrome 17 dev. -->
@@ -8874,7 +8856,7 @@ Firefox 12.0a1. -->
 
 <ol>
  <li>If <var>node</var>'s <a for=tree>root</a>
- is different from the <a>context object</a>'s
+ is different from <a>this</a>'s
  <a for="live range">root</a>, return false.
  <!-- It seems like for doctypes, Opera Next 12.00 alpha throws
  InvalidNodeTypeError instead of returning false.  The spec follows Chrome
@@ -8910,23 +8892,22 @@ these steps:
 <ol>
  <li><p>Let <var>s</var> be the empty string.
 
- <li><p>If the <a>context object</a>'s <a for=range>start node</a> is the <a>context object</a>'s
- <a for=range>end node</a> and it is a {{Text}} <a>node</a>, then return the substring of that
- {{Text}} <a>node</a>'s <a for=CharacterData>data</a> beginning at the <a>context object</a>'s
- <a for=range>start offset</a> and ending at the <a>context object</a>'s
- <a for=range>end offset</a>.
+ <li><p>If <a>this</a>'s <a for=range>start node</a> is <a>this</a>'s <a for=range>end node</a> and
+ it is a {{Text}} <a>node</a>, then return the substring of that {{Text}} <a>node</a>'s
+ <a for=CharacterData>data</a> beginning at <a>this</a>'s <a for=range>start offset</a> and ending
+ at <a>this</a>'s <a for=range>end offset</a>.
 
- <li><p>If the <a>context object</a>'s <a for=range>start node</a> is a {{Text}} <a>node</a>, then
- append the substring of that <a>node</a>'s <a for=CharacterData>data</a> from the
- <a>context object</a>'s <a for=range>start offset</a> until the end to <var>s</var>.
+ <li><p>If <a>this</a>'s <a for=range>start node</a> is a {{Text}} <a>node</a>, then append the
+ substring of that <a>node</a>'s <a for=CharacterData>data</a> from <a>this</a>'s
+ <a for=range>start offset</a> until the end to <var>s</var>.
 
  <li><p>Append the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
- {{Text}} <a for=/>nodes</a> that are <a for="live range">contained</a> in the
- <a>context object</a>, in <a>tree order</a>, to <var>s</var>.
+ {{Text}} <a for=/>nodes</a> that are <a for="live range">contained</a> in <a>this</a>, in
+ <a>tree order</a>, to <var>s</var>.
 
- <li><p>If the <a>context object</a>'s <a for=range>end node</a> is a {{Text}} <a>node</a>, then
- append the substring of that <a>node</a>'s <a for=CharacterData>data</a> from its start until the
- <a>context object</a>'s <a for=range>end offset</a> to <var>s</var>.
+ <li><p>If <a>this</a>'s <a for=range>end node</a> is a {{Text}} <a>node</a>, then
+ append the substring of that <a>node</a>'s <a for=CharacterData>data</a> from its start until
+ <a>this</a>'s <a for=range>end offset</a> to <var>s</var>.
 
  <li><p>Return <var>s</var>.
 </ol>
@@ -9054,20 +9035,19 @@ filter matches any <a for=/>node</a>.
 <hr>
 
 <p>The <dfn attribute for=NodeIterator><code>root</code></dfn> attribute's getter, when invoked,
-must return the <a>context object</a>'s <a for=traversal>root</a>.
+must return <a>this</a>'s <a for=traversal>root</a>.
 
 <p>The <dfn attribute for=NodeIterator><code>referenceNode</code></dfn> attribute's getter, when
-invoked, must return the <a>context object</a>'s <a for=NodeIterator>reference</a>.
+invoked, must return <a>this</a>'s <a for=NodeIterator>reference</a>.
 
 <p>The <dfn attribute for=NodeIterator><code>pointerBeforeReferenceNode</code></dfn> attribute's
-getter, when invoked, must return the <a>context object</a>'s
-<a for=NodeIterator>pointer before reference</a>.
+getter, when invoked, must return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 
 <p>The <dfn attribute for=NodeIterator><code>whatToShow</code></dfn> attribute's getter, when
-invoked, must return the <a>context object</a>'s <a for=traversal>whatToShow</a>.
+invoked, must return <a>this</a>'s <a for=traversal>whatToShow</a>.
 
 <p>The <dfn attribute for=NodeIterator><code>filter</code></dfn> attribute's getter, when invoked,
-must return the <a>context object</a>'s <a for=traversal>filter</a>.
+must return <a>this</a>'s <a for=traversal>filter</a>.
 
 <p>To <dfn export id=concept-nodeiterator-traverse for=NodeIterator>traverse</dfn>, given a
 {{NodeIterator}} object <var>iterator</var> and a direction <var>direction</var>, run these steps:
@@ -9120,10 +9100,10 @@ must return the <a>context object</a>'s <a for=traversal>filter</a>.
 </ol>
 
 <p>The <dfn method for=NodeIterator><code>nextNode()</code></dfn> method, when invoked, must return
-the result of <a for=NodeIterator>traversing</a> with the <a>context object</a> and next.
+the result of <a for=NodeIterator>traversing</a> with <a>this</a> and next.
 
 <p>The <dfn method for=NodeIterator><code>previousNode()</code></dfn> method, when invoked, must
-return the result of <a for=NodeIterator>traversing</a> with the <a>context object</a> and previous.
+return the result of <a for=NodeIterator>traversing</a> with <a>this</a> and previous.
 
 <p>The <dfn method for=NodeIterator><code>detach()</code></dfn> method, when invoked, must do
 nothing. <span class=note>Its functionality (disabling a {{NodeIterator}} object) was removed, but
@@ -9159,19 +9139,19 @@ method on {{Document}} objects.
 <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and <a for=traversal>filter</a> as well.
 
 <p>The <dfn attribute for=TreeWalker><code>root</code></dfn> attribute's getter, when invoked, must
-return the <a>context object</a>'s <a for=traversal>root</a>.
+return <a>this</a>'s <a for=traversal>root</a>.
 
 <p>The <dfn attribute for=TreeWalker><code>whatToShow</code></dfn> attribute's getter, when invoked,
-must return the <a>context object</a>'s <a for=traversal>whatToShow</a>.
+must return <a>this</a>'s <a for=traversal>whatToShow</a>.
 
 <p>The <dfn attribute for=TreeWalker><code>filter</code></dfn> attribute's getter, when invoked,
-must return the <a>context object</a>'s <a for=traversal>filter</a>.
+must return <a>this</a>'s <a for=traversal>filter</a>.
 
 <p>The <dfn attribute for=TreeWalker><code>currentNode</code></dfn> attribute's getter, when
-invoked, must return the <a>context object</a>'s <a for=TreeWalker>current</a>.
+invoked, must return <a>this</a>'s <a for=TreeWalker>current</a>.
 
-<p>The {{TreeWalker/currentNode}} attribute's setter, when invoked, must set the
-<a>context object</a>'s <a for=TreeWalker>current</a> to the given value.
+<p>The {{TreeWalker/currentNode}} attribute's setter, when invoked, must set <a>this</a>'s
+<a for=TreeWalker>current</a> to the given value.
 
 <hr>
 
@@ -9179,17 +9159,17 @@ invoked, must return the <a>context object</a>'s <a for=TreeWalker>current</a>.
 these steps:
 
 <ol>
- <li><p>Let <var>node</var> be the <a>context object</a>'s <a for=TreeWalker>current</a>.
+ <li><p>Let <var>node</var> be <a>this</a>'s <a for=TreeWalker>current</a>.
 
  <li>
-  <p>While <var>node</var> is non-null and is not the <a>context object</a>'s
+  <p>While <var>node</var> is non-null and is not <a>this</a>'s
   <a for=traversal>root</a>:
 
   <ol>
    <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
 
-   <li><p>If <var>node</var> is non-null and <a for=/>filtering</a> <var>node</var> within the
-   <a>context object</a> returns {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s
+   <li><p>If <var>node</var> is non-null and <a for=/>filtering</a> <var>node</var> within
+   <a>this</a> returns {{NodeFilter/FILTER_ACCEPT}}, then set <a>this</a>'s
    <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
   </ol>
 
@@ -9250,10 +9230,10 @@ these steps:
 </ol>
 
 <p>The <dfn method for=TreeWalker><code>firstChild()</code></dfn> method, when invoked, must
-<a>traverse children</a> with the <a>context object</a> and first.
+<a>traverse children</a> with <a>this</a> and first.
 
 <p>The <dfn method for=TreeWalker><code>lastChild()</code></dfn> method, when invoked, must
-<a>traverse children</a> with the <a>context object</a> and last.
+<a>traverse children</a> with <a>this</a> and last.
 
 <p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a <var>walker</var>
 and <var>type</var>, run these steps:
@@ -9303,19 +9283,19 @@ and <var>type</var>, run these steps:
 </ol>
 
 <p>The <dfn method for=TreeWalker><code>nextSibling()</code></dfn> method, when invoked, must
-<a>traverse siblings</a> with the <a>context object</a> and next.
+<a>traverse siblings</a> with <a>this</a> and next.
 
 <p>The <dfn method for=TreeWalker><code>previousSibling()</code></dfn> method, when invoked, must
-<a>traverse siblings</a> with the <a>context object</a> and previous.
+<a>traverse siblings</a> with <a>this</a> and previous.
 
 <p>The <dfn method for=TreeWalker><code>previousNode()</code></dfn> method, when invoked, must run
 these steps:
 
 <ol>
- <li><p>Let <var>node</var> be the <a>context object</a>'s <a for=TreeWalker>current</a>.
+ <li><p>Let <var>node</var> be <a>this</a>'s <a for=TreeWalker>current</a>.
 
  <li>
-  <p>While <var>node</var> is not the <a>context object</a>'s <a for=traversal>root</a>:
+  <p>While <var>node</var> is not <a>this</a>'s <a for=traversal>root</a>:
 
   <ol>
    <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>previous sibling</a>.
@@ -9326,8 +9306,8 @@ these steps:
     <ol>
      <li><p>Set <var>node</var> to <var>sibling</var>.
 
-     <li><p>Let <var>result</var> be the result of <a for=/>filtering</a> <var>node</var> within the
-     <a>context object</a>.
+     <li><p>Let <var>result</var> be the result of <a for=/>filtering</a> <var>node</var> within
+     <a>this</a>.
 
      <li>
       <p>While <var>result</var> is not {{NodeFilter/FILTER_REJECT}} and <var>node</var> has a
@@ -9337,24 +9317,23 @@ these steps:
        <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>last child</a>.
 
        <li><p>Set <var>result</var> to the result of <a for=/>filtering</a> <var>node</var> within
-       the <a>context object</a>.
+       <a>this</a>.
       </ol>
 
-     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
-     <a>context object</a>'s <a for=TreeWalker>current</a> to <var>node</var> and return
-     <var>node</var>.
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set <a>this</a>'s
+     <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
 
      <li><p>Set <var>sibling</var> to <var>node</var>'s <a for=tree>previous sibling</a>.
     </ol>
 
-   <li><p>If <var>node</var> is the <a>context object</a>'s <a for=traversal>root</a> or
-   <var>node</var>'s <a for=tree>parent</a> is null, then return null.
+   <li><p>If <var>node</var> is <a>this</a>'s <a for=traversal>root</a> or <var>node</var>'s
+   <a for=tree>parent</a> is null, then return null.
 
    <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
 
-   <li><p>If the return value of <a for=/>filtering</a> <var>node</var> within the
-   <a>context object</a> is {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s
-   <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
+   <li><p>If the return value of <a for=/>filtering</a> <var>node</var> within <a>this</a> is
+   {{NodeFilter/FILTER_ACCEPT}}, then set <a>this</a>'s <a for=TreeWalker>current</a> to
+   <var>node</var> and return <var>node</var>.
   </ol>
 
  <li><p>Return null.
@@ -9364,7 +9343,7 @@ these steps:
 steps:
 
 <ol>
- <li><p>Let <var>node</var> be the <a>context object</a>'s <a for=TreeWalker>current</a>.
+ <li><p>Let <var>node</var> be <a>this</a>'s <a for=TreeWalker>current</a>.
 
  <li><p>Let <var>result</var> be {{NodeFilter/FILTER_ACCEPT}}.
 
@@ -9379,12 +9358,11 @@ steps:
     <ol>
      <li><p>Set <var>node</var> to its <a for=tree>first child</a>.
 
-     <li><p>Set <var>result</var> to the result of <a for=/>filtering</a> <var>node</var> within the
-     <a>context object</a>.
+     <li><p>Set <var>result</var> to the result of <a for=/>filtering</a> <var>node</var> within
+     <a>this</a>.
 
-     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the
-     <a>context object</a>'s <a for=TreeWalker>current</a> to <var>node</var> and return
-     <var>node</var>.
+     <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set <a>this</a>'s
+     <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
     </ol>
 
    <li><p>Let <var>sibling</var> be null.
@@ -9395,8 +9373,7 @@ steps:
     <p>While <var>temporary</var> is non-null:
 
     <ol>
-     <li><p>If <var>temporary</var> is the <a>context object</a>'s <a for=traversal>root</a>, then
-     return null.
+     <li><p>If <var>temporary</var> is <a>this</a>'s <a for=traversal>root</a>, then return null.
 
      <li><p>Set <var>sibling</var> to <var>temporary</var>'s <a for=tree>next sibling</a>.
 
@@ -9406,10 +9383,10 @@ steps:
      <li><p>Set <var>temporary</var> to <var>temporary</var>'s <a for=tree>parent</a>.
     </ol>
 
-   <li><p>Set <var>result</var> to the result of <a for=/>filtering</a> <var>node</var> within the
-   <a>context object</a>.
+   <li><p>Set <var>result</var> to the result of <a for=/>filtering</a> <var>node</var> within
+   <a>this</a>.
 
-   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set the <a>context object</a>'s
+   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then set <a>this</a>'s
    <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
   </ol>
 </ol>
@@ -9627,7 +9604,7 @@ are to return the result of running <a>get an attribute value</a> given the asso
 </dl>
 
 <p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return
-<a>context object</a>'s <a>token set</a>'s <a for=set>size</a>.
+<a>this</a>'s <a>token set</a>'s <a for=set>size</a>.
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to object's
 <a>token set</a>'s <a for=set>size</a> minus one, unless <a>token set</a> <a for=set>is empty</a>,
@@ -9637,15 +9614,15 @@ in which case there are no <a>supported property indices</a>.
 invoked, must run these steps:
 
 <ol>
- <li><p>If <var>index</var> is equal to or greater than <a>context object</a>'s <a>token set</a>'s
+ <li><p>If <var>index</var> is equal to or greater than <a>this</a>'s <a>token set</a>'s
  <a for=set>size</a>, then return null.
 
- <li><p>Return <a>context object</a>'s <a>token set</a>[<var>index</var>].
+ <li><p>Return <a>this</a>'s <a>token set</a>[<var>index</var>].
 </ol>
 
 <p>The <dfn method for="DOMTokenList"><code>contains(<var>token</var>)</code></dfn> method, when
-invoked, must return true if <a>context object</a>'s <a>token set</a>[<var>token</var>]
-<a for=set>exists</a>, and false otherwise.</p>
+invoked, must return true if <a>this</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>,
+and false otherwise.</p>
 
 <p>The
 <dfn method for="DOMTokenList" lt="add(tokens)|add()"><code>add(<var>tokens</var>&hellip;)</code></dfn>
@@ -9664,7 +9641,7 @@ method, when invoked, must run these steps:
   </ol>
 
  <li><p><a for=list>For each</a> <var>token</var> in <var>tokens</var>, <a for=set>append</a>
- <var>token</var> to <a>context object</a>'s <a>token set</a>.
+ <var>token</var> to <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
 </ol>
@@ -9686,7 +9663,7 @@ method, when invoked, must run these steps:
   </ol>
 
  <li><p>For each <var>token</var> in <var>tokens</var>, <a for=set>remove</a> <var>token</var> from
- <a>context object</a>'s <a>token set</a>.
+ <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
 </ol>
@@ -9702,18 +9679,18 @@ method, when invoked, must run these steps:
  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>
-  <p>If <a>context object</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>, then:
+  <p>If <a>this</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>, then:
 
   <ol>
    <li><p>If <var>force</var> is either not given or is false, then <a for=set>remove</a>
-   <var>token</var> from <a>context object</a>'s <a>token set</a>, run the <a>update steps</a> and
-   return false.
+   <var>token</var> from <a>this</a>'s <a>token set</a>, run the <a>update steps</a> and return
+   false.
 
    <li><p>Return true.
   </ol>
 
  <li><p>Otherwise, if <var>force</var> not given or is true, <a for=set>append</a> <var>token</var>
- to <a>context object</a>'s <a>token set</a>, run the <a>update steps</a>, and return true.
+ to <a>this</a>'s <a>token set</a>, run the <a>update steps</a>, and return true.
 
  <li><p>Return false.
 </ol>
@@ -9733,10 +9710,10 @@ method, when invoked, must run these steps:
  <li><p>If either <var>token</var> or <var>newToken</var> contains any <a>ASCII whitespace</a>, then
  <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>context object</a>'s <a>token set</a> does not <a for=set>contain</a>
- <var>token</var>, then return false.</p>
+ <li><p>If <a>this</a>'s <a>token set</a> does not <a for=set>contain</a> <var>token</var>, then
+ return false.</p>
 
- <li><p><a for=set>Replace</a> <var>token</var> in <a>context object</a>'s <a>token set</a> with
+ <li><p><a for=set>Replace</a> <var>token</var> in <a>this</a>'s <a>token set</a> with
  <var>newToken</var>.
 
  <li><p>Run the <a>update steps</a>.
@@ -9759,7 +9736,7 @@ method, when invoked, must run these steps:
 </ol>
 
 <p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> attribute must return the
-result of running <a>context object</a>'s <a>serialize steps</a>.
+result of running <a>this</a>'s <a>serialize steps</a>.
 
 <p>Setting the {{DOMTokenList/value}} attribute must <a>set an attribute value</a> for the
 associated <a for="/">element</a> using associated <a>attribute</a>'s <a for=Attr>local name</a> and
