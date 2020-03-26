@@ -3320,6 +3320,8 @@ dictionary MutationObserverInit {
   boolean attributeOldValue;
   boolean characterDataOldValue;
   sequence&lt;DOMString> attributeFilter;
+  sequence&lt;DOMString> elementFilterByAttribute;
+  sequence&lt;DOMString> elementLocalNameFilter;
 };
 </pre>
 
@@ -3398,6 +3400,19 @@ dictionary MutationObserverInit {
    <a>attribute</a> mutations need to be
    observed and {{MutationObserverInit/attributes}} is true
    or omitted.
+
+   <dt>{{MutationObserverInit/elementFilterByAttribute}}
+   <dd>Set to a list of <a>attribute</a>
+   <a for=Attr>local names</a> (without <a for=Attr>namespace</a>) to observe changes
+   to the presence of an elements <a>attributes</a>.
+
+   <dt>{{MutationObserverInit/elementLocalNameFilter}}
+   <dd>Set to a list of <a for=/>element</a>
+   <a for=Element>local names</a> (without <a for=Attr>namespace</a>) to observe
+   changes to the presence of specific <a for=/>element</a> <a for=Element>local names</a>
+   if not all <a for=/>element</a> <a for=Element>local names</a> need to be
+   observed and {{MutationObserverInit/attributes}} is true
+   or omitted.
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
@@ -3437,6 +3452,14 @@ method, when invoked, must run these steps:
  <var>options</var>'s {{MutationObserverInit/characterData}} is omitted, then set
  <var>options</var>'s {{MutationObserverInit/characterData}} to true.
 
+ <li><p>If <var>options</var>'s {{MutationObserverInit/elementFilterByAttribute}} is present and
+ <var>options</var>'s {{MutationObserverInit/childList}} is omitted, then set
+ <var>options</var>'s {{MutationObserverInit/childList}} to true.
+
+ <li><p>If <var>options</var>'s {{MutationObserverInit/elementLocalNameFilter}} is present and
+ <var>options</var>'s {{MutationObserverInit/childList}} is omitted, then set
+ <var>options</var>'s {{MutationObserverInit/childList}} to true.
+
  <li><p>If none of <var>options</var>'s {{MutationObserverInit/childList}},
  {{MutationObserverInit/attributes}}, and {{MutationObserverInit/characterData}} is true, then
  <a>throw</a> a <code>TypeError</code>.
@@ -3451,6 +3474,14 @@ method, when invoked, must run these steps:
 
  <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is true and
  <var>options</var>'s {{MutationObserverInit/characterData}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
+
+ <li><p>If <var>options</var>'s {{MutationObserverInit/elementFilterByAttribute}} is present and
+ <var>options</var>'s {{MutationObserverInit/childList}} is false, then <a>throw</a> a
+ <code>TypeError</code>.
+
+ <li><p>If <var>options</var>'s {{MutationObserverInit/elementLocalNameFilter}} is present and
+ <var>options</var>'s {{MutationObserverInit/childList}} is false, then <a>throw</a> a
  <code>TypeError</code>.
 
  <li>
@@ -3593,6 +3624,60 @@ run these steps:
 
 <ol>
  <li><p>Assert: either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>.
+
+ <li><p>If either <var>options</var>'s' {{MutationObserverInit/elementLocalNameFilter}} or
+ {{MutationObserverInit/elementFilterByAttribute}} is present, then:
+
+ <ol>
+  <li><p>Let <var>nodeAttributesList</var> be the set of local names of node's attributes.
+
+  <li><p>Let <var>filteredAddedNodes</var> be an empty <a for=/>list</a>.
+
+  <li><p>Let <var>filterRemovedNodes</var> be an empty <a for=/>list</a>.
+
+  <li>
+   <p>For each <var>node</var> in <var>addedNodes</var></a>.
+
+   <li>
+     <p>If none of the following are true
+
+     <ul class=brief>
+      <li>if <var>options</var>'s
+      {{MutationObserverInit/elementLocalNameFilter}} is present, and
+      "<code>node.localName</code>" is in {{MutationObserverInit/elementLocalNameFilter}}
+
+      <li><var>options</var>'s {{MutationObserverInit/elementFilterByAttribute}} is
+      present, and <var>options</var>'s  {{MutationObserverInit/elementFilterByAttribute}}
+      contains any of the attribute name in <var>nodeAttributesList</var>
+    </ul>
+    <p>then:
+    <ol>
+     <li><p><a for=queue>Enqueue</a> <var>record</var> node in <var>filteredAddedNodes</var>
+    </ol>
+
+  <li><p>For each <var>node</var> in <var>removedNodes</var></a>.
+    <li>
+      <p>If none of the following are true
+      <ul class=brief>
+       <li>if <var>options</var>'s
+        {{MutationObserverInit/elementLocalNameFilter}} is present, and
+        "<code>node.localName</code>" is in {{MutationObserverInit/elementLocalNameFilter}}
+      <li>if <var>options</var>'s
+        {{MutationObserverInit/elementFilterByAttribute}} is present,and <var>options</var>'s
+          {{MutationObserverInit/elementFilterByAttribute}} contains any of the attribute names
+        in <var>nodeAttributesList</var>
+     </ul>
+     <p>then:
+     <ol>
+      <li><p><a for=queue>Enqueue</a> <var>record</var> node in <var>filterRemovedNodes</var>
+     </ol>
+
+ <li><p>Assert: either <var>filteredAddedNodes</var> or <var>filteredRemovedNodes</var> <a for=set>is not empty</a>.
+
+ <li><p>Set <var>addedNodes</var> to <var>filteredAddedNodes</var>
+
+ <li><p>Set <var>removedNodes</var> to <var>filteredRemovedNodes</var>
+ </ol>
 
  <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
  null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>,
