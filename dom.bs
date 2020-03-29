@@ -2797,6 +2797,7 @@ interface mixin ParentNode {
 
   [CEReactions, Unscopable] void prepend((Node or DOMString)... nodes);
   [CEReactions, Unscopable] void append((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void replaceChildren((Node or DOMString)... nodes);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -2831,6 +2832,15 @@ Element includes ParentNode;
  <dd>
   <p>Inserts <var>nodes</var> after the <a>last child</a> of <var>node</var>, while replacing
   strings in <var>nodes</var> with equivalent {{Text}} <a for=/>nodes</a>.
+
+  <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
+  the <a>node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var>node</var> . <a method for=ParentNode lt="replaceChildren()">replaceChildren</a>(<var>nodes</var>)</code>
+ <dd>
+  <p>Replace all <a>children</a> of <var>node</var> with <var>nodes</var>,
+  while replacing strings in <var>nodes</var> with equivalent {{Text}} <a for=/>nodes</a>.
 
   <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
   the <a>node tree</a> are violated.
@@ -2881,6 +2891,19 @@ must run these steps:
  <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Append</a> <var>node</var> to <a>this</a>.
+</ol>
+
+<p>The <dfn method for=ParentNode><code>replaceChildren(<var>nodes</var>)</code></dfn> method, when invoked,
+must run these steps:
+
+<ol>
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
+
+ <li><p><a>Ensure pre-insertion validity</a> of <var>node</var> into <a>this</a> before
+ null.
+
+ <li><p><a for=Node>Replace all</a> with <var>node</var> within <a>this</a>.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method,
