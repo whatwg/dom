@@ -5867,6 +5867,8 @@ interface Element : Node {
   HTMLCollection getElementsByTagNameNS(DOMString? namespace, DOMString localName);
   HTMLCollection getElementsByClassName(DOMString classNames);
 
+  DOMString getInnerHTML(GetInnerHTMLOptions options);
+
   [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // historical
   void insertAdjacentText(DOMString where, DOMString data); // historical
 };
@@ -5874,6 +5876,10 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
+};
+
+dictionary GetInnerHTMLOptions {
+  boolean includeShadowRoots = true;
 };
 </pre>
 
@@ -6883,8 +6889,13 @@ for <a>this</a>.
 </dl>
 
 <p>The
+<dfn method for=Element><code>getInnerHTML(<var>options</var>)</code></dfn>
+method, when invoked, must return the result of running
+<a href="https://www.w3.org/TR/html5/single-page.html#html-fragment-serialisation-algorithm">fragment serialization algorithm</a>, given <a>this</a> as <var>the node</var> and <var>options.includeShadowRoots</var> as <var>include shadow roots</var>.
+
+<p>The
 <dfn method for=Element><code>insertAdjacentElement(<var>where</var>, <var>element</var>)</code></dfn>
-method, when invoked, must return the result of running <a>insert adjacent</a>, give <a>this</a>,
+method, when invoked, must return the result of running <a>insert adjacent</a>, given <a>this</a>,
 <var>where</var>, and <var>element</var>.
 
 <p>The
