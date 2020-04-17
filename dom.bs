@@ -6703,11 +6703,35 @@ when invoked, must run these steps:
 invoked, must run these steps:
 
 <ol>
- <li><p>If <a>this</a>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
+
+ <li><p>Run <a>attach a shadow root</a> with <var>shadow host</var> equal to <a>this</a>,
+   <var>mode</var> equal to <var>init</var>'s {{ShadowRootInit/mode}}, and <var>delegates focus</var>
+   equal to <var>init</var>'s {{ShadowRootInit/delegatesFocus}}.</p></li>
+
+ <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.</p></li>
+
+</ol>
+
+<p>The <dfn attribute for=Element><code>shadowRoot</code></dfn> attribute's getter must run these
+steps:
+
+<ol>
+ <li><p>Let <var>shadow</var> be <var>shadow host</var>'s <a for=Element>shadow root</a>.
+
+ <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
+ then return null.</p></li>
+
+ <li><p>Return <var>shadow</var>.
+</ol>
+
+<p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given a
+<var>shadow host</var>, <var>mode</var>, and <var>delegates focus</var>, run these steps:</p>
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a>,
  then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li>
-  <p>If <a>this</a>'s <a for=Element>local name</a> is not one of the following:
+ <li><p>If <a>this</a>'s <a for=Element>local name</a> is <em>not</em> a
 
   <ul class=brief>
    <li>a <a>valid custom element name</a>
@@ -6750,35 +6774,23 @@ invoked, must run these steps:
   </ol>
  </li>
 
- <li><p>If <a>this</a> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s <a for=ShadowRoot>is declarative shadow root</a> property is false, then <a>throw</a> an
+ <li><p>If <a>this</a> has a non-null <a for=/>shadow root</a> whose
+ <a for=ShadowRoot>is declarative shadow root</a> property is false, then <a>throw</a> an
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>this</a> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s <a for=ShadowRoot>is declarative shadow root</a> property is true, then <a for=/>remove</a> all of <a for=/>shadow root</a>'s <a>children</a>, in <a>tree order</a>. Return <a>this</a>'s <a for=/>shadow root</a>.
+ <li><p>If <a>this</a> has a non-null <a for=/>shadow root</a> whose
+ <a for=ShadowRoot>is declarative shadow root</a> property is true, then <a for=/>remove</a> all of
+ <a for=/>shadow root</a>'s <a>children</a>, in <a>tree order</a>. Return <var>shadow host</var>'s <a for=/>shadow root</a>.
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
- is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <a>this</a>,
- and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
+ is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <var>shadow host</var>,
+ and <a for=ShadowRoot>mode</a> is <var>mode</var>.
 
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>init</var>'s
- {{ShadowRootInit/delegatesFocus}}.
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>delegates focus</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>is declarative shadow root</a> property to false.
 
  <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
-
- <li><p>Return <var>shadow</var>.
-</ol>
-
-<p>The <dfn attribute for=Element><code>shadowRoot</code></dfn> attribute's getter must run these
-steps:
-
-<ol>
- <li><p>Let <var>shadow</var> be <a>this</a>'s <a for=Element>shadow root</a>.
-
- <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
- then return null.</p></li>
-
- <li><p>Return <var>shadow</var>.
 </ol>
 
 <hr>
