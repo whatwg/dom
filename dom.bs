@@ -2195,6 +2195,11 @@ steps:</p>
  <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
 
+ <li><p>If the shadow's <a for=ShadowRoot>slot assignment</a> is set to "<code>manual</code>",
+ return the associated <a>slot</a> in shadow where the <var>slottable</var> is
+ <a href="https://html.spec.whatwg.org/multipage/scripting.html#dom-slot-assign"><code>assigned</code></a>,
+ otherwise return null.</p></li>
+
  <li><p>Return the first <a>slot</a> in <a>tree order</a> in <var>shadow</var>'s
  <a for=tree>descendants</a> whose <a for=slot>name</a> is <var>slottable</var>'s
  <a for=slottable>name</a>, if any, and null otherwise.</p></li>
@@ -5713,9 +5718,11 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute ShadowRootMode mode;
   readonly attribute Element host;
   attribute EventHandler onslotchange;
+  readonly attribute SlotAssignmentMode slotAssignment;
 };
 
 enum ShadowRootMode { "open", "closed" };
+enum SlotAssignmentMode { "manual", "auto" };
 </pre>
 
 <p>{{ShadowRoot}} <a for=/>nodes</a> are simply known as
@@ -5730,6 +5737,9 @@ It is initially set to false.</p>
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
+
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
+("<code>manual</code>" or "<code>auto</code>"). It is default to "<code>auto</code>"</p>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
@@ -5747,6 +5757,9 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <a>event handler IDL attribute</a> for the
 <dfn for=ShadowRoot export><code>onslotchange</code></dfn> <a>event handler</a>, whose
 <a>event handler event type</a> is {{HTMLSlotElement/slotchange}}.
+
+<p>The <dfn attribute for=ShadowRoot><code>slotAssignment</code></dfn> attribute's getter must
+return <a>this</a>'s <a for=ShadowRoot>slot assignment</a>.</p>
 
 <hr>
 
@@ -5871,6 +5884,7 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
+  SlotAssignmentMode slotAssignment = "auto";
 };
 </pre>
 
@@ -6743,6 +6757,9 @@ invoked, must run these steps:
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>init</var>'s
  {{ShadowRootInit/delegatesFocus}}.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>init</var>'s
+ {{ShadowRootInit/slotAssignment}}.
 
  <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
@@ -10187,7 +10204,8 @@ Xidorn Quan,
 Yehuda Katz,
 Yoav Weiss,
 Yoichi Osato,
-Yoshinori Sano, and
+Yoshinori Sano,
+Yu Han, <!-- yuzhe-han on GitHub --> and
 Zack Weinberg
 for being awesome!
 
