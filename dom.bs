@@ -5899,6 +5899,7 @@ dictionary ShadowRootInit {
 
 dictionary GetInnerHTMLOptions {
   boolean includeShadowRoots = true;
+  sequence&lt;ShadowRoot> closedRoots;
 };
 </pre>
 
@@ -6735,7 +6736,7 @@ invoked, must run these steps:
 steps:
 
 <ol>
- <li><p>Let <var>shadow</var> be <var>shadow host</var>'s <a for=Element>shadow root</a>.
+ <li><p>Let <var>shadow</var> be <a>this</a>'s <a for=Element>shadow root</a>.
 
  <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
  then return null.</p></li>
@@ -6747,10 +6748,10 @@ steps:
 <var>shadow host</var>, <var>mode</var>, and <var>delegates focus</var>, run these steps:</p>
 
 <ol>
- <li><p>If <a>this</a>'s <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a>,
+ <li><p>If <var>shadow host</var>'s <a for=Element>namespace</a> is <em>not</em> the <a>HTML namespace</a>,
  then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>this</a>'s <a for=Element>local name</a> is <em>not</em> a
+ <li><p>If <var>shadow host</var>'s <a for=Element>local name</a> is <em>not</em> a
 
   <ul class=brief>
    <li>a <a>valid custom element name</a>
@@ -6778,13 +6779,13 @@ steps:
  </li>
 
  <li>
-  <p>If <a>this</a>'s <a for=Element>local name</a> is a <a>valid custom element name</a>, or
-  <a>this</a>'s <a for=Element><code>is</code> value</a> is not null, then:
+  <p>If <var>shadow host</var>'s <a for=Element>local name</a> is a <a>valid custom element name</a>, or
+  <var>shadow host</var>'s <a for=Element><code>is</code> value</a> is not null, then:
 
   <ol>
    <li><p>Let <var>definition</var> be the result of
    <a lt="look up a custom element definition">looking up a custom element definition</a> given
-   <a>this</a>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
+   <var>shadow host</var>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
    <a for=Element>local name</a>, and its <a for=Element><code>is</code> value</a>.
 
    <li><p>If <var>definition</var> is not null and <var>definition</var>'s
@@ -6793,26 +6794,27 @@ steps:
   </ol>
  </li>
 
- <li><p>If <a>this</a> has a non-null <a for=/>shadow root</a> whose
- <a for=ShadowRoot>is declarative shadow root</a> property is false, then <a>throw</a> an
- "{{NotSupportedError!!exception}}" {{DOMException}}.
+ <li><p>If <var>shadow host</var> has a non-null <a for=/>shadow root</a>, then:
+   <ol>
+     <li><p>If <var>shadow host</var>'s <a for=/>shadow root</a>'s <a for=ShadowRoot>is declarative
+     shadow root</a> property is false, then <a>throw</a> an "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>this</a> has a non-null <a for=/>shadow root</a> whose
- <a for=ShadowRoot>is declarative shadow root</a> property is true, then <a for=/>remove</a> all of
- <a for=/>shadow root</a>'s <a>children</a>, in <a>tree order</a>. Return <var>shadow host</var>'s <a for=/>shadow root</a>.
+     <li><p>Otherwise, <a for=/>remove</a> all of <a for=/>shadow root</a>'s <a>children</a>, in
+     <a>tree order</a>. Return <var>shadow host</var>'s <a for=/>shadow root</a>.
 
- <p class="note">This means that if multiple declarative shadow roots are contained within a single shadow host,
- only the last one will remain.
+     <p class="note">This means that if multiple declarative shadow roots are contained within a single shadow host,
+     only the last one will remain.
+   </ol>
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
- is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <var>shadow host</var>,
+ is <var>shadow host</var>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <var>shadow host</var>,
  and <a for=ShadowRoot>mode</a> is <var>mode</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>delegates focus</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>is declarative shadow root</a> property to false.
 
- <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
+ <li><p>Set <var>shadow host</var>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 </ol>
 
 <hr>
@@ -6925,7 +6927,8 @@ for <a>this</a>.
 <p>The
 <dfn method for=Element><code>getInnerHTML(<var>options</var>)</code></dfn>
 method, when invoked, must return the result of running <a>HTML fragment serialization algorithm</a>,
-given <a>this</a> as <var>node</var> and <i>options.includeShadowRoots</i> as <i>include shadow roots</i>.
+given <a>this</a> as <var>node</var>, <i>options.includeShadowRoots</i> as <i>include shadow roots</i>,
+and <i>options.closedRoots</i> as <i>closed shadow roots</i>.
 
 <p>The
 <dfn method for=Element><code>insertAdjacentElement(<var>where</var>, <var>element</var>)</code></dfn>
