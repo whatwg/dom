@@ -1518,8 +1518,12 @@ run these steps:
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
+ <li><p>Let <var>invocationTargetInShadowTree</var> be <var>struct</var>'s
+ <a for=Event/path>invocation-target-in-shadow-tree</a>.
+
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
- <var>listeners</var>, <var>phase</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
+ <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>, and
+ <var>legacyOutputDidListenersThrowFlag</var> if given.
 
  <li>
   <p>If <var>found</var> is false and <var>event</var>'s {{Event/isTrusted}} attribute is true,
@@ -1543,16 +1547,17 @@ run these steps:
       <tr><td>"<code>transitionend</code>"<td>"<code>webkitTransitionEnd</code>"
     </table>
 
-   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>, and
-   <var>legacyOutputDidListenersThrowFlag</var> if given.
+   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>,
+   <var>invocationTargetInShadowTree</var>, and <var>legacyOutputDidListenersThrowFlag</var>
+   if given.
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
-<var>event</var>, <var>listeners</var>, <var>phase</var>, and an optional
-<var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<var>event</var>, <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>,
+and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>Let <var>found</var> be false.
@@ -1590,8 +1595,8 @@ run these steps:
     <ol>
      <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
 
-     <li><p>If <var>struct</var>'s <a for=Event/path>invocation-target-in-shadow-tree</a> is false,
-     then set <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
+     <li><p>If <var>invocationTargetInShadowTree</var> is false, then set <var>global</var>'s
+     <a for=Window>current event</a> to <var>event</var>.
     </ol>
 
    <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
