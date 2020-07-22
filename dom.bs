@@ -2454,14 +2454,17 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
    <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
-   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
+   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> with its <a for=tree>root</a>'s
+   <a for=ShadowRoot>slot assignment</a> set to "<code>auto</code>" and <var>node</var> is a
    <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
    <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
    then run <a>signal a slot change</a> for <var>parent</var>.
 
-   <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>'s <a for=tree>root</a>.
+   <li><p>If <var>node</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> with its <a for=tree>root</a>'s
+   <a for=ShadowRoot>slot assignment</a> set to "<code>auto</code>", then run <a>assign slottables for a tree</a>
+   with <var>node</var>'s <a for=tree>root</a>.
 
    <li>
     <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
@@ -2671,8 +2674,16 @@ indicated in the <a for=/>remove</a> algorithm below.
 
  <li><p><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
 
- <li><p>If <var>node</var> is <a for=slottable>assigned</a>, then run <a>assign slottables</a> for
- <var>node</var>'s <a>assigned slot</a>.
+ <li>
+  <p>If <var>node</var> is <a for=slottable>assigned</a>, then:
+
+  <ol>
+   <li><p><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> with its
+   <a for=tree>root</a>'s <a for=ShadowRoot>slot assignment</a> set to "<code>auto</code>",
+   then <a for=set>remove</a> <var>node</var> from its <a>assigned slot</a>'s <a>manually assigned nodes</a>.
+
+   <li><p>Run <a>assign slottables</a> for <var>node</var>'s <a>assigned slot</a>.
+  </ol>
 
  <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
  <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
@@ -2682,6 +2693,11 @@ indicated in the <a for=/>remove</a> algorithm below.
   <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
 
   <ol>
+   <li><p>for each <a>slot</a> <var>slot</var> in <var>node</var>'s <a for=tree>inclusive descendants</a>,
+   if <var>slot</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> with its <a for=tree>root</a>'s
+   <a for=ShadowRoot>slot assignment</a> set to "<code>manual</code>", then set <var>slot</var>'s
+   <a>manually assigned nodes</a> to an empty list.
+
    <li><p>Run <a>assign slottables for a tree</a> with <var>parent</var>'s <a for=tree>root</a>.
 
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
