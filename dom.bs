@@ -3075,6 +3075,53 @@ steps:
 </ol>
 
 
+<h4 id=interface-treenode>Mixin {{TreeNode}}</h4>
+
+<pre class=idl>
+interface mixin TreeNode {
+  [Unscopable] Element? closest(DOMString selectors);
+};
+Element includes TreeNode;
+CharacterData includes TreeNode;
+Document includes TreeNode;
+DocumentType includes TreeNode;
+DocumentFragment includes TreeNode;
+</pre>
+
+<dl class=domintro>
+ <dt><code><var>node</var> . {{closest(selectors)}}</code>
+ <dd>
+  <p>Returns the first (starting at <var>node</var>) <a for=tree>inclusive ancestor</a>
+  that matches <var>selectors</var>, and null otherwise.
+</dl>
+
+<p>The <dfn method for=TreeNode oldids=dom-element-closest>
+<code>closest(<var>selectors</var>)</code></dfn> method, when invoked, must run these steps:
+
+<ol>
+ <li><p>Let <var>s</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
+ [[!SELECTORS4]]
+
+ <li><p>If <var>s</var> is failure, <a>throw</a> a "{{SyntaxError!!exception}}" {{DOMException}}.
+
+ <li><p>Let <var>elements</var> be <a>this</a>'s <a for=tree>inclusive ancestors</a> that are
+ <a for="/">elements</a>, in reverse <a>tree order</a>.
+
+ <li><p>If <var>elements</var> <a for=list>is not empty</a>, then:
+
+ <ol>
+   <li><p>Let <var>scopeElement</var> be the first <a for="/">element</a> in <var>elements</var>.
+
+   <li><p>For each <var>element</var> in <var>elements</var>,
+   if <a>match a selector against an element</a>, using <var>s</var>, <var>element</var>,
+   and <a>:scope element</a> <var>scopeElement</var>, returns success, return <var>element</var>.
+   [[!SELECTORS4]]
+ </ol>
+
+ <li><p>Return null.
+</ol>
+
+
 <h4 id=mixin-slotable>Mixin {{Slottable}}</h4>
 
 <pre class=idl>
@@ -5861,7 +5908,6 @@ interface Element : Node {
   ShadowRoot attachShadow(ShadowRootInit init);
   readonly attribute ShadowRoot? shadowRoot;
 
-  Element? closest(DOMString selectors);
   boolean matches(DOMString selectors);
   boolean webkitMatchesSelector(DOMString selectors); // historical alias of .matches
 
@@ -6776,41 +6822,11 @@ steps:
 <hr>
 
 <dl class=domintro>
- <dt><code><var>element</var> . {{closest(selectors)}}</code>
- <dd>Returns the first (starting at <var>element</var>)
- <a for=tree>inclusive ancestor</a> that matches
- <var>selectors</var>, and null otherwise.
-
  <dt><code><var>element</var> . {{matches(selectors)}}</code>
  <dd>Returns true if matching <var>selectors</var> against
  <var>element</var>'s <a for=tree>root</a> yields
  <var>element</var>, and false otherwise.
 </dl>
-
-The <dfn method for=Element><code>closest(<var>selectors</var>)</code></dfn>
-method, when invoked, must run these steps:
-
-<ol>
- <li>Let <var>s</var> be the result of
- <a>parse a selector</a> from <var>selectors</var>.
- [[!SELECTORS4]]
-
- <li>If <var>s</var> is failure, <a>throw</a> a
- "{{SyntaxError!!exception}}" {{DOMException}}.
-
- <li>Let <var>elements</var> be <a>this</a>'s
- <a for=tree>inclusive ancestors</a> that are
- <a for="/">elements</a>, in reverse
- <a>tree order</a>.
-
- <li>For each <var>element</var> in <var>elements</var>, if
- <a>match a selector against an element</a>, using
- <var>s</var>, <var>element</var>, and
- <a>:scope element</a> <a>this</a>,
- returns success, return <var>element</var>. [[!SELECTORS4]]
-
- <li>Return null.
-</ol>
 
 The <dfn method for=Element><code>matches(<var>selectors</var>)</code></dfn> and
 <dfn method for=Element><code>webkitMatchesSelector(<var>selectors</var>)</code></dfn> methods, when
