@@ -1,9 +1,9 @@
-<pre class=metadata>
+<pre class='metadata'>
 Group: WHATWG
+Date: 2020-06-15
 H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
-Text Macro: LATESTRD 2020-06
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Translation: ja https://triple-underscore.github.io/DOM4-ja.html
 Translate IDs: slottable slotable
@@ -45,9 +45,8 @@ urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
 spec:html; type:element
  text: title
  text: script
+spec:infra; type:dfn; text:list
 </pre>
-
-
 
 <h2 id=goals class=no-num>Goals</h2>
 
@@ -83,7 +82,6 @@ This specification standardizes the DOM. It does so as follows:
 
  <li><p>By defining new features that simplify common DOM operations.
 </ol>
-
 
 
 <h2 id=infrastructure oldids=terminology,dependencies>Infrastructure</h2>
@@ -361,24 +359,34 @@ use of this functionality through <a>events</a>
 (synthetic events) can make use of the return value of the
 {{EventTarget/dispatchEvent()}} method:
 
-<pre class=lang-javascript>
+<pre class='lang-javascript'>
 if(obj.dispatchEvent(event)) {
   // event was not canceled, time for some magic
   &hellip;
 }
 </pre>
 
-<p>When an <a>event</a> is <a>dispatched</a> to an object that <a>participates</a> in a <a>tree</a>
-(e.g., an <a for=/>element</a>), it can reach <a>event listeners</a> on that object's
-<a>ancestors</a> too. Effectively, all the object's <a>inclusive ancestor</a> <a>event listeners</a>
-whose <a for="event listener">capture</a> is true are invoked, in <a>tree order</a>. And then, if
-<a>event</a>'s {{Event/bubbles}} is true, all the object's <a>inclusive ancestor</a>
-<a>event listeners</a> whose <a for="event listener">capture</a> is false are invoked, now in
-reverse <a>tree order</a>.
+When an <a>event</a> is
+<a>dispatched</a> to an object that
+<a>participates</a> in a
+<a>tree</a> (e.g. an
+<a for="/">element</a>), it can reach
+<a>event listeners</a> on that object's
+<a>ancestors</a> too. First all object's
+<a>ancestor</a>
+<a>event listeners</a> whose
+<a for="event listener">capture</a> variable is set to true are invoked, in
+<a>tree order</a>. Second, object's own
+<a>event listeners</a> are invoked. And
+finally, and only if <a>event</a>'s
+{{Event/bubbles}} attribute value is true,
+object's  <a>ancestor</a>
+<a>event listeners</a> are invoked again,
+but now in reverse <a>tree order</a>.
 
-<p>Let's look at an example of how <a>events</a> work in a <a>tree</a>:
+Let's look at an example of how <a>events</a> work in a <a>tree</a>:
 
-<pre class=lang-markup>
+<pre class='lang-markup'>
 &lt;!doctype html>
 &lt;html>
  &lt;head>
@@ -399,13 +407,19 @@ reverse <a>tree order</a>.
 &lt;/html>
 </pre>
 
-<p>The <code>debug</code> function will be invoked twice. Each time the <a>event</a>'s
-{{Event/target}} attribute value will be the <code>span</code> <a for=/>element</a>. The first time
-{{Event/currentTarget}} attribute's value will be the <a>document</a>, the second time the
-<code>body</code> <a for=/>element</a>. {{Event/eventPhase}} attribute's value switches from
-{{Event/CAPTURING_PHASE}} to {{Event/BUBBLING_PHASE}}. If an <a>event listener</a> was registered
-for the <code>span</code> <a for=/>element</a>, {{Event/eventPhase}} attribute's value would have
-been {{Event/AT_TARGET}}.
+The <code>debug</code> function will be invoked twice. Each time the <a>event</a>'s
+{{Event/target}} attribute value will be the
+<code>span</code> <a for="/">element</a>. The
+first time {{Event/currentTarget}} attribute's
+value will be the <a>document</a>, the second
+time the <code>body</code> <a for="/">element</a>.
+{{Event/eventPhase}} attribute's value
+switches from {{Event/CAPTURING_PHASE}}
+to {{Event/BUBBLING_PHASE}}. If an
+<a>event listener</a> was registered for
+the <code>span</code> <a for="/">element</a>,
+{{Event/eventPhase}} attribute's value
+would have been {{Event/AT_TARGET}}.
 
 
 <h3 id=interface-event>Interface {{Event}}</h3>
@@ -427,21 +441,21 @@ interface Event {
   const unsigned short BUBBLING_PHASE = 3;
   readonly attribute unsigned short eventPhase;
 
-  undefined stopPropagation();
+  void stopPropagation();
            attribute boolean cancelBubble; // historical alias of .stopPropagation
-  undefined stopImmediatePropagation();
+  void stopImmediatePropagation();
 
   readonly attribute boolean bubbles;
   readonly attribute boolean cancelable;
            attribute boolean returnValue;  // historical
-  undefined preventDefault();
+  void preventDefault();
   readonly attribute boolean defaultPrevented;
   readonly attribute boolean composed;
 
   [LegacyUnforgeable] readonly attribute boolean isTrusted;
   readonly attribute DOMHighResTimeStamp timeStamp;
 
-  undefined initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // historical
+  void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // historical
 };
 
 dictionary EventInit {
@@ -833,7 +847,7 @@ interface CustomEvent : Event {
 
   readonly attribute any detail;
 
-  undefined initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null); // historical
+  void initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null); // historical
 };
 
 dictionary CustomEventInit : EventInit {
@@ -983,13 +997,13 @@ for historical reasons.
 interface EventTarget {
   constructor();
 
-  undefined addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = {});
-  undefined removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = {});
+  void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = {});
+  void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = {});
   boolean dispatchEvent(Event event);
 };
 
 callback interface EventListener {
-  undefined handleEvent(Event event);
+  void handleEvent(Event event);
 };
 
 dictionary EventListenerOptions {
@@ -1505,12 +1519,8 @@ run these steps:
   <p class="note no-backref">This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
- <li><p>Let <var>invocationTargetInShadowTree</var> be <var>struct</var>'s
- <a for=Event/path>invocation-target-in-shadow-tree</a>.
-
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
- <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>, and
- <var>legacyOutputDidListenersThrowFlag</var> if given.
+ <var>listeners</var>, <var>phase</var>, and <var>legacyOutputDidListenersThrowFlag</var> if given.
 
  <li>
   <p>If <var>found</var> is false and <var>event</var>'s {{Event/isTrusted}} attribute is true,
@@ -1534,17 +1544,16 @@ run these steps:
       <tr><td>"<code>transitionend</code>"<td>"<code>webkitTransitionEnd</code>"
     </table>
 
-   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>,
-   <var>invocationTargetInShadowTree</var>, and <var>legacyOutputDidListenersThrowFlag</var>
-   if given.
+   <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>, and
+   <var>legacyOutputDidListenersThrowFlag</var> if given.
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
 </ol>
 
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
-<var>event</var>, <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>,
-and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<var>event</var>, <var>listeners</var>, <var>phase</var>, and an optional
+<var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
 <ol>
  <li><p>Let <var>found</var> be false.
@@ -1582,8 +1591,8 @@ and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
     <ol>
      <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
 
-     <li><p>If <var>invocationTargetInShadowTree</var> is false, then set <var>global</var>'s
-     <a for=Window>current event</a> to <var>event</var>.
+     <li><p>If <var>struct</var>'s <a for=Event/path>invocation-target-in-shadow-tree</a> is false,
+     then set <var>global</var>'s <a for=Window>current event</a> to <var>event</var>.
     </ol>
 
    <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
@@ -1746,7 +1755,7 @@ interface AbortController {
 
   [SameObject] readonly attribute AbortSignal signal;
 
-  undefined abort();
+  void abort();
 };
 </pre>
 
@@ -1766,20 +1775,22 @@ interface AbortController {
 <p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
 {{AbortSignal}} object).
 
-<p>The
-<dfn constructor for=AbortController lt="AbortController()"><code>new AbortController()</code></dfn>
-constructor steps are:
+<p>The <dfn constructor for=AbortController><code>AbortController()</code></dfn> constructor, when
+invoked, must run these steps:
 
 <ol>
  <li><p>Let <var>signal</var> be a new {{AbortSignal}} object.
 
- <li><p>Set <a>this</a>'s <a for=AbortController>signal</a> to <var>signal</var>.
+ <li><p>Let <var>controller</var> be a new {{AbortController}} object whose
+ <a for=AbortController>signal</a> is <var>signal</var>.
+
+ <li><p>Return <var>controller</var>.
 </ol>
 
-<p>The <dfn attribute for=AbortController><code>signal</code></dfn> getter steps are to return
-<a>this</a>'s <a for=AbortController>signal</a>.
+<p>The <dfn attribute for=AbortController><code>signal</code></dfn> attribute's getter, when
+invoked, must return <a>this</a>'s <a for=AbortController>signal</a>.
 
-<p>The <dfn method for=AbortController><code>abort()</code></dfn> method steps are to
+<p>The <dfn method for=AbortController><code>abort()</code></dfn> method, when invoked, must
 <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>.
 
 
@@ -1825,8 +1836,8 @@ requirements to react in a reasonable way to {{AbortController/abort()}}. For ex
 [=AbortSignal/aborted flag=] might need to be propagated to a cross-thread environment, such as a
 service worker.
 
-<p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>'s
-[=AbortSignal/aborted flag=] is set; otherwise false.
+<p>The <dfn attribute for=AbortSignal>aborted</dfn> attribute's getter, when invoked, must return
+true if <a>this</a>'s [=AbortSignal/aborted flag=] is set, and false otherwise.
 
 <p>The <dfn attribute for=AbortSignal><code>onabort</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the <dfn export for=AbortSignal><code>onabort</code></dfn>
@@ -1946,7 +1957,7 @@ applications.
 
 To illustrate, consider this HTML document:
 
-<pre class=lang-markup>
+<pre class='lang-markup'>
 &lt;!DOCTYPE html>
 &lt;html class=e>
  &lt;head>&lt;title>Aliens?&lt;/title>&lt;/head>
@@ -2184,10 +2195,6 @@ steps:</p>
 
  <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
-
- <li><p>If <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> is set to "<code>manual</code>",
- then return the <a>slot</a> in <var>shadow</var>'s <a for=tree>descendants</a> whose <a>manually assigned nodes</a>
- <a for=set>contains</a> <var>slottable</var>, if any, and null otherwise.</p></li>
 
  <li><p>Return the first <a>slot</a> in <a>tree order</a> in <var>shadow</var>'s
  <a for=tree>descendants</a> whose <a for=slot>name</a> is <var>slottable</var>'s
@@ -2444,8 +2451,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
    <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
-   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> with its <a for=tree>root</a>'s
-   <a for=ShadowRoot>slot assignment</a> set to "<code>auto</code>" and <var>node</var> is a
+   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
@@ -2662,16 +2668,8 @@ indicated in the <a for=/>remove</a> algorithm below.
 
  <li><p><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
 
- <li>
-  <p>If <var>node</var> is <a for=slottable>assigned</a>, then:
-
-  <ol>
-   <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> with its
-   <a for=tree>root</a>'s <a for=ShadowRoot>slot assignment</a> set to "<code>auto</code>",
-   then <a for=set>remove</a> <var>node</var> from its <a>assigned slot</a>'s <a>manually assigned nodes</a>.
-
-   <li><p>Run <a>assign slottables</a> for <var>node</var>'s <a>assigned slot</a>.
-  </ol>
+ <li><p>If <var>node</var> is <a for=slottable>assigned</a>, then run <a>assign slottables</a> for
+ <var>node</var>'s <a>assigned slot</a>.
 
  <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
  <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
@@ -2681,11 +2679,6 @@ indicated in the <a for=/>remove</a> algorithm below.
   <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
 
   <ol>
-   <li><p>for each <a>slot</a> <var>slot</var> in <var>node</var>'s <a for=tree>inclusive descendants</a>,
-   if <var>slot</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> with its <a for=tree>root</a>'s
-   <a for=ShadowRoot>slot assignment</a> set to "<code>manual</code>", then set <var>slot</var>'s
-   <a>manually assigned nodes</a> to an empty list.
-
    <li><p>Run <a>assign slottables for a tree</a> with <var>parent</var>'s <a for=tree>root</a>.
 
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
@@ -2803,9 +2796,9 @@ interface mixin ParentNode {
   readonly attribute Element? lastElementChild;
   readonly attribute unsigned long childElementCount;
 
-  [CEReactions, Unscopable] undefined prepend((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined append((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void prepend((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void append((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void replaceChildren((Node or DOMString)... nodes);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -2965,10 +2958,10 @@ getter must return the first <a>following</a> <a for=tree>sibling</a> that is an
 
 <pre class=idl>
 interface mixin ChildNode {
-  [CEReactions, Unscopable] undefined before((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined after((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined replaceWith((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined remove();
+  [CEReactions, Unscopable] void before((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void after((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void replaceWith((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] void remove();
 };
 DocumentType includes ChildNode;
 Element includes ChildNode;
@@ -3336,12 +3329,12 @@ they do not get lost when {{MutationObserverInit/subtree}} is set to true on <a 
 interface MutationObserver {
   constructor(MutationCallback callback);
 
-  undefined observe(Node target, optional MutationObserverInit options = {});
-  undefined disconnect();
+  void observe(Node target, optional MutationObserverInit options = {});
+  void disconnect();
   sequence&lt;MutationRecord> takeRecords();
 };
 
-callback MutationCallback = undefined (sequence&lt;MutationRecord> mutations, MutationObserver observer);
+callback MutationCallback = void (sequence&lt;MutationRecord> mutations, MutationObserver observer);
 
 dictionary MutationObserverInit {
   boolean childList = false;
@@ -3756,7 +3749,7 @@ interface Node : EventTarget {
 
   [CEReactions] attribute DOMString? nodeValue;
   [CEReactions] attribute DOMString? textContent;
-  [CEReactions] undefined normalize();
+  [CEReactions] void normalize();
 
   [CEReactions, NewObject] Node cloneNode(optional boolean deep = false);
   boolean isEqualNode(Node? otherNode);
@@ -4485,7 +4478,7 @@ when invoked, must run these steps:
 
   <p class="note no-backref">Whether to return {{Node/DOCUMENT_POSITION_PRECEDING}} or
   {{Node/DOCUMENT_POSITION_FOLLOWING}} is typically implemented via pointer comparison. In
-  JavaScript implementations a cached <code class=lang-javascript>Math.random()</code> value can
+  JavaScript implementations a cached <code class='lang-javascript'>Math.random()</code> value can
   be used.
 
  <li><p>If <var>node1</var> is an <a>ancestor</a> of <var>node2</var> and <var>attr1</var> is null,
@@ -5006,7 +4999,7 @@ method, when invoked, must return the
 <a>list of elements with qualified name <var>qualifiedName</var></a> for <a>this</a>.
 
 <p class="note no-backref">Thus, in an <a>HTML document</a>,
-<code class=lang-javascript>document.getElementsByTagName("FOO")</code> will match
+<code class='lang-javascript'>document.getElementsByTagName("FOO")</code> will match
 <code>&lt;FOO></code> elements that are not in the
 <a>HTML namespace</a>, and <code>&lt;foo></code> elements that are in
 the <a>HTML namespace</a>, but not <code>&lt;FOO></code> elements
@@ -5719,13 +5712,11 @@ invoked, must return a new {{DocumentFragment}} <a>node</a> whose <a for=Node>no
 [Exposed=Window]
 interface ShadowRoot : DocumentFragment {
   readonly attribute ShadowRootMode mode;
-  readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute Element host;
   attribute EventHandler onslotchange;
 };
 
 enum ShadowRootMode { "open", "closed" };
-enum SlotAssignmentMode { "manual", "auto" };
 </pre>
 
 <p>{{ShadowRoot}} <a for=/>nodes</a> are simply known as
@@ -5737,15 +5728,9 @@ or "<code>closed</code>").</p>
 <p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>delegates focus</dfn>.
 It is initially set to false.</p>
 
-<p><a for=/>Shadow roots</a> have an associated
-<dfn export for=ShadowRoot>available to element internals</dfn>. It is initially set to false.</p>
-
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
-
-<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
-("<code>manual</code>" or "<code>auto</code>").</p>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
@@ -5763,9 +5748,6 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <a>event handler IDL attribute</a> for the
 <dfn for=ShadowRoot export><code>onslotchange</code></dfn> <a>event handler</a>, whose
 <a>event handler event type</a> is {{HTMLSlotElement/slotchange}}.
-
-<p>The <dfn attribute for=ShadowRoot><code>slotAssignment</code></dfn> attribute's getter must
-return <a>this</a>'s <a for=ShadowRoot>slot assignment</a>.</p>
 
 <hr>
 
@@ -5858,10 +5840,10 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
-  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
-  [CEReactions] undefined removeAttribute(DOMString qualifiedName);
-  [CEReactions] undefined removeAttributeNS(DOMString? namespace, DOMString localName);
+  [CEReactions] void setAttribute(DOMString qualifiedName, DOMString value);
+  [CEReactions] void setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
+  [CEReactions] void removeAttribute(DOMString qualifiedName);
+  [CEReactions] void removeAttributeNS(DOMString? namespace, DOMString localName);
   [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
   boolean hasAttribute(DOMString qualifiedName);
   boolean hasAttributeNS(DOMString? namespace, DOMString localName);
@@ -5884,13 +5866,12 @@ interface Element : Node {
   HTMLCollection getElementsByClassName(DOMString classNames);
 
   [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // historical
-  undefined insertAdjacentText(DOMString where, DOMString data); // historical
+  void insertAdjacentText(DOMString where, DOMString data); // historical
 };
 
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
-  SlotAssignmentMode slotAssignment = "auto";
 };
 </pre>
 
@@ -5908,19 +5889,19 @@ dictionary ShadowRootInit {
 initialized.
 
 <p>An <a for=/>element</a>'s <a for=Element>custom element state</a> is one of
-"<code>undefined</code>", "<code>failed</code>", "<code>uncustomized</code>",
-"<code>precustomized</code>", or "<code>custom</code>". An <a for=/>element</a> whose
-<a for=Element>custom element state</a> is "<code>uncustomized</code>" or "<code>custom</code>" is
-said to be <dfn export id=concept-element-defined for=Element>defined</dfn>. An <a for=/>element</a>
-whose <a for=Element>custom element state</a> is "<code>custom</code>" is said to be
+"<code>undefined</code>", "<code>failed</code>", "<code>uncustomized</code>", or
+"<code>custom</code>". An <a for=/>element</a> whose <a for=Element>custom element state</a> is
+"<code>uncustomized</code>" or "<code>custom</code>" is said to be
+<dfn export id=concept-element-defined for=Element>defined</dfn>. An <a for=/>element</a> whose
+<a for=Element>custom element state</a> is "<code>custom</code>" is said to be
 <dfn export id=concept-element-custom for=Element>custom</dfn>.
 
 <p class=note>Whether or not an element is <a for=Element>defined</a> is used to determine the
 behavior of the '':defined'' pseudo-class. Whether or not an element is <a for=Element>custom</a> is
 used to determine the behavior of the <a href=#mutation-algorithms>mutation algorithms</a>. The
-"<code>failed</code>" and "<code>precustomized</code>" states are used to ensure that if a
-<a>custom element constructor</a> fails to execute correctly the first time, it is not executed
-again by an <a lt="upgrade an element">upgrade</a>.</p>
+"<code>failed</code>" state is used to ensure that if a <a>custom element constructor</a> fails to
+execute correctly the first time, it is not executed again by an
+<a lt="upgrade an element">upgrade</a>.</p>
 
 <div class=example id=example-c5b21302>
  <p>The following code illustrates elements in each of these four states:</p>
@@ -6143,9 +6124,9 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
 </ol>
 
 <p><a for=/>Elements</a> also have an
-<dfn export id=concept-element-attribute for=Element>attribute list</dfn>, which is a
-<a for=/>list</a> exposed through a {{NamedNodeMap}}. Unless explicitly given when an
-<a for=/>element</a> is created, its <a for=Element>attribute list</a> <a for=list>is empty</a>.
+<dfn export id=concept-element-attribute for=Element>attribute list</dfn>, which is a <a>list</a>
+exposed through a {{NamedNodeMap}}. Unless explicitly given when an <a for=/>element</a> is created,
+its <a for=Element>attribute list</a> <a for=list>is empty</a>.
 
 <p>An <a for="/">element</a>
 <dfn export id=concept-element-attribute-has lt="has an attribute">has</dfn> an <a>attribute</a>
@@ -6526,7 +6507,7 @@ associated {{NamedNodeMap}}.
 
 <p>The <dfn method for=Element><code>getAttributeNames()</code></dfn> method, when invoked, must
 return the <a for=Attr>qualified names</a> of the <a>attributes</a> in <a>this</a>'s
-<a for=Element>attribute list</a>, in order, and a new <a for=/>list</a> otherwise.
+<a for=Element>attribute list</a>, in order, and a new <a>list</a> otherwise.
 
 <p class=note>These are not guaranteed to be unique.<!-- A theoretical getAttributeNamesNS() could
 return an array of unique two-value-arrays. -->
@@ -6770,13 +6751,6 @@ invoked, must run these steps:
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>init</var>'s
  {{ShadowRootInit/delegatesFocus}}.
-
- <li><p>If <a>this</a>'s <a for=Element>custom element state</a> is "<code>precustomized</code>" or
- "<code>custom</code>", then set <var>shadow</var>'s
- <a for=ShadowRoot>available to element internals</a> to true.
-
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>init</var>'s
- {{ShadowRootInit/slotAssignment}}.
 
  <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
@@ -7143,10 +7117,10 @@ interface CharacterData : Node {
   attribute [LegacyNullToEmptyString] DOMString data;
   readonly attribute unsigned long length;
   DOMString substringData(unsigned long offset, unsigned long count);
-  undefined appendData(DOMString data);
-  undefined insertData(unsigned long offset, DOMString data);
-  undefined deleteData(unsigned long offset, unsigned long count);
-  undefined replaceData(unsigned long offset, unsigned long count, DOMString data);
+  void appendData(DOMString data);
+  void insertData(unsigned long offset, DOMString data);
+  void deleteData(unsigned long offset, unsigned long count);
+  void replaceData(unsigned long offset, unsigned long count, DOMString data);
 };
 </pre>
 
@@ -7471,6 +7445,7 @@ invoked, must return a new {{Comment}} <a>node</a> whose <a for=CharacterData>da
 
 
 
+
 <h2 id=ranges>Ranges</h2>
 
 <h3 id=introduction-to-dom-ranges>Introduction to "DOM Ranges"</h3>
@@ -7487,9 +7462,9 @@ are <a>boundary points</a>. A <a>boundary point</a> is a <a for=/>tuple</a> cons
 <ul class="domTree">
  <li class="t1">{{Element}}: <code>p</code>
   <ul>
-   <li class="t1">{{Element}}: <code class=lang-markup>&lt;img src="insanity-wolf" alt="Little-endian BOM; decode as big-endian!"></code>
+   <li class="t1">{{Element}}: <code class='lang-markup'>&lt;img src="insanity-wolf" alt="Little-endian BOM; decode as big-endian!"></code>
    <li class="t3">{{Text}}: <span>&nbsp;CSS 2.1 syndata is&nbsp;</span>
-   <li class="t1">{{Element}}: <code class=lang-markup>&lt;em></code>
+   <li class="t1">{{Element}}: <code class='lang-markup'>&lt;em></code>
     <ul>
      <li class="t3">{{Text}}: <span>awesome</span>
     </ul>
@@ -7505,7 +7480,7 @@ are <a>boundary points</a>. A <a>boundary point</a> is a <a for=/>tuple</a> cons
 <var ignore>em</var> to the <code>em</code>
 <a for="/">element</a>, this would be done as follows:
 
-<pre class=lang-javascript><code>
+<pre class='lang-javascript'><code>
 var range = new Range(),
     firstText = p.childNodes[1],
     secondText = em.firstChild
@@ -7703,15 +7678,15 @@ interface Range : AbstractRange {
 
   readonly attribute Node commonAncestorContainer;
 
-  undefined setStart(Node node, unsigned long offset);
-  undefined setEnd(Node node, unsigned long offset);
-  undefined setStartBefore(Node node);
-  undefined setStartAfter(Node node);
-  undefined setEndBefore(Node node);
-  undefined setEndAfter(Node node);
-  undefined collapse(optional boolean toStart = false);
-  undefined selectNode(Node node);
-  undefined selectNodeContents(Node node);
+  void setStart(Node node, unsigned long offset);
+  void setEnd(Node node, unsigned long offset);
+  void setStartBefore(Node node);
+  void setStartAfter(Node node);
+  void setEndBefore(Node node);
+  void setEndAfter(Node node);
+  void collapse(optional boolean toStart = false);
+  void selectNode(Node node);
+  void selectNodeContents(Node node);
 
   const unsigned short START_TO_START = 0;
   const unsigned short START_TO_END = 1;
@@ -7719,14 +7694,14 @@ interface Range : AbstractRange {
   const unsigned short END_TO_START = 3;
   short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-  [CEReactions] undefined deleteContents();
+  [CEReactions] void deleteContents();
   [CEReactions, NewObject] DocumentFragment extractContents();
   [CEReactions, NewObject] DocumentFragment cloneContents();
-  [CEReactions] undefined insertNode(Node node);
-  [CEReactions] undefined surroundContents(Node newParent);
+  [CEReactions] void insertNode(Node node);
+  [CEReactions] void surroundContents(Node newParent);
 
   [NewObject] Range cloneRange();
-  undefined detach();
+  void detach();
 
   boolean isPointInRange(Node node, unsigned long offset);
   short comparePoint(Node node, unsigned long offset);
@@ -9056,7 +9031,7 @@ interface NodeIterator {
   Node? nextNode();
   Node? previousNode();
 
-  undefined detach();
+  void detach();
 };
 </pre>
 
@@ -9540,8 +9515,8 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  [CEReactions] undefined add(DOMString... tokens);
-  [CEReactions] undefined remove(DOMString... tokens);
+  [CEReactions] void add(DOMString... tokens);
+  [CEReactions] void remove(DOMString... tokens);
   [CEReactions] boolean toggle(DOMString token, optional boolean force);
   [CEReactions] boolean replace(DOMString token, DOMString newToken);
   boolean supports(DOMString token);
@@ -10057,7 +10032,6 @@ chapter of <cite>DOM Level 2 Traversal and Range</cite>.
 </ul>
 
 
-
 <h2 class=no-num id="acks">Acknowledgments</h2>
 
 <p>There have been a lot of people that have helped make DOM more interoperable over the years and
@@ -10146,7 +10120,6 @@ Justin Summerlin,
 Kagami Sascha Rosylight,
 呂康豪 (Kang-Hao Lu),
 田村健人 (Kent TAMURA),
-Kevin J. Sung,
 Kevin Sweeney,
 Kirill Topolyan,
 Koji Ishii,
@@ -10223,8 +10196,7 @@ Yash Handa,
 Yehuda Katz,
 Yoav Weiss,
 Yoichi Osato,
-Yoshinori Sano,
-Yu Han, and
+Yoshinori Sano, and
 Zack Weinberg
 for being awesome!
 
@@ -10233,8 +10205,10 @@ for being awesome!
 with substantial contributions from Aryeh Gregor (<a href=mailto:ayg@aryeh.name>ayg@aryeh.name</a>)
 and Ms2ger (<a href="mailto:ms2ger@gmail.com">ms2ger@gmail.com</a>).
 
-<p boilerplate=ipr>Part of the revision history of the integration points related to
-<a for=Element>custom</a> elements can be found in
+<p>Part of the revision history of the integration points related to <a for=Element>custom</a>
+elements can be found in
 <a href="https://github.com/w3c/webcomponents">the w3c/webcomponents repository</a>, which is
 available under the
-<a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and Document License</a>.
+<a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Permissive Document License</a>.
+
+<!-- vim: set expandtab shiftwidth=1 tabstop=1 textwidth=100 -->
