@@ -278,7 +278,11 @@ function imgFetched(ev) {
 <a>Event listeners</a> can be removed
 by utilizing the
 {{EventTarget/removeEventListener()}}
-method, passing the same arguments.
+method passing the same arguments.
+
+Alternatively, <a>event listeners</a> can be removed by passing an {{AbortSignal}} to
+{{EventTarget/addEventListener()}} and calling {{AbortController/abort()}} on the controller
+owning the signal.
 
 <a>Events</a> are objects too and implement the
 {{Event}} interface (or a derived interface). In the example above
@@ -962,6 +966,7 @@ dictionary EventListenerOptions {
 dictionary AddEventListenerOptions : EventListenerOptions {
   boolean passive = false;
   boolean once = false;
+  AbortSignal signal;
 };
 </pre>
 
@@ -981,6 +986,7 @@ when something has occurred.
  <li><dfn for="event listener">capture</dfn> (a boolean, initially false)
  <li><dfn for="event listener">passive</dfn> (a boolean, initially false)
  <li><dfn for="event listener">once</dfn> (a boolean, initially false)
+ <li><dfn for="event listener">signal</dfn> (null or an {{AbortSignal}} object)
  <li><dfn for="event listener">removed</dfn> (a boolean for bookkeeping purposes, initially false)
 </ul>
 
@@ -1042,6 +1048,9 @@ are not to be used for anything else. [[!HTML]]
   <a for="event listener">callback</a> will only be invoked once after which the event listener will
   be removed.
 
+  <p>If an {{AbortSignal}} is passed for <var>options</var>'s {{AddEventListenerOptions/signal}}
+  then the event listener will be removed when signal is aborted.
+
   <p>The <a>event listener</a> is appended to <var>target</var>'s
   <a for=EventTarget>event listener list</a> and is not appended if it has the same
   <a for="event listener">type</a>, <a for="event listener">callback</a>, and
@@ -1075,11 +1084,17 @@ steps:
 
  <li><p>Let <var>once</var> and <var>passive</var> be false.
 
+ <li><p>Let <var>signal</var> be null.
+
  <li><p>If <var>options</var> is a dictionary, then set <var>passive</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/passive}}</code> and <var>once</var> to <var>options</var>'s
+ <code>{{AddEventListenerOptions/passive}}</code>, <var>once</var> to <var>options</var>'s
  <code>{{AddEventListenerOptions/once}}</code>.
 
- <li><p>Return <var>capture</var>, <var>passive</var>, and <var>once</var>.
+ <li><p>If |options| is a dictionary and |options|["{{AddEventListenerOptions/signal}}"] [=map/exists=],
+ then set |signal| to |options|["{{AddEventListenerOptions/signal}}"].
+
+
+ <li><p>Return <var>capture</var>, <var>passive</var>, <var>once</var> and <var>signal</var>.
 </ol>
 
 <p>The <dfn constructor for=EventTarget><code>EventTarget()</code></dfn> constructor, when invoked,
@@ -1105,6 +1120,9 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
+ <li><p>If <a for="event listener">signal</a> is not null and its [=AbortSignal/aborted flag=] is
+ set, then return.
+
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
  <li><p>If <var>eventTarget</var>'s <a>event listener list</a> does not <a for=list>contain</a> an
@@ -1113,6 +1131,12 @@ participate in a tree structure.</p>
  <a for="event listener">callback</a>, and <a for="event listener">capture</a> is
  <var>listener</var>'s <a for="event listener">capture</a>, then <a for=list>append</a>
  <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
+
+  <li><p>If <a for="event listener">signal</a> is not null then <a for=AbortSignal lt=add>add the following</a>
+  abort steps to it:
+   <ol>
+    <li><a>Remove an event listener</a> with <var>eventTarget</var> and <var>listener</var>.
+   </ol>
 </ol>
 
 <p class=note>The <a>add an event listener</a> concept exists to ensure <a>event handlers</a> use
@@ -1129,8 +1153,8 @@ method, when invoked, must run these steps:
  <li><p><a>Add an event listener</a> with <a>this</a> and an <a>event listener</a> whose
  <a for="event listener">type</a> is <var>type</var>, <a for="event listener">callback</a> is
  <var>callback</var>, <a for="event listener">capture</a> is <var>capture</var>,
- <a for="event listener">passive</a> is <var>passive</var>, and <a for="event listener">once</a> is
- <var>once</var>.
+ <a for="event listener">passive</a> is <var>passive</var>, <a for="event listener">once</a> is
+ <var>once</var>, and <a for="event listener">signal</a> is <var>signal</var>.
 </ol>
 
 <p>To <dfn export>remove an event listener</dfn>, given an {{EventTarget}} object
