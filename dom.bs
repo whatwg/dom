@@ -1048,7 +1048,7 @@ are not to be used for anything else. [[!HTML]]
   <a for="event listener">callback</a> will only be invoked once after which the event listener will
   be removed.
 
-  <p>If an {{AbortSignal}} is passed for <var>options</var>'s {{AddEventListenerOptions/signal}}
+  <p>If an {{AbortSignal}} is passed for <var>options</var>'s {{AddEventListenerOptions/signal}},
   then the event listener will be removed when signal is aborted.
 
   <p>The <a>event listener</a> is appended to <var>target</var>'s
@@ -1084,14 +1084,18 @@ steps:
 
  <li><p>Let <var>once</var> and <var>passive</var> be false.
 
- <li><p>Let <var>signal</var> be null.
+ <li><p>Let |signal| be null.
 
- <li><p>If <var>options</var> is a dictionary, then set <var>passive</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/passive}}</code> and <var>once</var> to <var>options</var>'s
- <code>{{AddEventListenerOptions/once}}</code>.
+ <li>
+  <p>If |options| is a dictionary, then:
 
- <li><p>If |options| is a dictionary and |options|["{{AddEventListenerOptions/signal}}"] [=map/exists=],
- then set |signal| to |options|["{{AddEventListenerOptions/signal}}"].
+  <ol>
+   <li><p>Set |passive| to |options|["{{AddEventListenerOptions/passive}}"] and |once| to
+   |options|["{{AddEventListenerOptions/once}}"].
+
+   <li><p>If |options|["{{AddEventListenerOptions/signal}}"] [=map/exists=], then set |signal| to
+   |options|["{{AddEventListenerOptions/signal}}"].
+  </ol>
 
  <li><p>Return <var>capture</var>, <var>passive</var>, <var>once</var>, and <var>signal</var>.
 </ol>
@@ -1131,12 +1135,13 @@ participate in a tree structure.</p>
  <var>listener</var>'s <a for="event listener">capture</a>, then <a for=list>append</a>
  <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
 
-  <li>
-   <p>If <a for="event listener">signal</a> is not null, then <a for=AbortSignal lt=add>add the following</a>
-  abort steps to it:
-   <ol>
-    <li><a>Remove an event listener</a> with <var>eventTarget</var> and <var>listener</var>.
-   </ol>
+ <li>
+  <p>If <var>listener</var>'s <a for="event listener">signal</a> is not null, then
+  <a for=AbortSignal lt=add>add the following</a> abort steps to it:
+
+  <ol>
+   <li><a>Remove an event listener</a> with <var>eventTarget</var> and <var>listener</var>.
+  </ol>
 </ol>
 
 <p class=note>The <a>add an event listener</a> concept exists to ensure <a>event handlers</a> use
