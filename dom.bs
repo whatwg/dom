@@ -2199,7 +2199,16 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
  <a for=DocumentFragment>host</a>.</p></li>
 
  <li>
-  <p>For each <a>slottable</a> <a for=tree>child</a> of <var>host</var>, <var>slottable</var>, in
+  <p>If <var>slot</var>'s <a for=/>shadow root</a>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>",
+  then:</p>
+
+  <ol>
+   <li><p>Set <var>result</var> to <var>slot</var>'s <a>manually assigned nodes</a>.</p></li>
+  </ol>
+ </li>
+
+ <li>
+  <p>Otherwise, for each <a>slottable</a> <a for=tree>child</a> of <var>host</var>, <var>slottable</var>, in
   <a>tree order</a>:</p>
 
   <ol>
@@ -2437,7 +2446,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
    <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
-   <a for=ShadowRoot>slot assignment</a> is "<code>auto</code>" and <var>node</var> is a
+   <a for=ShadowRoot>slot assignment</a> is "<code>name</code>" and <var>node</var> is a
    <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
@@ -5717,7 +5726,7 @@ interface ShadowRoot : DocumentFragment {
 };
 
 enum ShadowRootMode { "open", "closed" };
-enum SlotAssignmentMode { "manual", "auto" };
+enum SlotAssignmentMode { "manual", "name" };
 </pre>
 
 <p>{{ShadowRoot}} <a for=/>nodes</a> are simply known as
@@ -5737,7 +5746,7 @@ It is initially set to false.</p>
      consequences for innerHTML. -->
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
-("<code>manual</code>" or "<code>auto</code>").</p>
+("<code>manual</code>" or "<code>name</code>").</p>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
@@ -5882,7 +5891,7 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
-  SlotAssignmentMode slotAssignment = "auto";
+  SlotAssignmentMode slotAssignment = "name";
 };
 </pre>
 
