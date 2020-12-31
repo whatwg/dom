@@ -1,5 +1,6 @@
 <pre class=metadata>
 Group: WHATWG
+Date: 2020-12-21
 H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
@@ -776,7 +777,7 @@ incapable of setting {{Event/composed}}. It has to be supported for legacy conte
 
 <pre class=idl>
 partial interface Window {
-  [Replaceable] readonly attribute (Event or undefined) event; // legacy
+  [Replaceable] readonly attribute any event; // legacy
 };
 </pre>
 
@@ -2177,10 +2178,6 @@ steps:</p>
  <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
 
- <li><p>If <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>",
- then return the <a>slot</a> in <var>shadow</var>'s <a for=tree>descendants</a> whose <a>manually assigned nodes</a>
- <a for=set>contains</a> <var>slottable</var>, if any, and null otherwise.</p></li>
-
  <li><p>Return the first <a>slot</a> in <a>tree order</a> in <var>shadow</var>'s
  <a for=tree>descendants</a> whose <a for=slot>name</a> is <var>slottable</var>'s
  <a for=slottable>name</a>, if any, and null otherwise.</p></li>
@@ -2436,8 +2433,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
    <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
-   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
-   <a for=ShadowRoot>slot assignment</a> is "<code>auto</code>" and <var>node</var> is a
+   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
    <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
@@ -2654,16 +2650,8 @@ indicated in the <a for=/>remove</a> algorithm below.
 
  <li><p><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
 
- <li>
-  <p>If <var>node</var> is <a for=slottable>assigned</a>, then:
-
-  <ol>
-   <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose
-   <a for=tree>root</a>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>",
-   then <a for=set>remove</a> <var>node</var> from its <a>assigned slot</a>'s <a>manually assigned nodes</a>.
-
-   <li><p>Run <a>assign slottables</a> for <var>node</var>'s <a>assigned slot</a>.
-  </ol>
+ <li><p>If <var>node</var> is <a for=slottable>assigned</a>, then run <a>assign slottables</a> for
+ <var>node</var>'s <a>assigned slot</a>.
 
  <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
  <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
@@ -2673,11 +2661,6 @@ indicated in the <a for=/>remove</a> algorithm below.
   <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>, then:
 
   <ol>
-   <li><p>for each <a>slot</a> <var>slot</var> in <var>node</var>'s <a for=tree>inclusive descendants</a>,
-   if <var>slot</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a> whose <a for=tree>root</a>'s
-   <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>", then set <var>slot</var>'s
-   <a>manually assigned nodes</a> to an empty set.
-
    <li><p>Run <a>assign slottables for a tree</a> with <var>parent</var>'s <a for=tree>root</a>.
 
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
@@ -5711,13 +5694,11 @@ invoked, must return a new {{DocumentFragment}} <a>node</a> whose <a for=Node>no
 [Exposed=Window]
 interface ShadowRoot : DocumentFragment {
   readonly attribute ShadowRootMode mode;
-  readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute Element host;
   attribute EventHandler onslotchange;
 };
 
 enum ShadowRootMode { "open", "closed" };
-enum SlotAssignmentMode { "manual", "auto" };
 </pre>
 
 <p>{{ShadowRoot}} <a for=/>nodes</a> are simply known as
@@ -5736,9 +5717,6 @@ It is initially set to false.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
 
-<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
-("<code>manual</code>" or "<code>auto</code>").</p>
-
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
@@ -5755,9 +5733,6 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <a>event handler IDL attribute</a> for the
 <dfn for=ShadowRoot export><code>onslotchange</code></dfn> <a>event handler</a>, whose
 <a>event handler event type</a> is {{HTMLSlotElement/slotchange}}.
-
-<p>The <dfn attribute for=ShadowRoot><code>slotAssignment</code></dfn> attribute's getter must
-return <a>this</a>'s <a for=ShadowRoot>slot assignment</a>.</p>
 
 <hr>
 
@@ -5882,7 +5857,6 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
-  SlotAssignmentMode slotAssignment = "auto";
 };
 </pre>
 
@@ -6766,9 +6740,6 @@ invoked, must run these steps:
  <li><p>If <a>this</a>'s <a for=Element>custom element state</a> is "<code>precustomized</code>" or
  "<code>custom</code>", then set <var>shadow</var>'s
  <a for=ShadowRoot>available to element internals</a> to true.
-
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>init</var>'s
- {{ShadowRootInit/slotAssignment}}.
 
  <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
@@ -10167,7 +10138,6 @@ Yehuda Katz,
 Yoav Weiss,
 Yoichi Osato,
 Yoshinori Sano,
-Yu Han,
 Yusuke Abe, and
 Zack Weinberg
 for being awesome!
