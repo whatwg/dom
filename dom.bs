@@ -2175,6 +2175,12 @@ Unless stated otherwise it is null. A <a>slottable</a> is
 <dfn export for=slottable id=slotable-assigned>assigned</dfn> if its <a>assigned slot</a> is
 non-null.</p>
 
+<p>A <a>slottable</a> has an associated <dfn export for=slottable>manual slot assignment</dfn> (null
+or a <a>slot</a>). Unless stated otherwise, it is null.
+
+<p class=note>A <a>slottable</a>'s <a>manual slot assignment</a> can be implemented using a weak
+reference to the <a>slot</a>, because this variable is not directly accessible from script.
+
 <h5 id=finding-slots-and-slotables>Finding slots and slottables</h5>
 
 <p>To <dfn export lt="find a slot|finding a slot">find a slot</dfn> for a given <a>slottable</a>
@@ -2192,6 +2198,11 @@ steps:</p>
  <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
  <em>not</em> "<code>open</code>", then return null.</p></li>
 
+ <li><p>If <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>", then
+ return the <a>slot</a> in <var>shadow</var>'s <a for=tree>descendants</a> whose
+ <a>manually assigned nodes</a> <a for=set>contains</a> <var>slottable</var>, if any, and null
+ otherwise.
+
  <li><p>Return the first <a>slot</a> in <a>tree order</a> in <var>shadow</var>'s
  <a for=tree>descendants</a> whose <a for=slot>name</a> is <var>slottable</var>'s
  <a for=slottable>name</a>, if any, and null otherwise.</p></li>
@@ -2203,22 +2214,33 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
 <ol>
  <li><p>Let <var>result</var> be an empty list.</p></li>
 
- <li><p>If <var>slot</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, then return
- <var>result</var>.</p></li>
+ <li><p>Let <var>root</var> be <var>slot</var>'s <a for=tree>root</a>.
 
- <li><p>Let <var>host</var> be <var>slot</var>'s <a for=tree>root</a>'s
- <a for=DocumentFragment>host</a>.</p></li>
+ <li><p>If <var>root</var> is not a <a for=/>shadow root</a>, then return <var>result</var>.
+
+ <li><p>Let <var>host</var> be <var>root</var>'s <a for=DocumentFragment>host</a>.
 
  <li>
-  <p>For each <a>slottable</a> <a for=tree>child</a> of <var>host</var>, <var>slottable</var>, in
-  <a>tree order</a>:</p>
+  <p>If <var>root</var>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>", then:
+
+  <ol>
+   <li><p>Let <var>result</var> be « ».
+
+   <li><p><a for=set>For each</a> <a>slottable</a> <var>slottable</var> of <var>slot</var>'s
+   <a>manually assigned nodes</a>, if <var>slottable</var>'s <a for=tree>parent</a> is
+   <var>host</var>, <a for=list>append</a> <var>slottable</var> to <var>result</var>.
+  </ol>
+
+ <li>
+  <p>Otherwise, for each <a>slottable</a> <a for=tree>child</a> <var>slottable</var> of
+  <var>host</var>, in <a>tree order</a>:
 
   <ol>
    <li><p>Let <var>foundSlot</var> be the result of <a>finding a slot</a> given
-   <var>slottable</var>.</p></li>
+   <var>slottable</var>.
 
-   <li><p>If <var>foundSlot</var> is <var>slot</var>, then append <var>slottable</var> to
-   <var>result</var>.</p></li>
+   <li><p>If <var>foundSlot</var> is <var>slot</var>, then <a for=list>append</a>
+   <var>slottable</var> to <var>result</var>.
   </ol>
  </li>
 
@@ -2447,7 +2469,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
    <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
-   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> and <var>node</var> is a
+   <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
+   <a for=ShadowRoot>slot assignment</a> is "<code>named</code>" and <var>node</var> is a
    <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
    <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
@@ -5706,11 +5729,13 @@ invoked, must return a new {{DocumentFragment}} <a>node</a> whose <a for=Node>no
 [Exposed=Window]
 interface ShadowRoot : DocumentFragment {
   readonly attribute ShadowRootMode mode;
+  readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute Element host;
   attribute EventHandler onslotchange;
 };
 
 enum ShadowRootMode { "open", "closed" };
+enum SlotAssignmentMode { "manual", "named" };
 </pre>
 
 <p>{{ShadowRoot}} <a for=/>nodes</a> are simply known as
@@ -5729,6 +5754,9 @@ It is initially set to false.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
 
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
+("<code>manual</code>" or "<code>named</code>").
+
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
@@ -5745,6 +5773,9 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <a>event handler IDL attribute</a> for the
 <dfn for=ShadowRoot export><code>onslotchange</code></dfn> <a>event handler</a>, whose
 <a>event handler event type</a> is {{HTMLSlotElement/slotchange}}.
+
+<p>The <dfn attribute for=ShadowRoot><code>slotAssignment</code></dfn> getter steps are to return
+<a>this</a>'s <a for=ShadowRoot>slot assignment</a>.
 
 <hr>
 
@@ -5869,6 +5900,7 @@ interface Element : Node {
 dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
+  SlotAssignmentMode slotAssignment = "named";
 };
 </pre>
 
@@ -6744,14 +6776,17 @@ invoked, must run these steps:
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
  is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <a>this</a>,
- and <a for=ShadowRoot>mode</a> is <var>init</var>'s {{ShadowRootInit/mode}}.
+ and <a for=ShadowRoot>mode</a> is <var>init</var>["{{ShadowRootInit/mode}}"].
 
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>init</var>'s
- {{ShadowRootInit/delegatesFocus}}.
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to
+ <var>init</var>["{{ShadowRootInit/delegatesFocus}}"].
 
  <li><p>If <a>this</a>'s <a for=Element>custom element state</a> is "<code>precustomized</code>" or
  "<code>custom</code>", then set <var>shadow</var>'s
  <a for=ShadowRoot>available to element internals</a> to true.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to
+ <var>init</var>["{{ShadowRootInit/slotAssignment}}"].
 
  <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 
@@ -10087,6 +10122,7 @@ Manish Tripathi,
 Marcos Caceres,
 Mark Miller,
 Martijn van der Ven,
+Mason Freed,
 Mats Palmgren,
 Mounir Lamouri,
 Michael Stramel,
@@ -10150,6 +10186,7 @@ Yehuda Katz,
 Yoav Weiss,
 Yoichi Osato,
 Yoshinori Sano,
+Yu Han,
 Yusuke Abe, and
 Zack Weinberg
 for being awesome!
