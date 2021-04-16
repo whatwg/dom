@@ -28,8 +28,6 @@ type: interface
  url: https://w3c.github.io/deviceorientation/spec-source-orientation.html#devicemotion
   text: DeviceMotionEvent
   text: DeviceOrientationEvent
- url: https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
-  text: WebGLContextEvent
 urlPrefix: https://tc39.github.io/ecma262/#; spec: ECMASCRIPT
  text: Construct; url: sec-construct; type: abstract-op
  type: dfn
@@ -1086,7 +1084,7 @@ steps:
  <li><p>Let |signal| be null.
 
  <li>
-  <p>If |options| is a dictionary, then:
+  <p>If |options| is a <a for=/>dictionary</a>, then:
 
   <ol>
    <li><p>Set |passive| to |options|["{{AddEventListenerOptions/passive}}"] and |once| to
@@ -2730,7 +2728,7 @@ indicated in the <a for=/>remove</a> algorithm below.
  <li><p>For each <a for=tree>inclusive ancestor</a> <var>inclusiveAncestor</var> of
  <var>parent</var>, and then <a for=list>for each</a> <var>registered</var> of
  <var>inclusiveAncestor</var>'s <a>registered observer list</a>, if <var>registered</var>'s
- <a for="registered observer">options</a>'s {{MutationObserverInit/subtree}} is true, then
+ <a for="registered observer">options</a>["{{MutationObserverInit/subtree}}"] is true, then
  <a for=list>append</a> a new <a>transient registered observer</a> whose
  <a for="registered observer">observer</a> is <var>registered</var>'s
  <a for="registered observer">observer</a>, <a for="registered observer">options</a> is
@@ -3456,29 +3454,31 @@ constructor steps are:
 method steps are:
 
 <ol>
- <li><p>If either <var>options</var>'s {{MutationObserverInit/attributeOldValue}} or
- {{MutationObserverInit/attributeFilter}} is present and <var>options</var>'s
- {{MutationObserverInit/attributes}} is omitted, then set <var>options</var>'s
- {{MutationObserverInit/attributes}} to true.
+ <li><p>If either <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] or
+ <var>options</var>["{{MutationObserverInit/attributeFilter}}"] <a for=map>exists</a>, and
+ <var>options</var>["{{MutationObserverInit/attributes}}"] does not <a for=map>exist</a>, then set
+ <var>options</var>["{{MutationObserverInit/attributes}}"] to true.
 
- <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is present and
- <var>options</var>'s {{MutationObserverInit/characterData}} is omitted, then set
- <var>options</var>'s {{MutationObserverInit/characterData}} to true.
+ <li><p>If <var>options</var>["{{MutationObserverInit/characterDataOldValue}}"]
+ <a for=map>exists</a> and <var>options</var>["{{MutationObserverInit/characterData}}"] does not
+ <a for=map>exist</a>, then set <var>options</var>["{{MutationObserverInit/characterData}}"] to
+ true.
 
- <li><p>If none of <var>options</var>'s {{MutationObserverInit/childList}},
- {{MutationObserverInit/attributes}}, and {{MutationObserverInit/characterData}} is true, then
- <a>throw</a> a <code>TypeError</code>.
-
- <li><p>If <var>options</var>'s {{MutationObserverInit/attributeOldValue}} is true and
- <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <li><p>If none of <var>options</var>["{{MutationObserverInit/childList}}"],
+ <var>options</var>["{{MutationObserverInit/attributes}}"], and
+ <var>options</var>["{{MutationObserverInit/characterData}}"] is true, then <a>throw</a> a
  <code>TypeError</code>.
 
- <li><p>If <var>options</var>'s {{MutationObserverInit/attributeFilter}} is present and
- <var>options</var>'s {{MutationObserverInit/attributes}} is false, then <a>throw</a> a
+ <li><p>If <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] is true and
+ <var>options</var>["{{MutationObserverInit/attributes}}"] is false, then <a>throw</a> a
  <code>TypeError</code>.
 
- <li><p>If <var>options</var>'s {{MutationObserverInit/characterDataOldValue}} is true and
- <var>options</var>'s {{MutationObserverInit/characterData}} is false, then <a>throw</a> a
+ <li><p>If <var>options</var>["{{MutationObserverInit/attributeFilter}}"] is present and
+ <var>options</var>["{{MutationObserverInit/attributes}}"] is false, then <a>throw</a> a
+ <code>TypeError</code>.
+
+ <li><p>If <var>options</var>["{{MutationObserverInit/characterDataOldValue}}"] is true and
+ <var>options</var>["{{MutationObserverInit/characterData}}"] is false, then <a>throw</a> a
  <code>TypeError</code>.
 
  <li>
@@ -3556,24 +3556,24 @@ method steps are:
     <p>If none of the following are true
 
     <ul class=brief>
-     <li><var>node</var> is not <var>target</var> and <var>options</var>'s
-     {{MutationObserverInit/subtree}} is false
+     <li><var>node</var> is not <var>target</var> and
+     <var>options</var>["{{MutationObserverInit/subtree}}"] is false
 
-     <li><var>type</var> is "<code>attributes</code>" and <var>options</var>'s
-     {{MutationObserverInit/attributes}} is not true
-     <!--not true==false||omitted-->
+     <li><var>type</var> is "<code>attributes</code>" and
+     <var>options</var>["{{MutationObserverInit/attributes}}"] either does not <a for=map>exist</a>
+     or is false
 
-     <li><var>type</var> is "<code>attributes</code>", <var>options</var>'s
-     {{MutationObserverInit/attributeFilter}} is present, and <var>options</var>'s
-     {{MutationObserverInit/attributeFilter}} does not contain <var>name</var> or
-     <var>namespace</var> is non-null
+     <li><var>type</var> is "<code>attributes</code>",
+     <var>options</var>["{{MutationObserverInit/attributeFilter}}"] <a for=map>exists</a>, and
+     <var>options</var>["{{MutationObserverInit/attributeFilter}}"] does not <a for=list>contain</a>
+     <var>name</var> or <var>namespace</var> is non-null
 
-     <li><var>type</var> is "<code>characterData</code>" and <var>options</var>'s
-     {{MutationObserverInit/characterData}} is not true
-     <!--not true==false||omitted-->
+     <li><var>type</var> is "<code>characterData</code>" and
+     <var>options</var>["{{MutationObserverInit/characterData}}"] either does not
+     <a for=map>exist</a> or is false
 
-     <li><var>type</var> is "<code>childList</code>" and <var>options</var>'s
-     {{MutationObserverInit/childList}} is false
+     <li><var>type</var> is "<code>childList</code>" and
+     <var>options</var>["{{MutationObserverInit/childList}}"] is false
     </ul>
 
     <p>then:
@@ -3584,11 +3584,11 @@ method steps are:
      <li><p>If <var>interestedObservers</var>[<var>mo</var>] does not <a for=map>exist</a>, then
      <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to null.
 
-     <li><p>If either <var>type</var> is "<code>attributes</code>" and <var>options</var>'s
-     {{MutationObserverInit/attributeOldValue}} is true, or <var>type</var> is
-     "<code>characterData</code>" and <var>options</var>'s
-     {{MutationObserverInit/characterDataOldValue}} is true, then <a for=map>set</a>
-     <var>interestedObservers</var>[<var>mo</var>] to <var>oldValue</var>.
+     <li><p>If either <var>type</var> is "<code>attributes</code>" and
+     <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] is true, or <var>type</var> is
+     "<code>characterData</code>" and
+     <var>options</var>["{{MutationObserverInit/characterDataOldValue}}"] is true, then
+     <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to <var>oldValue</var>.
     </ol>
   </ol>
 
@@ -4025,8 +4025,9 @@ if <a>this</a> is a <a>document</a>; otherwise <a>this</a>'s <a for=Node>node do
 All <a for=/>nodes</a> have a <a for=Node>node document</a> at all times.
 
 <p>The <dfn method for=Node><code>getRootNode(<var>options</var>)</code></dfn> method steps are to
-return <a>this</a>'s <a>shadow-including root</a> if <var>options</var>'s
-{{GetRootNodeOptions/composed}} is true; otherwise <a>this</a>'s <a for=tree>root</a>.
+return <a>this</a>'s <a>shadow-including root</a> if
+<var>options</var>["{{GetRootNodeOptions/composed}}"] is true; otherwise <a>this</a>'s
+<a for=tree>root</a>.
 
 <p>The <dfn attribute for=Node><code>parentNode</code></dfn> getter steps are to return
 <a>this</a>'s <a for=tree>parent</a>.
@@ -5130,8 +5131,9 @@ method steps are:
 
  <li><p>Let <var>is</var> be null.
 
- <li><p>If <var>options</var> is a <a for=/>dictionary</a> and <var>options</var>'s
- {{ElementCreationOptions/is}} is present, then set <var>is</var> to it.
+ <li><p>If <var>options</var> is a <a for=/>dictionary</a> and
+ <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set <var>is</var>
+ to it.
 
  <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if <a>this</a> is an
  <a>HTML document</a> or <a>this</a>'s <a for=Document>content type</a> is
@@ -5151,8 +5153,9 @@ method steps are:
 
  <li><p>Let <var>is</var> be null.
 
- <li><p>If <var>options</var> is a <a for=/>dictionary</a> and <var>options</var>'s
- {{ElementCreationOptions/is}} is present, then set <var>is</var> to it.
+ <li><p>If <var>options</var> is a <a for=/>dictionary</a> and
+ <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set <var>is</var>
+ to it.
 
  <li><p>Return the result of <a>creating an element</a> given <var>document</var>,
  <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, and with the
