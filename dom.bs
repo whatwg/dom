@@ -2023,9 +2023,10 @@ can be used to explore this matter in more detail.
 </div>
 
 <p>For brevity, this specification refers to an object that <a>implements</a> {{Node}} and an
-inherited interface <var>NodeInterface</var>, as a <var>NodeInterface</var> <a for=/>node</a>.
+inherited interface <code><var>NodeInterface</var></code>, as a
+<code><var>NodeInterface</var></code> <a for=/>node</a>.
 
-<p>A <a>node tree</a> is constrained as follows, expressed as a relationship between an interface of
+<p>A <a>node tree</a> is constrained as follows, expressed as a relationship between a
 <a for=/>node</a> and its allowed <a for=tree>children</a>:
 
 <dl>
@@ -2353,8 +2354,8 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
  <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <var>parent</var>,
  then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
 
- <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, {{Text}},
- {{ProcessingInstruction}}, or {{Comment}} <a for=/>node</a>, then <a>throw</a> a
+ <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, or
+ {{CharacterData}} <a for=/>node</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li><p>If either <var>node</var> is a {{Text}} <a for=/>node</a> and <var>parent</var> is a
@@ -2542,8 +2543,8 @@ within a <var>parent</var>, run these steps:
  <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
  "{{NotFoundError!!exception}}" {{DOMException}}.
 
- <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, {{Text}},
- {{ProcessingInstruction}}, or {{Comment}} <a for=/>node</a>, then <a>throw</a> a
+ <li><p>If <var>node</var> is not a {{DocumentFragment}}, {{DocumentType}}, {{Element}}, or
+ {{CharacterData}} <a for=/>node</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <li><p>If either <var>node</var> is a {{Text}} <a for=/>node</a> and <var>parent</var> is a
@@ -3788,9 +3789,8 @@ dictionary GetRootNodeOptions {
 };
 </pre>
 
-<p class=note>{{Node}} is an abstract interface and does not exist as <a for=/>node</a>. It is used
-by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFragment}}, {{Element}},
-{{Text}}, {{ProcessingInstruction}}, and {{Comment}}).
+<p class=note>{{Node}} is an abstract interface that is used by all <a for=/>nodes</a>. You cannot
+get a direct instance of it.
 
 <p>Each <a for=/>node</a> has an associated
 <dfn export for=Node id=concept-node-document>node document</dfn>, set upon creation, that is a
@@ -3810,38 +3810,35 @@ by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFragment}},
 <dl class=domintro>
  <dt><code><var>node</var> . {{Node/nodeType}}</code>
  <dd>
-  Returns the type of <var>node</var>, represented by a number from the following list:
+  <p>Returns a number appropriate for the type of <var>node</var>, as follows:
 
   <dl>
-   <dt><code>{{Node}} . {{Node/ELEMENT_NODE}}</code> (1)
-   <dd><var>node</var> is an
-   <a for=/>element</a>.
+   <dt>{{Element}}
+   <dd><code>{{Node}} . {{Node/ELEMENT_NODE}}</code> (1).
 
-   <dt><code>{{Node}} . {{Node/TEXT_NODE}}</code> (3)
-   <dd><var>node</var> is a {{Text}}
-   <a for=/>node</a>.
+   <dt>{{Attr}}
+   <dd><code>{{Node}} . {{Node/ATTRIBUTE_NODE}}</code> (2).
 
-   <dt><code>{{Node}} . {{Node/CDATA_SECTION_NODE}}</code> (4)
-   <dd><var>node</var> is a {{CDATASection}} <a for=/>node</a>.
+   <dt>An <a>exclusive <code>Text</code> node</a>
+   <dd><code>{{Node}} . {{Node/TEXT_NODE}}</code> (3).
 
-   <dt><code>{{Node}} . {{Node/PROCESSING_INSTRUCTION_NODE}}</code> (7)
-   <dd><var>node</var> is a {{ProcessingInstruction}}
-   <a for=/>node</a>.
+   <dt>{{CDATASection}}
+   <dd><code>{{Node}} . {{Node/CDATA_SECTION_NODE}}</code> (4).
 
-   <dt><code>{{Node}} . {{Node/COMMENT_NODE}}</code> (8)
-   <dd><var>node</var> is a {{Comment}}
-   <a for=/>node</a>.
+   <dt>{{ProcessingInstruction}}
+   <dd><code>{{Node}} . {{Node/PROCESSING_INSTRUCTION_NODE}}</code> (7).
 
-   <dt><code>{{Node}} . {{Node/DOCUMENT_NODE}}</code> (9)
-   <dd><var>node</var> is a
-   <a>document</a>.
+   <dt>{{Comment}}
+   <dd><code>{{Node}} . {{Node/COMMENT_NODE}}</code> (8).
 
-   <dt><code>{{Node}} . {{Node/DOCUMENT_TYPE_NODE}}</code> (10)
-   <dd><var>node</var> is a
-   <a>doctype</a>.
+   <dt>{{Document}}
+   <dd><code>{{Node}} . {{Node/DOCUMENT_NODE}}</code> (9).
 
-   <dt><code>{{Node}} . {{Node/DOCUMENT_FRAGMENT_NODE}}</code> (11)
-   <dd><var>node</var> is a {{DocumentFragment}} <a for=/>node</a>.
+   <dt>{{DocumentType}}
+   <dd><code>{{Node}} . {{Node/DOCUMENT_TYPE_NODE}}</code> (10).
+
+   <dt>{{DocumentFragment}}
+   <dd><code>{{Node}} . {{Node/DOCUMENT_FRAGMENT_NODE}}</code> (11).
   </dl>
 
  <dt><code><var>node</var> . {{Node/nodeName}}</code>
@@ -3856,7 +3853,7 @@ by all <a for=/>nodes</a> ({{Document}}, {{DocumentType}}, {{DocumentFragment}},
    <dt>{{Attr}}
    <dd>Its <a for=Attr>qualified name</a>.
 
-   <dt>{{Text}}
+   <dt>An <a>exclusive <code>Text</code> node</a>
    <dd>"<code>#text</code>".
 
    <dt>{{CDATASection}}
@@ -3889,7 +3886,7 @@ statement, switching on <a>this</a>:
  <dt>{{Attr}}
  <dd><dfn const for=Node>ATTRIBUTE_NODE</dfn> (2);
 
- <dt>{{Text}}
+ <dt>An <a>exclusive <code>Text</code> node</a>
  <dd><dfn const for=Node>TEXT_NODE</dfn> (3);
 
  <dt>{{CDATASection}}
@@ -3911,33 +3908,6 @@ statement, switching on <a>this</a>:
  <dd><dfn const for=Node>DOCUMENT_FRAGMENT_NODE</dfn> (11).
 </dl>
 
-<!-- NodeExodus
-<hr>
-
-The <dfn attribute for=Node>namespaceURI</dfn> attribute must return the namespace that is associated with the node, if there is one and it's not the empty string, and null otherwise.
-
-The <dfn attribute for=Node>prefix</dfn> attribute must return the prefix that is associated with the node, if there is one and it's not the empty string, and null otherwise.
-<!- - support setting? - - On setting, it must run these steps:
-
-<ol>
- <li>Let <var>prefix</var> be the value being assigned.
- <li>
-  If <var>prefix</var> is not null, run these substeps:
-  <ol>
-   <li>If <var>prefix</var> does not match the
-   <code><a type>Name</a></code> production in XML,
-   <a>throw</a> an
-   "{{InvalidCharacterError!!exception}}" {{DOMException}}.
-   <li>If <var>prefix</var> does not match the <a type>NCName</a> production in Namespaces in XML, <a>throw</a> a
-   "{{NamespaceError!!exception}}" {{DOMException}}.
-  </ol>
- <li>Actually this does not match any browser. Let's try to drop it instead.
-</ol>- ->
-
-The <dfn attribute for=Node>localName</dfn> attribute
-must return the local name that is associated with the node, if it has one,
-and null otherwise.-->
-
 <p>The <dfn attribute for=Node>nodeName</dfn> getter steps are to return the
 first matching statement, switching on <a>this</a>:
 
@@ -3948,7 +3918,7 @@ first matching statement, switching on <a>this</a>:
  <dt>{{Attr}}
  <dd>Its <a for=Attr>qualified name</a>.
 
- <dt>{{Text}}
+ <dt>An <a>exclusive <code>Text</code> node</a>
  <dd>"<code>#text</code>".
 
  <dt>{{CDATASection}}
@@ -4071,35 +4041,30 @@ return <a>this</a>'s <a>shadow-including root</a> if
 
 <!-- TODO: domintro -->
 
-The <dfn attribute for=Node>nodeValue</dfn> attribute
-must return the following, depending on <a>this</a>:
+<p>The <dfn attribute for=Node>nodeValue</dfn> getter steps are to return the following, switching
+on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Attr}}
  <dd><a>this</a>'s <a for=Attr>value</a>.
 
- <dt>{{Text}}
- <dt>{{ProcessingInstruction}}
- <dt>{{Comment}}
+ <dt>{{CharacterData}}
  <dd><a>this</a>'s <a for=CharacterData>data</a>.
 
  <dt>Any other node
  <dd>Null.
 </dl>
 
-The {{Node/nodeValue}} attribute must,
-on setting, if the new value is null, act as if it was the empty string
-instead, and then do as described below, depending on <a>this</a>:
+<p>The {{Node/nodeValue}} setter steps are to, if the given value is null, act as if it was the
+empty string instead, and then do as described below, switching on <a>this</a>:
 
 <dl class=switch>
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <a>this</a> and new value.
+ <dd><p><a>Set an existing attribute value</a> with <a>this</a> and the given value.
 
- <dt>{{Text}}
- <dt>{{ProcessingInstruction}}
- <dt>{{Comment}}
+ <dt>{{CharacterData}}
  <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
- <a for=Node>length</a>, and data new value.
+ <a for=Node>length</a>, and data the given value.
 
  <dt>Any other node
  <dd><p>Do nothing.
@@ -4116,9 +4081,7 @@ following, switching on <a>this</a>:
  <dt>{{Attr}}
  <dd><a>this</a>'s <a for=Attr>value</a>.
 
- <dt>{{Text}}
- <dt>{{ProcessingInstruction}}
- <dt>{{Comment}}
+ <dt>{{CharacterData}}
  <dd><a>this</a>'s <a for=CharacterData>data</a>.
 
  <dt>Any other node
@@ -4147,11 +4110,9 @@ empty string instead, and then do as described below, switching on <a>this</a>:
  <dd><p><a>String replace all</a> with the given value within <a>this</a>.
 
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <a>this</a> and new value.
+ <dd><p><a>Set an existing attribute value</a> with <a>this</a> and the given value.
 
- <dt>{{Text}}
- <dt>{{ProcessingInstruction}}
- <dt>{{Comment}}
+ <dt>{{CharacterData}}
  <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
  <a for=Node>length</a>, and data the given value.
 
@@ -7124,9 +7085,8 @@ interface CharacterData : Node {
 };
 </pre>
 
-<p class=note>{{CharacterData}} is an abstract interface and does not exist as
-<a for=/>node</a>. It is used by {{Text}}, {{ProcessingInstruction}}, and {{Comment}}
-<a for=/>nodes</a>.
+<p class=note>{{CharacterData}} is an abstract interface. You cannot get a direct instance of it. It
+is used by {{Text}}, {{ProcessingInstruction}}, and {{Comment}} <a for=/>nodes</a>.
 
 <p>Each <a for=/>node</a> inheriting from the {{CharacterData}} interface has an associated mutable
 string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
@@ -7416,12 +7376,11 @@ interface ProcessingInstruction : CharacterData {
   readonly attribute DOMString target;
 };</pre>
 
+<p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
+<dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
 
-{{ProcessingInstruction}} <a for=/>nodes</a>
-have an associated <dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
-
-The <dfn attribute for=ProcessingInstruction>target</dfn>
-attribute must return the <a for=ProcessingInstruction>target</a>.
+<p>The <dfn attribute for=ProcessingInstruction>target</dfn> getter steps are to return
+<a>this</a>'s <a for=ProcessingInstruction>target</a>.
 
 
 <h3 id=interface-comment>Interface {{Comment}}</h3>
@@ -7738,8 +7697,8 @@ but not its <a for=range>end node</a>, or vice versa.
  <ul>
   <li><p>The content that one would think of as being within the <a>live range</a> consists of all
   <a for="live range">contained</a> <a for=/>nodes</a>, plus possibly some of the contents of the
-  <a for=range>start node</a> and <a for=range>end node</a> if those are {{Text}},
-  {{ProcessingInstruction}}, or {{Comment}} <a for=/>nodes</a>.
+  <a for=range>start node</a> and <a for=range>end node</a> if those are {{CharacterData}}
+  <a for=/>nodes</a>.
 
   <li><p>The <a for=/>nodes</a> that are contained in a <a>live range</a> will generally not be
   contiguous, because the <a for=tree>parent</a> of a <a for="live range">contained</a>
@@ -8086,10 +8045,8 @@ method steps are:
  <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
- <li>If <var>original start node</var> and
- <var>original end node</var> are the same, and they are a
- {{Text}}, {{ProcessingInstruction}}, or
- {{Comment}} <a for=/>node</a>,
+ <li><p>If <var>original start node</var> is <var>original end node</var> and it is a
+ {{CharacterData}} <a for=/>node</a>, then
  <a>replace data</a> with node
  <var>original start node</var>, offset
  <var>original start offset</var>, count
@@ -8137,9 +8094,7 @@ method steps are:
     <var>original end node</var>, and we could not reach this point.
   </ol>
 
- <li>If <var>original start node</var> is a {{Text}},
- {{ProcessingInstruction}}, or {{Comment}}
- <a for=/>node</a>,
+ <li><p>If <var>original start node</var> is a {{CharacterData}} <a for=/>node</a>, then
  <a>replace data</a> with node
  <var>original start node</var>, offset
  <var>original start offset</var>, count
@@ -8150,9 +8105,7 @@ method steps are:
  <li><p>For each <var>node</var> in <var>nodes to remove</var>, in <a>tree order</a>,
  <a for=/>remove</a> <var>node</var>.
 
- <li>If <var>original end node</var> is a {{Text}},
- {{ProcessingInstruction}}, or {{Comment}}
- <a for=/>node</a>,
+ <li><p>If <var>original end node</var> is a {{CharacterData}} <a for=/>node</a>, then
  <a>replace data</a> with node
  <var>original end node</var>, offset 0, count
  <var>original end offset</var> and data the empty string.
@@ -8186,8 +8139,8 @@ method steps are:
  <a for=range>end offset</a>, respectively.
 
  <li>
-  If <var>original start node</var> is <var>original end node</var>, and they are a
-  {{Text}}, {{ProcessingInstruction}}, or {{Comment}} <a for=/>node</a>:
+  <p>If <var>original start node</var> is <var>original end node</var> and it is a
+  {{CharacterData}} <a for=/>node</a>, then:
 
   <ol>
    <li>Let <var>clone</var> be a
@@ -8306,9 +8259,7 @@ method steps are:
   how it will have mutated. -->
 
  <li>
-  If <var>first partially contained child</var> is a
-  {{Text}}, {{ProcessingInstruction}}, or
-  {{Comment}} <a for=/>node</a>:
+  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>, then:
 
   <p class=note>In this case, <var>first partially contained child</var> is
   <var>original start node</var>.
@@ -8368,9 +8319,7 @@ method steps are:
  <var>fragment</var>.
 
  <li>
-  If <var>last partially contained child</var> is a
-  {{Text}}, {{ProcessingInstruction}}, or
-  {{Comment}} <a for=/>node</a>:
+  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>, then:
 
   <p class=note>In this case, <var>last partially contained child</var> is
   <var>original end node</var>.
@@ -8453,8 +8402,8 @@ of a <a>live range</a> <var>range</var>, run these steps:
  <a for=range>end offset</a>, respectively.
 
  <li>
-  If <var>original start node</var> is <var>original end node</var>, and they are a
-  {{Text}}, {{ProcessingInstruction}}, or {{Comment}} <a for=/>node</a>:
+  <p>If <var>original start node</var> is <var>original end node</var> and it is a
+  {{CharacterData}} <a for=/>node</a>, then:
 
   <ol>
    <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
@@ -8529,9 +8478,7 @@ of a <a>live range</a> <var>range</var>, run these steps:
   cannot be the ancestor of anything.
 
  <li>
-  If <var>first partially contained child</var> is a
-  {{Text}}, {{ProcessingInstruction}}, or
-  {{Comment}} <a for=/>node</a>:
+  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>, then:
 
   <p class=note>In this case, <var>first partially contained child</var> is
   <var>original start node</var>.
@@ -8592,9 +8539,7 @@ of a <a>live range</a> <var>range</var>, run these steps:
   </ol>
 
  <li>
-  If <var>last partially contained child</var> is a
-  {{Text}}, {{ProcessingInstruction}}, or
-  {{Comment}} <a for=/>node</a>:
+  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>, then:
 
   <p class=note>In this case, <var>last partially contained child</var> is
   <var>original end node</var>.
@@ -8775,7 +8720,7 @@ check first thing, which matches everyone but Firefox.
   <p>If <var>newParent</var> is a {{Document}}, {{DocumentType}}, or {{DocumentFragment}}
   <a for=/>node</a>, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
-  <p class=note>For historical reasons {{Text}}, {{ProcessingInstruction}}, and {{Comment}}
+  <p class=note>For historical reasons {{CharacterData}}
   <a for=/>nodes</a> are not checked here and end up throwing later on as a side effect.
 
  <li><p>Let <var>fragment</var> be the result of <a lt="live range">extracting</a> <a>this</a>.
