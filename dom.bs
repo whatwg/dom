@@ -1729,7 +1729,7 @@ interface AbortController {
 
   [SameObject] readonly attribute AbortSignal signal;
 
-  undefined abort(optional any reason = null);
+  undefined abort(optional any reason);
 };
 </pre>
 
@@ -1743,7 +1743,7 @@ interface AbortController {
 
  <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>(reason)</code>
  <dd>Invoking this method will set this object's {{AbortSignal}}'s [=AbortSignal/aborted flag=],
- store the <var>reason</var> in this object's {{AbortSignal}}'s [=AbortSignal/abort reason=], and
+ store the <var ignore>reason</var> in this object's {{AbortSignal}}'s [=AbortSignal/abort reason=], and
  signal to any observers that the associated activity is to be aborted.
 </dl>
 
@@ -1763,11 +1763,17 @@ constructor steps are:
 <p>The <dfn attribute for=AbortController><code>signal</code></dfn> getter steps are to return
 <a>this</a>'s <a for=AbortController>signal</a>.
 
-<p>The <dfn method for=AbortController><code>abort(reason)</code></dfn> method steps are to
-<a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>, with
-the provided <var>reason</var>. If a <var>reason</var> is not passed, create a new "{{AbortError!!exception}}"
-{{DOMException}}.
+<p>The <dfn method for=AbortController><code>abort(reason)</code></dfn> method steps are:
 
+<ol>
+ <li><p>If <var>reason</var> is undefined, let <var>reason</var> be a new "{{AbortError!!exception}}"
+ {{DOMException}}.
+
+ <li><p>Set <a>this</a>'s <a for=AbortController>signal</a>'s <a for=AbortSignal>abort reason</a>
+ to <var>reason</var>.
+
+ <li><p><a for=AbortSignal>Signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>.
+</ol>
 
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
 
@@ -1787,6 +1793,10 @@ interface AbortSignal : EventTarget {
  <dt><code>AbortSignal . <a method for="AbortSignal">abort()</a></code>
  <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>aborted flag</a> is set.
 
+ <dt><code><var>signal</var> . <a attribute for=AbortSignal>reason</a></code>
+ <dd>Returns the <a for=AbortSignal>abort reason</a> for an {{AbortSignal}} if it has been
+ set; otherwise returns an "{{AbortError!!exception}}" {{DOMException}}.
+
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
  <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
  false.
@@ -1795,8 +1805,8 @@ interface AbortSignal : EventTarget {
 <p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>aborted flag</dfn>. It is
 unset unless specified otherwise.
 
-<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is an
-argument given to {{AbortController}}'s {{AbortController/abort()}}, or undefined.
+<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
+JavaScript value given to {{AbortController}}'s {{AbortController/abort()}}, or undefined.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
 <a for=/>set</a> of algorithms which are to be executed when its [=AbortSignal/aborted flag=] is
