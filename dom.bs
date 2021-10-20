@@ -1763,17 +1763,9 @@ constructor steps are:
 <p>The <dfn attribute for=AbortController><code>signal</code></dfn> getter steps are to return
 <a>this</a>'s <a for=AbortController>signal</a>.
 
-<p>The <dfn method for=AbortController><code>abort(reason)</code></dfn> method steps are:
-
-<ol>
- <li><p>If <var>reason</var> is undefined, let <var>reason</var> be a new "{{AbortError!!exception}}"
- {{DOMException}}.
-
- <li><p>Set <a>this</a>'s <a for=AbortController>signal</a>'s <a for=AbortSignal>abort reason</a>
- to <var>reason</var>.
-
- <li><p><a for=AbortSignal>Signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>.
-</ol>
+<p>The <dfn method for=AbortController><code>abort(reason)</code></dfn> method steps are to
+<a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a> with
+<var>reason</var> if it is given.
 
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
 
@@ -1857,12 +1849,17 @@ service worker.
 them. For instance, if the operation has already completed.
 
 <p>To <dfn export for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object
-<var>signal</var>, run these steps:
+<var>signal</var> and an optional abort <var>reason</var>, run these steps:
 
 <ol>
  <li><p>If <var>signal</var>'s [=AbortSignal/aborted flag=] is set, then return.
 
  <li><p>Set <var>signal</var>'s [=AbortSignal/aborted flag=].
+
+ <li><p>If <var>reason</var> is undefined or not given, then let <var>reason</var> be
+ a new "{{AbortError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var>.
 
  <li><p><a for=set>For each</a> <var>algorithm</var> in <var>signal</var>'s
  [=AbortSignal/abort algorithms=]: run <var>algorithm</var>.
@@ -1880,14 +1877,16 @@ these steps:
  <li><p>If <var>followingSignal</var>'s [=AbortSignal/aborted flag=] is set, then return.
 
  <li><p>If <var>parentSignal</var>'s [=AbortSignal/aborted flag=] is set, then
- <a for=AbortSignal>signal abort</a> on <var>followingSignal</var>.
+ <a for=AbortSignal>signal abort</a> on <var>followingSignal</var> with <var>parentSignal</var>'s
+ [=AbortSignal/abort reason=].
 
  <li>
   <p>Otherwise, <a for=AbortSignal lt=add>add the following abort steps</a> to
   <var>parentSignal</var>:
 
   <ol>
-   <li><p><a for=AbortSignal>Signal abort</a> on <var>followingSignal</var>.
+   <li><p><a for=AbortSignal>Signal abort</a> on <var>followingSignal</var> with
+   <var>parentSignal</var>'s [=AbortSignal/abort reason=].
   </ol>
 </ol>
 
