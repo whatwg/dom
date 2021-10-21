@@ -1772,7 +1772,7 @@ constructor steps are:
 <pre class=idl>
 [Exposed=(Window,Worker)]
 interface AbortSignal : EventTarget {
-  [NewObject] static AbortSignal abort();
+  [NewObject] static AbortSignal abort(optional any reason);
 
   readonly attribute boolean aborted;
 
@@ -1782,12 +1782,14 @@ interface AbortSignal : EventTarget {
 };</pre>
 
 <dl class=domintro>
- <dt><code>AbortSignal . <a method for="AbortSignal">abort()</a></code>
- <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>aborted flag</a> is set.
+ <dt><code>AbortSignal . <a method for=AbortSignal>abort</a>(reason)</code>
+ <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>aborted flag</a> is set, and
+ <a for=AbortSignal>abort reason</a> is set to <var>reason</var> if provided, otherwise to
+ "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>reason</a></code>
  <dd>Returns the <a for=AbortSignal>abort reason</a> for an {{AbortSignal}} if it has been
- set; otherwise returns an "{{AbortError!!exception}}" {{DOMException}}.
+ set; by default this will be an "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
  <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
@@ -1823,12 +1825,17 @@ requirements to react in a reasonable way to {{AbortController/abort()}}. For ex
 [=AbortSignal/aborted flag=] might need to be propagated to a cross-thread environment, such as a
 service worker.
 
-<p>The static <dfn method for=AbortSignal><code>abort()</code></dfn> method steps are:
+<p>The static <dfn method for=AbortSignal><code>abort(reason)</code></dfn> method steps are:
 
 <ol>
  <li><p>Let <var>signal</var> be a new {{AbortSignal}} object.
 
  <li><p>Set <var>signal</var>'s [=AbortSignal/aborted flag=].
+
+ <li><p>If <var>reason</var> is undefined or not given, then let <var>reason</var> be a new
+ "{{AbortError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var>.
 
  <li>Return <var>signal</var>.
 </ol>
