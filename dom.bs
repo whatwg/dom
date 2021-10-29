@@ -1796,6 +1796,9 @@ interface AbortSignal : EventTarget {
 <p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
 JavaScript value. It is undefined unless specified otherwise.
 
+<p>An {{AbortSignal}} is <dfn export for="AbortSignal">aborted</dfn> when its
+[=AbortSignal/abort reason=] is not undefined.
+
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
 <a for=/>set</a> of algorithms which are to be executed when its [=AbortSignal/abort reason=] is
 not undefined. Unless specified otherwise, its value is the empty set.
@@ -1804,7 +1807,7 @@ not undefined. Unless specified otherwise, its value is the empty set.
 object <var>signal</var>, run these steps:
 
 <ol>
- <li><p>If <var>signal</var>'s <a for=AbortSignal>abort reason</a> is not undefined, then return.
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
 
  <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
  <a for=AbortSignal>abort algorithms</a>.
@@ -1831,8 +1834,8 @@ are:
  <li>Return <var>signal</var>.
 </ol>
 
-<p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>'s
-[=AbortSignal/abort reason=] is not undefined; otherwise false.
+<p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
+is [=AbortSignal/aborted=]; otherwise false.
 
 <p>The <dfn attribute for=AbortSignal>reason</dfn> getter steps are to return <a>this</a>'s
 <a for=AbortSignal>abort reason</a>.
@@ -1850,7 +1853,7 @@ them. For instance, if the operation has already completed.
 <var>signal</var> and an optional <var>reason</var>, run these steps:
 
 <ol>
- <li><p>If <var>signal</var>'s [=AbortSignal/abort reason=] is not undefined, then return.
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
 
  <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
  otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
@@ -1868,9 +1871,9 @@ them. For instance, if the operation has already completed.
 these steps:
 
 <ol>
- <li><p>If <var>followingSignal</var>'s [=AbortSignal/abort reason=] is not undefined, then return.
+ <li><p>If <var>followingSignal</var> is [=AbortSignal/aborted=], then return.
 
- <li><p>If <var>parentSignal</var>'s [=AbortSignal/abort reason=] is not undefined, then
+ <li><p>If <var>parentSignal</var> is [=AbortSignal/aborted=], then
  <a for=AbortSignal>signal abort</a> on <var>followingSignal</var> with <var>parentSignal</var>'s
  [=AbortSignal/abort reason=].
 
@@ -1912,8 +1915,8 @@ the following:
    <p>If |options|' <code>signal</code> member is present, then:
 
    <ol>
-    <li><p>If |options|' <code>signal</code>'s [=AbortSignal/abort reason=] is not undefined, then
-    [=reject=] |p| with an "{{AbortError!!exception}}" {{DOMException}} and return |p|.
+    <li><p>If |options|' <code>signal</code> is [=AbortSignal/aborted=], then [=reject=] |p| with
+    an "{{AbortError!!exception}}" {{DOMException}} and return |p|.
 
     <li>
      <p>[=AbortSignal/Add|Add the following abort steps=] to |options|' <code>signal</code>:
