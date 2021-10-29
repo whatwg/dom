@@ -1114,8 +1114,8 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
- <li><p>If <a for="event listener">signal</a> is not null and its [=AbortSignal/abort reason=] is
- not undefined, then return.
+ <li><p>If <a for="event listener">signal</a> is not null and is [=AbortSignal/aborted=], then
+ return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
@@ -1800,8 +1800,8 @@ JavaScript value. It is undefined unless specified otherwise.
 [=AbortSignal/abort reason=] is not undefined.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
-<a for=/>set</a> of algorithms which are to be executed when its [=AbortSignal/abort reason=] is
-not undefined. Unless specified otherwise, its value is the empty set.
+<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]. Unless
+specified otherwise, its value is the empty set.
 
 <p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
 object <var>signal</var>, run these steps:
@@ -1898,8 +1898,7 @@ the following:
  <li>Accept {{AbortSignal}} objects through a <code>signal</code> dictionary member.
  <li>Convey that the operation got aborted by rejecting the promise with an
  "{{AbortError!!exception}}" {{DOMException}}.
- <li>Reject immediately if the {{AbortSignal}}'s [=AbortSignal/abort reason=] is already not undefined,
- otherwise:
+ <li>Reject immediately if the {{AbortSignal}} is already [=AbortSignal/aborted=], otherwise:
  <li>Use the [=AbortSignal/abort algorithms=] mechanism to observe changes to the {{AbortSignal}}
  object and do so in a manner that does not lead to clashes with other observers.
 </ul>
