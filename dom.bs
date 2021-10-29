@@ -1797,7 +1797,7 @@ interface AbortSignal : EventTarget {
 <p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
 JavaScript value. It is undefined unless specified otherwise.
 
-<p>An {{AbortSignal}} is <dfn export for="AbortSignal">aborted</dfn> when its
+<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
 [=AbortSignal/abort reason=] is not undefined.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
@@ -1897,34 +1897,36 @@ the following:
 
 <ul class=brief>
  <li>Accept {{AbortSignal}} objects through a <code>signal</code> dictionary member.
- <li>Convey that the operation got aborted by rejecting the promise with an
- "{{AbortError!!exception}}" {{DOMException}}.
+ <li>Convey that the operation got aborted by rejecting the promise with {{AbortSignal}} object's
+ [=AbortSignal/abort reason=].
  <li>Reject immediately if the {{AbortSignal}} is already [=AbortSignal/aborted=], otherwise:
  <li>Use the [=AbortSignal/abort algorithms=] mechanism to observe changes to the {{AbortSignal}}
  object and do so in a manner that does not lead to clashes with other observers.
 </ul>
 
 <div class=example id=aborting-ongoing-activities-spec-example>
- <p>The steps for a promise-returning method <code>doAmazingness(options)</code> could be as
- follows:
+ <p>The method steps for a promise-returning method <code>doAmazingness(<var>options</var>)</code>
+ could be as follows:
 
  <ol>
   <li><p>Let |p| be [=a new promise=].
 
   <li>
-   <p>If |options|' <code>signal</code> member is present, then:
+   <p>If |options|["<code>signal</code>"] member is present, then:
 
    <ol>
-    <li><p>If |options|' <code>signal</code> is [=AbortSignal/aborted=], then [=reject=] |p| with
-    an "{{AbortError!!exception}}" {{DOMException}} and return |p|.
+    <li><p>Let |signal| be |options|["<code>signal</code>"].
+
+    <li><p>If |signal| is [=AbortSignal/aborted=], then [=reject=] |p| with |signal|'s
+    [=AbortSignal/abort reason=] and return |p|.
 
     <li>
-     <p>[=AbortSignal/Add|Add the following abort steps=] to |options|' <code>signal</code>:
+     <p>[=AbortSignal/Add|Add the following abort steps=] to |signal|:
 
      <ol>
       <li><p>Stop doing amazing things.
 
-      <li><p>[=Reject=] |p| with an "{{AbortError!!exception}}" {{DOMException}}.
+      <li><p>[=Reject=] |p| with |signal|'s [=AbortSignal/abort reason=].
      </ol>
    </ol>
 
