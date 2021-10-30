@@ -1114,8 +1114,8 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
- <li><p>If <a for="event listener">signal</a> is not null and is [=AbortSignal/aborted=], then
- return.
+ <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is not null and is
+ [=AbortSignal/aborted=], then return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
@@ -1741,11 +1741,11 @@ interface AbortController {
  <dt><code><var>controller</var> . <a attribute for=AbortController>signal</a></code>
  <dd>Returns the {{AbortSignal}} object associated with this object.
 
- <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>
- (<var>reason</var>)</code>
+ <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>(<var>reason</var>)</code>
  <dd>Invoking this method will store <var>reason</var> in this object's {{AbortSignal}}'s
  [=AbortSignal/abort reason=], and signal to any observers that the associated activity is to be
- aborted.
+ aborted. If <var>reason</var> is undefined, then an "{{AbortError!!exception}}" {{DOMException}}
+ will be stored.
 </dl>
 
 <p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
@@ -1784,7 +1784,7 @@ interface AbortSignal : EventTarget {
 <dl class=domintro>
  <dt><code>AbortSignal . <a method for=AbortSignal>abort</a>(<var>reason</var>)</code>
  <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>abort reason</a> is set to
- <var>reason</var> if provided, otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
+ <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
  <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
