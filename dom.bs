@@ -1110,8 +1110,8 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
- <li><p>If <a for="event listener">signal</a> is not null and its [=AbortSignal/aborted flag=] is
- set, then return.
+ <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is not null and is
+ [=AbortSignal/aborted=], then return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
 
@@ -1725,7 +1725,7 @@ interface AbortController {
 
   [SameObject] readonly attribute AbortSignal signal;
 
-  undefined abort();
+  undefined abort(optional any reason);
 };
 </pre>
 
@@ -1737,9 +1737,11 @@ interface AbortController {
  <dt><code><var>controller</var> . <a attribute for=AbortController>signal</a></code>
  <dd>Returns the {{AbortSignal}} object associated with this object.
 
- <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>()</code>
- <dd>Invoking this method will set this object's {{AbortSignal}}'s [=AbortSignal/aborted flag=] and
- signal to any observers that the associated activity is to be aborted.
+ <dt><code><var>controller</var> . <a method for=AbortController lt=abort()>abort</a>(<var>reason</var>)</code>
+ <dd>Invoking this method will store <var>reason</var> in this object's {{AbortSignal}}'s
+ [=AbortSignal/abort reason=], and signal to any observers that the associated activity is to be
+ aborted. If <var>reason</var> is undefined, then an "{{AbortError!!exception}}" {{DOMException}}
+ will be stored.
 </dl>
 
 <p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
@@ -1758,43 +1760,51 @@ constructor steps are:
 <p>The <dfn attribute for=AbortController><code>signal</code></dfn> getter steps are to return
 <a>this</a>'s <a for=AbortController>signal</a>.
 
-<p>The <dfn method for=AbortController><code>abort()</code></dfn> method steps are to
-<a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a>.
-
+<p>The <dfn method for=AbortController><code>abort(<var>reason</var>)</code></dfn> method steps are
+to <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a> with
+<var>reason</var> if it is given.
 
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
 
 <pre class=idl>
 [Exposed=(Window,Worker)]
 interface AbortSignal : EventTarget {
-  [NewObject] static AbortSignal abort();
+  [NewObject] static AbortSignal abort(optional any reason);
 
   readonly attribute boolean aborted;
+  readonly attribute any reason;
 
   attribute EventHandler onabort;
 };</pre>
 
 <dl class=domintro>
- <dt><code>AbortSignal . <a method for="AbortSignal">abort()</a></code>
- <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>aborted flag</a> is set.
+ <dt><code>AbortSignal . <a method for=AbortSignal>abort</a>(<var>reason</var>)</code>
+ <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>abort reason</a> is set to
+ <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
  <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
  false.
+
+ <dt><code><var>signal</var> . <a attribute for=AbortSignal>reason</a></code>
+ <dd>Returns this {{AbortSignal}}'s <a for=AbortSignal>abort reason</a>.
 </dl>
 
-<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>aborted flag</dfn>. It is
-unset unless specified otherwise.
+<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
+JavaScript value. It is undefined unless specified otherwise.
+
+<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
+[=AbortSignal/abort reason=] is not undefined.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
-<a for=/>set</a> of algorithms which are to be executed when its [=AbortSignal/aborted flag=] is
-set. Unless specified otherwise, its value is the empty set.
+<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]. Unless
+specified otherwise, its value is the empty set.
 
 <p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
 object <var>signal</var>, run these steps:
 
 <ol>
- <li><p>If <var>signal</var>'s <a for=AbortSignal>aborted flag</a> is set, then return.
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
 
  <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
  <a for=AbortSignal>abort algorithms</a>.
@@ -1806,21 +1816,26 @@ object <var>signal</var>, run these steps:
 
 <p class=note>The [=AbortSignal/abort algorithms=] enable APIs with complex
 requirements to react in a reasonable way to {{AbortController/abort()}}. For example, a given API's
-[=AbortSignal/aborted flag=] might need to be propagated to a cross-thread environment, such as a
+[=AbortSignal/abort reason=] might need to be propagated to a cross-thread environment, such as a
 service worker.
 
-<p>The static <dfn method for=AbortSignal><code>abort()</code></dfn> method steps are:
+<p>The static <dfn method for=AbortSignal><code>abort(<var>reason</var>)</code></dfn> method steps
+are:
 
 <ol>
  <li><p>Let <var>signal</var> be a new {{AbortSignal}} object.
 
- <li><p>Set <var>signal</var>'s [=AbortSignal/aborted flag=].
+ <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
+ otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
  <li>Return <var>signal</var>.
 </ol>
 
-<p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>'s
-[=AbortSignal/aborted flag=] is set; otherwise false.
+<p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
+is [=AbortSignal/aborted=]; otherwise false.
+
+<p>The <dfn attribute for=AbortSignal>reason</dfn> getter steps are to return <a>this</a>'s
+<a for=AbortSignal>abort reason</a>.
 
 <p>The <dfn attribute for=AbortSignal><code>onabort</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the <dfn export for=AbortSignal><code>onabort</code></dfn>
@@ -1832,12 +1847,13 @@ service worker.
 them. For instance, if the operation has already completed.
 
 <p>To <dfn export for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object
-<var>signal</var>, run these steps:
+<var>signal</var> and an optional <var>reason</var>, run these steps:
 
 <ol>
- <li><p>If <var>signal</var>'s [=AbortSignal/aborted flag=] is set, then return.
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
 
- <li><p>Set <var>signal</var>'s [=AbortSignal/aborted flag=].
+ <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
+ otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
  <li><p><a for=set>For each</a> <var>algorithm</var> in <var>signal</var>'s
  [=AbortSignal/abort algorithms=]: run <var>algorithm</var>.
@@ -1852,17 +1868,19 @@ them. For instance, if the operation has already completed.
 these steps:
 
 <ol>
- <li><p>If <var>followingSignal</var>'s [=AbortSignal/aborted flag=] is set, then return.
+ <li><p>If <var>followingSignal</var> is [=AbortSignal/aborted=], then return.
 
- <li><p>If <var>parentSignal</var>'s [=AbortSignal/aborted flag=] is set, then
- <a for=AbortSignal>signal abort</a> on <var>followingSignal</var>.
+ <li><p>If <var>parentSignal</var> is [=AbortSignal/aborted=], then
+ <a for=AbortSignal>signal abort</a> on <var>followingSignal</var> with <var>parentSignal</var>'s
+ [=AbortSignal/abort reason=].
 
  <li>
   <p>Otherwise, <a for=AbortSignal lt=add>add the following abort steps</a> to
   <var>parentSignal</var>:
 
   <ol>
-   <li><p><a for=AbortSignal>Signal abort</a> on <var>followingSignal</var>.
+   <li><p><a for=AbortSignal>Signal abort</a> on <var>followingSignal</var> with
+   <var>parentSignal</var>'s [=AbortSignal/abort reason=].
   </ol>
 </ol>
 
@@ -1875,35 +1893,36 @@ the following:
 
 <ul class=brief>
  <li>Accept {{AbortSignal}} objects through a <code>signal</code> dictionary member.
- <li>Convey that the operation got aborted by rejecting the promise with an
- "{{AbortError!!exception}}" {{DOMException}}.
- <li>Reject immediately if the {{AbortSignal}}'s [=AbortSignal/aborted flag=] is already set,
- otherwise:
+ <li>Convey that the operation got aborted by rejecting the promise with {{AbortSignal}} object's
+ [=AbortSignal/abort reason=].
+ <li>Reject immediately if the {{AbortSignal}} is already [=AbortSignal/aborted=], otherwise:
  <li>Use the [=AbortSignal/abort algorithms=] mechanism to observe changes to the {{AbortSignal}}
  object and do so in a manner that does not lead to clashes with other observers.
 </ul>
 
 <div class=example id=aborting-ongoing-activities-spec-example>
- <p>The steps for a promise-returning method <code>doAmazingness(options)</code> could be as
- follows:
+ <p>The method steps for a promise-returning method <code>doAmazingness(<var>options</var>)</code>
+ could be as follows:
 
  <ol>
   <li><p>Let |p| be [=a new promise=].
 
   <li>
-   <p>If |options|' <code>signal</code> member is present, then:
+   <p>If |options|["<code>signal</code>"] member is present, then:
 
    <ol>
-    <li><p>If |options|' <code>signal</code>'s [=AbortSignal/aborted flag=] is set, then [=reject=]
-    |p| with an "{{AbortError!!exception}}" {{DOMException}} and return |p|.
+    <li><p>Let |signal| be |options|["<code>signal</code>"].
+
+    <li><p>If |signal| is [=AbortSignal/aborted=], then [=reject=] |p| with |signal|'s
+    [=AbortSignal/abort reason=] and return |p|.
 
     <li>
-     <p>[=AbortSignal/Add|Add the following abort steps=] to |options|' <code>signal</code>:
+     <p>[=AbortSignal/Add|Add the following abort steps=] to |signal|:
 
      <ol>
       <li><p>Stop doing amazing things.
 
-      <li><p>[=Reject=] |p| with an "{{AbortError!!exception}}" {{DOMException}}.
+      <li><p>[=Reject=] |p| with |signal|'s [=AbortSignal/abort reason=].
      </ol>
    </ol>
 
@@ -10055,6 +10074,7 @@ Mike Champion,
 Mike Taylor,
 Mike West,
 Nicolás Peña Moreno,
+Nidhi Jaju,
 Ojan Vafai,
 Oliver Nightingale,
 Olli Pettay,
