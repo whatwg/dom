@@ -1776,6 +1776,7 @@ interface AbortSignal : EventTarget {
 
   readonly attribute boolean aborted;
   readonly attribute any reason;
+  undefined throwIfAborted();
 
   attribute EventHandler onabort;
 };</pre>
@@ -1786,11 +1787,14 @@ interface AbortSignal : EventTarget {
  <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
- <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
- false.
+ <dd>Returns true if <var>signal</var>'s {{AbortController}} has signaled to abort; otherwise false.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>reason</a></code>
- <dd>Returns this {{AbortSignal}}'s <a for=AbortSignal>abort reason</a>.
+ <dd>Returns <var>signal</var>'s <a for=AbortSignal>abort reason</a>.
+
+ <dt><code><var>signal</var> . <a method for=AbortSignal lt=throwIfAborted()>throwIfAborted</a>()</code>
+ <dd>Throws <var>signal</var>'s <a for=AbortSignal>abort reason</a>, if <var>signal</var>'s
+ {{AbortController}} has signaled to abort; otherwise, does nothing.
 </dl>
 
 <p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
@@ -1839,6 +1843,31 @@ is [=AbortSignal/aborted=]; otherwise false.
 
 <p>The <dfn attribute for=AbortSignal>reason</dfn> getter steps are to return <a>this</a>'s
 <a for=AbortSignal>abort reason</a>.
+
+<p>The <dfn method for=AbortSignal>throwIfAborted()</dfn> method steps are to throw <a>this</a>'s
+<a for=AbortSignal>abort reason</a>, if <a>this</a> is [=AbortSignal/aborted=].
+
+<div class=example id=example-throwifaborted>
+ <p>This method is primarily useful for when functions accepting {{AbortSignal}}s want to throw (or
+ return a rejected promise) at specific checkpoints, instead of passing along the {{AbortSignal}}
+ to other methods. For example, the following function allows aborting in between each attempt to
+ poll for a condition. This gives opportunities to abort the polling process, even though the
+ actual asynchronous operation (i.e., <code class=lang-javascript>await func()</code>) does not
+ accept an {{AbortSignal}}.
+
+ <pre class=lang-javascript>
+ async function waitForCondition(func, targetValue, { signal } = {}) {
+   while (true) {
+     signal?.throwIfAborted();
+
+     const result = await func();
+     if (result === targetValue) {
+       return;
+     }
+   }
+ }
+ </pre>
+</div>
 
 <p>The <dfn attribute for=AbortSignal><code>onabort</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the <dfn export for=AbortSignal><code>onabort</code></dfn>
