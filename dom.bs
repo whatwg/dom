@@ -1695,11 +1695,9 @@ controller.abort();</code></pre>
 
  <pre><code class=lang-javascript>
 function doAmazingness({signal}) {
-  if (signal.aborted) {
-    return Promise.reject(signal.reason);
-  }
-
   return new Promise((resolve, reject) => {
+    signal.throwIfAborted();
+
     // Begin doing amazingness, and call resolve(result) when done.
     // But also, watch for signals:
     signal.addEventListener('abort', () => {
