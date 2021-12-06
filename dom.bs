@@ -1667,7 +1667,7 @@ The API which wishes to support aborting can accept an {{AbortSignal}} object, a
 determine how to proceed.
 
 <p>APIs that rely upon {{AbortController}} are encouraged to respond to {{AbortController/abort()}}
-by rejecting any unsettled promise with a new "{{AbortError!!exception}}" {{DOMException}}.
+by rejecting any unsettled promise with the {{AbortSignal}}'s [=AbortSignal/abort reason=].
 
 <div class=example id=aborting-ongoing-activities-example>
  <p>A hypothetical <code>doAmazingness({ ... })</code> method could accept an {{AbortSignal}} object
@@ -1696,7 +1696,7 @@ controller.abort();</code></pre>
  <pre><code class=lang-javascript>
 function doAmazingness({signal}) {
   if (signal.aborted) {
-    return Promise.reject(new DOMException('Aborted', 'AbortError'));
+    return Promise.reject(signal.reason);
   }
 
   return new Promise((resolve, reject) => {
@@ -1704,15 +1704,19 @@ function doAmazingness({signal}) {
     // But also, watch for signals:
     signal.addEventListener('abort', () => {
       // Stop doing amazingness, and:
-      reject(new DOMException('Aborted', 'AbortError'));
+      reject(signal.reason);
     });
   });
 }
 </code></pre>
-
- <p>APIs that require more granular control could extend both {{AbortController}} and
- {{AbortSignal}} objects according to their needs.
 </div>
+
+<p>APIs that do not return promises can either react in an equivalent manner or opt to not surface
+the {{AbortSignal}}'s [=AbortSignal/abort reason=] at all. {{EventTarget/addEventListener()}} is an
+example of an API where the latter made sense.
+
+<p>APIs that require more granular control could extend both {{AbortController}} and
+{{AbortSignal}} objects according to their needs.
 
 
 <h3 id=interface-abortcontroller>Interface {{AbortController}}</h3>
