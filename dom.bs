@@ -1729,6 +1729,8 @@ interface AbortController {
   [SameObject] readonly attribute AbortSignal signal;
 
   undefined abort(optional any reason);
+
+  undefined close();
 };
 </pre>
 
@@ -1745,6 +1747,13 @@ interface AbortController {
  [=AbortSignal/abort reason=], and signal to any observers that the associated activity is to be
  aborted. If <var>reason</var> is undefined, then an "{{AbortError!!exception}}" {{DOMException}}
  will be stored.
+
+ <dt><code><var>controller</var> . <a method for=AbortController lt=close()>close</a>()</code>
+ <dd>Invoking this method will set this object's {{AbortSignal}}'s [=AbortSignal/closed] to
+ <code>true</code>, indicating that the {{AbortController}} is abandoning the {{AbortSignal}} and
+ will not signal to any observers that associated activity is to be aborted. As a result, the {
+ {AbortSignal}} will <a>Remove all event listeners</a> whose set of event types to handle contains
+ <var>abort</var>.
 </dl>
 
 <p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
@@ -1767,6 +1776,8 @@ constructor steps are:
 to <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a> with
 <var>reason</var> if it is given.
 
+<p>The <dfn method for="AbortController><code>close()</code></dfn> method steps are to <a for="AbortSignal">signal close</a> on <a>this</a>'s <a for="AbortController>signal</a>.
+
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
 
 <pre class=idl>
@@ -1775,6 +1786,7 @@ interface AbortSignal : EventTarget {
   [NewObject] static AbortSignal abort(optional any reason);
 
   readonly attribute boolean aborted;
+  readonly attribute boolean closed;
   readonly attribute any reason;
 
   attribute EventHandler onabort;
@@ -1789,6 +1801,10 @@ interface AbortSignal : EventTarget {
  <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to abort; otherwise
  false.
 
+ <dt><code><var>signal</var> . <a attribute for="AbortSignal>closed</a></code>
+ <dd>Returns true if this {{AbortSignal}}'s {{AbortController}} has signaled to close; otherwise
+ false.
+
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>reason</a></code>
  <dd>Returns this {{AbortSignal}}'s <a for=AbortSignal>abort reason</a>.
 </dl>
@@ -1799,6 +1815,9 @@ JavaScript value. It is undefined unless specified otherwise.
 <p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
 [=AbortSignal/abort reason=] is not undefined.
 
+<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">closed</dfn> when its
+[=AbortSignal/closed=] is true.
+
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
 <a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]. Unless
 specified otherwise, its value is the empty set.
@@ -1808,6 +1827,8 @@ object <var>signal</var>, run these steps:
 
 <ol>
  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
+
+ <li><p>If <var>signal</var> is [=AbortSignal/closed=], then return.
 
  <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
  <a for=AbortSignal>abort algorithms</a>.
@@ -1837,6 +1858,9 @@ are:
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
 is [=AbortSignal/aborted=]; otherwise false.
 
+<p>The <dfn attribute for=AbortSignal>closed</dfn> getter steps are to return true if <a>this</a>
+is [=AbortSignal/closed=]; otherwise false.
+
 <p>The <dfn attribute for=AbortSignal>reason</dfn> getter steps are to return <a>this</a>'s
 <a for=AbortSignal>abort reason</a>.
 
@@ -1855,6 +1879,8 @@ them. For instance, if the operation has already completed.
 <ol>
  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
 
+ <li><p>If <var>signal</var> is [=AbortSignal/closed=], then return.
+
  <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
  otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
@@ -1866,12 +1892,34 @@ them. For instance, if the operation has already completed.
  <li><p>[=Fire an event=] named {{AbortSignal/abort}} at <var>signal</var>.
 </ol>
 
+<p>To <dfn export for=AbortSignal>signal close</dfn>, given an {{AbortSignal}} object
+<var>signal</var>, run these steps:
+
+<ol>
+  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
+
+  <li><p>If <var>signal</var> is [=AbortSignal/closed=], then return.
+
+  <li><p>Set <var>signal</var>'s [=AbortSignal/closed=] to <var>true</var>.
+
+  <li><p>Remove all of <var>signal</var>'s abort algorithms.
+</ol>
+
+<p class=note>Closing an {{AbortSignal}} enables explicitly indicating that there is no further
+reason to expect the {{AbortController}} to <a for=AbortSignal>signal abort</a> on its
+{{AbortSignal}}, and that the signal can be safely ignored.
+
 <p>A <var>followingSignal</var> (an {{AbortSignal}}) is made to
 <dfn export for=AbortSignal>follow</dfn> a <var>parentSignal</var> (an {{AbortSignal}}) by running
 these steps:
 
 <ol>
  <li><p>If <var>followingSignal</var> is [=AbortSignal/aborted=], then return.
+
+ <li><p>If <var>followingSignal</var> is [=AbortSignal/closed=], then return.
+
+ <li><p>If <var>parentSignal</var> is [=AbortSignal/closed=], then
+ <a for="AbortSignal">signal close</a> on <var>followingSignal</var>.
 
  <li><p>If <var>parentSignal</var> is [=AbortSignal/aborted=], then
  <a for=AbortSignal>signal abort</a> on <var>followingSignal</var> with <var>parentSignal</var>'s
