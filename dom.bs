@@ -1771,6 +1771,7 @@ to <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>s
 [Exposed=*]
 interface AbortSignal : EventTarget {
   [NewObject] static AbortSignal abort(optional any reason);
+  [NewObject] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
 
   readonly attribute boolean aborted;
   readonly attribute any reason;
@@ -1783,6 +1784,11 @@ interface AbortSignal : EventTarget {
  <dt><code>AbortSignal . <a method for=AbortSignal>abort</a>(<var>reason</var>)</code>
  <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>abort reason</a> is set to
  <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
+
+ <dt><code>AbortSignal . <a method for=AbortSignal lt=timeout(milliseconds)>timeout</a>(<var>milliseconds</var>)</code>
+ <dd>Returns an {{AbortSignal}} instance which will be aborted in <var>milliseconds</var>
+ milliseconds. Its <a for=AbortSignal>abort reason</a> will be set to a
+ "{{TimeoutError!!exception}}" {{DOMException}}.
 
  <dt><code><var>signal</var> . <a attribute for=AbortSignal>aborted</a></code>
  <dd>Returns true if <var>signal</var>'s {{AbortController}} has signaled to abort; otherwise false.
@@ -1834,6 +1840,31 @@ are:
  otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
  <li>Return <var>signal</var>.
+</ol>
+
+<p>The static <dfn method for=AbortSignal><code>timeout(<var>milliseconds</var>)</code></dfn> method
+steps are:
+
+<ol>
+ <li><p>Let <var>signal</var> be a new {{AbortSignal}} object.
+
+ <li><p>Let <var>global</var> be <var>signal</var>'s <a>relevant global object</a>.
+
+ <li>
+  <p><a>Run steps after a timeout</a> given <var>global</var>, "<code>AbortSignal-timeout</code>",
+  <var>milliseconds</var>, and the following step:</p>
+
+  <ol>
+   <li><p><a>Queue a global task</a> on the <a>timer task source</a> given <var>global</var> to
+   <a for=AbortSignal>signal abort</a> given <var>signal</var> and a new
+   "{{TimeoutError!!exception}}" {{DOMException}}.
+  </ol>
+
+  <p>For the duration of this timeout, if <var>signal</var> has any event listeners registered for
+  its {{AbortSignal/abort}} event, there must be a strong reference from <var>global</var> to
+  <var>signal</var>.
+
+ <li><p>Return <var>signal</var>.
 </ol>
 
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
