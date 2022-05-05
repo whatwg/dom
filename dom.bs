@@ -13,12 +13,12 @@ Indent: 1
 
 <pre class=anchors>
 urlPrefix: https://www.w3.org/TR/xml/#NT-
- type: type
-  text: Name; url: Name
+ type: dfn
+  text: Name; url: Name; for: XML
   text: Char; url: Char
   text: PubidChar; url: PubidChar
 urlPrefix: https://www.w3.org/TR/xml-names/#NT-
- type: type
+ type: dfn
   text: QName; url: QName
 url: https://w3c.github.io/DOM-Parsing/#dom-range-createcontextualfragment
  type: method; text: createContextualFragment(); for: Range
@@ -177,19 +177,59 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 added.
 
 
-<h3 id=namespaces>Namespaces</h3>
+<h3 id=name-validation oldids=namespaces>Name validation</h3>
 
-<p>To <dfn export>validate</dfn> a <var>qualifiedName</var>, <a>throw</a> an
-"{{InvalidCharacterError!!exception}}" {{DOMException}} if <var>qualifiedName</var> does not match
-the <code><a type>QName</a></code> production.
+<p>A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
+does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
 
-<p>To <dfn export>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>,
-run these steps:
+<p>A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1
+and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
+
+<p>A [=string=] |name| is a <dfn>valid element local name</dfn> if the following steps return true:
+
+<ol>
+ <li><p>If |name|'s [=string/length=] is 0, then return false.
+
+ <li>
+  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=], then:
+
+  <ol>
+   <li><p>If |name| contains [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>), then
+   return false.
+
+   <li><p>Return true.
+  </ol>
+
+ <li><p>If |name|'s 0th [=code point=] is not U+003A (:), U+005F (_), or in the range U+0080
+ to U+10FFFF, inclusive, then return false.
+
+ <li><p>If |name|'s subsequent [=code points=], if any, are not [=ASCII alphas=], [=ASCII digits=],
+ U+002D (-), U+002E (.), U+003A (:), U+005F (_), or in the range U+0080 to U+10FFFF, inclusive, then
+ return false.
+
+ <li><p>Return true.
+</ol>
+
+<p class=note>This concept is used to validate [=/element=] [=Element/local names=], when
+constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
+HTML parser (the branch where the first [=code point=] is an [=ASCII alpha=]), plus some additional
+possibilities. For those additional possibilities, the ASCII range is restricted for historical
+reasons, but beyond ASCII anything is allowed.
+
+<div class=note>
+ <p>The following JavaScript-compatible regular expression is an implementation of the above
+ definition:
+
+ <pre class=lang-javascript>
+  /^(?:[A-Za-z][^\0\t\n\f\r\u0020/>]*)|(?:[:_\u0080-\u{10FFFF}][A-Za-z0-9-.:_\u0080-\u{10FFFF}]*)$/u
+ </pre>
+</div>
+
+<p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
+<var>context</var>:
 
 <ol>
  <li><p>If <var>namespace</var> is the empty string, then set it to null.
-
- <li><p><a>Validate</a> <var>qualifiedName</var>.
 
  <li><p>Let <var>prefix</var> be null.
 
@@ -206,6 +246,15 @@ run these steps:
 
    <li><p>Set <var>localName</var> to <var>splitResult</var>[1].
   </ol>
+
+ <li><p>If <var>prefix</var> is not a [=valid namespace prefix=], then [=throw=] an
+ "{{InvalidCharacterError}}" {{DOMException}}.
+
+ <li><p>If <var>context</var> is "<code>attribute</code>" and <var>localName</var> is not a
+ [=valid attribute local name=], then [=throw=] an "{{InvalidCharacterError}}" {{DOMException}}.
+
+ <li><p>If <var>context</var> is "<code>element</code>" and <var>localName</var> is not a
+ [=valid element local name=], then [=throw=] an "{{InvalidCharacterError}}" {{DOMException}}.
 
  <li><p>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
  "{{NamespaceError!!exception}}" {{DOMException}}.
@@ -5633,8 +5682,8 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
 
-  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
-  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
+  <p>If <var>localName</var> is not a <a>valid element local name</a> an
+  "{{InvalidCharacterError}}" {{DOMException}} will be thrown.
 
   <p>When both <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} and
   <var>options</var>'s {{ElementCreationOptions/is}} are supplied, a
@@ -5654,8 +5703,9 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
 
-  <p>If <var>qualifiedName</var> does not match the <code><a type>QName</a></code> production an
-  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
+  <p>If <var>qualifiedName</var> is not a (possibly-prefixed)
+  <a>valid element local name</a> an "{{InvalidCharacterError}}" {{DOMException}} will be
+  thrown.
 
   <p>If one of the following conditions is true a "{{NamespaceError!!exception}}" {{DOMException}}
   will be thrown:
@@ -5700,8 +5750,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <a for=/>node</a> whose
   <a for=ProcessingInstruction>target</a> is <var>target</var> and
   <a for=CharacterData>data</a> is <var>data</var>.
-  If <var>target</var> does not match the
-  <code><a type>Name</a></code> production an
+  If <var>target</var> does not match the <code>[=XML/Name=]</code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
   If <var>data</var> contains "<code>?></code>" an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
@@ -5718,7 +5767,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
 method steps are:
 
 <ol>
- <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production, then
+ <li><p>If <var>localName</var> is not a <a>valid element local name</a>, then
  <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li><p>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
@@ -5740,7 +5789,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>element</code>".
 
  <li><p>Let <var>registry</var> and <var>is</var> be the result of
  <a>flattening element creation options</a> given <var>options</var> and <a>this</a>.
@@ -5796,7 +5846,7 @@ to return a new {{Text}} <a for=/>node</a> whose <a for=CharacterData>data</a> i
 and <a for=Node>node document</a> is <a>this</a>.
 
 <p class=note>No check is performed that <var>data</var> consists of
-characters that match the <code><a type>Char</a></code> production.
+characters that match the <code><a>Char</a></code> production.
 
 <p>The <dfn method for=Document><code>createCDATASection(<var>data</var>)</code></dfn> method steps
 are:
@@ -5817,7 +5867,7 @@ to return a new {{Comment}} <a for=/>node</a> whose <a for=CharacterData>data</a
 and <a for=Node>node document</a> is <a>this</a>.
 
 <p class=note>No check is performed that <var>data</var> consists of
-characters that match the <code><a type>Char</a></code> production
+characters that match the <code><a>Char</a></code> production
 or that it contains two adjacent hyphens or ends with a hyphen.
 
 <p>The
@@ -5826,8 +5876,7 @@ method steps are:
 
 <ol>
  <li>If <var>target</var> does not match the
- <!--<code data-anolis-type>PITarget</code>-->
- <code><a type>Name</a></code> production,
+ <code>[=XML/Name=]</code> production,
  then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- DOM3 does not check for "xml" -->
 
  <li>If <var>data</var> contains the string
@@ -5844,7 +5893,7 @@ method steps are:
 <p class=note>No check is performed that <var>target</var> contains
 "<code>xml</code>" or "<code>:</code>", or that
 <var>data</var> contains characters that match the
-<code><a type>Char</a></code> production.
+<code><a>Char</a></code> production.
 
 <hr>
 
@@ -5972,8 +6021,8 @@ these steps:
 steps are:
 
 <ol>
- <li><p>If <var>localName</var> does not match the <code><a type>Name</a></code> production in XML,
- then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <li><p>If <var>localName</var> is not a <a>valid attribute local name</a>, then
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
@@ -5988,7 +6037,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>attribute</code>".
 
  <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
@@ -6132,10 +6182,8 @@ interface DOMImplementation {
   Returns a <a>doctype</a>, with the given
   <var>qualifiedName</var>, <var>publicId</var>, and
   <var>systemId</var>. If <var>qualifiedName</var> does not
-  match the <code><a type>Name</a></code> production, an
-  "{{InvalidCharacterError!!exception}}" {{DOMException}} is thrown, and if it does not match the
-  <code><a type>QName</a></code> production, a
-  "{{NamespaceError!!exception}}" {{DOMException}} is thrown.
+  match the <code><a>QName</a></code> production, an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} is thrown.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a method for=DOMImplementation lt=createDocument()>createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code>
 
@@ -6168,7 +6216,8 @@ interface DOMImplementation {
 method steps are:
 
 <ol>
- <li><p><a>Validate</a> <var>qualifiedName</var>.
+ <li><p>If <var>qualifiedName</var> does not match the <code><a>QName</a></code> production,
+ then throw an "{{InvalidCharacterError}}" {{DOMException}}.
 
  <li><p>Return a new <a>doctype</a>, with <var>qualifiedName</var> as its
  <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
@@ -6177,7 +6226,7 @@ method steps are:
 </ol>
 
 <p class=note>No check is performed that <var>publicId</var> code points match the
-<code><a type>PubidChar</a></code> production or that <var>systemId</var> does not contain both a
+<code><a>PubidChar</a></code> production or that <var>systemId</var> does not contain both a
 '<code>"</code>' and a "<code>'</code>".
 
 <p>The
@@ -7284,8 +7333,14 @@ method steps are:
 method steps are:
 
 <ol>
- <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
- XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <li>
+  <p>If <var>qualifiedName</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+  <p class="note" id="node-setAttribute-qualifiedName">Despite the parameter naming,
+  <var>qualifiedName</var> is only used as a [=Attr/qualified name=] if an [=attribute=] already
+  exists with that qualified name. Otherwise, it is used as the [=Attr/local name=] of the new
+  attribute. We only need to validate it for the latter case.
 
  <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
@@ -7310,7 +7365,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>element</code>".
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
  and also <var>prefix</var> and <var>namespace</var>.
@@ -7343,8 +7399,12 @@ steps are:
 method steps are:
 
 <ol>
- <li><p>If <var>qualifiedName</var> does not match the <code><a type>Name</a></code> production in
- XML, then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <li>
+  <p>If <var>qualifiedName</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+  <p class="note">See <a href="#node-setAttribute-qualifiedName">the discussion above</a> about why
+  we validate it as a local name, instead of a qualified name.
 
  <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
