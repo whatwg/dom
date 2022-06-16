@@ -951,7 +951,7 @@ dictionary EventListenerOptions {
 };
 
 dictionary AddEventListenerOptions : EventListenerOptions {
-  boolean passive = false;
+  boolean passive;
   boolean once = false;
   AbortSignal signal;
 };
@@ -971,7 +971,7 @@ when something has occurred.
  <li><dfn for="event listener">type</dfn> (a string)
  <li><dfn for="event listener">callback</dfn> (null or an {{EventListener}} object)
  <li><dfn for="event listener">capture</dfn> (a boolean, initially false)
- <li><dfn for="event listener">passive</dfn> (a boolean, initially false)
+ <li><dfn for="event listener">passive</dfn> (null or a boolean)
  <li><dfn for="event listener">once</dfn> (a boolean, initially false)
  <li><dfn for="event listener">signal</dfn> (null or an {{AbortSignal}} object)
  <li><dfn for="event listener">removed</dfn> (a boolean for bookkeeping purposes, initially false)
@@ -1069,16 +1069,18 @@ steps:
 <ol>
  <li><p>Let <var>capture</var> be the result of <a>flattening</a> <var>options</var>.
 
- <li><p>Let <var>once</var> and <var>passive</var> be false.
+ <li><p>Let <var>once</var> be false.
 
- <li><p>Let |signal| be null.
+ <li><p>Let |passive| and |signal| be null.
 
  <li>
   <p>If |options| is a <a for=/>dictionary</a>, then:
 
   <ol>
-   <li><p>Set |passive| to |options|["{{AddEventListenerOptions/passive}}"] and |once| to
-   |options|["{{AddEventListenerOptions/once}}"].
+   <li><p>Set |once| to |options|["{{AddEventListenerOptions/once}}"].
+
+   <li><p>If |options|["{{AddEventListenerOptions/passive}}"] [=map/exists=], then set |passive| to
+   |options|["{{AddEventListenerOptions/passive}}"].
 
    <li><p>If |options|["{{AddEventListenerOptions/signal}}"] [=map/exists=], then set |signal| to
    |options|["{{AddEventListenerOptions/signal}}"].
@@ -1098,6 +1100,25 @@ constructor steps are to do nothing.
 if this would be useful for your programs. For now, all author-created {{EventTarget}}s do not
 participate in a tree structure.</p>
 
+<p>The <dfn>default passive value</dfn>, given an event type |type| and an {{EventTarget}}
+|eventTarget|, is determined as follows:
+
+<ol>
+ <li>
+  <p>Return true if all of the following are true:
+
+  <ol class="brief">
+   <li>|type| is one of "<code>touchstart</code>", "<code>touchmove</code>",
+   "<code>wheel</code>", or "<code>mousewheel</code>" [[TOUCH-EVENTS]] [[UIEVENTS]]
+   <li>|eventTarget| is a {{Window}}, or is a {{Node}} whose <a>node document</a> equals
+   |eventTarget|, or is a {{Node}} whose <a>node document</a>'s <a>document element</a> is
+   |eventTarget|, or is a {{Node}} whose <a>node document</a>'s
+   <a lt="the body element">body element</a> is |eventTarget| [[!HTML]]
+  </ol>
+
+ <li><p>Return false.
+</ol>
+
 <p>To <dfn export>add an event listener</dfn>, given an {{EventTarget}} object
 <var>eventTarget</var> and an <a>event listener</a> <var>listener</var>, run these steps:
 
@@ -1114,6 +1135,9 @@ participate in a tree structure.</p>
  [=AbortSignal/aborted=], then return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
+
+ <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is null, then set it to the
+ <a>default passive value</a> given |type| and |eventTarget|.
 
  <li><p>If <var>eventTarget</var>'s <a>event listener list</a> does not <a for=list>contain</a> an
  <a>event listener</a> whose <a for="event listener">type</a> is <var>listener</var>'s
