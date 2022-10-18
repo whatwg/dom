@@ -5329,8 +5329,8 @@ method steps are:
 algorithm is passed <var>node</var> and <var>oldDocument</var>, as indicated in the <a>adopt</a>
 algorithm.
 
-<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
-these steps:
+<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>,
+with an optional <var>forceDocumentFragmentAdoption</var> (default false):
 
 <ol>
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
@@ -5347,6 +5347,16 @@ these steps:
     <a>shadow-including inclusive descendants</a>:
 
     <ol>
+     <li>
+      <p>If <var>forceDocumentFragmentAdoption</var> is false, <var>inclusiveDescendant</var> is a
+      {{DocumentFragment}} <a for=/>node</a>, <var>inclusiveDescendant</var> is <var>node</var>, and
+      <var>node</var>'s <a for=DocumentFragment>host</a> is non-null, then
+      <a for=iteration>continue</a>.
+
+      <p class=note>This is only reasonable as long as all <a>adopt</a> callers remove the children
+      of <var>node</var>. HTML's <{template}> element passes true for
+      <var>forceDocumentFragmentAdoption</var>.
+
      <li><p>Set <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to <var>document</var>.
 
      <li><p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>, then set the
@@ -5374,6 +5384,12 @@ these steps:
 
  <li><p>If <var>node</var> is a <a for=/>shadow root</a>, then <a>throw</a> a
  "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li>
+  <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a> and its
+  <a for=DocumentFragment>host</a> is non-null, then return <var>node</var>.
+
+  <p class=note>Unfortunately this does not throw for web compatibility.
 
  <li><p><a>Adopt</a> <var>node</var> into <a>this</a>.
 
