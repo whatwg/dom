@@ -1782,9 +1782,9 @@ constructor steps are:
 <a>this</a>'s <a for=AbortController>signal</a>.
 
 <p>The <dfn method for=AbortController><code>abort(<var>reason</var>)</code></dfn> method steps are
-to <a for=AbortController>request abort</a> on <a>this</a> with <var>reason</var> if it is given.
+to <a for=AbortController>signal abort</a> on <a>this</a> with <var>reason</var> if it is given.
 
-<p>To <dfn export for=AbortController>request abort</dfn> on an {{AbortController}} <var>controller</var>
+<p>To <dfn export for=AbortController>signal abort</dfn> on an {{AbortController}} <var>controller</var>
 with an optional <var>reason</var>, <a for=AbortSignal>signal abort</a> on <var>controller</var>'s
 <a for=AbortController>signal</a> with <var>reason</var> if it is given.
 
@@ -1810,7 +1810,7 @@ interface AbortSignal : EventTarget {
  <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
 
  <dt><code>AbortSignal . <a method for=AbortSignal lt=any(signals)>any</a>(<var>signals</var>)</code>
- <dd>Returns an {{AbortSignal}} instance which will be aborted if any of <var>signals</var> is
+ <dd>Returns an {{AbortSignal}} instance which will be aborted once any of <var>signals</var> is
  aborted. Its <a for=AbortSignal>abort reason</a> will be set to whichever one of <var>signals</var>
  cause it to be aborted.
 
@@ -1908,8 +1908,8 @@ steps are:
 </ol>
 
 <p>The static <dfn method for=AbortSignal><code>any(<var>signals</var>)</code></dfn> method
-steps are to return the result of <a for=AbortSignal>creating a composite abort signal</a> from
-<var>signals</var>.
+steps are to return the result of <a>creating a composite abort signal</a> from <var>signals</var>
+using {{AbortSignal}}.
 
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
 is [=AbortSignal/aborted=]; otherwise false.
@@ -1951,8 +1951,8 @@ is [=AbortSignal/aborted=]; otherwise false.
 {{AbortController}} object, but an API observing the {{AbortSignal}} object can choose to ignore
 them. For instance, if the operation has already completed.
 
-<p>To <dfn noexport for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object
-<var>signal</var> and an optional <var>reason</var>, run these steps:
+<p>To <dfn for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object <var>signal</var> and
+an optional <var>reason</var>, run these steps:
 
 <ol>
  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
@@ -1976,29 +1976,28 @@ them. For instance, if the operation has already completed.
  <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>source signals</a>.
 </ol>
 
-<p>To <dfn export for=AbortSignal>create a composite abort signal</dfn> from a list of
-{{AbortSignal}} objects <var>signals</var> or a single {{AbortSignal}} <var>signal</var>, an
-optional <var>signalInterface</var>, which must be either {{AbortSignal}} or an interface that
-inherits from it, and an optional <var>realm</var>, run these steps:
+<p>To <dfn export>create a composite abort signal</dfn> from a list of {{AbortSignal}} objects
+<var>signals</var>, using <var>signalInterface</var>, which must be either {{AbortSignal}} or an
+interface that inherits from it, and an optional <var>realm</var>, run these steps:
 
 <ol>
  <li><p>Let <var>resultSignal</var> be a <a for=/>new</a> object implementing
- <var>signalInterface</var> if given, otherwise {{AbortSignal}}, and using <var>realm</var> if
- given, otherwise using the default behavior defined in Web IDL.
+ <var>signalInterface</var> using <var>realm</var> if given, otherwise using the default behavior
+ defined in Web IDL.
 
  <li><p>Set <var>resultSignal</var>'s [=AbortSignal/composite=] to true.
-
- <li><p>If <var>signal</var> was given, then set <var>signals</var> to a new <a for="/">list</a> and
- <a for=list>append</a> <var>signal</var> to it.
 
  <li><p><a for=list>For each</a> <var>signal</var> of <var>signals</var>: if <var>signal</var> is
  [=AbortSignal/aborted=], then set <var>resultSignal</var>'s [=AbortSignal/abort reason=] to
  <var>signal</var>'s [=AbortSignal/abort reason=] and return <var>resultSignal</var>.
- </li>
 
- <li><p><a for=list>For each</a> <var>signal</var> of <var>signals</var>:
+ <li>
+  <p><a for=list>For each</a> <var>signal</var> of <var>signals</var>:
+
   <ol>
-   <li><p>If <var>signal</var>'s [=AbortSignal/composite=] is false, then:
+   <li>
+    <p>If <var>signal</var>'s [=AbortSignal/composite=] is false, then:
+
     <ol>
      <li><p><a for=set>Append</a> <var>signal</var> to <var>resultSignal</var>'s
      [=AbortSignal/source signals=].
@@ -2007,8 +2006,10 @@ inherits from it, and an optional <var>realm</var>, run these steps:
      [=AbortSignal/dependent signals=].
     </ol>
 
-   <li><p>Otherwise, <a for=list>for each</a> <var>sourceSignal</var> of <var>signal</var>'s
-   [=AbortSignal/source signals=]:
+   <li>
+    <p>Otherwise, <a for=list>for each</a> <var>sourceSignal</var> of <var>signal</var>'s
+    [=AbortSignal/source signals=]:
+
     <ol>
      <li><p>Assert: <var>sourceSignal</var> is not [=AbortSignal/aborted=] and not
      [=AbortSignal/composite=].
