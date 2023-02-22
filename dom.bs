@@ -4589,6 +4589,10 @@ the interface <var>node</var> <a>implements</a>:
  <dt>{{Element}}
  <dd>
   <ol>
+   <li><p>If <var>prefix</var> is "<code>xml</code>", then return the <a>XML namespace</a>.
+
+   <li><p>If <var>prefix</var> is "<code>xmlns</code>", then return the <a>XMLNS namespace</a>.
+
    <li><p>If its <a for=Element>namespace</a> is non-null and its
    <a for=Element>namespace prefix</a> is <var>prefix</var>, then return
    <a for=Element>namespace</a>.
@@ -9848,12 +9852,18 @@ callback interface XPathNSResolver {
 
 interface mixin XPathEvaluatorBase {
   [NewObject] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver = null);
-  XPathNSResolver createNSResolver(Node nodeResolver);
+  Node createNSResolver(Node nodeResolver); // legacy
   // XPathResult.ANY_TYPE = 0
   XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver = null, optional unsigned short type = 0, optional XPathResult? result = null);
 };
 Document includes XPathEvaluatorBase;
 </pre>
+
+<p>The
+<dfn method for=XPathEvaluatorBase><code>createNSResolver(<var>nodeResolver</var>)</code></dfn>
+method steps are to return <var>nodeResolver</var>.
+
+<p class=note>This method exists only for historical reasons.
 
 
 <h3 id=interface-xpathevaluator>Interface {{XPathEvaluator}}</h3>
