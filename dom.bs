@@ -1844,12 +1844,12 @@ specified otherwise, its value is the empty set.
 initially false.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn>, which is a
-<a for=/>set</a> of {{AbortSignal}}s the object is dependent on for its [=AbortSignal/aborted=]
-state. Unless specified otherwise, its value is the empty set.
+<a for=/>set</a> of weak references to {{AbortSignal}}s that the object is dependent on for its
+[=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>dependent signals</dfn>, which is a
-<a for=/>set</a> of {{AbortSignal}}s that are dependent on it for their [=AbortSignal/aborted=]
-state. Unless specified otherwise, its value is the empty set.
+<a for=/>set</a> of weak references to {{AbortSignal}}s that are dependent on it for their
+[=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
 
 <p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
 object <var>signal</var>, run these steps:
@@ -2027,16 +2027,12 @@ interface that inherits from it, and an optional <var>realm</var>, run these ste
  <li>Return <var>resultSignal</var>.
 </ol>
 
+
 <h4 id=abort-signal-garbage-collection>Garbage collection</h4>
 
-<p>An {{AbortSignal}} object holds weak references to its [=AbortSignal/source signals=].
-
-<p>A non-[=AbortSignal/composite=] {{AbortSignal}} object must hold strong references to its
-[=AbortSignal/dependent signals=] as long as the source can still [=AbortSignal/signal abort=] and
-the dependent signal has any event listeners registered for its {{AbortSignal/abort}} event or its
-[=AbortSignal/abort algorithms=] is not empty. An {{AbortSignal}} can no longer
-[=AbortSignal/signal abort=] if it is the {{AbortController/signal}} of an {{AbortController}} that
-has been garbage collected.
+<p>A [=AbortSignal/composite=] {{AbortSignal}} object must not be garbage collected while its
+[=AbortSignal/source signals=] is non-empty unless it has no registered event listeners for its
+{{AbortSignal/abort}} event and its [=AbortSignal/abort algorithms=] is empty.
 
 
 <h3 id=abortcontroller-api-integration>Using {{AbortController}} and {{AbortSignal}} objects in
