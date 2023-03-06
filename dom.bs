@@ -1812,7 +1812,7 @@ interface AbortSignal : EventTarget {
  <dt><code>AbortSignal . <a method for=AbortSignal lt=any(signals)>any</a>(<var>signals</var>)</code>
  <dd>Returns an {{AbortSignal}} instance which will be aborted once any of <var>signals</var> is
  aborted. Its <a for=AbortSignal>abort reason</a> will be set to whichever one of <var>signals</var>
- cause it to be aborted.
+ caused it to be aborted.
 
  <dt><code>AbortSignal . <a method for=AbortSignal lt=timeout(milliseconds)>timeout</a>(<var>milliseconds</var>)</code>
  <dd>Returns an {{AbortSignal}} instance which will be aborted in <var>milliseconds</var>
@@ -1844,11 +1844,11 @@ specified otherwise, its value is the empty set.
 initially false.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn>, which is a
-<a for=/>set</a> of weak references to {{AbortSignal}}s that the object is dependent on for its
-[=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
+<a for=/>set</a> of weak references to {{AbortSignal}} objects that the object is dependent on for
+its [=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>dependent signals</dfn>, which is a
-<a for=/>set</a> of weak references to {{AbortSignal}}s that are dependent on it for their
+<a for=/>set</a> of weak references to {{AbortSignal}} objects that are dependent on it for their
 [=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
 
 <p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
@@ -1970,10 +1970,6 @@ an optional <var>reason</var>, run these steps:
  <li><p><a for=set>For each</a> <var>dependentSignal</var> of <var>signal</var>'s
  [=AbortSignal/dependent signals=], [=AbortSignal/signal abort=] on <var>dependentSignal</var> with
  <var>signal</var>'s [=AbortSignal/abort reason=].
-
- <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>dependent signals</a>.
-
- <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>source signals</a>.
 </ol>
 
 <p>To <dfn export>create a composite abort signal</dfn> from a list of {{AbortSignal}} objects
@@ -2028,15 +2024,16 @@ interface that inherits from it, and an optional <var>realm</var>, run these ste
      [=AbortSignal/dependent signals=].
     </ol>
   </ol>
+
  <li>Return <var>resultSignal</var>.
 </ol>
 
 
 <h4 id=abort-signal-garbage-collection>Garbage collection</h4>
 
-<p>A [=AbortSignal/composite=] {{AbortSignal}} object must not be garbage collected while its
-[=AbortSignal/source signals=] is non-empty unless it has no registered event listeners for its
-{{AbortSignal/abort}} event and its [=AbortSignal/abort algorithms=] is empty.
+<p>A non-[=AbortSignal/aborted=] [=AbortSignal/composite=] {{AbortSignal}} object must not be
+garbage collected while its [=AbortSignal/source signals=] is non-empty and it has registered event
+listeners for its {{AbortSignal/abort}} event or its [=AbortSignal/abort algorithms=] is non-empty.
 
 
 <h3 id=abortcontroller-api-integration>Using {{AbortController}} and {{AbortSignal}} objects in
