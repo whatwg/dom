@@ -2767,11 +2767,11 @@ indicated in the <a for=/>remove</a> algorithm below.
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
- <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
+ <a>inclusive descendant</a> of <var>node</var>, set its [=range start=] to
  (<var>parent</var>, <var>index</var>).
 
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
- of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
+ of <var>node</var>, set its [=range end=] to (<var>parent</var>, <var>index</var>).
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
  <a for=range>start offset</a> is greater than <var>index</var>, decrease its
@@ -5465,7 +5465,7 @@ are:
 <hr>
 
 <p>The <dfn method for=Document><code>createRange()</code></dfn> method steps are to return a new
-<a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> an <a for=range>end</a>.
+<a>live range</a> with (<a>this</a>, 0) as its [=range start=] and [=range end=].
 
 <p class=note>The {{Range/Range()}} constructor can be used instead.
 
@@ -7487,7 +7487,7 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 <h3 id=introduction-to-dom-ranges>Introduction to "DOM Ranges"</h3>
 
 <p>{{StaticRange}} and {{Range}} objects (<a>ranges</a>) represent a sequence of content within a
-<a>node tree</a>. Each <a>range</a> has a <a for=range>start</a> and an <a for=range>end</a> which
+<a>node tree</a>. Each <a>range</a> has a [=range start=] and a [=range end=] which
 are <a>boundary points</a>. A <a>boundary point</a> is a <a for=/>tuple</a> consisting of a
 <a for="boundary point">node</a> and an <a for="boundary point">offset</a>. So in other words, a
 <a>range</a> represents a piece of content within a <a>node tree</a> between two
@@ -7614,17 +7614,17 @@ interface AbstractRange {
 <dfn export id=concept-range lt="range">ranges</dfn>.
 
 <p>A <a>range</a> has two associated <a>boundary points</a> — a
-<dfn export id=concept-range-start for=range>start</dfn> and
-<dfn export id=concept-range-end for=range>end</dfn>.
+<dfn export id=concept-range-start for=range local-lt="start">range start</dfn>
+and a <dfn export id=concept-range-end for=range local-lt="end">range end</dfn>.
 
 <p>For convenience, a <a>range</a>'s
-<dfn export id=concept-range-start-node for=range>start node</dfn> is its <a for=range>start</a>'s
+<dfn export id=concept-range-start-node for=range>start node</dfn> is its [=range start=]'s
 <a for="boundary point">node</a>, its
 <dfn export id=concept-range-start-offset for=range>start offset</dfn> is its
-<a for=range>start</a>'s <a for="boundary point">offset</a>, its
-<dfn export id=concept-range-end-node for=range>end node</dfn> is its <a for=range>end</a>'s
+[=range start=]'s <a for="boundary point">offset</a>, its
+<dfn export id=concept-range-end-node for=range>end node</dfn> is its [=range end=]'s
 <a for="boundary point">node</a>,  and its
-<dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
+<dfn export id=concept-range-end-offset for=range>end offset</dfn> is its [=range end=]'s
 <a for="boundary point">offset</a>.
 
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
@@ -7694,9 +7694,9 @@ constructor steps are:
  <var>init</var>["{{StaticRangeInit/endContainer}}"] is a {{DocumentType}} or {{Attr}}
  <a for=/>node</a>, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
- <li><p>Set <a>this</a>'s <a for=range>start</a> to
+ <li><p>Set <a>this</a>'s [=range start=] to
  (<var>init</var>["{{StaticRangeInit/startContainer}}"],
- <var>init</var>["{{StaticRangeInit/startOffset}}"]) and <a for=range>end</a> to
+ <var>init</var>["{{StaticRangeInit/startOffset}}"]) and its [=range end=] to
  (<var>init</var>["{{StaticRangeInit/endContainer}}"],
  <var>init</var>["{{StaticRangeInit/endOffset}}"]).
 </ol>
@@ -7704,7 +7704,7 @@ constructor steps are:
 <p>A {{StaticRange}} is <dfn for=StaticRange export>valid</dfn> if all of the following are true:
 
 <ul>
- <li><p>Its <a for=range>start</a> and <a for=range>end</a> are in the same <a>node tree</a>.
+ <li><p>Its [=range start=] and [=range end=] are in the same <a>node tree</a>.
 
  <li><p>Its <a for=range>start offset</a> is between 0 and its <a for=range>start node</a>'s
  <a for=Node>length</a>, inclusive.
@@ -7712,8 +7712,8 @@ constructor steps are:
  <li><p>Its <a for=range>end offset</a> is between 0 and its <a for=range>end node</a>'s
  <a for=Node>length</a>, inclusive.
 
- <li><p>Its <a for=range>start</a> is <a for="boundary point">before</a> or
- <a for="boundary point">equal</a> to its <a for=range>end</a>.
+ <li><p>Its [=range start=] is <a for="boundary point">before</a> or
+ <a for="boundary point">equal</a> to its [=range end=].
 </ul>
 
 
@@ -7774,9 +7774,9 @@ interface Range : AbstractRange {
 <p>A <a for=/>node</a> <var>node</var> is <dfn export for="live range" id=contained>contained</dfn>
 in a <a>live range</a> <var>range</var> if <var>node</var>'s <a for=tree>root</a> is
 <var>range</var>'s <a for="live range">root</a>, and (<var>node</var>, 0) is
-<a for="boundary point">after</a> <var>range</var>'s <a for=range>start</a>, and
+<a for="boundary point">after</a> <var>range</var>'s [=range start=], and
 (<var>node</var>, <var>node</var>'s <a for=Node>length</a>) is <a for="boundary point">before</a>
-<var>range</var>'s <a for=range>end</a>.
+<var>range</var>'s [=range end=].
 
 <p>A <a for=/>node</a> is
 <dfn export for="live range" id=partially-contained>partially contained</dfn> in a <a>live range</a>
@@ -7838,7 +7838,7 @@ but not its <a for=range>end node</a>, or vice versa.
 </dl>
 
 <p>The <dfn constructor for=Range lt="Range()"><code>new Range()</code></dfn> constructor steps are
-to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
+to set <a>this</a>'s [=range start=] and [=range end=] to
 (<a>current global object</a>'s <a>associated <code>Document</code></a>, 0).
 
 <hr>
@@ -7896,12 +7896,12 @@ steps:
      <var>node</var>'s <a for=tree>root</a>,
      or if <var>bp</var> is
      <a for="boundary point">after</a> the
-     <var>range</var>'s <a for=range>end</a>, set
-     <var>range</var>'s <a for=range>end</a>
+     <var>range</var>'s [=range end=], set
+     <var>range</var>'s [=range end=]
      to <var>bp</var>.
 
      <li>Set <var>range</var>'s
-     <a for=range>start</a> to <var>bp</var>.
+     [=range start=] to <var>bp</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
@@ -7911,12 +7911,12 @@ steps:
      <var>node</var>'s <a for=tree>root</a>,
      or if <var>bp</var> is
      <a for="boundary point">before</a> the
-     <var>range</var>'s <a for=range>start</a>, set
-     <var>range</var>'s <a for=range>start</a>
+     <var>range</var>'s [=range start=], set
+     <var>range</var>'s [=range start=]
      to <var>bp</var>.
 
      <li>Set <var>range</var>'s
-     <a for=range>end</a> to <var>bp</var>.
+     [=range end=] to <var>bp</var>.
     </ol>
   </dl>
 </ol>
@@ -7985,8 +7985,8 @@ steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
 </ol>
 
 <p>The <dfn method for=Range><code>collapse(<var>toStart</var>)</code></dfn> method steps are to, if
-<var>toStart</var> is true, set <a for=range>end</a> to <a for=range>start</a>; otherwise set
-<a for=range>start</a> to <a for=range>end</a>.
+<var>toStart</var> is true, set [=range end=] to [=range start=]; otherwise set
+[=range start=] to [=range end=].
 
 <p>To <dfn export id=concept-range-select for=range>select</dfn> a <a for=/>node</a> <var>node</var>
 within a <a>range</a> <var>range</var>, run these steps:
@@ -7999,10 +7999,10 @@ within a <a>range</a> <var>range</var>, run these steps:
 
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
- <li><p>Set <var>range</var>'s <a for=range>start</a> to <a>boundary point</a>
+ <li><p>Set <var>range</var>'s [=range start=] to <a>boundary point</a>
  (<var>parent</var>, <var>index</var>).
 
- <li><p>Set <var>range</var>'s <a for=range>end</a> to <a>boundary point</a>
+ <li><p>Set <var>range</var>'s [=range end=] to <a>boundary point</a>
  (<var>parent</var>, <var>index</var> plus 1).
 </ol>
 
@@ -8018,9 +8018,9 @@ are:
 
  <li><p>Let <var>length</var> be the <a for=Node>length</a> of <var>node</var>.
 
- <li><p>Set <a for=range>start</a> to the <a>boundary point</a> (<var>node</var>, 0).
+ <li><p>Set [=range start=] to the <a>boundary point</a> (<var>node</var>, 0).
 
- <li><p>Set <a for=range>end</a> to the <a>boundary point</a> (<var>node</var>, <var>length</var>).
+ <li><p>Set [=range end=] to the <a>boundary point</a> (<var>node</var>, <var>length</var>).
 </ol>
 
 <hr>
@@ -8071,30 +8071,30 @@ method steps are:
    <dt>{{Range/START_TO_START}}:
    <dd>
     Let <var>this point</var> be <a>this</a>'s
-    <a for=range>start</a>.
+    [=range start=].
     Let <var>other point</var> be <var>sourceRange</var>'s
-    <a for=range>start</a>.
+    [=range start=].
 
    <dt>{{Range/START_TO_END}}:
    <dd>
     Let <var>this point</var> be <a>this</a>'s
-    <a for=range>end</a>.
+    [=range end=].
     Let <var>other point</var> be <var>sourceRange</var>'s
-    <a for=range>start</a>.
+    [=range start=].
 
     <dt>{{Range/END_TO_END}}:
     <dd>
      Let <var>this point</var> be <a>this</a>'s
-     <a for=range>end</a>.
+     [=range end=].
      Let <var>other point</var> be <var>sourceRange</var>'s
-     <a for=range>end</a>.
+     [=range end=].
 
     <dt>{{Range/END_TO_START}}:
     <dd>
      Let <var>this point</var> be <a>this</a>'s
-     <a for=range>start</a>.
+     [=range start=].
      Let <var>other point</var> be <var>sourceRange</var>'s
-     <a for=range>end</a>.
+     [=range end=].
    </dl>
 
   <li>
@@ -8192,8 +8192,8 @@ method steps are:
  <var>original end node</var>, offset 0, count
  <var>original end offset</var> and data the empty string.
 
- <li>Set <a for=range>start</a> and
- <a for=range>end</a> to
+ <li>Set [=range start=] and
+ [=range end=] to
  (<var>new node</var>, <var>new offset</var>).
 </ol>
 
@@ -8375,9 +8375,9 @@ method steps are:
    to <var>fragment</var>.
 
    <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
+   whose [=range start=] is
    (<var>original start node</var>, <var>original start offset</var>) and
-   whose <a for=range>end</a> is
+   whose [=range end=] is
    (<var>first partially contained child</var>, <var>first partially contained child</var>'s
    <a for=Node>length</a>).
 
@@ -8429,9 +8429,9 @@ method steps are:
    to <var>fragment</var>.
 
    <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
+   whose [=range start=] is
    (<var>last partially contained child</var>, 0) and whose
-   <a for=range>end</a> is
+   [=range end=] is
    (<var>original end node</var>, <var>original end offset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">extracting</a>
@@ -8441,8 +8441,7 @@ method steps are:
    <var>clone</var>.
   </ol>
 
- <li>Set <var>range</var>'s <a for=range>start</a> and
- <a for=range>end</a> to
+ <li>Set <var>range</var>'s [=range start=] and [=range end=] both to
  (<var>new node</var>, <var>new offset</var>).
 
  <li>Return <var>fragment</var>.
@@ -8582,9 +8581,9 @@ of a <a>live range</a> <var>range</var>, run these steps:
    to <var>fragment</var>.
 
    <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
+   whose [=range start=] is
    (<var>original start node</var>, <var>original start offset</var>) and
-   whose <a for=range>end</a> is
+   whose [=range end=] is
    (<var>first partially contained child</var>, <var>first partially contained child</var>'s
    <a for=Node>length</a>).
 
@@ -8640,9 +8639,9 @@ of a <a>live range</a> <var>range</var>, run these steps:
    to <var>fragment</var>.
 
    <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
+   whose [=range start=] is
    (<var>last partially contained child</var>, 0) and whose
-   <a for=range>end</a> is
+   [=range end=] is
    (<var>original end node</var>, <var>original end offset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">cloning the contents</a>
@@ -8756,7 +8755,7 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  <var>node</var> into <var>parent</var> before <var>referenceNode</var>.
 
  <li><p>If <var>range</var> is <a for=range>collapsed</a>, then set <var>range</var>'s
- <a for=range>end</a> to (<var>parent</var>, <var>newOffset</var>).
+ [=range end=] to (<var>parent</var>, <var>newOffset</var>).
 </ol>
 
 <p>The <dfn method for=Range><code>insertNode(<var>node</var>)</code></dfn> method steps are to
@@ -8810,7 +8809,7 @@ check first thing, which matches everyone but Firefox.
 </ol>
 
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method steps are to return a new
-<a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as <a>this</a>.
+<a>live range</a> with the same [=range start=] and [=range end=] as <a>this</a>.
 
 <p>The <dfn method for=Range><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{Range}} object) was removed, but the method itself
@@ -8860,9 +8859,9 @@ method steps are:
 
  <li>If (<var>node</var>, <var>offset</var>) is
  <a for="boundary point">before</a>
- <a for=range>start</a> or
+ [=range start=] or
  <a for="boundary point">after</a>
- <a for=range>end</a>, return false.
+ [=range end=], return false.
 
  <li>Return true.
 </ol>
@@ -8891,11 +8890,11 @@ and Opera Next 12.00 alpha all do. -->
 
  <li>If (<var>node</var>, <var>offset</var>) is
  <a for="boundary point">before</a>
- <a for=range>start</a>, return &minus;1.
+ [=range start=], return &minus;1.
 
  <li>If (<var>node</var>, <var>offset</var>) is
  <a for="boundary point">after</a>
- <a for=range>end</a>, return 1.
+ [=range end=], return 1.
 
  <li>Return 0.
 </ol>
@@ -8926,10 +8925,10 @@ Firefox 12.0a1. -->
 
  <li>If (<var>parent</var>, <var>offset</var>) is
  <a for="boundary point">before</a>
- <a for=range>end</a> and (<var>parent</var>,
+ [=range end=] and (<var>parent</var>,
  <var>offset</var> plus 1) is
  <a for="boundary point">after</a>
- <a for=range>start</a>, return true.
+ [=range start=], return true.
 
  <li>Return false.
 </ol>
