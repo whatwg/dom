@@ -30,6 +30,7 @@ type: interface
 urlPrefix: https://tc39.es/ecma262/#; spec: ECMASCRIPT
  text: Construct; url: sec-construct; type: abstract-op
  type: dfn
+  text: current realm; url: current-realm
   text: realm; url: realm
   text: surrounding agent; url: surrounding-agent
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
@@ -1830,45 +1831,30 @@ interface AbortSignal : EventTarget {
  {{AbortController}} has signaled to abort; otherwise, does nothing.
 </dl>
 
-<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
-JavaScript value. It is undefined unless specified otherwise.
+<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn> (a
+JavaScript value), which is initially undefined.
 
-<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
-[=AbortSignal/abort reason=] is not undefined.
-
-<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
-<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]. Unless
-specified otherwise, its value is the empty set.
-
-<p>An {{AbortSignal}} object has a <dfn for="AbortSignal">composite</dfn> (a boolean), which is
-initially false.
-
-<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn>, which is a
-<a for=/>set</a> of weak references to {{AbortSignal}} objects that the object is dependent on for
-its [=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
-
-<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>dependent signals</dfn>, which is a
-<a for=/>set</a> of weak references to {{AbortSignal}} objects that are dependent on it for their
-[=AbortSignal/aborted=] state. Unless specified otherwise, its value is the empty set.
-
-<p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
-object <var>signal</var>, run these steps:
-
-<ol>
- <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
-
- <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
- <a for=AbortSignal>abort algorithms</a>.
-</ol>
-
-<p>To <dfn export for=AbortSignal>remove</dfn> an algorithm <var>algorithm</var> from an
-{{AbortSignal}} <var>signal</var>, <a for=set>remove</a> <var>algorithm</var> from
-<var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, (a
+<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]),
+which is initially empty.
 
 <p class=note>The [=AbortSignal/abort algorithms=] enable APIs with complex
 requirements to react in a reasonable way to {{AbortController/abort()}}. For example, a given API's
 [=AbortSignal/abort reason=] might need to be propagated to a cross-thread environment, such as a
 service worker.
+
+<p>An {{AbortSignal}} object has a <dfn for="AbortSignal">composite</dfn> (a boolean), which is
+initially false.
+
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn>, (a weak
+<a for=/>set</a> of {{AbortSignal}} objects that the object is dependent on for its
+[=AbortSignal/aborted=] state), which is initially empty.
+
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>dependent signals</dfn> (a weak
+<a for=/>set</a> of {{AbortSignal}} objects that are dependent on the obejct for their
+[=AbortSignal/aborted=] state), which is initially empty.
+
+<hr>
 
 <p>The static <dfn method for=AbortSignal><code>abort(<var>reason</var>)</code></dfn> method steps
 are:
@@ -1909,7 +1895,7 @@ steps are:
 
 <p>The static <dfn method for=AbortSignal><code>any(<var>signals</var>)</code></dfn> method
 steps are to return the result of <a>creating a composite abort signal</a> from <var>signals</var>
-using {{AbortSignal}}.
+using {{AbortSignal}} and the <a>current realm</a>.
 
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
 is [=AbortSignal/aborted=]; otherwise false.
@@ -1951,8 +1937,27 @@ is [=AbortSignal/aborted=]; otherwise false.
 {{AbortController}} object, but an API observing the {{AbortSignal}} object can choose to ignore
 them. For instance, if the operation has already completed.
 
+<hr>
+
+<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
+[=AbortSignal/abort reason=] is not undefined.
+
+<p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
+object <var>signal</var>:
+
+<ol>
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
+
+ <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
+ <a for=AbortSignal>abort algorithms</a>.
+</ol>
+
+<p>To <dfn export for=AbortSignal>remove</dfn> an algorithm <var>algorithm</var> from an
+{{AbortSignal}} <var>signal</var>, <a for=set>remove</a> <var>algorithm</var> from
+<var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+
 <p>To <dfn for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object <var>signal</var> and
-an optional <var>reason</var>, run these steps:
+an optional <var>reason</var>:
 
 <ol>
  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
@@ -1974,16 +1979,12 @@ an optional <var>reason</var>, run these steps:
 
 <p>To <dfn export>create a composite abort signal</dfn> from a list of {{AbortSignal}} objects
 <var>signals</var>, using <var>signalInterface</var>, which must be either {{AbortSignal}} or an
-interface that inherits from it, and an optional <var>realm</var>, run these steps:
+interface that inherits from it, and a <var>realm</var>:
 
 <ol>
  <li>
   <p>Let <var>resultSignal</var> be a <a for=/>new</a> object implementing
-  <var>signalInterface</var> using <var>realm</var> if given, otherwise using the default behavior
-  defined in Web IDL.
-
-  <p class=XXX>As of the time of this writing Web IDL does not yet define any default behavior;
-  see <a href="https://github.com/whatwg/webidl/issues/135">whatwg/webidl#135</a>.
+  <var>signalInterface</var> using <var>realm</var>.
 
  <li><p>Set <var>resultSignal</var>'s [=AbortSignal/composite=] to true.
 
@@ -3539,6 +3540,7 @@ dictionary MutationObserverInit {
 <ul class=brief>
  <li>A <dfn for=MutationObserver id=concept-mo-callback>callback</dfn> set on creation.
  <li>A <dfn for=MutationObserver>node list</dfn> (a <a for=/>list</a> of weak references to
+
  <a for=/>nodes</a>), which is initially empty.
  <li>A <dfn for=MutationObserver id=concept-mo-queue>record queue</dfn> (a <a for=/>queue</a> of
  zero or more {{MutationRecord}} objects), which is initially empty.
