@@ -1850,7 +1850,7 @@ requirements to react in a reasonable way to {{AbortController/abort()}}. For ex
 [=AbortSignal/abort reason=] might need to be propagated to a cross-thread environment, such as a
 service worker.
 
-<p>An {{AbortSignal}} object has a <dfn for="AbortSignal">composite</dfn> (a boolean), which is
+<p>An {{AbortSignal}} object has a <dfn for="AbortSignal">dependent</dfn> (a boolean), which is
 initially false.
 
 <p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn> (a weak
@@ -1906,7 +1906,7 @@ steps are:
 
 <div algorithm>
 <p>The static <dfn method for=AbortSignal><code>any(<var>signals</var>)</code></dfn> method
-steps are to return the result of <a>creating a composite abort signal</a> from <var>signals</var>
+steps are to return the result of <a>creating a dependent abort signal</a> from <var>signals</var>
 using {{AbortSignal}} and the <a>current realm</a>.
 </div>
 
@@ -1997,7 +1997,7 @@ object <var>signal</var>:
 </div>
 
 <div algorithm>
-<p>To <dfn export>create a composite abort signal</dfn> from a list of {{AbortSignal}} objects
+<p>To <dfn export>create a dependent abort signal</dfn> from a list of {{AbortSignal}} objects
 <var>signals</var>, using <var>signalInterface</var>, which must be either {{AbortSignal}} or an
 interface that inherits from it, and a <var>realm</var>:
 
@@ -2009,14 +2009,14 @@ interface that inherits from it, and a <var>realm</var>:
  [=AbortSignal/aborted=], then set <var>resultSignal</var>'s [=AbortSignal/abort reason=] to
  <var>signal</var>'s [=AbortSignal/abort reason=] and return <var>resultSignal</var>.
 
- <li><p>Set <var>resultSignal</var>'s [=AbortSignal/composite=] to true.
+ <li><p>Set <var>resultSignal</var>'s [=AbortSignal/dependent=] to true.
 
  <li>
   <p><a for=list>For each</a> <var>signal</var> of <var>signals</var>:
 
   <ol>
    <li>
-    <p>If <var>signal</var>'s [=AbortSignal/composite=] is false, then:
+    <p>If <var>signal</var>'s [=AbortSignal/dependent=] is false, then:
 
     <ol>
      <li><p><a for=set>Append</a> <var>signal</var> to <var>resultSignal</var>'s
@@ -2032,7 +2032,7 @@ interface that inherits from it, and a <var>realm</var>:
 
     <ol>
      <li><p>Assert: <var>sourceSignal</var> is not [=AbortSignal/aborted=] and not
-     [=AbortSignal/composite=].
+     [=AbortSignal/dependent=].
 
      <li><p>If <var>resultSignal</var>'s [=AbortSignal/source signals=] <a for=set>contains</a>
      <var>sourceSignal</var>, then <a for=iteration>continue</a>.
@@ -2052,7 +2052,7 @@ interface that inherits from it, and a <var>realm</var>:
 
 <h4 id=abort-signal-garbage-collection>Garbage collection</h4>
 
-<p>A non-[=AbortSignal/aborted=] [=AbortSignal/composite=] {{AbortSignal}} object must not be
+<p>A non-[=AbortSignal/aborted=] [=AbortSignal/dependent=] {{AbortSignal}} object must not be
 garbage collected while its [=AbortSignal/source signals=] is non-empty and it has registered event
 listeners for its {{AbortSignal/abort}} event or its [=AbortSignal/abort algorithms=] is non-empty.
 
