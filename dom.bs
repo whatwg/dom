@@ -30,6 +30,7 @@ type: interface
 urlPrefix: https://tc39.es/ecma262/#; spec: ECMASCRIPT
  text: Construct; url: sec-construct; type: abstract-op
  type: dfn
+  text: current realm; url: current-realm
   text: realm; url: realm
   text: surrounding agent; url: surrounding-agent
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
@@ -1768,6 +1769,7 @@ interface AbortController {
 <p>An {{AbortController}} object has an associated <dfn for=AbortController>signal</dfn> (an
 {{AbortSignal}} object).
 
+<div algorithm>
 <p>The
 <dfn constructor for=AbortController lt="AbortController()"><code>new AbortController()</code></dfn>
 constructor steps are:
@@ -1777,13 +1779,22 @@ constructor steps are:
 
  <li><p>Set <a>this</a>'s <a for=AbortController>signal</a> to <var>signal</var>.
 </ol>
+</div>
 
 <p>The <dfn attribute for=AbortController><code>signal</code></dfn> getter steps are to return
 <a>this</a>'s <a for=AbortController>signal</a>.
 
+<div algorithm>
 <p>The <dfn method for=AbortController><code>abort(<var>reason</var>)</code></dfn> method steps are
-to <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>signal</a> with
-<var>reason</var> if it is given.
+to <a for=AbortController>signal abort</a> on <a>this</a> with <var>reason</var> if it is given.
+</div>
+
+<div algorithm>
+<p>To <dfn export for=AbortController>signal abort</dfn> on an {{AbortController}}
+<var>controller</var> with an optional <var>reason</var>, <a for=AbortSignal>signal abort</a> on
+<var>controller</var>'s <a for=AbortController>signal</a> with <var>reason</var> if it is given.
+</div>
+
 
 <h3 id=interface-AbortSignal>Interface {{AbortSignal}}</h3>
 
@@ -1792,6 +1803,7 @@ to <a for=AbortSignal>signal abort</a> on <a>this</a>'s <a for=AbortController>s
 interface AbortSignal : EventTarget {
   [NewObject] static AbortSignal abort(optional any reason);
   [Exposed=(Window,Worker), NewObject] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
+  [NewObject] static AbortSignal _any(sequence&lt;AbortSignal> signals);
 
   readonly attribute boolean aborted;
   readonly attribute any reason;
@@ -1804,6 +1816,11 @@ interface AbortSignal : EventTarget {
  <dt><code>AbortSignal . <a method for=AbortSignal>abort</a>(<var>reason</var>)</code>
  <dd>Returns an {{AbortSignal}} instance whose <a for=AbortSignal>abort reason</a> is set to
  <var>reason</var> if not undefined; otherwise to an "{{AbortError!!exception}}" {{DOMException}}.
+
+ <dt><code>AbortSignal . <a method for=AbortSignal lt=any(signals)>any</a>(<var>signals</var>)</code>
+ <dd>Returns an {{AbortSignal}} instance which will be aborted once any of <var>signals</var> is
+ aborted. Its <a for=AbortSignal>abort reason</a> will be set to whichever one of <var>signals</var>
+ caused it to be aborted.
 
  <dt><code>AbortSignal . <a method for=AbortSignal lt=timeout(milliseconds)>timeout</a>(<var>milliseconds</var>)</code>
  <dd>Returns an {{AbortSignal}} instance which will be aborted in <var>milliseconds</var>
@@ -1821,35 +1838,32 @@ interface AbortSignal : EventTarget {
  {{AbortController}} has signaled to abort; otherwise, does nothing.
 </dl>
 
-<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn>, which is a
-JavaScript value. It is undefined unless specified otherwise.
+<p>An {{AbortSignal}} object has an associated <dfn export for=AbortSignal>abort reason</dfn> (a
+JavaScript value), which is initially undefined.
 
-<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
-[=AbortSignal/abort reason=] is not undefined.
-
-<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, which is a
-<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]. Unless
-specified otherwise, its value is the empty set.
-
-<p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
-object <var>signal</var>, run these steps:
-
-<ol>
- <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
-
- <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
- <a for=AbortSignal>abort algorithms</a>.
-</ol>
-
-<p>To <dfn export for=AbortSignal>remove</dfn> an algorithm <var>algorithm</var> from an
-{{AbortSignal}} <var>signal</var>, <a for=set>remove</a> <var>algorithm</var> from
-<var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>abort algorithms</dfn>, (a
+<a for=/>set</a> of algorithms which are to be executed when it is [=AbortSignal/aborted=]),
+which is initially empty.
 
 <p class=note>The [=AbortSignal/abort algorithms=] enable APIs with complex
 requirements to react in a reasonable way to {{AbortController/abort()}}. For example, a given API's
 [=AbortSignal/abort reason=] might need to be propagated to a cross-thread environment, such as a
 service worker.
 
+<p>An {{AbortSignal}} object has a <dfn for="AbortSignal">dependent</dfn> (a boolean), which is
+initially false.
+
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>source signals</dfn> (a weak
+<a for=/>set</a> of {{AbortSignal}} objects that the object is dependent on for its
+[=AbortSignal/aborted=] state), which is initially empty.
+
+<p>An {{AbortSignal}} object has associated <dfn for=AbortSignal>dependent signals</dfn> (a weak
+<a for=/>set</a> of {{AbortSignal}} objects that are dependent on the object for their
+[=AbortSignal/aborted=] state), which is initially empty.
+
+<hr>
+
+<div algorithm>
 <p>The static <dfn method for=AbortSignal><code>abort(<var>reason</var>)</code></dfn> method steps
 are:
 
@@ -1861,7 +1875,9 @@ are:
 
  <li>Return <var>signal</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The static <dfn method for=AbortSignal><code>timeout(<var>milliseconds</var>)</code></dfn> method
 steps are:
 
@@ -1886,6 +1902,13 @@ steps are:
 
  <li><p>Return <var>signal</var>.
 </ol>
+</div>
+
+<div algorithm>
+<p>The static <dfn method for=AbortSignal><code>any(<var>signals</var>)</code></dfn> method
+steps are to return the result of <a>creating a dependent abort signal</a> from <var>signals</var>
+using {{AbortSignal}} and the <a>current realm</a>.
+</div>
 
 <p>The <dfn attribute for=AbortSignal>aborted</dfn> getter steps are to return true if <a>this</a>
 is [=AbortSignal/aborted=]; otherwise false.
@@ -1924,11 +1947,35 @@ is [=AbortSignal/aborted=]; otherwise false.
 <dfn event for=AbortSignal><code>abort</code></dfn>.
 
 <p class=note>Changes to an {{AbortSignal}} object represent the wishes of the corresponding
-{{AbortController}} object, but an API observing the {{AbortSignal}} object can chose to ignore
+{{AbortController}} object, but an API observing the {{AbortSignal}} object can choose to ignore
 them. For instance, if the operation has already completed.
 
+<hr>
+
+<p>An {{AbortSignal}} object is <dfn export for="AbortSignal">aborted</dfn> when its
+[=AbortSignal/abort reason=] is not undefined.
+
+<div algorithm>
+<p>To <dfn export for=AbortSignal>add</dfn> an algorithm <var>algorithm</var> to an {{AbortSignal}}
+object <var>signal</var>:
+
+<ol>
+ <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
+
+ <li><p><a for=set>Append</a> <var>algorithm</var> to <var>signal</var>'s
+ <a for=AbortSignal>abort algorithms</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export for=AbortSignal>remove</dfn> an algorithm <var>algorithm</var> from an
+{{AbortSignal}} <var>signal</var>, <a for=set>remove</a> <var>algorithm</var> from
+<var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
+</div>
+
+<div algorithm>
 <p>To <dfn export for=AbortSignal>signal abort</dfn>, given an {{AbortSignal}} object
-<var>signal</var> and an optional <var>reason</var>, run these steps:
+<var>signal</var> and an optional <var>reason</var>:
 
 <ol>
  <li><p>If <var>signal</var> is [=AbortSignal/aborted=], then return.
@@ -1936,34 +1983,78 @@ them. For instance, if the operation has already completed.
  <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
  otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
- <li><p><a for=set>For each</a> <var>algorithm</var> in <var>signal</var>'s
+ <li><p><a for=set>For each</a> <var>algorithm</var> of <var>signal</var>'s
  [=AbortSignal/abort algorithms=]: run <var>algorithm</var>.
 
  <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
 
  <li><p>[=Fire an event=] named {{AbortSignal/abort}} at <var>signal</var>.
-</ol>
 
-<p>A <var>followingSignal</var> (an {{AbortSignal}}) is made to
-<dfn export for=AbortSignal>follow</dfn> a <var>parentSignal</var> (an {{AbortSignal}}) by running
-these steps:
+ <li><p><a for=set>For each</a> <var>dependentSignal</var> of <var>signal</var>'s
+ [=AbortSignal/dependent signals=], [=AbortSignal/signal abort=] on <var>dependentSignal</var> with
+ <var>signal</var>'s [=AbortSignal/abort reason=].
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export>create a dependent abort signal</dfn> from a list of {{AbortSignal}} objects
+<var>signals</var>, using <var>signalInterface</var>, which must be either {{AbortSignal}} or an
+interface that inherits from it, and a <var>realm</var>:
 
 <ol>
- <li><p>If <var>followingSignal</var> is [=AbortSignal/aborted=], then return.
+ <li><p>Let <var>resultSignal</var> be a <a for=/>new</a> object implementing
+ <var>signalInterface</var> using <var>realm</var>.
 
- <li><p>If <var>parentSignal</var> is [=AbortSignal/aborted=], then
- <a for=AbortSignal>signal abort</a> on <var>followingSignal</var> with <var>parentSignal</var>'s
- [=AbortSignal/abort reason=].
+ <li><p><a for=list>For each</a> <var>signal</var> of <var>signals</var>: if <var>signal</var> is
+ [=AbortSignal/aborted=], then set <var>resultSignal</var>'s [=AbortSignal/abort reason=] to
+ <var>signal</var>'s [=AbortSignal/abort reason=] and return <var>resultSignal</var>.
+
+ <li><p>Set <var>resultSignal</var>'s [=AbortSignal/dependent=] to true.
 
  <li>
-  <p>Otherwise, <a for=AbortSignal lt=add>add the following abort steps</a> to
-  <var>parentSignal</var>:
+  <p><a for=list>For each</a> <var>signal</var> of <var>signals</var>:
 
   <ol>
-   <li><p><a for=AbortSignal>Signal abort</a> on <var>followingSignal</var> with
-   <var>parentSignal</var>'s [=AbortSignal/abort reason=].
+   <li>
+    <p>If <var>signal</var>'s [=AbortSignal/dependent=] is false, then:
+
+    <ol>
+     <li><p><a for=set>Append</a> <var>signal</var> to <var>resultSignal</var>'s
+     [=AbortSignal/source signals=].
+
+     <li><p><a for=set>Append</a> <var>resultSignal</var> to <var>signal</var>'s
+     [=AbortSignal/dependent signals=].
+    </ol>
+
+   <li>
+    <p>Otherwise, <a for=list>for each</a> <var>sourceSignal</var> of <var>signal</var>'s
+    [=AbortSignal/source signals=]:
+
+    <ol>
+     <li><p>Assert: <var>sourceSignal</var> is not [=AbortSignal/aborted=] and not
+     [=AbortSignal/dependent=].
+
+     <li><p>If <var>resultSignal</var>'s [=AbortSignal/source signals=] <a for=set>contains</a>
+     <var>sourceSignal</var>, then <a for=iteration>continue</a>.
+
+     <li><p><a for=set>Append</a> <var>sourceSignal</var> to <var>resultSignal</var>'s
+     [=AbortSignal/source signals=].
+
+     <li><p><a for=set>Append</a> <var>resultSignal</var> to <var>sourceSignal</var>'s
+     [=AbortSignal/dependent signals=].
+    </ol>
   </ol>
+
+ <li><p>Return <var>resultSignal</var>.
 </ol>
+</div>
+
+
+<h4 id=abort-signal-garbage-collection>Garbage collection</h4>
+
+<p>A non-[=AbortSignal/aborted=] [=AbortSignal/dependent=] {{AbortSignal}} object must not be
+garbage collected while its [=AbortSignal/source signals=] is non-empty and it has registered event
+listeners for its {{AbortSignal/abort}} event or its [=AbortSignal/abort algorithms=] is non-empty.
 
 
 <h3 id=abortcontroller-api-integration>Using {{AbortController}} and {{AbortSignal}} objects in
