@@ -82,3 +82,30 @@ is not indented, but
 is.
 
 End tags may be included (if done consistently) and attributes may be quoted (using double quotes), though the prevalent theme is to omit end tags and not quote attributes (unless they contain a space).
+
+Place one newline between paragraphs (including list elements). Place three newlines before `<h2>`, and two newlines before other headings. This does not apply when a nested heading follows the parent heading.
+```html
+<ul>
+ <li><p>Do not place a newline above.
+
+ <li><p>Place a newline above.
+</ul>
+
+<p>Place a newline above.
+
+
+<h3>Place two newlines above.</h3>
+
+<h4>Placing one newline is OK here.</h4>
+
+
+<h4>Place two newlines above.</h4>
+```
+Use camel-case for variable names and "spaced" names for definitions, algorithms, etc.
+```html
+<p>A <a for=/>request</a> has an associated
+<dfn export for=request id=concept-request-redirect-mode>redirect mode</dfn>,...
+```
+```html
+<p>Let <var>redirectMode</var> be <var>request</var>'s <a for=request>redirect mode</a>.
+```
