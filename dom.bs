@@ -909,8 +909,13 @@ for historical reasons.
 
 <pre class=idl>
 [Exposed=*]
+interface EventTargetInternals {
+  attribute EventTarget parent;
+};
+
+[Exposed=*]
 interface EventTarget {
-  constructor();
+  constructor(optional EventTargetCallback cb);
 
   undefined addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = {});
   undefined removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = {});
@@ -930,6 +935,8 @@ dictionary AddEventListenerOptions : EventListenerOptions {
   boolean once = false;
   AbortSignal signal;
 };
+
+callback EventTargetCallback = undefined (EventTargetInternals internals);
 </pre>
 
 <p>An {{EventTarget}} object represents a target to which an <a>event</a> can be <a>dispatched</a>
@@ -938,6 +945,70 @@ when something has occurred.
 <p>Each {{EventTarget}} object has an associated <dfn for=EventTarget>event listener list</dfn> (a
 <a for=/>list</a> of zero or more <a>event listeners</a>). It is initially the empty list.
 <!-- Intentionally not exported. -->
+
+<p>Each {{EventTarget}} object has an associated <dfn for=EventTarget>attached internals</dfn> (null
+or an {{EventTargetInternals}} object), initially null.
+
+<p>Each {{EventTargetInternals}} object has an associated <dfn
+for=EventTargetInternals>eventTarget</dfn> (an {{EventTarget}} object).
+
+<p>Each {{EventTargetInternals}} object has an associated <dfn
+for=EventTargetInternals>parent</dfn> (an {{EventTarget}} object).
+
+<p>The <dfn export for=Event id=concept-eventtarget-constructor>new EventTarget(cb)</dfn> constructor steps are:
+
+<ol>
+ <li><p>If <var>cb</var> is not null then:
+
+  <ol>
+   <li><p>Let <var>eventTargetInternals</var> a new {{EventTargetInternals}} instance.
+
+   <li><p>Set <var>eventTargetInternals</var>'s <a for=EventTargetInternals>eventTarget</a> to
+   <var>this</var>.
+
+   <li><a>Invoke</a> <var>cb</var> with « <var>eventTargetInternals</var> » and with <var>this</var>
+   as the <a>callback this value</a>.
+
+   <li><p>Set <var>this</var>'s <a for="EventTarget">attached internals</a> to
+   <var>eventTargetInternals</var>.
+  </ol>
+</ol>
+
+<p>The <a for=EventTargetInternals>parent</a> getter steps are to return <var>this</var>'s
+<a for=EventTargetInternals>parent</a>.
+
+<p>The <a for=EventTargetInternals>parent</a> setter steps are:
+
+<ol>
+  <li><p>Let <var>theParent</var> be the given value.
+
+  <li><p>Let <var>targets</var> be a new <a for=/>list</a>.
+
+   <li>Append <var>this</var>'s <a for=EventTargetInternals>eventTarget</a> to <var>targets</var>.
+
+  <li><p>Let <var>parent</var> be <var>theParent</var>.
+
+  <li>
+   <p>While <var>parent</var> is non-null:</p>
+
+   <ol>
+    <li>If <var>targets</var> <a for=set>contains</a> <var>parent</var> then <a>throw</a> a
+    "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+    <li>Append <var>parent</var> to <var>targets</var>.
+
+    <li>Let <var>parentInternals</var> be <var>parent</var>'s <a for=EventTarget>attached internals</a>.
+
+    <li>Set <var>parent</var> to <var>parentInternals</var>'s <a
+    for=EventTargetInternals>eventTarget</a>.
+
+   </ol>
+
+  <li>Set <var>this</var>'s <a for=EventTargetInternals>eventTarget</a> <a>get the parent</a>
+  algorithm to return <var>theParent</var>.
+
+  <li>Set <var>this</var>'s {{EventTargetInternals/parent}} to <var>theParent</var>.
+</ol>
 
 <p>An <dfn export id=concept-event-listener>event listener</dfn> can be used to observe a specific
 <a>event</a> and consists of:
