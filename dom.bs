@@ -4465,15 +4465,36 @@ dom-Range-extractContents, dom-Range-cloneContents -->
  <var>copy</var>, if <var>copy</var> is a <a>document</a>, and set <var>copy</var>'s
  <a for=Node>node document</a> to <var>document</var> otherwise.
 
- <li>Run any <a>cloning steps</a> defined for <var>node</var> in
+ <li><p>Run any <a>cloning steps</a> defined for <var>node</var> in
  <a>other applicable specifications</a> and pass <var>copy</var>, <var>node</var>,
- <var>document</var> and the <i>clone children flag</i> if set, as parameters.
+ <var>document</var>, and the <i>clone children flag</i> if set, as parameters.
 
- <li>If the <i>clone children flag</i> is set, <a lt="clone a node">clone</a> all the
- <a for=tree>children</a> of <var>node</var> and append them to <var>copy</var>, with
- <var>document</var> as specified and the <i>clone children flag</i> being set.
+ <li><p>If the <i>clone children flag</i> is set, then for each <a for=tree>child</a>
+ <var>child</var> of <var>node</var>, in <a>tree order</a>: <a>append</a> the result of
+ <a lt="clone a node">cloning</a> <var>child</var> with <var>document</var> and the
+ <i>clone children flag</i> set, to <var>copy</var>.
 
- <li>Return <var>copy</var>.
+ <li>
+  <p>If <var>node</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
+  <a for=ShadowRoot>clonable</a> is true:
+
+  <ol>
+   <li><p>Run <a>attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>.
+
+   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
+   to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
+
+   <li><p>If the <i>clone children flag</i> is set, then for each <a for=tree>child</a>
+   <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>, in <a>tree order</a>:
+   <a>append</a> the result of <a lt="clone a node">cloning</a> <var>child</var> with
+   <var>document</var> and the <i>clone children flag</i> set, to <var>copy</var>'s
+   <a for=Element>shadow root</a>.
+  </ol>
+
+ <li><p>Return <var>copy</var>.
 </ol>
 
 <p>The <dfn method for=Node><code>cloneNode(<var>deep</var>)</code></dfn> method steps are:
@@ -4973,8 +4994,9 @@ known as <dfn export id=concept-document lt="document">documents</dfn>.
 <dfn export for=Document id=concept-document-content-type>content type</dfn> (a string),
 <dfn export for=Document id=concept-document-url>URL</dfn> (a <a for=/>URL</a>),
 <dfn export for=Document id=concept-document-origin>origin</dfn> (an <a for=/>origin</a>),
-<dfn export for=Document id=concept-document-type>type</dfn> ("<code>xml</code>" or "<code>html</code>"), and
-<dfn export for=Document id=concept-document-mode>mode</dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>").
+<dfn export for=Document id=concept-document-type>type</dfn> ("<code>xml</code>" or "<code>html</code>"),
+<dfn export for=Document id=concept-document-mode>mode</dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>"), and
+<dfn export for=Document>allow declarative shadow roots</dfn> (a boolean).
 [[!ENCODING]]
 [[!URL]]
 [[!HTML]]
@@ -4983,8 +5005,8 @@ known as <dfn export id=concept-document lt="document">documents</dfn>.
 <a for=/>encoding</a>, <a for=Document>content type</a> is
 "<code>application/xml</code>", <a for=Document>URL</a> is "<code>about:blank</code>",
 <a for=Document>origin</a> is an <a>opaque origin</a>,
-<a for=Document>type</a> is "<code>xml</code>", and its
-<a for=Document>mode</a> is "<code>no-quirks</code>".
+<a for=Document>type</a> is "<code>xml</code>", <a for=Document>mode</a> is
+"<code>no-quirks</code>", and its <a for=Document>allow declarative shadow roots</a> is false.
 
 <p>A <a>document</a> is said to be an <dfn export>XML document</dfn> if its <a for=Document>type</a>
 is "<code>xml</code>"; otherwise an <dfn export>HTML document</dfn>. Whether a <a>document</a> is an
@@ -5857,12 +5879,18 @@ It is initially set to false.</p>
 <p><a for=/>Shadow roots</a> have an associated
 <dfn export for=ShadowRoot>available to element internals</dfn>. It is initially set to false.</p>
 
+<p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>declarative</dfn>
+(a boolean). It is initially set to false.</p>
+
 <p><a for=/>Shadow roots</a>'s associated <a for=DocumentFragment>host</a> is never null.</p>
 <!-- If we ever change this, e.g., add a ShadowRoot object constructor, that would have serious
      consequences for innerHTML. -->
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>slot assignment</dfn>
 ("<code>manual</code>" or "<code>named</code>").
+
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>clonable</dfn> (a boolean).
+It is initially set to false.</p>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
@@ -6010,6 +6038,7 @@ dictionary ShadowRootInit {
   required ShadowRootMode mode;
   boolean delegatesFocus = false;
   SlotAssignmentMode slotAssignment = "named";
+  boolean clonable = false;
 };
 </pre>
 
@@ -6857,23 +6886,39 @@ are:
  "<code>span</code>"
 </ul>
 
+<div algorithm>
 <p>The <dfn method for=Element><code>attachShadow(<var>init</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>If <a>this</a>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
+ <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
+ <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
+ <var>init</var>["{{ShadowRootInit/delegatesFocus}}"], and
+ <var>init</var>["{{ShadowRootInit/slotAssignment}}"].
+
+ <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
+<a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
+a boolean <var>delegatesFocus</var>, and a boolean <var>slotAssignment</var>:
+
+<ol>
+ <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
  then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>If <a>this</a>'s <a for=Element>local name</a> is not a <a>valid shadow host name</a>, then
- <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+ <li><p>If <var>element</var>'s is not a <a>valid shadow host name</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li>
-  <p>If <a>this</a>'s <a for=Element>local name</a> is a <a>valid custom element name</a>, or
-  <a>this</a>'s <a for=Element><code>is</code> value</a> is not null, then:
+  <p>If <var>element</var>'s <a for=Element>local name</a> is a <a>valid custom element name</a>, or
+  <var>element</var>'s <a for=Element><code>is</code> value</a> is non-null, then:
 
   <ol>
    <li><p>Let <var>definition</var> be the result of
    <a lt="look up a custom element definition">looking up a custom element definition</a> given
-   <a>this</a>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
+   <var>element</var>'s <a for=Node>node document</a>, its <a for=Element>namespace</a>, its
    <a for=Element>local name</a>, and its <a for=Element><code>is</code> value</a>.
 
    <li><p>If <var>definition</var> is not null and <var>definition</var>'s
@@ -6882,38 +6927,53 @@ are:
   </ol>
  </li>
 
- <li><p>If <a>this</a> is a <a for=Element>shadow host</a>, then <a>throw</a> an
- "{{NotSupportedError!!exception}}" {{DOMException}}.
+ <li>
+  <p>If <var>element</var> is a <a for=Element>shadow host</a>, then:
+
+  <ol>
+   <li><p>If <var>element</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
+   is false, then <a>throw</a> an "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+   <li>
+    <p>Otherwise, <a for=/>remove</a> all of <var>element</var>'s <a for=Element>shadow root</a>'s
+    <a for=tree>children</a>, in <a>tree order</a>, and return.
+
+    <p class=note>This means that if multiple declarative shadow roots are contained within a single
+    shadow host, only the last one will remain.
+  </ol>
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
- is <a>this</a>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is <a>this</a>,
- and <a for=ShadowRoot>mode</a> is <var>init</var>["{{ShadowRootInit/mode}}"].
+ is <var>element</var>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is
+ <var>element</var>, and <a for=ShadowRoot>mode</a> is <var>mode</var>.
 
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to
- <var>init</var>["{{ShadowRootInit/delegatesFocus}}"].
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>delegatesFocus</var>.
 
- <li><p>If <a>this</a>'s <a for=Element>custom element state</a> is "<code>precustomized</code>" or
- "<code>custom</code>", then set <var>shadow</var>'s
+ <li><p>If <var>element</var>'s <a for=Element>custom element state</a> is
+ "<code>precustomized</code>" or "<code>custom</code>", then set <var>shadow</var>'s
  <a for=ShadowRoot>available to element internals</a> to true.
 
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to
- <var>init</var>["{{ShadowRootInit/slotAssignment}}"].
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>slotAssignment</var>.
 
- <li><p>Set <a>this</a>'s <a for=Element>shadow root</a> to <var>shadow</var>.
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>declarative</a> to false.
 
- <li><p>Return <var>shadow</var>.
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>clonable</a> to <var>clonable</var>.
+
+ <li><p>Set <var>element</var>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=Element><code>shadowRoot</code></dfn> getter steps are:
 
 <ol>
  <li><p>Let <var>shadow</var> be <a>this</a>'s <a for=Element>shadow root</a>.
 
  <li><p>If <var>shadow</var> is null or its <a for=ShadowRoot>mode</a> is "<code>closed</code>",
- then return null.</p></li>
+ then return null.
 
  <li><p>Return <var>shadow</var>.
 </ol>
+</div>
 
 <hr>
 
@@ -10223,7 +10283,7 @@ Manish Tripathi,
 Marcos Caceres,
 Mark Miller,
 Martijn van der Ven,
-Mason Freed,
+Mason Freed,<!-- mfreed7; GitHub -->
 Mats Palmgren,
 Mounir Lamouri,
 Michael Stramel,
