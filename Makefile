@@ -16,7 +16,7 @@ remote: dom.bs
 	);
 
 local: dom.bs
-	bikeshed spec dom.bs dom.html --md-Text-Macro="COMMIT-SHA LOCAL COPY"
+	bikeshed spec dom.bs dom.html --md-Text-Macro="COMMIT-SHA LOCAL-COPY"
 
 deploy: dom.bs
 	curl --remote-name --fail https://resources.whatwg.org/build/deploy.sh
