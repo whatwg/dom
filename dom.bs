@@ -4502,6 +4502,8 @@ dom-Range-extractContents, dom-Range-cloneContents -->
   <a for=ShadowRoot>clonable</a> is true:
 
   <ol>
+   <li><p>Assert: <var>copy</var> is not a <a for=Element>shadow host</a>.
+
    <li><p>Run <a>attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
@@ -6929,7 +6931,7 @@ are:
 <div algorithm>
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
 <a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
-a boolean <var>delegatesFocus</var>, and a boolean <var>slotAssignment</var>:
+a boolean <var>delegatesFocus</var>, and a string <var>slotAssignment</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -6958,24 +6960,30 @@ a boolean <var>delegatesFocus</var>, and a boolean <var>slotAssignment</var>:
   <p>If <var>element</var> is a <a for=Element>shadow host</a>, then:
 
   <ol>
-   <li><p>If <var>element</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
-   is false, then <a>throw</a> an "{{NotSupportedError!!exception}}" {{DOMException}}.
+   <li><p>Let <var>currentShadowRoot</var> be <var>element</var>'s <a for=Element>shadow root</a>.
+
+   <li>
+    <p>If any of the following are true:
+
+    <ul>
+     <li><p><var>currentShadowRoot</var>'s <a for=ShadowRoot>declarative</a> is false; or
+
+     <li><p><var>currentShadowRoot</var>'s <a for=ShadowRoot>mode</a> is not <var>mode</var>,
+    </ul>
+
+    <p>then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
    <li>
     <p>Otherwise:
 
     <ol>
-     <li><p><a for=/>Remove</a> all of <var>element</var>'s <a for=Element>shadow root</a>'s
-     <a for=tree>children</a>, in <a>tree order</a>.
+     <li><p><a for=/>Remove</a> all of <var>currentShadowRoot</var>'s <a for=tree>children</a>, in
+     <a>tree order</a>.
 
-     <li><p>Set <var>element</var>'s <a for=Element>shadow root</a>'s
-     <a for=ShadowRoot>declarative</a> to false.
+     <li><p>Set <var>currentShadowRoot</var>'s <a for=ShadowRoot>declarative</a> to false.
 
      <li><p>Return.
     </ol>
-
-    <p class=note>This means that if multiple declarative shadow roots are contained within a single
-    shadow host, only the last one will remain.
   </ol>
 
  <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
