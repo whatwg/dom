@@ -3034,14 +3034,53 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
 <p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
-<var>nodes</var> and <var>document</var>, run these steps:
+<var>parent</var>, <var>nodes</var> and <var>document</var>, run these steps:
 
 <ol>
- <li><p>Let <var>node</var> be null.
+ <li><p>Let <var>isScriptElement</var> be <var>parent</var> is a {{HTMLScriptElement}}.
+ <li><p>For each <var>value</var> in <var>nodes</var>:
+  <ol>
+   <li>If <var>value</var> is a <a for=/>node</a>, then:
+    <ol>
+     <li>If <var>isScriptElement</var> is false, skip to the next <var>value</var>.
+      <li>If <var>value</var>'s {{nodeType}} is not {{TEXT_NODE}}, skip to the next <var>value</var>.
+       <li>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
+         * {{TrustedScript}} as <var>expectedType</var>,
+         * <var>document</var>'s [=relevant global object=] as <var>global</var>,
+         * <var>value</var>'s <a for=CharacterData>data</a> as <var>input</var>,
+         * `HTMLScriptElement text` as <var>sink</var>,
+         * `script` as <var>sinkGroup</var>.
 
- <li><p>Replace each string in <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
- <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
- <var>document</var>.
+         <p>If the algorithm threw an error, rethrow the error.
+       <li>Set <var>value</var>'s <a for=CharacterData>data</a> to <var>text</var>.
+    </ol>
+    <li>If <var>value</var> is a string, then:
+     <ol>
+      <li>Let <var>text</var> be <var>value</var>.
+      <li>If <var>isScriptElement</var> is true:
+       <ol>
+        <li>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
+          * {{TrustedScript}} as <var>expectedType</var>,
+          * <var>document</var>'s [=relevant global object=] as <var>global</var>,
+          * <var>value</var> as <var>input</var>,
+          * `HTMLScriptElement text` as <var>sink</var>,
+          * `script` as <var>sinkGroup</var>.
+
+          If the algorithm threw an error, rethrow the error.
+        <li>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
+          <a for=CharacterData>data</a> is <var>text</var> and <a for=Node>node document</a> is <var>document</var>.
+        <li>Replace <var>value</var> with <var>newValue</var>.
+       </ol>
+     </ol>
+    <li>If <var>value</var> is a {{TrustedScript}}, then:
+     <ol>
+      <li>Let <var>text</var> be <var>value</var>'s Data internal slot value.
+      <li>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
+         <a for=CharacterData>data</a> is <var>text</var> and <a for=Node>node document</a> is <var>document</var>.
+      <li>Replace <var>value</var> with <var>newValue</var>.
+     </ol>
+ </ol>
+ <li><p>Let <var>node</var> be null.
 
  <li><p>If <var>nodes</var> contains one <a for=/>node</a>, then set <var>node</var> to
  <var>nodes</var>[0].
@@ -3060,9 +3099,9 @@ interface mixin ParentNode {
   readonly attribute Element? lastElementChild;
   readonly attribute unsigned long childElementCount;
 
-  [CEReactions, Unscopable] undefined prepend((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined append((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] undefined prepend((Node or DOMString or TrustedScript)... nodes);
+  [CEReactions, Unscopable] undefined append((Node or DOMString or TrustedScript)... nodes);
+  [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString or TrustedScript)... nodes);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -3136,7 +3175,7 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
 <p>The <dfn method for=ParentNode><code>prepend(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given <a>this</a>,
  <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Pre-insert</a> <var>node</var> into <a>this</a> before <a>this</a>'s
@@ -3146,7 +3185,7 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
 <p>The <dfn method for=ParentNode><code>append(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given <a>this</a>,
  <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Append</a> <var>node</var> to <a>this</a>.
@@ -3156,7 +3195,7 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
 are:
 
 <ol>
- <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
+ <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given <a>this</a>,
  <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Ensure pre-insertion validity</a> of <var>node</var> into <a>this</a> before
@@ -3212,9 +3251,9 @@ steps are to return the first <a>following</a> <a for=tree>sibling</a> that is a
 
 <pre class=idl>
 interface mixin ChildNode {
-  [CEReactions, Unscopable] undefined before((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined after((Node or DOMString)... nodes);
-  [CEReactions, Unscopable] undefined replaceWith((Node or DOMString)... nodes);
+  [CEReactions, Unscopable] undefined before((Node or DOMString or TrustedScript)... nodes);
+  [CEReactions, Unscopable] undefined after((Node or DOMString or TrustedScript)... nodes);
+  [CEReactions, Unscopable] undefined replaceWith((Node or DOMString or TrustedScript)... nodes);
   [CEReactions, Unscopable] undefined remove();
 };
 DocumentType includes ChildNode;
@@ -3262,7 +3301,7 @@ CharacterData includes ChildNode;
  <a for=tree>sibling</a> not in <var>nodes</var>; otherwise null.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
+ <var>parent</var>, <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p>If <var>viablePreviousSibling</var> is null, then set it to <var>parent</var>'s
  <a for=tree>first child</a>; otherwise to <var>viablePreviousSibling</var>'s
@@ -3283,7 +3322,7 @@ CharacterData includes ChildNode;
  <a for=tree>sibling</a> not in <var>nodes</var>; otherwise null.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
+ <var>parent</var>, <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
@@ -3300,7 +3339,7 @@ CharacterData includes ChildNode;
  <a for=tree>sibling</a> not in <var>nodes</var>; otherwise null.
 
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a>, given
- <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
+ <var>parent</var>, <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
  <li>
   <p>If <a>this</a>'s <a for=tree>parent</a> is <var>parent</var>, <a>replace</a> <a>this</a> with
