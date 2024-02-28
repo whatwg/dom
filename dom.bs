@@ -2645,11 +2645,68 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed <var ignore>insertedNode</var>, as indicated in the <a for=/>insert</a>
-algorithm below.
+algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
+below. These steps must not modify the <a>node tree</a> that <var>insertedNode</var>
+<a>participates</a> in, create <a for=/>browsing contexts</a>, <a lt="fire an event">fire
+events</a>, or otherwise execute JavaScript.
+
+<div class=example id=example-foo-what-do-i-put-here>
+ <p>While the <a>insertion steps</a> cannot execute JavaScript (among other things), it is expected
+ that they will indeed have script-observable consequences. Consider the below example:
+
+ <pre class=lang-javascript><code>
+ const h1 = document.querySelector('h1');
+
+ const fragment = new DocumentFragment();
+ const script = fragment.appendChild(document.createElement('script'));
+ const style = fragment.appendChild(document.createElement('style'));
+
+ script.innerText= 'console.log(getComputedStyle(h1).color)'; // Prints 'rgb(255, 0, 0)'
+ style.innerText = 'h1 {color: rgb(255, 0, 0);}';
+
+ document.body.append(fragment);
+ </code></pre>
+
+ <p>The script in the above example prints <code class=lang-javascript>'rgb(255, 0, 0)'</code>
+ because the following happen in order:
+
+  <ol>
+   <li>
+    <p>The <a for=/>insert</a> algorithm runs, which will insert the <{script}> and <code><a element
+    spec=HTML>style</a></code> elements in order.
+
+    <ol>
+     <li>The HTML Standard's <a>insertion steps</a> run for the <{script}> element; they do nothing.
+     [[!HTML]]
+
+     <li>The HTML Standard's <a>insertion steps</a> run for the <code><a element
+     spec=HTML>style</a></code> element; they immediately apply its style rules to the document.
+     [[!HTML]]
+
+     <li>The HTML Standard's <a>post-insertion steps</a> run for the <{script}> element; they run
+     the script, which immediately observes the style rules that were applied in the above step.
+     [[!HTML]]
+    </ol>
+   </li>
+  </ol>
+</div>
+
 <!-- See https://github.com/whatwg/dom/issues/34#issuecomment-125571750 for why we might need to
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
+
+<p><a lt="Other applicable specifications">Specifications</a> may also define <dfn export
+id=concept-node-post-insert-ext>post-insertion steps</dfn> for all or some <a for=/>nodes</a>. The
+algorithm is passed <var ignore>insertedNode</var>, as indicated in the <a
+for=/>insert</a> algorithm below.
+
+<p class=note>The purpose of the <a>post-insertion steps</a> is to provide an opportunity for <a
+for=/>nodes</a> to perform any insertion-related operations that modify the <a>node tree</a> that
+<var ignore>insertedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>, or
+otherwise execute JavaScript. These steps allow all nodes that will be inserted by a given <a
+for=/>insert</a> operation to by inserted <i>atomically</i>, with all major side effects occurring
+<i>after</i> <a>node tree</a> insertion is complete.
+
 
 <p><a lt="other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
@@ -2752,6 +2809,16 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+
+ <li>
+  <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
+
+  <ol>
+   <li><p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
+   <var>node</var>, in <a>shadow-including tree order</a>, run the <a>post-insertion steps</a> with
+   <var>inclusiveDescendant</var>.
+  </ol>
+ </li>
 </ol>
 
 
