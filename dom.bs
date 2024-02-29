@@ -2648,7 +2648,8 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
 below. These steps must not modify the <a>node tree</a> that <var>insertedNode</var>
 <a>participates</a> in, create <a for=/>browsing contexts</a>, <a lt="fire an event">fire
-events</a>, or otherwise execute JavaScript.
+events</a>, or otherwise execute JavaScript. These steps may [=queue a global task|queue tasks=] to
+do these things asynchronously, however.
 
 <div class=example id=example-foo-what-do-i-put-here>
  <p>While the <a>insertion steps</a> cannot execute JavaScript (among other things), it is expected
@@ -2703,9 +2704,10 @@ for=/>insert</a> algorithm below.
 <p class=note>The purpose of the <a>post-insertion steps</a> is to provide an opportunity for <a
 for=/>nodes</a> to perform any insertion-related operations that modify the <a>node tree</a> that
 <var ignore>insertedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>, or
-otherwise execute JavaScript. These steps allow all nodes that will be inserted by a given <a
-for=/>insert</a> operation to by inserted <i>atomically</i>, with all major side effects occurring
-<i>after</i> <a>node tree</a> insertion is complete.
+otherwise execute JavaScript. These steps allow a batch of <a>nodes</a> to be <a for=/>inserted</a>
+<i>atomically</i> with respect to script, with all major side effects occurring <i>after</i> the
+batch insertions into the <a>node tree</a> is complete, but before <a lt="notify mutation
+observers"><code>MutationObserver</code>s are notified</a>.
 
 
 <p><a lt="other applicable specifications">Specifications</a> may define
