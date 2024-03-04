@@ -3037,41 +3037,31 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 <var>parent</var>, <var>nodes</var> and <var>document</var>, run these steps:
 
 <ol>
+ <li><p>Let <var>node</var> be null.
+
+ <li><p>Replace each string in <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
+ <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
+ <var>document</var>.
+
  <li><p>Let <var>isScriptElement</var> be <var>parent</var> is a {{HTMLScriptElement}}.
- <li><p>For each <var>value</var> in <var>nodes</var>:
+
+ <li><p><a for=set>For each</a> <var>value</var> in <var>nodes</var>:
   <ol>
    <li>If <var>value</var> is a <a for=/>node</a>, then:
     <ol>
      <li>If <var>isScriptElement</var> is false, skip to the next <var>value</var>.
-      <li>If <var>value</var>'s {{nodeType}} is not {{TEXT_NODE}}, skip to the next <var>value</var>.
-       <li>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
-         * {{TrustedScript}} as <var>expectedType</var>,
-         * <var>document</var>'s [=relevant global object=] as <var>global</var>,
-         * <var>value</var>'s <a for=CharacterData>data</a> as <var>input</var>,
-         * `HTMLScriptElement text` as <var>sink</var>,
-         * `script` as <var>sinkGroup</var>.
+     <li>If <var>value</var> is not a {{Text}} <a for=/>node</a>, then <a for=iteration>continue</a>.
+     <li>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
+        * {{TrustedScript}} as <span>expectedType</span>,
+        * <var>document</var>'s [=relevant global object=] as <span>global</span>,
+        * <var>value</var>'s <a for=CharacterData>data</a> as <span>input</span>,
+        * `HTMLScriptElement text` as <span>sink</span>,
+        * `script` as <span>sinkGroup</span>.
 
-         <p>If the algorithm threw an error, rethrow the error.
-       <li>Set <var>value</var>'s <a for=CharacterData>data</a> to <var>text</var>.
+        <p>If the algorithm threw an error, rethrow the error.
+     <li>Set <var>value</var>'s <a for=CharacterData>data</a> to <var>text</var>.
     </ol>
-    <li>If <var>value</var> is a string, then:
-     <ol>
-      <li>Let <var>text</var> be <var>value</var>.
-      <li>If <var>isScriptElement</var> is true:
-       <ol>
-        <li>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
-          * {{TrustedScript}} as <var>expectedType</var>,
-          * <var>document</var>'s [=relevant global object=] as <var>global</var>,
-          * <var>value</var> as <var>input</var>,
-          * `HTMLScriptElement text` as <var>sink</var>,
-          * `script` as <var>sinkGroup</var>.
 
-          If the algorithm threw an error, rethrow the error.
-        <li>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
-          <a for=CharacterData>data</a> is <var>text</var> and <a for=Node>node document</a> is <var>document</var>.
-        <li>Replace <var>value</var> with <var>newValue</var>.
-       </ol>
-     </ol>
     <li>If <var>value</var> is a {{TrustedScript}}, then:
      <ol>
       <li>Let <var>text</var> be <var>value</var>'s Data internal slot value.
@@ -3080,7 +3070,6 @@ standards that want to define APIs shared between <a for=/>documents</a> and
       <li>Replace <var>value</var> with <var>newValue</var>.
      </ol>
  </ol>
- <li><p>Let <var>node</var> be null.
 
  <li><p>If <var>nodes</var> contains one <a for=/>node</a>, then set <var>node</var> to
  <var>nodes</var>[0].
