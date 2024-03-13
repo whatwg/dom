@@ -37,6 +37,8 @@ urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: current high resolution time; url: dfn-current-high-resolution-time
  type:dfn; text: relative high resolution coarse time; url: dfn-relative-high-resolution-coarse-time
+urlPrefix: https://w3c.github.io/trusted-types/dist/spec/#; spec: TRUSTED-TYPES
+ type:dfn; text: [[Data]]; for: TrustedScript; url: trustedscript-data
 </pre>
 
 <pre class=link-defaults>
@@ -52,9 +54,11 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
+<cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
+[[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
@@ -3043,28 +3047,40 @@ standards that want to define APIs shared between <a for=/>documents</a> and
  <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
  <var>document</var>.
 
- <li><p>Let <var>isScriptElement</var> be <var>parent</var> is a {{HTMLScriptElement}}.
+ <li><p>Let <var>isScriptElement</var> be true if <var>parent</var> is an {{HTMLScriptElement}}
+ <a for=/>node</a>; otherwise false.
 
- <li><p><a for=set>For each</a> <var>value</var> in <var>nodes</var>:
+ <li>
+  <p><a for=set>For each</a> <var>value</var> of <var>nodes</var>:
+
   <ol>
-   <li><p>If <var>value</var> is a <a for=/>node</a>, then:
+   <li>
+    <p>If <var>value</var> is a <a for=/>node</a>, then:
+
     <ol>
      <li><p>If <var>isScriptElement</var> is false, then <a for=iteration>continue</a>.
+
      <li><p>If <var>value</var> is not a {{Text}} <a for=/>node</a>, then <a for=iteration>continue</a>.
-     <li><p>Let <var>text</var> be the result of executing the [$Get Trusted Type compliant string$] algorithm, with the following arguments:
-        * {{TrustedScript}} as <span>expectedType</span>,
-        * <var>document</var>'s [=relevant global object=] as <span>global</span>,
-        * <var>value</var>'s <a for=CharacterData>data</a> as <span>input</span>,
-        * `HTMLScriptElement text` as <span>sink</span>,
-        * `script` as <span>sinkGroup</span>.
+
+     <li><p>Let <var>text</var> be the result of calling <a abstract-op>Get Trusted Type compliant string</a>,
+     with {{TrustedScript}}, <var>document</var>'s <a>relevant global object</a>,
+     <var>value</var>'s <a for=CharacterData>data</a>, "<code>HTMLScriptElement text</code>",
+     "<code>script</code>".
+
      <li><p>Set <var>value</var>'s <a for=CharacterData>data</a> to <var>text</var>.
     </ol>
 
-    <li><p>If <var>value</var> is a {{TrustedScript}}, then:
+    <li>
+     <p>If <var>value</var> is a {{TrustedScript}}, then:
+
      <ol>
-      <li><p>Let <var>text</var> be <var>value</var>'s Data internal slot value.
+      <li><p>Let <var>text</var> be <var>value</var>'s <a for=TrustedScript>\[[Data]]</a>
+      internal slot value.
+
       <li><p>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
-         <a for=CharacterData>data</a> is <var>text</var> and <a for=Node>node document</a> is <var>document</var>.
+      <a for=CharacterData>data</a> is <var>text</var> and <a for=Node>node document</a> is
+      <var>document</var>.
+
       <li><p>Replace <var>value</var> with <var>newValue</var>.
      </ol>
  </ol>
