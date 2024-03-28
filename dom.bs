@@ -4401,7 +4401,7 @@ empty string instead, and then do as described below, switching on the interface
 
 <dl class=switch>
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <a>this</a> and the given value.
+ <dd><p><a>Set an existing attribute value</a> with <a>this</a>, the given value, and "Node nodeValue".
 
  <dt>{{CharacterData}}
  <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
@@ -4454,7 +4454,8 @@ do as defined below, switching on the interface <var>node</var> <a>implements</a
  <dd><p><a>String replace all</a> with <var>value</var> within <var>node</var>.
 
  <dt>{{Attr}}
- <dd><p><a>Set an existing attribute value</a> with <var>node</var> and <var>value</var>.
+ <dd><p><a>Set an existing attribute value</a> with <var>node</var>, <var>value</var> and
+ "Node textContent".
 
  <dt>{{CharacterData}}
  <dd><p><a>Replace data</a> with node <var>node</var>, offset 0, count <var>node</var>'s
@@ -6532,13 +6533,13 @@ null), and boolean <var>synchronousCustomElements</var> (default false):
 </ol>
 
 <p>To <dfn export id=concept-element-attributes-change lt="change an attribute">change</dfn> an
-<a>attribute</a> <var>attribute</var> to <var>value</var>, run these steps:
+<a>attribute</a> <var>attribute</var> to <var>value</var>, with string <var>sink</var>, run these steps:
 
 <ol>
  <li><p>Let <var>oldValue</var> be <var>attribute</var>'s <a for=Attr>value</a>.</p></li>
 
  <li><p><a>Validate and set attribute value</a> <var>value</var> for <var>attribute</var>, with
- <var>attribute</var>'s <a for=Attr>element</a>.
+ <var>attribute</var>'s <a for=Attr>element</a>, and <var>sink</var>.
 
  <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>attribute</var>'s
  <a for=Attr>element</a>, <var>oldValue</var>, and <var>value</var>.
@@ -6592,12 +6593,12 @@ steps:
 
 <p>To <dfn id=concept-element-attributes-validate-and-set-value>validate and set attribute value</dfn>
 {{TrustedType}} or a string <var>value</var> for an <a>attribute</a> <var>attribute</var>, with
-<a for=/>element</a> <var>element</var>:
+<a for=/>element</a> <var>element</var>, and string <var>sink</var>:
 
 <ol>
  <li><p>Let <var>validValue</var> be the result of calling
  <a abstract-op>get Trusted Types-compliant attribute value</a> for <var>attribute</var>, with
- <var>element</var> and <var>value</var>. [[!TRUSTED-TYPES]]
+ <var>element</var>, <var>value</var>, and <var>sink</var>. [[!TRUSTED-TYPES]]
 
  <li><p>Set <var>attribute</var>'s <a for=Attr>value</a> to <var>validValue</var>.
 </ol>
@@ -6651,7 +6652,8 @@ string <var>namespace</var> (default null):</p>
 
 <div algorithm>
 <p>To <dfn export id=concept-element-attributes-set>set an attribute</dfn> given an
-<a for=/>attribute</a> <var>attr</var> and an <a for=/>element</a> <var>element</var>:
+<a for=/>attribute</a> <var>attr</var>, an <a for=/>element</a> <var>element</var>,
+and a string <var>sink</var>:
 
 <ol>
  <li><p>If <var>attr</var>'s <a for=Attr>element</a> is neither null nor <var>element</var>,
@@ -6665,7 +6667,7 @@ string <var>namespace</var> (default null):</p>
  <li><p>If <var>oldAttr</var> is <var>attr</var>, return <var>attr</var>.
 
  <li><p><a>Validate and set attribute value</a> <var>newAttr</var>'s <a for="Attr">value</a> for
- <var>newAttr</var> with <var>element</var>.
+ <var>newAttr</var> with <var>element</var>, and <var>sink</var>.
 
  <li><p>If <var>oldAttr</var> is non-null, then <a lt="replace an attribute">replace</a>
  <var>oldAttr</var> with <var>attr</var>.
@@ -6679,8 +6681,8 @@ string <var>namespace</var> (default null):</p>
 <div algorithm>
 <p>To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> given an
 <a for=/>element</a> <var>element</var>, a string <var>localName</var>, a string or {{TrustedType}}
-<var>value</var>, an optional null or string <var>prefix</var> (default null), and an optional null
-or string <var>namespace</var> (default null):
+<var>value</var>, an optional null or string <var>prefix</var> (default null), an optional null
+or string <var>namespace</var> (default null), and an optional string <var>sink</var> (default ""):
 
 <ol>
  <li>Let <var>attribute</var> be the result of
@@ -6696,14 +6698,14 @@ or string <var>namespace</var> (default null):
     <var>element</var>'s <a for=Node>node document</a>.
 
     <li><p><a>Validate and set attribute value</a> <var>value</var> for <var>attribute</var> with
-    <var>element</var>.
+    <var>element</var>, and <var>sink</var>.
 
     <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <var>element</var>.
 
     <li><p>Return.
   </ol>
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>, with <var>sink</var>.
 </ol>
 </div>
 
@@ -6973,14 +6975,14 @@ method steps are:
    <a for=Node>node document</a>.
 
    <li><p><a>Validate and set attribute value</a> <var>value</var> for <var>attribute</var>,
-   with <a>this</a>.
+   with <a>this</a> and "Element setAttribute".
 
    <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
 
    <li><p>Return.
   </ol>
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>, with "Element setAttribute".
 </ol>
 
 <p>The
@@ -6992,7 +6994,7 @@ method steps are:
  passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
- and also <var>prefix</var> and <var>namespace</var>.
+ and also <var>prefix</var> and <var>namespace</var>, and "Element setAttributeNS".
 </ol>
 
 <p>The
@@ -7078,10 +7080,13 @@ method steps are to return the result of
 <a lt="get an attribute by namespace and local name">getting an attribute</a> given
 <var>namespace</var>, <var>localName</var>, and <a>this</a>.
 
-<p>The <dfn method for=Element><code>setAttributeNode(<var>attr</var>)</code></dfn> and
-<dfn method for=Element><code>setAttributeNodeNS(<var>attr</var>)</code></dfn> methods steps are to
+<p>The <dfn method for=Element><code>setAttributeNode(<var>attr</var>)</code></dfn> methods steps are to
 return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var> and
-<a>this</a>.
+<a>this</a>, and "Element setAttributeNode".
+
+<p>The <dfn method for=Element><code>setAttributeNodeNS(<var>attr</var>)</code></dfn> methods steps are to
+return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var>,
+<a>this</a>, and "Element setAttributeNodeNS".
 
 <p>The <dfn method for=Element><code>removeAttributeNode(<var>attr</var>)</code></dfn> method steps
 are:
@@ -7436,10 +7441,13 @@ method steps are to return the result of
 <a lt="get an attribute by namespace and local name">getting an attribute</a> given
 <var>namespace</var>, <var>localName</var>, and <a for=NamedNodeMap>element</a>.
 
-<p>The <dfn method for=NamedNodeMap><code>setNamedItem(<var>attr</var>)</code></dfn> and
-<dfn method for=NamedNodeMap><code>setNamedItemNS(<var>attr</var>)</code></dfn> method steps are
-to return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var> and
-<a for=NamedNodeMap>element</a>.
+<p>The <dfn method for=NamedNodeMap><code>setNamedItem(<var>attr</var>)</code></dfn> method steps are
+to return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var>,
+<a for=NamedNodeMap>element</a>, and "NamedNodeMap setNamedItem".
+
+<p>The <dfn method for=NamedNodeMap><code>setNamedItemNS(<var>attr</var>)</code></dfn> method steps are
+to return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var>,
+<a for=NamedNodeMap>element</a>, and "NamedNodeMap setNamedItemNS".
 
 <p>The <dfn method for=NamedNodeMap><code>removeNamedItem(<var>qualifiedName</var>)</code></dfn>
 method steps are:
@@ -7543,18 +7551,19 @@ null.
 <p>The <dfn attribute for=Attr><code>value</code></dfn> getter steps are to return <a>this</a>'s
 <a for=Attr>value</a>.
 
-<p>To <dfn>set an existing attribute value</dfn>, given an <a>attribute</a> <var>attribute</var> and
-string <var>value</var>, run these steps:
+<p>To <dfn>set an existing attribute value</dfn>, given an <a>attribute</a> <var>attribute</var>,
+string <var>value</var>, and string <var>sink</var>, run these steps:
 
 <ol>
  <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
  <a for=Attr>value</a> to <var>value</var>.
 
- <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>.
+ <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>,
+ with <var>sink</var>.
 </ol>
 
-<p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>
-and the given value.
+<p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>,
+the given value, and "Attr value".
 
 <hr>
 
