@@ -4511,6 +4511,7 @@ dom-Range-extractContents, dom-Range-cloneContents -->
 
    <li><p>Run <a>attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>.
 
@@ -5888,6 +5889,7 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean delegatesFocus;
   readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute boolean clonable;
+  readonly attribute boolean serializable;
   readonly attribute Element host;
   attribute EventHandler onslotchange;
 };
@@ -5921,6 +5923,9 @@ It is initially set to false.</p>
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>clonable</dfn> (a boolean).
 It is initially set to false.</p>
 
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>serializable</dfn> (a boolean).
+It is initially set to false.</p>
+
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
@@ -5938,6 +5943,9 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 
 <p>The <dfn attribute for=ShadowRoot><code>clonable</code></dfn> getter steps are to return
 <a>this</a>'s <a for=ShadowRoot>clonable</a>.
+
+<p>The <dfn attribute for=ShadowRoot><code>serializable</code></dfn> getter steps are to return
+<a>this</a>'s <a for=ShadowRoot>serializable</a>.
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
 <a>this</a>'s <a for=DocumentFragment>host</a>.
@@ -6071,6 +6079,7 @@ dictionary ShadowRootInit {
   boolean delegatesFocus = false;
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
+  boolean serializable = false;
 };
 </pre>
 
@@ -6924,6 +6933,7 @@ are:
 <ol>
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
+ <var>init</var>["{{ShadowRootInit/serializable}}"],
  <var>init</var>["{{ShadowRootInit/delegatesFocus}}"], and
  <var>init</var>["{{ShadowRootInit/slotAssignment}}"].
 
@@ -6934,7 +6944,8 @@ are:
 <div algorithm>
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
 <a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
-a boolean <var>delegatesFocus</var>, and a string <var>slotAssignment</var>:
+a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, and a string
+<var>slotAssignment</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -7005,6 +7016,8 @@ a boolean <var>delegatesFocus</var>, and a string <var>slotAssignment</var>:
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>declarative</a> to false.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>clonable</a> to <var>clonable</var>.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>serializable</a> to <var>serializable</var>.
 
  <li><p>Set <var>element</var>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 </ol>
