@@ -3035,8 +3035,9 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
-<p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
-<var>parent</var>, <var>nodes</var> and <var>document</var>, run these steps:
+<p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given a
+<a for=/>node</a> <var>parent</var>, <a for=/>list</a> of <a for=/>nodes</a> <var>nodes</var>, and
+<a for=/>document</a> <var>document</var>:
 
 <ol>
  <li><p>Let <var>node</var> be null.
@@ -3054,32 +3055,20 @@ standards that want to define APIs shared between <a for=/>documents</a> and
   <p><a for=list>For each</a> <var>value</var> of <var>nodes</var>:
 
   <ol>
-   <li>
-    <p>If <var>value</var> is a {{Text}} <a for=/>node</a> and <var>isScriptElement</var>
-    is true:
+   <li><p>Let <var>newValue</var> be <var>value</var>.
 
-    <ol>
-     <li><p>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
-     <a for=Node>node document</a> is <var>document</var> and <a for=CharacterData>data</a> is the
-     result of calling <a abstract-op>Get Trusted Type compliant string</a>, with {{TrustedScript}},
-     <var>document</var>'s <a>relevant global object</a>, <var>value</var>'s <a
-     for=CharacterData>data</a>, "<code>HTMLScriptElement text</code>", and "<code>script</code>".
+   <li><p>If <var>value</var> is a {{Text}} <a for=/>node</a> and <var>isScriptElement</var> is
+   true, then set <var>newValue</var> to a new {{Text}} <a for=/>node</a> whose
+   <a for=Node>node document</a> is <var>document</var> and <a for=CharacterData>data</a> is the
+   result of calling <a abstract-op>Get Trusted Type compliant string</a>, with {{TrustedScript}},
+   <var>document</var>'s <a>relevant global object</a>, <var>value</var>'s
+   <a for=CharacterData>data</a>, "<code>HTMLScriptElement text</code>", and "<code>script</code>".
 
-     <li><p><a for=list>Append</a> <var>newValue</var> to <var>newNodes</var>.
-    </ol>
+   <li><p>If <var>value</var> is a {{TrustedScript}}, then set <var>newValue</var> to a new {{Text}}
+   <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>value</var>'s
+   <a for=TrustedScript>data</a> and <a for=Node>node document</a> is <var>document</var>.
 
-   <li>
-    <p>Otherwise, if <var>value</var> is a {{TrustedScript}}:
-
-    <ol>
-     <li><p>Let <var>newValue</var> be a new {{Text}} <a for=/>node</a> whose
-     <a for=CharacterData>data</a> is <var>value</var>'s <a for=TrustedScript>data</a>
-     and <a for=Node>node document</a> is <var>document</var>.
-
-     <li><p><a for=list>Append</a> <var>newValue</var> to <var>newNodes</var>.
-    </ol>
-
-   <li><p>Otherwise, <a for=list>append</a> <var>value</var> to <var>newNodes</var>.
+   <li><p><a for=list>Append</a> <var>newValue</var> to <var>newNodes</var>.
   </ol>
 
  <li><p>If <var>newNodes</var> contains one <a for=/>node</a>, then set <var>node</var> to
