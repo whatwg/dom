@@ -2812,14 +2812,28 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 
  <li>
+  <p>Let <var>staticNodeList</var> be a <a for=/>list</a> of <a for=/>nodes</a>, initially
+  empty.</p>
+
+  <p class="note">We collect all <a for=/>nodes</a> <i>before</i> calling the <a>post-insertion
+  steps</a> on any one of them, instead of calling the <a>post-insertion steps</a> <i>while</i>
+  we're traversing the <a>node tree</a>. This is because the <a>post-insertion steps</a> can
+  modify the tree's structure, making live traversal unsafe, possibly leading to the
+  <a>post-insertion steps</a> being called multiple times on the same <a>node</a>.</p>
+ </li>
+
+ <li>
   <p>For each <var>node</var> in <var>nodes</var>, in <a>tree order</a>:
 
   <ol>
    <li><p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
-   <var>node</var>, in <a>shadow-including tree order</a>, run the <a>post-insertion steps</a> with
-   <var>inclusiveDescendant</var>.
+   <var>node</var>, in <a>shadow-including tree order</a>, <a for=list>append</a>
+   <var>inclusiveDescendant</var> to <var>staticNodeList</var>.
   </ol>
  </li>
+
+ <li><p><a for=list>For each</a> <var>node</var> in <var>staticNodeList</var>, run the
+ <a>post-insertion steps</a> with <var>node</var>.
 </ol>
 
 
