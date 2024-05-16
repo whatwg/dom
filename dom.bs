@@ -6918,6 +6918,8 @@ method steps are:
   <p>If <var>attribute</var> is null, then:
 
   <ol>
+   <li><p>If <var>force</var> is false, return false.
+
    <li><p>Set <var>attribute</var> to an <a>attribute</a> whose
    <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is the empty
    string, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
@@ -6925,12 +6927,20 @@ method steps are:
    <li><p>Let <var>verifiedValue</var> be the result of calling <a>verify attribute value</a>
    <var>attribute</var>'s <a for=Attr>value</a> for <var>attribute</var>, with <a>this</a>.
 
-   <li><p>Set <var>attribute</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
+   <li><p>Let <var>existingAttribute</var> be the first <a>attribute</a> in <a>this</a>'s
+   <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
+   and null otherwise.
 
-   <li><p>If <var>force</var> is not given or is true, then <a lt="append an attribute">append</a>
-   this <a>attribute</a> to <a>this</a>, and then return true.
+   <li><p>If <var>existingAttribute</var> is null:
+    <ol>
+     <li><p>Set <var>attribute</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
 
-   <li><p>Return false.
+     <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
+
+     <li><p>Return true.
+    </ol>
+
+   <li><p>Set <var>existingAttribute</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
   </ol>
 
  <li><p>Otherwise, if <var>force</var> is not given or is false,
