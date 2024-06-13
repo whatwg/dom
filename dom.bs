@@ -53,9 +53,11 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
+<cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
+[[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
@@ -6678,8 +6680,9 @@ string <var>namespace</var> (default null):</p>
 <div algorithm>
 <p>To <dfn export id=concept-element-attributes-set-value>set an attribute value</dfn> given an
 <a for=/>element</a> <var>element</var>, a string <var>localName</var>, a string or {{TrustedType}}
-<var>value</var>, an optional null or string <var>prefix</var> (default null), and an optional null
-or string <var>namespace</var> (default null):
+<var>value</var>, an optional null or string <var>prefix</var> (default null), an optional null
+or string <var>namespace</var> (default null), and an optional boolean <var>verify</var>
+(default false):
 
 <ol>
  <li>Let <var>attribute</var> be the result of
@@ -6694,11 +6697,17 @@ or string <var>namespace</var> (default null):
  <var>value</var>, and <a for=Node>node document</a> is <var>element</var>'s <a for=Node>node
  document</a>.
 
- <li><p>Let <var>verifiedValue</var> be the result of calling <a>verify attribute value</a>
- <var>value</var> for <var>attribute</var>, with <var>element</var>.
+ <li><p>Let <var>verifiedValue</var> be <var>value</var>.
 
- <li><p>Set <var>attributeExists</var> to true if <var>element</var> <a lt="has an attribute">has
- an attribute</a> <var>attribute</var>; otherwise false.
+ <li><p>If <var>verify</var> is true:
+  <ol>
+   <li><p>Set <var>verifiedValue</var> to the result of calling <a>verify attribute value</a>
+   <var>value</var> for <var>attribute</var>, with <var>element</var>.
+
+   <li><p>Set <var>attributeExists</var> to true if <var>element</var> <a lt="has an attribute">has
+   an attribute</a> <var>attribute</var>; otherwise false.
+  </ol>
+ </li>
 
  <li><p>If <var>attributeExists</var> is true, <a lt="change an attribute">change</a>
  <var>attribute</var> to <var>verifiedValue</var>.
@@ -7004,7 +7013,7 @@ method steps are:
  passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
- and also <var>prefix</var> and <var>namespace</var>.
+ <var>prefix</var>, <var>namespace</var> and true.
 </ol>
 
 <p>The
