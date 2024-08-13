@@ -1287,8 +1287,9 @@ property of the event being dispatched.
 
 <div algorithm>
 <p>To <dfn export id=concept-event-dispatch>dispatch</dfn> an <var>event</var> to a
-<var>target</var>, with an optional <var>legacy target override flag</var> and an optional
-<var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+<var>target</var>, with an optional <var>legacy target override flag</var>, an optional
+<var>legacyOutputDidListenersThrowFlag</var>, and an optional
+<var>useCallerAsyncContextFlag</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
@@ -1425,8 +1426,9 @@ property of the event being dispatched.
      <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
      {{Event/CAPTURING_PHASE}}.
 
-     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>capturing</code>", and
-     <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>capturing</code>",
+     <var>legacyOutputDidListenersThrowFlag</var> if given, and
+     <var>useCallerAsyncContextFlag</var> if given.
     </ol>
 
    <li>
@@ -1446,8 +1448,9 @@ property of the event being dispatched.
        <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/BUBBLING_PHASE}}.
       </ol>
 
-     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>bubbling</code>", and
-     <var>legacyOutputDidListenersThrowFlag</var> if given.
+     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>bubbling</code>",
+     <var>legacyOutputDidListenersThrowFlag</var> if given, and
+     <var>useCallerAsyncContextFlag</var> if given.
     </ol>
   </ol>
 
@@ -1517,8 +1520,9 @@ steps:</p>
 
 <div algorithm>
 <p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>struct</var>,
-<var>event</var>, <var>phase</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>,
-run these steps:
+<var>event</var>, <var>phase</var>, an optional <var>legacyOutputDidListenersThrowFlag</var>,
+an optional <var>legacyOutputDidListenersThrowFlag</var> if given, and an optional
+<var>useCallerAsyncContextFlag</var>, run these steps:
 
 <ol>
  <li><p>Set <var>event</var>'s <a for=Event>target</a> to the
@@ -1548,8 +1552,9 @@ run these steps:
  <a for=Event/path>invocation-target-in-shadow-tree</a>.
 
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
- <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>, and
- <var>legacyOutputDidListenersThrowFlag</var> if given.
+ <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>,
+ <var>legacyOutputDidListenersThrowFlag</var> if given, and <var>useCallerAsyncContextFlag</var> if
+ given.
 
  <li>
   <p>If <var>found</var> is false and <var>event</var>'s {{Event/isTrusted}} attribute is true,
@@ -1574,8 +1579,8 @@ run these steps:
     </table>
 
    <li><p><a>Inner invoke</a> with <var>event</var>, <var>listeners</var>, <var>phase</var>,
-   <var>invocationTargetInShadowTree</var>, and <var>legacyOutputDidListenersThrowFlag</var>
-   if given.
+   <var>invocationTargetInShadowTree</var>, <var>legacyOutputDidListenersThrowFlag</var> if given,
+   and <var>useCallerAsyncContextFlag</var> if given.
 
    <li><p>Set <var>event</var>'s {{Event/type}} attribute value to <var>originalEventType</var>.
   </ol>
@@ -1585,10 +1590,14 @@ run these steps:
 <div algorithm>
 <p>To <dfn noexport id=concept-event-listener-inner-invoke>inner invoke</dfn>, given an
 <var>event</var>, <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>,
-and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
+and an optional <var>legacyOutputDidListenersThrowFlag</var>, and an optional
+<var>useCallerAsyncContextFlag</var>, run these steps:
 
 <ol>
  <li><p>Let <var>found</var> be false.
+
+ <li><p>Let <var>useCreationTimeAsyncContext</var> be false if
+ <var>useCallerAsyncContextFlag</var> is passed and true otherwise.
 
  <li>
   <p><a for=list>For each</a> <var>listener</var> in <var>listeners</var>, whose
@@ -1635,8 +1644,9 @@ and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 
    <li>
     <p><a>Call a user object's operation</a> with <var>listener</var>'s
-    <a for="event listener">callback</a>, "<code>handleEvent</code>", « <var>event</var> », and
-    <var>event</var>'s {{Event/currentTarget}} attribute value. If this throws an exception, then:
+    <a for="event listener">callback</a>, "<code>handleEvent</code>", « <var>event</var> »,
+    <var>event</var>'s {{Event/currentTarget}} attribute value, and
+    <var>useCreationTimeAsyncContext</var>. If this throws an exception, then:
 
     <ol>
      <li><p><a>Report the exception</a>.
@@ -1667,7 +1677,8 @@ and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 <div algorithm>
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
-initialized, and a <var>legacy target override flag</var>, run these steps:
+initialized, a <var>legacy target override flag</var>, and an optional
+<var>useCallerAsyncContextFlag</var> run these steps:
 
 <ol>
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
@@ -1685,7 +1696,8 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
  <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
- <var>legacy target override flag</var> set if set.
+ <var>legacy target override flag</var> set if set, and <var>useCallerAsyncContextFlag</var> set if
+ set.
 </ol>
 </div>
 
