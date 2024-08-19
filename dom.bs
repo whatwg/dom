@@ -4126,6 +4126,8 @@ interface Node : EventTarget {
   [CEReactions] Node appendChild(Node node);
   [CEReactions] Node replaceChild(Node node, Node child);
   [CEReactions] Node removeChild(Node child);
+
+  [CEReactions] Node moveBefore(Node node, Node? child);
 };
 
 dictionary GetRootNodeOptions {
@@ -5036,6 +5038,36 @@ within <a>this</a>.
 
 <p>The <dfn method for=Node><code>removeChild(<var>child</var>)</code></dfn> method steps are to
 return the result of <a>pre-removing</a> <var>child</var> from <a>this</a>.
+
+<p>The <dfn method for=Node><code>moveBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>Let <var>perform state-preserving atomic move</var> be true if <a>this</a> is
+ <a>connected</a>, <var>node</var> is <a>connected</a>, <a>this</a>'s <a for=Node>node
+ document</a> is <a>fully active</a>, and <a>this</a>'s <a for=/>root</a> is the same as
+ <var>node</var>'s <a for=/>root</a>.</p></li>.
+
+ <li><p>If <var>perform state-preserving atomic move</var> is true, then set <a>this</a>'s <a
+ for=Node>node document</a>'s <a>state-preserving atomic move in progress</a> to true.</p></li>
+
+ <li><p>Let <var>oldFlag</var> be the value of <a>this</a>'s <a for=Node>node document</a>'s <a>fire
+ mutation events flag</a>.</p></li>
+
+ <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s <a>fire mutation events flag</a> to
+ false.</p></li>
+
+ <li><p>Let <var>return node</var> be the result of <a>pre-inserting</a> <var>node</var> into
+ <a>this</a> before <var>child</var>.</p></li>
+
+ <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s <a>fire mutation events flag</a> to
+ <var>oldFlag</var>.</p></li>
+
+ <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s <a>state-preserving atomic move in
+ progress</a> to false.</p></li>
+
+ <li><p>Return <var>return node</var>.</p></li>
+</ol>
 
 <hr><!-- Collections -->
 
