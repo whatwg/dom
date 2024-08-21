@@ -2034,16 +2034,42 @@ an optional <var>reason</var>:
  <li><p>Set <var>signal</var>'s [=AbortSignal/abort reason=] to <var>reason</var> if it is given;
  otherwise to a new "{{AbortError!!exception}}" {{DOMException}}.
 
+ <li><p>Let <var>dependentSignalsToAbort</var> be a new <a for=/>list</a>.
+
+ <li>
+  <p><a for=set>For each</a> <var>dependentSignal</var> of <var>signal</var>'s
+  [=AbortSignal/dependent signals=]:
+
+  <ol>
+   <li>
+    <p>If <var>dependentSignal</var> is not [=AbortSignal/aborted=], then:
+
+    <ol>
+     <li><p>Set <var>dependentSignal</var>'s [=AbortSignal/abort reason=] to <var>signal</var>'s
+     [=AbortSignal/abort reason=].
+
+     <li><p><a for=list>Append</a> <var>dependentSignal</var> to
+     <var>dependentSignalsToAbort</var>.
+    </ol>
+  </ol>
+
+ <li><p><a>Run the abort steps</a> for <var>signal</var>.
+
+ <li><p><a for=set>For each</a> <var>dependentSignal</var> of <var>dependentSignalsToAbort</var>,
+ <a>run the abort steps</a> for <var>dependentSignal</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>run the abort steps</dfn> for an {{AbortSignal}} <var>signal</var>:
+
+<ol>
  <li><p><a for=set>For each</a> <var>algorithm</var> of <var>signal</var>'s
  [=AbortSignal/abort algorithms=]: run <var>algorithm</var>.
 
  <li><p><a for=set>Empty</a> <var>signal</var>'s <a for=AbortSignal>abort algorithms</a>.
 
  <li><p>[=Fire an event=] named {{AbortSignal/abort}} at <var>signal</var>.
-
- <li><p><a for=set>For each</a> <var>dependentSignal</var> of <var>signal</var>'s
- [=AbortSignal/dependent signals=], [=AbortSignal/signal abort=] on <var>dependentSignal</var> with
- <var>signal</var>'s [=AbortSignal/abort reason=].
 </ol>
 </div>
 
