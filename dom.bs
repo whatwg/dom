@@ -2688,6 +2688,24 @@ boolean <var>open</var> (default false):
  <!-- Technically this is post-insert. -->
 </ol>
 
+<p>To <dfn export id=concept-node-pre-move>pre-move</dfn> a <var>node</var> into a
+<var>parent</var> before a <var>child</var>, run these steps:
+
+<ol>
+ <!-- domfarolino: Is this right? -->
+ <li><p><a>Ensure pre-insertion validity</a> of <var>node</var> into <var>parent</var> before
+ <var>child</var>.
+
+ <li><p>Let <var>referenceChild</var> be <var>child</var>.
+
+ <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
+ <var>node</var>'s <a for=tree>next sibling</a>.
+
+ <li><p><a for=/>Move</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>.
+
+ <li><p>Return <var>node</var>.
+</ol>
+
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
@@ -2899,6 +2917,114 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
  <li><p><a for=list>For each</a> <var>node</var> of <var>staticNodeList</var>, if <var>node</var> is
  <a>connected</a>, then run the <a>post-connection steps</a> with <var>node</var>.
+</ol>
+
+
+<p><a lt="Other applicable specifications">Specifications</a> may define <dfn export
+id=concept-moving-steps-ext>moving steps</dfn> for all or some <a for=/>nodes</a>. The algorithm is
+passed a <a for=/>node</a> <var ignore>movedNode</var>, and a <a for=/>node</a>-or-null <var
+ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below.
+
+<p>To <dfn export id=concept-node-move>move</dfn> a <var>node</var> into a <var>parent</var> before
+a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
+
+<ol>
+ <li><p>Let <var>statePreservingAtomicMoveInProgress</var> be <var>node</var>'s
+ <a for=Node>node document</a>'s <a>state-preserving atomic move in progress</a>.
+
+ <li><p>Let <var>oldParent</var> be <var>node</var>'s <a for=tree>parent</a>.
+
+ <li><p><a>Assert</a>: <var>parent</var> is non-null.
+
+ <li>
+  <p>If <var>child</var> is non-null, then:
+
+  <ol>
+   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   its <a for=range>start offset</a> by <var>count</var>.
+
+   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   its <a for=range>end offset</a> by <var>count</var>.
+  </ol>
+
+ <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
+ <var>parent</var>'s <a>last child</a> if <var>child</var> is null.
+
+ <li><p><a for=/>Remove</a> <var>node</var> with the <i>suppress observers flag</i> set if
+ <var>document</var>'s <a>state-preserving atomic move in progress</a> is true, and unset otherwise.
+
+ <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
+ <var>parent</var>'s <a for=tree>children</a>.
+
+ <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
+ <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
+
+ <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
+ <a for=ShadowRoot>slot assignment</a> is "<code>named</code>" and <var>node</var> is a
+ <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
+
+ <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+ <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
+ then run <a>signal a slot change</a> for <var>parent</var>.
+
+ <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>'s <a for=tree>root</a>.
+
+ <li>
+  <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
+  <var>node</var>, in <a>shadow-including tree order</a>:
+
+  <ol>
+   <li>
+    <p>If <var>inclusiveDescendant</var> is <var>node</var>, then run the <a>moving steps</a> with
+    <var>inclusiveDescendant</var> and <var>oldParent</var>. Otherwise, run the <a>moving steps</a>
+    with <var>inclusiveDescendant</var> and null.
+
+    <p class="note">Because the <a>move</a> algorithm is a separate primitive from
+    <a for=/>insert</a> and <a for=/>remove</a>, it does not invoke the traditional
+    <a>insertion steps</a> or <a>removing steps</a> for <var>inclusiveDescendant</var>.
+   </li>
+
+   <li>
+    <p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a>, then
+    <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
+    name "<code>connectedCallback</code>", and an empty argument list.
+
+    <p class=XXX>TODO(Noam): Do the right custom element callback stuff here.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, <a lt="try to upgrade an element">try to upgrade</a>
+    <var>inclusiveDescendant</var>.
+
+    <p class=note>If this successfully upgrades <var>inclusiveDescendant</var>, its
+    <code>connectedCallback</code> will be enqueued automatically during the
+    <a>upgrade an element</a> algorithm.
+   </li>
+  </ol>
+ </li>
+
+ <li>
+  <p>If <i>suppress observers flag</i> is unset, then:
+
+  <ol>
+   <li>
+    <p>If <var>statePreservingAtomicMoveInProgress</var>, then <a>queue a tree mutation record</a>
+    for <var>parent</var> with « », « », <var>nodes</var>, <var>previousSibling</var>, and
+    <var>child</var>.</p>
+
+    <p class="note">This exposes <var>nodes</var> in the corresponding
+    {{MutationRecord/movedNodes}}.</p>
+   </li>
+
+   <li><p>If <var>statePreservingAtomicMoveInProgress</var>, then
+   <a>queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>, « », « »,
+   <var>previousSibling</var>, and <var>child</var>.</p></li>
+  </ol>
+ </li>
+
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
 
 
@@ -3919,7 +4045,7 @@ method steps are:
 
 <!-- TODO(domfarolino): REMOVE THIS BEFORE MERGING. This is needed for the build to work, until this
 term actually appears in HTML -->
-<dfn>state-preserving atomic move in progress</dfn>
+<dfn for=Document>state-preserving atomic move in progress</dfn>
 
 <p>To <dfn noexport>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
@@ -5095,9 +5221,8 @@ method steps are:
 
    <li><p><var>node</var> is <a>connected</a>;</p></li>
 
-   <li><p><a>this</a>'s <a for=Node>node document</a> is <a>fully active</a>; or</p></li>
-
-   <li><p><a>this</a>'s <a for=/>root</a> is the same as <var>node</var>'s <a for=/>root</a>,</p></li>
+   <li><p><a>this</a>'s <a for=/>shadow-including root</a> is the same as <var>node</var>'s
+   <a for=/>shadow-including root</a>,</p></li>
   </ul>
 
  <li><p>then <a>throw</a> "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p>
@@ -5105,7 +5230,7 @@ method steps are:
  <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s
  <a>state-preserving atomic move in progress</a> to true.</p></li>
 
- <li><p>Let <var>return node</var> be the result of <a>pre-inserting</a> <var>node</var> into
+ <li><p>Let <var>return node</var> be the result of <a>pre-moving</a> <var>node</var> into
  <a>this</a> before <var>child</var>.</p></li>
 
  <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s
