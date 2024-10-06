@@ -6,9 +6,9 @@ We are committed to providing a friendly, safe, and welcoming environment for al
 
 ## Contribution opportunities
 
-Folks notice minor and larger issues with the DOM Standard all the time and we'd love your help fixing those. Pull requests for typographical and grammar errors are also most welcome.
+Folks notice minor and larger issues with the DOM Standard all the time and we would love your help fixing those. Pull requests for typographical and grammar errors are also most welcome.
 
-Issues labeled ["good first issue"](https://github.com/whatwg/dom/labels/good%20first%20issue) are a good place to get a taste for editing the DOM Standard. Note that we don't assign issues and there's no reason to ask for availability either, just provide a pull request.
+Issues labeled ["good first issue"](https://github.com/whatwg/dom/labels/good%20first%20issue) are a good place to get a taste for editing the DOM Standard. Note that we do not assign issues, and there is no reason to ask for availability either; simply provide a pull request.
 
 If you are thinking of suggesting a new feature, read through the [FAQ](https://whatwg.org/faq) and [Working Mode](https://whatwg.org/working-mode) documents to get yourself familiarized with the process.
 
@@ -30,7 +30,7 @@ A dashboard showing the tests running against browser engines can be seen at [wp
 
 ## Building "locally"
 
-For quick local iteration, run `make`; this will use a web service to build the standard, so that you don't have to install anything. See more in the [Contributor Guidelines](https://github.com/whatwg/meta/blob/main/CONTRIBUTING.md#building).
+For quick local iteration, run make; this will use a web service to build the standard, so you do not have to install anything. See more in the [Contributor Guidelines](https://github.com/whatwg/meta/blob/main/CONTRIBUTING.md#building).
 
 ## Formatting
 
