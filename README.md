@@ -1,3 +1,6 @@
+<p>The
+<dfn method for=DOMTokenList lt=remove(tokens)|remove()><code>remove(<var>tokens</var>&hellip;)</code></dfn>
+method, when invoked, must run these steps:
 This repository hosts the [DOM Standard](https://dom.spec.whatwg.org/).
 
 ## Code of conduct
@@ -41,7 +44,9 @@ Do not use newlines inside "inline" elements, even if that means exceeding the c
 <p>The
 <dfn method for=DOMTokenList lt=remove(tokens)|remove()><code>remove(<var>tokens</var>&hellip;)</code></dfn>
 method, when invoked, must run these steps:
-```
+`<p>The <dfn method for=DOMTokenList
+lt=remove(tokens)|remove()><code>remove(<var>tokens</var>&hellip;)</code></dfn> method, when
+invoked, must run these steps:``
 is okay and
   ```html
 <p>The <dfn method for=DOMTokenList
@@ -49,7 +54,7 @@ lt=remove(tokens)|remove()><code>remove(<var>tokens</var>&hellip;)</code></dfn> 
 invoked, must run these steps:
 ```
 is not.
-
+<a>token</a>
 Using newlines between "inline" element tag names and their content is also forbidden. (This actually alters the content, by adding spaces.) That is
 ```html
 <a>token</a>
@@ -60,7 +65,8 @@ is fine and
 </a>
 ```
 is not.
-
+ <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
+ <a>tokens</a>, append <var>token</var> to <a>tokens</a>.
 An `<li>` element always has a `<p>` element inside it, unless it's a child of `<ul class=brief>`.
 
 If a "block" element contains a single "block" element, do not put it on a newline.
@@ -80,7 +86,7 @@ is not indented, but
    <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
 ```
 is.
-
+<a>token</a>
 End tags may be included (if done consistently) and attributes may be quoted (using double quotes), though the prevalent theme is to omit end tags and not quote attributes (unless they contain a space).
 
 Place one newline between paragraphs (including list elements). Place three newlines before `<h2>`, and two newlines before other headings. This does not apply when a nested heading follows the parent heading.
@@ -92,12 +98,18 @@ Place one newline between paragraphs (including list elements). Place three newl
 </ul>
 
 <p>Place a newline above.
-
+ <li><p>For each <var>token</var> in <var>tokens</var>, in given order, that is not in
+ <a>tokens</a>, append <var>token</var> to <a>tokens</a>.
 
 <h3>Place two newlines above.</h3>
 
 <h4>Placing one newline is OK here.</h4>
+<ol>
+ <li>
+  <p>For each <var>token</var> in <var>tokens</var>, run these substeps:
 
+  <ol>
+   <li><p>If <var>token</var> is the empty string, <a>throw</a> a {{SyntaxError}} exception.
 
 <h4>Place two newlines above.</h4>
 ```
