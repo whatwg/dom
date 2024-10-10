@@ -2795,8 +2795,8 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
    set.
 
    <li>
-    <p><a>Queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, « »,
-    null, and null.
+    <p><a>Queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null,
+    and null.
 
     <p class=note>This step intentionally does not pay attention to the
     <i>suppress observers flag</i>.
@@ -2908,9 +2908,6 @@ ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below.
 a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
 
 <ol>
- <li><p>Let <var>statePreservingAtomicMoveInProgress</var> be <var>node</var>'s
- <a for=Node>node document</a>'s <a>state-preserving atomic move in progress</a>.
-
  <li><p>Let <var>oldParent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
  <li><p><a>Assert</a>: <var>parent</var> is non-null.
@@ -2931,8 +2928,7 @@ a <var>child</var>, with an optional <i>suppress observers flag</i>, run these s
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
  <var>parent</var>'s <a>last child</a> if <var>child</var> is null.
 
- <li><p><a for=/>Remove</a> <var>node</var> with the <i>suppress observers flag</i> set if
- <var>document</var>'s <a>state-preserving atomic move in progress</a> is true, and unset otherwise.
+ <li><p><a for=/>Remove</a> <var>node</var> with the <i>suppress observers flag</i> set.
 
  <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
  <var>parent</var>'s <a for=tree>children</a>.
@@ -2988,17 +2984,10 @@ a <var>child</var>, with an optional <i>suppress observers flag</i>, run these s
   <p>If <i>suppress observers flag</i> is unset, then:
 
   <ol>
-   <li>
-    <p>If <var>statePreservingAtomicMoveInProgress</var>, then <a>queue a tree mutation record</a>
-    for <var>parent</var> with « », « », <var>nodes</var>, <var>previousSibling</var>, and
-    <var>child</var>.</p>
+   <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with « », <var>nodes</var>,
+   <var>previousSibling</var>, and <var>child</var>.</p></li>
 
-    <p class="note">This exposes <var>nodes</var> in the corresponding
-    {{MutationRecord/movedNodes}}.</p>
-   </li>
-
-   <li><p>If <var>statePreservingAtomicMoveInProgress</var>, then
-   <a>queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>, « », « »,
+   <li><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>, « »,
    <var>previousSibling</var>, and <var>child</var>.</p></li>
   </ol>
  </li>
@@ -3091,7 +3080,7 @@ within a <var>parent</var>, run these steps:
  with the <i>suppress observers flag</i> set.
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>,
- <var>removedNodes</var>, « », <var>previousSibling</var>, and <var>referenceChild</var>.
+ <var>removedNodes</var>, <var>previousSibling</var>, and <var>referenceChild</var>.
 
  <li><p>Return <var>child</var>.
 </ol>
@@ -3118,7 +3107,7 @@ within a <var>parent</var>, run these steps:
 
  <li><p>If either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>,
  then <a>queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
- <var>removedNodes</var>, « », null, and null.
+ <var>removedNodes</var>, null, and null.
 </ol>
 
 <p class=note>This algorithm does not make any checks with regards to the
@@ -3234,7 +3223,7 @@ optional <i>suppress observers flag</i>, run these steps:
  <a>registered observer list</a>.
 
  <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
- <var>parent</var> with « », « <var>node</var> », « », <var>oldPreviousSibling</var>, and
+ <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
@@ -4022,14 +4011,9 @@ method steps are:
 
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
-<!-- TODO(domfarolino): REMOVE THIS BEFORE MERGING. This is needed for the build to work, until this
-term actually appears in HTML -->
-<dfn for=Document>state-preserving atomic move in progress</dfn>
-
 <p>To <dfn noexport>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
-<var>removedNodes</var>, <var>movedNodes</var>, <var>previousSibling</var>, and
-<var>nextSibling</var>, run these steps:
+<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, run these steps:
 
 <ol>
  <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
@@ -4094,9 +4078,9 @@ term actually appears in HTML -->
    {{MutationRecord/attributeName}} set to <var>name</var>, {{MutationRecord/attributeNamespace}}
    set to <var>namespace</var>, {{MutationRecord/oldValue}} set to <var>mappedOldValue</var>,
    {{MutationRecord/addedNodes}} set to <var>addedNodes</var>,
-   {{MutationRecord/removedNodes}} set to <var>removedNodes</var>, {{MutationRecord/movedNodes}} set
-   to <var>movedNodes</var>, {{MutationRecord/previousSibling}} set to <var>previousSibling</var>,
-   and {{MutationRecord/nextSibling}} set to <var>nextSibling</var>.
+   {{MutationRecord/removedNodes}} set to <var>removedNodes</var>,
+   {{MutationRecord/previousSibling}} set to <var>previousSibling</var>, and
+   {{MutationRecord/nextSibling}} set to <var>nextSibling</var>.
 
    <li><p><a for=queue>Enqueue</a> <var>record</var> to <var>observer</var>'s
    <a for=MutationObserver>record queue</a>.
@@ -4109,28 +4093,15 @@ term actually appears in HTML -->
 </ol>
 
 <p>To <dfn noexport>queue a tree mutation record</dfn> for <var>target</var> with
-<var>addedNodes</var>, <var>removedNodes</var>, <var>movedNodes</var>, <var>previousSibling</var>,
-and <var>nextSibling</var>, run these steps:
+<var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, and
+<var>nextSibling</var>, run these steps:
 
 <ol>
- <li>
-  <p><span>Assert</span>: one of the following conditions is true:</p>
-
-  <ol>
-   <li><p><var>target</var>'s <a for=Node>node document</a>'s
-   <a>state-preserving atomic move in progress</a> is false, and either <var>addedNodes</var> or
-   <var>removedNodes</var> <a for=set>is not empty</a>; or</p></li>
-
-   <li><p><var>target</var>'s <a for=Node>node document</a>'s
-   <a>state-preserving atomic move in progress</a>s true, and both <var>addedNodes</var> and
-   <var>removedNodes</var> are <a for=set>empty</a>, and <var>movedNodes</var>
-   <a for=set>is not empty</a></p></li>
-  </ol>
- </li>
+ <li><p>Assert: either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>.
 
  <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
- null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>movedNodes</var>,
- <var>previousSibling</var>, and <var>nextSibling</var>.
+ null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, and
+ <var>nextSibling</var>.
 </ol>
 
 
@@ -4143,7 +4114,6 @@ interface MutationRecord {
   [SameObject] readonly attribute Node target;
   [SameObject] readonly attribute NodeList addedNodes;
   [SameObject] readonly attribute NodeList removedNodes;
-  [SameObject] readonly attribute NodeList movedNodes;
   readonly attribute Node? previousSibling;
   readonly attribute Node? nextSibling;
   readonly attribute DOMString? attributeName;
@@ -4178,10 +4148,6 @@ interface MutationRecord {
  <dd>Return the <a for=/>nodes</a> added and removed
  respectively.
 
- <dt><code><var>record</var> . {{MutationRecord/movedNodes}}</code>
- <dd>Return the <a for=/>nodes</a> that were moved when a
- <a lt="state-preserving atomic move in progress">state-preserving atomic move was in progress</a>.
-
  <dt><code><var>record</var> . {{MutationRecord/previousSibling}}</code>
  <dt><code><var>record</var> . {{MutationRecord/nextSibling}}</code>
  <dd>Return the <a lt="previous sibling">previous</a> and <a for=tree>next sibling</a> respectively
@@ -4208,7 +4174,6 @@ interface MutationRecord {
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
 <dfn attribute for="MutationRecord">addedNodes</dfn>,
 <dfn attribute for="MutationRecord">removedNodes</dfn>,
-<dfn attribute for="MutationRecord">movedNodes</dfn>,
 <dfn attribute for="MutationRecord">previousSibling</dfn>,
 <dfn attribute for="MutationRecord">nextSibling</dfn>,
 <dfn attribute for="MutationRecord">attributeName</dfn>,
@@ -5206,14 +5171,8 @@ method steps are:
 
  <li><p>then <a>throw</a> "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p>
 
- <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s
- <a>state-preserving atomic move in progress</a> to true.</p></li>
-
  <li><p>Let <var>return node</var> be the result of <a>pre-moving</a> <var>node</var> into
  <a>this</a> before <var>child</var>.</p></li>
-
- <li><p>Set <a>this</a>'s <a for=Node>node document</a>'s
- <a>state-preserving atomic move in progress</a> to false.</p></li>
 
  <li><p>Return <var>return node</var>.</p></li>
 </ol>
@@ -5811,8 +5770,7 @@ these steps:
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
- <var>node</var> with the <i>suppress observers flag</i> set if <var>document</var>'s
- <span>state-preserving atomic move in progress</span> is true, and unset otherwise.
+ <var>node</var>.
 
  <li>
   <p>If <var>document</var> is not <var>oldDocument</var>:
