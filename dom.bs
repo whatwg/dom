@@ -2912,6 +2912,36 @@ a <var>child</var>, run these steps:
 
  <li><p><a>Assert</a>: <var>parent</var> is non-null.
 
+ <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
+
+ <!-- Start removing-related bookkeeping steps -->
+ <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
+ <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
+ (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
+ of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+ <a for=range>start offset</a> is greater than <var>index</var>, decrease its
+ <a for=range>start offset</a> by 1.
+
+ <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+ <a for=range>end offset</a> is greater than <var>index</var>, decrease its
+ <a for=range>end offset</a> by 1.
+
+ <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
+ <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
+ <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-removing steps</a> given
+ <var>node</var> and <var>iterator</var>.
+
+ <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
+
+ <li><p>Let <var>oldNextSibling</var> be <var>node</var>'s <a for=tree>next sibling</a>.
+
+ <li><p><a for=set>Remove</a> <var>node</var> from its <var>parent</var>'s <a for=tree>children</a>.
+
+ <!-- Start insertion-related bookkeeping steps -->
  <li>
   <p>If <var>child</var> is non-null, then:
 
@@ -2927,8 +2957,6 @@ a <var>child</var>, run these steps:
 
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
  <var>parent</var>'s <a>last child</a> if <var>child</var> is null.
-
- <li><p><a for=/>Remove</a> <var>node</var> with the <i>suppress observers flag</i> set.
 
  <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
  <var>parent</var>'s <a for=tree>children</a>.
@@ -2977,12 +3005,17 @@ a <var>child</var>, run these steps:
  </li>
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with « », <var>nodes</var>,
- <var>previousSibling</var>, and <var>child</var>.</p></li>
+ <var>oldPreviousSibling</var>, and <var>oldNextSibling</var>.</p></li>
 
  <li><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>, « »,
  <var>previousSibling</var>, and <var>child</var>.</p></li>
 
- <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+ <li>
+  <p>Run the <a>children changed steps</a> for <var>parent</var>.</p>
+
+  <p class="XXX">TODO(domfarolino): Before merging, do a full audit on children changed steps, and
+  write tests.</p>
+ </li>
 </ol>
 
 
