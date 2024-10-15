@@ -2691,7 +2691,13 @@ boolean <var>open</var> (default false):
 <p>To <dfn export for=Node id=concept-node-ensure-pre-move-validity>ensure pre-move validity</dfn>
 of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run these steps:
 
-<ol>
+ <li><p>If either <var>parent</var> or <var>node</var> are not <a>connected</a>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
+
+ <li><p>If <var>parent</var>'s <a for=/>shadow-including root</a> is not the same as
+ <var>node</var>'s <a for=/>shadow-including root</a>, then <a>throw</a> a
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
+
  <li><p>If <var>node</var> is not an {{Element}} or a {{CharacterData}} <a for=/>node</a>, then
  <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
 
@@ -5205,21 +5211,8 @@ return the result of <a>pre-removing</a> <var>child</var> from <a>this</a>.
 method steps are:
 
 <ol>
- <li><p>If any of the following conditions are false:</p>
-
-  <ul>
-   <li><p><a>this</a> is <a>connected</a>;</p></li>
-
-   <li><p><var>node</var> is <a>connected</a>;</p></li>
-
-   <li><p><a>this</a>'s <a for=/>shadow-including root</a> is the same as <var>node</var>'s
-   <a for=/>shadow-including root</a>,</p></li>
-  </ul>
-
- <li><p>then <a>throw</a> "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p>
-
  <li><p>Let <var>return node</var> be the result of <a>pre-moving</a> <var>node</var> into
- <a>this</a> before <var>child</var>.</p></li>
+ <a>this</a> before <var>child</var>, rethrowing any exceptions.</p></li>
 
  <li><p>Return <var>return node</var>.</p></li>
 </ol>
