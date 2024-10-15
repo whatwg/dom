@@ -2688,12 +2688,30 @@ boolean <var>open</var> (default false):
  <!-- Technically this is post-insert. -->
 </ol>
 
+<p>To <dfn export for=Node id=concept-node-ensure-pre-move-validity>ensure pre-move validity</dfn>
+of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run these steps:
+
+<ol>
+ <li><p><a>Assert</a>: <var>node</var> is either an {{Element}} or {{CharacterData}}.</p></li>
+
+ <li><p>If <var>parent</var> is not an {{Element}} <a for=/>node</a>, then <a>throw</a> a
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>parent</var>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <var>parent</var>,
+ then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
+</ol>
+
+<p class=note>The <a>ensure pre-move validity</a> steps are a similar, but slightly stricter version
+of the <a>ensure pre-insertion validity</a> steps.</p>
+
 <p>To <dfn export id=concept-node-pre-move>pre-move</dfn> a <var>node</var> into a
 <var>parent</var> before a <var>child</var>, run these steps:
 
 <ol>
- <!-- domfarolino: Is this right? -->
- <li><p><a>Ensure pre-insertion validity</a> of <var>node</var> into <var>parent</var> before
+ <li><p><a>Ensure pre-move validity</a> of <var>node</var> into <var>parent</var> before
  <var>child</var>.
 
  <li><p>Let <var>referenceChild</var> be <var>child</var>.
