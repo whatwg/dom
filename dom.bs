@@ -2948,8 +2948,8 @@ data-x="concept-insertion-steps-ext">insertion steps</span>, these steps must no
 JavaScript. These steps may queue tasks to do these things asynchronously, however.
 
 
-<p>To <dfn export id=concept-node-move>move</dfn> a <var>node</var> into a <var>parent</var> before
-a <var>child</var>, run these steps:
+<p>To <dfn export id=concept-node-move>move</dfn> a <var>node</var> into a <var>newParent</var>
+before a <var>child</var>, run these steps:
 
 <ol>
  <!-- Start removing-related bookkeeping steps -->
@@ -2975,31 +2975,31 @@ a <var>child</var>, run these steps:
   <p>If <var>child</var> is non-null, then:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>newParent</var> and
    <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
-   its <a for=range>start offset</a> by <var>count</var>.
+   its <a for=range>start offset</a> by 1.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>newParent</var> and
    <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
-   its <a for=range>end offset</a> by <var>count</var>.
+   its <a for=range>end offset</a> by 1.
   </ol>
 
- <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
- <var>parent</var>'s <a>last child</a> if <var>child</var> is null.
+ <li><p>Let <var>newPreviousSibling</var> be <var>child</var>'s <a>previous sibling</a> if
+ <var>child</var> is non-null, and <var>newParent</var>'s <a>last child</a> otherwise.
 
  <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
- <var>parent</var>'s <a for=tree>children</a>.
+ <var>newParent</var>'s <a for=tree>children</a>.
 
- <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>parent</var>'s
+ <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>newParent</var>'s
  <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
 
- <li><p>If <var>parent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
+ <li><p>If <var>newParent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
  <a for=ShadowRoot>slot assignment</a> is "<code>named</code>" and <var>node</var> is a
  <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
- <li><p>If <var>parent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
- <var>parent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
- then run <a>signal a slot change</a> for <var>parent</var>.
+ <li><p>If <var>newParent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+ <var>newParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
+ then run <a>signal a slot change</a> for <var>newParent</var>.
 
  <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>'s <a for=tree>root</a>.
 
@@ -3033,11 +3033,11 @@ a <var>child</var>, run these steps:
   </ol>
  </li>
 
- <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with « », <var>nodes</var>,
+ <li><p><a>Queue a tree mutation record</a> for <var>oldParent</var> with « », « <var>node</var> »,
  <var>oldPreviousSibling</var>, and <var>oldNextSibling</var>.</p></li>
 
- <li><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>, « »,
- <var>previousSibling</var>, and <var>child</var>.</p></li>
+ <li><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
+ <var>newPreviousSibling</var>, and <var>child</var>.</p></li>
 </ol>
 
 
