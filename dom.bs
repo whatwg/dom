@@ -2701,9 +2701,6 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>:
   <var>parent</var>'s <a>connected</a> status matches <var>node</var>'s <a>connected</a> status.</p>
  </li>
 
- <li><p>If <var>parent</var> is not a {{Document}}, {{DocumentFragment}}, or {{Element}}
- <a for=/>node</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
-
  <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>parent</var>, then
  <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
@@ -3320,6 +3317,7 @@ interface mixin ParentNode {
   [CEReactions, Unscopable] undefined prepend((Node or DOMString)... nodes);
   [CEReactions, Unscopable] undefined append((Node or DOMString)... nodes);
   [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString)... nodes);
+  [CEReactions] Node moveBefore(Node node, Node? child);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -3363,6 +3361,16 @@ Element includes ParentNode;
  <dd>
   <p>Replace all <a for=tree>children</a> of <var>node</var> with <var>nodes</var>,
   while replacing strings in <var>nodes</var> with equivalent {{Text}} <a for=/>nodes</a>.
+
+  <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
+  the <a>node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var>node</var> . <a method for=ParentNode lt="moveBefore()">moveBefore</a>(<var>movedNode</var>, <var>child</var>)</code>
+ <dd>
+  <p>Moves, without first removing, <var>movedNode</var> into <var>node</var> after <var>child</var>
+  if <var>child</var> is non-null; otherwise after the <a>last child</a> of <var>node</var>. This
+  methods preserves state associated with <var>movedNode</var> so that it persists after the move.
 
   <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
   the <a>node tree</a> are violated.
@@ -4260,7 +4268,6 @@ interface Node : EventTarget {
   [CEReactions] Node appendChild(Node node);
   [CEReactions] Node replaceChild(Node node, Node child);
   [CEReactions] Node removeChild(Node child);
-  [CEReactions] Node moveBefore(Node node, Node? child);
 };
 
 dictionary GetRootNodeOptions {
