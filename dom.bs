@@ -4560,11 +4560,10 @@ dom-Range-extractContents, dom-Range-cloneContents -->
    <li><p>Let <var>copy</var> be the result of <a>creating an element</a>, given
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
    <a for=Element>namespace</a>, <var>node</var>'s <a for=Element>namespace prefix</a>, and
-   <var>node</var>'s <a><code>is</code> value</a>, with the <var>synchronous custom elements
-   flag</var> unset.
+   <var>node</var>'s <a><code>is</code> value</a>.
 
    <li>
-    <p><a for=list>For each</a> <var>attribute</var> in <var>node</var>'s
+    <p><a for=list>For each</a> <var>attribute</var> of <var>node</var>'s
     <a for=Element>attribute list</a>:
 
     <ol>
@@ -5460,8 +5459,7 @@ method steps are:
  "<code>application/xhtml+xml</code>"; otherwise null.
 
  <li><p>Return the result of <a>creating an element</a> given <a>this</a>, <var>localName</var>,
- <var>namespace</var>, null, <var>is</var>, and with the <var>synchronous custom elements</var> flag
- set.
+ <var>namespace</var>, null, <var>is</var>, and true.
 </ol>
 
 <p>The <dfn noexport>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
@@ -5478,8 +5476,7 @@ method steps are:
  to it.
 
  <li><p>Return the result of <a>creating an element</a> given <var>document</var>,
- <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, and with the
- <var>synchronous custom elements</var> flag set.
+ <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, and true.
 </ol>
 
 <p>The
@@ -5907,26 +5904,26 @@ method steps are:
  <a for=DocumentType>name</a> and with its <a for=Node>node document</a> set to <var>doc</var>, to
  <var>doc</var>.
 
- <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>, <{html}>, and
- the <a>HTML namespace</a>, to <var>doc</var>.
+ <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
+ "<code>html</code>", and the <a>HTML namespace</a>, to <var>doc</var>.
 
- <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>, <{head}>, and
- the <a>HTML namespace</a>, to the <{html}> element created earlier.
+ <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
+ "<code>head</code>", and the <a>HTML namespace</a>, to the <{html}> element created earlier.
 
  <li>
   <p>If <var>title</var> is given:
 
   <ol>
-   <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>, <{title}>,
-   and the <a>HTML namespace</a>, to the <{head}> element created earlier.
+   <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
+   "<code>title</code>", and the <a>HTML namespace</a>, to the <{head}> element created earlier.
 
    <li><p><a>Append</a> a new {{Text}} <a for=/>node</a>, with its <a for=CharacterData>data</a> set
    to <var>title</var> (which could be the empty string) and its <a for=Node>node document</a> set
    to <var>doc</var>, to the <{title}> element created earlier.
   </ol>
 
- <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>, <{body}>, and
- the <a>HTML namespace</a>, to the <{html}> element created earlier.</li>
+ <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
+ "<code>body</code>", and the <a>HTML namespace</a>, to the <{html}> element created earlier.</li>
 
  <li><p><var>doc</var>'s <a for=Document>origin</a> is <a>this</a>'s associated <a>document</a>'s
  <a for=Document>origin</a>.
@@ -6305,16 +6302,12 @@ value of these steps:
 <p class=note>User agents could optimize <a for=Element>qualified name</a> and
 <a for=Element>HTML-uppercased qualified name</a> by storing them in internal slots.
 
-<p>To
-<dfn export id=concept-create-element lt="create an element|creating an element">create an element</dfn>,
-given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and optional
-<var>prefix</var>, <var>is</var>, and <var>synchronous custom elements flag</var>, run these steps:
+<p>To <dfn export id=concept-create-element>create an element</dfn>, given a <a for=/>document</a>
+<var>document</var>, string <var>localName</var>, string-or-null <var>namespace</var>, and
+optionally a string-or-null <var>prefix</var> (default null), string-or-null <var>is</var> (default
+null), and boolean <var>synchronousCustomElements</var> (default false):
 
 <ol>
- <li><p>If <var>prefix</var> was not given, let <var>prefix</var> be null.
-
- <li><p>If <var>is</var> was not given, let <var>is</var> be null.
-
  <li><p>Let <var>result</var> be null.
 
  <li><p>Let <var>definition</var> be the result of
@@ -6340,8 +6333,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
    <var>document</var>.
 
    <li>
-    <p>If the <var>synchronous custom elements flag</var> is set, then run this step while
-    catching any exceptions:
+    <p>If <var>synchronousCustomElements</var> is true, then run this step while catching any
+    exceptions:
 
     <ol>
      <li><p><a lt="upgrade an element">Upgrade</a> <var>result</var> using <var>definition</var>.
@@ -6369,8 +6362,8 @@ given a <var>document</var>, <var>localName</var>, <var>namespace</var>, and opt
 
   <ol>
    <li>
-    <p>If the <var>synchronous custom elements flag</var> is set, then run these steps while
-    catching any exceptions:
+    <p>If <var>synchronousCustomElements</var> is true, then run these steps while catching any
+    exceptions:
 
     <ol>
      <li><p>Let <var>C</var> be <var>definition</var>'s
