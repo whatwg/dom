@@ -2723,23 +2723,6 @@ boolean <var>open</var> (default false):
 <p class=note>The <a>ensure pre-move validity</a> steps are a similar, but slightly stricter version
 of the <a>ensure pre-insert validity</a> steps.</p>
 
-<p>To <dfn>pre-move</dfn> a <a for=/>node</a> <var>node</var> into a <a for=/>node</a>
-<var>parent</var> before a <a for=/>node</a> <var>child</var>:
-
-<ol>
- <li><p><a>Ensure pre-move validity</a> of <var>node</var> into <var>parent</var> before
- <var>child</var>.
-
- <li><p>Let <var>referenceChild</var> be <var>child</var>.
-
- <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
- <var>node</var>'s <a for=tree>next sibling</a>.
-
- <li><p><a for=/>Move</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>.
-
- <li><p>Return <var>node</var>.
-</ol>
-
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
@@ -3318,7 +3301,7 @@ interface mixin ParentNode {
   [CEReactions, Unscopable] undefined append((Node or DOMString)... nodes);
   [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString)... nodes);
 
-  [CEReactions] Node moveBefore(Node node, Node? child);
+  [CEReactions] undefined moveBefore(Node node, Node? child);
 
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
@@ -3434,10 +3417,14 @@ are:
 method steps are:
 
 <ol>
- <li><p>Let <var>result</var> be the result of <a>pre-moving</a> <var>node</var> into <a>this</a>
- before <var>child</var>.</p></li>
+ <li><p><a>Ensure pre-move validity</a> of <var>node</var> into <a>this</a>before <var>child</var>.
 
- <li><p>Return <var>result</var>.</p></li>
+ <li><p>Let <var>referenceChild</var> be <var>child</var>.
+
+ <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
+ <var>node</var>'s <a for=tree>next sibling</a>.
+
+ <li><p><a for=/>Move</a> <var>node</var> into <a>this</a> before <var>referenceChild</var>.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method
