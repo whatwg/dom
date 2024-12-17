@@ -972,8 +972,8 @@ object, an <a>event listener</a> is a broader concept as can be seen above.
 which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
 specified otherwise it returns null.
 
-<p class=note><a for=/>Nodes</a>, <a for=/>shadow roots</a>, and <a>documents</a>
-override the <a>get the parent</a> algorithm.
+<p class=note><a for=/>Nodes</a>, <a for=/>shadow roots</a>, and <a for=/>documents</a> override the
+<a>get the parent</a> algorithm.
 
 <p>Each {{EventTarget}} object can have an associated
 <dfn export for=EventTarget>activation behavior</dfn> algorithm. The
@@ -2218,7 +2218,7 @@ It is represented as follows:
 
 <ul class=domTree>
  <li>
-  <a>Document</a>
+  <a for=/>Document</a>
   <ul>
    <li class=t10><a>Doctype</a>: <code>html</code>
    <li class=t1>{{Element}}: <code>html</code> <span class=t2><code class="attribute name">class</code>="<code class="attribute value">e</code>"</span>
@@ -4097,7 +4097,7 @@ interface Node : EventTarget {
   [CEReactions] attribute DOMString? textContent;
   [CEReactions] undefined normalize();
 
-  [CEReactions, NewObject] Node cloneNode(optional boolean deep = false);
+  [CEReactions, NewObject] Node cloneNode(optional boolean subtree = false);
   boolean isEqualNode(Node? otherNode);
   boolean isSameNode(Node? otherNode); // legacy alias of ===
 
@@ -4294,7 +4294,7 @@ statement, switching on the interface <a>this</a> <a>implements</a>:
  <dt><code><var>node</var> . {{Node/ownerDocument}}</code>
  <dd>
   Returns the <a for=Node>node document</a>.
-  Returns null for <a>documents</a>.
+  Returns null for <a for=/>documents</a>.
 
  <dt><code><var>node</var> . {{Node/getRootNode()}}</code>
  <dd>Returns <var>node</var>'s <a for=tree>root</a>.
@@ -4521,9 +4521,9 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
 <hr>
 
 <dl class=domintro>
- <dt><code><var>node</var> . <a method for=Node lt=cloneNode()>cloneNode([<var>deep</var> = false])</a></code>
+ <dt><code><var>node</var> . <a method for=Node lt=cloneNode()>cloneNode([<var>subtree</var> = false])</a></code>
  <dd>Returns a copy of <var>node</var>. If
- <var>deep</var> is true, the copy also includes the
+ <var>subtree</var> is true, the copy also includes the
  <var>node</var>'s <a for=tree>descendants</a>.
 
  <dt><code><var>node</var> . {{Node/isEqualNode(otherNode)}}</code>
@@ -4533,33 +4533,83 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
 
 <div class=impl>
 
+<div algorithm>
 <a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-clone-ext>cloning steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed <var>copy</var>, <var>node</var>, <var>document</var>, and an optional
-<i>clone children flag</i>, as indicated in the <a lt="clone a node">clone</a> algorithm.
+algorithm is passed <var ignore>node</var>, <var ignore>copy</var>, and <var ignore>subtree</var> as
+indicated in the <a>clone a node</a> algorithm.
 
-<p class=note>HTML defines <a>cloning steps</a> for <{script}> and <{input}>
-elements. SVG ought to do the same for its <{script}> elements, but does not call this out
-at the moment.
+<p class=note>HTML defines <a>cloning steps</a> for several elements, such as <{input}>, <{script}>,
+and <{template}>. SVG ought to do the same for its <{script}> elements, but does not.
+</div>
 
-<p>To <dfn export id=concept-node-clone lt="clone a node" local-lt="clone">clone</dfn> a
-<var>node</var>, with an optional <var>document</var> and <i>clone children flag</i>, run these
-steps:
-<!-- This algorithm is used by dom-Node-cloneNode, dom-Document-importNode,
-dom-Range-extractContents, dom-Range-cloneContents -->
+<div algorithm="clone a node">
+<p>To <dfn export id=concept-node-clone>clone a node</dfn> given a <a for=/>node</a> <var>node</var>
+and an optional <a for=/>document</a> <dfn export for="clone a node"><var>document</var></dfn>
+(default <var>node</var>'s <a for=Node>node document</a>), boolean
+<dfn export for="clone a node"><var>subtree</var></dfn> (default false), and
+<a for=/>node</a>-or-null <dfn export for="clone a node"><var>parent</var></dfn> (default null):
 
 <ol>
- <li><p>If <var>document</var> is not given, then set <var>document</var> to <var>node</var>'s
- <a for=Node>node document</a>.
-
- <li><a for=/>Assert</a>: <var>node</var> is not a <a for=/>document</a> or <var>node</var> is
+ <li><p><a for=/>Assert</a>: <var>node</var> is not a <a for=/>document</a> or <var>node</var> is
  <var>document</var>.
+
+ <li><p>Let <var>copy</var> be the result of <a>cloning a single node</a> given <var>node</var> and
+ <var>document</var>.
+
+ <li><p>Run any <a>cloning steps</a> defined for <var>node</var> in
+ <a>other applicable specifications</a> and pass <var>node</var>, <var>copy</var>, and
+ <var>subtree</var> as parameters.
+
+ <li><p>If <var>parent</var> is non-null, then <a for=/>append</a> <var>copy</var> to
+ <var>parent</var>.
+
+ <li><p>If <var>subtree</var> is true, then for each <var>child</var> of <var>node</var>'s
+ <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
+ <a for="clone a node"><i>document</i></a> set to <var>document</var>,
+ <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
+ <a for="clone a node"><i>parent</i></a> set to <var>copy</var>.
+
+ <li>
+  <p>If <var>node</var> is an <a for=/>element</a>, <var>node</var> is a
+  <a for=Element>shadow host</a>, and <var>node</var>'s <a for=Element>shadow root</a>'s
+  <a for=ShadowRoot>clonable</a> is true:
+
+  <ol>
+   <li><p><a for=/>Assert</a>: <var>copy</var> is not a <a for=Element>shadow host</a>.
+
+   <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>.
+
+   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
+   to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
+
+   <li><p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
+   <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
+   <a for="clone a node"><i>document</i></a> set to <var>document</var>,
+   <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
+   <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>.
+  </ol>
+
+ <li><p>Return <var>copy</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>clone a single node</dfn> given a <a for=/>node</a> <var>node</var> and
+<a for=/>document</a> <var>document</var>:
+
+<ol>
+ <li><p>Let <var>copy</var> be null.
 
  <li>
   <p>If <var>node</var> is an <a for=/>element</a>:
 
   <ol>
-   <li><p>Let <var>copy</var> be the result of <a>creating an element</a>, given
+   <li><p>Set <var>copy</var> to the result of <a>creating an element</a>, given
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
    <a for=Element>namespace</a>, <var>node</var>'s <a for=Element>namespace prefix</a>, and
    <var>node</var>'s <a><code>is</code> value</a>.
@@ -4569,16 +4619,15 @@ dom-Range-extractContents, dom-Range-cloneContents -->
     <a for=Element>attribute list</a>:
 
     <ol>
-     <li><p>Let <var>copyAttribute</var> be a <a>clone</a> of <var>attribute</var>.
+     <li><p>Let <var>copyAttribute</var> be the result of <a>cloning a single node</a> given
+     <var>attribute</var> and <var>document</var>.
 
      <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to <var>copy</var>.
     </ol>
-   </li>
   </ol>
- </li>
 
  <li>
-  <p>Otherwise, let <var>copy</var> be a <a for=/>node</a> that <a>implements</a> the same
+  <p>Otherwise, set <var>copy</var> to a <a for=/>node</a> that <a>implements</a> the same
   interfaces as <var>node</var>, and fulfills these additional requirements, switching on the
   interface <var>node</var> <a>implements</a>:
 
@@ -4608,54 +4657,28 @@ dom-Range-extractContents, dom-Range-cloneContents -->
    <dd><p>Do nothing.
   </dl>
 
+ <li><p><a for=/>Assert</a>: <var>copy</var> is a <a for=/>node</a>.
+
  <li><p>If <var>node</var> is a <a for=/>document</a>, then set <var>document</var> to
  <var>copy</var>.
 
  <li><p>Set <var>copy</var>'s <a for=Node>node document</a> to <var>document</var>.
 
- <li><p>Run any <a>cloning steps</a> defined for <var>node</var> in
- <a>other applicable specifications</a> and pass <var>copy</var>, <var>node</var>,
- <var>document</var>, and the <i>clone children flag</i> if set, as parameters.
-
- <li><p>If the <i>clone children flag</i> is set, then for each <a for=tree>child</a>
- <var>child</var> of <var>node</var>, in <a>tree order</a>: <a>append</a> the result of
- <a lt="clone a node">cloning</a> <var>child</var> with <var>document</var> and the
- <i>clone children flag</i> set, to <var>copy</var>.
-
- <li>
-  <p>If <var>node</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
-  <a for=ShadowRoot>clonable</a> is true:
-
-  <ol>
-   <li><p>Assert: <var>copy</var> is not a <a for=Element>shadow host</a>.
-
-   <li><p>Run <a>attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>.
-
-   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
-   to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
-
-   <li><p>For each <a for=tree>child</a> <var>child</var> of <var>node</var>'s
-   <a for=Element>shadow root</a>, in <a>tree order</a>: <a>append</a> the result of
-   <a lt="clone a node">cloning</a> <var>child</var> with <var>document</var> and the
-   <i>clone children flag</i> set, to <var>copy</var>'s <a for=Element>shadow root</a>.
-  </ol>
-
  <li><p>Return <var>copy</var>.
 </ol>
+</div>
 
-<p>The <dfn method for=Node><code>cloneNode(<var>deep</var>)</code></dfn> method steps are:
+<div algorithm>
+<p>The <dfn method for=Node><code>cloneNode(<var>subtree</var>)</code></dfn> method steps are:
 
 <ol>
  <li><p>If <a>this</a> is a <a for=/>shadow root</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>Return a <a lt="clone a node">clone</a> of <a>this</a>, with the
- <i>clone children flag</i> set if <var>deep</var> is true.
+ <li><p>Return the result of <a>cloning a node</a> given <a>this</a> with
+ <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>.
 </ol>
+</div>
 
 <p>A <a for=/>node</a> <var>A</var> <dfn export for=Node id=concept-node-equals>equals</dfn> a
 <a for=/>node</a> <var>B</var> if all of the following conditions are true:
@@ -5127,7 +5150,7 @@ interface Document : Node {
   [NewObject] Comment createComment(DOMString data);
   [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
-  [CEReactions, NewObject] Node importNode(Node node, optional boolean deep = false);
+  [CEReactions, NewObject] Node importNode(Node node, optional boolean subtree = false);
   [CEReactions] Node adoptNode(Node node);
 
   [NewObject] Attr createAttribute(DOMString localName);
@@ -5188,9 +5211,9 @@ is "<code>quirks</code>", and
 <a for=Document>mode</a> is "<code>limited-quirks</code>".
 
 <div class=note>
- <p>The <a for=Document>mode</a> is only ever changed from the default for <a>documents</a> created
- by the <a>HTML parser</a> based on the presence, absence, or value of the DOCTYPE string, and by a
- new <a for=/>browsing context</a> (initial "<code>about:blank</code>"). [[!HTML]]
+ <p>The <a for=Document>mode</a> is only ever changed from the default for <a for=/>documents</a>
+ created by the <a>HTML parser</a> based on the presence, absence, or value of the DOCTYPE string,
+ and by a new <a for=/>browsing context</a> (initial "<code>about:blank</code>"). [[!HTML]]
 
  <p><a>No-quirks mode</a> was originally known as "standards mode" and <a>limited-quirks mode</a>
  was once known as "almost standards mode". They have been renamed because their details are now
@@ -5554,9 +5577,9 @@ method steps are:
 <hr>
 
 <dl class=domintro>
- <dt><var>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode(<var>node</var> [, <var>deep</var> = false])</a>
+ <dt><var>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode(<var>node</var> [, <var>subtree</var> = false])</a>
  <dd>
-  <p>Returns a copy of <var>node</var>. If <var>deep</var> is true, the copy also includes the
+  <p>Returns a copy of <var>node</var>. If <var>subtree</var> is true, the copy also includes the
   <var>node</var>'s <a for=tree>descendants</a>.
 
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
@@ -5573,16 +5596,19 @@ method steps are:
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 </dl>
 
-<p>The <dfn method for=Document><code>importNode(<var>node</var>, <var>deep</var>)</code></dfn>
+<div algorithm>
+<p>The <dfn method for=Document><code>importNode(<var>node</var>, <var>subtree</var>)</code></dfn>
 method steps are:
 
 <ol>
  <li><p>If <var>node</var> is a <a for=/>document</a> or <a for=/>shadow root</a>, then <a>throw</a>
  a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>Return a <a lt="clone a node">clone</a> of <var>node</var>, with <a>this</a> and the
- <i>clone children flag</i> set if <var>deep</var> is true.
+ <li><p>Return the result of <a>cloning a node</a> given <var>node</var> with
+ <a for="clone a node"><i>document</i></a> set to <a>this</a> and
+ <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>.
 </ol>
+</div>
 
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some <a for=/>nodes</a>. The
@@ -10402,6 +10428,7 @@ Daniel Clark,
 Daniel Glazman,
 Darien Maillet Valentine<!-- bhathos; GitHub -->,
 Darin Fisher,
+David Baron,
 David Bruant,
 David Flanagan,
 David Håsäther,
