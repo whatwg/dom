@@ -2688,41 +2688,6 @@ boolean <var>open</var> (default false):
  <!-- Technically this is post-insert. -->
 </ol>
 
-<p>To <dfn>ensure pre-move validity</dfn> of a <a for=/>node</a> <var>node</var> into a
-<a for=/>node</a> <var>parent</var> before a <a for=/>node</a> <var>child</var>:
-
-<ol>
- <li>
-  <p>If <var>parent</var>'s <a for=/>shadow-including root</a> is not the same as <var>node</var>'s
-  <a for=/>shadow-including root</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}"
-  {{DOMException}}.</p>
-
-  <p class=note>This has the side effect of ensuring that a move is only performed if
-  <var>parent</var>'s <a>connected</a> is <var>node</var>'s <a>connected</a>.</p>
- </li>
-
- <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>parent</var>, then
- <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
-
- <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <var>parent</var>,
- then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
-
- <li><p>If <var>node</var> is not an {{Element}} or a {{CharacterData}} <a for=/>node</a>, then
- <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
-
- <li><p>If <var>node</var> is a {{Text}} <a for=/>node</a> and <var>parent</var> is a
- <a>document</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
-
- <li><p>If <var>parent</var> is a <a>document</a>, <var>node</var> is an {{Element}}
- <a for=/>node</a>, and either <var>parent</var> has an <a for=/>element</a> <a for=tree>child</a>,
- <var>child</var> is a <a>doctype</a>, or <var>child</var> is non-null and a <a>doctype</a> is
- <a>following</a> <var>child</var> then <a>throw</a> a "{{HierarchyRequestError!!exception}}"
- {{DOMException}}.
-</ol>
-
-<p class=note>The <a>ensure pre-move validity</a> steps are a similar, but slightly stricter version
-of the <a>ensure pre-insert validity</a> steps.</p>
-
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
@@ -2930,6 +2895,33 @@ JavaScript. These steps may queue tasks to do these things asynchronously, howev
 <var>newParent</var> before a <a for=/>node</a> <var>child</var>:
 
 <ol>
+ <!-- Start pre-move validity checks -->
+ <li>
+  <p>If <a>this</a>'s <a for=/>shadow-including root</a> is not the same as <var>node</var>'s
+  <a for=/>shadow-including root</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}"
+  {{DOMException}}.</p>
+
+  <p class=note>This has the side effect of ensuring that a move is only performed if <a>this</a>'s
+  <a>connected</a> is <var>node</var>'s <a>connected</a>.</p>
+ </li>
+
+ <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <a>this</a>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <a>this</a>, then
+ <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>node</var> is not an {{Element}} or a {{CharacterData}} <a for=/>node</a>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
+
+ <li><p>If <var>node</var> is a {{Text}} <a for=/>node</a> and <a>this</a> is a <a>document</a>,
+ then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <a>this</a> is a <a>document</a>, <var>node</var> is an {{Element}} <a for=/>node</a>,
+ and either <a>this</a> has an <a for=/>element</a> <a for=tree>child</a>, <var>child</var> is a
+ <a>doctype</a>, or <var>child</var> is non-null and a <a>doctype</a> is <a>following</a>
+ <var>child</var> then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
  <!-- Start removing-related bookkeeping steps -->
  <li><p>Let <var>oldParent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
@@ -3417,8 +3409,6 @@ are:
 method steps are:
 
 <ol>
- <li><p><a>Ensure pre-move validity</a> of <var>node</var> into <a>this</a>before <var>child</var>.
-
  <li><p>Let <var>referenceChild</var> be <var>child</var>.
 
  <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
