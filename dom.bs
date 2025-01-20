@@ -1729,7 +1729,7 @@ can only be used to influence an ongoing one.
 
 
 
-<h2 id=aborting-ongoing-activities>Aborting ongoing activities</h3>
+<h2 id=aborting-ongoing-activities>Aborting ongoing activities</h2>
 
 <p>Though promises do not have a built-in aborting mechanism, many APIs using them require abort
 semantics. {{AbortController}} is meant to support these requirements by providing an
@@ -2461,20 +2461,20 @@ reference to the <a>slot</a>, because this variable is not directly accessible f
 
 <h5 id=finding-slots-and-slotables>Finding slots and slottables</h5>
 
-<p>To <dfn export lt="find a slot|finding a slot">find a slot</dfn> for a given <a>slottable</a>
-<var>slottable</var> and an optional <i>open flag</i> (unset unless stated otherwise), run these
-steps:</p>
+<div algorithm>
+<p>To <dfn>find a slot</dfn> for a given <a for=/>slottable</a> <var>slottable</var> and an optional
+boolean <var>open</var> (default false):
 
 <ol>
- <li><p>If <var>slottable</var>'s <a for=tree>parent</a> is null, then return null.</p></li>
+ <li><p>If <var>slottable</var>'s <a for=tree>parent</a> is null, then return null.
 
  <li><p>Let <var>shadow</var> be <var>slottable</var>'s <a for=tree>parent</a>'s
- <a for=Element>shadow root</a>.</p></li>
+ <a for=Element>shadow root</a>.
 
- <li><p>If <var>shadow</var> is null, then return null.</p></li>
+ <li><p>If <var>shadow</var> is null, then return null.
 
- <li><p>If the <i>open flag</i> is set and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is
- <em>not</em> "<code>open</code>", then return null.</p></li>
+ <li><p>If <var>open</var> is true and <var>shadow</var>'s <a for=ShadowRoot>mode</a> is not
+ "<code>open</code>", then return null.
 
  <li><p>If <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>", then
  return the <a>slot</a> in <var>shadow</var>'s <a for=tree>descendants</a> whose
@@ -2485,12 +2485,14 @@ steps:</p>
  <a for=tree>descendants</a> whose <a for=slot>name</a> is <var>slottable</var>'s
  <a for=slottable>name</a>, if any; otherwise null.
 </ol>
+</div>
 
-<p>To <dfn export lt="find slottables|finding slottables" id=find-slotables>find slottables</dfn>
-for a given <a>slot</a> <var>slot</var>, run these steps:</p>
+<div algorithm>
+<p>To <dfn export id=find-slotables>find slottables</dfn> for a given <a for=/>slot</a>
+<var>slot</var>:
 
 <ol>
- <li><p>Let <var>result</var> be an empty list.</p></li>
+ <li><p>Let <var>result</var> be « ».
 
  <li><p>Let <var>root</var> be <var>slot</var>'s <a for=tree>root</a>.
 
@@ -2502,8 +2504,6 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
   <p>If <var>root</var>'s <a for=ShadowRoot>slot assignment</a> is "<code>manual</code>":
 
   <ol>
-   <li><p>Let <var>result</var> be « ».
-
    <li><p><a for=set>For each</a> <a>slottable</a> <var>slottable</var> of <var>slot</var>'s
    <a>manually assigned nodes</a>, if <var>slottable</var>'s <a for=tree>parent</a> is
    <var>host</var>, <a for=list>append</a> <var>slottable</var> to <var>result</var>.
@@ -2520,29 +2520,29 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
    <li><p>If <var>foundSlot</var> is <var>slot</var>, then <a for=list>append</a>
    <var>slottable</var> to <var>result</var>.
   </ol>
- </li>
 
- <li><p>Return <var>result</var>.</p></li>
+ <li><p>Return <var>result</var>.
 </ol>
+</div>
 
-<p>To
-<dfn export lt="find flattened slottables|finding flattened slottables" id=find-flattened-slotables>find flattened slottables</dfn>
-for a given <a>slot</a> <var>slot</var>, run these steps:</p>
+<div algorithm>
+<p>To <dfn export id=find-flattened-slotables>find flattened slottables</dfn> for a given
+<a for=/>slot</a> <var>slot</var>:
 
 <ol>
- <li><p>Let <var>result</var> be an empty list.</p></li>
+ <li><p>Let <var>result</var> be « ».
 
  <li><p>If <var>slot</var>'s <a for=tree>root</a> is not a <a for=/>shadow root</a>, then return
- <var>result</var>.</p></li>
+ <var>result</var>.
 
  <li><p>Let <var>slottables</var> be the result of <a>finding slottables</a> given
- <var>slot</var>.</p></li>
+ <var>slot</var>.
 
  <li><p>If <var>slottables</var> is the empty list, then append each <a>slottable</a>
- <a for=tree>child</a> of <var>slot</var>, in <a>tree order</a>, to <var>slottables</var>.</p></li>
+ <a for=tree>child</a> of <var>slot</var>, in <a>tree order</a>, to <var>slottables</var>.
 
  <li>
-  <p>For each <var>node</var> in <var>slottables</var>:
+  <p>For each <var>node</var> of <var>slottables</var>:
 
   <ol>
    <li>
@@ -2550,23 +2550,23 @@ for a given <a>slot</a> <var>slot</var>, run these steps:</p>
 
     <ol>
      <li><p>Let <var>temporaryResult</var> be the result of <a>finding flattened slottables</a> given
-     <var>node</var>.</p></li>
+     <var>node</var>.
 
      <li><p>Append each <a>slottable</a> in <var>temporaryResult</var>, in order, to
-     <var>result</var>.</p></li>
+     <var>result</var>.
     </ol>
 
-   <li><p>Otherwise, append <var>node</var> to <var>result</var>.</p></li>
+   <li><p>Otherwise, append <var>node</var> to <var>result</var>.
   </ol>
- </li>
 
- <li><p>Return <var>result</var>.</p></li>
+ <li><p>Return <var>result</var>.
 </ol>
+</div>
 
 <h5 id=assigning-slotables-and-slots>Assigning slottables and slots</h5>
 
-<p>To <dfn noexport id=assign-slotables>assign slottables</dfn> for a <a>slot</a> <var>slot</var>,
-run these steps:
+<div algorithm>
+<p>To <dfn id=assign-slotables>assign slottables</dfn> for a <a for=/>slot</a> <var>slot</var>:
 
 <ol>
  <li><p>Let <var>slottables</var> be the result of <a>finding slottables</a> for <var>slot</var>.
@@ -2576,29 +2576,34 @@ run these steps:
 
  <li><p>Set <var>slot</var>'s <a for=slot>assigned nodes</a> to <var>slottables</var>.
 
- <li><p>For each <var>slottable</var> in <var>slottables</var>, set <var>slottable</var>'s
+ <li><p>For each <var>slottable</var> of <var>slottables</var>, set <var>slottable</var>'s
  <a>assigned slot</a> to <var>slot</var>.
 </ol>
+</div>
 
-<p>To <dfn noexport id=assign-slotables-for-a-tree>assign slottables for a tree</dfn>, given a
-<a for=/>node</a> <var>root</var>, run <a>assign slottables</a> for each <a>slot</a> <var>slot</var>
-in <var>root</var>'s <a for=tree>inclusive descendants</a>, in <a>tree order</a>.
+<div algorithm>
+<p>To <dfn id=assign-slotables-for-a-tree>assign slottables for a tree</dfn>, given a
+<a for=/>node</a> <var>root</var>, run <a>assign slottables</a> for each <a for=/>slot</a> of
+<var>root</var>'s <a for=tree>inclusive descendants</a>, in <a>tree order</a>.
+</div>
 
-<p>To <dfn noexport>assign a slot</dfn>, given a <a>slottable</a> <var>slottable</var>, run these
-steps:
+<div algorithm>
+<p>To <dfn>assign a slot</dfn>, given a <a>slottable</a> <var>slottable</var>:
 
 <ol>
  <li><p>Let <var>slot</var> be the result of <a>finding a slot</a> with <var>slottable</var>.
 
  <li><p>If <var>slot</var> is non-null, then run <a>assign slottables</a> for <var>slot</var>.
 </ol>
+</div>
 
 <h5 id=signaling-slot-change>Signaling slot change</h5>
 
 <p>Each <a>similar-origin window agent</a> has <dfn noexport id=signal-slot-list>signal slots</dfn>
 (a <a for=/>set</a> of <a>slots</a>), which is initially empty. [[!HTML]]
 
-<p>To <dfn noexport>signal a slot change</dfn>, for a <a>slot</a> <var>slot</var>, run these steps:
+<div algorithm>
+<p>To <dfn>signal a slot change</dfn>, for a <a>slot</a> <var>slot</var>:
 
 <ol>
  <li><p><a for=set>Append</a> <var>slot</var> to <var>slot</var>'s <a>relevant agent</a>'s
@@ -2606,6 +2611,7 @@ steps:
 
  <li><p><a>Queue a mutation observer microtask</a>.
 </ol>
+</div>
 
 
 <h4 id=mutation-algorithms>Mutation algorithms</h4>
@@ -3446,8 +3452,7 @@ Text includes Slottable;
 </pre>
 
 <p>The <dfn attribute for=Slottable id=dom-slotable-assignedslot><code>assignedSlot</code></dfn>
-getter steps are to return the result of <a>find a slot</a> given <a>this</a> and with the
-<i>open flag</i> set.
+getter steps are to return the result of <a>find a slot</a> given <a>this</a> and true.
 
 
 <h4 id=old-style-collections>Old-style collections: {{NodeList}} and {{HTMLCollection}}</h4>
@@ -5291,7 +5296,7 @@ otherwise "<code>CSS1Compat</code>".
  <dt><var>document</var> . {{Document/documentElement}}
  <dd>Returns the <a>document element</a>.
 
- <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByTagName(qualifiedName)}}</code>
+ <dt><code><var>collection</var> = <var>document</var> . <a method for=Document lt="getElementsByTagName(qualifiedName)">getElementsByTagName</a>(<var>qualifiedName</var>)</code>
 
  <dd>
   <p>If <var>qualifiedName</var> is "<code>*</code>" returns an {{HTMLCollection}} of all
@@ -5302,7 +5307,7 @@ otherwise "<code>CSS1Compat</code>".
   (Matches case-insensitively against <a for=/>elements</a> in the <a>HTML namespace</a> within an
   <a>HTML document</a>.)
 
- <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByTagNameNS(namespace, localName)}}</code>
+ <dt><code><var>collection</var> = <var>document</var> . <a method for=Document lt="getElementsByTagNameNS(namespace, localName)">getElementsByTagNameNS</a>(<var>namespace</var>, <var>localName</var>)</code>
 
  <dd>
   <p>If <var>namespace</var> and <var>localName</var> are "<code>*</code>", returns an
@@ -5320,8 +5325,8 @@ otherwise "<code>CSS1Compat</code>".
   <a for=/>elements</a> whose <a for=Element>namespace</a> is <var>namespace</var> and
   <a for=Element>local name</a> is <var>localName</var>.
 
- <dt><var>collection</var> = <var>document</var> . {{Document/getElementsByClassName(classNames)}}</code>
- <dt><var>collection</var> = <var>element</var> . {{Element/getElementsByClassName(classNames)}}</code>
+ <dt><code><var>collection</var> = <var>document</var> . <a method for=Document lt="getElementsByClassName(classNames)">getElementsByClassName</a>(<var>classNames</var>)</code>
+ <dt><code><var>collection</var> = <var>element</var> . <a method for=Element lt="getElementsByClassName(classNames)">getElementsByClassName</a>(<var>classNames</var>)</code>
  <dd><p>Returns an {{HTMLCollection}} of the <a for=/>elements</a> in the object on which the method
  was invoked (a <a for=/>document</a> or an <a for=/>element</a>) that have all the classes given by
  <var>classNames</var>. The <var>classNames</var> argument is interpreted as a space-separated list
