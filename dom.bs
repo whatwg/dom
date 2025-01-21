@@ -3040,7 +3040,7 @@ optional <i>suppress observers flag</i>, run these steps:
  <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
  (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>composed live range</a> whose <a for=range>end node</a> is an
+ <li><p>For each <a>composed live range</a> whose <a for=range>end node</a> is a
  <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>end</a> to
  (<var>parent</var>, <var>index</var>).
 
@@ -5785,8 +5785,7 @@ are:
 <hr>
 
 <p>The <dfn method for=Document><code>createRange()</code></dfn> method steps are to return a new
-{{Range}} <a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> and <a
-for=range>end</a>.
+{{Range}} object with (<a>this</a>, 0) as its <a for=range>start</a> and <a for=range>end</a>.
 
 <p class=note>The {{Range/Range()}} constructor can be used instead.
 
@@ -7921,11 +7920,11 @@ range.setEnd(secondText, 4)
 <a>node tree</a> above cannot be represented by a <a>range</a>. <a>Ranges</a> are only useful for
 <a for=/>nodes</a>.
 
-<p>{{Range}} objects, unlike {{StaticRange}} objects, are affected by mutations to the <a>node
-tree</a>. Therefore they are <a>live ranges</a>. Such mutations will not invalidate them and will
-try to ensure that it still represents the same piece of content. Necessarily, a <a>live range</a>
-might itself be modified as part of the mutation to the <a>node tree</a> when, e.g., part of the
-content it represents is mutated.
+<p>{{Range}} objects, unlike {{StaticRange}} objects, are affected by mutations to the
+<a>node tree</a>. Therefore they are <a>live ranges</a>. Such mutations will not invalidate them and
+will try to ensure that it still represents the same piece of content. Necessarily, a
+<a>live range</a> might itself be modified as part of the mutation to the <a>node tree</a> when,
+e.g., part of the content it represents is mutated.
 
 <p class=note>See the <a for=/>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
@@ -8162,12 +8161,11 @@ mutations to the <a>node tree</a>.</p>
 <a>live ranges</a> associated with that <a>tree</a>.</p>
 
 <p>A <dfn export id=concept-composed-live-range>composed live range</dfn> is a <a>live range</a>
-that has one associated {{Range}} object - <dfn export
-id=concept-composed-live-range-cached-live-range for="composed live range">cached live
-range</dfn>.</p>
+that has one associated {{Range}} object —
+<dfn export id=concept-cached-live-range for="composed live range">cached live range</dfn>.</p>
 
-<p class=note>The <a>cached live range</a> is used to maintain backward compatibility with the
-{{getRangeAt}} API.</p>
+<p class=note>The <a for="composed live range">cached live range</a> is used to maintain backward
+compatibility with the {{getRangeAt}} API.</p>
 
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
 <a for=tree>root</a> of its <a for=range>start node</a>.
@@ -8237,7 +8235,7 @@ but not its <a for=range>end node</a>, or vice versa.
 
 <dl class=domintro>
  <dt><code><var>range</var> = new <a constructor>Range()</a></code>
- <dd>Returns a new {{Range}} <a>live range</a>.
+ <dd>Returns a new {{Range}} object.
 </dl>
 
 <p>The <dfn constructor for=Range lt="Range()"><code>new Range()</code></dfn> constructor steps are
@@ -8303,9 +8301,9 @@ steps:
      <li>Set <var>range</var>'s
      <a for=range>start</a> to <var>bp</var>.
 
-     <li>If <var>range</var> is the associated <a>cached live range</a> of a <a>composed live
-     range</a> <var>composed live range</var>, set <var>composed live range</var>’s <a
-     for="range">start</a> to <var>bp</var>.
+     <li>If <var>range</var> is the <a for="composed live range">cached live range</a> of a
+     <var>composed live range</var>, set <var>composed live range</var>’s
+     <a or="range">start</a> to <var>bp</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
@@ -8322,9 +8320,9 @@ steps:
      <li>Set <var>range</var>'s
      <a for=range>end</a> to <var>bp</var>.
 
-     <li>If <var>range</var> is the associated <a>cached live range</a> of a <a>composed live range</a>
-     <var>composed live range</var>, set <var>composed live range</var>’s <a for="range">end</a> to
-     <var>bp</var>.
+     <li>If <var>range</var> is the <a for="composed live range">cached live range</a> of a
+     <var>composed live range</var>, set <var>composed live range</var>’s
+     <a for="range">end</a> to <var>bp</var>.
     </ol>
   </dl>
 </ol>
@@ -8605,8 +8603,8 @@ method steps are:
  (<var>new node</var>, <var>new offset</var>).
 </ol>
 
-<p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a {{Range}} <a>live
-range</a> <var>range</var>, run these steps:
+<p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a {{Range}} object
+<var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -8782,8 +8780,7 @@ range</a> <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} <a>live range</a>
-   whose <a for=range>start</a> is
+   <li>Let <var>subrange</var> be a new {{Range}} object whose <a for=range>start</a> is
    (<var>original start node</var>, <var>original start offset</var>) and
    whose <a for=range>end</a> is
    (<var>first partially contained child</var>, <var>first partially contained child</var>'s
@@ -8836,8 +8833,7 @@ range</a> <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} <a>live range</a>
-   whose <a for=range>start</a> is
+   <li>Let <var>subrange</var> be a new {{Range}} object whose <a for=range>start</a> is
    (<var>last partially contained child</var>, 0) and whose
    <a for=range>end</a> is
    (<var>original end node</var>, <var>original end offset</var>).
@@ -8861,7 +8857,7 @@ result of <a for="live range">extracting</a> <a>this</a>.
 
 <p>To
 <dfn export id=concept-range-clone for="live range" lt="clone the contents|cloning the contents">clone the contents</dfn>
-of a {{Range}} <a>live range</a> <var>range</var>, run these steps:
+of a {{Range}} object <var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -8989,7 +8985,7 @@ of a {{Range}} <a>live range</a> <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} <a>live range</a>
+   <li>Let <var>subrange</var> be a new {{Range}} object
    whose <a for=range>start</a> is
    (<var>original start node</var>, <var>original start offset</var>) and
    whose <a for=range>end</a> is
@@ -9047,7 +9043,7 @@ of a {{Range}} <a>live range</a> <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} <a>live range</a>
+   <li>Let <var>subrange</var> be a new {{Range}} object
    whose <a for=range>start</a> is
    (<var>last partially contained child</var>, 0) and whose
    <a for=range>end</a> is
@@ -9067,7 +9063,7 @@ of a {{Range}} <a>live range</a> <var>range</var>, run these steps:
 result of <a for="live range">cloning the contents</a> of <a>this</a>.
 
 <p>To <dfn export id=concept-range-insert for="live range">insert</dfn> a <a for=/>node</a>
-<var>node</var> into a {{Range}} <a>live range</a> <var>range</var>, run these steps:
+<var>node</var> into a {{Range}} object <var>range</var>, run these steps:
 
 <ol>
  <li>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
@@ -9217,7 +9213,7 @@ check first thing, which matches everyone but Firefox.
 </ol>
 
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method steps are to return a new
-{{Range}} <a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as
+{{Range}} object with the same <a for=range>start</a> and <a for=range>end</a> as
 <a>this</a>.
 
 <p>The <dfn method for=Range><code>detach()</code></dfn> method steps are to do nothing.
