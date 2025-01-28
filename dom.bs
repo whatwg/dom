@@ -3034,11 +3034,11 @@ optional <i>suppress observers flag</i>, run these steps:
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
  of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>composed live range</a> whose <a for=range>start node</a> is a
+ <li><p>For each <a>composed selection range</a> whose <a for=range>start node</a> is a
  <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
  (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>composed live range</a> whose <a for=range>end node</a> is a
+ <li><p>For each <a>composed selection range</a> whose <a for=range>end node</a> is a
  <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>end</a> to
  (<var>parent</var>, <var>index</var>).
 
@@ -7919,10 +7919,10 @@ range.setEnd(secondText, 4)
 <a for=/>nodes</a>.
 
 <p>{{Range}} objects, unlike {{StaticRange}} objects, are affected by mutations to the
-<a>node tree</a>. Therefore they are <a>live ranges</a>. Such mutations will not invalidate them and
-will try to ensure that it still represents the same piece of content. Necessarily, a
-<a>live range</a> might itself be modified as part of the mutation to the <a>node tree</a> when,
-e.g., part of the content it represents is mutated.
+<a>node tree</a>. Therefore they are also known as <a>live ranges</a>. Such mutations will not
+invalidate them and will try to ensure that it still represents the same piece of content.
+Necessarily, a <a>live range</a> might itself be modified as part of the mutation to the
+<a>node tree</a> when, e.g., part of the content it represents is mutated.
 
 <p class=note>See the <a for=/>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
@@ -8158,12 +8158,12 @@ mutations to the <a>node tree</a>.</p>
 <a for=/>remove</a>, <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms) modify
 <a>live ranges</a> associated with that <a>tree</a>.</p>
 
-<p>A <dfn export id=concept-composed-live-range>composed live range</dfn> is a <a>live range</a>
-that has an associated {{Range}} object, a
-<dfn export id=concept-cached-live-range for="composed live range">cached live range</dfn>.</p>
+<p>A <dfn export id=concept-composed-selection-range>composed selection range</dfn> is a
+<a>live range</a> that has an associated {{Range}} object, a
+<dfn export id=concept-legacy-selection-range for="composed selection range">legacy selection range</dfn>.</p>
 
-<p class=note>The <a for="composed live range">cached live range</a> is used to maintain backward
-compatibility with the {{Selection/getRangeAt()}} API.</p>
+<p class=note>The <a for="composed selection range">legacy selection range</a> is used to maintain
+backward compatibility with the {{Selection/getRangeAt()}} API.</p>
 
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
 <a for=tree>root</a> of its <a for=range>start node</a>.
@@ -8282,6 +8282,12 @@ steps:
  <a>boundary point</a>
  (<var>node</var>, <var>offset</var>).
 
+ <li>If <var>range</var> is the <a for="composed selection range">legacy selection range</a> of a
+ <a>composed selection range</a>, set <var>selection range</var> to that
+ <a>composed selection range</a>.
+
+ <li>Otherwise, set <var>selection range</var> to null.
+
  <li>
   <dl class=switch>
    <dt>If these steps were invoked as "set the start"
@@ -8295,20 +8301,21 @@ steps:
 
      <li>Otherwise, if <var>bp</var> is
      <a for="boundary point">after</a> the
-     <var>range</var>'s <a for=range>end</a>,
-     set <var>range</var>'s <a for=range>end</a>
-     to <var>bp</var>. If <var>range</var> is the
-     <a for="composed live range">cached live range</a> of a
-     <a>composed live range</a> <var>composed live range</var>,
-     set <var>composed live range</var>’s
-     <a for="range">end</a> to <var>bp</var>.
+     <var>range</var>'s <a for=range>end</a>, then:
+      <ol>
+       <li>Set <var>range</var>'s <a for=range>end</a>
+       to <var>bp</var>.
+
+       <li>If <var>selection range</var> is not null,
+       set <var>selection range</var>’s
+       <a for="range">end</a> to <var>bp</var>.
+      </ol>
 
      <li>Set <var>range</var>'s
      <a for=range>start</a> to <var>bp</var>.
-     If <var>range</var> is the
-     <a for="composed live range">cached live range</a> of a
-     <a>composed live range</a> <var>composed live range</var>,
-     set <var>composed live range</var>’s
+
+     <li>If <var>selection range</var> is not null,
+     set <var>selection range</var>’s
      <a for="range">start</a> to <var>bp</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
@@ -8322,20 +8329,21 @@ steps:
 
      <li>Otherwise, if <var>bp</var> is
      <a for="boundary point">before</a> the
-     <var>range</var>'s <a for=range>start</a>,
-     set <var>range</var>'s <a for=range>start</a>
-     to <var>bp</var>. If <var>range</var> is the
-     <a for="composed live range">cached live range</a> of a
-     <a>composed live range</a> <var>composed live range</var>,
-     set <var>composed live range</var>’s
-     <a for="range">start</a> to <var>bp</var>.
+     <var>range</var>'s <a for=range>start</a>, then:
+      <ol>
+       <li>Set <var>range</var>'s <a for=range>start</a>
+       to <var>bp</var>.
+
+       <li>If <var>selection range</var> is not null,
+       set <var>selection range</var>’s
+       <a for="range">start</a> to <var>bp</var>.
+      </ol>
 
      <li>Set <var>range</var>'s
      <a for=range>end</a> to <var>bp</var>.
-     If <var>range</var> is the
-     <a for="composed live range">cached live range</a> of a
-     <a>composed live range</a> <var>composed live range</var>,
-     set <var>composed live range</var>’s
+
+     <li>If <var>selection range</var> is not null,
+     set <var>selection range</var>’s
      <a for="range">end</a> to <var>bp</var>.
     </ol>
   </dl>
