@@ -4587,8 +4587,9 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, and <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>.
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, and <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>reference target</a>.
 
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
    to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
@@ -6057,6 +6058,7 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean clonable;
   readonly attribute boolean serializable;
   readonly attribute Element host;
+  attribute DOMString? referenceTarget;
   attribute EventHandler onslotchange;
 };
 
@@ -6092,6 +6094,9 @@ It is initially set to false.</p>
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>serializable</dfn> (a boolean).
 It is initially set to false.</p>
 
+<p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>reference target</dfn>.
+It is initially set to null.</p>
+
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
 <a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
@@ -6115,6 +6120,12 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
 <a>this</a>'s <a for=DocumentFragment>host</a>.
+
+<p>The <dfn attribute for=ShadowRoot><code>referenceTarget</code></dfn> getter steps are to return
+<a>this</a>'s <a for=ShadowRoot>reference target</a>.
+
+<p>The {{ShadowRoot/referenceTarget}} setter steps are to set
+<a>this</a>'s <a for=ShadowRoot>reference target</a> to the given value.
 
 <p>The <dfn attribute for=ShadowRoot><code>onslotchange</code></dfn> attribute is an
 <a>event handler IDL attribute</a> for the
@@ -6246,6 +6257,7 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   boolean serializable = false;
+  DOMString? referenceTarget = null;
 };
 </pre>
 
@@ -7099,8 +7111,9 @@ are:
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
  <var>init</var>["{{ShadowRootInit/serializable}}"],
- <var>init</var>["{{ShadowRootInit/delegatesFocus}}"], and
- <var>init</var>["{{ShadowRootInit/slotAssignment}}"].
+ <var>init</var>["{{ShadowRootInit/delegatesFocus}}"],
+ <var>init</var>["{{ShadowRootInit/slotAssignment}}"], and
+ <var>init</var>["{{ShadowRootInit/referenceTarget}}"].
 
  <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
 </ol>
@@ -7109,8 +7122,8 @@ are:
 <div algorithm>
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
 <a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
-a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, and a string
-<var>slotAssignment</var>:
+a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
+<var>slotAssignment</var>, and null or a string <var>referenceTarget</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -7177,6 +7190,8 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, and a st
  <a for=ShadowRoot>available to element internals</a> to true.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>slotAssignment</var>.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>reference target</a> to <var>referenceTarget</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>declarative</a> to false.
 
