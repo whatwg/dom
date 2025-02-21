@@ -5208,7 +5208,7 @@ interface Document : Node {
   [NewObject] Comment createComment(DOMString data);
   [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
-  [CEReactions, NewObject] Node importNode(Node node, optional boolean subtree = false);
+  [CEReactions, NewObject] Node importNode(Node node, optional (boolean or ImportNodeOptions) options = false);
   [CEReactions] Node adoptNode(Node node);
 
   [NewObject] Attr createAttribute(DOMString localName);
@@ -5227,8 +5227,14 @@ interface Document : Node {
 interface XMLDocument : Document {};
 
 dictionary ElementCreationOptions {
+  CustomElementRegistry customElements;
   DOMString is;
 };
+
+dictionary ImportNodeOptions {
+  CustomElementRegistry customElements;
+  selfOnly = false;
+}
 </pre>
 
 <p>{{Document}} <a for=/>nodes</a> are simply
@@ -5450,11 +5456,18 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <var>document</var> is an <a>HTML document</a> or <var>document</var>'s
   <a for=Document>content type</a> is "<code>application/xhtml+xml</code>"; otherwise null.
 
-  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
-  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElements}} can be used to
+  set the {{CustomElementRegistry}}.
 
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
+
+  <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
+
+  <p>When both <var>options</var>'s {{ElementCreationOptions/customElements}} and
+  <var>options</var>'s {{ElementCreationOptions/is}} are supplied, a
+  "{{NotSupportedError!!exception}}" {{DOMException}} will be thrown.
 
  <dt><code><var>element</var> = <var>document</var> . <a method for=Document lt=createElementNS()>createElementNS(namespace, qualifiedName [, options])</a></code>
 
@@ -5463,6 +5476,12 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <a for=Element>namespace prefix</a> will be everything before U+003A (:) in
   <var>qualifiedName</var> or null. Its <a for=Element>local name</a> will be everything after
   U+003A (:) in <var>qualifiedName</var> or <var>qualifiedName</var>.
+
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElements}} can be used to
+  set the {{CustomElementRegistry}}.
+
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
+  <a>customized built-in element</a>.
 
   <p>If <var>qualifiedName</var> does not match the <code><a type>QName</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
@@ -5486,8 +5505,9 @@ method steps are to return the <a>list of elements with class names <var>classNa
    is "<code>xmlns</code>".
   </ul>
 
-  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
-  <a>customized built-in element</a>.
+  <p>When both <var>options</var>'s {{ElementCreationOptions/customElements}} and
+  <var>options</var>'s {{ElementCreationOptions/is}} are supplied, a
+  "{{NotSupportedError!!exception}}" {{DOMException}} will be thrown.
 
  <dt><code><var ignore>documentFragment</var> = <var>document</var> . {{createDocumentFragment()}}</code>
  <dd>Returns a {{DocumentFragment}} <a for=/>node</a>.
@@ -5533,18 +5553,15 @@ method steps are:
  <li><p>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
- <li><p>Let <var>is</var> be null.
-
- <li><p>If <var>options</var> is a <a for=/>dictionary</a> and
- <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set <var>is</var>
- to it.
+ <li><p>Let <var>registry</var> and <var>is</var> be the result of
+ <a>flattening element creation options</a> given <var>options</var> and <a>this</a>.
 
  <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if <a>this</a> is an
  <a>HTML document</a> or <a>this</a>'s <a for=Document>content type</a> is
  "<code>application/xhtml+xml</code>"; otherwise null.
 
  <li><p>Return the result of <a>creating an element</a> given <a>this</a>, <var>localName</var>,
- <var>namespace</var>, null, <var>is</var>, and true.
+ <var>namespace</var>, null, <var>is</var>, true, and <var>registry</var>.
 </ol>
 
 <p>The <dfn noexport>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
@@ -5554,14 +5571,12 @@ method steps are:
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
  passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
 
- <li><p>Let <var>is</var> be null.
-
- <li><p>If <var>options</var> is a <a for=/>dictionary</a> and
- <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set <var>is</var>
- to it.
+ <li><p>Let <var>registry</var> and <var>is</var> be the result of
+ <a>flattening element creation options</a> given <var>options</var> and <a>this</a>.
 
  <li><p>Return the result of <a>creating an element</a> given <var>document</var>,
- <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, and true.
+ <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, true, and
+ <var>registry</var>.
 </ol>
 
 <p>The
@@ -5569,6 +5584,31 @@ method steps are:
 method steps are to return the result of running the
 <a>internal <code>createElementNS</code> steps</a>, given <a>this</a>, <var>namespace</var>,
 <var>qualifiedName</var>, and <var>options</var>.
+
+<p>To <dfn>flatten element creation options</dfn>, given a string or {{ElementCreationOptions}}
+dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
+
+<ol>
+ <li><p>Let <var>registry</var> be null.
+
+ <li><li>Let <var>is</var> be null.
+
+ <li>
+  <p>If <var>options</var> is a dictionary:
+
+  <ol>
+   <li><p>If <var>options</var>["{{ElementCreationOptions/customElements}}"] <a for=map>exists</a>,
+   then set <var>registry</var> to it.
+
+   <li><p>If <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set
+   <var>is</var> to it.
+  </ol>
+
+ <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+ <li><p>Return <var>registry</var> and <var>is</var>.
+</ol>
 
 <p class=note>{{Document/createElement()}} and {{Document/createElementNS()}}'s <var>options</var>
 parameter is allowed to be a string for web compatibility.
@@ -5635,10 +5675,14 @@ method steps are:
 <hr>
 
 <dl class=domintro>
- <dt><var>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode(<var>node</var> [, <var>subtree</var> = false])</a>
+ <dt><var>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode(<var>node</var> [, <var>options</var> = false])</a>
  <dd>
-  <p>Returns a copy of <var>node</var>. If <var>subtree</var> is true, the copy also includes the
+  <p>Returns a copy of <var>node</var>. If <var>options</var> is true or <var>options</var> is a
+  dictionary whose {{ImportNodeOptions/selfOnly}} is false, the copy also includes the
   <var>node</var>'s <a for=tree>descendants</a>.
+
+  <p>If <var>options</var>'s {{ImportNodeOptions/customElements}} can be used to set the
+  {{CustomelementRegistry}} of elements that have none.
 
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
   "{{NotSupportedError!!exception}}" {{DOMException}}.
@@ -5655,16 +5699,34 @@ method steps are:
 </dl>
 
 <div algorithm>
-<p>The <dfn method for=Document><code>importNode(<var>node</var>, <var>subtree</var>)</code></dfn>
+<p>The <dfn method for=Document><code>importNode(<var>node</var>, <var>options</var>)</code></dfn>
 method steps are:
 
 <ol>
  <li><p>If <var>node</var> is a <a for=/>document</a> or <a for=/>shadow root</a>, then <a>throw</a>
  a "{{NotSupportedError!!exception}}" {{DOMException}}.
 
+ <li><p>Let <var>subtree</var> be false.
+
+ <li><p>Let <var>registry</var> be false.
+
+ <li><p>If <var>options</var> is a boolean, then set <var>subtree</var> to <var>options</var>.
+
+ <li>
+  <p>Otherwise:
+
+  <ol>
+   <li><p>Set <var>subtree</var> to the negation of
+   <var>options</var>["{{ImportNodeOptions/selfOnly}}"].
+
+   <li><p>If <var>options</var>["{{ImportNodeOptions/customElements}}"] <a for=map>exists</a>, then
+   set <var>registry</var> to it.
+  </ol>
+
  <li><p>Return the result of <a>cloning a node</a> given <var>node</var> with
- <a for="clone a node"><i>document</i></a> set to <a>this</a> and
- <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>.
+ <a for="clone a node"><i>document</i></a> set to <a>this</a>,
+ <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
+ <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>registry</var>.
 </ol>
 </div>
 
@@ -6439,12 +6501,12 @@ value of these steps:
 <var>document</var>, string <var>localName</var>, string-or-null <var>namespace</var>, and
 optionally a string-or-null <var>prefix</var> (default null), string-or-null <var>is</var> (default
 null), boolean <var>synchronousCustomElements</var> (default false), and null or a
-{{CustomElementRegistry}} object <var>registry</var>:
+{{CustomElementRegistry}} object <var>registry</var> (default null):
 
 <ol>
  <li><p>Let <var>result</var> be null.
 
- <li><p>If <var>registry</var> is not given, then set <var>registry</var> to the result of
+ <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
  <b>looking up a custom element registry</b> given <var>document</var>.
  <!-- XXX xref -->
 
