@@ -2786,11 +2786,13 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
   <p>If <var>child</var> is non-null:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>start node</a> is <var>parent</var> and
    <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>start offset</a> by <var>count</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>end node</a> is <var>parent</var> and
    <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>end offset</a> by <var>count</var>.
   </ol>
@@ -3042,11 +3044,13 @@ optional <i>suppress observers flag</i>, run these steps:
  <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>end</a> to
  (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>start node</a> is <var>parent</var> and
  <a for=range>start offset</a> is greater than <var>index</var>, decrease its
  <a for=range>start offset</a> by 1.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>end node</a> is <var>parent</var> and
  <a for=range>end offset</a> is greater than <var>index</var>, decrease its
  <a for=range>end offset</a> by 1.
 
@@ -4505,20 +4509,24 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>,
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>start node</a> is <var>currentNode</var>,
    add <var>length</var> to its <a for=range>start offset</a> and set its
    <a for=range>start node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>, add
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>end node</a> is <var>currentNode</var>, add
    <var>length</var> to its <a for=range>end offset</a> and set its <a for=range>end node</a> to
    <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>'s
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>start node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>start offset</a> is <var>currentNode</var>'s
    <a for=tree>index</a>, set its <a for=range>start node</a> to <var>node</var> and its
    <a for=range>start offset</a> to <var>length</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>'s
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>end node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>end offset</a> is <var>currentNode</var>'s
    <a for=tree>index</a>, set its <a for=range>end node</a> to <var>node</var> and its
    <a for=range>end offset</a> to <var>length</var>.
@@ -5783,7 +5791,7 @@ are:
 <hr>
 
 <p>The <dfn method for=Document><code>createRange()</code></dfn> method steps are to return a new
-{{Range}} object with (<a>this</a>, 0) as its <a for=range>start</a> and <a for=range>end</a>.
+<a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> and <a for=range>end</a>.
 
 <p class=note>The {{Range/Range()}} constructor can be used instead.
 
@@ -7585,21 +7593,25 @@ string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
  <var>node</var>'s <a for=CharacterData>data</a>.
 
  <!-- ranges -->
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> but less than or equal to
  <var>offset</var> plus <var>count</var>, set its <a for=range>start offset</a> to
  <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> but less than or equal to
  <var>offset</var> plus <var>count</var>, set its <a for=range>end offset</a> to <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>start offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+ <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
@@ -7791,22 +7803,26 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
    mutate ranges prematurely:
    https://www.w3.org/Bugs/Public/show_bug.cgi?id=15325 -->
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>start node</a> is <var>node</var> and
    <a for=range>start offset</a> is greater than <var>offset</var>, set its
    <a for=range>start node</a> to <var>new node</var> and decrease its <a for=range>start offset</a>
    by <var>offset</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>end node</a> is <var>node</var> and
    <a for=range>end offset</a> is greater than <var>offset</var>, set its <a for=range>end node</a>
    to <var>new node</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
 
    <!-- This shit is complicated:
         https://www.w3.org/Bugs/Public/show_bug.cgi?id=19968 -->
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>start node</a> is <var>parent</var> and
    <a for=range>start offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
    increase its <a for=range>start offset</a> by 1.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed selection range</a> whose
+   <a for=range>end node</a> is <var>parent</var> and
    <a for=range>end offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
    increase its <a for=range>end offset</a> by 1.
   </ol>
@@ -8149,21 +8165,20 @@ interface Range : AbstractRange {
 };
 </pre>
 
-<p>A <dfn export id=concept-live-range>live range</dfn> is a <a>range</a> that is affected by
-mutations to the <a>node tree</a>.</p>
-
-<p>Objects implementing the {{Range}} interface are <a>live ranges</a>.
+<p>Objects implementing the {{Range}} interface are known as
+<dfn export id=concept-live-range>live ranges</dfn>.
 
 <p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
 <a for=/>remove</a>, <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms) modify
-<a>live ranges</a> associated with that <a>tree</a>.</p>
+<a>live ranges</a> associated with that <a>tree</a>.
 
 <p>A <dfn export id=concept-composed-selection-range>composed selection range</dfn> is a
-<a>live range</a> that has an associated {{Range}} object, a
-<dfn export id=concept-legacy-selection-range for="composed selection range">legacy selection range</dfn>.</p>
+<a>range</a> that is affected by mutations to the <a>node tree</a> and has an associated
+<a>live range</a> called
+<dfn export id=concept-legacy-selection-range for="composed selection range">legacy selection range</dfn>.
 
 <p class=note>The <a for="composed selection range">legacy selection range</a> is used to maintain
-backward compatibility with the {{Selection/getRangeAt()}} API.</p>
+backward compatibility with the {{Selection/getRangeAt()}} API.
 
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
 <a for=tree>root</a> of its <a for=range>start node</a>.
@@ -8233,7 +8248,7 @@ but not its <a for=range>end node</a>, or vice versa.
 
 <dl class=domintro>
  <dt><code><var>range</var> = new <a constructor>Range()</a></code>
- <dd>Returns a new {{Range}} object.
+ <dd>Returns a new <a>live range</a>.
 </dl>
 
 <p>The <dfn constructor for=Range lt="Range()"><code>new Range()</code></dfn> constructor steps are
@@ -8267,9 +8282,9 @@ to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
 <hr>
 
 <p>To
-<dfn export id=concept-range-bp-set lt="set the start|set the end" for=Range>set the start or end</dfn>
-of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>), run these
-steps:
+<dfn export id=concept-range-bp-set lt="set the start|set the end" for="live range">set the start or end</dfn>
+of a <a>live range</a> <var>range</var> to a <a>boundary point</a>
+(<var>node</var>, <var>offset</var>), run these steps:
 
 <ol>
  <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
@@ -8295,9 +8310,18 @@ steps:
     <ol>
      <li>If <var>range</var>'s
      <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>,
-     set <var>range</var>'s <a for=range>end</a>
-     to <var>bp</var>.
+     <var>node</var>'s <a for=tree>root</a>, then:
+      <ol>
+       <li>Set <var>range</var>'s <a for=range>end</a>
+       to <var>bp</var>.
+
+       <li>If <var>selection range</var> is not null and
+       <var>range</var>'s <a for=range>start node</a>'s
+       <a for=Node>node document</a> is not
+       <var>node</var>'s <a for=Node>node document</a>,
+       set <var>selection range</var>’s
+       <a for="range">end</a> to <var>bp</var>.
+      </ol>
 
      <li>Otherwise, if <var>bp</var> is
      <a for="boundary point">after</a> the
@@ -8323,9 +8347,18 @@ steps:
     <ol>
      <li>If <var>range</var>'s
      <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>,
-     set <var>range</var>'s <a for=range>start</a>
-     to <var>bp</var>.
+     <var>node</var>'s <a for=tree>root</a>, then:
+      <ol>
+       <li>Set <var>range</var>'s <a for=range>start</a>
+       to <var>bp</var>.
+
+       <li>If <var>selection range</var> is not null and
+       <var>range</var>'s <a for=range>start node</a>'s
+       <a for=Node>node document</a> is not
+       <var>node</var>'s <a for=Node>node document</a>,
+       set <var>selection range</var>’s
+       <a for="range">start</a> to <var>bp</var>.
+      </ol>
 
      <li>Otherwise, if <var>bp</var> is
      <a for="boundary point">before</a> the
@@ -8348,6 +8381,10 @@ steps:
     </ol>
   </dl>
 </ol>
+
+<p class=note>The <a>composed selection range</a>'s <a for=range>start</a> and
+<a for=range>end</a> can have different <a for=tree>roots</a>, but will have the
+same <a for=Node>node document</a>.
 
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the start</a> of <a>this</a> to <a>boundary point</a>
@@ -8625,7 +8662,7 @@ method steps are:
  (<var>new node</var>, <var>new offset</var>).
 </ol>
 
-<p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a {{Range}} object
+<p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a <a>live range</a>
 <var>range</var>, run these steps:
 
 <ol>
@@ -8802,7 +8839,8 @@ method steps are:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} object whose <a for=range>start</a> is
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
    (<var>original start node</var>, <var>original start offset</var>) and
    whose <a for=range>end</a> is
    (<var>first partially contained child</var>, <var>first partially contained child</var>'s
@@ -8855,7 +8893,8 @@ method steps are:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} object whose <a for=range>start</a> is
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
    (<var>last partially contained child</var>, 0) and whose
    <a for=range>end</a> is
    (<var>original end node</var>, <var>original end offset</var>).
@@ -8879,7 +8918,7 @@ result of <a for="live range">extracting</a> <a>this</a>.
 
 <p>To
 <dfn export id=concept-range-clone for="live range" lt="clone the contents|cloning the contents">clone the contents</dfn>
-of a {{Range}} object <var>range</var>, run these steps:
+of a <a>live range</a> <var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -9007,7 +9046,7 @@ of a {{Range}} object <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} object
+   <li>Let <var>subrange</var> be a new <a>live range</a>
    whose <a for=range>start</a> is
    (<var>original start node</var>, <var>original start offset</var>) and
    whose <a for=range>end</a> is
@@ -9065,7 +9104,7 @@ of a {{Range}} object <var>range</var>, run these steps:
    <li><a>Append</a> <var>clone</var>
    to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new {{Range}} object
+   <li>Let <var>subrange</var> be a new <a>live range</a>
    whose <a for=range>start</a> is
    (<var>last partially contained child</var>, 0) and whose
    <a for=range>end</a> is
@@ -9085,7 +9124,7 @@ of a {{Range}} object <var>range</var>, run these steps:
 result of <a for="live range">cloning the contents</a> of <a>this</a>.
 
 <p>To <dfn export id=concept-range-insert for="live range">insert</dfn> a <a for=/>node</a>
-<var>node</var> into a {{Range}} object <var>range</var>, run these steps:
+<var>node</var> into a <a>live range</a> <var>range</var>, run these steps:
 
 <ol>
  <li>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
@@ -9235,8 +9274,7 @@ check first thing, which matches everyone but Firefox.
 </ol>
 
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method steps are to return a new
-{{Range}} object with the same <a for=range>start</a> and <a for=range>end</a> as
-<a>this</a>.
+<a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as <a>this</a>.
 
 <p>The <dfn method for=Range><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{Range}} object) was removed, but the method itself
