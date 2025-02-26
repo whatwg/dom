@@ -4625,9 +4625,6 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p>Let <var>shadowRootRegistry</var> be <var>node</var>'s <a for=Element>shadow root</a>'s
    <a for=ShadowRoot>custom element registry</a>.
 
-   <li><p>If <var>shadowRootRegistry</var> is null, then set <var>shadowRootRegistry</var> to
-   <var>fallbackRegistry</var>.
-
    <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
@@ -4638,12 +4635,15 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
    to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
 
-   <li><p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
-   <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
-   <a for="clone a node"><i>document</i></a> set to <var>document</var>,
-   <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
-   <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>,
-   and <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>.
+   <li>
+    <p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
+    <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
+    <a for="clone a node"><i>document</i></a> set to <var>document</var>,
+    <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
+    <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>.
+
+    <p class="note">This intentionally leaves <a for="clone a node"><i>fallbackRegistry</i></a> set
+    to null.
   </ol>
 
  <li><p>Return <var>copy</var>.
@@ -5607,6 +5607,9 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
  <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
+ <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
+ <b>looking up a custom element registry</b> given <var>document</var>.
+
  <li><p>Return <var>registry</var> and <var>is</var>.
 </ol>
 
@@ -5708,7 +5711,7 @@ method steps are:
 
  <li><p>Let <var>subtree</var> be false.
 
- <li><p>Let <var>registry</var> be false.
+ <li><p>Let <var>registry</var> be null.
 
  <li><p>If <var>options</var> is a boolean, then set <var>subtree</var> to <var>options</var>.
 
@@ -5722,6 +5725,9 @@ method steps are:
    <li><p>If <var>options</var>["{{ImportNodeOptions/customElements}}"] <a for=map>exists</a>, then
    set <var>registry</var> to it.
   </ol>
+
+ <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
+ <b>looking up a custom element registry</b> given <var>document</var>.
 
  <li><p>Return the result of <a>cloning a node</a> given <var>node</var> with
  <a for="clone a node"><i>document</i></a> set to <a>this</a>,
@@ -6500,14 +6506,14 @@ value of these steps:
 <p>To <dfn export id=concept-create-element>create an element</dfn>, given a <a for=/>document</a>
 <var>document</var>, string <var>localName</var>, string-or-null <var>namespace</var>, and
 optionally a string-or-null <var>prefix</var> (default null), string-or-null <var>is</var> (default
-null), boolean <var>synchronousCustomElements</var> (default false), and null or a
-{{CustomElementRegistry}} object <var>registry</var> (default null):
+null), boolean <var>synchronousCustomElements</var> (default false), and "<code>default</code>",
+null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>default</code>"):
 
 <ol>
  <li><p>Let <var>result</var> be null.
 
- <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
- <b>looking up a custom element registry</b> given <var>document</var>.
+ <li><p>If <var>registry</var> is "<code>default</code>", then set <var>registry</var> to the result
+ of <b>looking up a custom element registry</b> given <var>document</var>.
  <!-- XXX xref -->
 
  <li><p>Let <var>definition</var> be the result of <a>looking up a custom element definition</a>
