@@ -2886,13 +2886,13 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 algorithm is passed a <a for=/>node</a> <var ignore>movedNode</var>, and a <a for=/>node</a>-or-null
 <var ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below. Like the
 <a>insertion steps</a>, these steps must not modify the <a>node tree</a> that
-<var>insertedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
+<var>movedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may queue tasks
 to do these things asynchronously, however.
 
 
 <p>To <dfn>move</dfn> a <a for=/>node</a> <var>node</var> into a <a for=/>node</a>
-<var>newParent</var> before a <a for=/>node</a> <var>child</var>:
+<var>newParent</var> before a <a for=/>node</a>-or-null <var>child</var>:
 
 <ol>
  <!-- Start pre-move validity checks -->
@@ -2945,8 +2945,8 @@ to do these things asynchronously, however.
  <var>node</var>'s <a>assigned slot</a>.
 
  <li><p>If <var>oldParent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
- <var>oldParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list, then
- run <a>signal a slot change</a> for <var>oldParent</var>.
+ <var>oldParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a>
+ <a for=list>is empty</a>, then run <a>signal a slot change</a> for <var>oldParent</var>.
 
  <li>
   <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>:
@@ -2956,7 +2956,6 @@ to do these things asynchronously, however.
 
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
   </ol>
- </li>
 
  <!-- Start insertion-related bookkeeping steps -->
  <li>
@@ -2986,8 +2985,8 @@ to do these things asynchronously, however.
  <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
 
  <li><p>If <var>newParent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
- <var>newParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a> is the empty list,
- then run <a>signal a slot change</a> for <var>newParent</var>.
+ <var>newParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a>
+ <a for=list>is empty</a>, then run <a>signal a slot change</a> for <var>newParent</var>.
 
  <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>'s <a for=tree>root</a>.
 
@@ -3364,10 +3363,11 @@ Element includes ParentNode;
  <dd>
   <p>Moves, without first removing, <var>movedNode</var> into <var>node</var> after <var>child</var>
   if <var>child</var> is non-null; otherwise after the <a>last child</a> of <var>node</var>. This
-  methods preserves state associated with <var>movedNode</var> so that it persists after the move.
+  method preserves state associated with <var>movedNode</var>.
 
   <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
-  the <a>node tree</a> are violated.
+  the <a>node tree</a> are violated, or the state associated with the moved node cannot be
+  preserved.
   <!-- "NotFoundError" is impossible -->
 
  <dt><code><var>node</var> . <a method for=ParentNode lt="querySelector()">querySelector</a>(<var>selectors</var>)</code>
