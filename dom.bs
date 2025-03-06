@@ -3177,12 +3177,30 @@ otherwise, if there is no such <a for=/>element</a>, null.
 
 <pre class=idl>
 interface mixin DocumentOrShadowRoot {
+  readonly attribute CustomElementRegistry? customElementRegistry;
 };
 Document includes DocumentOrShadowRoot;
 ShadowRoot includes DocumentOrShadowRoot;
 </pre>
 
-<p class=note>The {{DocumentOrShadowRoot}} mixin is expected to be used by other
+<dl class=domintro>
+ <dt><code><var>registry</var> = <var>documentOrShadowRoot</var> . {{DocumentOrShadowRoot/customElementRegistry}}</code>
+ <dd><p>Returns <var>documentOrShadowRoot</var>'s {{CustomElementRegistry}} object, if any;
+ otherwise null.
+</dl>
+
+<p>The <dfn attribute for=DocumentOrShadowRoot><code>customElementRegistry</code></dfn> getter steps
+are:
+
+<ol>
+ <li><p class="XXX">Handle the document node case.
+
+ <li><p><a for=/>Assert</a>: <a>this</a> is a {{ShadowRoot}} <a for=/>node</a>.
+
+ <li><p>Return <a>this</a>'s <a for=ShadowRoot>custom element registry</a>.
+</ol>
+
+<p class=note>The {{DocumentOrShadowRoot}} mixin is also expected to be used by other
 standards that want to define APIs shared between <a for=/>documents</a> and
 <a for=/>shadow roots</a>.
 
@@ -5227,12 +5245,12 @@ interface Document : Node {
 interface XMLDocument : Document {};
 
 dictionary ElementCreationOptions {
-  CustomElementRegistry customElements;
+  CustomElementRegistry customElementRegistry;
   DOMString is;
 };
 
 dictionary ImportNodeOptions {
-  CustomElementRegistry customElements;
+  CustomElementRegistry customElementRegistry;
   boolean selfOnly = false;
 };
 </pre>
@@ -5456,8 +5474,8 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <var>document</var> is an <a>HTML document</a> or <var>document</var>'s
   <a for=Document>content type</a> is "<code>application/xhtml+xml</code>"; otherwise null.
 
-  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElements}} can be used to
-  set the {{CustomElementRegistry}}.
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} can be
+  used to set the {{CustomElementRegistry}}.
 
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
@@ -5465,7 +5483,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <p>If <var>localName</var> does not match the <code><a type>Name</a></code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
 
-  <p>When both <var>options</var>'s {{ElementCreationOptions/customElements}} and
+  <p>When both <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} and
   <var>options</var>'s {{ElementCreationOptions/is}} are supplied, a
   "{{NotSupportedError!!exception}}" {{DOMException}} will be thrown.
 
@@ -5477,8 +5495,8 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <var>qualifiedName</var> or null. Its <a for=Element>local name</a> will be everything after
   U+003A (:) in <var>qualifiedName</var> or <var>qualifiedName</var>.
 
-  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElements}} can be used to
-  set the {{CustomElementRegistry}}.
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} can be
+  used to set the {{CustomElementRegistry}}.
 
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
@@ -5505,7 +5523,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
    is "<code>xmlns</code>".
   </ul>
 
-  <p>When both <var>options</var>'s {{ElementCreationOptions/customElements}} and
+  <p>When both <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} and
   <var>options</var>'s {{ElementCreationOptions/is}} are supplied, a
   "{{NotSupportedError!!exception}}" {{DOMException}} will be thrown.
 
@@ -5597,8 +5615,8 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
   <p>If <var>options</var> is a dictionary:
 
   <ol>
-   <li><p>If <var>options</var>["{{ElementCreationOptions/customElements}}"] <a for=map>exists</a>,
-   then set <var>registry</var> to it.
+   <li><p>If <var>options</var>["{{ElementCreationOptions/customElementRegistry}}"]
+   <a for=map>exists</a>, then set <var>registry</var> to it.
 
    <li><p>If <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set
    <var>is</var> to it.
@@ -5684,7 +5702,7 @@ method steps are:
   dictionary whose {{ImportNodeOptions/selfOnly}} is false, the copy also includes the
   <var>node</var>'s <a for=tree>descendants</a>.
 
-  <p>If <var>options</var>'s {{ImportNodeOptions/customElements}} can be used to set the
+  <p>If <var>options</var>'s {{ImportNodeOptions/customElementRegistry}} can be used to set the
   {{CustomElementRegistry}} of elements that have none.
 
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
@@ -5722,8 +5740,8 @@ method steps are:
    <li><p>Set <var>subtree</var> to the negation of
    <var>options</var>["{{ImportNodeOptions/selfOnly}}"].
 
-   <li><p>If <var>options</var>["{{ImportNodeOptions/customElements}}"] <a for=map>exists</a>, then
-   set <var>registry</var> to it.
+   <li><p>If <var>options</var>["{{ImportNodeOptions/customElementRegistry}}"]
+   <a for=map>exists</a>, then set <var>registry</var> to it.
   </ol>
 
  <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
@@ -6178,8 +6196,6 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean serializable;
   readonly attribute Element host;
 
-  [Replaceable] readonly attribute CustomElementRegistry? customElements;
-
   attribute EventHandler onslotchange;
 };
 
@@ -6253,11 +6269,6 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
 <a>this</a>'s <a for=DocumentFragment>host</a>.
-
-<hr>
-
-<p>The <dfn attribute for=ShadowRoot><code>customElements</code></dfn> getter steps are to return
-<a>this</a>'s <a for=ShadowRoot>custom element registry</a>.
 
 <hr>
 
@@ -6373,7 +6384,7 @@ interface Element : Node {
   ShadowRoot attachShadow(ShadowRootInit init);
   readonly attribute ShadowRoot? shadowRoot;
 
-  readonly attribute CustomElementRegistry? customElements;
+  readonly attribute CustomElementRegistry? customElementRegistry;
 
   Element? closest(DOMString selectors);
   boolean matches(DOMString selectors);
@@ -6393,7 +6404,7 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   boolean serializable = false;
-  any customElements;
+  CustomElementRegistry customElementRegistry;
 };
 </pre>
 
@@ -7295,8 +7306,8 @@ are:
 <ol>
  <li><p>Let <var>registry</var> be <a>this</a>'s <a for=Element>custom element registry</a>.
 
- <li><p>If <var>init</var>["{{ShadowRootInit/customElements}}"] <a for=map>exists</a> and is a
- {{CustomElementRegistry}} object, then set <var>registry</var> to it.
+ <li><p>If <var>init</var>["{{ShadowRootInit/customElementRegistry}}"] <a for=map>exists</a>, then
+ set <var>registry</var> to it.
 
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
@@ -7409,13 +7420,13 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
 <hr>
 
 <dl class=domintro>
- <dt><code><var>registry</var> = <var>element</var> . {{Element/customElements}}</code>
+ <dt><code><var>registry</var> = <var>element</var> . {{Element/customElementRegistry}}</code>
  <dd><p>Returns <var>element</var>'s {{CustomElementRegistry}} object, if any; otherwise null.
 </dl>
 
 <div algorithm>
-<p>The <dfn attribute for=Element><code>customElements</code></dfn> getter steps are to return
-<a>this</a>'s <a for=Element>custom element registry</a>.
+<p>The <dfn attribute for=Element><code>customElementRegistry</code></dfn> getter steps are to
+return <a>this</a>'s <a for=Element>custom element registry</a>.
 </div>
 
 <hr>
