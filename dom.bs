@@ -2881,6 +2881,144 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 </ol>
 
 
+<p><a lt="Other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-move-ext>moving steps</dfn> for all or some <a for=/>nodes</a>. The
+algorithm is passed a <a for=/>node</a> <var ignore>movedNode</var>, and a <a for=/>node</a>-or-null
+<var ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below. Like the
+<a>insertion steps</a>, these steps must not modify the <a>node tree</a> that
+<var>movedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
+<a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may queue tasks
+to do these things asynchronously, however.
+
+
+<p>To <dfn>move</dfn> a <a for=/>node</a> <var>node</var> into a <a for=/>node</a>
+<var>newParent</var> before a <a for=/>node</a>-or-null <var>child</var>:
+
+<ol>
+ <!-- Start pre-move validity checks -->
+ <li>
+  <p>If <var>newParent</var>'s <a for=/>shadow-including root</a> is not the same as
+  <var>node</var>'s <a for=/>shadow-including root</a>, then <a>throw</a> a
+  "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p>
+
+  <p class=note>This has the side effect of ensuring that a move is only performed if
+  <var>newParent</var>'s <a>connected</a> is <var>node</var>'s <a>connected</a>.</p>
+ </li>
+
+ <li><p>If <var>node</var> is a <a>host-including inclusive ancestor</a> of <var>newParent</var>,
+ then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>child</var> is non-null and its <a for=tree>parent</a> is not <var>newParent</var>,
+ then <a>throw</a> a "{{NotFoundError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>node</var> is not an {{Element}} or a {{CharacterData}} <a for=/>node</a>, then
+ <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
+
+ <li><p>If <var>node</var> is a {{Text}} <a for=/>node</a> and <var>newParent</var> is a
+ <a for=/>document</a>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>newParent</var> is a <a for=/>document</a>, <var>node</var> is an {{Element}}
+ <a for=/>node</a>, and either <var>newParent</var> has an <a for=/>element</a>
+ <a for=tree>child</a>, <var>child</var> is a <a>doctype</a>, or <var>child</var> is non-null and a
+ <a>doctype</a> is <a>following</a> <var>child</var> then <a>throw</a> a
+ "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+
+ <!-- Start removing-related bookkeeping steps -->
+ <li><p>Let <var>oldParent</var> be <var>node</var>'s <a for=tree>parent</a>.
+
+ <li><p><a>Assert</a>: <var>oldParent</var> is non-null.
+
+ <li><p>Run the <a>live range pre-remove steps</a>, given <var>node</var>.
+
+ <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
+ <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
+ <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-remove steps</a> given
+ <var>node</var> and <var>iterator</var>.
+
+ <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
+
+ <li><p>Let <var>oldNextSibling</var> be <var>node</var>'s <a for=tree>next sibling</a>.
+
+ <li><p><a for=set>Remove</a> <var>node</var> from <var>oldParent</var>'s <a for=tree>children</a>.
+
+ <li><p>If <var>node</var> is <a for=slottable>assigned</a>, then run <a>assign slottables</a> for
+ <var>node</var>'s <a>assigned slot</a>.
+
+ <li><p>If <var>oldParent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+ <var>oldParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a>
+ <a for=list>is empty</a>, then run <a>signal a slot change</a> for <var>oldParent</var>.
+
+ <li>
+  <p>If <var>node</var> has an <a>inclusive descendant</a> that is a <a>slot</a>:
+
+  <ol>
+   <li><p>Run <a>assign slottables for a tree</a> with <var>oldParent</var>'s <a for=tree>root</a>.
+
+   <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
+  </ol>
+
+ <!-- Start insertion-related bookkeeping steps -->
+ <li>
+  <p>If <var>child</var> is non-null:
+
+  <ol>
+   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>newParent</var> and
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   its <a for=range>start offset</a> by 1.
+
+   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>newParent</var> and
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   its <a for=range>end offset</a> by 1.
+  </ol>
+
+ <li><p>Let <var>newPreviousSibling</var> be <var>child</var>'s <a>previous sibling</a> if
+ <var>child</var> is non-null, and <var>newParent</var>'s <a>last child</a> otherwise.
+
+ <li><p>If <var>child</var> is null, then <a for=set>append</a> <var>node</var> to
+ <var>newParent</var>'s <a for=tree>children</a>.
+
+ <li><p>Otherwise, <a for=set>insert</a> <var>node</var> into <var>newParent</var>'s
+ <a for=tree>children</a> before <var>child</var>'s <a for=tree>index</a>.
+
+ <li><p>If <var>newParent</var> is a <a for=Element>shadow host</a> whose <a for=/>shadow root</a>'s
+ <a for=ShadowRoot>slot assignment</a> is "<code>named</code>" and <var>node</var> is a
+ <a>slottable</a>, then <a>assign a slot</a> for <var>node</var>.
+
+ <li><p>If <var>newParent</var>'s <a for=tree>root</a> is a <a for=/>shadow root</a>, and
+ <var>newParent</var> is a <a>slot</a> whose <a for=slot>assigned nodes</a>
+ <a for=list>is empty</a>, then run <a>signal a slot change</a> for <var>newParent</var>.
+
+ <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>'s <a for=tree>root</a>.
+
+ <li>
+  <p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
+  <var>node</var>, in <a>shadow-including tree order</a>:
+
+  <ol>
+   <li>
+    <p>If <var>inclusiveDescendant</var> is <var>node</var>, then run the <a>moving steps</a> with
+    <var>inclusiveDescendant</var> and <var>oldParent</var>. Otherwise, run the <a>moving steps</a>
+    with <var>inclusiveDescendant</var> and null.
+
+    <p class="note">Because the <a>move</a> algorithm is a separate primitive from
+    <a for=/>insert</a> and <a for=/>remove</a>, it does not invoke the traditional
+    <a>insertion steps</a> or <a>removing steps</a> for <var>inclusiveDescendant</var>.
+   </li>
+
+   <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a> and <var>newParent</var> is
+   <a>connected</a>, then <a>enqueue a custom element callback reaction</a> with
+   <var>inclusiveDescendant</var>, callback name "<code>connectedMoveCallback</code>", and « ».
+  </ol>
+ </li>
+
+ <li><p><a>Queue a tree mutation record</a> for <var>oldParent</var> with « », « <var>node</var> »,
+ <var>oldPreviousSibling</var>, and <var>oldNextSibling</var>.</p></li>
+
+ <li><p><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
+ <var>newPreviousSibling</var>, and <var>child</var>.</p></li>
+</ol>
+
+
 <p>To <dfn export id=concept-node-append>append</dfn> a <var>node</var> to a <var>parent</var>,
 <a>pre-insert</a> <var>node</var> into <var>parent</var> before null.
 
@@ -3027,22 +3165,7 @@ optional <i>suppress observers flag</i>, run these steps:
 
  <li><p>Assert: <var>parent</var> is non-null.
 
- <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
-
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
- <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
- (<var>parent</var>, <var>index</var>).
-
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
- of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
-
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
- <a for=range>start offset</a> is greater than <var>index</var>, decrease its
- <a for=range>start offset</a> by 1.
-
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
- <a for=range>end offset</a> is greater than <var>index</var>, decrease its
- <a for=range>end offset</a> by 1.
+ <li><p>Run the <a>live range pre-remove steps</a>, given <var>node</var>.
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
@@ -3187,6 +3310,8 @@ interface mixin ParentNode {
   [CEReactions, Unscopable] undefined append((Node or DOMString)... nodes);
   [CEReactions, Unscopable] undefined replaceChildren((Node or DOMString)... nodes);
 
+  [CEReactions] undefined moveBefore(Node node, Node? child);
+
   Element? querySelector(DOMString selectors);
   [NewObject] NodeList querySelectorAll(DOMString selectors);
 };
@@ -3232,6 +3357,17 @@ Element includes ParentNode;
 
   <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
   the <a>node tree</a> are violated.
+  <!-- "NotFoundError" is impossible -->
+
+ <dt><code><var>node</var> . <a method for=ParentNode lt="moveBefore()">moveBefore</a>(<var>movedNode</var>, <var>child</var>)</code>
+ <dd>
+  <p>Moves, without first removing, <var>movedNode</var> into <var>node</var> after <var>child</var>
+  if <var>child</var> is non-null; otherwise after the <a>last child</a> of <var>node</var>. This
+  method preserves state associated with <var>movedNode</var>.
+
+  <p><a>Throws</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}} if the constraints of
+  the <a>node tree</a> are violated, or the state associated with the moved node cannot be
+  preserved.
   <!-- "NotFoundError" is impossible -->
 
  <dt><code><var>node</var> . <a method for=ParentNode lt="querySelector()">querySelector</a>(<var>selectors</var>)</code>
@@ -3285,6 +3421,18 @@ are:
  <li><p><a>Ensure pre-insert validity</a> of <var>node</var> into <a>this</a> before null.
 
  <li><p><a for=Node>Replace all</a> with <var>node</var> within <a>this</a>.
+</ol>
+
+<p>The <dfn method for=ParentNode><code>moveBefore(<var>node</var>, <var>child</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>Let <var>referenceChild</var> be <var>child</var>.
+
+ <li><p>If <var>referenceChild</var> is <var>node</var>, then set <var>referenceChild</var> to
+ <var>node</var>'s <a for=tree>next sibling</a>.
+
+ <li><p><a for=/>Move</a> <var>node</var> into <a>this</a> before <var>referenceChild</var>.
 </ol>
 
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method
@@ -8154,8 +8302,8 @@ interface Range : AbstractRange {
 <dfn export id=concept-live-range>live ranges</dfn>.
 
 <p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
-<a for=/>remove</a>, <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms) modify
-<a>live ranges</a> associated with that <a>tree</a>.
+<a for=/>remove</a>, <a for=/>move</a>, <a>replace data</a>, and <a lt="split a Text node">split</a>
+algorithms) modify <a>live ranges</a> associated with that <a>tree</a>.
 
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
 <a for=tree>root</a> of its <a for=range>start node</a>.
@@ -8220,6 +8368,32 @@ but not its <a for=range>end node</a>, or vice versa.
   only if it lies between those two.
  </ul>
 </div>
+
+<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are as
+follows:
+
+<ol>
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
+
+ <li><p><a>Assert</a>: <var>parent</var> is not null.
+
+ <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
+
+ <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
+ <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
+ (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
+ of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+ <a for=range>start offset</a> is greater than <var>index</var>, decrease its
+ <a for=range>start offset</a> by 1.
+
+ <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+ <a for=range>end offset</a> is greater than <var>index</var>, decrease its
+ <a for=range>end offset</a> by 1.
+</ol>
 
 <hr>
 
