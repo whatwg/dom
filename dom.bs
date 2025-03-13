@@ -8170,13 +8170,13 @@ interface Range : AbstractRange {
 
 <p>A <dfn export id=concept-composed-selection-range>composed selection range</dfn> is a
 <a>range</a> with an associated <a>live range</a> called
-<dfn export id=concept-legacy-selection-range for="composed selection range">legacy selection range</dfn>.
+<dfn export id=concept-legacy-uncomposed-range for="composed selection range">legacy uncomposed range</dfn>.
 
 <p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
 <a for=/>remove</a>, <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms) modify
 <a>live ranges</a> and <a>composed selection range</a> associated with that <a>tree</a>.
 
-<p class=note>The <a for="composed selection range">legacy selection range</a> is used to maintain
+<p class=note>The <a for="composed selection range">legacy uncomposed range</a> is used to maintain
 backward compatibility with the {{Selection/getRangeAt()}} API.
 
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
@@ -8296,11 +8296,11 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
  <a>boundary point</a>
  (<var>node</var>, <var>offset</var>).
 
- <li>If <var>range</var> is the <a for="composed selection range">legacy selection range</a> of a
- <a>composed selection range</a>, set <var>selection range</var> to that
- <a>composed selection range</a>.
+ <li>Let <var>composed range</var> be null.
 
- <li>Otherwise, set <var>selection range</var> to null.
+ <li>If <var>range</var> is the <a for="composed selection range">legacy uncomposed range</a> of a
+ <a>composed selection range</a>, set <var>composed range</var> to that
+ <a>composed selection range</a>.
 
  <li>
   <dl class=switch>
@@ -8314,11 +8314,11 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
        <li>Set <var>range</var>'s <a for=range>end</a>
        to <var>bp</var>.
 
-       <li>If <var>selection range</var> is not null and
+       <li>If <var>composed range</var> is not null and
        <var>range</var>'s <a for=range>start node</a>'s
        <a>shadow-including root</a> is not
        <var>node</var>'s <a>shadow-including root</a>,
-       set <var>selection range</var>’s
+       set <var>composed range</var>’s
        <a for="range">end</a> to <var>bp</var>.
       </ol>
 
@@ -8329,16 +8329,16 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
        <li>Set <var>range</var>'s <a for=range>end</a>
        to <var>bp</var>.
 
-       <li>If <var>selection range</var> is not null,
-       set <var>selection range</var>’s
+       <li>If <var>composed range</var> is not null,
+       set <var>composed range</var>’s
        <a for="range">end</a> to <var>bp</var>.
       </ol>
 
      <li>Set <var>range</var>'s
      <a for=range>start</a> to <var>bp</var>.
 
-     <li>If <var>selection range</var> is not null,
-     set <var>selection range</var>’s
+     <li>If <var>composed range</var> is not null,
+     set <var>composed range</var>’s
      <a for="range">start</a> to <var>bp</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
@@ -8351,11 +8351,11 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
        <li>Set <var>range</var>'s <a for=range>start</a>
        to <var>bp</var>.
 
-       <li>If <var>selection range</var> is not null and
+       <li>If <var>composed range</var> is not null and
        <var>range</var>'s <a for=range>start node</a>'s
        <a>shadow-including root</a> is not
        <var>node</var>'s <a>shadow-including root</a>,
-       set <var>selection range</var>’s
+       set <var>composed range</var>’s
        <a for="range">start</a> to <var>bp</var>.
       </ol>
 
@@ -8366,16 +8366,16 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
        <li>Set <var>range</var>'s <a for=range>start</a>
        to <var>bp</var>.
 
-       <li>If <var>selection range</var> is not null,
-       set <var>selection range</var>’s
+       <li>If <var>composed range</var> is not null,
+       set <var>composed range</var>’s
        <a for="range">start</a> to <var>bp</var>.
       </ol>
 
      <li>Set <var>range</var>'s
      <a for=range>end</a> to <var>bp</var>.
 
-     <li>If <var>selection range</var> is not null,
-     set <var>selection range</var>’s
+     <li>If <var>composed range</var> is not null,
+     set <var>composed range</var>’s
      <a for="range">end</a> to <var>bp</var>.
     </ol>
   </dl>
@@ -8383,7 +8383,7 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
 
 <p class=note>The <a>composed selection range</a>'s <a for=range>start</a> and
 <a for=range>end</a> can have different <a for=tree>roots</a>, but will have the
-same <a for=Node>node document</a>.
+same <a>shadow-including root</a>.
 
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the start</a> of <a>this</a> to <a>boundary point</a>
