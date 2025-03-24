@@ -8149,6 +8149,41 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 </ol>
 
 
+<p>The
+<dfn export id=concept-range-bp-composed-position for="boundary point">composed position</dfn> of a
+<a>boundary point</a> (<var>nodeA</var>, <var>offsetA</var>) relative to a <a>boundary point</a>
+(<var>nodeB</var>, <var>offsetB</var>) is
+<dfn export id=concept-range-bp-composed-before for="boundary point">composed before</dfn>,
+<dfn export id=concept-range-bp-composed-equal for="boundary point">composed equal</dfn>, or
+<dfn export id=concept-range-bp-composed-after for="boundary point">composed after</dfn>,
+as returned by these steps:
+
+<ol>
+ <li><p>Assert: <var>nodeA</var> and <var>nodeB</var> have the same <a>shadow-including root</a>.
+
+ <li>If <var>nodeA</var> comes before <var>nodeB</var> in <a>shadow-including tree order</a>, then
+ return <a for="boundary point">composed before</a>.
+
+ <li>If <var>nodeA</var> comes after <var>nodeB</var> in <a>shadow-including tree order</a>, then
+ return <a for="boundary point">composed after</a>.
+
+  <li>
+   <p>If the <a for="boundary point">position</a> of (<var>nodeA</var>, <var>offsetA</var>)
+   relative to (<var>nodeB</var>, <var>offsetB</var>) is:
+
+   <dl class=switch>
+    <dt><a for="boundary point">before</a>
+    <dd>Return <a for="boundary point">composed before</a>.
+
+    <dt><a for="boundary point">equal</a>
+    <dd>Return <a for="boundary point">composed equal</a>.
+
+    <dt><a for="boundary point">after</a>
+    <dd>Return <a for="boundary point">composed after</a>.
+   </dl>
+
+</ol>
+
 <h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3>
 
 <pre class=idl>
@@ -8315,14 +8350,13 @@ interface Range : AbstractRange {
 <p>Objects implementing the {{Range}} interface are known as
 <dfn export id=concept-live-range>live ranges</dfn>.
 
+<p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
+<a for=/>remove</a>, <a for=/>move</a>, <a>replace data</a>, and <a lt="split a Text node">split</a>
+algorithms) modify <a>live ranges</a> associated with that <a>tree</a>.
+
 <p>A <dfn export id=concept-composed-selection-range>composed selection range</dfn> is a
 <a>range</a> with an associated <a>live range</a> called
 <dfn export id=concept-legacy-uncomposed-range for="composed selection range">legacy uncomposed range</dfn>.
-
-<p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
-
-<a for=/>remove</a>, <a for=/>move</a>, <a>replace data</a>, and <a lt="split a Text node">split</a>
-algorithms) modify <a>live ranges</a> associated with that <a>tree</a>.
 
 <p class=note>The <a for="composed selection range">legacy uncomposed range</a> is used to maintain
 backward compatibility with the {{Selection/getRangeAt()}} API.
@@ -8493,74 +8527,60 @@ set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>bound
     <ol>
      <li>If <var>range</var>'s
      <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>, then:
-      <ol>
-       <li>Set <var>range</var>'s <a for=range>end</a>
-       to <var>bp</var>.
-
-       <li>If <var>composed range</var> is not null and
-       <var>range</var>'s <a for=range>start node</a>'s
-       <a>shadow-including root</a> is not
-       <var>node</var>'s <a>shadow-including root</a>,
-       set <var>composed range</var>’s
-       <a for="range">end</a> to <var>bp</var>.
-      </ol>
-
-     <li>Otherwise, if <var>bp</var> is
+     <var>node</var>'s <a for=tree>root</a>,
+     or if <var>bp</var> is
      <a for="boundary point">after</a> the
-     <var>range</var>'s <a for=range>end</a>, then:
-      <ol>
-       <li>Set <var>range</var>'s <a for=range>end</a>
-       to <var>bp</var>.
-
-       <li>If <var>composed range</var> is not null,
-       set <var>composed range</var>’s
-       <a for="range">end</a> to <var>bp</var>.
-      </ol>
+     <var>range</var>'s <a for=range>end</a>, set
+     <var>range</var>'s <a for=range>end</a>
+     to <var>bp</var>.
 
      <li>Set <var>range</var>'s
      <a for=range>start</a> to <var>bp</var>.
 
-     <li>If <var>composed range</var> is not null,
-     set <var>composed range</var>’s
-     <a for="range">start</a> to <var>bp</var>.
+     <li>f <var>composed range</var> is not null, then:
+      <ol>
+       <li>If <var>range</var>'s <a for=range>start node</a>'s
+       <a>shadow-including root</a> is not
+       <var>node</var>'s <a>shadow-including root</a>,
+       or if <var>bp</var> is
+       <a for="boundary point">composed after</a> the
+       <var>range</var>'s <a for=range>end</a>, set
+       <var>composed range</var>'s
+       <a for="range">end</a> to <var>bp</var>.
+
+       <li>Set <var>composed range</var>’s
+       <a for="range">start</a> to <var>bp</var>.
+      </ol>
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
     <ol>
      <li>If <var>range</var>'s
      <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>, then:
-      <ol>
-       <li>Set <var>range</var>'s <a for=range>start</a>
-       to <var>bp</var>.
-
-       <li>If <var>composed range</var> is not null and
-       <var>range</var>'s <a for=range>start node</a>'s
-       <a>shadow-including root</a> is not
-       <var>node</var>'s <a>shadow-including root</a>,
-       set <var>composed range</var>’s
-       <a for="range">start</a> to <var>bp</var>.
-      </ol>
-
-     <li>Otherwise, if <var>bp</var> is
+     <var>node</var>'s <a for=tree>root</a>,
+     or if <var>bp</var> is
      <a for="boundary point">before</a> the
-     <var>range</var>'s <a for=range>start</a>, then:
-      <ol>
-       <li>Set <var>range</var>'s <a for=range>start</a>
-       to <var>bp</var>.
-
-       <li>If <var>composed range</var> is not null,
-       set <var>composed range</var>’s
-       <a for="range">start</a> to <var>bp</var>.
-      </ol>
+     <var>range</var>'s <a for=range>start</a>, set
+     <var>range</var>'s <a for=range>start</a>
+     to <var>bp</var>.
 
      <li>Set <var>range</var>'s
      <a for=range>end</a> to <var>bp</var>.
 
-     <li>If <var>composed range</var> is not null,
-     set <var>composed range</var>’s
-     <a for="range">end</a> to <var>bp</var>.
+     <li>f <var>composed range</var> is not null, then:
+      <ol>
+       <li>If <var>range</var>'s <a for=range>end node</a>'s
+       <a>shadow-including root</a> is not
+       <var>node</var>'s <a>shadow-including root</a>,
+       or if <var>bp</var> is
+       <a for="boundary point">composed before</a> the
+       <var>range</var>'s <a for=range>start</a>, set
+       <var>composed range</var>'s
+       <a for="range">start</a> to <var>bp</var>.
+
+       <li>Set <var>composed range</var>’s
+       <a for="range">end</a> to <var>bp</var>.
+      </ol>
     </ol>
   </dl>
 </ol>
