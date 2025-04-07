@@ -2829,8 +2829,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
     <ol>
      <li><p>Run the <a>insertion steps</a> with <var>inclusiveDescendant</var>.
 
+     <li><p>If <var>inclusiveDescendant</var> is not <a>connected</a>, then
+     <a for=iteration>continue</a>.
+
      <li>
-      <p>If <var>inclusiveDescendant</var> is <a>connected</a> and is an <a for=/>element</a>:
+      <p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>:
 
       <ol>
        <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is
@@ -2860,12 +2863,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
       </ol>
 
      <li>
-      <p>Otherwise, if <var>inclusiveDescendant</var> is <a>connected</a> and is a
-      <a for=/>shadow root</a>:
+      <p>Otherwise, if <var>inclusiveDescendant</var> is a <a for=/>shadow root</a>:
 
       <ol>
-       <li><p>If <li><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
-       is null and <li><var>inclusiveDescendant</var>'s
+       <li><p>If <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is
+       null and <var>inclusiveDescendant</var>'s
        <a for=ShadowRoot>keep custom element registry null</a> is false, then set
        <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to the result
        of <b>looking up a custom element registry</b> given <var>inclusiveDescendant</var>'s
@@ -4808,8 +4810,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
     <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
     <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>.
 
-    <p class="note">This intentionally leaves <a for="clone a node"><i>fallbackRegistry</i></a> set
-    to null.
+    <p class="note">This intentionally does not pass the
+    <a for="clone a node"><i>fallbackRegistry</i></a> argument.
   </ol>
 
  <li><p>Return <var>copy</var>.
@@ -5757,7 +5759,7 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
 <ol>
  <li><p>Let <var>registry</var> be null.
 
- <li><li>Let <var>is</var> be null.
+ <li><p>Let <var>is</var> be null.
 
  <li>
   <p>If <var>options</var> is a dictionary:
@@ -5768,10 +5770,10 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
 
    <li><p>If <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set
    <var>is</var> to it.
-  </ol>
 
- <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
- "{{NotSupportedError!!exception}}" {{DOMException}}.
+   <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
+   "{{NotSupportedError!!exception}}" {{DOMException}}.
+  </ol>
 
  <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
  <b>looking up a custom element registry</b> given <var>document</var>.
@@ -5850,7 +5852,7 @@ method steps are:
   dictionary whose {{ImportNodeOptions/selfOnly}} is false, the copy also includes the
   <var>node</var>'s <a for=tree>descendants</a>.
 
-  <p>If <var>options</var>'s {{ImportNodeOptions/customElementRegistry}} can be used to set the
+  <p><var>options</var>'s {{ImportNodeOptions/customElementRegistry}} can be used to set the
   {{CustomElementRegistry}} of elements that have none.
 
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
@@ -6381,7 +6383,7 @@ It is initially set to false.</p>
 It is initially set to false.</p>
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom element registry</dfn>
-(null or a {{CustomElementRegistry}} object).</p>
+(null or a {{CustomElementRegistry}} object). It is initially null.</p>
 
 <p><a for=/>Shadow roots</a> have an associated
 <dfn for=ShadowRoot>keep custom element registry null</dfn> (a boolean). It is initially false.
