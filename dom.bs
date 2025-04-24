@@ -50,9 +50,11 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
+<cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
+[[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
@@ -6633,8 +6635,8 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
-  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
+  [CEReactions] undefined setAttribute(DOMString qualifiedName, (TrustedType or DOMString) value);
+  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, (TrustedType or DOMString) value);
   [CEReactions] undefined removeAttribute(DOMString qualifiedName);
   [CEReactions] undefined removeAttributeNS(DOMString? namespace, DOMString localName);
   [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
@@ -7063,6 +7065,14 @@ steps:
  <a for=Attr>value</a>.
 </ol>
 
+<p>To <dfn>verify attribute value</dfn> given a {{TrustedType}} or string <var>value</var>, an
+<a>attribute</a> <var>attribute</var>, and an <a for=/>Element</a> <var>element</var>:
+
+<ol>
+ <li><p>Return the result of calling <a abstract-op>get Trusted Types-compliant attribute value</a>
+ given <var>attribute</var>, with <var>element</var>, and <var>value</var>. [[!TRUSTED-TYPES]]
+</ol>
+
 <hr>
 
 <div algorithm>
@@ -7115,6 +7125,10 @@ string <var>namespace</var> (default null):</p>
 <a for=/>attribute</a> <var>attr</var> and an <a for=/>element</a> <var>element</var>:
 
 <ol>
+ <li><p>Let <var>verifiedValue</var> be the result of
+ <a lt="verify attribute value">verifying an attribute value</a> given <var>attr</var>'s
+ <a for=Attr>value</a>, <var>attr</var>, and <var>element</var>.
+
  <li><p>If <var>attr</var>'s <a for=Attr>element</a> is neither null nor <var>element</var>,
  <a>throw</a> an "{{InUseAttributeError!!exception}}" {{DOMException}}.
 
@@ -7130,6 +7144,8 @@ string <var>namespace</var> (default null):</p>
 
  <li><p>Otherwise, <a lt="append an attribute">append</a> <var>attr</var> to <var>element</var>.
 
+ <li><p>Set <var>attr</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
+
  <li><p>Return <var>oldAttr</var>.
 </ol>
 </div>
@@ -7141,18 +7157,32 @@ an optional null or string <var>prefix</var> (default null), and an optional nul
 <var>namespace</var> (default null):
 
 <ol>
- <li>Let <var>attribute</var> be the result of
+ <li><p>Let <var>attribute</var> be the result of
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <var>element</var>.
 
- <li>If <var>attribute</var> is null, create an <a>attribute</a> whose <a for=Attr>namespace</a> is
- <var>namespace</var>, <a for=Attr>namespace prefix</a> is <var>prefix</var>,
- <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is <var>value</var>, and
- <a for=Node>node document</a> is <var>element</var>'s <a for=Node>node document</a>, then
- <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
- return.
+ <li><p>If <var>attribute</var> is null, then set attribute to an <a>attribute</a> whose
+ <a for=Attr>namespace</a> is <var>namespace</var>, <a for=Attr>namespace prefix</a> is
+ <var>prefix</var>, <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is
+ <var>value</var>, and <a for=Node>node document</a> is <var>element</var>'s
+ <a for=Node>node document</a>.
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
+ <li><p>Let <var>verifiedValue</var> be the result of
+ <a lt="verify attribute value">verifying an attribute value</a> given <var>value</var>,
+ <var>attribute</var>, and <var>element</var>.
+
+ <li><p>Set <var>attribute</var> to the result of
+ <a lt="get an attribute by namespace and local name">getting an attribute</a> given
+ <var>namespace</var>, <var>localName</var>, and <var>element</var>.
+
+ <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose <a for=Attr>namespace</a>
+ is <var>namespace</var>, <a for=Attr>namespace prefix</a> is <var>prefix</var>,
+ <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is
+ <var>verifiedValue</var>, and <a for=Node>node document</a> is <var>element</var>'s
+ <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a> to
+ <var>element</var>, and then return.
+
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
 </ol>
 </div>
 
@@ -7417,14 +7447,26 @@ method steps are:
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
- <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
+
+ <li><p>If <var>attribute</var> is null, then set <var>attribute</var> to an <a>attribute</a>
+ whose <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
+ <var>value</var>, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
+
+ <li><p>Let <var>verifiedValue</var> be the result of
+ <a lt="verify attribute value">verifying an attribute value</a> given <var>value</var>,
+ <var>attribute</var>, and <a>this</a>.
+
+ <li><p>Set <var>attribute</var> to the first <a>attribute</a> in <a>this</a>'s
+ <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
+ and null otherwise.
 
  <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
  <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
- <var>value</var>, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>,
- then <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return.
+ <var>verifiedValue</var>, and <a for=Node>node document</a> is <a>this</a>'s
+ <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a>
+ to <a>this</a>, and then return.
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
 </ol>
 
 <p>The
@@ -7437,7 +7479,7 @@ method steps are:
  <var>qualifiedName</var> given "<code>element</code>".
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
- and also <var>prefix</var> and <var>namespace</var>.
+ <var>prefix</var>, <var>namespace</var> and true.
 </ol>
 
 <p>The
@@ -8028,7 +8070,24 @@ string <var>value</var>, run these steps:
  <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
  <a for=Attr>value</a> to <var>value</var>.
 
- <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>.
+ <li>
+  <p>Otherwise:
+
+  <ol>
+   <li><p>Let <var>originalElement</var> be <var>attribute</var>'s <a for=Attr>element</a>.
+
+   <li><p>Let <var>verifiedValue</var> be the result of
+   <a lt="verify attribute value">verifying an attribute value</a> given <var>value</var>,
+   <var>attribute</var>, and <a>this</a>.
+
+   <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
+   <a for=Attr>value</a> to <var>verifiedValue</var>, and return.
+
+   <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is not <var>originalElement</var>, then
+   return.
+
+   <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
+  </ol>
 </ol>
 
 <p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>
