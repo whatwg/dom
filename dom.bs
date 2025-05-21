@@ -225,6 +225,9 @@ reasons, but beyond ASCII anything is allowed.
  </code></pre>
 </div>
 
+<p>A string is a <dfn>valid doctype name</dfn> if it does not contain [=ASCII whitespace=], U+0000
+NULL, or U+003E (>).
+
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
 
@@ -6167,7 +6170,7 @@ created and associate it with that <a for=/>document</a>.
 <pre class=idl>
 [Exposed=Window]
 interface DOMImplementation {
-  [NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
+  [NewObject] DocumentType createDocumentType(DOMString name, DOMString publicId, DOMString systemId);
   [NewObject] XMLDocument createDocument(DOMString? namespace, [LegacyNullToEmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
   [NewObject] Document createHTMLDocument(optional DOMString title);
 
@@ -6176,14 +6179,12 @@ interface DOMImplementation {
 </pre>
 
 <dl class=domintro>
- <dt><code><var>doctype</var> = <var>document</var> . {{Document/implementation}} . {{createDocumentType(qualifiedName, publicId, systemId)}}</code>
+ <dt><code><var>doctype</var> = <var>document</var> . {{Document/implementation}} . {{createDocumentType(name, publicId, systemId)}}</code>
 
  <dd>
-  Returns a <a>doctype</a>, with the given
-  <var>qualifiedName</var>, <var>publicId</var>, and
-  <var>systemId</var>. If <var>qualifiedName</var> does not
-  match the <code><a>QName</a></code> production, an
-  "{{InvalidCharacterError!!exception}}" {{DOMException}} is thrown.
+  Returns a <a>doctype</a>, with the given <var>name</var>, <var>publicId</var>, and <var>systemId</var>.
+
+  If <var>name</var> is not a <a>valid doctype name</a>, an "{{InvalidCharacterError}}" {{DOMException}} is thrown.
 
  <dt><code><var>doc</var> = <var>document</var> . {{Document/implementation}} . <a method for=DOMImplementation lt=createDocument()>createDocument(<var>namespace</var>, <var>qualifiedName</var> [, <var>doctype</var> = null])</a></code>
 
@@ -6212,22 +6213,22 @@ interface DOMImplementation {
 <div class=impl>
 
 <p>The
-<dfn method for=DOMImplementation><code>createDocumentType(<var>qualifiedName</var>, <var>publicId</var>, <var>systemId</var>)</code></dfn>
+<dfn method for=DOMImplementation><code>createDocumentType(<var>name</var>, <var>publicId</var>, <var>systemId</var>)</code></dfn>
 method steps are:
 
 <ol>
- <li><p>If <var>qualifiedName</var> does not match the <code><a>QName</a></code> production,
- then throw an "{{InvalidCharacterError}}" {{DOMException}}.
+ <li><p>If <var>name</var> is not a <a>valid doctype name</a>, then throw an "{{InvalidCharacterError}}"
+ {{DOMException}}.
 
- <li><p>Return a new <a>doctype</a>, with <var>qualifiedName</var> as its
+ <li><p>Return a new <a>doctype</a>, with <var>name</var> as its
  <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
  as its <a>system ID</a>, and with its <a for=Node>node document</a> set to the associated
  <a for=/>document</a> of <a>this</a>.
 </ol>
 
-<p class=note>No check is performed that <var>publicId</var> code points match the
-<code><a>PubidChar</a></code> production or that <var>systemId</var> does not contain both a
-'<code>"</code>' and a "<code>'</code>".
+<p class=note>No check is performed that <var>name</var> matches the <code><a>QName</a></code>
+production, that <var>publicId</var>'s code points match the <code><a>PubidChar</a></code>
+production, or that <var>systemId</var> does not contain both a U+0022 (") and a U+0027 (').
 
 <p>The
 <dfn method for=DOMImplementation><code>createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)</code></dfn>
