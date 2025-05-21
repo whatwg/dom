@@ -15,11 +15,6 @@ Indent: 1
 urlPrefix: https://www.w3.org/TR/xml/#NT-; spec: XML
  type: dfn
   text: Name; url: Name; for: XML
-  text: Char; url: Char
-  text: PubidChar; url: PubidChar
-urlPrefix: https://www.w3.org/TR/xml-names/#NT-; spec: XML-NAMES
- type: dfn
-  text: QName; url: QName
 url: https://w3c.github.io/DOM-Parsing/#dom-range-createcontextualfragment
  type: method; text: createContextualFragment(); for: Range
 type: interface
@@ -225,8 +220,10 @@ reasons, but beyond ASCII anything is allowed.
  </code></pre>
 </div>
 
-<p>A string is a <dfn>valid doctype name</dfn> if it does not contain [=ASCII whitespace=], U+0000
-NULL, or U+003E (>).
+<p>A [=string=] is a <dfn>valid doctype name</dfn> if it does not contain [=ASCII whitespace=],
+U+0000 NULL, or U+003E (>).
+
+<p class="note">The empty string is a [=valid doctype name=].
 
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
@@ -275,6 +272,17 @@ NULL, or U+003E (>).
 
  <li><p>Return (<var>namespace</var>, <var>prefix</var>, <var>localName</var>).
 </ol>
+
+<div class="note">
+ <p>Various APIs in this specification used to validate namespace prefixes, attribute local names,
+ element local names, and doctype names more strictly. This was done in a way that aligned with
+ various XML-related specifications. (Although not all rules from the those specifications were
+ enforced.)
+
+ <p>This was found to be annoying for web developers, especially since it meant there were some
+ names that could be created by the HTML parser, but not by DOM APIs. So, the validations have been
+ loosened to just those described above.
+</div>
 
 
 
@@ -5848,9 +5856,6 @@ return a new {{DocumentFragment}} <a for=/>node</a> whose <a for=Node>node docum
 to return a new {{Text}} <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>data</var>
 and <a for=Node>node document</a> is <a>this</a>.
 
-<p class=note>No check is performed that <var>data</var> consists of
-characters that match the <code><a>Char</a></code> production.
-
 <p>The <dfn method for=Document><code>createCDATASection(<var>data</var>)</code></dfn> method steps
 are:
 
@@ -5868,10 +5873,6 @@ are:
 <p>The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method steps are
 to return a new {{Comment}} <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>data</var>
 and <a for=Node>node document</a> is <a>this</a>.
-
-<p class=note>No check is performed that <var>data</var> consists of
-characters that match the <code><a>Char</a></code> production
-or that it contains two adjacent hyphens or ends with a hyphen.
 
 <p>The
 <dfn method for=Document><code>createProcessingInstruction(<var>target</var>, <var>data</var>)</code></dfn>
@@ -5892,11 +5893,6 @@ method steps are:
  <a for=CharacterData>data</a> set to <var>data</var>, and
  <a for=Node>node document</a> set to <a>this</a>.
 </ol>
-
-<p class=note>No check is performed that <var>target</var> contains
-"<code>xml</code>" or "<code>:</code>", or that
-<var>data</var> contains characters that match the
-<code><a>Char</a></code> production.
 
 <hr>
 
@@ -6225,10 +6221,6 @@ method steps are:
  as its <a>system ID</a>, and with its <a for=Node>node document</a> set to the associated
  <a for=/>document</a> of <a>this</a>.
 </ol>
-
-<p class=note>No check is performed that <var>name</var> matches the <code><a>QName</a></code>
-production, that <var>publicId</var>'s code points match the <code><a>PubidChar</a></code>
-production, or that <var>systemId</var> does not contain both a U+0022 (") and a U+0027 (').
 
 <p>The
 <dfn method for=DOMImplementation><code>createDocument(<var>namespace</var>, <var>qualifiedName</var>, <var>doctype</var>)</code></dfn>
