@@ -8381,7 +8381,7 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 
 <h2 id=ranges>Ranges</h2>
 
-<h3 id=introduction-to-dom-ranges>Introduction to "DOM Ranges"</h3> // Start here
+<h3 id=introduction-to-dom-ranges>Introduction to "DOM Ranges"</h3>
 
 <p>{{StaticRange}} and {{Range}} objects (<a>ranges</a>) represent a sequence of content within a
 <a>node tree</a>. Each <a>range</a> has a <a for=range>start</a> and an <a for=range>end</a> which
@@ -8494,7 +8494,7 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 </ol>
 
 
-<h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3> // Abstract Range
+<h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3>
 
 <pre class=idl>
 [Exposed=Window]
@@ -8561,7 +8561,7 @@ getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
 getter steps are to return true if <a>this</a> is <a for=range>collapsed</a>; otherwise false.
 
 
-<h3 id=interface-staticrange>Interface {{StaticRange}}</h3> // Static Range
+<h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
 
 <pre class=idl>
 dictionary StaticRangeInit {
@@ -8614,7 +8614,7 @@ constructor steps are:
 </ul>
 
 
-<h3 id=interface-range>Interface {{Range}}</h3> // Range
+<h3 id=interface-range>Interface {{Range}}</h3>
 
 <pre class=idl>
 [Exposed=Window]
@@ -9891,8 +9891,6 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 [[DOM-Parsing]]
 [[CSSOM-VIEW]]
 
-// End here
-
 
 <h3 id=interface-formcontrolrange>Interface {{FormControlRange}}</h3>
 
@@ -9905,96 +9903,115 @@ interface FormControlRange : AbstractRange {
                                 unsigned long startOffset,
                                 unsigned long endOffset);
 
+  DOMRectList getClientRects();
+  DOMRect getBoundingClientRect();
   stringifier;
 };
 </pre>
 
-<dl class=domintro>
- <dt><code><var ignore>formRange</var> = new <a constructor lt="FormControlRange()">FormControlRange</a>()</code>
- <dd>Creates a new live range that can refer to text within a supported text control.
+<p>Objects implementing the {{FormControlRange}} interface are known as
+<dfn export id=concept-live-form-control-range>live FormControlRanges</dfn>.</p>
 
- <dt><code><var ignore>formRange</var> . <a method for=FormControlRange>setFormControlRange</a>(<var>element</var>, <var>startOffset</var>, <var>endOffset</var>)</code>
- <dd>Sets the range to refer to the substring of <code><var>element</var>.value</code> starting at
- <var>startOffset</var> and ending at <var>endOffset</var>. Throws if <var>element</var> is not a
- supported text control or if offsets are out of bounds.
+<dl class=domintro>
+ <dt><code><var ignore>formControlRange</var> = new
+ <a constructor lt="FormControlRange()">FormControlRange()</a></code>
+ <dd>Returns a new <a>live FormControlRange</a> that tracks text offsets in a text control’s
+     value as it changes.</dd>
+
+ <dt><code><var ignore>formControlRange</var> .
+ {{FormControlRange/setFormControlRange()}} (<var ignore>element</var>,
+ <var ignore>startOffset</var>, <var ignore>endOffset</var>)</code>
+ <dd>Sets the endpoints to <code>[start, end)</code> within <var>element</var>’s
+     <i>value string</i>. Throws {{NotSupportedError}} for unsupported elements and
+     {{IndexSizeError}} for out-of-bounds offsets.</dd>
 </dl>
 
-<p>Objects implementing the {{FormControlRange}} interface are live and update as their associated
-<a for=FormControlRange>element</a>'s user-visible <code>value</code> changes. They do not expose or mutate any
-implementation-internal nodes of the <a for=FormControlRange>element</a>.</p>
+<p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the
+host text control’s <i>value string</i> rather than in the <a>node tree</a>. Its
+<a for=range>start node</a> and <a for=range>end node</a> are always the host
+<code>&lt;input&gt;</code> or <code>&lt;textarea&gt;</code>, and its offsets are indices into that
+string.</p>
 
-<p>A {{FormControlRange}} has an associated <dfn export for=FormControlRange id=concept-formcontrolrange-element>element</dfn>,
-which is a supported text control (<code>&lt;textarea&gt;</code> or an <code>&lt;input&gt;</code> whose
-<code>type</code> is one of <code>text</code>, <code>search</code>, <code>tel</code>,
-<code>url</code>, or <code>password</code>).</p>
+<p>A {{FormControlRange}} has associated state:</p>
+<ul>
+ <li><dfn export for=FormControlRange id=formcontrolrange-control>control</dfn>
+     (null or an {{HTMLInputElement}}/{{HTMLTextAreaElement}})</li>
+ <li><dfn export for=FormControlRange id=formcontrolrange-start>start offset</dfn>
+     (a non-negative integer)</li>
+ <li><dfn export for=FormControlRange id=formcontrolrange-end>end offset</dfn>
+     (a non-negative integer)</li>
+</ul>
 
-<p>For a {{FormControlRange}}, the <a for=range>start node</a> and <a for=range>end node</a> are
-both the <a for=FormControlRange>element</a>, and the <a for=range>start offset</a> and <a for=range>end offset</a> are
-interpreted as 16-bit code unit indices into the <a for=FormControlRange>element</a>'s <code>value</code>. These offsets do
-not refer to the <a for=FormControlRange>element</a>'s children.</p>
+<p>The {{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters of a
+{{FormControlRange}} return its <a for=FormControlRange>control</a>. The
+{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} getters return its
+<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a>.
+{{AbstractRange/collapsed}} is true if and only if the two offsets are equal.</p>
 
-<p class=note>This differs from {{Range}}, where offsets for non-{{CharacterData}} nodes refer to child
-indices. {{FormControlRange}} offsets always refer to positions within the control's <code>value</code>.</p>
+<p>An {{Element}} <var>el</var> supports form control ranges if it is an {{HTMLTextAreaElement}},
+or an {{HTMLInputElement}} whose type
+<a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">supports the selection APIs</a>:
+"<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
+"<code>password</code>".</p>
 
-<p>The <dfn constructor for=FormControlRange lt="FormControlRange()"><code>new FormControlRange()</code></dfn>
-constructor steps are to construct a new {{FormControlRange}} whose <a for=FormControlRange>element</a>, <a for=range>start</a>,
-and <a for=range>end</a> are initially unset.</p>
+<p>For a supported host element <var>el</var>, its <i>value string</i> is the same string exposed by
+its IDL attribute {{HTMLTextAreaElement/value}}/{{HTMLInputElement/value}}. Offsets for
+{{FormControlRange}} are indices into this string in the inclusive range
+[0, <code>value.length</code>], matching
+{{HTMLTextAreaElement/selectionStart}}/{{HTMLTextAreaElement/selectionEnd}} and
+{{HTMLInputElement/selectionStart}}/{{HTMLInputElement/selectionEnd}} units.</p>
 
-<p>The <dfn id=dom-formcontrolrange-setformcontrolrange for=FormControlRange method>
-<code>setFormControlRange(<var>element</var>, <var>startOffset</var>, <var>endOffset</var>)</code></dfn>
+<p>The <dfn constructor for=FormControlRange lt="FormControlRange()">
+<code>new FormControlRange()</code></dfn> constructor steps are to set <a>this</a>’s
+<a for=FormControlRange>control</a> to null and its
+<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.</p>
+
+<p>The <dfn method for=FormControlRange>
+<code>setFormControlRange(<var>element</var>, <var>start</var>, <var>end</var>)</code></dfn>
 method steps are:</p>
 
 <ol>
- <li>
-  <p>If <var>element</var> is not a supported text control (i.e., neither a {{HTMLTextAreaElement}} nor an
-  {{HTMLInputElement}} whose <code>type</code> is one of
-  <code>text</code>, <code>search</code>, <code>tel</code>, <code>url</code>, or <code>password</code>),
-  then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.</p>
-
- <li><p>Let <var>L</var> be the length, in 16-bit code units, of <var>element</var>'s <code>value</code>.</p>
-
- <li>
-  <p>If <var>startOffset</var> greater than <var>L</var> or <var>endOffset</var> greater than <var>L</var>,
-  then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.</p>
-
- <li>
-  <p>If <var>startOffset</var> less than 0 or <var>endOffset</var> less than 0, then <a>throw</a> an
-  "{{IndexSizeError!!exception}}" {{DOMException}}.</p>
-
- <li>
-  <p>If <var>startOffset</var> is greater than <var>endOffset</var>, then set
-  <var>startOffset</var> and <var>endOffset</var> to <var>startOffset</var>. <span class=note>This matches
-  {{Range}}'s collapsing behavior for reversed endpoints.</span></p>
-
- <li>
-  <p>Set <a>this</a>'s <a for=FormControlRange>element</a> to <var>element</var>. Set <a>this</a>'s <a for=range>start</a> to
-  (<var>element</var>, <var>startOffset</var>) and <a for=range>end</a> to
-  (<var>element</var>, <var>endOffset</var>).</p>
+ <li>If <var>element</var> does not support form control ranges, then <a>throw</a> a
+     "{{NotSupportedError!!exception}}" {{DOMException}}.</li>
+ <li>Let <var>len</var> be the length of <var>element</var>’s <i>value string</i>.</li>
+ <li>If <var>start</var> &gt; <var>len</var> or <var>end</var> &gt; <var>len</var>, then
+     <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.</li>
+ <li>If <var>start</var> &gt; <var>end</var>, then set <var>end</var> to <var>start</var>.</li>
+ <li>Set <a for=FormControlRange>control</a> to <var>element</var>,
+     <a for=FormControlRange>start offset</a> to <var>start</var>, and
+     <a for=FormControlRange>end offset</a> to <var>end</var>.</li>
 </ol>
 
-<p class=note>Because a {{FormControlRange}} <em>extends</em> {{AbstractRange}}, its
-<a attribute for=AbstractRange>startContainer</a>, <a attribute for=AbstractRange>startOffset</a>,
-<a attribute for=AbstractRange>endContainer</a>, <a attribute for=AbstractRange>endOffset</a>, and
-<a attribute for=AbstractRange>collapsed</a> attributes work as defined for {{AbstractRange}}, with the
-interpretation described above.</p>
+<p>A {{FormControlRange}} is <em>live</em>: when the control’s value string changes, the range’s
+{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are updated automatically
+to preserve the same logical content. These behaviors mirror {{Range}} boundary adjustments
+in the DOM, but are applied to the UTF-16 code units of a form control’s value.</p>
 
-<p>The <dfn export for=FormControlRange id=dom-formcontrolrange-stringifier>stringification behavior</dfn>
-must return the substring of <a>this</a>'s <a for=FormControlRange>element</a>'s <code>value</code> defined by <a>this</a>'s
-<a for=range>start offset</a> and <a for=range>end offset</a>.</p>
+<ul>
+ <li>Edits before the range: Offsets shift by the net length change.</li>
+ <li>Edits after the range: Offsets remain unchanged.</li>
+ <li>Edits overlapping the range: If a boundary falls inside text that was removed,
+ move it to the start of the change. If the edit also inserted new text, remap the boundary
+ into the inserted span at the closest corresponding offset, not exceeding its end.</li>
+ <li>Insertion at the start boundary: A non-{{AbstractRange/collapsed}} range expands
+     to include the new text. A collapsed range (caret) moves after the insertion.</li>
+ <li>Insertion at the end boundary: A non-collapsed range does not expand to include
+     the new text. A collapsed range moves after the insertion.</li>
+ <li>Clamping and collapse: Offsets are clamped to the current value length. If the
+     {{AbstractRange/startOffset}} would exceed the {{AbstractRange/endOffset}}, set the end to the
+     start.</li>
+</ul>
 
-<h4 id=formcontrolrange-live-update>Live update semantics</h4>
+<p>The <dfn export for=FormControlRange id=dom-formcontrolrange-stringifier>stringification behavior</dfn> must run these steps:</p>
 
-<p>User agents must update {{FormControlRange}} objects as their <a for=FormControlRange>element</a>'s <code>value</code> is
-mutated so that they continue to refer to the same logical text positions. This updating must behave as
-if the <a for=FormControlRange>element</a>'s <code>value</code> were represented by a single {{Text}} node that is a child of
-the <a for=FormControlRange>element</a>, and modifications to <code>value</code> performed the corresponding <a>replace data</a>
-operations on that conceptual node. In particular, boundary points are adjusted per the existing
-<a>live range</a> mutation rules that apply to {{CharacterData}} changes.</p>
+<ol>
+ <li><p>If <a for=FormControlRange>control</a> is null, then return the empty string.</p>
+ <li><p>Let <var>value</var> be <a for=FormControlRange>control</a>'s <i>value string</i>.</p>
+ <li><p>Let <var>start</var> be <a for=FormControlRange>start offset</a>, and let <var>end</var> be min(<a for=FormControlRange>end offset</a>, <var>value</var>.<code>length</code>).</p>
+ <li><p>If <var>start</var> ≥ <var>end</var>, then return the empty string.</p>
+ <li><p>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.</p>
+</ol>
 
-<p class=note>Layout and geometry methods such as <code>getClientRects()</code> and
-<code>getBoundingClientRect()</code> are defined in other specifications as partial interfaces on {{Range}}.
-Those specifications can extend {{FormControlRange}} in the same way; when present, they operate over the
-text rendered by the <a for=FormControlRange>element</a>'s <code>value</code>.</p>
 
 <h2 id="traversal">Traversal</h2>
 
