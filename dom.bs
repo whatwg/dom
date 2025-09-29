@@ -4,7 +4,6 @@ H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
 Text Macro: LATESTRD 2025-06
-Text Macro: COMMIT-SHA 0000000
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Translation: ja https://triple-underscore.github.io/DOM4-ja.html
 Translation: zh-Hans https://htmlspecs.com/dom/
@@ -9901,8 +9900,9 @@ interface FormControlRange : AbstractRange {
   constructor();
 
   undefined setFormControlRange((HTMLInputElement or HTMLTextAreaElement) element,
-                                unsigned long startOffset,
-                                unsigned long endOffset);
+      unsigned long startOffset,
+      unsigned long endOffset
+  );
   <!-- TODO: Bikeshed method name. Alternatives suggested include setInFormControl,
        setFormControl, setControl, setStartAndEnd, or simply set. -->
 
@@ -9912,111 +9912,123 @@ interface FormControlRange : AbstractRange {
 };
 </pre>
 
-<p>Objects implementing the {{FormControlRange}} interface are known as
-{{FormControlRange}} objects.</p>
+<p>Objects implementing the {{FormControlRange}} interface are known as {{FormControlRange}} objects.
 
 <dl class=domintro>
  <dt><code><var ignore>formControlRange</var> = new
  <a constructor lt="FormControlRange()">FormControlRange</a>()</code>
- <dd>Returns a new {{FormControlRange}} that tracks text offsets in a text
- control's value as it changes.
+ <dd>Returns a new {{FormControlRange}} that tracks text offsets in a text control's value as it
+ changes.
 
- <dt><code><var ignore>formControlRange</var> .
+ <dt><code><var ignore>formControlRange</var>.
  {{FormControlRange/setFormControlRange()}}(<var ignore>element</var>,
  <var ignore>startOffset</var>, <var ignore>endOffset</var>)</code>
- <dd>Sets the endpoints to <code>[startOffset, endOffset]</code> within
- <var>element</var>'s <i>value string</i>. Throws {{NotSupportedError}} for
- unsupported elements and {{IndexSizeError}} for out-of-bounds offsets.
+ <dd>Sets the endpoints to <code>[startOffset, endOffset]</code> within <var>element</var>'s
+ <i>value string</i>. Throws {{NotSupportedError}} for unsupported elements and {{IndexSizeError}}
+ for out-of-bounds offsets.
 </dl>
 
-<p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the
-host text control's <i>value string</i> rather than in the <a>node tree</a>. Its
-<a for=range>start node</a> and <a for=range>end node</a> are always the host
-<code>&lt;input></code> or <code>&lt;textarea></code>, and its offsets are indices into that
-string.</p>
+<p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the host text
+control's <i>value string</i> rather than in the <a>node tree</a>. Its <a for=range>start node</a>
+and <a for=range>end node</a> are always the host <code>&lt;input></code> or <code>&lt;textarea></code>,
+and its offsets are indices into that string.
 
-<p>A {{FormControlRange}} has associated state:</p>
+<p>A {{FormControlRange}} has associated state:
+
 <ul>
- <li><dfn export for=FormControlRange id=formcontrolrange-control>control</dfn>
-     (null or an {{HTMLInputElement}}/{{HTMLTextAreaElement}})</li>
- <li><dfn export for=FormControlRange id=formcontrolrange-start>start offset</dfn>
-     (a non-negative integer)</li>
- <li><dfn export for=FormControlRange id=formcontrolrange-end>end offset</dfn>
-     (a non-negative integer)</li>
+ <li><p><dfn export for=FormControlRange id=formcontrolrange-control>control</dfn> (null or an
+ {{HTMLInputElement}}/{{HTMLTextAreaElement}}).
+
+ <li><p><dfn export for=FormControlRange id=formcontrolrange-start>start offset</dfn> (a
+ non-negative integer).
+
+ <li><p><dfn export for=FormControlRange id=formcontrolrange-end>end offset</dfn> (a non-negative
+ integer).
 </ul>
 
-<p>The startContainer getter steps are to return <var>this</var>’s
-<a for=FormControlRange>control</a>.</p>
-<p>The endContainer getter steps are to return <var>this</var>’s
-<a for=FormControlRange>control</a>.</p>
-<p>The startOffset getter steps are to return <var>this</var>’s
-<a for=FormControlRange>start offset</a>.</p>
-<p>The endOffset getter steps are to return <var>this</var>’s
-<a for=FormControlRange>end offset</a>.</p>
-<p>The collapsed getter steps are to return true if <var>this</var>’s
-<a for=FormControlRange>start offset</a> equals <var>this</var>’s
-<a for=FormControlRange>end offset</a>; otherwise false.</p>
+<p>The startContainer getter steps are to return <var>this</var>'s
+<a for=FormControlRange>control</a>.
+
+<p>The endContainer getter steps are to return <var>this</var>'s
+<a for=FormControlRange>control</a>.
+
+<p>The startOffset getter steps are to return <var>this</var>'s
+<a for=FormControlRange>start offset</a>.
+
+<p>The endOffset getter steps are to return <var>this</var>'s
+<a for=FormControlRange>end offset</a>.
+
+<p>The collapsed getter steps are to return true if <var>this</var>'s
+<a for=FormControlRange>start offset</a> equals <var>this</var>'s
+<a for=FormControlRange>end offset</a>; otherwise false.
 
 <p>An {{Element}} <var>el</var> <dfn>supports form control range</dfn> if it is an
 {{HTMLTextAreaElement}}, or an {{HTMLInputElement}} whose type
-<a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">supports the selection APIs</a>:
-"<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
-"<code>password</code>".</p>
+<a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">supports the selection
+APIs</a>: "<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
+"<code>password</code>".
 
 <p>For a <a lt="supports form control range">supported</a> host element <var>el</var>, its
 <i>value string</i> is the same string exposed by its IDL attribute
-{{HTMLTextAreaElement/value}}/{{HTMLInputElement/value}}. Offsets for
-{{FormControlRange}} are indices into this string in the inclusive range
-[0, <code>value.length</code>], matching
+{{HTMLTextAreaElement/value}}/{{HTMLInputElement/value}}. Offsets for {{FormControlRange}} are
+indices into this string in the inclusive range [0, <code>value.length</code>], matching
 {{HTMLTextAreaElement/selectionStart}}/{{HTMLTextAreaElement/selectionEnd}} and
-{{HTMLInputElement/selectionStart}}/{{HTMLInputElement/selectionEnd}} units.</p>
+{{HTMLInputElement/selectionStart}}/{{HTMLInputElement/selectionEnd}} units.
 
 <p>The <dfn constructor for=FormControlRange lt="FormControlRange()">
-<code>new FormControlRange()</code></dfn> constructor steps are to set <var>this</var>’s
-<a for=FormControlRange>control</a> to null and its
-<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.</p>
+<code>new FormControlRange()</code></dfn> constructor steps are to set <var>this</var>'s
+<a for=FormControlRange>control</a> to null and its <a for=FormControlRange>start offset</a> and
+<a for=FormControlRange>end offset</a> to 0.
 
 <p>The <dfn method for=FormControlRange>
-<code>setFormControlRange(<var>element</var>, <var>startOffset</var>, <var>endOffset</var>)</code></dfn>
-method steps are:</p>
+<code>setFormControlRange(<var>element</var>, <var>startOffset</var>,
+<var>endOffset</var>)</code></dfn> method steps are:
 
 <ol>
- <li>If <var>element</var> does not <a>support form control range</a>, then
-     <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.</li>
- <li>Let <var>len</var> be the length of <var>element</var>’s <i>value string</i>.</li>
- <li>If <var>startOffset</var> &gt; <var>len</var> or <var>endOffset</var> &gt;
-     <var>len</var>, then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.</li>
- <li>If <var>startOffset</var> &gt; <var>endOffset</var>, then set <var>endOffset</var> to
-     <var>startOffset</var>.</li>
- <li>Set <var>this</var>’s <a for=FormControlRange>control</a> to <var>element</var>,
-     <var>this</var>’s <a for=FormControlRange>start offset</a> to <var>startOffset</var>, and
-     <var>this</var>’s <a for=FormControlRange>end offset</a> to <var>endOffset</var>.</li>
+ <li><p>If <var>element</var> does not <a>support form control range</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+ <li><p>Let <var>len</var> be the length of <var>element</var>'s <i>value string</i>.
+
+ <li><p>If <var>startOffset</var> &gt; <var>len</var> or <var>endOffset</var> &gt; <var>len</var>,
+ then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>startOffset</var> &gt; <var>endOffset</var>, then set <var>endOffset</var> to
+ <var>startOffset</var>.
+
+ <li><p>Set <var>this</var>'s <a for=FormControlRange>control</a> to <var>element</var>,
+ <var>this</var>'s <a for=FormControlRange>start offset</a> to <var>startOffset</var>, and
+ <var>this</var>'s <a for=FormControlRange>end offset</a> to <var>endOffset</var>.
 </ol>
 
-<p>If an {{HTMLInputElement}}’s <code>type</code> changes to a type that does not
-<a>support form control range</a> (e.g., switching to <code>date</code>), then each
-associated {{FormControlRange}} must set its
-<a for=FormControlRange>control</a> to null and set both its
-<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.</p>
+<p>If an {{HTMLInputElement}}'s <code>type</code> changes to a type that does not
+<a>support form control range</a> (e.g., switching to <code>date</code>), then each associated
+{{FormControlRange}} must set its <a for=FormControlRange>control</a> to null and set both its
+<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.
 
 <p>A {{FormControlRange}} is live: when the control's value string changes, the range's
-{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are updated automatically to
-preserve the same logical content. These behaviors mirror {{Range}} boundary adjustments in the DOM,
-but are applied to the UTF-16 code units of a form control's value.</p>
+{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are updated automatically to preserve
+the same logical content. These behaviors mirror {{Range}} boundary adjustments in the DOM, but are
+applied to the UTF-16 code units of a form control's value.
 
 <ul>
- <li>Edits before the range: Offsets shift by the net length change.</li>
- <li>Edits after the range: Offsets remain unchanged.</li>
- <li>Edits overlapping the range: If a boundary falls inside text that was removed, move it to the
-     start of the change. If the edit also inserted new text, remap the boundary into the inserted
-     span at the closest corresponding offset, not exceeding its end.</li>
- <li>Insertion at the start boundary: A non-{{AbstractRange/collapsed}} range expands to include the
-     new text. A collapsed range (caret) moves after the insertion.</li>
- <li>Insertion at the end boundary: A non-collapsed range does not expand to include the new text. A
-     collapsed range moves after the insertion.</li>
- <li>Clamping and collapse: Offsets are clamped to the current value length. If the
-     {{AbstractRange/startOffset}} would exceed the {{AbstractRange/endOffset}}, set the end to the
-     start.</li>
+ <li><p>Edits before the range: Offsets shift by the net length change.
+
+ <li><p>Edits after the range: Offsets remain unchanged.
+
+ <li><p>Edits overlapping the range: If a boundary falls inside text that was removed, move it to the
+ start of the change. If the edit also inserted new text, remap the boundary into the inserted span
+ at the closest corresponding offset, not exceeding its end.
+
+ <li><p>Insertion at the start boundary: A non-{{AbstractRange/collapsed}} range expands to include
+ the new text. A collapsed range (caret) moves after the insertion.
+
+ <li><p>Insertion at the end boundary: A non-collapsed range does not expand to include the new text.
+ A collapsed range moves after the insertion.
+
+ <li><p>Clamping and collapse: Offsets are clamped to the current value length. If the
+ {{AbstractRange/startOffset}} would exceed the {{AbstractRange/endOffset}}, set the end to the
+ start.
 </ul>
 
 <!-- TODO: Define boundary adjustment algorithm in HTML spec. DOM spec currently describes
@@ -10024,15 +10036,21 @@ but are applied to the UTF-16 code units of a form control's value.</p>
      control value changes (similar to Range update handling in DOM). -->
 
 <p>The <dfn export for=FormControlRange id=dom-formcontrolrange-stringifier>stringification
-behavior</dfn> must run these steps:</p>
+behavior</dfn> must run these steps:
 
 <ol>
- <li>If <var>this</var>’s <a for=FormControlRange>control</a> is null, then return the empty string.</li>
- <li>Let <var>value</var> be <var>this</var>’s <a for=FormControlRange>control</a>’s <i>value string</i>.</li>
- <li>Let <var>start</var> be <var>this</var>’s <a for=FormControlRange>start offset</a>, and
-     let <var>end</var> be <var>this</var>’s <a for=FormControlRange>end offset</a>.</li>
- <li>If <var>start</var> ≥ <var>end</var>, then return the empty string.</li>
- <li>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.</li>
+ <li><p>If <var>this</var>'s <a for=FormControlRange>control</a> is null, then return the empty
+ string.
+
+ <li><p>Let <var>value</var> be <var>this</var>'s <a for=FormControlRange>control</a>'s <i>value
+ string</i>.
+
+ <li><p>Let <var>start</var> be <var>this</var>'s <a for=FormControlRange>start offset</a>, and let
+ <var>end</var> be <var>this</var>'s <a for=FormControlRange>end offset</a>.
+
+ <li><p>If <var>start</var> ≥ <var>end</var>, then return the empty string.
+
+ <li><p>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.
 </ol>
 
 
