@@ -4,6 +4,7 @@ H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
 Text Macro: LATESTRD 2025-06
+Text Macro: COMMIT-SHA 0000000
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Translation: ja https://triple-underscore.github.io/DOM4-ja.html
 Translation: zh-Hans https://htmlspecs.com/dom/
@@ -9904,7 +9905,9 @@ interface FormControlRange : AbstractRange {
       unsigned long endOffset
   );
   <!-- TODO: Bikeshed method name. Alternatives suggested include setInFormControl,
-       setFormControl, setControl, setStartAndEnd, or simply set. -->
+       setFormControl, setControl, setStartAndEnd, or simply set. Tracked as an
+       Open Question in the explainer:
+       https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/FormControlRange/explainer.md#open-questions -->
 
   DOMRectList getClientRects();
   DOMRect getBoundingClientRect();
@@ -9924,14 +9927,14 @@ interface FormControlRange : AbstractRange {
  {{FormControlRange/setFormControlRange()}}(<var ignore>element</var>,
  <var ignore>startOffset</var>, <var ignore>endOffset</var>)</code>
  <dd>Sets the endpoints to <code>[startOffset, endOffset]</code> within <var>element</var>'s
- <i>value string</i>. Throws {{NotSupportedError}} for unsupported elements and {{IndexSizeError}}
- for out-of-bounds offsets.
+<a href="#formcontrolrange-value-string">value string</a>. Throws {{NotSupportedError}} for 
+unsupported elements and {{IndexSizeError}} for out-of-bounds offsets.
 </dl>
 
 <p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the host text
-control's <i>value string</i> rather than in the <a>node tree</a>. Its <a for=range>start node</a>
-and <a for=range>end node</a> are always the host <code>&lt;input></code> or <code>&lt;textarea></code>,
-and its offsets are indices into that string.
+control's <a href="#formcontrolrange-value-string">value string</a> rather than in the <a>node tree</a>. 
+Its <a for=range>start node</a> and <a for=range>end node</a> are always the host <code>&lt;input></code>
+or <code>&lt;textarea></code>, and its offsets are indices into that string.
 
 <p>A {{FormControlRange}} has associated state:
 
@@ -9962,11 +9965,16 @@ and its offsets are indices into that string.
 <a for=FormControlRange>start offset</a> equals <a>this</a>'s
 <a for=FormControlRange>end offset</a>; otherwise false.
 
-<p>An {{Element}} <var>el</var> <dfn>supports form control range</dfn> if it is an
-{{HTMLInputElement}}, or an {{HTMLTextAreaElement}} whose type
-<a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">supports the selection
-APIs</a>: "<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
+<p>An {{Element}} <var>el</var>
+<dfn export id=supports-form-control-range>supports form control range</dfn> if it is an
+{{HTMLTextAreaElement}}, or an {{HTMLInputElement}} whose type is one of
+"<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
 "<code>password</code>".
+
+<p class=note>These are exactly the types for which the related selection APIs
+apply in HTML; see <a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">
+selection APIs applicability for <code>input</code> types</a>.
+This list is the complement of that section.</p>
 
 <p>The <dfn constructor for=FormControlRange lt="FormControlRange()">
 <code>new FormControlRange()</code></dfn> constructor steps are to set <a>this</a>'s
@@ -9974,11 +9982,12 @@ APIs</a>: "<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code
 <a for=FormControlRange>end offset</a> to 0.
 
 <p>For a <a lt="supports form control range">supported</a> host element <var>el</var>, its
-<i>value string</i> is the same string exposed by its IDL attribute
-{{HTMLInputElement/value}}/{{HTMLTextAreaElement/value}}. Offsets for {{FormControlRange}} are
-indices into this string in the inclusive range [0, <code>value.length</code>], matching
+<dfn export id=formcontrolrange-value-string>value string</dfn> is the same string exposed by its IDL
+attribute {{HTMLInputElement/value}}/{{HTMLTextAreaElement/value}}. Offsets for {{FormControlRange}}
+are indices into this <a href="#formcontrolrange-value-string">value string</a> in the inclusive
+range [0, <code>value.length</code>], matching
 {{HTMLInputElement/selectionStart}}/{{HTMLInputElement/selectionEnd}} and
-{{HTMLTextAreaElement/selectionStart}}/{{HTMLTextAreaElement/selectionEnd}} units.
+{{HTMLTextAreaElement/selectionStart}}/{{HTMLTextAreaElement/selectionEnd}} units.</p>
 
 <p>The <dfn method for=FormControlRange>
 <code>setFormControlRange(<var>element</var>, <var>startOffset</var>,
@@ -9988,7 +9997,8 @@ indices into this string in the inclusive range [0, <code>value.length</code>], 
  <li><p>If <var>element</var> does not <a>support form control range</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <li><p>Let <var>len</var> be the length of <var>element</var>'s <i>value string</i>.
+<li><p>Let <var>len</var> be the length of <var>element</var>'s
+<a href="#formcontrolrange-value-string">value string</a>.
 
  <li><p>If <var>startOffset</var> &gt; <var>len</var> or <var>endOffset</var> &gt; <var>len</var>,
  then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.
@@ -10006,10 +10016,13 @@ indices into this string in the inclusive range [0, <code>value.length</code>], 
 {{FormControlRange}} must set its <a for=FormControlRange>control</a> to null and set both its
 <a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.
 
-<p>A {{FormControlRange}} is live: when the control's value string changes, the range's
-{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are updated automatically to preserve
-the same logical content. These behaviors mirror {{Range}} boundary adjustments in the DOM, but are
-applied to the UTF-16 code units of a form control's value.
+<p class=note>HTML will normatively call the associated range-adjustment algorithm wherever a
+control’s value changes or its type ceases to support selection.</p>
+
+<p>A {{FormControlRange}} is live: when the control's <a href="#formcontrolrange-value-string">value
+string</a> changes, the range's {{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are
+updated automatically to preserve the same logical content. These behaviors mirror {{Range}}
+boundary adjustments in the DOM, but are applied to the UTF-16 code units of a form control's value.
 
 <ul>
  <li><p>Edits before the range: Offsets shift by the net length change.
@@ -10036,21 +10049,18 @@ applied to the UTF-16 code units of a form control's value.
      control value changes (similar to Range update handling in DOM). -->
 
 <p>The <dfn export for=FormControlRange id=dom-formcontrolrange-stringifier>stringification
-behavior</dfn> must run these steps:
+behavior</dfn> must run these steps:</p>
 
 <ol>
- <li><p>If <a>this</a>'s <a for=FormControlRange>control</a> is null, then return the empty
- string.
+  <li><p>If <a>this</a>'s <a for=FormControlRange>control</a> is null, then return the empty string.</p></li>
 
- <li><p>Let <var>value</var> be <a>this</a>'s <a for=FormControlRange>control</a>'s <i>value
- string</i>.
+  <li><p>Let <var>value</var> be <a>this</a>'s <a for=FormControlRange>control</a>'s
+  <a href="#formcontrolrange-value-string">value string</a>.</p></li>
 
- <li><p>Let <var>start</var> be <a>this</a>'s <a for=FormControlRange>start offset</a>, and let
- <var>end</var> be <a>this</a>'s <a for=FormControlRange>end offset</a>.
+  <li><p>Let <var>start</var> be <a>this</a>'s <a for=FormControlRange>start offset</a>, and let
+ <var>end</var> be <a>this</a>'s <a for=FormControlRange>end offset</a>.</p></li>
 
- <li><p>If <var>start</var> ≥ <var>end</var>, then return the empty string.
-
- <li><p>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.
+ <li><p>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.</p></li>
 </ol>
 
 
