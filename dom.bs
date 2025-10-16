@@ -4,7 +4,6 @@ H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
 Text Macro: LATESTRD 2025-06
-Text Macro: COMMIT-SHA 0000000
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Translation: ja https://triple-underscore.github.io/DOM4-ja.html
 Translation: zh-Hans https://htmlspecs.com/dom/
@@ -9927,8 +9926,22 @@ interface FormControlRange : AbstractRange {
  {{FormControlRange/setFormControlRange()}}(<var ignore>element</var>,
  <var ignore>startOffset</var>, <var ignore>endOffset</var>)</code>
  <dd>Sets the endpoints to <code>[startOffset, endOffset]</code> within <var>element</var>'s
-<a href="#formcontrolrange-value-string">value string</a>. Throws {{NotSupportedError}} for 
-unsupported elements and {{IndexSizeError}} for out-of-bounds offsets.
+ <a href="#formcontrolrange-value-string">value string</a>. Throws {{NotSupportedError}} for 
+ unsupported elements and {{IndexSizeError}} for out-of-bounds offsets.
+
+ <dt><code><var ignore>rects</var> = <var ignore>formControlRange</var> . {{FormControlRange/getClientRects()}}</code>
+ <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the host
+ control’s <a href="#formcontrolrange-value-string">value string</a>. If the range is unset (its
+ <a for=FormControlRange>control</a> is null), {{AbstractRange/collapsed}} with no visible caret,
+ the control has computed <code>display</code> of <code>none</code>, or the control (or its inner
+ editor) is not <a>connected</a>, returns an empty list.
+
+ <dt><code><var ignore>rect</var> = <var ignore>formControlRange</var> . {{FormControlRange/getBoundingClientRect()}}</code>
+ <dd>Returns a {{DOMRect}} that is the union of the rectangles from
+ {{FormControlRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range in a visible
+ control, returns a rectangle of zero width whose height equals the line height at the caret
+ position. If the control has computed <code>display</code> of <code>none</code> or is not
+ <a>connected</a>, returns a rectangle with zero width and height.
 </dl>
 
 <p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the host text
