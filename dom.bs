@@ -7424,20 +7424,21 @@ method steps are:
  <a>ASCII lowercase</a>.
 
  <li><p>Let <var>verifiedValue</var> be the result of calling
- <a>get trusted type compliant attribute value</a> with <var>qualifiedName</var>, null,
- <a>this</a>, and <var>value</var>. [[!TRUSTED-TYPES]]
+ <a>get trusted type compliant attribute value</a> with <var>qualifiedName</var>, null, <a>this</a>,
+ and <var>value</var>. [[!TRUSTED-TYPES]]
 
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
 
- <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
- <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
- <var>verifiedValue</var>, and <a for=Node>node document</a> is <a>this</a>'s
- <a for=Node>node document</a>, then <a lt="append an attribute">append</a> this <a>attribute</a>
- to <a>this</a>, and then return.
+ <li><p>If <var>attribute</var> is non-null, then <a lt="change an attribute">change</a>
+ <var>attribute</var> to <var>verifiedValue</var> and return.
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
+ <li><p>Set <var>attribute</var> to a new <a>attribute</a> whose <a for=Attr>local name</a> is
+ <var>qualifiedName</var>, <a for=Attr>value</a> is <var>verifiedValue</var>, and
+ <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
+
+ <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
 </ol>
 
 <p>The
@@ -7454,7 +7455,7 @@ method steps are:
  <a>this</a>, and <var>value</var>. [[!TRUSTED-TYPES]]
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>,
- <var>verifiedValue</var>, and also <var>prefix</var> and <var>namespace</var>.
+ <var>verifiedValue</var>, <var>prefix</var>, and <var>namespace</var>.
 </ol>
 
 <p>The
@@ -8043,24 +8044,19 @@ string <var>value</var>, run these steps:
 
 <ol>
  <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
- <a for=Attr>value</a> to <var>value</var>.
+ <a for=Attr>value</a> to <var>value</var> and return.
 
- <li>
-  <p>Otherwise:
+ <li><p>Let <var>element</var> be <var>attribute</var>'s <a for=Attr>element</a>.
 
-  <ol>
-   <li><p>Let <var>element</var> be <var>attribute</var>'s <a for=Attr>element</a>.
+ <li><p>Let <var>verifiedValue</var> be the result of calling
+ <a>get trusted type compliant attribute value</a> with <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, <var>element</var>,
+ and <var>value</var>. [[!TRUSTED-TYPES]]
 
-   <li><p>Let <var>verifiedValue</var> be the result of calling
-   <a>get trusted type compliant attribute value</a> with <var>attribute</var>'s
-   <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>,
-   <var>element</var>, and <var>value</var>. [[!TRUSTED-TYPES]]
+ <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
+ <a for=Attr>value</a> to <var>verifiedValue</var> and return.
 
-   <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
-   <a for=Attr>value</a> to <var>verifiedValue</var>, and return.
-
-   <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
-  </ol>
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
 </ol>
 
 <p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>
