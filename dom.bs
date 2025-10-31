@@ -50,9 +50,11 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
+<cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
+[[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
@@ -6633,8 +6635,8 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
-  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
+  [CEReactions] undefined setAttribute(DOMString qualifiedName, (TrustedType or DOMString) value);
+  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, (TrustedType or DOMString) value);
   [CEReactions] undefined removeAttribute(DOMString qualifiedName);
   [CEReactions] undefined removeAttributeNS(DOMString? namespace, DOMString localName);
   [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
@@ -7115,6 +7117,11 @@ string <var>namespace</var> (default null):</p>
 <a for=/>attribute</a> <var>attr</var> and an <a for=/>element</a> <var>element</var>:
 
 <ol>
+ <li><p>Let <var>verifiedValue</var> be the result of calling
+ <a>get trusted type compliant attribute value</a> with <var>attr</var>'s
+ <a for=Attr>local name</a>, <var>attr</var>'s <a for=Attr>namespace</a>, <var>element</var>, and
+ <var>attr</var>'s <a for=Attr>value</a>. [[!TRUSTED-TYPES]]
+
  <li><p>If <var>attr</var>'s <a for=Attr>element</a> is neither null nor <var>element</var>,
  <a>throw</a> an "{{InUseAttributeError!!exception}}" {{DOMException}}.
 
@@ -7124,6 +7131,8 @@ string <var>namespace</var> (default null):</p>
  <var>element</var>.
 
  <li><p>If <var>oldAttr</var> is <var>attr</var>, return <var>attr</var>.
+
+ <li><p>Set <var>attr</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
 
  <li><p>If <var>oldAttr</var> is non-null, then <a lt="replace an attribute">replace</a>
  <var>oldAttr</var> with <var>attr</var>.
@@ -7414,17 +7423,22 @@ method steps are:
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
  <a>ASCII lowercase</a>.
 
+ <li><p>Let <var>verifiedValue</var> be the result of calling
+ <a>get trusted type compliant attribute value</a> with <var>qualifiedName</var>, null, <a>this</a>,
+ and <var>value</var>. [[!TRUSTED-TYPES]]
+
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
- <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
- <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
- <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
- <var>value</var>, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>,
- then <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return.
+ <li><p>If <var>attribute</var> is non-null, then <a lt="change an attribute">change</a>
+ <var>attribute</var> to <var>verifiedValue</var> and return.
 
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
+ <li><p>Set <var>attribute</var> to a new <a>attribute</a> whose <a for=Attr>local name</a> is
+ <var>qualifiedName</var>, <a for=Attr>value</a> is <var>verifiedValue</var>, and
+ <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
+
+ <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
 </ol>
 
 <p>The
@@ -7436,8 +7450,12 @@ method steps are:
  [=validate and extract|validating and extracting=] <var>namespace</var> and
  <var>qualifiedName</var> given "<code>element</code>".
 
- <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
- and also <var>prefix</var> and <var>namespace</var>.
+ <li><p>Let <var>verifiedValue</var> be the result of calling
+ <a>get trusted type compliant attribute value</a> with <var>localName</var>, <var>namespace</var>,
+ <a>this</a>, and <var>value</var>. [[!TRUSTED-TYPES]]
+
+ <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>,
+ <var>verifiedValue</var>, <var>prefix</var>, and <var>namespace</var>.
 </ol>
 
 <p>The
@@ -8027,9 +8045,19 @@ string <var>value</var>, run these steps:
 
 <ol>
  <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
- <a for=Attr>value</a> to <var>value</var>.
+ <a for=Attr>value</a> to <var>value</var> and return.
 
- <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>.
+ <li><p>Let <var>element</var> be <var>attribute</var>'s <a for=Attr>element</a>.
+
+ <li><p>Let <var>verifiedValue</var> be the result of calling
+ <a>get trusted type compliant attribute value</a> with <var>attribute</var>'s
+ <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, <var>element</var>,
+ and <var>value</var>. [[!TRUSTED-TYPES]]
+
+ <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
+ <a for=Attr>value</a> to <var>verifiedValue</var> and return.
+
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
 </ol>
 
 <p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>
