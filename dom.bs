@@ -5475,7 +5475,7 @@ interface Document : Node {
 interface XMLDocument : Document {};
 
 dictionary ElementCreationOptions {
-  CustomElementRegistry customElementRegistry;
+  CustomElementRegistry? customElementRegistry;
   DOMString is;
 };
 
@@ -5847,7 +5847,8 @@ method steps are to return the result of running the
 dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
 
 <ol>
- <li><p>Let <var>registry</var> be null.
+ <li><p>Let <var>registry</var> be the result of <a for=/>looking up a custom element registry</a>
+ given <var>document</var>.
 
  <li><p>Let <var>is</var> be null.
 
@@ -5858,9 +5859,10 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
    <li><p>If <var>options</var>["{{ElementCreationOptions/customElementRegistry}}"]
    <a for=map>exists</a>, then set <var>registry</var> to it.
 
-   <li><p>If <var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false and
-   <var>registry</var> is not <var>document</var>'s <a for=Document>custom element registry</a>,
-   then <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+   <li><p>If <var>registry</var> is not null and <var>registry</var>'s
+   <a for=CustomElementRegistry>is scoped</a> is false and <var>registry</var> is not
+   <var>document</var>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
+   "{{NotSupportedError!!exception}}" {{DOMException}}.
 
    <li><p>If <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set
    <var>is</var> to it.
@@ -5868,9 +5870,6 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
    <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
    "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
-
- <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
- <a for=/>looking up a custom element registry</a> given <var>document</var>.
 
  <li><p>Return <var>registry</var> and <var>is</var>.
 </ol>
@@ -6672,7 +6671,7 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   boolean serializable = false;
-  CustomElementRegistry? customElementRegistry = null;
+  CustomElementRegistry? customElementRegistry;
 };
 </pre>
 
@@ -7604,17 +7603,12 @@ are:
  <li><p>Let <var>registry</var> be <a>this</a>'s <a>node document</a>'s
  <a for=Document>custom element registry</a>.
 
- <li>
-  <p>If <var>init</var>["{{ShadowRootInit/customElementRegistry}}"] is non-null:
+ <li><p>Set <var>registry</var> to <var>init</var>["{{ShadowRootInit/customElementRegistry}}"].
 
-  <ol>
-   <li><p>Set <var>registry</var> to <var>init</var>["{{ShadowRootInit/customElementRegistry}}"].
-
-   <li><p>If <var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false and
-   <var>registry</var> is not <a>this</a>'s <a>node document</a>'s
-   <a for=Document>custom element registry</a>, then <a>throw</a> a
-   "{{NotSupportedError!!exception}}" {{DOMException}}.
-  </ol>
+ <li><p>If <var>registry</var> is not null and <var>registry</var>'s
+ <a for=CustomElementRegistry>is scoped</a> is false and <var>registry</var> is not <a>this</a>'s
+ <a>node document</a>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
