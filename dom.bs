@@ -2854,11 +2854,13 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
   <p>If <var>child</var> is non-null:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>start node</a> is <var>parent</var> and
    <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>start offset</a> by <var>count</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>end node</a> is <var>parent</var> and
    <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>end offset</a> by <var>count</var>.
   </ol>
@@ -4764,20 +4766,24 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>,
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>start node</a> is <var>currentNode</var>,
    add <var>length</var> to its <a for=range>start offset</a> and set its
    <a for=range>start node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>, add
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>end node</a> is <var>currentNode</var>, add
    <var>length</var> to its <a for=range>end offset</a> and set its <a for=range>end node</a> to
    <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>'s
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>start node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>start offset</a> is <var>currentNode</var>'s
    <a for=tree>index</a>, set its <a for=range>start node</a> to <var>node</var> and its
    <a for=range>start offset</a> to <var>length</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>'s
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>end node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>end offset</a> is <var>currentNode</var>'s
    <a for=tree>index</a>, set its <a for=range>end node</a> to <var>node</var> and its
    <a for=range>end offset</a> to <var>length</var>.
@@ -6188,7 +6194,7 @@ are:
 <hr>
 
 <p>The <dfn method for=Document><code>createRange()</code></dfn> method steps are to return a new
-<a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> an <a for=range>end</a>.
+<a>live range</a> with (<a>this</a>, 0) as its <a for=range>start</a> and <a for=range>end</a>.
 
 <p class=note>The {{Range/Range()}} constructor can be used instead.
 
@@ -8122,21 +8128,25 @@ string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
  <var>node</var>'s <a for=CharacterData>data</a>.
 
  <!-- ranges -->
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> but less than or equal to
  <var>offset</var> plus <var>count</var>, set its <a for=range>start offset</a> to
  <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> but less than or equal to
  <var>offset</var> plus <var>count</var>, set its <a for=range>end offset</a> to <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>start offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
@@ -8328,22 +8338,26 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
    mutate ranges prematurely:
    https://www.w3.org/Bugs/Public/show_bug.cgi?id=15325 -->
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>start node</a> is <var>node</var> and
    <a for=range>start offset</a> is greater than <var>offset</var>, set its
    <a for=range>start node</a> to <var>new node</var> and decrease its <a for=range>start offset</a>
    by <var>offset</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>end node</a> is <var>node</var> and
    <a for=range>end offset</a> is greater than <var>offset</var>, set its <a for=range>end node</a>
    to <var>new node</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
 
    <!-- This shit is complicated:
         https://www.w3.org/Bugs/Public/show_bug.cgi?id=19968 -->
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>start node</a> is <var>parent</var> and
    <a for=range>start offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
    increase its <a for=range>start offset</a> by 1.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+   <li><p>For each <a>live range</a> or <a>composed range</a> whose
+   <a for=range>end node</a> is <var>parent</var> and
    <a for=range>end offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
    increase its <a for=range>end offset</a> by 1.
   </ol>
@@ -8523,6 +8537,43 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 </ol>
 
 
+<p>The
+<dfn export id=concept-range-bp-composed-position for="boundary point">composed position</dfn> of a
+<a>boundary point</a> (<var>nodeA</var>, <var>offsetA</var>) relative to a <a>boundary point</a>
+(<var>nodeB</var>, <var>offsetB</var>) is
+<dfn export id=concept-range-bp-composed-before for="boundary point">composed before</dfn>,
+<dfn export id=concept-range-bp-composed-equal for="boundary point">composed equal</dfn>, or
+<dfn export id=concept-range-bp-composed-after for="boundary point">composed after</dfn>,
+as returned by these steps:
+
+<ol>
+ <li><p>Assert: <var>nodeA</var> and <var>nodeB</var> have the same <a>shadow-including root</a>.
+
+ <li>If <var>nodeA</var> comes before <var>nodeB</var> in <a>shadow-including tree order</a>, then
+ return <a for="boundary point">composed before</a>.
+
+ <li>If <var>nodeA</var> comes after <var>nodeB</var> in <a>shadow-including tree order</a>, then
+ return <a for="boundary point">composed after</a>.
+
+ <li><p>Assert: <var>nodeA</var> is <var>nodeB</var>.
+
+ <li>
+  <p>If the <a for="boundary point">position</a> of (<var>nodeA</var>, <var>offsetA</var>)
+  relative to (<var>nodeB</var>, <var>offsetB</var>) is:
+
+  <dl class=switch>
+   <dt><a for="boundary point">before</a>
+   <dd>Return <a for="boundary point">composed before</a>.
+
+   <dt><a for="boundary point">equal</a>
+   <dd>Return <a for="boundary point">composed equal</a>.
+
+   <dt><a for="boundary point">after</a>
+   <dd>Return <a for="boundary point">composed after</a>.
+  </dl>
+
+</ol>
+
 <h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3>
 
 <pre class=idl>
@@ -8693,6 +8744,13 @@ interface Range : AbstractRange {
 <a for=/>remove</a>, <a for=/>move</a>, <a>replace data</a>, and <a lt="split a Text node">split</a>
 algorithms) modify <a>live ranges</a> associated with that <a>tree</a>.
 
+<p>A <dfn export id=concept-composed-selection-range>composed range</dfn> is a
+<a>range</a> with an associated <a>live range</a> called
+<dfn export id=concept-legacy-uncomposed-range for="composed range">legacy uncomposed range</dfn>.
+
+<p class=note>The <a for="composed range">legacy uncomposed range</a> is used to maintain
+backward compatibility with the {{Selection/getRangeAt()}} API.
+
 <p>The <dfn export id=concept-range-root for="live range">root</dfn> of a <a>live range</a> is the
 <a for=tree>root</a> of its <a for=range>start node</a>.
 <!-- start and end have an identical root -->
@@ -8774,11 +8832,21 @@ follows:
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
  of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
+ <li><p>For each <a>composed range</a> whose <a for=range>start node</a> is a
+ <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
+ (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>composed range</a> whose <a for=range>end node</a> is a
+ <a>shadow-including inclusive descendant</a> of <var>node</var>, set its <a for=range>end</a> to
+ (<var>parent</var>, <var>index</var>).
+
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>start node</a> is <var>parent</var> and
  <a for=range>start offset</a> is greater than <var>index</var>, decrease its
  <a for=range>start offset</a> by 1.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
+ <li><p>For each <a>live range</a> or <a>composed range</a> whose
+ <a for=range>end node</a> is <var>parent</var> and
  <a for=range>end offset</a> is greater than <var>index</var>, decrease its
  <a for=range>end offset</a> by 1.
 </ol>
@@ -8821,9 +8889,9 @@ to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
 <hr>
 
 <p>To
-<dfn export id=concept-range-bp-set lt="set the start|set the end" for=Range>set the start or end</dfn>
-of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>), run these
-steps:
+<dfn export id=concept-range-bp-set lt="set the start|set the end" for="live range">
+set the start or end</dfn> of a <a>live range</a> <var>range</var> to a <a>boundary point</a>
+(<var>node</var>, <var>offset</var>), run these steps:
 
 <ol>
  <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
@@ -8835,6 +8903,11 @@ steps:
  <li>Let <var>bp</var> be the
  <a>boundary point</a>
  (<var>node</var>, <var>offset</var>).
+
+ <li>Let <var>composed range</var> be null.
+
+ <li>If <var>range</var> is the <a for="composed range">legacy uncomposed range</a> of a
+ <a>composed range</a>, set <var>composed range</var> to that <a>composed range</a>.
 
  <li>
   <dl class=switch>
@@ -8852,6 +8925,21 @@ steps:
 
      <li>Set <var>range</var>'s
      <a for=range>start</a> to <var>bp</var>.
+
+     <li>If <var>composed range</var> is not null, then:
+      <ol>
+       <li>If <var>composed range</var>'s <a for=range>start node</a>'s
+       <a>shadow-including root</a> is not the same as
+       <var>node</var>'s <a>shadow-including root</a>,
+       or if <var>bp</var> is
+       <a for="boundary point">composed after</a> the
+       <var>composed range</var>'s <a for=range>end</a>, set
+       <var>composed range</var>'s
+       <a for="range">end</a> to <var>bp</var>.
+
+       <li>Set <var>composed range</var>’s
+       <a for="range">start</a> to <var>bp</var>.
+      </ol>
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
@@ -8867,9 +8955,28 @@ steps:
 
      <li>Set <var>range</var>'s
      <a for=range>end</a> to <var>bp</var>.
+
+     <li>If <var>composed range</var> is not null, then:
+      <ol>
+       <li>If <var>composed range</var>'s <a for=range>end node</a>'s
+       <a>shadow-including root</a> is not the same as
+       <var>node</var>'s <a>shadow-including root</a>,
+       or if <var>bp</var> is
+       <a for="boundary point">composed before</a> the
+       <var>composed range</var>'s <a for=range>start</a>, set
+       <var>composed range</var>'s
+       <a for="range">start</a> to <var>bp</var>.
+
+       <li>Set <var>composed range</var>’s
+       <a for="range">end</a> to <var>bp</var>.
+      </ol>
     </ol>
   </dl>
 </ol>
+
+<p class=note>The <a>composed range</a>'s <a for=range>start</a> and
+<a for=range>end</a> can have different <a for=tree>roots</a>, but will have the
+same <a>shadow-including root</a>.
 
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the start</a> of <a>this</a> to <a>boundary point</a>
@@ -11012,6 +11119,7 @@ David Håsäther,
 David Hyatt,
 Deepak Sherveghar,
 Dethe Elza,
+Di Zhang,
 Dimitri Glazkov,
 Domenic Denicola,
 Dominic Cooney,
