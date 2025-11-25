@@ -145,7 +145,7 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 
  <li><p>Let <var>tokens</var> be a new <a>ordered set</a>.
 
- <li><p><a for=list>For each</a> <var>token</var> of <var>inputTokens</var>, <a for=set>append</a>
+ <li><p><a for=list>For each</a> <var>token</var> of <var>inputTokens</var>: <a for=set>append</a>
  <var>token</var> to <var>tokens</var>.
 
  <li>Return <var>tokens</var>.
@@ -962,7 +962,7 @@ correct defaults.</p>
  <a>relative high resolution coarse time</a> given <var>time</var> and <var>event</var>'s
  <a>relevant global object</a>.
 
- <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> of <var>dictionary</var>, if
+ <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> of <var>dictionary</var>: if
  <var>event</var> has an attribute whose <a spec=webidl>identifier</a> is <var>member</var>, then
  initialize that attribute to <var>value</var>.
 
@@ -1263,8 +1263,8 @@ method steps are:
 
 <div algorithm>
 <p>To <dfn export>remove all event listeners</dfn>, given an {{EventTarget}} object
-<var>eventTarget</var>, <a for=list>for each</a> <var>listener</var> of <var>eventTarget</var>'s
-<a for=EventTarget>event listener list</a>, <a>remove an event listener</a> with
+<var>eventTarget</var>: <a for=list>for each</a> <var>listener</var> of <var>eventTarget</var>'s
+<a for=EventTarget>event listener list</a>: <a>remove an event listener</a> with
 <var>eventTarget</var> and <var>listener</var>.
 
 <p class=note>HTML needs this to define <code>document.open()</code>. [[HTML]]
@@ -1383,7 +1383,7 @@ property of the event being dispatched.
    <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
    <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
-   <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
+   <a for=Event>touch target list</a>: <a for=list>append</a> the result of <a>retargeting</a>
    <var>touchTarget</var> against <var>target</var> to <var>touchTargets</var>.
 
    <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
@@ -1430,7 +1430,7 @@ property of the event being dispatched.
      <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
      <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
-     <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
+     <a for=Event>touch target list</a>: <a for=list>append</a> the result of <a>retargeting</a>
      <var>touchTarget</var> against <var>parent</var> to <var>touchTargets</var>.
 
      <li>
@@ -2644,7 +2644,7 @@ boolean <var>open</var> (default false):
 
  <li><p>Set <var>slot</var>'s <a for=slot>assigned nodes</a> to <var>slottables</var>.
 
- <li><p>For each <var>slottable</var> of <var>slottables</var>, set <var>slottable</var>'s
+ <li><p>For each <var>slottable</var> of <var>slottables</var>: set <var>slottable</var>'s
  <a>assigned slot</a> to <var>slot</var>.
 </ol>
 </div>
@@ -2684,8 +2684,9 @@ boolean <var>open</var> (default false):
 
 <h4 id=mutation-algorithms>Mutation algorithms</h4>
 
+<div algorithm>
 <p>To <dfn id=concept-node-ensure-pre-insertion-validity>ensure pre-insert validity</dfn> of a
-<a for=/>node</a> <var>node</var> into a <a for=/>node</a> <var>parent</var> before a
+<a for=/>node</a> <var>node</var> into a <a for=/>node</a> <var>parent</var> before null or a
 <a for=/>node</a> <var>child</var>:
 
 <ol>
@@ -2735,9 +2736,11 @@ boolean <var>open</var> (default false):
    and <var>parent</var> has an <a for=/>element</a> <a for=tree>child</a>.
   </dl>
 </ol>
+</div>
 
-<p>To <dfn export id=concept-node-pre-insert>pre-insert</dfn> a <var>node</var> into a
-<var>parent</var> before a <var>child</var>, run these steps:
+<div algorithm>
+<p>To <dfn export id=concept-node-pre-insert>pre-insert</dfn> a <a for=/>node</a> <var>node</var>
+into a <a for=/>node</a> <var>parent</var> before null or <a for=/>node</a> <var>child</var>:
 
 <ol>
  <li><p><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
@@ -2753,7 +2756,9 @@ boolean <var>open</var> (default false):
  <li><p>Return <var>node</var>.
  <!-- Technically this is post-insert. -->
 </ol>
+</div>
 
+<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
@@ -2761,6 +2766,7 @@ below. These steps must not modify the <a>node tree</a> that <var>insertedNode</
 <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may
 [=queue a global task|queue tasks=] to do these things asynchronously, however.
+</div>
 
 <div class=example id=example-foo-what-do-i-put-here>
  <p>While the <a>insertion steps</a> cannot execute JavaScript (among other things), they will
@@ -2806,6 +2812,7 @@ below. These steps must not modify the <a>node tree</a> that <var>insertedNode</
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
 
+<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may also define
 <dfn export id=concept-node-post-connection-ext>post-connection steps</dfn> for all or some
 <a for=/>nodes</a>. The algorithm is passed <var ignore>connectedNode</var>, as indicated in the
@@ -2818,14 +2825,19 @@ or otherwise execute JavaScript. These steps allow a batch of <a>nodes</a> to be
 <a for=/>inserted</a> <em>atomically</em> with respect to script, with all major side effects
 occurring <em>after</em> the batch insertions into the <a>node tree</a> is complete. This ensures
 that all pending <a>node tree</a> insertions completely finish before more insertions can occur.
+</div>
 
+<div algorithm>
 <p><a lt="other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
 <a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a>,
 <a for=/>remove</a>, and <a for=/>replace data</a>.
+</div>
 
-<p>To <dfn export id=concept-node-insert>insert</dfn> a <var>node</var> into a <var>parent</var>
-before a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
+<div algorithm=insert>
+<p>To <dfn export id=concept-node-insert>insert</dfn> a <a for=/>node</a> <var>node</var> into a
+<a for=/>node</a> <var>parent</var> before null or a <a for=/>node</a> <var>child</var>, with an
+optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default false):
 
 <ol>
  <li><p>Let <var>nodes</var> be <var>node</var>'s <a for=tree>children</a>, if <var>node</var> is a
@@ -2839,15 +2851,14 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
   <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a>:
 
   <ol>
-   <li><p><a for=/>Remove</a> its <a for=tree>children</a> with the <i>suppress observers flag</i>
-   set.
+   <li><p><a for=/>Remove</a> its <a for=tree>children</a> with
+   <a for=remove><i>suppressObservers</i></a> set to true.
 
    <li>
     <p><a>Queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null, and
     null.
 
-    <p class=note>This step intentionally does not pay attention to the
-    <i>suppress observers flag</i>.
+    <p class=note>This step intentionally does not pay attention to <var>suppressObservers</var>.
   </ol>
 
  <li>
@@ -2855,11 +2866,11 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
   <ol>
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
    its <a for=range>start offset</a> by <var>count</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
    its <a for=range>end offset</a> by <var>count</var>.
   </ol>
 
@@ -2948,7 +2959,7 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
     </ol>
   </ol>
 
- <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
+ <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
@@ -2969,28 +2980,38 @@ before a <var>child</var>, with an optional <i>suppress observers flag</i>, run 
 
   <ol>
    <li><p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
-   <var>node</var>, in <a>shadow-including tree order</a>, <a for=list>append</a>
+   <var>node</var>, in <a>shadow-including tree order</a>: <a for=list>append</a>
    <var>inclusiveDescendant</var> to <var>staticNodeList</var>.
   </ol>
  </li>
 
- <li><p><a for=list>For each</a> <var>node</var> of <var>staticNodeList</var>, if <var>node</var> is
+ <li><p><a for=list>For each</a> <var>node</var> of <var>staticNodeList</var>: if <var>node</var> is
  <a>connected</a>, then run the <a>post-connection steps</a> with <var>node</var>.
 </ol>
+</div>
 
+<div algorithm>
+<p>To <dfn export id=concept-node-append>append</dfn> a <a for=/>node</a> <var>node</var> to a
+<a for=/>node</a> <var>parent</var>: <a>pre-insert</a> <var>node</var> into <var>parent</var> before
+null.
+</div>
 
+<hr>
+
+<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-move-ext>moving steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed a <a for=/>node</a> <var ignore>movedNode</var>, and a <a for=/>node</a>-or-null
+algorithm is passed a <a for=/>node</a> <var>movedNode</var>, and a <a for=/>node</a>-or-null
 <var ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below. Like the
 <a>insertion steps</a>, these steps must not modify the <a>node tree</a> that
 <var>movedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may queue tasks
 to do these things asynchronously, however.
+</div>
 
-
+<div algorithm>
 <p>To <dfn>move</dfn> a <a for=/>node</a> <var>node</var> into a <a for=/>node</a>
-<var>newParent</var> before a <a for=/>node</a>-or-null <var>child</var>:
+<var>newParent</var> before null or a <a for=/>node</a> <var>child</var>:
 
 <ol>
  <!-- Start pre-move validity checks -->
@@ -3030,7 +3051,7 @@ to do these things asynchronously, however.
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
- <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-remove steps</a> given
+ <a for=Node>node document</a>: run the <a><code>NodeIterator</code> pre-remove steps</a> given
  <var>node</var> and <var>iterator</var>.
 
  <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
@@ -3061,11 +3082,11 @@ to do these things asynchronously, however.
 
   <ol>
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>newParent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
    its <a for=range>start offset</a> by 1.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>newParent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
    its <a for=range>end offset</a> by 1.
   </ol>
 
@@ -3115,14 +3136,13 @@ to do these things asynchronously, however.
  <li><p><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
  <var>newPreviousSibling</var>, and <var>child</var>.</p></li>
 </ol>
+</div>
 
+<hr>
 
-<p>To <dfn export id=concept-node-append>append</dfn> a <var>node</var> to a <var>parent</var>,
-<a>pre-insert</a> <var>node</var> into <var>parent</var> before null.
-
-
-<p>To <dfn export id=concept-node-replace>replace</dfn> a <var>child</var> with <var>node</var>
-within a <var>parent</var>, run these steps:
+<div algorithm>
+<p>To <dfn export id=concept-node-replace>replace</dfn> a <a for=/>node</a> <var>child</var> with
+a <a for=/>node</a> <var>node</var> within a <a for=/>node</a> <var>parent</var>:
 
 <!-- Step 1-5 could be shared with concept-node-pre-insert, although step 3
      in pre-insert is a superset (which is fine). Step 6.1.1 could also be
@@ -3187,7 +3207,8 @@ within a <var>parent</var>, run these steps:
   <ol>
    <li><p>Set <var>removedNodes</var> to « <var>child</var> ».
 
-   <li><p><a for=/>Remove</a> <var>child</var> with the <i>suppress observers flag</i> set.
+   <li><p><a for=/>Remove</a> <var>child</var> with <a for=remove><i>suppressObservers</i></a> set
+   to true.
   </ol>
 
   <p class=note>The above can only be false if <var>child</var> is <var>node</var>.
@@ -3198,17 +3219,18 @@ within a <var>parent</var>, run these steps:
       DocumentFragment node. -->
 
  <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>
- with the <i>suppress observers flag</i> set.
+ with <a for=insert><i>suppressObservers</i></a> set to true.
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>,
  <var>removedNodes</var>, <var>previousSibling</var>, and <var>referenceChild</var>.
 
  <li><p>Return <var>child</var>.
 </ol>
+</div>
 
-
-<p>To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a <var>node</var>
-within a <var>parent</var>, run these steps:
+<div algorithm>
+<p>To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a <a for=/>node</a> or
+null <var>node</var> within a <a for=/>node</a> <var>parent</var>:
 
 <ol>
  <li><p>Let <var>removedNodes</var> be <var>parent</var>'s <a for=tree>children</a>.
@@ -3221,10 +3243,10 @@ within a <var>parent</var>, run these steps:
  <li><p>Otherwise, if <var>node</var> is non-null, set <var>addedNodes</var> to « <var>node</var> ».
 
  <li><p><a for=/>Remove</a> all <var>parent</var>'s <a for=tree>children</a>, in <a>tree order</a>,
- with the <i>suppress observers flag</i> set.
+ with <a for=remove><i>suppressObservers</i></a> set to true.
 
  <li><p>If <var>node</var> is non-null, then <a for=/>insert</a> <var>node</var> into
- <var>parent</var> before null with the <i>suppress observers flag</i> set.
+ <var>parent</var> before null with <a for=insert><i>suppressObservers</i></a> set to true.
 
  <li><p>If either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>,
  then <a>queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
@@ -3233,10 +3255,13 @@ within a <var>parent</var>, run these steps:
 
 <p class=note>This algorithm does not make any checks with regards to the
 <a>node tree</a> constraints. Specification authors need to use it wisely.
+</div>
 
+<hr>
 
-<p>To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> from a
-<var>parent</var>, run these steps:
+<div algorithm>
+<p>To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <a for=/>node</a> <var>child</var>
+from a <a for=/>node</a> <var>parent</var>:
 
 <ol>
  <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
@@ -3247,16 +3272,19 @@ within a <var>parent</var>, run these steps:
  <li><p>Return <var>child</var>.
  <!-- Technically this is post-remove. -->
 </ol>
+</div>
 
-
+<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-remove-ext>removing steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed a <a for=/>node</a> <var ignore>removedNode</var> and a
 <a for=/>node</a>-or-null <var ignore>oldParent</var>, as indicated in the <a for=/>remove</a>
 algorithm below.
+</div>
 
+<div algorithm=remove>
 <p>To <dfn export id=concept-node-remove>remove</dfn> a <a for=/>node</a> <var>node</var>, with an
-optional <i>suppress observers flag</i>, run these steps:
+optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default false):
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -3267,7 +3295,7 @@ optional <i>suppress observers flag</i>, run these steps:
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
- <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-remove steps</a> given
+ <a for=Node>node document</a>: run the <a><code>NodeIterator</code> pre-remove steps</a> given
  <var>node</var> and <var>iterator</var>.
 
  <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
@@ -3328,12 +3356,13 @@ optional <i>suppress observers flag</i>, run these steps:
  <a for="transient registered observer">source</a> is <var>registered</var> to <var>node</var>'s
  <a>registered observer list</a>.
 
- <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
+ <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
+</div>
 
 
 <h4 id=interface-nonelementparentnode>Mixin {{NonElementParentNode}}</h4>
@@ -3926,7 +3955,7 @@ run these steps:
    <li><p><a for=queue>Empty</a> <var>mo</var>'s <a for=MutationObserver>record queue</a>.
 
    <li><p><a for=list>For each</a> <var>node</var> of <var>mo</var>'s
-   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
+   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
    <var>mo</var> from <var>node</var>'s <a>registered observer list</a>.
 
@@ -3935,7 +3964,7 @@ run these steps:
    and "<code>report</code>", and with <a>callback this value</a> <var>mo</var>.
   </ol>
 
- <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>, <a>fire an event</a> named
+ <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>: <a>fire an event</a> named
  <dfn event for=HTMLSlotElement>slotchange</dfn>, with its {{Event/bubbles}} attribute set to true,
  at <var>slot</var>.
 </ol>
@@ -4109,12 +4138,12 @@ method steps are:
 
  <li>
   <p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
-  <a>registered observer list</a>, if <var>registered</var>'s
+  <a>registered observer list</a>: if <var>registered</var>'s
   <a for="registered observer">observer</a> is <a>this</a>:
 
   <ol>
    <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
-   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
+   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="transient registered observer">source</a> is
    <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
 
@@ -4140,7 +4169,7 @@ method steps are:
 
 <ol>
  <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
- <a for=MutationObserver>node list</a>, <a for=list>remove</a> any <a>registered observer</a> from
+ <a for=MutationObserver>node list</a>: <a for=list>remove</a> any <a>registered observer</a> from
  <var>node</var>'s <a>registered observer list</a> for which <a>this</a> is the
  <a for="registered observer">observer</a>.
 
@@ -4171,7 +4200,7 @@ method steps are:
  <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
 
  <li>
-  <p>For each <var>node</var> in <var>nodes</var>, and then <a for=list>for each</a>
+  <p>For each <var>node</var> of <var>nodes</var>, and then <a for=list>for each</a>
   <var>registered</var> of <var>node</var>'s <a>registered observer list</a>:
 
   <ol>
@@ -4764,22 +4793,22 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>,
+   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>:
    add <var>length</var> to its <a for=range>start offset</a> and set its
    <a for=range>start node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>, add
+   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>: add
    <var>length</var> to its <a for=range>end offset</a> and set its <a for=range>end node</a> to
    <var>node</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>start offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>, set its <a for=range>start node</a> to <var>node</var> and its
+   <a for=tree>index</a>: set its <a for=range>start node</a> to <var>node</var> and its
    <a for=range>start offset</a> to <var>length</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>end offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>, set its <a for=range>end node</a> to <var>node</var> and its
+   <a for=tree>index</a>: set its <a for=range>end node</a> to <var>node</var> and its
    <a for=range>end offset</a> to <var>length</var>.
 
    <li><p>Add <var>currentNode</var>'s <a for=Node>length</a> to <var>length</var>.
@@ -7762,7 +7791,7 @@ return <a>this</a>'s <a for=Element>custom element registry</a>.
  <li><p>Let <var>elements</var> be <a>this</a>'s <a for=tree>inclusive ancestors</a> that are
  <a for=/>elements</a>, in reverse <a>tree order</a>.
 
- <li><p>For each <var>element</var> in <var>elements</var>, if
+ <li><p>For each <var>element</var> of <var>elements</var>: if
  <a>match a selector against an element</a>, using <var>s</var>, <var>element</var>, and
  <a>scoping root</a> <a>this</a>, returns success, return <var>element</var>. [[!SELECTORS4]]
 
@@ -9135,7 +9164,7 @@ method steps are:
  <var>original start offset</var>, count <var>original start node</var>'s <a for=Node>length</a>
  &minus; <var>original start offset</var>, data the empty string.
 
- <li><p>For each <var>node</var> in <var>nodes to remove</var>, in <a>tree order</a>,
+ <li><p>For each <var>node</var> of <var>nodes to remove</var>, in <a>tree order</a>:
  <a for=/>remove</a> <var>node</var>.
 
  <li><p>If <var>original end node</var> is a {{CharacterData}} <a for=/>node</a>, then
@@ -9339,9 +9368,8 @@ method steps are:
    <var>clone</var>.
   </ol>
 
- <li>For each <var>contained child</var> in <var>contained children</var>,
- <a>append</a> <var>contained child</var> to
- <var>fragment</var>.
+ <li><p>For each <var>contained child</var> of <var>contained children</var>: <a>append</a>
+ <var>contained child</var> to <var>fragment</var>.
 
  <li>
   <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
@@ -9547,15 +9575,13 @@ of a <a>live range</a> <var>range</var>, run these steps:
   </ol>
 
  <li>
-  For each <var>contained child</var> in
-  <var>contained children</var>:
+  <p>For each <var>contained child</var> of <var>contained children</var>:
 
   <ol>
-   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>contained child</var> with the <i>clone children flag</i> set.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>contained child</var>
+   with <a for="clone a node"><i>subtree</i></a> set to true.
 
-   <li><a>Append</a> <var>clone</var> to
-   <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
   </ol>
 
  <li>
@@ -10638,7 +10664,7 @@ method steps are:
    "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
- <li><p><a for=list>For each</a> <var>token</var> of <var>tokens</var>, <a for=set>append</a>
+ <li><p><a for=list>For each</a> <var>token</var> of <var>tokens</var>: <a for=set>append</a>
  <var>token</var> to <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
@@ -10660,7 +10686,7 @@ method steps are:
    "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
- <li><p>For each <var>token</var> in <var>tokens</var>, <a for=set>remove</a> <var>token</var> from
+ <li><p>For each <var>token</var> of <var>tokens</var>: <a for=set>remove</a> <var>token</var> from
  <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
