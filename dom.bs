@@ -136,6 +136,7 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 
 <h3 id="ordered-sets">Ordered sets</h3>
 
+<div algorithm>
 <p>The <dfn export id=concept-ordered-set-parser>ordered set parser</dfn> takes a string
 <var>input</var> and then runs these steps:
 
@@ -150,46 +151,56 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 
  <li>Return <var>tokens</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn export id=concept-ordered-set-serializer>ordered set serializer</dfn> takes a
 <var>set</var> and returns the <a for=string>concatenation</a> of <var>set</var> using U+0020 SPACE.
+</div>
 
 
 <h3 id=selectors>Selectors</h3>
 
-<p>To <dfn export>scope-match a selectors string</dfn> <var>selectors</var> against a
-<var>node</var>, run these steps:
+<div algorithm>
+<p>To <dfn export>scope-match a selectors string</dfn> given a string <var>selectors</var> against a
+<a for=/>node</a> <var>node</var>:
 
 <ol>
- <li><p>Let <var>s</var> be the result of <a>parse a selector</a> <var>selectors</var>.
+ <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
- <li><p>Return the result of <a>match a selector against a tree</a> with <var>s</var> and
+ <li><p>Return the result of <a>match a selector against a tree</a> with <var>selector</var> and
  <var>node</var>'s <a for=tree>root</a> using <a>scoping root</a> <var>node</var>. [[!SELECTORS4]].
 </ol>
 
-<p class=note>Support for namespaces within selectors is not planned and will not be
-added.
+</div>
+
+<p class=note>Support for namespaces within selectors is not planned and will not be added.
 
 
 <h3 id=namespaces>Name validation</h3>
 
+<div algorithm>
 <p>A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
 does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
+</div>
 
+<div algorithm>
 <p>A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1
 and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
+</div>
 
+<div algorithm>
 <p>A [=string=] |name| is a <dfn>valid element local name</dfn> if the following steps return true:
 
 <ol>
  <li><p>If |name|'s [=string/length=] is 0, then return false.
 
  <li>
-  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=], then:
+  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=]:
 
   <ol>
    <li><p>If |name| contains [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>), then
@@ -207,6 +218,7 @@ and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=
 
  <li><p>Return true.
 </ol>
+</div>
 
 <p class=note>This concept is used to validate [=/element=] [=Element/local names=], when
 constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
@@ -228,6 +240,7 @@ U+0000 NULL, or U+003E (>).
 
 <p class="note">The empty string is a [=valid doctype name=].
 
+<div algorithm>
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
 
@@ -277,6 +290,7 @@ U+0000 NULL, or U+003E (>).
 
  <li><p>Return (<var>namespace</var>, <var>prefix</var>, <var>localName</var>).
 </ol>
+</div>
 
 <div class="note">
  <p>Various APIs in this specification used to validate namespace prefixes, attribute local names,
@@ -7768,40 +7782,44 @@ return <a>this</a>'s <a for=Element>custom element registry</a>.
  yields <var>element</var>; otherwise false.
 </dl>
 
+<div algorithm>
 <p>The <dfn method for=Element><code>closest(<var>selectors</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>s</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
+ <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
  <li><p>Let <var>elements</var> be <a>this</a>'s <a for=tree>inclusive ancestors</a> that are
  <a for=/>elements</a>, in reverse <a>tree order</a>.
 
  <li><p>For each <var>element</var> of <var>elements</var>: if
- <a>match a selector against an element</a>, using <var>s</var>, <var>element</var>, and
+ <a>match a selector against an element</a>, using <var>selector</var>, <var>element</var>, and
  <a>scoping root</a> <a>this</a>, returns success, return <var>element</var>. [[!SELECTORS4]]
 
  <li><p>Return null.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Element><code>matches(<var>selectors</var>)</code></dfn> and
 <dfn method for=Element><code>webkitMatchesSelector(<var>selectors</var>)</code></dfn> method steps
 are:
 
 <ol>
- <li><p>Let <var>s</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
+ <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
- <li><p>If the result of <a>match a selector against an element</a>, using <var>s</var>,
+ <li><p>If the result of <a>match a selector against an element</a>, using <var>selector</var>,
  <a>this</a>, and <a>scoping root</a> <a>this</a>, returns success, then return true; otherwise,
  return false. [[!SELECTORS4]]
 </ol>
+</div>
 
 <hr>
 
@@ -9855,7 +9873,7 @@ Firefox 12.0a1. -->
 these steps:
 
 <ol>
- <li><p>Let <var>s</var> be the empty string.
+ <li><p>Let <var>string</var> be the empty string.
 
  <li><p>If <a>this</a>'s <a for=range>start node</a> is <a>this</a>'s <a for=range>end node</a> and
  it is a {{Text}} <a for=/>node</a>, then return the substring of that {{Text}} <a for=/>node</a>'s
@@ -9864,17 +9882,17 @@ these steps:
 
  <li><p>If <a>this</a>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then append
  the substring of that <a for=/>node</a>'s <a for=CharacterData>data</a> from <a>this</a>'s
- <a for=range>start offset</a> until the end to <var>s</var>.
+ <a for=range>start offset</a> until the end to <var>string</var>.
 
  <li><p>Append the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
  {{Text}} <a for=/>nodes</a> that are <a for="live range">contained</a> in <a>this</a>, in
- <a>tree order</a>, to <var>s</var>.
+ <a>tree order</a>, to <var>string</var>.
 
  <li><p>If <a>this</a>'s <a for=range>end node</a> is a {{Text}} <a for=/>node</a>, then
  append the substring of that <a for=/>node</a>'s <a for=CharacterData>data</a> from its start until
- <a>this</a>'s <a for=range>end offset</a> to <var>s</var>.
+ <a>this</a>'s <a for=range>end offset</a> to <var>string</var>.
 
- <li><p>Return <var>s</var>.
+ <li><p>Return <var>string</var>.
 </ol>
 </div>
 
