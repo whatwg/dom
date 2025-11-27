@@ -1336,14 +1336,10 @@ property of the event being dispatched.
  <li><p>Let <var>callbacks</var> be « ».
 
  <li><p><a for=list>For each</a> <var>listener</var> of <var>global</var>'s
- <a>event listener list</a>:
-
- <ol>
-  <li><p>If <var>listener</var>'s <a for="event listener">type</a> is "<code>fetch</code>", and
-  <var>listener</var>'s <a for="event listener">callback</a> is not null, then
-  <a for=list>append</a> <var>listener</var>'s <a for="event listener">callback</a> to
-  <var>callbacks</var>.
- </ol>
+ <a>event listener list</a>: if <var>listener</var>'s <a for="event listener">type</a> is
+ "<code>fetch</code>" and <var>listener</var>'s <a for="event listener">callback</a> is non-null,
+ then <a for=list>append</a> <var>listener</var>'s <a for="event listener">callback</a> to
+ <var>callbacks</var>.
 
  <li><p>Return <var>callbacks</var>.
 </ol>
@@ -4682,8 +4678,8 @@ empty string instead, and then do as described below, switching on the interface
  <dd><p><a>Set an existing attribute value</a> with <a>this</a> and the given value.
 
  <dt>{{CharacterData}}
- <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
- <a for=Node>length</a>, and data the given value.
+ <dd><p><a>Replace data</a> of <a>this</a> with 0, <a>this</a>'s <a for=Node>length</a>, and
+ the given value.
 
  <dt>Otherwise
  <dd><p>Do nothing.
@@ -4735,8 +4731,8 @@ do as defined below, switching on the interface <var>node</var> <a>implements</a
  <dd><p><a>Set an existing attribute value</a> with <var>node</var> and <var>value</var>.
 
  <dt>{{CharacterData}}
- <dd><p><a>Replace data</a> with node <var>node</var>, offset 0, count <var>node</var>'s
- <a for=Node>length</a>, and data <var>value</var>.
+ <dd><p><a>Replace data</a> of <var>node</var> with 0, <var>node</var>'s <a for=Node>length</a>, and
+ <var>value</var>.
 
  <dt>Otherwise
  <dd><p>Do nothing.
@@ -4768,8 +4764,7 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
  of <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in
  <a>tree order</a>.
 
- <li><a>Replace data</a> with node <var>node</var>, offset <var>length</var>, count 0, and data
- <var>data</var>.
+ <li><a>Replace data</a> of <var>node</var> with <var>length</var>, 0, and <var>data</var>.
 
  <li>Let <var>currentNode</var> be <var>node</var>'s <a for=tree>next sibling</a>.
 
@@ -7907,7 +7902,7 @@ interface NamedNodeMap {
 <hr>
 
 <p>A {{NamedNodeMap}} object's <a>supported property indices</a> are the numbers in the
-range zero to its <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a> minus one, unless
+range zero to its <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a> &minus; 1, unless
 the <a for=NamedNodeMap>attribute list</a> <a for=list>is empty</a>, in which case there are no
 <a>supported property indices</a>.
 
@@ -8120,56 +8115,54 @@ is used by {{Text}}, {{ProcessingInstruction}}, and {{Comment}} <a for=/>nodes</
 <p>Each <a for=/>node</a> inheriting from the {{CharacterData}} interface has an associated mutable
 string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
 
-<p>To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> with offset
-<var>offset</var>, count <var>count</var>, and data <var>data</var>, run these steps:
+<div algorithm>
+<p>To <dfn export id=concept-cd-replace>replace data</dfn> of a <a for=/>node</a> <var>node</var>
+with an integer <var>offset</var>, integer <var>count</var>, and string <var>data</var>:
 
 <ol>
- <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li>If <var>offset</var> plus <var>count</var> is greater than <var>length</var>, then set
- <var>count</var> to <var>length</var> minus <var>offset</var>.
+ <li><p>If <var>offset</var> + <var>count</var> is greater than <var>length</var>, then set
+ <var>count</var> to <var>length</var> &minus; <var>offset</var>.
 
  <li><p><a>Queue a mutation record</a> of "<code>characterData</code>" for <var>node</var> with
  null, null, <var>node</var>'s <a for=CharacterData>data</a>, « », « », null, and null.
 
- <li>Insert <var>data</var> into <var>node</var>'s
- <a for=CharacterData>data</a> after <var>offset</var>
- <a>code units</a>.
+ <li><p>Insert <var>data</var> into <var>node</var>'s <a for=CharacterData>data</a> after
+ <var>offset</var> <a>code units</a>.
 
- <li>Let <var>delete offset</var> be <var>offset</var> + <var>data</var>'s <a for=string>length</a>.
+ <li><p>Let <var>deleteOffset</var> be <var>offset</var> + <var>data</var>'s
+ <a for=string>length</a>.
 
- <li>Starting from <var>delete offset</var>
- <a>code units</a>, remove
- <var>count</var>
- <a>code units</a> from
- <var>node</var>'s <a for=CharacterData>data</a>.
+ <li><p>Starting from <var>deleteOffset</var> <a>code units</a>, remove <var>count</var>
+ <a>code units</a> from <var>node</var>'s <a for=CharacterData>data</a>.
 
  <!-- ranges -->
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> plus <var>count</var>, set its <a for=range>start offset</a> to
- <var>offset</var>.
+ <var>offset</var> + <var>count</var>: set its <a for=range>start offset</a> to <var>offset</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> plus <var>count</var>, set its <a for=range>end offset</a> to <var>offset</var>.
+ <var>offset</var> + <var>count</var>: set its <a for=range>end offset</a> to <var>offset</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
- <a for=range>start offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
+ <a for=range>start offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
  <a for=range>start offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
- <a for=range>end offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
+ <a for=range>end offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
  <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
 </ol>
+</div>
 <!-- delete happens after insert for better cursor positioning with editing
 https://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
 
@@ -8196,64 +8189,72 @@ Authors who want WebKit-like behavior can always use replaceData() instead.
 
 XXX replaceData is the same as setting data these days -->
 
-
-To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=concept-cd-substring>substring data</dfn> with node
-<var>node</var>, offset <var>offset</var>, and count
-<var>count</var>, run these steps:
+<div algorithm>
+<p>To
+<dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=concept-cd-substring>substring data</dfn>
+of a <a for=/>node</a> <var>node</var> with an integer <var>offset</var> and integer
+<var>count</var>:
 
 <ol>
- <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li>If <var>offset</var> plus <var>count</var> is
- greater than <var>length</var>, return a string whose value is the
- <a>code units</a> from the
- <var>offset</var><sup>th</sup>
- <a>code unit</a> to the end of
- <var>node</var>'s <a for=CharacterData>data</a>, and then
- return.
+ <li><p>If <var>offset</var> + <var>count</var> is greater than <var>length</var>, then return a
+ string whose value is the <a>code units</a> from the <var>offset</var><sup>th</sup>
+ <a>code unit</a> to the end of <var>node</var>'s <a for=CharacterData>data</a>.
 
- <li>Return a string whose value is the
- <a>code units</a> from the
- <var>offset</var><sup>th</sup>
- <a>code unit</a> to the
- <var>offset</var>+<var>count</var><sup>th</sup>
- <a>code unit</a> in <var>node</var>'s
- <a for=CharacterData>data</a>.
+ <li><p>Return a string whose value is the <a>code units</a> from the <var>offset</var><sup>th</sup>
+ <a>code unit</a> to the <var>offset</var>+<var>count</var><sup>th</sup> <a>code unit</a> in
+ <var>node</var>'s <a for=CharacterData>data</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=CharacterData><code>data</code></dfn> getter steps are to return
-<a>this</a>'s <a for=CharacterData>data</a>. Its setter must <a>replace data</a> with node
-<a>this</a>, offset 0, count <a>this</a>'s <a for=Node>length</a>, and data new value.
+<a>this</a>'s <a for=CharacterData>data</a>. Its setter steps are to <a>replace data</a> of
+<a>this</a> with 0, <a>this</a>'s <a for=Node>length</a>, and the given value.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=CharacterData><code>length</code></dfn> getter steps are to return
 <a>this</a>'s <a for=Node>length</a>.
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>substringData(<var>offset</var>, <var>count</var>)</code></dfn>
-method steps are to return the result of running <a>substring data</a> with node <a>this</a>,
-offset <var>offset</var>, and count <var>count</var>.
+method steps are to return the result of <a>substringing data</a> of <a>this</a> with
+<var>offset</var> and <var>count</var>.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=CharacterData><code>appendData(<var>data</var>)</code></dfn> method steps are
-to <a>replace data</a> with node <a>this</a>, offset <a>this</a>'s <a for=Node>length</a>, count 0,
-and data <var>data</var>.
+to <a>replace data</a> of <a>this</a> with <a>this</a>'s <a for=Node>length</a>, 0, and
+<var>data</var>.
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>insertData(<var>offset</var>, <var>data</var>)</code></dfn>
-method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count 0,
-and data <var>data</var>.
+method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, 0, and
+<var>data</var>.
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>deleteData(<var>offset</var>, <var>count</var>)</code></dfn>
-method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count
-<var>count</var>, and data the empty string.
+method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, <var>count</var>, and
+the empty string.
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>replaceData(<var>offset</var>, <var>count</var>, <var>data</var>)</code></dfn>
-method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count
-<var>count</var>, and data <var>data</var>.
+method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, <var>count</var>, and
+<var>data</var>.
+</div>
 
 
 <h3 id=interface-text>Interface {{Text}}</h3>
@@ -8286,69 +8287,76 @@ interface Text : CharacterData {
 
 <hr>
 
+<div algorithm>
 <p>An <dfn export>exclusive {{Text}} node</dfn> is a {{Text}} <a for=/>node</a> that is not a
 {{CDATASection}} <a for=/>node</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn export>contiguous {{Text}} nodes</dfn> of a <a for=/>node</a> <var>node</var> are
 <var>node</var>, <var>node</var>'s <a>previous sibling</a> {{Text}} <a for=/>node</a>, if any, and
 its <a>contiguous <code>Text</code> nodes</a>, and <var>node</var>'s <a for=tree>next sibling</a>
 {{Text}} <a for=/>node</a>, if any, and its <a>contiguous <code>Text</code> nodes</a>, avoiding any
 duplicates.
+</div>
 
+<div algorithm>
 <p>The <dfn export>contiguous exclusive {{Text}} nodes</dfn> of a <a for=/>node</a> <var>node</var>
 are <var>node</var>, <var>node</var>'s <a>previous sibling</a>
 <a>exclusive <code>Text</code> node</a>, if any, and its
 <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>node</var>'s
 <a for=tree>next sibling</a> <a>exclusive <code>Text</code> node</a>, if any, and its
 <a>contiguous exclusive <code>Text</code> nodes</a>, avoiding any duplicates.
+</div>
 
+<div algorithm>
 <p>The <dfn export id=concept-child-text-content>child text content</dfn> of a <a for=/>node</a>
 <var>node</var> is the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
 the {{Text}} <a for=/>node</a> <a for=tree>children</a> of <var>node</var>, in <a>tree order</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn export id=concept-descendant-text-content>descendant text content</dfn> of a
 <a for=/>node</a> <var>node</var> is the <a for=string>concatenation</a> of the
 <a for=CharacterData>data</a> of all the {{Text}} <a for=/>node</a> <a for=tree>descendants</a> of
 <var>node</var>, in <a>tree order</a>.
+</div>
 
 <hr>
 
+<div algorithm>
 <p>The <dfn constructor for=Text lt=Text(data)><code>new Text(<var>data</var>)</code></dfn>
 constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var> and
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
+</div>
 
+<div algorithm>
 <p>To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text}}
-<a for=/>node</a> <var>node</var> with offset <var>offset</var>, run these steps:
+<a for=/>node</a> <var>node</var> with integer <var>offset</var>:
 
 <ol>
- <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li>Let <var>count</var> be <var>length</var> minus
- <var>offset</var>.
+ <li><p>Let <var>count</var> be <var>length</var> &minus; <var>offset</var>.
 
- <li>Let <var>new data</var> be the result of
- <a lt="substring data">substringing data</a> with node
- <var>node</var>, offset <var>offset</var>, and count
- <var>count</var>.
+ <li><p>Let <var>newData</var> be the result of <a>substringing data</a> of <var>node</var> with
+ <var>offset</var> and <var>count</var>.
 
- <li>Let <var>new node</var> be a new {{Text}}
- <a for=/>node</a>, with the same
- <a for=Node>node document</a> as
- <var>node</var>. Set <var>new node</var>'s
- <a for=CharacterData>data</a> to <var>new data</var>.
+ <li><p>Let <var>newNode</var> be a new {{Text}} <a for=/>node</a> whose
+ <a for=Node>node document</a> is <var>node</var>'s <a for=Node>node document</a> and
+ <a for=CharacterData>data</a> is <var>newData</var>.
 
- <li>Let <var>parent</var> be <var>node</var>'s
- <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
  <li>
-  <p>If <var>parent</var> is not null:
+  <p>If <var>parent</var> is non-null:
 
   <ol>
-   <li><p><a for=/>Insert</a> <var>new node</var> into <var>parent</var> before <var>node</var>'s
+   <li><p><a for=/>Insert</a> <var>newNode</var> into <var>parent</var> before <var>node</var>'s
    <a for=tree>next sibling</a>.
    <!-- Do this before we replace data, so that the data replacement won't
    mutate ranges prematurely:
@@ -8356,12 +8364,12 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
    <a for=range>start offset</a> is greater than <var>offset</var>, set its
-   <a for=range>start node</a> to <var>new node</var> and decrease its <a for=range>start offset</a>
+   <a for=range>start node</a> to <var>newNode</var> and decrease its <a for=range>start offset</a>
    by <var>offset</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
    <a for=range>end offset</a> is greater than <var>offset</var>, set its <a for=range>end node</a>
-   to <var>new node</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
+   to <var>newNode</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
 
    <!-- This shit is complicated:
         https://www.w3.org/Bugs/Public/show_bug.cgi?id=19968 -->
@@ -8374,19 +8382,23 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
    increase its <a for=range>end offset</a> by 1.
   </ol>
 
- <li><a>Replace data</a> with node
- <var>node</var>, offset <var>offset</var>, count
- <var>count</var>, and data the empty string.
+ <li><p><a>Replace data</a> of <var>node</var> with <var>offset</var>, <var>count</var>, and
+ the empty string.
 
- <li>Return <var>new node</var>.
+ <li><p>Return <var>newNode</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Text><code>splitText(<var>offset</var>)</code></dfn> method steps are to
 <a lt="split a Text node">split</a> <a>this</a> with offset <var>offset</var>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=Text><code>wholeText</code></dfn> getter steps are to return the
 <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of the
 <a>contiguous <code>Text</code> nodes</a> of <a>this</a>, in <a>tree order</a>.
+</div>
 
 
 <h3 id=interface-cdatasection>Interface {{CDATASection}}</h3>
@@ -8408,8 +8420,10 @@ interface ProcessingInstruction : CharacterData {
 <p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
 <dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
 
+<div algorithm>
 <p>The <dfn attribute for=ProcessingInstruction>target</dfn> getter steps are to return
 <a>this</a>'s <a for=ProcessingInstruction>target</a>.
+</div>
 
 
 <h3 id=interface-comment>Interface {{Comment}}</h3>
@@ -8427,10 +8441,12 @@ interface Comment : CharacterData {
  <a for=CharacterData>data</a> is <var>data</var>.
 </dl>
 
+<div algorithm>
 <p>The <dfn constructor for=Comment lt=Comment(data)><code>new Comment(<var>data</var>)</code></dfn>
 constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var> and
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
+</div>
 
 
 
@@ -8511,6 +8527,7 @@ when a mutation occurs.
 be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <a for=Node>length</a>, inclusive.
 
+<div algorithm="boundary point/position">
 <p>The <dfn export id=concept-range-bp-position for="boundary point">position</dfn> of a
 <a>boundary point</a> (<var>nodeA</var>, <var>offsetA</var>) relative to a <a>boundary point</a>
 (<var>nodeB</var>, <var>offsetB</var>) is
@@ -8547,6 +8564,7 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 
  <li><p>Return <a for="boundary point">before</a>.
 </ol>
+</div>
 
 
 <h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3>
@@ -8579,8 +8597,10 @@ interface AbstractRange {
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
 
+<div algorithm>
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
+</div>
 
 <dl class=domintro>
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
@@ -8599,21 +8619,31 @@ interface AbstractRange {
  <dd>Returns true if <var>range</var> is <a for=range>collapsed</a>; otherwise false.
 </dl>
 
+<div algorithm>
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start node</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end node</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn id=dom-range-collapsed attribute for=AbstractRange><code>collapsed</code></dfn>
 getter steps are to return true if <a>this</a> is <a for=range>collapsed</a>; otherwise false.
+</div>
 
 
 <h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
@@ -8637,6 +8667,7 @@ interface StaticRange : AbstractRange {
  <dd><p>Returns a new <a>range</a> object that does not update when the <a>node tree</a> mutates.
 </dl>
 
+<div algorithm>
 <p>The
 <dfn constructor for=StaticRange lt="StaticRange(init)"><code>new StaticRange(<var>init</var>)</code></dfn>
 constructor steps are:
@@ -8652,7 +8683,9 @@ constructor steps are:
  (<var>init</var>["{{StaticRangeInit/endContainer}}"],
  <var>init</var>["{{StaticRangeInit/endOffset}}"]).
 </ol>
+</div>
 
+<div algorithm>
 <p>A {{StaticRange}} is <dfn for=StaticRange export>valid</dfn> if all of the following are true:
 
 <ul>
@@ -8667,6 +8700,7 @@ constructor steps are:
  <li><p>Its <a for=range>start</a> is <a for="boundary point">before</a> or
  <a for="boundary point">equal</a> to its <a for=range>end</a>.
 </ul>
+</div>
 
 
 <h3 id=interface-range>Interface {{Range}}</h3>
@@ -8783,8 +8817,8 @@ but not its <a for=range>end node</a>, or vice versa.
  </ul>
 </div>
 
-<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are as
-follows:
+<div algorithm>
+<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are:
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -8808,6 +8842,7 @@ follows:
  <a for=range>end offset</a> is greater than <var>index</var>, decrease its
  <a for=range>end offset</a> by 1.
 </ol>
+</div>
 
 <hr>
 
@@ -8816,9 +8851,11 @@ follows:
  <dd>Returns a new <a>live range</a>.
 </dl>
 
+<div algorithm>
 <p>The <dfn constructor for=Range lt="Range()"><code>new Range()</code></dfn> constructor steps are
 to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
 (<a>current global object</a>'s <a>associated <code>Document</code></a>, 0).
+</div>
 
 <hr>
 
@@ -8829,37 +8866,35 @@ to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
  <a for=range>end node</a>.
 </dl>
 
+<div algorithm>
 <p>The <dfn attribute for=Range><code>commonAncestorContainer</code></dfn> getter steps are:
 
 <ol>
- <li>Let <var>container</var> be
- <a for=range>start node</a>.
+ <li><p>Let <var>container</var> be <a for=range>start node</a>.
 
- <li>While <var>container</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <a for=range>end node</a>, let
- <var>container</var> be <var>container</var>'s
+ <li><p>While <var>container</var> is not an <a for=tree>inclusive ancestor</a> of
+ <a for=range>end node</a>: set <var>container</var> to <var>container</var>'s
  <a for=tree>parent</a>.
 
- <li>Return <var>container</var>.
+ <li><p>Return <var>container</var>.
 </ol>
+</div>
 
 <hr>
 
+<div algorithm>
 <p>To
 <dfn export id=concept-range-bp-set lt="set the start|set the end" for=Range>set the start or end</dfn>
-of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>), run these
-steps:
+of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>):
 
 <ol>
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
- <li>If <var>offset</var> is greater than <var>node</var>'s <a for=Node>length</a>, then
+ <li><p>If <var>offset</var> is greater than <var>node</var>'s <a for=Node>length</a>, then
  <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li>Let <var>bp</var> be the
- <a>boundary point</a>
+ <li><p>Let <var>boundaryPoint</var> be the <a>boundary point</a>
  (<var>node</var>, <var>offset</var>).
 
  <li>
@@ -8867,60 +8902,54 @@ steps:
    <dt>If these steps were invoked as "set the start"
    <dd>
     <ol>
-     <li>If <var>range</var>'s
-     <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>,
-     or if <var>bp</var> is
-     <a for="boundary point">after</a> the
-     <var>range</var>'s <a for=range>end</a>, set
-     <var>range</var>'s <a for=range>end</a>
-     to <var>bp</var>.
+     <li><p>If <var>range</var>'s <a for="live range">root</a> is not <var>node</var>'s
+     <a for=tree>root</a> or <var>boundaryPoint</var> is <a for="boundary point">after</a>
+     <var>range</var>'s <a for=range>end</a>, then set <var>range</var>'s <a for=range>end</a>
+     to <var>boundaryPoint</var>.
 
-     <li>Set <var>range</var>'s
-     <a for=range>start</a> to <var>bp</var>.
+     <li><p>Set <var>range</var>'s <a for=range>start</a> to <var>boundaryPoint</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
     <ol>
-     <li>If <var>range</var>'s
-     <a for="live range">root</a> is not equal to
-     <var>node</var>'s <a for=tree>root</a>,
-     or if <var>bp</var> is
-     <a for="boundary point">before</a> the
-     <var>range</var>'s <a for=range>start</a>, set
-     <var>range</var>'s <a for=range>start</a>
-     to <var>bp</var>.
+     <li><p>If <var>range</var>'s <a for="live range">root</a> is not <var>node</var>'s
+     <a for=tree>root</a> or <var>boundaryPoint</var> is <a for="boundary point">before</a>
+     <var>range</var>'s <a for=range>start</a>, then set <var>range</var>'s <a for=range>start</a>
+     to <var>boundaryPoint</var>.
 
-     <li>Set <var>range</var>'s
-     <a for=range>end</a> to <var>bp</var>.
+     <li><p>Set <var>range</var>'s <a for=range>end</a> to <var>boundaryPoint</var>.
     </ol>
   </dl>
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the start</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setEnd(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setStartBefore(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
- <li>Let <var>parent</var> be <var>node</var>'s
- <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><a>Set the start</a> of
- <a>this</a> to
- <a>boundary point</a>
- (<var>parent</var>, <var>node</var>'s
- <a for=tree>index</a>).
+ <li><p><a>Set the start</a> of <a>this</a> to <a>boundary point</a>
+ (<var>parent</var>, <var>node</var>'s <a for=tree>index</a>).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setStartAfter(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
@@ -8932,22 +8961,23 @@ steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
  <li><p><a>Set the start</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setEndBefore(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
- <li>Let <var>parent</var> be <var>node</var>'s
- <a for=tree>parent</a>.
+ <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><a>Set the end</a> of
- <a>this</a> to
- <a>boundary point</a>
+ <li><p><a>Set the end</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a>).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>setEndAfter(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
@@ -8959,13 +8989,17 @@ steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
  <li><p><a>Set the end</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>collapse(<var>toStart</var>)</code></dfn> method steps are to, if
 <var>toStart</var> is true, set <a for=range>end</a> to <a for=range>start</a>; otherwise set
 <a for=range>start</a> to <a for=range>end</a>.
+</div>
 
+<div algorithm>
 <p>To <dfn export id=concept-range-select for=range>select</dfn> a <a for=/>node</a> <var>node</var>
-within a <a>range</a> <var>range</var>, run these steps:
+within a <a>range</a> <var>range</var>:
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -8981,15 +9015,19 @@ within a <a>range</a> <var>range</var>, run these steps:
  <li><p>Set <var>range</var>'s <a for=range>end</a> to <a>boundary point</a>
  (<var>parent</var>, <var>index</var> plus 1).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>selectNode(<var>node</var>)</code></dfn> method steps are to
 <a for=range>select</a> <var>node</var> within <a>this</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>selectNodeContents(<var>node</var>)</code></dfn> method steps
 are:
 
 <ol>
- <li><p>If <var>node</var> is a <a>doctype</a>, <a>throw</a> an
+ <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>length</var> be the <a for=Node>length</a> of <var>node</var>.
@@ -8998,9 +9036,11 @@ are:
 
  <li><p>Set <a for=range>end</a> to the <a>boundary point</a> (<var>node</var>, <var>length</var>).
 </ol>
+</div>
 
 <hr>
 
+<div algorithm>
 <p>The
 <dfn method for=Range><code>compareBoundaryPoints(<var>how</var>, <var>sourceRange</var>)</code></dfn>
 method steps are:
@@ -9038,57 +9078,51 @@ method steps are:
  Opera) instead of a nonstandard exception type.
  -->
 
- <li>If <a>this</a>'s <a for="live range">root</a> is not the same as <var>sourceRange</var>'s
- <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
+ <li><p>If <a>this</a>'s <a for="live range">root</a> is not <var>sourceRange</var>'s
+ <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}"
+ {{DOMException}}.
+
+ <li><p>Let <var>thisPoint</var> and <var>sourcePoint</var> be null.
 
  <li>
-  If <var>how</var> is:
+  <p>Switch on <var>how</var>:
+
   <dl class=switch>
    <dt>{{Range/START_TO_START}}:
-   <dd>
-    Let <var>this point</var> be <a>this</a>'s
-    <a for=range>start</a>.
-    Let <var>other point</var> be <var>sourceRange</var>'s
-    <a for=range>start</a>.
+   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>start</a> and
+   <var>sourcePoint</var> to <var>sourceRange</var>'s <a for=range>start</a>.
 
    <dt>{{Range/START_TO_END}}:
-   <dd>
-    Let <var>this point</var> be <a>this</a>'s
-    <a for=range>end</a>.
-    Let <var>other point</var> be <var>sourceRange</var>'s
-    <a for=range>start</a>.
+   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>end</a> and <var>sourcePoint</var>
+   to <var>sourceRange</var>'s <a for=range>start</a>.
 
-    <dt>{{Range/END_TO_END}}:
-    <dd>
-     Let <var>this point</var> be <a>this</a>'s
-     <a for=range>end</a>.
-     Let <var>other point</var> be <var>sourceRange</var>'s
-     <a for=range>end</a>.
+   <dt>{{Range/END_TO_END}}:
+   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>end</a> and <var>sourcePoint</var>
+   to <var>sourceRange</var>'s <a for=range>end</a>.
 
-    <dt>{{Range/END_TO_START}}:
-    <dd>
-     Let <var>this point</var> be <a>this</a>'s
-     <a for=range>start</a>.
-     Let <var>other point</var> be <var>sourceRange</var>'s
-     <a for=range>end</a>.
-   </dl>
+   <dt>{{Range/END_TO_START}}:
+   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>start</a> and
+   <var>sourcePoint</var> to <var>sourceRange</var>'s <a for=range>end</a>.
+  </dl>
 
-  <li>
-   <p>If the <a for="boundary point">position</a> of <var>this point</var> relative to
-   <var>other point</var> is
+ <li>
+  <p>Switch on the <a for="boundary point">position</a> of <var>thisPoint</var> relative to
+  <var>sourcePoint</var>:
 
-   <dl class=switch>
-    <dt><a for="boundary point">before</a>
-    <dd>Return &minus;1.
+  <dl class=switch>
+   <dt><a for="boundary point">before</a>
+   <dd>Return &minus;1.
 
-    <dt><a for="boundary point">equal</a>
-    <dd>Return 0.
+   <dt><a for="boundary point">equal</a>
+   <dd>Return 0.
 
-    <dt><a for="boundary point">after</a>
-    <dd>Return 1.
-   </dl>
+   <dt><a for="boundary point">after</a>
+   <dd>Return 1.
+  </dl>
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>deleteContents()</code></dfn> method steps are:
 
 <ol>
@@ -9098,83 +9132,73 @@ method steps are:
  are all the substeps of the next step actually no-ops, or could some have
  side effects? -->
 
- <li>Let <var>original start node</var>,
- <var>original start offset</var>, <var>original end node</var>,
- and <var>original end offset</var> be <a>this</a>'s
- <a for=range>start node</a>,
- <a for=range>start offset</a>,
- <a for=range>end node</a>, and
+ <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
+ <var>originalEndNode</var>, and <var>originalEndOffset</var> be <a>this</a>'s
+ <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
- <li><p>If <var>original start node</var> is <var>original end node</var> and it is a
- {{CharacterData}} <a for=/>node</a>, then
- <a>replace data</a> with node
- <var>original start node</var>, offset
- <var>original start offset</var>, count
- <var>original end offset</var> minus
- <var>original start offset</var>, and data the empty string, and then return.
-
- <li>Let <var>nodes to remove</var> be a list of all the
- <a for=/>nodes</a> that are <a for="live range">contained</a> in
- <a>this</a>, in
- <a>tree order</a>, omitting any
- <a for=/>node</a> whose
- <a for=tree>parent</a> is also
- <a for="live range">contained</a> in <a>this</a>.
-
- <li>If <var>original start node</var> is an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set
- <var>new node</var> to <var>original start node</var> and
- <var>new offset</var> to <var>original start offset</var>.
-
  <li>
-  Otherwise:
+  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
+  <a for=/>node</a>:
+
   <ol>
-   <li>Let <var>reference node</var> equal
-   <var>original start node</var>.
+   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
+   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>, and the empty string.
 
-   <li>While <var>reference node</var>'s
-   <a for=tree>parent</a> is not null and is not an
-   <a for=tree>inclusive ancestor</a> of
-   <var>original end node</var>, set <var>reference node</var>
-   to its <a for=tree>parent</a>.
-
-   <li>
-    Set <var>new node</var> to the
-    <a for=tree>parent</a> of
-    <var>reference node</var>, and <var>new offset</var> to one
-    plus the <a for=tree>index</a> of
-    <var>reference node</var>.
-
-    <p class=note>If <var>reference node</var>'s
-    <a for=tree>parent</a> were null, it would be the
-    <a for="live range">root</a> of
-    <a>this</a>, so would be an
-    <a for=tree>inclusive ancestor</a> of
-    <var>original end node</var>, and we could not reach this point.
+   <li><p>Return.
   </ol>
 
- <li><p>If <var>original start node</var> is a {{CharacterData}} <a for=/>node</a>, then
- <a>replace data</a> with node <var>original start node</var>, offset
- <var>original start offset</var>, count <var>original start node</var>'s <a for=Node>length</a>
- &minus; <var>original start offset</var>, data the empty string.
+ <li><p>Let <var>nodesToRemove</var> be a list of all the <a for=/>nodes</a> that are
+ <a for="live range">contained</a> in <a>this</a>, in <a>tree order</a>, omitting any
+ <a for=/>node</a> whose <a for=tree>parent</a> is also <a for="live range">contained</a> in
+ <a>this</a>.
 
- <li><p>For each <var>node</var> of <var>nodes to remove</var>, in <a>tree order</a>:
+ <li><p>Let <var>newNode</var> and <var>newOffset</var> be null.
+
+ <li><p>If <var>originalStartNode</var> is an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>, then set <var>newNode</var> to <var>originalStartNode</var> and
+ <var>newOffset</var> to <var>originalStartOffset</var>.
+
+ <li>
+  <p>Otherwise:
+
+  <ol>
+   <li><p>Let <var>referenceNode</var> be <var>originalStartNode</var>.
+
+   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is not null and is not an
+   <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
+   its <a for=tree>parent</a>.
+
+   <li>
+    <p>Set <var>newNode</var> to <var>referenceNode</var>'s <a for=tree>parent</a> and
+    <var>newOffset</var> to <var>referenceNode</var>'s <a for=tree>index</a> + 1.
+
+    <p class=note>If <var>referenceNode</var>'s <a for=tree>parent</a> were null, it would be the
+    <a for="live range">root</a> of <a>this</a>. And then it would be an
+    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var> and we could not reach this
+    point.
+  </ol>
+
+ <li><p>If <var>originalStartNode</var> is a {{CharacterData}} <a for=/>node</a>, then
+ <a>replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
+ <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>, and
+ the empty string.
+
+ <li><p>For each <var>node</var> of <var>nodesToRemove</var>, in <a>tree order</a>:
  <a for=/>remove</a> <var>node</var>.
 
- <li><p>If <var>original end node</var> is a {{CharacterData}} <a for=/>node</a>, then
- <a>replace data</a> with node
- <var>original end node</var>, offset 0, count
- <var>original end offset</var> and data the empty string.
+ <li><p>If <var>originalEndNode</var> is a {{CharacterData}} <a for=/>node</a>, then
+ <a>replace data</a> of <var>originalEndNode</var> with 0, <var>originalEndOffset</var>, and
+ the empty string.
 
- <li>Set <a for=range>start</a> and
- <a for=range>end</a> to
- (<var>new node</var>, <var>new offset</var>).
+ <li><p>Set <a for=range>start</a> and <a for=range>end</a> to
+ (<var>newNode</var>, <var>newOffset</var>).
 </ol>
+</div>
 
+<div algorithm>
 <p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a <a>live range</a>
-<var>range</var>, run these steps:
+<var>range</var>:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -9189,88 +9213,65 @@ method steps are:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li>Let <var>original start node</var>, <var>original start offset</var>,
- <var>original end node</var>, and <var>original end offset</var> be
- <var>range</var>'s <a for=range>start node</a>,
- <a for=range>start offset</a>,
- <a for=range>end node</a>, and
+ <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
+ <var>originalEndNode</var>, and <var>originalEndOffset</var> be <var>range</var>'s
+ <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
  <li>
-  <p>If <var>original start node</var> is <var>original end node</var> and it is a {{CharacterData}}
+  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
   <a for=/>node</a>:
 
   <ol>
-   <li>Let <var>clone</var> be a
-   <a lt="clone a node">clone</a> of
-   <var>original start node</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
 
-   <li>Set the <a for=CharacterData>data</a> of
-   <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node
-   <var>original start node</var>, offset
-   <var>original start offset</var>, and count
-   <var>original end offset</var> minus
-   <var>original start offset</var>.
+   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
+   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
+   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li><a>Replace data</a> with node
-   <var>original start node</var>, offset
-   <var>original start offset</var>, count
-   <var>original end offset</var> minus
-   <var>original start offset</var>, and data the empty string.
+   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
+   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>, and the empty string.
 
    <li>Return <var>fragment</var>.
   </ol>
 
- <li>Let <var>common ancestor</var> be
- <var>original start node</var>.
+ <li><p>Let <var>commonAncestor</var> be <var>originalStartNode</var>.
 
- <li>While <var>common ancestor</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set <var>common ancestor</var> to
- its own <a for=tree>parent</a>.
+ <li><p>While <var>commonAncestor</var> is not an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>: set <var>commonAncestor</var> to its own <a for=tree>parent</a>.
 
- <li>Let <var>first partially contained child</var> be null.
+ <li><p>Let <var>firstPartiallyContainedChild</var> be null.
 
- <li>If <var>original start node</var> is <em>not</em> an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set <var>first partially contained child</var>
- to the first <a for=tree>child</a> of
- <var>common ancestor</var> that is <a for="live range">partially contained</a> in
- <var>range</var>.
+ <li>If <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>, then set <var>firstPartiallyContainedChild</var> to the first
+ <a for=tree>child</a> of <var>commonAncestor</var> that is
+ <a for="live range">partially contained</a> in <var>range</var>.
 
- <li>Let <var>last partially contained child</var> be null.
+ <li><p>Let <var>lastPartiallyContainedChild</var> be null.
 
  <li>
-  If <var>original end node</var> is <em>not</em> an
-  <a for=tree>inclusive ancestor</a> of
-  <var>original start node</var>, set
-  <var>last partially contained child</var> to the last
-  <a for=tree>child</a> of <var>common ancestor</var> that is
+  <p>If <var>originalEndNode</var> is not an <a for=tree>inclusive ancestor</a> of
+  <var>originalStartNode</var>, then set <var>lastPartiallyContainedChild</var> to the last
+  <a for=tree>child</a> of <var>commonAncestor</var> that is
   <a for="live range">partially contained</a> in <var>range</var>.
 
-  <p class=note>These variable assignments do actually always make sense.
-  For instance, if <var>original start node</var> is not an
-  <a for=tree>inclusive ancestor</a> of
-  <var>original end node</var>, <var>original start node</var> is itself
+  <p class=note>These variable assignments do actually always make sense. For instance, if
+  <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
+  <var>originalEndNode</var>, <var>originalStartNode</var> is itself
   <a for="live range">partially contained</a> in <var>range</var>, and so are all its
-  <a for=tree>ancestors</a> up until a
-  <a for=tree>child</a> of <var>common ancestor</var>.
-  <var>common ancestor</var> cannot be <var>original start node</var>, because
-  it has to be an <a for=tree>inclusive ancestor</a> of
-  <var>original end node</var>. The other case is similar. Also, notice that the two
-  <a for=tree>children</a> will never be equal if both are defined.
+  <a for=tree>ancestors</a> up until a <a for=tree>child</a> of <var>commonAncestor</var>.
+  <var>commonAncestor</var> cannot be <var>originalStartNode</var>, because it has to be an
+  <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>. The other case is similar. Also,
+  notice that the two <a for=tree>children</a> will never be equal if both are defined.
 
- <li>Let <var>contained children</var> be a list of all
- <a for=tree>children</a> of
- <var>common ancestor</var> that are <a for="live range">contained</a> in
- <var>range</var>, in <a>tree order</a>.
+ <li><p>Let <var>containedChildren</var> be a list of all <a for=tree>children</a> of
+ <var>commonAncestor</var> that are <a for="live range">contained</a> in <var>range</var>, in
+ <a>tree order</a>.
 
  <li>
-  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
+  <p>If any member of <var>containedChildren</var> is a <a>doctype</a>, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
@@ -9283,152 +9284,132 @@ method steps are:
   partially contained. It cannot be a boundary point of a range, and it
   cannot be the ancestor of anything.
 
- <li>If <var>original start node</var> is an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set <var>new node</var> to
- <var>original start node</var> and <var>new offset</var> to
- <var>original start offset</var>.
+ <li><p>Let <var>newNode</var> and <var>newOffset</var> be null.
+
+ <li><p>If <var>originalStartNode</var> is an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>, then set <var>newNode</var> to <var>originalStartNode</var> and
+ <var>newOffset</var> to <var>originalStartOffset</var>.
 
  <li>
-  Otherwise:
-  <ol>
-   <li>Let <var>reference node</var> equal <var>original start node</var>.
+  <p>Otherwise:
 
-   <li>While <var>reference node</var>'s
-   <a for=tree>parent</a> is not null and is not an
-   <a for=tree>inclusive ancestor</a> of
-   <var>original end node</var>, set <var>reference node</var> to its
-   <a for=tree>parent</a>.
+  <ol>
+   <li><p>Let <var>referenceNode</var> equal <var>originalStartNode</var>.
+
+   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is not null and is not an
+   <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
+   its <a for=tree>parent</a>.
 
    <li>
-    Set <var>new node</var> to the
-    <a for=tree>parent</a> of <var>reference node</var>, and
-    <var>new offset</var> to one plus <var>reference node</var>'s
-    <a for=tree>index</a>.
+    <p>Set <var>newNode</var> to the <a for=tree>parent</a> of <var>referenceNode</var>, and
+    <var>newOffset</var> to <var>referenceNode</var>'s <a for=tree>index</a> + 1.
 
-    <p class=note>If <var>reference node</var>'s
-    <a for=tree>parent</a> is null, it would be the
-    <a for="live range">root</a> of <var>range</var>, so would be an
-    <a for=tree>inclusive ancestor</a> of
-    <var>original end node</var>, and we could not reach this point.
+    <p class=note>If <var>referenceNode</var>'s <a for=tree>parent</a> is null, it would be the
+    <a for="live range">root</a> of <var>range</var>. And then it would be an
+    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var> and we could not reach this
+    point.
   </ol>
 
   <!-- Now we start with mutations, so we can't refer to this anymore unless we carefully consider
   how it will have mutated. -->
 
  <li>
-  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>firstPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>first partially contained child</var> is
-  <var>original start node</var>.
+  <p class=note>In this case, <var>firstPartiallyContainedChild</var> is
+  <var>originalStartNode</var>.
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>original start node</var>.
+   <var>originalStartNode</var>.
 
    <li><p>Set the <a for=CharacterData>data</a> of <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node <var>original start node</var>, offset
-   <var>original start offset</var>, and count <var>original start node</var>'s
-   <a for=Node>length</a> &minus; <var>original start offset</var>.
+   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
+   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>.
 
    <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li><p><a>Replace data</a> with node <var>original start node</var>, offset
-   <var>original start offset</var>, count <var>original start node</var>'s <a for=Node>length</a>
-   &minus; <var>original start offset</var>, and data the empty string.
+   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
+   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>, and
+   the empty string.
   </ol>
 
  <li>
-  Otherwise, if <var>first partially contained child</var> is not
-  null:
+  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is not null:
 
   <ol>
-   <li>Let <var>clone</var> be a
-   <a lt="clone a node">clone</a> of
-   <var>first partially contained child</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>firstPartiallyContainedChild</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
-   (<var>original start node</var>, <var>original start offset</var>) and
-   whose <a for=range>end</a> is
-   (<var>first partially contained child</var>, <var>first partially contained child</var>'s
+   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
+   (<var>originalStartNode</var>, <var>originalStartOffset</var>) and whose <a for=range>end</a> is
+   (<var>firstPartiallyContainedChild</var>, <var>firstPartiallyContainedChild</var>'s
    <a for=Node>length</a>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">extracting</a>
    <var>subrange</var>.
 
-   <li><a>Append</a> <var>subfragment</var> to
-   <var>clone</var>.
+   <li><a>Append</a> <var>subfragment</var> to <var>clone</var>.
   </ol>
 
- <li><p>For each <var>contained child</var> of <var>contained children</var>: <a>append</a>
+ <li><p>For each <var>contained child</var> of <var>containedChildren</var>: <a>append</a>
  <var>contained child</var> to <var>fragment</var>.
 
  <li>
-  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>lastPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>last partially contained child</var> is
-  <var>original end node</var>.
+  <p class=note>In this case, <var>lastPartiallyContainedChild</var> is
+  <var>originalEndNode</var>.
 
   <ol>
-   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>original end node</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalEndNode</var>.
 
-   <li>Set the <a for=CharacterData>data</a> of
-   <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node
-   <var>original end node</var>, offset 0, and count
-   <var>original end offset</var>.
+   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
+   <a>substringing data</a> of <var>originalEndNode</var> with 0 and <var>originalEndOffset</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li><a>Replace data</a> with node
-   <var>original end node</var>, offset 0, count
-   <var>original end offset</var>, and data the empty string.
+   <li><p><a>Replace data</a> of <var>originalEndNode</var> with 0, <var>originalEndOffset</var>,
+   and the empty string.
   </ol>
 
  <li>
-  Otherwise, if <var>last partially contained child</var> is not
-  null:
+  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is non-null:
 
   <ol>
-   <li>Let <var>clone</var> be a
-   <a lt="clone a node">clone</a> of
-   <var>last partially contained child</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>lastPartiallyContainedChild</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
-   (<var>last partially contained child</var>, 0) and whose
-   <a for=range>end</a> is
-   (<var>original end node</var>, <var>original end offset</var>).
+   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
+   (<var>lastPartiallyContainedChild</var>, 0) and whose <a for=range>end</a> is
+   (<var>originalEndNode</var>, <var>originalEndOffset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">extracting</a>
    <var>subrange</var>.
 
-   <li><a>Append</a> <var>subfragment</var> to
-   <var>clone</var>.
+   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
   </ol>
 
- <li>Set <var>range</var>'s <a for=range>start</a> and
- <a for=range>end</a> to
- (<var>new node</var>, <var>new offset</var>).
+ <li><p>Set <var>range</var>'s <a for=range>start</a> and <a for=range>end</a> to
+ (<var>newNode</var>, <var>newOffset</var>).
 
- <li>Return <var>fragment</var>.
+ <li><p>Return <var>fragment</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>extractContents()</code></dfn> method steps are to return the
 result of <a for="live range">extracting</a> <a>this</a>.
+</div>
 
+<div algorithm>
 <p>To
 <dfn export id=concept-range-clone for="live range" lt="clone the contents|cloning the contents">clone the contents</dfn>
-of a <a>live range</a> <var>range</var>, run these steps:
+of a <a>live range</a> <var>range</var>:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -9443,82 +9424,62 @@ of a <a>live range</a> <var>range</var>, run these steps:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li>Let <var>original start node</var>, <var>original start offset</var>,
- <var>original end node</var>, and <var>original end offset</var> be
- <var>range</var>'s <a for=range>start node</a>,
- <a for=range>start offset</a>,
- <a for=range>end node</a>, and
+ <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
+ <var>originalEndNode</var>, and <var>originalEndOffset</var> be <var>range</var>'s
+ <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
  <li>
-  <p>If <var>original start node</var> is <var>original end node</var> and it is a {{CharacterData}}
+  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
   <a for=/>node</a>:
 
   <ol>
-   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>original start node</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
 
-   <li>Set the <a for=CharacterData>data</a> of
-   <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node
-   <var>original start node</var>, offset
-   <var>original start offset</var>, and count
-   <var>original end offset</var> minus
-   <var>original start offset</var>.
+   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
+   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
+   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li>Return <var>fragment</var>.
+   <li><p>Return <var>fragment</var>.
   </ol>
 
- <li>Let <var>common ancestor</var> be
- <var>original start node</var>.
+ <li><p>Let <var>commonAncestor</var> be <var>originalStartNode</var>.
 
- <li>While <var>common ancestor</var> is not an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set
- <var>common ancestor</var> to its own
- <a for=tree>parent</a>.
+ <li><p>While <var>commonAncestor</var> is not an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>: set <var>commonAncestor</var> to its own <a for=tree>parent</a>.
 
- <li>Let <var>first partially contained child</var> be null.
+ <li><p>Let <var>firstPartiallyContainedChild</var> be null.
 
- <li>If <var>original start node</var> is <em>not</em> an
- <a for=tree>inclusive ancestor</a> of
- <var>original end node</var>, set <var>first partially contained child</var>
- to the first <a for=tree>child</a> of
- <var>common ancestor</var> that is <a for="live range">partially contained</a> in
- <var>range</var>.
+ <li><p>If <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
+ <var>originalEndNode</var>, then set <var>firstPartiallyContainedChild</var> to the first
+ <a for=tree>child</a> of <var>commonAncestor</var> that is
+ <a for="live range">partially contained</a> in <var>range</var>.
 
- <li>Let <var>last partially contained child</var> be null.
+ <li><p>Let <var>lastPartiallyContainedChild</var> be null.
 
  <li>
-  If <var>original end node</var> is <em>not</em> an
-  <a for=tree>inclusive ancestor</a> of
-  <var>original start node</var>, set
-  <var>last partially contained child</var> to the last
-  <a for=tree>child</a> of <var>common ancestor</var> that is
+  <p>If <var>originalEndNode</var> is not an <a for=tree>inclusive ancestor</a> of
+  <var>originalStartNode</var>, then set <var>lastPartiallyContainedChild</var> to the last
+  <a for=tree>child</a> of <var>commonAncestor</var> that is
   <a for="live range">partially contained</a> in <var>range</var>.
 
-  <p class=note>These variable assignments do actually always make sense.
-  For instance, if <var>original start node</var> is not an
-  <a for=tree>inclusive ancestor</a> of
-  <var>original end node</var>, <var>original start node</var> is itself
+  <p class=note>These variable assignments do actually always make sense. For instance, if
+  <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
+  <var>originalEndNode</var>, <var>originalStartNode</var> is itself
   <a for="live range">partially contained</a> in <var>range</var>, and so are all its
-  <a for=tree>ancestors</a> up until a
-  <a for=tree>child</a> of <var>common ancestor</var>.
-  <var>common ancestor</var> cannot be <var>original start node</var>, because
-  it has to be an <a for=tree>inclusive ancestor</a> of
-  <var>original end node</var>. The other case is similar. Also, notice that the two
-  <a for=tree>children</a> will never be equal if both are defined.
+  <a for=tree>ancestors</a> up until a <a for=tree>child</a> of <var>commonAncestor</var>.
+  <var>commonAncestor</var> cannot be <var>originalStartNode</var>, because it has to be an
+  <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>. The other case is similar. Also,
+  notice that the two <a for=tree>children</a> will never be equal if both are defined.
 
- <li>Let <var>contained children</var> be a list of all
- <a for=tree>children</a> of
- <var>common ancestor</var> that are <a for="live range">contained</a> in
- <var>range</var>, in <a>tree order</a>.
+ <li><p>Let <var>containedChildren</var> be a list of all <a for=tree>children</a> of
+ <var>commonAncestor</var> that are <a for="live range">contained</a> in <var>range</var>, in
+ <a>tree order</a>.
 
  <li>
-  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
+  <p>If any member of <var>containedChildren</var> is a <a>doctype</a>, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <p class=note>We do not have to worry about the first or last partially
@@ -9527,51 +9488,43 @@ of a <a>live range</a> <var>range</var>, run these steps:
   cannot be the ancestor of anything.
 
  <li>
-  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>firstPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>first partially contained child</var> is
-  <var>original start node</var>.
+  <p class=note>In this case, <var>firstPartiallyContainedChild</var> is
+  <var>originalStartNode</var>.
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>original start node</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
 
    <li><p>Set the <a for=CharacterData>data</a> of <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node <var>original start node</var>, offset
-   <var>original start offset</var>, and count <var>original start node</var>'s
-   <a for=Node>length</a> &minus; <var>original start offset</var>.
+   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
+   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>.
 
    <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
   </ol>
 
  <li>
-  Otherwise, if <var>first partially contained child</var> is not
-  null:
+  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is not null:
 
   <ol>
-   <li>Let <var>clone</var> be a
-   <a lt="clone a node">clone</a> of
-   <var>first partially contained child</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>firstPartiallyContainedChild</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
-   (<var>original start node</var>, <var>original start offset</var>) and
-   whose <a for=range>end</a> is
-   (<var>first partially contained child</var>, <var>first partially contained child</var>'s
+   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
+   (<var>originalStartNode</var>, <var>originalStartOffset</var>) and whose <a for=range>end</a> is
+   (<var>firstPartiallyContainedChild</var>, <var>firstPartiallyContainedChild</var>'s
    <a for=Node>length</a>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">cloning the contents</a>
    of <var>subrange</var>.
 
-   <li><a>Append</a> <var>subfragment</var> to
-   <var>clone</var>.
+   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
   </ol>
 
  <li>
-  <p>For each <var>contained child</var> of <var>contained children</var>:
+  <p>For each <var>contained child</var> of <var>containedChildren</var>:
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>contained child</var>
@@ -9581,63 +9534,57 @@ of a <a>live range</a> <var>range</var>, run these steps:
   </ol>
 
  <li>
-  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>lastPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>last partially contained child</var> is
-  <var>original end node</var>.
+  <p class=note>In this case, <var>lastPartiallyContainedChild</var> is
+  <var>originalEndNode</var>.
 
   <ol>
-   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>original end node</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalEndNode</var>.
 
-   <li>Set the <a for=CharacterData>data</a> of
-   <var>clone</var> to the result of
-   <a lt="substring data">substringing data</a> with node
-   <var>original end node</var>, offset 0, and count
-   <var>original end offset</var>.
+   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
+   <a>substringing data</a> of <var>originalEndNode</var> with 0 and <var>originalEndOffset</var>.
 
-   <li><a>Append</a> <var>clone</var> to
-   <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
   </ol>
 
  <li>
-  Otherwise, if <var>last partially contained child</var> is not
-  null:
+  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is not null:
 
   <ol>
-   <li>Let <var>clone</var> be a
-   <a lt="clone a node">clone</a> of
-   <var>last partially contained child</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>lastPartiallyContainedChild</var>.
 
-   <li><a>Append</a> <var>clone</var>
-   to <var>fragment</var>.
+   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li>Let <var>subrange</var> be a new <a>live range</a>
-   whose <a for=range>start</a> is
-   (<var>last partially contained child</var>, 0) and whose
-   <a for=range>end</a> is
-   (<var>original end node</var>, <var>original end offset</var>).
+   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
+   (<var>lastPartiallyContainedChild</var>, 0) and whose <a for=range>end</a> is
+   (<var>originalEndNode</var>, <var>originalEndOffset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">cloning the contents</a>
    of <var>subrange</var>.
 
-   <li><a>Append</a> <var>subfragment</var> to
-   <var>clone</var>.
+   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
   </ol>
 
- <li>Return <var>fragment</var>.
+ <li><p>Return <var>fragment</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>cloneContents()</code></dfn> method steps are to return the
 result of <a for="live range">cloning the contents</a> of <a>this</a>.
+</div>
 
+<div algorithm>
 <p>To <dfn export id=concept-range-insert for="live range">insert</dfn> a <a for=/>node</a>
-<var>node</var> into a <a>live range</a> <var>range</var>, run these steps:
+<var>node</var> into a <a>live range</a> <var>range</var>:
 
 <ol>
- <li>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
- <a for=/>node</a>, is a {{Text}} <a for=/>node</a> whose <a for=tree>parent</a> is null, or is
- <var>node</var>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
+ <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or
+ {{Comment}} <a for=/>node</a>, is a {{Text}} <a for=/>node</a> whose <a for=tree>parent</a> is
+ null, or is <var>node</var>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}"
+ {{DOMException}}.
 
  <!--
  Behavior for Text node with null parent:
@@ -9655,25 +9602,18 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
  text node.
  -->
- <li>Let <var>referenceNode</var> be null.
+ <li><p>Let <var>referenceNode</var> be null.
 
- <li>If <var>range</var>'s <a for=range>start node</a>
- is a {{Text}} <a for=/>node</a>,
- set <var>referenceNode</var> to that {{Text}}
- <a for=/>node</a>. <!-- This will change when we split
- it. -->
+ <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then set
+ <var>referenceNode</var> to that {{Text}} <a for=/>node</a>.
+ <!-- This will change when we split it. -->
 
- <li>Otherwise, set <var>referenceNode</var> to the
- <a for=tree>child</a> of
- <a for=range>start node</a> whose
- <a for=tree>index</a> is
- <a for=range>start offset</a>, and null if
- there is no such <a for=tree>child</a>.
+ <li><p>Otherwise, set <var>referenceNode</var> to the <a for=tree>child</a> of <var>range</var>'s
+ <a for=range>start node</a> whose <a for=tree>index</a> is <var>range</var>'s
+ <a for=range>start offset</a> if there is such a <a for=tree>child</a>; otherwise null.
 
- <li>Let <var>parent</var> be <var>range</var>'s
- <a for=range>start node</a> if <var>referenceNode</var>
- is null, and <var>referenceNode</var>'s
- <a for=tree>parent</a> otherwise.
+ <li><p>Let <var>parent</var> be <var>range</var>'s <a for=range>start node</a> if
+ <var>referenceNode</var> is null; otherwise <var>referenceNode</var>'s <a for=tree>parent</a>.
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -9683,14 +9623,14 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
 
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
- <li><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
+ <li><p><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
  <var>referenceNode</var>.
 
- <li>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, set
- <var>referenceNode</var> to the result of <a lt="split a Text node">splitting</a> it with
- offset <var>range</var>'s <a for=range>start offset</a>.
+ <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then set
+ <var>referenceNode</var> to the result of <a lt="split a Text node">splitting</a> it with offset
+ <var>range</var>'s <a for=range>start offset</a>.
 
- <li>If <var>node</var> is <var>referenceNode</var>, set <var>referenceNode</var> to its
+ <li><p>If <var>node</var> is <var>referenceNode</var>, then set <var>referenceNode</var> to its
  <a for=tree>next sibling</a>.
  <!-- Because we're about to remove node from its parent. -->
 
@@ -9724,16 +9664,19 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  <li><p>Increase <var>newOffset</var> by <var>node</var>'s <a for=Node>length</a> if <var>node</var>
  is a {{DocumentFragment}} <a for=/>node</a>; otherwise 1.
 
- <li><a>Pre-insert</a>
- <var>node</var> into <var>parent</var> before <var>referenceNode</var>.
+ <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before <var>referenceNode</var>.
 
  <li><p>If <var>range</var> is <a for=range>collapsed</a>, then set <var>range</var>'s
  <a for=range>end</a> to (<var>parent</var>, <var>newOffset</var>).
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>insertNode(<var>node</var>)</code></dfn> method steps are to
 <a for="live range">insert</a> <var>node</var> into <a>this</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>surroundContents(<var>newParent</var>)</code></dfn> method steps
 are:
 
@@ -9780,13 +9723,18 @@ check first thing, which matches everyone but Firefox.
  but it makes a difference in at least one corner case (when the original
  range lies in a single text node). -->
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method steps are to return a new
 <a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as <a>this</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{Range}} object) was removed, but the method itself
 is preserved for compatibility.</span>
+</div>
 
 <hr>
 
@@ -9802,18 +9750,19 @@ is preserved for compatibility.</span>
 
 <div class=impl>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>isPointInRange(<var>node</var>, <var>offset</var>)</code></dfn>
 method steps are:
 <!-- Tested October 2011 on Firefox 9.0a2 and Chrome 16 dev.  IE9 and Opera
 11.50 don't support the method. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
- <a for="live range">root</a>, return false.
+ <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
+ then return false.
  <!-- This happens even if the offset is negative or too large, or if the node
  is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- Firefox 9.0a2 doesn't throw.  It ignores the offset and returns true or
  false depending on whether the doctype itself is in the range.  This makes
@@ -9830,27 +9779,27 @@ method steps are:
  APIs, so I go with Chrome 16 dev.  This is probably an authoring bug, so it's
  best to throw anyway. -->
 
- <li>If (<var>node</var>, <var>offset</var>) is
- <a for="boundary point">before</a>
- <a for=range>start</a> or
- <a for="boundary point">after</a>
- <a for=range>end</a>, return false.
+ <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">before</a>
+ <a for=range>start</a> or <a for="boundary point">after</a> <a for=range>end</a>, then return
+ false.
 
- <li>Return true.
+ <li><p>Return true.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>comparePoint(<var>node</var>, <var>offset</var>)</code></dfn>
 method steps are:
 <!-- IE9 doesn't support this method at all.  Firefox 12.0a1, Chrome 17 dev,
 and Opera Next 12.00 alpha all do. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
- <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
+ <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
+ then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
  <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
  Firefox 12.0a1 and Chrome 17 dev. -->
 
- <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw and seem to just ignore the offset instead.  See
@@ -9861,55 +9810,49 @@ and Opera Next 12.00 alpha all do. -->
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw.  See comment for isPointInRange(). -->
 
- <li>If (<var>node</var>, <var>offset</var>) is
- <a for="boundary point">before</a>
- <a for=range>start</a>, return &minus;1.
+ <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">before</a>
+ <a for=range>start</a>, then return &minus;1.
 
- <li>If (<var>node</var>, <var>offset</var>) is
- <a for="boundary point">after</a>
- <a for=range>end</a>, return 1.
+ <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">after</a>
+ <a for=range>end</a>, then return 1.
 
- <li>Return 0.
+ <li><p>Return 0.
 </ol>
+</div>
 
 <hr>
 
+<div algorithm>
 <p>The <dfn method for=Range><code>intersectsNode(<var>node</var>)</code></dfn> method steps are:
 <!-- Supported by Chrome 17 dev and Opera Next 12.00 alpha, but not IE9 or
 Firefox 12.0a1. -->
 
 <ol>
- <li>If <var>node</var>'s <a for=tree>root</a>
- is different from <a>this</a>'s
- <a for="live range">root</a>, return false.
- <!-- It seems like for doctypes, Opera Next 12.00 alpha throws
- InvalidNodeTypeError instead of returning false.  The spec follows Chrome
- 17 dev. -->
+ <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
+ then return false.
 
- <li>Let <var>parent</var> be <var>node</var>'s
+ <li><p>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li>If <var>parent</var> is null, return true.
+ <li><p>If <var>parent</var> is null, then return true.
  <!-- browsers currently throw, but are willing to change
       https://www.w3.org/Bugs/Public/show_bug.cgi?id=16759 -->
 
- <li>Let <var>offset</var> be <var>node</var>'s
- <a for=tree>index</a>.
+ <li><p>Let <var>offset</var> be <var>node</var>'s <a for=tree>index</a>.
 
- <li>If (<var>parent</var>, <var>offset</var>) is
- <a for="boundary point">before</a>
- <a for=range>end</a> and (<var>parent</var>,
- <var>offset</var> plus 1) is
- <a for="boundary point">after</a>
- <a for=range>start</a>, return true.
+ <li><p>If (<var>parent</var>, <var>offset</var>) is <a for="boundary point">before</a>
+ <a for=range>end</a> and (<var>parent</var>, <var>offset</var> + 1) is
+ <a for="boundary point">after</a> <a for=range>start</a>, then return true.
 
- <li>Return false.
+ <li><p>Return false.
 </ol>
+</div>
 
 </div>
 
 <hr>
 
+<div algorithm>
 <p>The <dfn export for=Range id=dom-range-stringifier>stringification behavior</dfn> must run
 these steps:
 
@@ -9935,6 +9878,7 @@ these steps:
 
  <li><p>Return <var>s</var>.
 </ol>
+</div>
 
 <hr>
 
@@ -10628,7 +10572,7 @@ are to return the result of running <a>get an attribute value</a> given the asso
 <a>this</a>'s <a>token set</a>'s <a for=set>size</a>.
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to object's
-<a>token set</a>'s <a for=set>size</a> minus one, unless <a>token set</a> <a for=set>is empty</a>,
+<a>token set</a>'s <a for=set>size</a> &minus; 1, unless <a>token set</a> <a for=set>is empty</a>,
 in which case there are no <a>supported property indices</a>.
 
 <p>The <dfn method for="DOMTokenList"><code>item(<var>index</var>)</code></dfn> method steps are:
