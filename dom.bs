@@ -175,7 +175,6 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
  <li><p>Return the result of <a>match a selector against a tree</a> with <var>selector</var> and
  <var>node</var>'s <a for=tree>root</a> using <a>scoping root</a> <var>node</var>. [[!SELECTORS4]].
 </ol>
-
 </div>
 
 <p class=note>Support for namespaces within selectors is not planned and will not be added.
@@ -1210,7 +1209,7 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
- <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is not null and is
+ <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is non-null and is
  [=AbortSignal/aborted=], then return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
@@ -1227,7 +1226,7 @@ participate in a tree structure.</p>
  <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
 
  <li>
-  <p>If <var>listener</var>'s <a for="event listener">signal</a> is not null, then
+  <p>If <var>listener</var>'s <a for="event listener">signal</a> is non-null, then
   <a for=AbortSignal lt=add>add the following</a> abort steps to it:
 
   <ol>
@@ -3790,8 +3789,6 @@ interface NodeList {
  <a for=/>nodes</a> are sorted in <a>tree order</a>.
 </dl>
 
-<div class=impl>
-
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to one less than
 the number of nodes <a for=collection>represented by the collection</a>. If there are no such
 elements, then there are no <a>supported property indices</a>.
@@ -3803,8 +3800,6 @@ elements, then there are no <a>supported property indices</a>.
 <var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>. If there is no
 <var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>, then the method must
 return null.
-
-</div>
 
 
 <h5 id=interface-htmlcollection>Interface {{HTMLCollection}}</h5>
@@ -4764,23 +4759,24 @@ empty string instead, and then run <a>set text content</a> with <a>this</a> and 
  into the first of their <a for=/>nodes</a>.
 </dl>
 
+<div algorithm>
 <p>The <dfn method for=Node><code>normalize()</code></dfn> method steps are to run these steps for
 each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>node</var> of
 <a>this</a>:
 
 <ol>
- <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li>If <var>length</var> is zero, then <a for=/>remove</a> <var>node</var> and continue with the
+ <li><p>If <var>length</var> is zero, then <a for=/>remove</a> <var>node</var> and continue with the
  next <a>exclusive <code>Text</code> node</a>, if any.
 
- <li>Let <var>data</var> be the <a for=string>concatenation</a> of the <a for=CharacterData>data</a>
- of <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in
- <a>tree order</a>.
+ <li><p>Let <var>data</var> be the <a for=string>concatenation</a> of the
+ <a for=CharacterData>data</a> of <var>node</var>'s
+ <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in <a>tree order</a>.
 
- <li><a>Replace data</a> of <var>node</var> with <var>length</var>, 0, and <var>data</var>.
+ <li><p><a>Replace data</a> of <var>node</var> with <var>length</var>, 0, and <var>data</var>.
 
- <li>Let <var>currentNode</var> be <var>node</var>'s <a for=tree>next sibling</a>.
+ <li><p>Let <var>currentNode</var> be <var>node</var>'s <a for=tree>next sibling</a>.
 
  <li>
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
@@ -4809,9 +4805,10 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
    <li><p>Set <var>currentNode</var> to its <a for=tree>next sibling</a>.
   </ol>
 
- <li><a for=/>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a>
+ <li><p><a for=/>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a>
  (excluding itself), in <a>tree order</a>.
 </ol>
+</div>
 
 <hr>
 
@@ -4825,8 +4822,6 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
  <dd>Returns whether <var>node</var> and <var>otherNode</var>
  have the same properties.
 </dl>
-
-<div class=impl>
 
 <div algorithm>
 <a lt="Other applicable specifications">Specifications</a> may define
@@ -5008,6 +5003,7 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 </ol>
 </div>
 
+<div algorithm>
 <p>A <a for=/>node</a> <var>A</var> <dfn export for=Node id=concept-node-equals>equals</dfn> a
 <a for=/>node</a> <var>B</var> if all of the following conditions are true:
 
@@ -5048,14 +5044,17 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
  <li><p>Each <a for=tree>child</a> of <var>A</var> <a for=Node>equals</a> the <a for=tree>child</a>
  of <var>B</var> at the identical <a for=tree>index</a>.
 </ul>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Node><code>isEqualNode(<var>otherNode</var>)</code></dfn> method steps are to
 return true if <var>otherNode</var> is non-null and <a>this</a> <a for=Node>equals</a>
 <var>otherNode</var>; otherwise false.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=Node><code>isSameNode(<var>otherNode</var>)</code></dfn> method steps are to
 return true if <var>otherNode</var> is <a>this</a>; otherwise false.
-
 </div>
 
 <hr>
@@ -5205,7 +5204,7 @@ for an <var>element</var> using <var>namespace</var>, run these steps:
  <var>namespace</var>, then return <var>element</var>'s first such <a>attribute</a>'s
  <a for=Attr>local name</a>.
 
- <li><p>If <var>element</var>'s <a>parent element</a> is not null, then return the result of running
+ <li><p>If <var>element</var>'s <a>parent element</a> is non-null, then return the result of running
  <a>locate a namespace prefix</a> on that <a for=/>element</a> using <var>namespace</var>.
 
  <li><p>Return null.
@@ -5764,7 +5763,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
 
   <ul>
    <li><a for=Element>Namespace prefix</a>
-   is not null and <var>namespace</var> is the empty string.
+   is non-null and <var>namespace</var> is the empty string.
    <li><a for=Element>Namespace prefix</a>
    is "<code>xml</code>" and <var>namespace</var> is not the
    <a>XML namespace</a>.
@@ -6316,8 +6315,6 @@ interface DOMImplementation {
   argument is omitted.
 </dl>
 
-<div class=impl>
-
 <p>The
 <dfn method for=DOMImplementation><code>createDocumentType(<var>name</var>, <var>publicId</var>, <var>systemId</var>)</code></dfn>
 method steps are:
@@ -6417,8 +6414,6 @@ claimed to support a given DOM feature, but experience proved it was not nearly 
 reliable or granular as simply checking whether the desired objects, attributes, or
 methods existed. As such, it is no longer to be used, but continues to exist (and simply
 returns true) so that old pages don't stop working.
-
-</div>
 
 
 <h3 id=interface-documenttype>Interface {{DocumentType}}</h3>
@@ -6914,7 +6909,7 @@ null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>
        <li><p>If <var>result</var> has <a for=tree>children</a>, then <a>throw</a> a
        "{{NotSupportedError!!exception}}" {{DOMException}}.
 
-       <li><p>If <var>result</var>'s <a for=tree>parent</a> is not null, then <a>throw</a> a
+       <li><p>If <var>result</var>'s <a for=tree>parent</a> is non-null, then <a>throw</a> a
        "{{NotSupportedError!!exception}}" {{DOMException}}.
 
        <li><p>If <var>result</var>'s <a for=Node>node document</a> is not <var>document</var>, then
@@ -7683,7 +7678,7 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
    <a for=Element>namespace</a>, its <a for=Element>local name</a>, and its
    <a for=Element><code>is</code> value</a>.
 
-   <li><p>If <var>definition</var> is not null and <var>definition</var>'s
+   <li><p>If <var>definition</var> is non-null and <var>definition</var>'s
    <a for="custom element definition">disable shadow</a> is true, then <a>throw</a> a
    "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
@@ -8839,7 +8834,7 @@ but not its <a for=range>end node</a>, or vice versa.
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
- <li><p><a>Assert</a>: <var>parent</var> is not null.
+ <li><p><a>Assert</a>: <var>parent</var> is non-null.
 
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
@@ -9181,7 +9176,7 @@ method steps are:
   <ol>
    <li><p>Let <var>referenceNode</var> be <var>originalStartNode</var>.
 
-   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is not null and is not an
+   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is non-null and is not an
    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
    its <a for=tree>parent</a>.
 
@@ -9310,9 +9305,9 @@ method steps are:
   <p>Otherwise:
 
   <ol>
-   <li><p>Let <var>referenceNode</var> equal <var>originalStartNode</var>.
+   <li><p>Let <var>referenceNode</var> be <var>originalStartNode</var>.
 
-   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is not null and is not an
+   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is non-null and is not an
    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
    its <a for=tree>parent</a>.
 
@@ -9351,7 +9346,7 @@ method steps are:
   </ol>
 
  <li>
-  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is not null:
+  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is non-null:
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
@@ -9520,7 +9515,7 @@ of a <a>live range</a> <var>range</var>:
   </ol>
 
  <li>
-  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is not null:
+  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is non-null:
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
@@ -9565,7 +9560,7 @@ of a <a>live range</a> <var>range</var>:
   </ol>
 
  <li>
-  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is not null:
+  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is non-null:
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
@@ -9764,8 +9759,6 @@ is preserved for compatibility.</span>
  <var>node</var>.
 </dl>
 
-<div class=impl>
-
 <div algorithm>
 <p>The <dfn method for=Range><code>isPointInRange(<var>node</var>, <var>offset</var>)</code></dfn>
 method steps are:
@@ -9862,8 +9855,6 @@ Firefox 12.0a1. -->
 
  <li><p>Return false.
 </ol>
-</div>
-
 </div>
 
 <hr>
