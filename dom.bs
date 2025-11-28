@@ -3377,10 +3377,12 @@ DocumentFragment includes NonElementParentNode;
  whose <a for=Element>ID</a> is <var>elementId</var>.
 </dl>
 
+<div algorithm>
 <p>The <dfn method for=NonElementParentNode><code>getElementById(<var>elementId</var>)</code></dfn>
 method steps are to return the first <a for=/>element</a>, in <a>tree order</a>, within
 <a>this</a>'s <a for=tree>descendants</a>, whose <a for=Element>ID</a> is <var>elementId</var>;
 otherwise, if there is no such <a for=/>element</a>, null.
+</div>
 
 
 <h4 id=mixin-documentorshadowroot>Mixin {{DocumentOrShadowRoot}}</h4>
@@ -3399,6 +3401,7 @@ ShadowRoot includes DocumentOrShadowRoot;
  otherwise null.
 </dl>
 
+<div algorithm>
 <p>The <dfn attribute for=DocumentOrShadowRoot><code>customElementRegistry</code></dfn> getter steps
 are:
 
@@ -3410,6 +3413,7 @@ are:
 
  <li><p>Return <a>this</a>'s <a for=ShadowRoot>custom element registry</a>.
 </ol>
+</div>
 
 <p class=note>The {{DocumentOrShadowRoot}} mixin is also expected to be used by other
 standards that want to define APIs shared between <a for=/>documents</a> and
@@ -3418,25 +3422,26 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
-<p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
-<var>nodes</var> and <var>document</var>, run these steps:
+<div algorithm>
+<p>To <dfn>convert nodes into a node</dfn>, given a <a for=/>list</a> of <a for=/>nodes</a> and
+strings <var>nodes</var>, and <a for=/>document</a> <var>document</var>:
 
 <ol>
- <li><p>Let <var>node</var> be null.
-
- <li><p>Replace each string in <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
+ <li><p>Replace each string of <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
  <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
  <var>document</var>.
 
- <li><p>If <var>nodes</var> contains one <a for=/>node</a>, then set <var>node</var> to
- <var>nodes</var>[0].
+ <li><p>If <var>nodes</var>'s <a for=list>size</a> is 1, then return <var>nodes</var>[0].
 
- <li><p>Otherwise, set <var>node</var> to a new {{DocumentFragment}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>document</var>, and then <a>append</a> each <a for=/>node</a>
- in <var>nodes</var>, if any, to it.
+ <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
+ <a for=Node>node document</a> is <var>document</var>.
 
- <li><p>Return <var>node</var>.
+ <li><p>For each <var>node</var> of <var>nodes</var>: <a>append</a> <var>node</var> to
+ <var>fragment</var>.
+
+ <li><p>Return <var>fragment</var>.
 </ol>
+</div>
 
 <pre class=idl>
 interface mixin ParentNode {
@@ -3518,19 +3523,28 @@ Element includes ParentNode;
  <var>selectors</var>.
 </dl>
 
+<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>children</code></dfn> getter steps are to return an
 {{HTMLCollection}} <a>collection</a> rooted at <a>this</a> matching only <a for=/>element</a>
 <a for=tree>children</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>firstElementChild</code></dfn> getter steps are to return
 the first <a for=tree>child</a> that is an <a for=/>element</a>; otherwise null.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>lastElementChild</code></dfn> getter steps are to return
 the last <a for=tree>child</a> that is an <a for=/>element</a>; otherwise null.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>childElementCount</code></dfn> getter steps are to return
 the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>prepend(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3540,7 +3554,9 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
  <li><p><a>Pre-insert</a> <var>node</var> into <a>this</a> before <a>this</a>'s
  <a for=tree>first child</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>append(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3549,7 +3565,9 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
 
  <li><p><a>Append</a> <var>node</var> to <a>this</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>replaceChildren(<var>nodes</var>)</code></dfn> method steps
 are:
 
@@ -3561,7 +3579,9 @@ are:
 
  <li><p><a for=Node>Replace all</a> with <var>node</var> within <a>this</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>moveBefore(<var>node</var>, <var>child</var>)</code></dfn>
 method steps are:
 
@@ -3573,14 +3593,19 @@ method steps are:
 
  <li><p><a for=/>Move</a> <var>node</var> into <a>this</a> before <var>referenceChild</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method
 steps are to return the first result of running <a>scope-match a selectors string</a>
 <var>selectors</var> against <a>this</a>, if the result is not an empty list; otherwise null.
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ParentNode><code>querySelectorAll(<var>selectors</var>)</code></dfn> method
 steps are to return the <a lt="static collection">static</a> result of running
 <a>scope-match a selectors string</a> <var>selectors</var> against <a>this</a>.
+</div>
 
 
 <h4 id=interface-nondocumenttypechildnode>Mixin {{NonDocumentTypeChildNode}}</h4>
@@ -3608,13 +3633,17 @@ CharacterData includes NonDocumentTypeChildNode;
  otherwise null.
 </dl>
 
+<div algorithm>
 <p>The <dfn attribute for=NonDocumentTypeChildNode><code>previousElementSibling</code></dfn> getter
 steps are to return the first <a>preceding</a> <a for=tree>sibling</a> that is an
 <a for=/>element</a>; otherwise null.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=NonDocumentTypeChildNode><code>nextElementSibling</code></dfn> getter
 steps are to return the first <a>following</a> <a for=tree>sibling</a> that is an
 <a for=/>element</a>; otherwise null.
+</div>
 
 
 <h4 id=interface-childnode>Mixin {{ChildNode}}</h4>
@@ -3660,6 +3689,7 @@ CharacterData includes ChildNode;
  <dd>Removes <var>node</var>.
 </dl>
 
+<div algorithm>
 <p>The <dfn method for=ChildNode><code>before(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3680,7 +3710,9 @@ CharacterData includes ChildNode;
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viablePreviousSibling</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ChildNode><code>after(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3697,7 +3729,9 @@ CharacterData includes ChildNode;
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ChildNode><code>replaceWith(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3720,7 +3754,9 @@ CharacterData includes ChildNode;
  <li><p>Otherwise, <a>pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=ChildNode><code>remove()</code></dfn> method steps are:
 
 <ol>
@@ -3728,6 +3764,7 @@ CharacterData includes ChildNode;
 
  <li><p><a for=/>Remove</a> <a>this</a>.
 </ol>
+</div>
 
 
 <h4 id=mixin-slotable>Mixin {{Slottable}}</h4>
@@ -3740,8 +3777,10 @@ Element includes Slottable;
 Text includes Slottable;
 </pre>
 
+<div algorithm>
 <p>The <dfn attribute for=Slottable id=dom-slotable-assignedslot><code>assignedSlot</code></dfn>
 getter steps are to return the result of <a>find a slot</a> given <a>this</a> and true.
+</div>
 
 
 <h4 id=old-style-collections>Old-style collections: {{NodeList}} and {{HTMLCollection}}</h4>
