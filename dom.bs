@@ -10449,72 +10449,89 @@ interface DOMTokenList {
 <dfn export id=concept-dtl-tokens for=DOMTokenList>token set</dfn> (a <a for=/>set</a>), which is
 initially empty.
 
-<p>A {{DOMTokenList}} object also has an associated <a for=/>element</a> and an <a>attribute</a>'s
-<a for=Attr>local name</a>.
+<p>A {{DOMTokenList}} object also has an associated <dfn for=DOMTokenList>element</dfn>
+(an <a for=/>element</a>) and an <dfn for=DOMTokenList>attribute name</dfn> (an <a>attribute</a>'s
+<a for=Attr>local name</a>).
 
 <a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Node id=concept-supported-tokens>supported tokens</dfn> for a {{DOMTokenList}}'s
-associated <a>attribute</a>'s <a for=Attr>local name</a>.
+<a for=DOMTokenList>element</a> and <a for=DOMTokenList>attribute name</a>.
 
-<p>A {{DOMTokenList}} object's
+<div algorithm>
+<p>A {{DOMTokenList}} object <var>set</var>'s
 <dfn export id=concept-domtokenlist-validation for=DOMTokenList>validation steps</dfn> for a given
 <var>token</var> are:
 
 <ol>
- <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
- <a for=Node>supported tokens</a>, <a>throw</a> a <code>TypeError</code>.
+ <li><p>If <var>set</var>'s <a for=DOMTokenList>element</a> and
+ <a for=DOMTokenList>attribute name</a> does not define <a for=Node>supported tokens</a>, then
+ <a>throw</a> a <code>TypeError</code>.
 
- <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>, in <a>ASCII lowercase</a>.
+ <li><p>Let <var>lowercaseToken</var> be <var>token</var>, in <a>ASCII lowercase</a>.
 
- <li><p>If <var>lowercase token</var> is present in <a for=Node>supported tokens</a>, return true.
+ <li><p>If <var>lowercaseToken</var> is present in the <a for=Node>supported tokens</a> of
+ <var>set</var>'s <a for=DOMTokenList>element</a> and <a for=DOMTokenList>attribute name</a>, then
+ return true.
 
  <li><p>Return false.
 </ol>
+</div>
 
-<p>A {{DOMTokenList}} object's <dfn id=concept-dtl-update for="DOMTokenList">update steps</dfn> are:
+<div algorithm>
+<p>A {{DOMTokenList}} object <var>set</var>'s
+<dfn id=concept-dtl-update for="DOMTokenList">update steps</dfn> are:
 
 <ol>
- <li><p>If the associated <a for=/>element</a> does not have an associated <a>attribute</a> and
- <a>token set</a> is empty, then return.
+ <li><p>If <a>get an attribute by namespace and local name</a> given null, <var>set</var>'s
+ <a for=DOMTokenList>attribute name</a>, and <var>set</var>'s <a for=DOMTokenList>element</a>
+ returns null and <var>set</var>'s <a>token set</a> is empty, then return.
 
- <li><p><a>Set an attribute value</a> for the associated <a for=/>element</a> using associated
- <a>attribute</a>'s <a for=Attr>local name</a> and the result of running the <a>ordered set
- serializer</a> for <a>token set</a>.
+ <li><p><a>Set an attribute value</a> given <var>set</var>'s <a for=DOMTokenList>element</a>,
+ <var>set</var>'s <a for=DOMTokenList>attribute name</a>, and the result of running the
+ <a>ordered set serializer</a> for <var>set</var>'s <a>token set</a>.
 </ol>
+</div>
 
-<p>A {{DOMTokenList}} object's <dfn id=concept-dtl-serialize for=DOMTokenList>serialize steps</dfn>
-are to return the result of running <a>get an attribute value</a> given the associated
-<a for=/>element</a> and the associated <a>attribute</a>'s <a for=Attr>local name</a>.</p>
+<div algorithm>
+<p>A {{DOMTokenList}} object <var>set</var>'s
+<dfn id=concept-dtl-serialize for=DOMTokenList>serialize steps</dfn> are to return the result of
+running <a>get an attribute value</a> given <var>set</var>'s <a for=DOMTokenList>element</a> and
+<var>set</var>'s <a for=DOMTokenList>attribute name</a>.
+</div>
 
 <hr>
 
-<p>A {{DOMTokenList}} object has these <a>attribute change steps</a> for its associated
-<a for=/>element</a>:
+<div algorithm>
+<p>A {{DOMTokenList}} object <var>set</var> has these <a>attribute change steps</a> for
+<var>set</var>'s <a for=DOMTokenList>element</a>:
 
 <ol>
- <li><p>If <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
+ <li><p>If <var>localName</var> is <var>set</var>'s <a for=DOMTokenList>attribute name</a>,
  <var>namespace</var> is null, and <var>value</var> is null, then <a for=set>empty</a>
  <a>token set</a>.
 
- <li><p>Otherwise, if <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
- <var>namespace</var> is null, then set <a>token set</a> to <var>value</var>,
- <a lt="ordered set parser">parsed</a>.
+ <li><p>Otherwise, if <var>localName</var> is <var>set</var>'s
+ <a for=DOMTokenList>attribute name</a> and <var>namespace</var> is null, then set <var>set</var>'s
+ <a>token set</a> to <var>value</var>, <a lt="ordered set parser">parsed</a>.
 </ol>
+</div>
 
-<p>When a {{DOMTokenList}} object is created, then:
+<div algorithm>
+<p>When a {{DOMTokenList}} object <var>set</var> is created:
 
 <ol>
- <li><p>Let <var>element</var> be associated <a for=/>element</a>.
+ <li><p>Let <var>element</var> be <var>set</var>'s <a for=DOMTokenList>element</a>.
 
- <li><p>Let <var>localName</var> be associated attribute's <a for=Attr>local name</a>.
+ <li><p>Let <var>attributeName</var> be <var>set</var>'s <a for=DOMTokenList>attribute name</a>.
 
  <li><p>Let <var>value</var> be the result of
  <a lt="get an attribute value">getting an attribute value</a> given <var>element</var> and
- <var>localName</var>.
+ <var>attributeName</var>.
 
- <li><p>Run the <a>attribute change steps</a> for <var>element</var>, <var>localName</var>,
+ <li><p>Run the <a>attribute change steps</a> for <var>element</var>, <var>attributeName</var>,
  <var>value</var>, <var>value</var>, and null.
 </ol>
+</div>
 
 <dl class=domintro>
  <dt><code><var>tokenlist</var> . {{DOMTokenList/length}}</code>
@@ -10575,13 +10592,16 @@ are to return the result of running <a>get an attribute value</a> given the asso
   <p>Can be set, to change the associated attribute.
 </dl>
 
-<p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return
+<div algorithm>
+<p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> getter steps are to return
 <a>this</a>'s <a>token set</a>'s <a for=set>size</a>.
+</div>
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to object's
 <a>token set</a>'s <a for=set>size</a> &minus; 1, unless <a>token set</a> <a for=set>is empty</a>,
 in which case there are no <a>supported property indices</a>.
 
+<div algorithm>
 <p>The <dfn method for="DOMTokenList"><code>item(<var>index</var>)</code></dfn> method steps are:
 
 <ol>
@@ -10590,11 +10610,15 @@ in which case there are no <a>supported property indices</a>.
 
  <li><p>Return <a>this</a>'s <a>token set</a>[<var>index</var>].
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for="DOMTokenList"><code>contains(<var>token</var>)</code></dfn> method steps are
 to return true if <a>this</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>; otherwise
 false.
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="add(tokens)|add()"><code>add(<var>tokens</var>&hellip;)</code></dfn>
 method steps are:
@@ -10616,7 +10640,9 @@ method steps are:
 
  <li><p>Run the <a>update steps</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="remove(tokens)|remove()"><code>remove(<var>tokens</var>&hellip;)</code></dfn>
 method steps are:
@@ -10638,7 +10664,9 @@ method steps are:
 
  <li><p>Run the <a>update steps</a>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=DOMTokenList><code>toggle(<var>token</var>, <var>force</var>)</code></dfn>
 method steps are:
 
@@ -10665,10 +10693,12 @@ method steps are:
 
  <li><p>Return false.
 </ol>
+</div>
 
 <p class=note>The <a>update steps</a> are not always run for {{DOMTokenList/toggle()}}
 for web compatibility.
 
+<div algorithm>
 <p>The
 <dfn method for=DOMTokenList><code>replace(<var>token</var>, <var>newToken</var>)</code></dfn>
 method steps are:
@@ -10691,10 +10721,12 @@ method steps are:
 
  <li><p>Return true.
 </ol>
+</div>
 
 <p class=note>The <a>update steps</a> are not always run for {{DOMTokenList/replace()}}
 for web compatibility.
 
+<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="supports(token)"><code>supports(<var>token</var>)</code></dfn>
 method steps are:
@@ -10705,13 +10737,18 @@ method steps are:
 
  <li><p>Return <var>result</var>.
 </ol>
+</div>
 
-<p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> attribute must return the
+<div algorithm>
+<p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> getter steps are to return the
 result of running <a>this</a>'s <a>serialize steps</a>.
+</div>
 
-<p>Setting the {{DOMTokenList/value}} attribute must <a>set an attribute value</a> for the
-associated <a for=/>element</a> using associated <a>attribute</a>'s <a for=Attr>local name</a> and
-the given value.
+<div algorithm>
+<p>The <a attribute for=DOMTokenList><code>value</code></a> setter steps are to
+<a>set an attribute value</a> for <a>this</a>'s <a for=DOMTokenList>element</a> using <a>this</a>'s
+<a for=DOMTokenList>attribute name</a> and the given value.
+</div>
 
 
 
