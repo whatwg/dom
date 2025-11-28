@@ -9901,20 +9901,21 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 <p>{{NodeIterator}} and {{TreeWalker}} objects can be used to filter and traverse <a for=/>node</a>
 <a>trees</a>.
 
-<p>Each {{NodeIterator}} and {{TreeWalker}} object has an associated
-<dfn noexport id=concept-traversal-active for=traversal>active flag</dfn> to avoid recursive
-invocations. It is initially unset.
+<p>Each {{NodeIterator}} and {{TreeWalker}} object has an associated boolean
+<dfn id=concept-traversal-active for=traversal>is active</dfn> to avoid recursive invocations. It is
+initially false.
 
 <p>Each {{NodeIterator}} and {{TreeWalker}} object also has an associated
-<dfn noexport id=concept-traversal-root for=traversal>root</dfn> (a <a for=/>node</a>), a
-<dfn noexport id=concept-traversal-whattoshow for=traversal>whatToShow</dfn> (a bitmask), and a
-<dfn noexport id=concept-traversal-filter for=traversal>filter</dfn> (a callback).
+<dfn id=concept-traversal-root for=traversal>root</dfn> (a <a for=/>node</a>), a
+<dfn id=concept-traversal-whattoshow for=traversal>whatToShow</dfn> (a bitmask), and a
+<dfn id=concept-traversal-filter for=traversal>filter</dfn> (a callback).
 
+<div algorithm>
 <p>To <dfn noexport id=concept-node-filter>filter</dfn> a <a for=/>node</a> <var>node</var> within
-a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>, run these steps:
+a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>:
 
 <ol>
- <li><p>If <var>traverser</var>'s <a for=traversal>active flag</a> is set, then throw an
+ <li><p>If <var>traverser</var>'s <a for=traversal>is active</a> is true, then throw an
  "{{InvalidStateError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>n</var> be <var>node</var>'s {{Node/nodeType}} attribute value &minus; 1.
@@ -9927,17 +9928,18 @@ a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>, run these step
  <li><p>If <var>traverser</var>'s <a for=traversal>filter</a> is null, then return
  {{NodeFilter/FILTER_ACCEPT}}.
 
- <li><p>Set <var>traverser</var>'s <a for=traversal>active flag</a>.
+ <li><p>Set <var>traverser</var>'s <a for=traversal>is active</a> to true.
 
  <li><p>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
  <var>traverser</var>'s <a for=traversal>filter</a>, "<code>acceptNode</code>", and
- « <var>node</var> ». If this throws an exception, then unset <var>traverser</var>'s
- <a for=traversal>active flag</a> and rethrow the exception.
+ « <var>node</var> ». If this throws an exception, then set <var>traverser</var>'s
+ <a for=traversal>is active</a> to false and rethrow the exception.
 
- <li><p>Unset <var>traverser</var>'s <a for=traversal>active flag</a>.
+ <li><p>Set <var>traverser</var>'s <a for=traversal>is active</a> to false.
 
  <li><p>Return <var>result</var>.
 </ol>
+</div>
 
 
 <h3 id="interface-nodeiterator">Interface {{NodeIterator}}</h3>
@@ -9970,11 +9972,13 @@ filter matches any <a for=/>node</a>.
 <a for=/>node</a>) and <dfn for=NodeIterator>pointer before reference</dfn> (a boolean).
 
 <p class=note>As mentioned earlier, {{NodeIterator}} objects have an associated
-<a for=traversal>active flag</a>, <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and
+<a for=traversal>is active</a>, <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and
 <a for=traversal>filter</a> as well.
 
+<div algorithm>
 <p>The <dfn id=nodeiterator-pre-removing-steps><code>NodeIterator</code> pre-remove steps</dfn>
-given a <var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:
+given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
+<var>toBeRemovedNode</var>, are:
 
 <ol>
  <li><p>If <var>toBeRemovedNode</var> is not an <a for=tree>inclusive ancestor</a> of
@@ -9988,44 +9992,52 @@ given a <var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:
    <li><p>Let <var>next</var> be <var>toBeRemovedNode</var>'s first <a>following</a>
    <a for=/>node</a> that is an <a>inclusive descendant</a> of <var>nodeIterator</var>'s
    <a for=traversal>root</a> and is not an <a>inclusive descendant</a> of
-   <var>toBeRemovedNode</var>, and null if there is no such <a for=/>node</a>.
+   <var>toBeRemovedNode</var>, if there is such a <a for=/>node</a>; otherwise null.
 
    <li><p>If <var>next</var> is non-null, then set <var>nodeIterator</var>'s
    <a for=NodeIterator>reference</a> to <var>next</var> and return.
 
-   <li>
-    <p>Otherwise, set <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> to
-    false.
-
-    <p class=note>Steps are not terminated here.
+   <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> to false.
   </ol>
 
  <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>reference</a> to
  <var>toBeRemovedNode</var>'s <a for=tree>parent</a>, if <var>toBeRemovedNode</var>'s
- <a>previous sibling</a> is null, and to the <a>inclusive descendant</a> of
- <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears last in <a>tree order</a>
- otherwise.
+ <a>previous sibling</a> is null; otherwise to the <a>inclusive descendant</a> of
+ <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears last in <a>tree order</a>.
 </ol>
+</div>
 
 <hr>
 
+<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>root</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>root</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>referenceNode</code></dfn> getter steps are to return
 <a>this</a>'s <a for=NodeIterator>reference</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>pointerBeforeReferenceNode</code></dfn> getter steps
 are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>whatToShow</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>whatToShow</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>filter</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>filter</a>.
+</div>
 
+<div algorithm>
 <p>To <dfn export id=concept-nodeiterator-traverse for=NodeIterator>traverse</dfn>, given a
-{{NodeIterator}} object <var>iterator</var> and a direction <var>direction</var>, run these steps:
+{{NodeIterator}} object <var>iterator</var> and "<code>next</code>" or "<code>previous</code>"
+<var>type</var>:
 
 <ol>
  <li><p>Let <var>node</var> be <var>iterator</var>'s <a for=NodeIterator>reference</a>.
@@ -10038,27 +10050,28 @@ are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 
   <ol>
    <li>
-    <p>Branch on <var>direction</var>:
+    <p>If <var>type</var> is <code>next</code>":
 
-    <dl class=switch>
-     <dt>next
-     <dd>
-      <p>If <var>beforeNode</var> is false, then set <var>node</var> to the first <a for=/>node</a>
-      <a>following</a> <var>node</var> in <var>iterator</var>'s
-      <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then
-      return null.
+    <ol>
+     <li><p>If <var>beforeNode</var> is false, then set <var>node</var> to the first
+     <a for=/>node</a> <a>following</a> <var>node</var> in <var>iterator</var>'s
+     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
+     null.
 
-      <p>If <var>beforeNode</var> is true, then set it to false.
+     <li><p>If <var>beforeNode</var> is true, then set it to false.
+    </ol>
 
-     <dt>previous
-     <dd>
-      <p>If <var>beforeNode</var> is true, then set <var>node</var> to the first <a for=/>node</a>
-      <a>preceding</a> <var>node</var> in <var>iterator</var>'s
-      <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then
-      return null.
+   <li>
+    <p>Otherwise:
 
-      <p>If <var>beforeNode</var> is false, then set it to true.
-    </dl>
+    <ol>
+     <li><p>If <var>beforeNode</var> is true, then set <var>node</var> to the first
+     <a for=/>node</a> <a>preceding</a> <var>node</var> in <var>iterator</var>'s
+     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
+     null.
+
+     <li><p>If <var>beforeNode</var> is false, then set it to true.
+    </ol>
 
    <li><p>Let <var>result</var> be the result of <a for=/>filtering</a> <var>node</var> within
    <var>iterator</var>.
@@ -10073,16 +10086,23 @@ are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 
  <li><p>Return <var>node</var>.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=NodeIterator><code>nextNode()</code></dfn> method steps are to return the
-result of <a for=NodeIterator>traversing</a> with <a>this</a> and next.
+result of <a for=NodeIterator>traversing</a> with <a>this</a> and "<code>next</code>".
+</div>
 
+<div algorithm>
 <p>The <dfn method for=NodeIterator><code>previousNode()</code></dfn> method steps are to return the
-result of <a for=NodeIterator>traversing</a> with <a>this</a> and previous.
+result of <a for=NodeIterator>traversing</a> with <a>this</a> and "<code>previous</code>".
+</div>
 
+<div algorithm>
 <p>The <dfn method for=NodeIterator><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{NodeIterator}} object) was removed, but the method
 itself is preserved for compatibility.</span>
+</div>
 
 
 <h3 id=interface-treewalker>Interface {{TreeWalker}}</h3>
@@ -10113,23 +10133,34 @@ method on {{Document}} objects.
 <p class=note>As mentioned earlier {{TreeWalker}} objects have an associated
 <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and <a for=traversal>filter</a> as well.
 
+<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>root</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>root</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>whatToShow</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>whatToShow</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>filter</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>filter</a>.
+</div>
 
+<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>currentNode</code></dfn> getter steps are to return
 <a>this</a>'s <a for=TreeWalker>current</a>.
+</div>
 
+<div algorithm="TreeWalker/currentNode setter">
 <p>The {{TreeWalker/currentNode}} setter steps are to set <a>this</a>'s
 <a for=TreeWalker>current</a> to the given value.
+</div>
 
 <hr>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>parentNode()</code></dfn> method steps are:
 
 <ol>
@@ -10149,15 +10180,18 @@ method on {{Document}} objects.
 
  <li><p>Return null.
 </ol>
+</div>
 
+<div algorithm>
 <p>To <dfn noexport for=TreeWalker id=concept-traverse-children>traverse children</dfn>, given a
-<var>walker</var> and <var>type</var>, run these steps:
+{{TreeWalker}} object <var>walker</var> and "<code>first</code>" or "<code>last</code>"
+<var>type</var>:
 
 <ol>
  <li><p>Let <var>node</var> be <var>walker</var>'s <a for=TreeWalker>current</a>.
 
  <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>first child</a> if <var>type</var> is
- first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
+ "<code>first</code>"; otherwise to <var>node</var>'s <a for=tree>last child</a>.
 
  <li>
   <p>While <var>node</var> is non-null:
@@ -10174,7 +10208,7 @@ method on {{Document}} objects.
 
     <ol>
      <li><p>Let <var>child</var> be <var>node</var>'s <a for=tree>first child</a> if <var>type</var>
-     is first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
+     is "<code>first</code>"; otherwise <var>node</var>'s <a for=tree>last child</a>.
 
      <li><p>If <var>child</var> is non-null, then set <var>node</var> to <var>child</var> and
      <a for=iteration>continue</a>.
@@ -10185,8 +10219,8 @@ method on {{Document}} objects.
 
     <ol>
      <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
-     <var>type</var> is first, and <var>node</var>'s <a for=tree>previous sibling</a> if
-     <var>type</var> is last.
+     <var>type</var> is "<code>first</code>"; otherwise <var>node</var>'s
+     <a for=tree>previous sibling</a>.
 
      <li><p>If <var>sibling</var> is non-null, then set <var>node</var> to <var>sibling</var> and
      <a for=iteration>break</a>.
@@ -10202,15 +10236,21 @@ method on {{Document}} objects.
 
  <li><p>Return null.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>firstChild()</code></dfn> method steps are to
-<a>traverse children</a> with <a>this</a> and first.
+<a>traverse children</a> with <a>this</a> and "<code>first</code>".
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>lastChild()</code></dfn> method steps are to
-<a>traverse children</a> with <a>this</a> and last.
+<a>traverse children</a> with <a>this</a> and "<code>last</code>".
+</div>
 
-<p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a <var>walker</var>
-and <var>type</var>, run these steps:
+<div algorithm>
+<p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a {{TreeWalker}}
+object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var>type</var>:
 
 <ol>
  <li><p>Let <var>node</var> be <var>walker</var>'s <a for=TreeWalker>current</a>.
@@ -10222,8 +10262,8 @@ and <var>type</var>, run these steps:
 
   <ol>
    <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
-   <var>type</var> is next, and <var>node</var>'s <a for=tree>previous sibling</a> if
-   <var>type</var> is previous.
+   <var>type</var> is "<code>next</code>"; otherwise <var>node</var>'s
+   <a for=tree>previous sibling</a>.
 
    <li>
     <p>While <var>sibling</var> is non-null:
@@ -10238,12 +10278,12 @@ and <var>type</var>, run these steps:
      <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
 
      <li><p>Set <var>sibling</var> to <var>node</var>'s <a for=tree>first child</a> if
-     <var>type</var> is next, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is
-     previous.
+     <var>type</var> is "<code>next</code>"; otherwise to <var>node</var>'s
+     <a for=tree>last child</a>.
 
      <li><p>If <var>result</var> is {{NodeFilter/FILTER_REJECT}} or <var>sibling</var> is null, then
      set <var>sibling</var> to <var>node</var>'s <a for=tree>next sibling</a> if <var>type</var> is
-     next, and <var>node</var>'s <a for=tree>previous sibling</a> if <var>type</var> is previous.
+     "<code>next</code>"; otherwise to <var>node</var>'s <a for=tree>previous sibling</a>.
     </ol>
 
    <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
@@ -10255,13 +10295,19 @@ and <var>type</var>, run these steps:
    {{NodeFilter/FILTER_ACCEPT}}, then return null.
   </ol>
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>nextSibling()</code></dfn> method steps are to
-<a>traverse siblings</a> with <a>this</a> and next.
+<a>traverse siblings</a> with <a>this</a> and "<code>next</code>".
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>previousSibling()</code></dfn> method steps are to
-<a>traverse siblings</a> with <a>this</a> and previous.
+<a>traverse siblings</a> with <a>this</a> and "<code>previous</code>".
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>previousNode()</code></dfn> method steps are:
 
 <ol>
@@ -10311,7 +10357,9 @@ and <var>type</var>, run these steps:
 
  <li><p>Return null.
 </ol>
+</div>
 
+<div algorithm>
 <p>The <dfn method for=TreeWalker><code>nextNode()</code></dfn> method steps are:
 
 <ol>
@@ -10362,6 +10410,7 @@ and <var>type</var>, run these steps:
    <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
   </ol>
 </ol>
+</div>
 
 
 <h3 id="interface-nodefilter">Interface {{NodeFilter}}</h3>
