@@ -4891,7 +4891,7 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 
    <li><p>If <var>shadowRootRegistry</var> <a>is a global custom element registry</a>, then set
    <var>shadowRootRegistry</var> to <var>document</var>'s
-   <a>effective global custom element registry</a>.
+   <a for=Document>custom element registry</a>'s <a>effective global custom element registry</a>.
 
    <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
@@ -4936,7 +4936,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <var>fallbackRegistry</var>.
 
    <li><p>If <var>registry</var> <a>is a global custom element registry</a>, then set
-   <var>registry</var> to <var>document</var>'s <a>effective global custom element registry</a>.
+   <var>registry</var> to <var>document</var>'s <a for=Document>custom element registry</a>
+   <a>effective global custom element registry</a>.
 
    <li><p>Set <var>copy</var> to the result of <a>creating an element</a>, given
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
@@ -6071,7 +6072,8 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
       </ul>
 
       <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
-      <var>document</var>'s <a>effective global custom element registry</a>.
+      <var>document</var>'s <a for=Document>custom element registry</a>'s
+      <a>effective global custom element registry</a>.
 
      <li>
       <p>Otherwise, if <var>inclusiveDescendant</var> is an <a for=/>element</a>:
@@ -6082,26 +6084,21 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
 
        <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null
        or <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
-       <a for=CustomElementRegistry>is scoped</a> is false, then set
-       <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> based on the
-       following conditions:
+       <a for=CustomElementRegistry>is scoped</a> is false:
 
         <ol>
          <li><p>If <var>inclusiveDescendant</var>'s <a for=tree>parent</a> is null or
          <var>inclusiveDescendant</var>'s <a for=tree>parent</a> is a {{DocumentFragment}} but not
          a {{ShadowRoot}}, then set <var>inclusiveDescendant</var>'s
          <a for=Element>custom element registry</a> to <var>document</var>'s
+         <a for=Document>custom element registry</a>'s
          <a>effective global custom element registry</a>.
 
-         <li><p>If <var>inclusiveDescendant</var>'s <a for=tree>parent</a>'s
-         <a for=Element>custom element registry</a> is null or is equal to <var>document</var>'s
-         <a>effective global custom element registry</a>, then set <var>inclusiveDescendant</var>'s
-         <a for=Element>custom element registry</a> to <var>inclusiveDescendant</var>'s
-         <a for=tree>parent</a>'s <a for=Element>custom element registry</a>.
-
-         <li><p>Otherwise, set <var>inclusiveDescendant</var>'s
-         <a for=Element>custom element registry</a> to <var>document</var>'s
-         <a>effective global custom element registry</a>.
+         <li><p>Otherwise, let <var>registry</var> be the result of
+         <a for=/>looking up a custom element registry</a> given <var>inclusiveDescendant</var>'s
+         <a for=tree>parent</a>; set <var>inclusiveDescendant</var>'s
+         <a for=Element>custom element registry</a> to <var>registry</var>'s
+         <a>effective global custom element registry</a>
         </ol>
       </ol>
     </ol>
@@ -6145,13 +6142,12 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
 <dfn>is a global custom element registry</dfn> if <var>registry</var> is non-null and
 <var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false.</p>
 
-<p>A <a for=/>document</a> <var>document</var>'s <dfn>effective global custom element registry</dfn>
-is:
+<p>Null or a {{CustomElementRegistry}} object <var>registry</var>'s
+<dfn>effective global custom element registry</dfn> is:
 
 <ol>
- <li><p>If <var>document</var>'s <a for=Document>custom element registry</a>
- <a>is a global custom element registry</a>, then return <var>document</var>'s
- <a for=Document>custom element registry</a>.
+ <li><p>If <var>registry</var> <a>is a global custom element registry</a>, then return
+ <var>registry</var>
 
  <li><p>Return null.
 </ol>
