@@ -9892,188 +9892,142 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 [[CSSOM-VIEW]]
 
 
-<h3 id=interface-formcontrolrange>Interface {{FormControlRange}}</h3>
+<h3 id=interface-plaintext-range>Interface {{PlainTextRange}}</h3>
 
 <pre class=idl>
 [Exposed=Window]
-interface FormControlRange : AbstractRange {
-  constructor();
-
-  undefined setFormControlRange((HTMLInputElement or HTMLTextAreaElement) element,
-      unsigned long startOffset,
-      unsigned long endOffset
-  );
-  <!-- TODO: Bikeshed method name. Alternatives suggested include setInFormControl,
-       setFormControl, setControl, setStartAndEnd, or simply set. Tracked as an
-       Open Question in the explainer:
-       https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/FormControlRange/explainer.md#open-questions -->
-
+interface PlainTextRange : AbstractRange {
   DOMRectList getClientRects();
   DOMRect getBoundingClientRect();
   stringifier;
 };
 </pre>
 
-<p>Objects implementing the {{FormControlRange}} interface are known as {{FormControlRange}} objects.
+<p>Objects implementing the {{PlainTextRange}} interface are known as {{PlainTextRange}} objects.</p>
 
 <dl class=domintro>
- <dt><code><var ignore>formControlRange</var> = new
- <a constructor lt="FormControlRange()">FormControlRange</a>()</code>
- <dd>Returns a new {{FormControlRange}} that tracks text offsets in a text control's value as it
- changes.
-
- <dt><code><var ignore>formControlRange</var>.
- {{FormControlRange/setFormControlRange()}}(<var ignore>element</var>,
- <var ignore>startOffset</var>, <var ignore>endOffset</var>)</code>
- <dd>Sets the endpoints to <code>[startOffset, endOffset]</code> within <var>element</var>'s
- <a href="#formcontrolrange-value-string">value string</a>. Throws {{NotSupportedError}} for 
- unsupported elements and {{IndexSizeError}} for out-of-bounds offsets.
-
- <dt><code><var ignore>rects</var> = <var ignore>formControlRange</var> . {{FormControlRange/getClientRects()}}</code>
- <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the host
- control’s <a href="#formcontrolrange-value-string">value string</a>. If the range is unset (its
- <a for=FormControlRange>control</a> is null), {{AbstractRange/collapsed}} with no visible caret,
- the control has computed <code>display</code> of <code>none</code>, or the control (or its inner
- editor) is not <a>connected</a>, returns an empty list.
-
- <dt><code><var ignore>rect</var> = <var ignore>formControlRange</var> . {{FormControlRange/getBoundingClientRect()}}</code>
+ <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{PlainTextRange/getClientRects()}}</code>
+ <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the host's
+ <a href="#plaintext-range-string">plain text range string</a>. If the range has no
+ <a for=PlainTextRange>host</a>, is {{AbstractRange/collapsed}} with no visible caret, or the host
+ has computed <code>display</code> of <code>none</code> or is not <a>connected</a>, returns an
+ empty list.
+ 
+ <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{PlainTextRange/getBoundingClientRect()}}</code>
  <dd>Returns a {{DOMRect}} that is the union of the rectangles from
- {{FormControlRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range in a visible
- control, returns a rectangle of zero width whose height equals the line height at the caret
- position. If the control has computed <code>display</code> of <code>none</code> or is not
- <a>connected</a>, returns a rectangle with zero width and height.
+ {{PlainTextRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range in a visible host,
+ returns a rectangle of zero width whose height equals the line height at the caret position. If the
+ host has computed <code>display</code> of <code>none</code> or is not <a>connected</a>, returns a
+ rectangle with zero width and height.
 </dl>
 
-<p>A {{FormControlRange}} is a range whose <a>boundary points</a> are defined in the host text
-control's <a href="#formcontrolrange-value-string">value string</a> rather than in the <a>node tree</a>. 
-Its <a for=range>start node</a> and <a for=range>end node</a> are always the host <code>&lt;input></code>
-or <code>&lt;textarea></code>, and its offsets are indices into that string.
+<p>A {{PlainTextRange}} is a range whose <a>boundary points</a> are defined as offsets in a
+host-defined <a href="#plaintext-range-string">plain text range string</a> rather than in the
+<a>node tree</a>. It has no associated container node; its {{AbstractRange/startContainer}} and
+{{AbstractRange/endContainer}} getters return null, and its {{AbstractRange/startOffset}} and
+{{AbstractRange/endOffset}} getters return indices into that string.</p>
 
-<p>A {{FormControlRange}} has associated state:
+<p>A {{PlainTextRange}} has associated state:</p>
 
 <ul>
- <li><p><dfn export for=FormControlRange id=formcontrolrange-control>control</dfn> (null or an
- {{HTMLInputElement}}/{{HTMLTextAreaElement}}).
-
- <li><p><dfn export for=FormControlRange id=formcontrolrange-start>start offset</dfn> (a
- non-negative integer).
-
- <li><p><dfn export for=FormControlRange id=formcontrolrange-end>end offset</dfn> (a non-negative
- integer).
+ <li><p><dfn export for=PlainTextRange id=plaintext-range-host>host</dfn> (null or an
+ {{Element}}).</p></li>
+ <li><p><dfn export for=PlainTextRange id=plaintext-range-start>start offset</dfn> (a non-negative
+ integer).</p></li>
+ <li><p><dfn export for=PlainTextRange id=plaintext-range-end>end offset</dfn> (a non-negative
+ integer).</p></li>
 </ul>
 
-<p>The startContainer getter steps are to return <a>this</a>'s
-<a for=FormControlRange>control</a>.
+<p>The {{AbstractRange/startContainer}} getter steps for {{PlainTextRange}} objects are to return
+null.</p>
 
-<p>The endContainer getter steps are to return <a>this</a>'s
-<a for=FormControlRange>control</a>.
+<p>The {{AbstractRange/endContainer}} getter steps for {{PlainTextRange}} objects are to return
+null.</p>
 
-<p>The startOffset getter steps are to return <a>this</a>'s
-<a for=FormControlRange>start offset</a>.
+<p>The {{AbstractRange/startOffset}} getter steps for {{PlainTextRange}} objects are to return
+<a>this</a>'s <a for=PlainTextRange>start offset</a>.</p>
 
-<p>The endOffset getter steps are to return <a>this</a>'s
-<a for=FormControlRange>end offset</a>.
+<p>The {{AbstractRange/endOffset}} getter steps for {{PlainTextRange}} objects are to return
+<a>this</a>'s <a for=PlainTextRange>end offset</a>.</p>
 
-<p>The collapsed getter steps are to return true if <a>this</a>'s
-<a for=FormControlRange>start offset</a> equals <a>this</a>'s
-<a for=FormControlRange>end offset</a>; otherwise false.
+<p>The {{AbstractRange/collapsed}} getter steps for {{PlainTextRange}} objects are to return true
+if <a>this</a>'s <a for=PlainTextRange>start offset</a> equals <a for=PlainTextRange>end
+offset</a>; otherwise false.</p>
 
-<p>An {{Element}} <var>el</var>
-<dfn export id=supports-form-control-range>supports form control range</dfn> if it is an
-{{HTMLTextAreaElement}}, or an {{HTMLInputElement}} whose type is one of
-"<code>text</code>", "<code>search</code>", "<code>tel</code>", "<code>url</code>", or
-"<code>password</code>".
+<p>An {{Element}} <var>el</var> <dfn export id=supports-plaintext-range>supports plain text
+ranges</dfn> if its specification defines that it does.</p>
 
-<p class=note>These are exactly the types for which the related selection APIs
-apply in HTML; see <a href="https://html.spec.whatwg.org/multipage/input.html#do-not-apply">
-selection APIs applicability for <code>input</code> types</a>.
-This list is the complement of that section.</p>
+<p class=note>The HTML Standard defines that certain {{HTMLInputElement}} types and
+{{HTMLTextAreaElement}} support plain text ranges over their <code>value</code>. Other
+specifications may define additional elements, including custom elements, that support plain text
+ranges.</p>
 
-<p>The <dfn constructor for=FormControlRange lt="FormControlRange()">
-<code>new FormControlRange()</code></dfn> constructor steps are to set <a>this</a>'s
-<a for=FormControlRange>control</a> to null and its <a for=FormControlRange>start offset</a> and
-<a for=FormControlRange>end offset</a> to 0.
+<p>For an element <var>el</var> that <a lt="supports plain text ranges">supports plain text
+ranges</a>, its <dfn export id=plaintext-range-string>plain text range string</dfn> is a
+specification-defined string that represents the linear editable text for that element. In HTML,
+this is typically the string exposed by the element's IDL <code>value</code> attribute. Offsets for
+{{PlainTextRange}} are indices into this <a href="#plaintext-range-string">plain text range
+string</a> in the inclusive range [0, <code>string.length</code>].</p>
 
-<p>For a <a lt="supports form control range">supported</a> host element <var>el</var>, its
-<dfn export id=formcontrolrange-value-string>value string</dfn> is the same string exposed by its IDL
-attribute {{HTMLInputElement/value}}/{{HTMLTextAreaElement/value}}. Offsets for {{FormControlRange}}
-are indices into this <a href="#formcontrolrange-value-string">value string</a> in the inclusive
-range [0, <code>value.length</code>], matching
-{{HTMLInputElement/selectionStart}}/{{HTMLInputElement/selectionEnd}} and
-{{HTMLTextAreaElement/selectionStart}}/{{HTMLTextAreaElement/selectionEnd}} units.</p>
+<p>When a {{PlainTextRange}} is created, its <a for=PlainTextRange>host</a> must be set to null and
+its <a for=PlainTextRange>start offset</a> and <a for=PlainTextRange>end offset</a> must be set to
+0.</p>
 
-<p>The <dfn method for=FormControlRange>
-<code>setFormControlRange(<var>element</var>, <var>startOffset</var>,
-<var>endOffset</var>)</code></dfn> method steps are:
+<p>To <dfn export id=concept-plaintext-range-set>set a plain text range</dfn> for a
+{{PlainTextRange}} <var>range</var> over an {{Element}} <var>host</var> from
+<var>startOffset</var> to <var>endOffset</var>, run these steps:</p>
 
 <ol>
- <li><p>If <var>element</var> does not <a>support form control range</a>, then <a>throw</a> a
- "{{NotSupportedError!!exception}}" {{DOMException}}.
-
-<li><p>Let <var>len</var> be the length of <var>element</var>'s
-<a href="#formcontrolrange-value-string">value string</a>.
-
+ <li><p>If <var>host</var> does not <a>support plain text ranges</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.</p></li>
+ <li><p>Let <var>string</var> be <var>host</var>'s <a href="#plaintext-range-string">plain text
+ range string</a>. Let <var>len</var> be <var>string</var>'s <a for=string>length</a>.</p></li>
  <li><p>If <var>startOffset</var> &gt; <var>len</var> or <var>endOffset</var> &gt; <var>len</var>,
- then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.
-
+ then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.</p></li>
  <li><p>If <var>startOffset</var> &gt; <var>endOffset</var>, then set <var>endOffset</var> to
- <var>startOffset</var>.
-
- <li><p>Set <a>this</a>'s <a for=FormControlRange>control</a> to <var>element</var>,
- <a>this</a>'s <a for=FormControlRange>start offset</a> to <var>startOffset</var>, and
- <a>this</a>'s <a for=FormControlRange>end offset</a> to <var>endOffset</var>.
+ <var>startOffset</var>.</p></li>
+ <li><p>Set <var>range</var>'s <a for=PlainTextRange>host</a> to <var>host</var>, its
+ <a for=PlainTextRange>start offset</a> to <var>startOffset</var>, and its
+ <a for=PlainTextRange>end offset</a> to <var>endOffset</var>.</p></li>
 </ol>
 
-<p>If an {{HTMLInputElement}}'s <code>type</code> changes to a type that does not
-<a>support form control range</a> (e.g., switching to <code>date</code>), then each associated
-{{FormControlRange}} must set its <a for=FormControlRange>control</a> to null and set both its
-<a for=FormControlRange>start offset</a> and <a for=FormControlRange>end offset</a> to 0.
-
-<p class=note>HTML will normatively call the associated range-adjustment algorithm wherever a
-control’s value changes or its type ceases to support selection.</p>
-
-<p>A {{FormControlRange}} is live: when the control's <a href="#formcontrolrange-value-string">value
-string</a> changes, the range's {{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are
-updated automatically to preserve the same logical content. These behaviors mirror {{Range}}
-boundary adjustments in the DOM, but are applied to the UTF-16 code units of a form control's value.
+<p>A {{PlainTextRange}} is live: when its host's <a href="#plaintext-range-string">plain text range
+string</a> changes, the range's <a for=PlainTextRange>start offset</a> and <a
+for=PlainTextRange>end offset</a> are updated automatically to preserve the same logical content.
+These behaviors mirror {{Range}} boundary adjustments in the DOM but are applied to the UTF-16 code
+units of the host's string.</p>
 
 <ul>
- <li><p>Edits before the range: Offsets shift by the net length change.
-
- <li><p>Edits after the range: Offsets remain unchanged.
-
- <li><p>Edits overlapping the range: If a boundary falls inside text that was removed, move it to the
- start of the change. If the edit also inserted new text, remap the boundary into the inserted span
- at the closest corresponding offset, not exceeding its end.
-
+ <li><p>Edits before the range: Offsets shift by the net length change.</p></li>
+ <li><p>Edits after the range: Offsets remain unchanged.</p></li>
+ <li><p>Edits overlapping the range: If a boundary falls inside text that was removed, move it to
+ the start of the change. If the edit also inserted new text, remap the boundary into the inserted
+ span at the closest corresponding offset, not exceeding its end.</p></li>
  <li><p>Insertion at the start boundary: A non-{{AbstractRange/collapsed}} range expands to include
- the new text. A collapsed range (caret) moves after the insertion.
-
- <li><p>Insertion at the end boundary: A non-collapsed range does not expand to include the new text.
- A collapsed range moves after the insertion.
-
- <li><p>Clamping and collapse: Offsets are clamped to the current value length. If the
+ the new text. A collapsed range moves after the insertion.</p></li>
+ <li><p>Insertion at the end boundary: A non-collapsed range does not expand to include the new
+ text. A collapsed range moves after the insertion.</p></li>
+ <li><p>Clamping and collapse: Offsets are clamped to the current string length. If the
  {{AbstractRange/startOffset}} would exceed the {{AbstractRange/endOffset}}, set the end to the
- start.
+ start.</p></li>
 </ul>
 
-<!-- TODO: Define boundary adjustment algorithm in HTML spec. DOM spec currently describes
-     expected behaviors, but HTML spec should normatively call this algorithm anywhere a form
-     control value changes (similar to Range update handling in DOM). -->
+<p class=note>Specifications that define elements which <a>support plain text ranges</a> (such as
+the HTML Standard for text controls) must normatively define when a {{PlainTextRange}} is created,
+how it is associated with a host, when its host becomes null, and when its boundary points are
+updated using the rules above.</p>
 
-<p>The <dfn export for=FormControlRange id=dom-formcontrolrange-stringifier>stringification
+<p>The <dfn export for=PlainTextRange id=dom-plaintext-range-stringifier>stringification
 behavior</dfn> must run these steps:</p>
 
 <ol>
-  <li><p>If <a>this</a>'s <a for=FormControlRange>control</a> is null, then return the empty string.</p></li>
-
-  <li><p>Let <var>value</var> be <a>this</a>'s <a for=FormControlRange>control</a>'s
-  <a href="#formcontrolrange-value-string">value string</a>.</p></li>
-
-  <li><p>Let <var>start</var> be <a>this</a>'s <a for=FormControlRange>start offset</a>, and let
- <var>end</var> be <a>this</a>'s <a for=FormControlRange>end offset</a>.</p></li>
-
- <li><p>Return the substring of <var>value</var> from <var>start</var> to <var>end</var>.</p></li>
+ <li><p>If <a>this</a>'s <a for=PlainTextRange>host</a> is null, then return the empty
+ string.</p></li>
+ <li><p>Let <var>string</var> be <a>this</a>'s <a for=PlainTextRange>host</a>'s
+ <a href="#plaintext-range-string">plain text range string</a>.</p></li>
+ <li><p>Let <var>start</var> be <a>this</a>'s <a for=PlainTextRange>start offset</a>, and let
+ <var>end</var> be <a for=PlainTextRange>end offset</a>.</p></li>
+ <li><p>Return the substring of <var>string</var> from <var>start</var> to <var>end</var>.</p></li>
 </ol>
 
 
