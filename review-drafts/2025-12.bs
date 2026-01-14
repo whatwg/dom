@@ -1,5 +1,7 @@
 <pre class=metadata>
 Group: WHATWG
+Status: RD
+Date: 2025-12-15
 H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
@@ -5090,8 +5092,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
   </dl>
 
  <li><p>If <var>A</var> is an <a for=/>element</a>, each <a>attribute</a> in its
- <a for=Element>attribute list</a> <a for=Node>equals</a> an <a>attribute</a> in <var>B</var>'s
- <a for=Element>attribute list</a>.
+ <a for=Element>attribute list</a> has an <a>attribute</a> that <a for=Node>equals</a> an
+ <a>attribute</a> in <var>B</var>'s <a for=Element>attribute list</a>.
 
  <li><p><var>A</var> and <var>B</var> have the same number of <a for=tree>children</a>.
 
@@ -8669,9 +8671,9 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <pre class=idl>
 [Exposed=Window]
 interface AbstractRange {
-  readonly attribute Node? startContainer;
+  readonly attribute Node startContainer;
   readonly attribute unsigned long startOffset;
-  readonly attribute Node? endContainer;
+  readonly attribute Node endContainer;
   readonly attribute unsigned long endOffset;
   readonly attribute boolean collapsed;
 };
@@ -8694,14 +8696,6 @@ interface AbstractRange {
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
 
-<p class=note>Some ranges are not backed by the <a>node tree</a> (for example, {{OpaqueRange}}).
-For such ranges, {{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} are null, and
-offsets are interpreted as defined by the relevant specification (e.g., as indices into a host-defined
-string).
-
-<p class=note>For {{Range}} and {{StaticRange}} objects, {{AbstractRange/startContainer}} and
-{{AbstractRange/endContainer}} never return null.
-
 <div algorithm>
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
@@ -8709,13 +8703,13 @@ string).
 
 <dl class=domintro>
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>start node</a>, or null.
+ <dd>Returns <var>range</var>'s <a for=range>start node</a>.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>startOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start offset</a>.
 
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>endContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>end node</a>, or null.
+ <dd>Returns <var>range</var>'s <a for=range>end node</a>.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>endOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end offset</a>.
@@ -8727,7 +8721,7 @@ string).
 <div algorithm>
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start node</a>, or null.
+getter steps are to return <a>this</a>'s <a for=range>start node</a>.
 </div>
 
 <div algorithm>
@@ -8737,7 +8731,7 @@ getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
 
 <div algorithm>
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end node</a>, or null.
+getter steps are to return <a>this</a>'s <a for=range>end node</a>.
 </div>
 
 <div algorithm>
@@ -9989,77 +9983,6 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 [[CSSOM-VIEW]]
 
 
-<h3 id=interface-opaquerange>Interface {{OpaqueRange}}</h3>
-
-<pre class=idl>
-[Exposed=Window]
-interface OpaqueRange : AbstractRange {
-  DOMRectList getClientRects();
-  DOMRect getBoundingClientRect();
-};
-</pre>
-
-<p>Objects implementing the {{OpaqueRange}} interface are known as {{OpaqueRange}} objects.
-
-<dl class=domintro>
- <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
- <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the opaque
- range string. If the user agent cannot compute geometry for the range (e.g. because the element it
- was created from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>),
- or if the range is {{AbstractRange/collapsed}} with no visible caret, returns an empty list.
-
- <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{OpaqueRange/getBoundingClientRect()}}</code>
- <dd>Returns a {{DOMRect}} that is the union of the rectangles from {{OpaqueRange/getClientRects()}}.
- For a {{AbstractRange/collapsed}} range with a visible caret, returns a rectangle of zero width whose
- height equals the line height at the caret position. If the user agent cannot compute geometry for the
- range (e.g. because the element it was created from is not <a>connected</a> or has computed
- <code>display</code> of <code>none</code>), returns a rectangle with zero width and height.
-</dl>
-
-<p>An {{OpaqueRange}} is a range whose endpoints are defined as offsets in a host-defined
-<a href="#opaque-range-string">opaque range string</a> rather than in the <a>node tree</a>. It is not
-backed by the <a>node tree</a> and therefore has no associated container nodes; its
-{{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters return null, and its
-{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} getters return indices into that string.
-
-<p>An {{OpaqueRange}} has associated state:
-
-<ul>
- <li><p><dfn export for=OpaqueRange id=opaque-range-start>start offset</dfn> (a non-negative integer).
-
- <li><p><dfn export for=OpaqueRange id=opaque-range-end>end offset</dfn> (a non-negative integer).
-</ul>
-
-<p>The {{AbstractRange/startOffset}} getter steps for {{OpaqueRange}} objects are to return
-<a>this</a>'s <a for=OpaqueRange>start offset</a>.
-
-<p>The {{AbstractRange/endOffset}} getter steps for {{OpaqueRange}} objects are to return
-<a>this</a>'s <a for=OpaqueRange>end offset</a>.
-
-<p>The {{AbstractRange/collapsed}} getter steps for {{OpaqueRange}} objects are to return true if
-<a>this</a>'s <a for=OpaqueRange>start offset</a> equals <a for=OpaqueRange>end offset</a>; otherwise
-false.
-
-<p>An {{Element}} <var>el</var> <dfn export id=supports-opaque-range>supports opaque ranges</dfn> if
-its specification defines that it does. In HTML, this includes certain {{HTMLInputElement}} types and
-{{HTMLTextAreaElement}}, whose opaque-range behavior is defined over their <code>value</code>. Other
-specifications may designate additional elements, including custom elements.
-
-<p>For an element <var>el</var> that <a>supports opaque ranges</a>, its
-<dfn export id=opaque-range-string>opaque range string</dfn> is a string defined by the relevant
-specification that represents the element's text for the purposes of opaque ranges. In HTML, this is
-typically the string exposed by the element's IDL <code>value</code> attribute. Offsets for
-{{OpaqueRange}} are indices into this string in the inclusive range [0, <code>string.length</code>].
-
-<p>An {{OpaqueRange}} is live. When the underlying opaque range string changes, the range's
-<a for=OpaqueRange>start offset</a> and <a for=OpaqueRange>end offset</a> are updated automatically
-to preserve the same logical content. These updates mirror {{Range}} boundary adjustment behavior,
-but operate on UTF-16 code unit indices of the host's string.
-
-<p class=note>Specifications that introduce elements that <a>support opaque ranges</a> specify how
-{{OpaqueRange}} objects are obtained, detached, and updated when the underlying opaque range string
-changes.
-
 
 <h2 id="traversal">Traversal</h2>
 
@@ -11249,7 +11172,6 @@ Elliott Sprehn,
 Emilio Cobos Álvarez,
 Eric Bidelman,
 Erik Arvidsson,
-Evgeny Kapun<!-- abacabadabacaba; GitHub -->,
 François Daoust<!-- tidoust; GitHub -->,
 François Remy<!-- FremyCompany; GitHub -->,
 Gary Kacmarcik,
