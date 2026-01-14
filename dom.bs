@@ -8499,9 +8499,9 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <pre class=idl>
 [Exposed=Window]
 interface AbstractRange {
-  readonly attribute Node startContainer;
+  readonly attribute Node? startContainer;
   readonly attribute unsigned long startOffset;
-  readonly attribute Node endContainer;
+  readonly attribute Node? endContainer;
   readonly attribute unsigned long endOffset;
   readonly attribute boolean collapsed;
 };
@@ -8524,18 +8524,26 @@ interface AbstractRange {
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
 
+<p class=note>Some ranges are not backed by the <a>node tree</a> (for example, {{OpaqueRange}}).
+For such ranges, {{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} are null, and
+offsets are interpreted as defined by the relevant specification (e.g., as indices into a host-defined
+string).
+
+<p class=note>For {{Range}} and {{StaticRange}} objects, {{AbstractRange/startContainer}} and
+{{AbstractRange/endContainer}} never return null.
+
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
 
 <dl class=domintro>
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>start node</a>.
+ <dd>Returns <var>range</var>'s <a for=range>start node</a>, or null.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>startOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start offset</a>.
 
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>endContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>end node</a>.
+ <dd>Returns <var>range</var>'s <a for=range>end node</a>, or null.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>endOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end offset</a>.
@@ -8546,13 +8554,13 @@ interface AbstractRange {
 
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start node</a>.
+getter steps are to return <a>this</a>'s <a for=range>start node</a>, or null.
 
 <p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
 
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end node</a>.
+getter steps are to return <a>this</a>'s <a for=range>end node</a>, or null.
 
 <p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
@@ -9892,143 +9900,76 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 [[CSSOM-VIEW]]
 
 
-<h3 id=interface-plaintext-range>Interface {{PlainTextRange}}</h3>
+<h3 id=interface-opaquerange>Interface {{OpaqueRange}}</h3>
 
 <pre class=idl>
 [Exposed=Window]
-interface PlainTextRange : AbstractRange {
+interface OpaqueRange : AbstractRange {
   DOMRectList getClientRects();
   DOMRect getBoundingClientRect();
-  stringifier;
 };
 </pre>
 
-<p>Objects implementing the {{PlainTextRange}} interface are known as {{PlainTextRange}} objects.</p>
+<p>Objects implementing the {{OpaqueRange}} interface are known as {{OpaqueRange}} objects.
 
 <dl class=domintro>
- <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{PlainTextRange/getClientRects()}}</code>
- <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the host's
- <a href="#plaintext-range-string">plain text range string</a>. If the range has no
- <a for=PlainTextRange>host</a>, is {{AbstractRange/collapsed}} with no visible caret, or the host
- has computed <code>display</code> of <code>none</code> or is not <a>connected</a>, returns an
- empty list.
- 
- <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{PlainTextRange/getBoundingClientRect()}}</code>
- <dd>Returns a {{DOMRect}} that is the union of the rectangles from
- {{PlainTextRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range in a visible host,
- returns a rectangle of zero width whose height equals the line height at the caret position. If the
- host has computed <code>display</code> of <code>none</code> or is not <a>connected</a>, returns a
- rectangle with zero width and height.
+ <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
+ <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the opaque
+ range string. If the user agent cannot compute geometry for the range (e.g. because the element it
+ was created from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>),
+ or if the range is {{AbstractRange/collapsed}} with no visible caret, returns an empty list.
+
+ <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{OpaqueRange/getBoundingClientRect()}}</code>
+ <dd>Returns a {{DOMRect}} that is the union of the rectangles from {{OpaqueRange/getClientRects()}}.
+ For a {{AbstractRange/collapsed}} range with a visible caret, returns a rectangle of zero width whose
+ height equals the line height at the caret position. If the user agent cannot compute geometry for the
+ range (e.g. because the element it was created from is not <a>connected</a> or has computed
+ <code>display</code> of <code>none</code>), returns a rectangle with zero width and height.
 </dl>
 
-<p>A {{PlainTextRange}} is a range whose <a>boundary points</a> are defined as offsets in a
-host-defined <a href="#plaintext-range-string">plain text range string</a> rather than in the
-<a>node tree</a>. It has no associated container node; its {{AbstractRange/startContainer}} and
-{{AbstractRange/endContainer}} getters return null, and its {{AbstractRange/startOffset}} and
-{{AbstractRange/endOffset}} getters return indices into that string.</p>
+<p>An {{OpaqueRange}} is a range whose endpoints are defined as offsets in a host-defined
+<a href="#opaque-range-string">opaque range string</a> rather than in the <a>node tree</a>. It is not
+backed by the <a>node tree</a> and therefore has no associated container nodes; its
+{{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters return null, and its
+{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} getters return indices into that string.
 
-<p>A {{PlainTextRange}} has associated state:</p>
-
-<ul>
- <li><p><dfn export for=PlainTextRange id=plaintext-range-host>host</dfn> (null or an
- {{Element}}).</p></li>
- <li><p><dfn export for=PlainTextRange id=plaintext-range-start>start offset</dfn> (a non-negative
- integer).</p></li>
- <li><p><dfn export for=PlainTextRange id=plaintext-range-end>end offset</dfn> (a non-negative
- integer).</p></li>
-</ul>
-
-<p>The {{AbstractRange/startContainer}} getter steps for {{PlainTextRange}} objects are to return
-null.</p>
-
-<p>The {{AbstractRange/endContainer}} getter steps for {{PlainTextRange}} objects are to return
-null.</p>
-
-<p>The {{AbstractRange/startOffset}} getter steps for {{PlainTextRange}} objects are to return
-<a>this</a>'s <a for=PlainTextRange>start offset</a>.</p>
-
-<p>The {{AbstractRange/endOffset}} getter steps for {{PlainTextRange}} objects are to return
-<a>this</a>'s <a for=PlainTextRange>end offset</a>.</p>
-
-<p>The {{AbstractRange/collapsed}} getter steps for {{PlainTextRange}} objects are to return true
-if <a>this</a>'s <a for=PlainTextRange>start offset</a> equals <a for=PlainTextRange>end
-offset</a>; otherwise false.</p>
-
-<p>An {{Element}} <var>el</var> <dfn export id=supports-plaintext-range>supports plain text
-ranges</dfn> if its specification defines that it does.</p>
-
-<p class=note>The HTML Standard defines that certain {{HTMLInputElement}} types and
-{{HTMLTextAreaElement}} support plain text ranges over their <code>value</code>. Other
-specifications may define additional elements, including custom elements, that support plain text
-ranges.</p>
-
-<p>For an element <var>el</var> that <a lt="supports plain text ranges">supports plain text
-ranges</a>, its <dfn export id=plaintext-range-string>plain text range string</dfn> is a
-specification-defined string that represents the linear editable text for that element. In HTML,
-this is typically the string exposed by the element's IDL <code>value</code> attribute. Offsets for
-{{PlainTextRange}} are indices into this <a href="#plaintext-range-string">plain text range
-string</a> in the inclusive range [0, <code>string.length</code>].</p>
-
-<p>When a {{PlainTextRange}} is created, its <a for=PlainTextRange>host</a> must be set to null and
-its <a for=PlainTextRange>start offset</a> and <a for=PlainTextRange>end offset</a> must be set to
-0.</p>
-
-<p>To <dfn export id=concept-plaintext-range-set>set a plain text range</dfn> for a
-{{PlainTextRange}} <var>range</var> over an {{Element}} <var>host</var> from
-<var>startOffset</var> to <var>endOffset</var>, run these steps:</p>
-
-<ol>
- <li><p>If <var>host</var> does not <a>support plain text ranges</a>, then <a>throw</a> a
- "{{NotSupportedError!!exception}}" {{DOMException}}.</p></li>
- <li><p>Let <var>string</var> be <var>host</var>'s <a href="#plaintext-range-string">plain text
- range string</a>. Let <var>len</var> be <var>string</var>'s <a for=string>length</a>.</p></li>
- <li><p>If <var>startOffset</var> &gt; <var>len</var> or <var>endOffset</var> &gt; <var>len</var>,
- then <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.</p></li>
- <li><p>If <var>startOffset</var> &gt; <var>endOffset</var>, then set <var>endOffset</var> to
- <var>startOffset</var>.</p></li>
- <li><p>Set <var>range</var>'s <a for=PlainTextRange>host</a> to <var>host</var>, its
- <a for=PlainTextRange>start offset</a> to <var>startOffset</var>, and its
- <a for=PlainTextRange>end offset</a> to <var>endOffset</var>.</p></li>
-</ol>
-
-<p>A {{PlainTextRange}} is live: when its host's <a href="#plaintext-range-string">plain text range
-string</a> changes, the range's <a for=PlainTextRange>start offset</a> and <a
-for=PlainTextRange>end offset</a> are updated automatically to preserve the same logical content.
-These behaviors mirror {{Range}} boundary adjustments in the DOM but are applied to the UTF-16 code
-units of the host's string.</p>
+<p>An {{OpaqueRange}} has associated state:
 
 <ul>
- <li><p>Edits before the range: Offsets shift by the net length change.</p></li>
- <li><p>Edits after the range: Offsets remain unchanged.</p></li>
- <li><p>Edits overlapping the range: If a boundary falls inside text that was removed, move it to
- the start of the change. If the edit also inserted new text, remap the boundary into the inserted
- span at the closest corresponding offset, not exceeding its end.</p></li>
- <li><p>Insertion at the start boundary: A non-{{AbstractRange/collapsed}} range expands to include
- the new text. A collapsed range moves after the insertion.</p></li>
- <li><p>Insertion at the end boundary: A non-collapsed range does not expand to include the new
- text. A collapsed range moves after the insertion.</p></li>
- <li><p>Clamping and collapse: Offsets are clamped to the current string length. If the
- {{AbstractRange/startOffset}} would exceed the {{AbstractRange/endOffset}}, set the end to the
- start.</p></li>
+ <li><p><dfn export for=OpaqueRange id=opaque-range-start>start offset</dfn> (a non-negative integer).
+
+ <li><p><dfn export for=OpaqueRange id=opaque-range-end>end offset</dfn> (a non-negative integer).
 </ul>
 
-<p class=note>Specifications that define elements which <a>support plain text ranges</a> (such as
-the HTML Standard for text controls) must normatively define when a {{PlainTextRange}} is created,
-how it is associated with a host, when its host becomes null, and when its boundary points are
-updated using the rules above.</p>
+<p>The {{AbstractRange/startOffset}} getter steps for {{OpaqueRange}} objects are to return
+<a>this</a>'s <a for=OpaqueRange>start offset</a>.
 
-<p>The <dfn export for=PlainTextRange id=dom-plaintext-range-stringifier>stringification
-behavior</dfn> must run these steps:</p>
+<p>The {{AbstractRange/endOffset}} getter steps for {{OpaqueRange}} objects are to return
+<a>this</a>'s <a for=OpaqueRange>end offset</a>.
 
-<ol>
- <li><p>If <a>this</a>'s <a for=PlainTextRange>host</a> is null, then return the empty
- string.</p></li>
- <li><p>Let <var>string</var> be <a>this</a>'s <a for=PlainTextRange>host</a>'s
- <a href="#plaintext-range-string">plain text range string</a>.</p></li>
- <li><p>Let <var>start</var> be <a>this</a>'s <a for=PlainTextRange>start offset</a>, and let
- <var>end</var> be <a for=PlainTextRange>end offset</a>.</p></li>
- <li><p>Return the substring of <var>string</var> from <var>start</var> to <var>end</var>.</p></li>
-</ol>
+<p>The {{AbstractRange/collapsed}} getter steps for {{OpaqueRange}} objects are to return true if
+<a>this</a>'s <a for=OpaqueRange>start offset</a> equals <a for=OpaqueRange>end offset</a>; otherwise
+false.
+
+<p>An {{Element}} <var>el</var> <dfn export id=supports-opaque-range>supports opaque ranges</dfn> if
+its specification defines that it does. In HTML, this includes certain {{HTMLInputElement}} types and
+{{HTMLTextAreaElement}}, whose opaque-range behavior is defined over their <code>value</code>. Other
+specifications may designate additional elements, including custom elements.
+
+<p>For an element <var>el</var> that <a>supports opaque ranges</a>, its
+<dfn export id=opaque-range-string>opaque range string</dfn> is a string defined by the relevant
+specification that represents the element's text for the purposes of opaque ranges. In HTML, this is
+typically the string exposed by the element's IDL <code>value</code> attribute. Offsets for
+{{OpaqueRange}} are indices into this string in the inclusive range [0, <code>string.length</code>].
+
+<p>An {{OpaqueRange}} is live. When the underlying opaque range string changes, the range's
+<a for=OpaqueRange>start offset</a> and <a for=OpaqueRange>end offset</a> are updated automatically
+to preserve the same logical content. These updates mirror {{Range}} boundary adjustment behavior,
+but operate on UTF-16 code unit indices of the host's string.
+
+<p class=note>Specifications that introduce elements that <a>support opaque ranges</a> specify how
+{{OpaqueRange}} objects are obtained, detached, and updated when the underlying opaque range string
+changes.
 
 
 <h2 id="traversal">Traversal</h2>
