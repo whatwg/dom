@@ -4421,6 +4421,7 @@ interface Node : EventTarget {
   const unsigned short DOCUMENT_TYPE_NODE = 10;
   const unsigned short DOCUMENT_FRAGMENT_NODE = 11;
   const unsigned short NOTATION_NODE = 12; // legacy
+  const unsigned short MARKER_NODE = 13;
   readonly attribute unsigned short nodeType;
   readonly attribute DOMString nodeName;
 
@@ -4520,6 +4521,9 @@ get a direct instance of it.
 
    <dt>{{DocumentFragment}}
    <dd><code>{{Node}} . {{Node/DOCUMENT_FRAGMENT_NODE}}</code> (11).
+
+   <dt>{{Marker}}
+   <dd><code>{{Node}} . {{Node/MARKER_NODE}}</code> (13).
   </dl>
 
  <dt><code><var>node</var> . {{Node/nodeName}}</code>
@@ -4586,6 +4590,9 @@ statement, switching on the interface <a>this</a> <a>implements</a>:
 
  <dt>{{DocumentFragment}}
  <dd><dfn const for=Node>DOCUMENT_FRAGMENT_NODE</dfn> (11).
+
+ <dt>{{Marker}}
+ <dd><dfn const for=Node>MARKER_NODE</dfn> (13).
 </dl>
 
 <p>The <dfn attribute for=Node>nodeName</dfn> getter steps are to return the first matching
@@ -8548,6 +8555,42 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
 </div>
+
+
+<h3 id=interface-marker>Interface {{Marker}}</h3>
+
+<pre class=idl>
+enum MarkerType { "marker", "start", "end" };
+
+[Exposed=Window]
+interface Marker : Node {
+  constructor(MarkerType type, optional DOMString name = "");
+
+  readonly attribute MarkerType type;
+  readonly attribute DOMString name;
+};
+</pre>
+
+<dl class=domintro>
+ <dt><code><var ignore>marker</var> = new <a constructor lt="Marker()">Marker(<var>type</var> [, <var>name</var> = ""])</a></code>
+ <dd>Returns a new {{Marker}} <a for=/>node</a> whose <a for=Marker>type</a> is <var>type</var> and
+ <a for=Marker>name</a> is <var>name</var>.
+</dl>
+
+<p>{{Marker}} <a for=/>nodes</a> are simply known as
+<dfn export id=concept-marker lt="marker">markers</dfn>.
+
+<p><a>Markers</a> have an associated
+<dfn export id=concept-marker-type for=Marker>type</dfn> and
+<dfn export id=concept-marker-name for=Marker>name</dfn>.
+
+<div algorithm>
+<p>The <dfn constructor for=Marker lt="Marker(type)"><code>new Marker(<var>type</var>, <var>name</var>)</code></dfn>
+constructor steps are to set <a>this</a>'s <a for=Marker>type</a> to <var>type</var>, <a>this</a>'s
+<a for=Marker>name</a> to <var>name</var>, and <a>this</a>'s <a for=Node>node document</a> to
+<a>current global object</a>'s <a>associated <code>Document</code></a>.
+</div>
+
 
 
 
