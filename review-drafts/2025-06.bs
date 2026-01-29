@@ -1,13 +1,14 @@
 <pre class=metadata>
 Group: WHATWG
+Status: RD
+Date: 2025-06-16
 H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
-Text Macro: LATESTRD 2025-12
+Text Macro: LATESTRD 2025-06
 Abstract: DOM defines a platform-neutral model for events, aborting activities, and node trees.
 Translation: ja https://triple-underscore.github.io/DOM4-ja.html
 Translation: zh-Hans https://htmlspecs.com/dom/
-Translation: ko https://ko.htmlspecs.com/dom/
 Translate IDs: slottable slotable
 Indent: 1
 </pre>
@@ -50,11 +51,9 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
-<cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and <cite>Namespaces in XML</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
-[[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
@@ -136,7 +135,6 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 
 <h3 id="ordered-sets">Ordered sets</h3>
 
-<div algorithm>
 <p>The <dfn export id=concept-ordered-set-parser>ordered set parser</dfn> takes a string
 <var>input</var> and then runs these steps:
 
@@ -146,60 +144,51 @@ first <a>following</a> <a for=tree>sibling</a> or null if it has no <a for=tree>
 
  <li><p>Let <var>tokens</var> be a new <a>ordered set</a>.
 
- <li><p><a for=list>For each</a> <var>token</var> of <var>inputTokens</var>: <a for=set>append</a>
+ <li><p><a for=list>For each</a> <var>token</var> of <var>inputTokens</var>, <a for=set>append</a>
  <var>token</var> to <var>tokens</var>.
 
  <li>Return <var>tokens</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn export id=concept-ordered-set-serializer>ordered set serializer</dfn> takes a
 <var>set</var> and returns the <a for=string>concatenation</a> of <var>set</var> using U+0020 SPACE.
-</div>
 
 
 <h3 id=selectors>Selectors</h3>
 
-<div algorithm>
-<p>To <dfn export>scope-match a selectors string</dfn> given a string <var>selectors</var> against a
-<a for=/>node</a> <var>node</var>:
+<p>To <dfn export>scope-match a selectors string</dfn> <var>selectors</var> against a
+<var>node</var>, run these steps:
 
 <ol>
- <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> <var>selectors</var>.
+ <li><p>Let <var>s</var> be the result of <a>parse a selector</a> <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
- <li><p>Return the result of <a>match a selector against a tree</a> with <var>selector</var> and
+ <li><p>Return the result of <a>match a selector against a tree</a> with <var>s</var> and
  <var>node</var>'s <a for=tree>root</a> using <a>scoping root</a> <var>node</var>. [[!SELECTORS4]].
 </ol>
-</div>
 
-<p class=note>Support for namespaces within selectors is not planned and will not be added.
+<p class=note>Support for namespaces within selectors is not planned and will not be
+added.
 
 
 <h3 id=namespaces>Name validation</h3>
 
-<div algorithm>
 <p>A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
 does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
-</div>
 
-<div algorithm>
 <p>A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1
 and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
-</div>
 
-<div algorithm>
 <p>A [=string=] |name| is a <dfn>valid element local name</dfn> if the following steps return true:
 
 <ol>
  <li><p>If |name|'s [=string/length=] is 0, then return false.
 
  <li>
-  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=]:
+  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=], then:
 
   <ol>
    <li><p>If |name| contains [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>), then
@@ -217,7 +206,6 @@ and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=
 
  <li><p>Return true.
 </ol>
-</div>
 
 <p class=note>This concept is used to validate [=/element=] [=Element/local names=], when
 constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
@@ -239,7 +227,6 @@ U+0000 NULL, or U+003E (>).
 
 <p class="note">The empty string is a [=valid doctype name=].
 
-<div algorithm>
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
 
@@ -260,12 +247,10 @@ U+0000 NULL, or U+003E (>).
    <li><p>Set <var>prefix</var> to <var>splitResult</var>[0].
 
    <li><p>Set <var>localName</var> to <var>splitResult</var>[1].
-
-   <li><p>If <var>prefix</var> is not a [=valid namespace prefix=], then [=throw=] an
-   "{{InvalidCharacterError}}" {{DOMException}}.
   </ol>
 
- <li><p><a for=/>Assert</a>: <var>prefix</var> is either null or a [=valid namespace prefix=].
+ <li><p>If <var>prefix</var> is not a [=valid namespace prefix=], then [=throw=] an
+ "{{InvalidCharacterError}}" {{DOMException}}.
 
  <li><p>If <var>context</var> is "<code>attribute</code>" and <var>localName</var> is not a
  [=valid attribute local name=], then [=throw=] an "{{InvalidCharacterError}}" {{DOMException}}.
@@ -289,7 +274,6 @@ U+0000 NULL, or U+003E (>).
 
  <li><p>Return (<var>namespace</var>, <var>prefix</var>, <var>localName</var>).
 </ol>
-</div>
 
 <div class="note">
  <p>Various APIs in this specification used to validate namespace prefixes, attribute local names,
@@ -975,7 +959,7 @@ correct defaults.</p>
  <a>relative high resolution coarse time</a> given <var>time</var> and <var>event</var>'s
  <a>relevant global object</a>.
 
- <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> of <var>dictionary</var>: if
+ <li><p><a for=map>For each</a> <var>member</var> → <var>value</var> of <var>dictionary</var>, if
  <var>event</var> has an attribute whose <a spec=webidl>identifier</a> is <var>member</var>, then
  initialize that attribute to <var>value</var>.
 
@@ -1209,7 +1193,7 @@ participate in a tree structure.</p>
  <a>service worker events</a>, then <a>report a warning to the console</a> that this might not give
  the expected results. [[!SERVICE-WORKERS]]
 
- <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is non-null and is
+ <li><p>If <var>listener</var>'s <a for="event listener">signal</a> is not null and is
  [=AbortSignal/aborted=], then return.
 
  <li><p>If <var>listener</var>'s <a for="event listener">callback</a> is null, then return.
@@ -1226,7 +1210,7 @@ participate in a tree structure.</p>
  <var>listener</var> to <var>eventTarget</var>'s <a>event listener list</a>.
 
  <li>
-  <p>If <var>listener</var>'s <a for="event listener">signal</a> is non-null, then
+  <p>If <var>listener</var>'s <a for="event listener">signal</a> is not null, then
   <a for=AbortSignal lt=add>add the following</a> abort steps to it:
 
   <ol>
@@ -1276,8 +1260,8 @@ method steps are:
 
 <div algorithm>
 <p>To <dfn export>remove all event listeners</dfn>, given an {{EventTarget}} object
-<var>eventTarget</var>: <a for=list>for each</a> <var>listener</var> of <var>eventTarget</var>'s
-<a for=EventTarget>event listener list</a>: <a>remove an event listener</a> with
+<var>eventTarget</var>, <a for=list>for each</a> <var>listener</var> of <var>eventTarget</var>'s
+<a for=EventTarget>event listener list</a>, <a>remove an event listener</a> with
 <var>eventTarget</var> and <var>listener</var>.
 
 <p class=note>HTML needs this to define <code>document.open()</code>. [[HTML]]
@@ -1349,10 +1333,14 @@ property of the event being dispatched.
  <li><p>Let <var>callbacks</var> be « ».
 
  <li><p><a for=list>For each</a> <var>listener</var> of <var>global</var>'s
- <a>event listener list</a>: if <var>listener</var>'s <a for="event listener">type</a> is
- "<code>fetch</code>" and <var>listener</var>'s <a for="event listener">callback</a> is non-null,
- then <a for=list>append</a> <var>listener</var>'s <a for="event listener">callback</a> to
- <var>callbacks</var>.
+ <a>event listener list</a>:
+
+ <ol>
+  <li><p>If <var>listener</var>'s <a for="event listener">type</a> is "<code>fetch</code>", and
+  <var>listener</var>'s <a for="event listener">callback</a> is not null, then
+  <a for=list>append</a> <var>listener</var>'s <a for="event listener">callback</a> to
+  <var>callbacks</var>.
+ </ol>
 
  <li><p>Return <var>callbacks</var>.
 </ol>
@@ -1392,7 +1380,7 @@ property of the event being dispatched.
    <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
    <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
-   <a for=Event>touch target list</a>: <a for=list>append</a> the result of <a>retargeting</a>
+   <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
    <var>touchTarget</var> against <var>target</var> to <var>touchTargets</var>.
 
    <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
@@ -1439,7 +1427,7 @@ property of the event being dispatched.
      <li><p>Let <var>touchTargets</var> be a new <a for=/>list</a>.
 
      <li><p><a for=list>For each</a> <var>touchTarget</var> of <var>event</var>'s
-     <a for=Event>touch target list</a>: <a for=list>append</a> the result of <a>retargeting</a>
+     <a for=Event>touch target list</a>, <a for=list>append</a> the result of <a>retargeting</a>
      <var>touchTarget</var> against <var>parent</var> to <var>touchTargets</var>.
 
      <li>
@@ -2653,7 +2641,7 @@ boolean <var>open</var> (default false):
 
  <li><p>Set <var>slot</var>'s <a for=slot>assigned nodes</a> to <var>slottables</var>.
 
- <li><p>For each <var>slottable</var> of <var>slottables</var>: set <var>slottable</var>'s
+ <li><p>For each <var>slottable</var> of <var>slottables</var>, set <var>slottable</var>'s
  <a>assigned slot</a> to <var>slot</var>.
 </ol>
 </div>
@@ -2693,9 +2681,8 @@ boolean <var>open</var> (default false):
 
 <h4 id=mutation-algorithms>Mutation algorithms</h4>
 
-<div algorithm>
 <p>To <dfn id=concept-node-ensure-pre-insertion-validity>ensure pre-insert validity</dfn> of a
-<a for=/>node</a> <var>node</var> into a <a for=/>node</a> <var>parent</var> before null or a
+<a for=/>node</a> <var>node</var> into a <a for=/>node</a> <var>parent</var> before a
 <a for=/>node</a> <var>child</var>:
 
 <ol>
@@ -2745,11 +2732,9 @@ boolean <var>open</var> (default false):
    and <var>parent</var> has an <a for=/>element</a> <a for=tree>child</a>.
   </dl>
 </ol>
-</div>
 
-<div algorithm>
-<p>To <dfn export id=concept-node-pre-insert>pre-insert</dfn> a <a for=/>node</a> <var>node</var>
-into a <a for=/>node</a> <var>parent</var> before null or <a for=/>node</a> <var>child</var>:
+<p>To <dfn export id=concept-node-pre-insert>pre-insert</dfn> a <var>node</var> into a
+<var>parent</var> before a <var>child</var>, run these steps:
 
 <ol>
  <li><p><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
@@ -2765,9 +2750,7 @@ into a <a for=/>node</a> <var>parent</var> before null or <a for=/>node</a> <var
  <li><p>Return <var>node</var>.
  <!-- Technically this is post-insert. -->
 </ol>
-</div>
 
-<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-insert-ext>insertion steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed <var>insertedNode</var>, as indicated in the <a for=/>insert</a> algorithm
@@ -2775,7 +2758,6 @@ below. These steps must not modify the <a>node tree</a> that <var>insertedNode</
 <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may
 [=queue a global task|queue tasks=] to do these things asynchronously, however.
-</div>
 
 <div class=example id=example-foo-what-do-i-put-here>
  <p>While the <a>insertion steps</a> cannot execute JavaScript (among other things), they will
@@ -2821,7 +2803,6 @@ below. These steps must not modify the <a>node tree</a> that <var>insertedNode</
      adjust this further based on the requirements of the script element. There might be other ways
      to define that though as Olli suggests, so leaving that out for now. -->
 
-<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may also define
 <dfn export id=concept-node-post-connection-ext>post-connection steps</dfn> for all or some
 <a for=/>nodes</a>. The algorithm is passed <var ignore>connectedNode</var>, as indicated in the
@@ -2834,19 +2815,14 @@ or otherwise execute JavaScript. These steps allow a batch of <a>nodes</a> to be
 <a for=/>inserted</a> <em>atomically</em> with respect to script, with all major side effects
 occurring <em>after</em> the batch insertions into the <a>node tree</a> is complete. This ensures
 that all pending <a>node tree</a> insertions completely finish before more insertions can occur.
-</div>
 
-<div algorithm>
 <p><a lt="other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
 <a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a>,
 <a for=/>remove</a>, and <a for=/>replace data</a>.
-</div>
 
-<div algorithm=insert>
-<p>To <dfn export id=concept-node-insert>insert</dfn> a <a for=/>node</a> <var>node</var> into a
-<a for=/>node</a> <var>parent</var> before null or a <a for=/>node</a> <var>child</var>, with an
-optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default false):
+<p>To <dfn export id=concept-node-insert>insert</dfn> a <var>node</var> into a <var>parent</var>
+before a <var>child</var>, with an optional <i>suppress observers flag</i>, run these steps:
 
 <ol>
  <li><p>Let <var>nodes</var> be <var>node</var>'s <a for=tree>children</a>, if <var>node</var> is a
@@ -2860,14 +2836,15 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
   <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a>:
 
   <ol>
-   <li><p><a for=/>Remove</a> its <a for=tree>children</a> with
-   <a for=remove><i>suppressObservers</i></a> set to true.
+   <li><p><a for=/>Remove</a> its <a for=tree>children</a> with the <i>suppress observers flag</i>
+   set.
 
    <li>
     <p><a>Queue a tree mutation record</a> for <var>node</var> with « », <var>nodes</var>, null, and
     null.
 
-    <p class=note>This step intentionally does not pay attention to <var>suppressObservers</var>.
+    <p class=note>This step intentionally does not pay attention to the
+    <i>suppress observers flag</i>.
   </ol>
 
  <li>
@@ -2875,11 +2852,11 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
 
   <ol>
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>start offset</a> by <var>count</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>end offset</a> by <var>count</var>.
   </ol>
 
@@ -2919,13 +2896,17 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
      <a for=iteration>continue</a>.
 
      <li>
-      <p>If <var>inclusiveDescendant</var> is an <a for=/>element</a> and
-      <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is non-null:
+      <p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>:
 
       <ol>
-       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
-       <a for=CustomElementRegistry>is scoped</a> is true, then <a for=set>append</a>
-       <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
+       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is
+       null, then set <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> to
+       the result of <a for=/>looking up a custom element registry</a> given
+       <var>inclusiveDescendant</var>'s <a for=tree>parent</a>.
+
+       <li><p>Otherwise, if <var>inclusiveDescendant</var>'s
+       <a for=Element>custom element registry</a>'s <a for=CustomElementRegistry>is scoped</a> is
+       true, <a for=set>append</a> <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
        <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
        <a for=CustomElementRegistry>scoped document set</a>.
 
@@ -2942,17 +2923,29 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
         <a>upgrade an element</a> algorithm.
       </ol>
 
-     <li><p>Otherwise, if <var>inclusiveDescendant</var> is a <a for=/>shadow root</a>,
-     <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is non-null, and
-     <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>'s
-     <a for=CustomElementRegistry>is scoped</a> is true, then <a for=set>append</a>
-     <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
-     <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>'s
-     <a for=CustomElementRegistry>scoped document set</a>.
+     <li>
+      <p>Otherwise, if <var>inclusiveDescendant</var> is a <a for=/>shadow root</a>:
+
+      <ol>
+       <li><p>If <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is
+       null and <var>inclusiveDescendant</var>'s
+       <a for=ShadowRoot>keep custom element registry null</a> is false, then set
+       <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to the result
+       of <a for=/>looking up a custom element registry</a> given <var>inclusiveDescendant</var>'s
+       <a for=DocumentFragment>host</a>.
+
+       <li><p>Otherwise, if <var>inclusiveDescendant</var>'s
+       <a for=ShadowRoot>custom element registry</a> is non-null and
+       <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>'s
+       <a for=CustomElementRegistry>is scoped</a> is true, <a for=set>append</a>
+       <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
+       <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>'s
+       <a for=CustomElementRegistry>scoped document set</a>.
+      </ol>
     </ol>
   </ol>
 
- <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
+ <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
@@ -2973,38 +2966,28 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
 
   <ol>
    <li><p>For each <a>shadow-including inclusive descendant</a> <var>inclusiveDescendant</var> of
-   <var>node</var>, in <a>shadow-including tree order</a>: <a for=list>append</a>
+   <var>node</var>, in <a>shadow-including tree order</a>, <a for=list>append</a>
    <var>inclusiveDescendant</var> to <var>staticNodeList</var>.
   </ol>
  </li>
 
- <li><p><a for=list>For each</a> <var>node</var> of <var>staticNodeList</var>: if <var>node</var> is
+ <li><p><a for=list>For each</a> <var>node</var> of <var>staticNodeList</var>, if <var>node</var> is
  <a>connected</a>, then run the <a>post-connection steps</a> with <var>node</var>.
 </ol>
-</div>
 
-<div algorithm>
-<p>To <dfn export id=concept-node-append>append</dfn> a <a for=/>node</a> <var>node</var> to a
-<a for=/>node</a> <var>parent</var>: <a>pre-insert</a> <var>node</var> into <var>parent</var> before
-null.
-</div>
 
-<hr>
-
-<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-move-ext>moving steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed a <a for=/>node</a> <var>movedNode</var>, and a <a for=/>node</a>-or-null
+algorithm is passed a <a for=/>node</a> <var ignore>movedNode</var>, and a <a for=/>node</a>-or-null
 <var ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below. Like the
 <a>insertion steps</a>, these steps must not modify the <a>node tree</a> that
 <var>movedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may queue tasks
 to do these things asynchronously, however.
-</div>
 
-<div algorithm>
+
 <p>To <dfn>move</dfn> a <a for=/>node</a> <var>node</var> into a <a for=/>node</a>
-<var>newParent</var> before null or a <a for=/>node</a> <var>child</var>:
+<var>newParent</var> before a <a for=/>node</a>-or-null <var>child</var>:
 
 <ol>
  <!-- Start pre-move validity checks -->
@@ -3044,7 +3027,7 @@ to do these things asynchronously, however.
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
- <a for=Node>node document</a>: run the <a><code>NodeIterator</code> pre-remove steps</a> given
+ <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-remove steps</a> given
  <var>node</var> and <var>iterator</var>.
 
  <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
@@ -3075,11 +3058,11 @@ to do these things asynchronously, however.
 
   <ol>
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>newParent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
+   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>start offset</a> by 1.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>newParent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
+   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>, increase
    its <a for=range>end offset</a> by 1.
   </ol>
 
@@ -3129,13 +3112,14 @@ to do these things asynchronously, however.
  <li><p><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
  <var>newPreviousSibling</var>, and <var>child</var>.</p></li>
 </ol>
-</div>
 
-<hr>
 
-<div algorithm>
-<p>To <dfn export id=concept-node-replace>replace</dfn> a <a for=/>node</a> <var>child</var> with
-a <a for=/>node</a> <var>node</var> within a <a for=/>node</a> <var>parent</var>:
+<p>To <dfn export id=concept-node-append>append</dfn> a <var>node</var> to a <var>parent</var>,
+<a>pre-insert</a> <var>node</var> into <var>parent</var> before null.
+
+
+<p>To <dfn export id=concept-node-replace>replace</dfn> a <var>child</var> with <var>node</var>
+within a <var>parent</var>, run these steps:
 
 <!-- Step 1-5 could be shared with concept-node-pre-insert, although step 3
      in pre-insert is a superset (which is fine). Step 6.1.1 could also be
@@ -3200,8 +3184,7 @@ a <a for=/>node</a> <var>node</var> within a <a for=/>node</a> <var>parent</var>
   <ol>
    <li><p>Set <var>removedNodes</var> to « <var>child</var> ».
 
-   <li><p><a for=/>Remove</a> <var>child</var> with <a for=remove><i>suppressObservers</i></a> set
-   to true.
+   <li><p><a for=/>Remove</a> <var>child</var> with the <i>suppress observers flag</i> set.
   </ol>
 
   <p class=note>The above can only be false if <var>child</var> is <var>node</var>.
@@ -3212,18 +3195,17 @@ a <a for=/>node</a> <var>node</var> within a <a for=/>node</a> <var>parent</var>
       DocumentFragment node. -->
 
  <li><p><a for=/>Insert</a> <var>node</var> into <var>parent</var> before <var>referenceChild</var>
- with <a for=insert><i>suppressObservers</i></a> set to true.
+ with the <i>suppress observers flag</i> set.
 
  <li><p><a>Queue a tree mutation record</a> for <var>parent</var> with <var>nodes</var>,
  <var>removedNodes</var>, <var>previousSibling</var>, and <var>referenceChild</var>.
 
  <li><p>Return <var>child</var>.
 </ol>
-</div>
 
-<div algorithm>
-<p>To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a <a for=/>node</a> or
-null <var>node</var> within a <a for=/>node</a> <var>parent</var>:
+
+<p>To <dfn export for=Node id=concept-node-replace-all>replace all</dfn> with a <var>node</var>
+within a <var>parent</var>, run these steps:
 
 <ol>
  <li><p>Let <var>removedNodes</var> be <var>parent</var>'s <a for=tree>children</a>.
@@ -3236,10 +3218,10 @@ null <var>node</var> within a <a for=/>node</a> <var>parent</var>:
  <li><p>Otherwise, if <var>node</var> is non-null, set <var>addedNodes</var> to « <var>node</var> ».
 
  <li><p><a for=/>Remove</a> all <var>parent</var>'s <a for=tree>children</a>, in <a>tree order</a>,
- with <a for=remove><i>suppressObservers</i></a> set to true.
+ with the <i>suppress observers flag</i> set.
 
  <li><p>If <var>node</var> is non-null, then <a for=/>insert</a> <var>node</var> into
- <var>parent</var> before null with <a for=insert><i>suppressObservers</i></a> set to true.
+ <var>parent</var> before null with the <i>suppress observers flag</i> set.
 
  <li><p>If either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>,
  then <a>queue a tree mutation record</a> for <var>parent</var> with <var>addedNodes</var>,
@@ -3248,13 +3230,10 @@ null <var>node</var> within a <a for=/>node</a> <var>parent</var>:
 
 <p class=note>This algorithm does not make any checks with regards to the
 <a>node tree</a> constraints. Specification authors need to use it wisely.
-</div>
 
-<hr>
 
-<div algorithm>
-<p>To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <a for=/>node</a> <var>child</var>
-from a <a for=/>node</a> <var>parent</var>:
+<p>To <dfn export id=concept-node-pre-remove>pre-remove</dfn> a <var>child</var> from a
+<var>parent</var>, run these steps:
 
 <ol>
  <li><p>If <var>child</var>'s <a for=tree>parent</a> is not <var>parent</var>, then <a>throw</a> a
@@ -3265,19 +3244,16 @@ from a <a for=/>node</a> <var>parent</var>:
  <li><p>Return <var>child</var>.
  <!-- Technically this is post-remove. -->
 </ol>
-</div>
 
-<div algorithm>
+
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-remove-ext>removing steps</dfn> for all or some <a for=/>nodes</a>. The
 algorithm is passed a <a for=/>node</a> <var ignore>removedNode</var> and a
 <a for=/>node</a>-or-null <var ignore>oldParent</var>, as indicated in the <a for=/>remove</a>
 algorithm below.
-</div>
 
-<div algorithm=remove>
 <p>To <dfn export id=concept-node-remove>remove</dfn> a <a for=/>node</a> <var>node</var>, with an
-optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default false):
+optional <i>suppress observers flag</i>, run these steps:
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -3288,7 +3264,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
- <a for=Node>node document</a>: run the <a><code>NodeIterator</code> pre-remove steps</a> given
+ <a for=Node>node document</a>, run the <a><code>NodeIterator</code> pre-remove steps</a> given
  <var>node</var> and <var>iterator</var>.
 
  <li><p>Let <var>oldPreviousSibling</var> be <var>node</var>'s <a>previous sibling</a>.
@@ -3349,13 +3325,12 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
  <a for="transient registered observer">source</a> is <var>registered</var> to <var>node</var>'s
  <a>registered observer list</a>.
 
- <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
+ <li><p>If <i>suppress observers flag</i> is unset, then <a>queue a tree mutation record</a> for
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
-</div>
 
 
 <h4 id=interface-nonelementparentnode>Mixin {{NonElementParentNode}}</h4>
@@ -3377,12 +3352,10 @@ DocumentFragment includes NonElementParentNode;
  whose <a for=Element>ID</a> is <var>elementId</var>.
 </dl>
 
-<div algorithm>
 <p>The <dfn method for=NonElementParentNode><code>getElementById(<var>elementId</var>)</code></dfn>
 method steps are to return the first <a for=/>element</a>, in <a>tree order</a>, within
 <a>this</a>'s <a for=tree>descendants</a>, whose <a for=Element>ID</a> is <var>elementId</var>;
 otherwise, if there is no such <a for=/>element</a>, null.
-</div>
 
 
 <h4 id=mixin-documentorshadowroot>Mixin {{DocumentOrShadowRoot}}</h4>
@@ -3401,7 +3374,6 @@ ShadowRoot includes DocumentOrShadowRoot;
  otherwise null.
 </dl>
 
-<div algorithm>
 <p>The <dfn attribute for=DocumentOrShadowRoot><code>customElementRegistry</code></dfn> getter steps
 are:
 
@@ -3413,7 +3385,6 @@ are:
 
  <li><p>Return <a>this</a>'s <a for=ShadowRoot>custom element registry</a>.
 </ol>
-</div>
 
 <p class=note>The {{DocumentOrShadowRoot}} mixin is also expected to be used by other
 standards that want to define APIs shared between <a for=/>documents</a> and
@@ -3422,26 +3393,25 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 
 <h4 id=interface-parentnode>Mixin {{ParentNode}}</h4>
 
-<div algorithm>
-<p>To <dfn>convert nodes into a node</dfn>, given a <a for=/>list</a> of <a for=/>nodes</a> and
-strings <var>nodes</var>, and <a for=/>document</a> <var>document</var>:
+<p>To <dfn export lt="converting nodes into a node">convert nodes into a node</dfn>, given
+<var>nodes</var> and <var>document</var>, run these steps:
 
 <ol>
- <li><p>Replace each string of <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
+ <li><p>Let <var>node</var> be null.
+
+ <li><p>Replace each string in <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
  <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
  <var>document</var>.
 
- <li><p>If <var>nodes</var>'s <a for=list>size</a> is 1, then return <var>nodes</var>[0].
+ <li><p>If <var>nodes</var> contains one <a for=/>node</a>, then set <var>node</var> to
+ <var>nodes</var>[0].
 
- <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>document</var>.
+ <li><p>Otherwise, set <var>node</var> to a new {{DocumentFragment}} <a for=/>node</a> whose
+ <a for=Node>node document</a> is <var>document</var>, and then <a>append</a> each <a for=/>node</a>
+ in <var>nodes</var>, if any, to it.
 
- <li><p>For each <var>node</var> of <var>nodes</var>: <a>append</a> <var>node</var> to
- <var>fragment</var>.
-
- <li><p>Return <var>fragment</var>.
+ <li><p>Return <var>node</var>.
 </ol>
-</div>
 
 <pre class=idl>
 interface mixin ParentNode {
@@ -3523,28 +3493,19 @@ Element includes ParentNode;
  <var>selectors</var>.
 </dl>
 
-<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>children</code></dfn> getter steps are to return an
 {{HTMLCollection}} <a>collection</a> rooted at <a>this</a> matching only <a for=/>element</a>
 <a for=tree>children</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>firstElementChild</code></dfn> getter steps are to return
 the first <a for=tree>child</a> that is an <a for=/>element</a>; otherwise null.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>lastElementChild</code></dfn> getter steps are to return
 the last <a for=tree>child</a> that is an <a for=/>element</a>; otherwise null.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=ParentNode><code>childElementCount</code></dfn> getter steps are to return
 the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>prepend(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3554,9 +3515,7 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
  <li><p><a>Pre-insert</a> <var>node</var> into <a>this</a> before <a>this</a>'s
  <a for=tree>first child</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>append(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3565,9 +3524,7 @@ the number of <a for=tree>children</a> of <a>this</a> that are <a for=/>elements
 
  <li><p><a>Append</a> <var>node</var> to <a>this</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>replaceChildren(<var>nodes</var>)</code></dfn> method steps
 are:
 
@@ -3579,9 +3536,7 @@ are:
 
  <li><p><a for=Node>Replace all</a> with <var>node</var> within <a>this</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>moveBefore(<var>node</var>, <var>child</var>)</code></dfn>
 method steps are:
 
@@ -3593,19 +3548,14 @@ method steps are:
 
  <li><p><a for=/>Move</a> <var>node</var> into <a>this</a> before <var>referenceChild</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>querySelector(<var>selectors</var>)</code></dfn> method
 steps are to return the first result of running <a>scope-match a selectors string</a>
 <var>selectors</var> against <a>this</a>, if the result is not an empty list; otherwise null.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ParentNode><code>querySelectorAll(<var>selectors</var>)</code></dfn> method
 steps are to return the <a lt="static collection">static</a> result of running
 <a>scope-match a selectors string</a> <var>selectors</var> against <a>this</a>.
-</div>
 
 
 <h4 id=interface-nondocumenttypechildnode>Mixin {{NonDocumentTypeChildNode}}</h4>
@@ -3633,17 +3583,13 @@ CharacterData includes NonDocumentTypeChildNode;
  otherwise null.
 </dl>
 
-<div algorithm>
 <p>The <dfn attribute for=NonDocumentTypeChildNode><code>previousElementSibling</code></dfn> getter
 steps are to return the first <a>preceding</a> <a for=tree>sibling</a> that is an
 <a for=/>element</a>; otherwise null.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=NonDocumentTypeChildNode><code>nextElementSibling</code></dfn> getter
 steps are to return the first <a>following</a> <a for=tree>sibling</a> that is an
 <a for=/>element</a>; otherwise null.
-</div>
 
 
 <h4 id=interface-childnode>Mixin {{ChildNode}}</h4>
@@ -3689,7 +3635,6 @@ CharacterData includes ChildNode;
  <dd>Removes <var>node</var>.
 </dl>
 
-<div algorithm>
 <p>The <dfn method for=ChildNode><code>before(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3710,9 +3655,7 @@ CharacterData includes ChildNode;
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viablePreviousSibling</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ChildNode><code>after(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3729,9 +3672,7 @@ CharacterData includes ChildNode;
  <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ChildNode><code>replaceWith(<var>nodes</var>)</code></dfn> method steps are:
 
 <ol>
@@ -3754,9 +3695,7 @@ CharacterData includes ChildNode;
  <li><p>Otherwise, <a>pre-insert</a> <var>node</var> into <var>parent</var> before
  <var>viableNextSibling</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=ChildNode><code>remove()</code></dfn> method steps are:
 
 <ol>
@@ -3764,7 +3703,6 @@ CharacterData includes ChildNode;
 
  <li><p><a for=/>Remove</a> <a>this</a>.
 </ol>
-</div>
 
 
 <h4 id=mixin-slotable>Mixin {{Slottable}}</h4>
@@ -3777,10 +3715,8 @@ Element includes Slottable;
 Text includes Slottable;
 </pre>
 
-<div algorithm>
 <p>The <dfn attribute for=Slottable id=dom-slotable-assignedslot><code>assignedSlot</code></dfn>
 getter steps are to return the result of <a>find a slot</a> given <a>this</a> and true.
-</div>
 
 
 <h4 id=old-style-collections>Old-style collections: {{NodeList}} and {{HTMLCollection}}</h4>
@@ -3828,6 +3764,8 @@ interface NodeList {
  <a for=/>nodes</a> are sorted in <a>tree order</a>.
 </dl>
 
+<div class=impl>
+
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to one less than
 the number of nodes <a for=collection>represented by the collection</a>. If there are no such
 elements, then there are no <a>supported property indices</a>.
@@ -3839,6 +3777,8 @@ elements, then there are no <a>supported property indices</a>.
 <var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>. If there is no
 <var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>, then the method must
 return null.
+
+</div>
 
 
 <h5 id=interface-htmlcollection>Interface {{HTMLCollection}}</h5>
@@ -3945,9 +3885,9 @@ must return null.
 <dfn id=mutation-observer-list>pending mutation observers</dfn> (a <a for=/>set</a> of zero or more
 {{MutationObserver}} objects), which is initially empty.
 
-<div algorithm>
 <p>To
-<dfn id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>:
+<dfn noexport id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>,
+run these steps:
 
 <ol>
  <li><p>If the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> is true, then
@@ -3957,10 +3897,8 @@ must return null.
 
  <li><p><a lt="queue a microtask">Queue</a> a <a>microtask</a> to <a>notify mutation observers</a>.
 </ol>
-</div>
 
-<div algorithm="notify mutation observers">
-<p>To <dfn export>notify mutation observers</dfn>:
+<p>To <dfn export>notify mutation observers</dfn>, run these steps:
 
 <ol>
  <li><p>Set the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> to false.
@@ -3985,7 +3923,7 @@ must return null.
    <li><p><a for=queue>Empty</a> <var>mo</var>'s <a for=MutationObserver>record queue</a>.
 
    <li><p><a for=list>For each</a> <var>node</var> of <var>mo</var>'s
-   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
+   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
    <var>mo</var> from <var>node</var>'s <a>registered observer list</a>.
 
@@ -3994,11 +3932,10 @@ must return null.
    and "<code>report</code>", and with <a>callback this value</a> <var>mo</var>.
   </ol>
 
- <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>: <a>fire an event</a> named
+ <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>, <a>fire an event</a> named
  <dfn event for=HTMLSlotElement>slotchange</dfn>, with its {{Event/bubbles}} attribute set to true,
  at <var>slot</var>.
 </ol>
-</div>
 
 <hr>
 
@@ -4130,14 +4067,11 @@ dictionary MutationObserverInit {
  returns what was in there.
 </dl>
 
-<div algorithm>
 <p>The
 <dfn constructor for=MutationObserver lt=MutationObserver(callback)><code>new MutationObserver(<var>callback</var>)</code></dfn>
 constructor steps are to set <a>this</a>'s <a for=MutationObserver>callback</a> to
 <var>callback</var>.
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=MutationObserver><code>observe(<var>target</var>, <var>options</var>)</code></dfn>
 method steps are:
@@ -4172,12 +4106,12 @@ method steps are:
 
  <li>
   <p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
-  <a>registered observer list</a>: if <var>registered</var>'s
+  <a>registered observer list</a>, if <var>registered</var>'s
   <a for="registered observer">observer</a> is <a>this</a>:
 
   <ol>
    <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
-   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
+   <a for=MutationObserver>node list</a>, <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="transient registered observer">source</a> is
    <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
 
@@ -4198,22 +4132,18 @@ method steps are:
    <a for=MutationObserver>node list</a>.
   </ol>
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=MutationObserver><code>disconnect()</code></dfn> method steps are:
 
 <ol>
  <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
- <a for=MutationObserver>node list</a>: <a for=list>remove</a> any <a>registered observer</a> from
+ <a for=MutationObserver>node list</a>, <a for=list>remove</a> any <a>registered observer</a> from
  <var>node</var>'s <a>registered observer list</a> for which <a>this</a> is the
  <a for="registered observer">observer</a>.
 
  <li><p><a for=queue>Empty</a> <a>this</a>'s <a for=MutationObserver>record queue</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=MutationObserver><code>takeRecords()</code></dfn> method steps are:
 
 <ol>
@@ -4224,15 +4154,13 @@ method steps are:
 
  <li><p>Return <var>records</var>.
 </ol>
-</div>
 
 
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
-<div algorithm>
-<p>To <dfn>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
+<p>To <dfn noexport>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, run these steps:
 
 <ol>
  <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
@@ -4240,7 +4168,7 @@ method steps are:
  <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
 
  <li>
-  <p>For each <var>node</var> of <var>nodes</var>, and then <a for=list>for each</a>
+  <p>For each <var>node</var> in <var>nodes</var>, and then <a for=list>for each</a>
   <var>registered</var> of <var>node</var>'s <a>registered observer list</a>:
 
   <ol>
@@ -4310,21 +4238,18 @@ method steps are:
 
  <li><p><a>Queue a mutation observer microtask</a>.
 </ol>
-</div>
 
-<div algorithm>
-<p>To <dfn>queue a tree mutation record</dfn> for <var>target</var> with <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<p>To <dfn noexport>queue a tree mutation record</dfn> for <var>target</var> with
+<var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, and
+<var>nextSibling</var>, run these steps:
 
 <ol>
- <li><p><a for=/>Assert</a>: either <var>addedNodes</var> or <var>removedNodes</var>
- <a for=set>is not empty</a>.
+ <li><p>Assert: either <var>addedNodes</var> or <var>removedNodes</var> <a for=set>is not empty</a>.
 
  <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
  null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>,
  and <var>nextSibling</var>.
 </ol>
-</div>
 
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
@@ -4741,8 +4666,8 @@ empty string instead, and then do as described below, switching on the interface
  <dd><p><a>Set an existing attribute value</a> with <a>this</a> and the given value.
 
  <dt>{{CharacterData}}
- <dd><p><a>Replace data</a> of <a>this</a> with 0, <a>this</a>'s <a for=Node>length</a>, and
- the given value.
+ <dd><p><a>Replace data</a> with node <a>this</a>, offset 0, count <a>this</a>'s
+ <a for=Node>length</a>, and data the given value.
 
  <dt>Otherwise
  <dd><p>Do nothing.
@@ -4794,8 +4719,8 @@ do as defined below, switching on the interface <var>node</var> <a>implements</a
  <dd><p><a>Set an existing attribute value</a> with <var>node</var> and <var>value</var>.
 
  <dt>{{CharacterData}}
- <dd><p><a>Replace data</a> of <var>node</var> with 0, <var>node</var>'s <a for=Node>length</a>, and
- <var>value</var>.
+ <dd><p><a>Replace data</a> with node <var>node</var>, offset 0, count <var>node</var>'s
+ <a for=Node>length</a>, and data <var>value</var>.
 
  <dt>Otherwise
  <dd><p>Do nothing.
@@ -4813,45 +4738,45 @@ empty string instead, and then run <a>set text content</a> with <a>this</a> and 
  into the first of their <a for=/>nodes</a>.
 </dl>
 
-<div algorithm>
 <p>The <dfn method for=Node><code>normalize()</code></dfn> method steps are to run these steps for
 each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>node</var> of
 <a>this</a>:
 
 <ol>
- <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li><p>If <var>length</var> is zero, then <a for=/>remove</a> <var>node</var> and continue with the
+ <li>If <var>length</var> is zero, then <a for=/>remove</a> <var>node</var> and continue with the
  next <a>exclusive <code>Text</code> node</a>, if any.
 
- <li><p>Let <var>data</var> be the <a for=string>concatenation</a> of the
- <a for=CharacterData>data</a> of <var>node</var>'s
- <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in <a>tree order</a>.
+ <li>Let <var>data</var> be the <a for=string>concatenation</a> of the <a for=CharacterData>data</a>
+ of <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a> (excluding itself), in
+ <a>tree order</a>.
 
- <li><p><a>Replace data</a> of <var>node</var> with <var>length</var>, 0, and <var>data</var>.
+ <li><a>Replace data</a> with node <var>node</var>, offset <var>length</var>, count 0, and data
+ <var>data</var>.
 
- <li><p>Let <var>currentNode</var> be <var>node</var>'s <a for=tree>next sibling</a>.
+ <li>Let <var>currentNode</var> be <var>node</var>'s <a for=tree>next sibling</a>.
 
  <li>
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>:
+   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>,
    add <var>length</var> to its <a for=range>start offset</a> and set its
    <a for=range>start node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>: add
+   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>, add
    <var>length</var> to its <a for=range>end offset</a> and set its <a for=range>end node</a> to
    <var>node</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>start offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>: set its <a for=range>start node</a> to <var>node</var> and its
+   <a for=tree>index</a>, set its <a for=range>start node</a> to <var>node</var> and its
    <a for=range>start offset</a> to <var>length</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>'s
    <a for=tree>parent</a> and <a for=range>end offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>: set its <a for=range>end node</a> to <var>node</var> and its
+   <a for=tree>index</a>, set its <a for=range>end node</a> to <var>node</var> and its
    <a for=range>end offset</a> to <var>length</var>.
 
    <li><p>Add <var>currentNode</var>'s <a for=Node>length</a> to <var>length</var>.
@@ -4859,23 +4784,24 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
    <li><p>Set <var>currentNode</var> to its <a for=tree>next sibling</a>.
   </ol>
 
- <li><p><a for=/>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a>
+ <li><a for=/>Remove</a> <var>node</var>'s <a>contiguous exclusive <code>Text</code> nodes</a>
  (excluding itself), in <a>tree order</a>.
 </ol>
-</div>
 
 <hr>
 
 <dl class=domintro>
- <dt><code><var>node</var> . <a method for=Node lt=cloneNode()>cloneNode</a>([<var>subtree</var> = false])</code>
+ <dt><code><var>node</var> . <a method for=Node lt=cloneNode()>cloneNode([<var>subtree</var> = false])</a></code>
  <dd>Returns a copy of <var>node</var>. If
  <var>subtree</var> is true, the copy also includes the
  <var>node</var>'s <a for=tree>descendants</a>.
 
- <dt><code><var>node</var> . <a method for=Node lt=isEqualNode(otherNode)>isEqualNode</a>(<var>otherNode</var>)</code>
+ <dt><code><var>node</var> . {{Node/isEqualNode(otherNode)}}</code>
  <dd>Returns whether <var>node</var> and <var>otherNode</var>
  have the same properties.
 </dl>
+
+<div class=impl>
 
 <div algorithm>
 <a lt="Other applicable specifications">Specifications</a> may define
@@ -4928,24 +4854,15 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p>Let <var>shadowRootRegistry</var> be <var>node</var>'s <a for=Element>shadow root</a>'s
    <a for=ShadowRoot>custom element registry</a>.
 
-   <li><p>If <var>shadowRootRegistry</var> <a>is a global custom element registry</a>, then set
-   <var>shadowRootRegistry</var> to <var>document</var>'s
-   <a>effective global custom element registry</a>.
-
    <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>reference target</a>, and
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, and
    <var>shadowRootRegistry</var>.
 
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
    to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
-
-   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s
-   <a for=ShadowRoot>keep custom element registry null</a> to <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>keep custom element registry null</a>.
 
    <li>
     <p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
@@ -4979,9 +4896,6 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p>If <var>registry</var> is null, then set <var>registry</var> to
    <var>fallbackRegistry</var>.
 
-   <li><p>If <var>registry</var> <a>is a global custom element registry</a>, then set
-   <var>registry</var> to <var>document</var>'s <a>effective global custom element registry</a>.
-
    <li><p>Set <var>copy</var> to the result of <a>creating an element</a>, given
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
    <a for=Element>namespace</a>, <var>node</var>'s <a for=Element>namespace prefix</a>,
@@ -5006,18 +4920,11 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 
   <dl class=switch>
    <dt>{{Document}}
-   <dd>
-    <ol>
-     <li><p>Set <var>copy</var>'s <a for=Document>encoding</a>, <a for=Document>content type</a>,
-     <a for=Document>URL</a>, <a for=Document>origin</a>, <a for=Document>type</a>,
-     <a for=Document>mode</a>, and <a for=Document>allow declarative shadow roots</a>, to those of
-     <var>node</var>.
-
-     <li><p>If <var>node</var>'s <a for=Document>custom element registry</a>'s
-     <a for=CustomElementRegistry>is scoped</a> is true, then set <var>copy</var>'s
-     <a for=Document>custom element registry</a> to <var>node</var>'s
-     <a for=Document>custom element registry</a>.
-    </ol>
+   <dd><p>Set <var>copy</var>'s <a for=Document>encoding</a>, <a for=Document>content type</a>,
+   <a for=Document>URL</a>, <a for=Document>origin</a>, <a for=Document>type</a>,
+   <a for=Document>mode</a>, and <a for=Document>custom element registry</a> to those of
+   <var>node</var>.
+   <!-- XXX https://github.com/whatwg/dom/issues/1366 -->
 
    <dt>{{DocumentType}}
    <dd><p>Set <var>copy</var>'s <a for=DocumentType>name</a>, <a>public ID</a>, and
@@ -5062,7 +4969,6 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 </ol>
 </div>
 
-<div algorithm>
 <p>A <a for=/>node</a> <var>A</var> <dfn export for=Node id=concept-node-equals>equals</dfn> a
 <a for=/>node</a> <var>B</var> if all of the following conditions are true:
 
@@ -5095,25 +5001,22 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
   </dl>
 
  <li><p>If <var>A</var> is an <a for=/>element</a>, each <a>attribute</a> in its
- <a for=Element>attribute list</a> <a for=Node>equals</a> an <a>attribute</a> in <var>B</var>'s
- <a for=Element>attribute list</a>.
+ <a for=Element>attribute list</a> has an <a>attribute</a> that <a for=Node>equals</a> an
+ <a>attribute</a> in <var>B</var>'s <a for=Element>attribute list</a>.
 
  <li><p><var>A</var> and <var>B</var> have the same number of <a for=tree>children</a>.
 
  <li><p>Each <a for=tree>child</a> of <var>A</var> <a for=Node>equals</a> the <a for=tree>child</a>
  of <var>B</var> at the identical <a for=tree>index</a>.
 </ul>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Node><code>isEqualNode(<var>otherNode</var>)</code></dfn> method steps are to
 return true if <var>otherNode</var> is non-null and <a>this</a> <a for=Node>equals</a>
 <var>otherNode</var>; otherwise false.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Node><code>isSameNode(<var>otherNode</var>)</code></dfn> method steps are to
 return true if <var>otherNode</var> is <a>this</a>; otherwise false.
+
 </div>
 
 <hr>
@@ -5263,7 +5166,7 @@ for an <var>element</var> using <var>namespace</var>, run these steps:
  <var>namespace</var>, then return <var>element</var>'s first such <a>attribute</a>'s
  <a for=Attr>local name</a>.
 
- <li><p>If <var>element</var>'s <a>parent element</a> is non-null, then return the result of running
+ <li><p>If <var>element</var>'s <a>parent element</a> is not null, then return the result of running
  <a>locate a namespace prefix</a> on that <a for=/>element</a> using <var>namespace</var>.
 
  <li><p>Return null.
@@ -5555,7 +5458,7 @@ interface Document : Node {
 interface XMLDocument : Document {};
 
 dictionary ElementCreationOptions {
-  CustomElementRegistry? customElementRegistry;
+  CustomElementRegistry customElementRegistry;
   DOMString is;
 };
 
@@ -5822,7 +5725,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
 
   <ul>
    <li><a for=Element>Namespace prefix</a>
-   is non-null and <var>namespace</var> is the empty string.
+   is not null and <var>namespace</var> is the empty string.
    <li><a for=Element>Namespace prefix</a>
    is "<code>xml</code>" and <var>namespace</var> is not the
    <a>XML namespace</a>.
@@ -5872,7 +5775,6 @@ method steps are to return the <a>list of elements with class names <var>classNa
 <p class=note>The HTML Standard will, e.g., define that for <code>html</code> and the
 <a>HTML namespace</a>, the {{HTMLHtmlElement}} interface is used. [[!HTML]]
 
-<div algorithm>
 <p>The
 <dfn method for=Document><code>createElement(<var>localName</var>, <var>options</var>)</code></dfn>
 method steps are:
@@ -5894,9 +5796,7 @@ method steps are:
  <li><p>Return the result of <a>creating an element</a> given <a>this</a>, <var>localName</var>,
  <var>namespace</var>, null, <var>is</var>, true, and <var>registry</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn noexport>internal <code>createElementNS</code> steps</dfn>, given <var>document</var>,
 <var>namespace</var>, <var>qualifiedName</var>, and <var>options</var>, are as follows:
 
@@ -5912,23 +5812,18 @@ method steps are:
  <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, true, and
  <var>registry</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Document><code>createElementNS(<var>namespace</var>, <var>qualifiedName</var>, <var>options</var>)</code></dfn>
 method steps are to return the result of running the
 <a>internal <code>createElementNS</code> steps</a>, given <a>this</a>, <var>namespace</var>,
 <var>qualifiedName</var>, and <var>options</var>.
-</div>
 
-<div algorithm>
 <p>To <dfn>flatten element creation options</dfn>, given a string or {{ElementCreationOptions}}
 dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
 
 <ol>
- <li><p>Let <var>registry</var> be the result of <a for=/>looking up a custom element registry</a>
- given <var>document</var>.
+ <li><p>Let <var>registry</var> be null.
 
  <li><p>Let <var>is</var> be null.
 
@@ -5936,33 +5831,24 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
   <p>If <var>options</var> is a dictionary:
 
   <ol>
+   <li><p>If <var>options</var>["{{ElementCreationOptions/customElementRegistry}}"]
+   <a for=map>exists</a>, then set <var>registry</var> to it.
+
    <li><p>If <var>options</var>["{{ElementCreationOptions/is}}"] <a for=map>exists</a>, then set
    <var>is</var> to it.
 
-   <li>
-    <p>If <var>options</var>["{{ElementCreationOptions/customElementRegistry}}"]
-    <a for=map>exists</a>:
-
-    <ol>
-     <li><p>If <var>is</var> is non-null, then <a>throw</a> a "{{NotSupportedError!!exception}}"
-     {{DOMException}}.
-
-     <li><p>Set <var>registry</var> to
-     <var>options</var>["{{ElementCreationOptions/customElementRegistry}}"].
-    </ol>
-
-   <li><p>If <var>registry</var> is non-null, <var>registry</var>'s
-   <a for=CustomElementRegistry>is scoped</a> is false, and <var>registry</var> is not
-   <var>document</var>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
+   <li><p>If <var>registry</var> is non-null and <var>is</var> is non-null, then <a>throw</a> a
    "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
+
+ <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
+ <a for=/>looking up a custom element registry</a> given <var>document</var>.
 
  <li><p>Return <var>registry</var> and <var>is</var>.
 </ol>
 
 <p class=note>{{Document/createElement()}} and {{Document/createElementNS()}}'s <var>options</var>
 parameter is allowed to be a string for web compatibility.
-</div>
 
 <p>The <dfn method for=Document><code>createDocumentFragment()</code></dfn> method steps are to
 return a new {{DocumentFragment}} <a for=/>node</a> whose <a for=Node>node document</a> is
@@ -6013,7 +5899,7 @@ method steps are:
 <hr>
 
 <dl class=domintro>
- <dt><code><var ignore>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode</a>(<var>node</var> [, <var>options</var> = false])</code>
+ <dt><var>clone</var> = <var>document</var> . <a method for=Document lt=importNode()>importNode(<var>node</var> [, <var>options</var> = false])</a>
  <dd>
   <p>Returns a copy of <var>node</var>. If <var>options</var> is true or <var>options</var> is a
   dictionary whose {{ImportNodeOptions/selfOnly}} is false, the copy also includes the
@@ -6025,11 +5911,13 @@ method steps are:
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
   "{{NotSupportedError!!exception}}" {{DOMException}}.
 
- <dt><code><var>node</var> = <var>document</var> . <a method for=Document lt=adoptNode()>adoptNode</a>(<var>node</var>)</code>
- <dd>
-  <p>Moves <var>node</var> from another <a for=/>document</a> and returns it.
+ <dt><var>node</var> = <var>document</var> . {{adoptNode(node)}}
 
-  <p>If <var>node</var> is a <a for=/>document</a>, throws a "{{NotSupportedError!!exception}}"
+ <dd>
+  Moves <var>node</var> from another
+  <a for=/>document</a> and returns it.
+
+  If <var>node</var> is a <a for=/>document</a>, throws a "{{NotSupportedError!!exception}}"
   {{DOMException}} or, if <var>node</var> is a <a for=/>shadow root</a>, throws a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 </dl>
@@ -6057,10 +5945,6 @@ method steps are:
 
    <li><p>If <var>options</var>["{{ImportNodeOptions/customElementRegistry}}"]
    <a for=map>exists</a>, then set <var>registry</var> to it.
-
-   <li><p>If <var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false and
-   <var>registry</var> is not <a>this</a>'s <a for=Document>custom element registry</a>, then
-   <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
 
  <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
@@ -6073,16 +5957,13 @@ method steps are:
 </ol>
 </div>
 
-<div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-adopt-ext>adopting steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as indicated in the
-<a>adopt</a> algorithm.
-</div>
+algorithm is passed <var>node</var> and <var>oldDocument</var>, as indicated in the <a>adopt</a>
+algorithm.
 
-<div algorithm>
-<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <a for=/>node</a> <var>node</var> into a
-<a for=/>document</a> <var>document</var>:
+<p>To <dfn export id=concept-node-adopt>adopt</dfn> a <var>node</var> into a <var>document</var>, run
+these steps:
 
 <ol>
  <li><p>Let <var>oldDocument</var> be <var>node</var>'s <a for=Node>node document</a>.
@@ -6095,58 +5976,29 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
 
   <ol>
    <li>
-    <p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-    <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>:
+    <p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
+    <a>shadow-including inclusive descendants</a>:
 
     <ol>
      <li><p>Set <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to <var>document</var>.
 
-     <li>
-      <p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a> and if any of the following
-      are true:
-
-      <ul>
-       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is null
-       and <var>inclusiveDescendant</var>'s <a for=ShadowRoot>keep custom element registry null</a>
-       is false; or
-
-       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
-       <a>is a global custom element registry</a>,
-      </ul>
-
-      <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
-      <var>document</var>'s <a>effective global custom element registry</a>.
-
-     <li>
-      <p>Otherwise, if <var>inclusiveDescendant</var> is an <a for=/>element</a>:
-
-      <ol>
-       <li><p>Set the <a for=Node>node document</a> of each <a>attribute</a> in
-       <var>inclusiveDescendant</var>'s <a for=Element>attribute list</a> to <var>document</var>.
-
-       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null
-       or <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
-       <a for=CustomElementRegistry>is scoped</a> is false, then set
-       <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> to
-       <var>document</var>'s <a>effective global custom element registry</a>.
-      </ol>
+     <li><p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>, then set the
+     <a for=Node>node document</a> of each <a>attribute</a> in <var>inclusiveDescendant</var>'s
+     <a for=Element>attribute list</a> to <var>document</var>.
     </ol>
 
-   <li><p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-   <a>shadow-including inclusive descendants</a> that is <a for=Element>custom</a>, in
-   <a>shadow-including tree order</a>: <a>enqueue a custom element callback reaction</a> with
-   <var>inclusiveDescendant</var>, callback name "<code>adoptedCallback</code>", and
-   « <var>oldDocument</var>, <var>document</var> ».
+   <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
+   <a>shadow-including inclusive descendants</a> that is <a for=Element>custom</a>,
+   <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
+   name "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>document</var> ».
    <!-- attributeChangedCallback is also old, then new -->
 
-   <li><p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-   <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>: run the
+   <li><p>For each <var>inclusiveDescendant</var> in <var>node</var>'s
+   <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>, run the
    <a>adopting steps</a> with <var>inclusiveDescendant</var> and <var>oldDocument</var>.
   </ol>
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Document><code>adoptNode(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
@@ -6162,24 +6014,6 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
  <li><p><a>Adopt</a> <var>node</var> into <a>this</a>.
 
  <li><p>Return <var>node</var>.
-</ol>
-</div>
-
-<hr>
-
-<p>Null or a {{CustomElementRegistry}} object <var>registry</var>
-<dfn>is a global custom element registry</dfn> if <var>registry</var> is non-null and
-<var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false.</p>
-
-<p>A <a for=/>document</a> <var>document</var>'s <dfn>effective global custom element registry</dfn>
-is:
-
-<ol>
- <li><p>If <var>document</var>'s <a for=Document>custom element registry</a>
- <a>is a global custom element registry</a>, then return <var>document</var>'s
- <a for=Document>custom element registry</a>.
-
- <li><p>Return null.
 </ol>
 
 <hr>
@@ -6374,6 +6208,8 @@ interface DOMImplementation {
   argument is omitted.
 </dl>
 
+<div class=impl>
+
 <p>The
 <dfn method for=DOMImplementation><code>createDocumentType(<var>name</var>, <var>publicId</var>, <var>systemId</var>)</code></dfn>
 method steps are:
@@ -6474,6 +6310,8 @@ reliable or granular as simply checking whether the desired objects, attributes,
 methods existed. As such, it is no longer to be used, but continues to exist (and simply
 returns true) so that old pages don't stop working.
 
+</div>
+
 
 <h3 id=interface-documenttype>Interface {{DocumentType}}</h3>
 
@@ -6554,7 +6392,6 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean clonable;
   readonly attribute boolean serializable;
   readonly attribute Element host;
-  attribute DOMString? referenceTarget;
 
   attribute EventHandler onslotchange;
 };
@@ -6591,9 +6428,6 @@ It is initially set to false.</p>
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>serializable</dfn> (a boolean).
 It is initially set to false.</p>
-
-<p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>reference target</dfn>
-(null or a string). It is initially set to null.</p>
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom element registry</dfn>
 (null or a {{CustomElementRegistry}} object). It is initially null.</p>
@@ -6730,8 +6564,8 @@ interface Element : Node {
   sequence&lt;DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString qualifiedName);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [CEReactions] undefined setAttribute(DOMString qualifiedName, (TrustedType or DOMString) value);
-  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, (TrustedType or DOMString) value);
+  [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
+  [CEReactions] undefined setAttributeNS(DOMString? namespace, DOMString qualifiedName, DOMString value);
   [CEReactions] undefined removeAttribute(DOMString qualifiedName);
   [CEReactions] undefined removeAttributeNS(DOMString? namespace, DOMString localName);
   [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
@@ -6767,14 +6601,9 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   boolean serializable = false;
-  DOMString? referenceTarget = null;
-  CustomElementRegistry? customElementRegistry;
+  CustomElementRegistry customElementRegistry;
 };
 </pre>
-
-<p class=note>{{ShadowRootInit}} somewhat unusually allows both <code>undefined</code> and
-<code>null</code> to be passed to its {{ShadowRootInit/customElementRegistry}} member to allow web
-developers to pass a {{ShadowRoot}} node instead of a dictionary to {{Element/attachShadow()}}.
 
 <p>{{Element}} <a for=/>nodes</a> are simply known as
 <dfn export id=concept-element lt=element>elements</dfn>.
@@ -6973,7 +6802,7 @@ null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>
        <li><p>If <var>result</var> has <a for=tree>children</a>, then <a>throw</a> a
        "{{NotSupportedError!!exception}}" {{DOMException}}.
 
-       <li><p>If <var>result</var>'s <a for=tree>parent</a> is non-null, then <a>throw</a> a
+       <li><p>If <var>result</var>'s <a for=tree>parent</a> is not null, then <a>throw</a> a
        "{{NotSupportedError!!exception}}" {{DOMException}}.
 
        <li><p>If <var>result</var>'s <a for=Node>node document</a> is not <var>document</var>, then
@@ -7213,11 +7042,6 @@ string <var>namespace</var> (default null):</p>
 <a for=/>attribute</a> <var>attr</var> and an <a for=/>element</a> <var>element</var>:
 
 <ol>
- <li><p>Let <var>verifiedValue</var> be the result of calling
- <a>get trusted type compliant attribute value</a> with <var>attr</var>'s
- <a for=Attr>local name</a>, <var>attr</var>'s <a for=Attr>namespace</a>, <var>element</var>, and
- <var>attr</var>'s <a for=Attr>value</a>. [[!TRUSTED-TYPES]]
-
  <li><p>If <var>attr</var>'s <a for=Attr>element</a> is neither null nor <var>element</var>,
  <a>throw</a> an "{{InUseAttributeError!!exception}}" {{DOMException}}.
 
@@ -7227,8 +7051,6 @@ string <var>namespace</var> (default null):</p>
  <var>element</var>.
 
  <li><p>If <var>oldAttr</var> is <var>attr</var>, return <var>attr</var>.
-
- <li><p>Set <var>attr</var>'s <a for=Attr>value</a> to <var>verifiedValue</var>.
 
  <li><p>If <var>oldAttr</var> is non-null, then <a lt="replace an attribute">replace</a>
  <var>oldAttr</var> with <var>attr</var>.
@@ -7461,26 +7283,19 @@ namespace.</p>
  is <var>namespace</var> and <a for=Attr>local name</a> is <var>localName</var>.
 </dl>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>hasAttributes()</code></dfn> method steps are to return false
 if <a>this</a>'s <a for=Element>attribute list</a> <a for=list>is empty</a>; otherwise true.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=Element><code>attributes</code></dfn> getter steps are to return the
 associated {{NamedNodeMap}}.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>getAttributeNames()</code></dfn> method steps are to return the
 <a for=Attr>qualified names</a> of the <a>attributes</a> in <a>this</a>'s
 <a for=Element>attribute list</a>, in order; otherwise a new <a for=/>list</a>.
 
 <p class=note>These are not guaranteed to be unique.<!-- A theoretical getAttributeNamesNS() could
 return an array of unique two-value-arrays. -->
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>getAttribute(<var>qualifiedName</var>)</code></dfn> method
 steps are:
 
@@ -7493,9 +7308,7 @@ steps are:
 
  <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>getAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method steps are:
@@ -7509,9 +7322,7 @@ method steps are:
 
  <li><p>Return <var>attr</var>'s <a for=Attr>value</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>setAttribute(<var>qualifiedName</var>, <var>value</var>)</code></dfn>
 method steps are:
@@ -7530,26 +7341,19 @@ method steps are:
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
  <a>ASCII lowercase</a>.
 
- <li><p>Let <var>verifiedValue</var> be the result of calling
- <a>get trusted type compliant attribute value</a> with <var>qualifiedName</var>, null, <a>this</a>,
- and <var>value</var>. [[!TRUSTED-TYPES]]
-
  <li><p>Let <var>attribute</var> be the first <a>attribute</a> in <a>this</a>'s
  <a for=Element>attribute list</a> whose <a for=Attr>qualified name</a> is <var>qualifiedName</var>,
  and null otherwise.
+ <!-- This is step 2 of "get an attribute by name", modified as appropriate -->
 
- <li><p>If <var>attribute</var> is non-null, then <a lt="change an attribute">change</a>
- <var>attribute</var> to <var>verifiedValue</var> and return.
+ <li><p>If <var>attribute</var> is null, create an <a>attribute</a> whose
+ <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is
+ <var>value</var>, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>,
+ then <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return.
 
- <li><p>Set <var>attribute</var> to a new <a>attribute</a> whose <a for=Attr>local name</a> is
- <var>qualifiedName</var>, <a for=Attr>value</a> is <var>verifiedValue</var>, and
- <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
-
- <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
+ <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>setAttributeNS(<var>namespace</var>, <var>qualifiedName</var>, <var>value</var>)</code></dfn>
 method steps are:
@@ -7557,32 +7361,22 @@ method steps are:
 <ol>
  <li><p>Let (<var>namespace</var>, <var>prefix</var>, <var>localName</var>) be the result of
  [=validate and extract|validating and extracting=] <var>namespace</var> and
- <var>qualifiedName</var> given "<code>attribute</code>".
+ <var>qualifiedName</var> given "<code>element</code>".
 
- <li><p>Let <var>verifiedValue</var> be the result of calling
- <a>get trusted type compliant attribute value</a> with <var>localName</var>, <var>namespace</var>,
- <a>this</a>, and <var>value</var>. [[!TRUSTED-TYPES]]
-
- <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>,
- <var>verifiedValue</var>, <var>prefix</var>, and <var>namespace</var>.
+ <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
+ and also <var>prefix</var> and <var>namespace</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>removeAttribute(<var>qualifiedName</var>)</code></dfn>
 method steps are to <a lt="remove an attribute by name">remove an attribute</a> given
 <var>qualifiedName</var> and <a>this</a>, and then return undefined.
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>removeAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method steps are to <a lt="remove an attribute by namespace and local name">remove an attribute</a>
 given <var>namespace</var>, <var>localName</var>, and <a>this</a>, and then return undefined.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>hasAttribute(<var>qualifiedName</var>)</code></dfn> method
 steps are:
 
@@ -7594,9 +7388,7 @@ steps are:
  <li><p>Return true if <a>this</a> <a lt="has an attribute">has</a> an <a>attribute</a> whose
  <a for=Attr>qualified name</a> is <var>qualifiedName</var>; otherwise false.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>toggleAttribute(<var>qualifiedName</var>, <var>force</var>)</code></dfn>
 method steps are:
@@ -7637,9 +7429,7 @@ method steps are:
 
  <li><p>Return true.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>hasAttributeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method steps are:
@@ -7651,32 +7441,24 @@ method steps are:
  <a for=Attr>namespace</a> is <var>namespace</var> and <a for=Attr>local name</a> is
  <var>localName</var>; otherwise false.
 </ol>
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>getAttributeNode(<var>qualifiedName</var>)</code></dfn> method
 steps are to return the result of <a lt="get an attribute by name">getting an attribute</a> given
 <var>qualifiedName</var> and <a>this</a>.
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=Element><code>getAttributeNodeNS(<var>namespace</var>, <var>localName</var>)</code></dfn>
 method steps are to return the result of
 <a lt="get an attribute by namespace and local name">getting an attribute</a> given
 <var>namespace</var>, <var>localName</var>, and <a>this</a>.
-</div>
 
-<div algorithm=Element/setAttributeNode>
 <p>The <dfn method for=Element><code>setAttributeNode(<var>attr</var>)</code></dfn> and
 <dfn method for=Element><code>setAttributeNodeNS(<var>attr</var>)</code></dfn> methods steps are to
 return the result of <a lt="set an attribute">setting an attribute</a> given <var>attr</var> and
 <a>this</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>removeAttributeNode(<var>attr</var>)</code></dfn> method steps
 are:
 
@@ -7688,7 +7470,6 @@ are:
 
  <li><p>Return <var>attr</var>.
 </ol>
-</div>
 
 <hr>
 
@@ -7729,23 +7510,16 @@ are:
 <p>The <dfn method for=Element><code>attachShadow(<var>init</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>registry</var> be <a>this</a>'s <a>node document</a>'s
- <a for=Document>custom element registry</a>.
+ <li><p>Let <var>registry</var> be <a>this</a>'s <a for=Element>custom element registry</a>.
 
  <li><p>If <var>init</var>["{{ShadowRootInit/customElementRegistry}}"] <a for=map>exists</a>, then
  set <var>registry</var> to it.
-
- <li><p>If <var>registry</var> is non-null, <var>registry</var>'s
- <a for=CustomElementRegistry>is scoped</a> is false, and <var>registry</var> is not <a>this</a>'s
- <a>node document</a>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
- "{{NotSupportedError!!exception}}" {{DOMException}}.
 
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
  <var>init</var>["{{ShadowRootInit/serializable}}"],
  <var>init</var>["{{ShadowRootInit/delegatesFocus}}"],
- <var>init</var>["{{ShadowRootInit/slotAssignment}}"], and
- <var>init</var>["{{ShadowRootInit/referenceTarget}}"], and <var>registry</var>.
+ <var>init</var>["{{ShadowRootInit/slotAssignment}}"], and <var>registry</var>.
 
  <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
 </ol>
@@ -7755,8 +7529,7 @@ are:
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
 <a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
 a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
-<var>slotAssignment</var>, null or a string <var>referenceTarget</var>, and null or a
-{{CustomElementRegistry}} object <var>registry</var>:
+<var>slotAssignment</var>, and null or a {{CustomElementRegistry}} object <var>registry</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -7776,7 +7549,7 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
    <a for=Element>namespace</a>, its <a for=Element>local name</a>, and its
    <a for=Element><code>is</code> value</a>.
 
-   <li><p>If <var>definition</var> is non-null and <var>definition</var>'s
+   <li><p>If <var>definition</var> is not null and <var>definition</var>'s
    <a for="custom element definition">disable shadow</a> is true, then <a>throw</a> a
    "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
@@ -7830,8 +7603,6 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>serializable</a> to <var>serializable</var>.
 
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>reference target</a> to <var>referenceTarget</var>.
-
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>custom element registry</a> to
  <var>registry</var>.
 
@@ -7877,44 +7648,40 @@ return <a>this</a>'s <a for=Element>custom element registry</a>.
  yields <var>element</var>; otherwise false.
 </dl>
 
-<div algorithm>
 <p>The <dfn method for=Element><code>closest(<var>selectors</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
+ <li><p>Let <var>s</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
  <li><p>Let <var>elements</var> be <a>this</a>'s <a for=tree>inclusive ancestors</a> that are
  <a for=/>elements</a>, in reverse <a>tree order</a>.
 
- <li><p>For each <var>element</var> of <var>elements</var>: if
- <a>match a selector against an element</a>, using <var>selector</var>, <var>element</var>, and
+ <li><p>For each <var>element</var> in <var>elements</var>, if
+ <a>match a selector against an element</a>, using <var>s</var>, <var>element</var>, and
  <a>scoping root</a> <a>this</a>, returns success, return <var>element</var>. [[!SELECTORS4]]
 
  <li><p>Return null.
 </ol>
-</div>
 
-<div algorithm="Element/matches(selectors)">
 <p>The <dfn method for=Element><code>matches(<var>selectors</var>)</code></dfn> and
 <dfn method for=Element><code>webkitMatchesSelector(<var>selectors</var>)</code></dfn> method steps
 are:
 
 <ol>
- <li><p>Let <var>selector</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
+ <li><p>Let <var>s</var> be the result of <a>parse a selector</a> from <var>selectors</var>.
  [[!SELECTORS4]]
 
- <li><p>If <var>selector</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
+ <li><p>If <var>s</var> is failure, then <a>throw</a> a "{{SyntaxError!!exception}}"
  {{DOMException}}.
 
- <li><p>If the result of <a>match a selector against an element</a>, using <var>selector</var>,
+ <li><p>If the result of <a>match a selector against an element</a>, using <var>s</var>,
  <a>this</a>, and <a>scoping root</a> <a>this</a>, returns success, then return true; otherwise,
  return false. [[!SELECTORS4]]
 </ol>
-</div>
 
 <hr>
 
@@ -8013,7 +7780,7 @@ interface NamedNodeMap {
 <hr>
 
 <p>A {{NamedNodeMap}} object's <a>supported property indices</a> are the numbers in the
-range zero to its <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a> &minus; 1, unless
+range zero to its <a for=NamedNodeMap>attribute list</a>'s <a for=list>size</a> minus one, unless
 the <a for=NamedNodeMap>attribute list</a> <a for=list>is empty</a>, in which case there are no
 <a>supported property indices</a>.
 
@@ -8177,19 +7944,9 @@ string <var>value</var>, run these steps:
 
 <ol>
  <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
- <a for=Attr>value</a> to <var>value</var> and return.
+ <a for=Attr>value</a> to <var>value</var>.
 
- <li><p>Let <var>element</var> be <var>attribute</var>'s <a for=Attr>element</a>.
-
- <li><p>Let <var>verifiedValue</var> be the result of calling
- <a>get trusted type compliant attribute value</a> with <var>attribute</var>'s
- <a for=Attr>local name</a>, <var>attribute</var>'s <a for=Attr>namespace</a>, <var>element</var>,
- and <var>value</var>. [[!TRUSTED-TYPES]]
-
- <li><p>If <var>attribute</var>'s <a for=Attr>element</a> is null, then set <var>attribute</var>'s
- <a for=Attr>value</a> to <var>verifiedValue</var> and return.
-
- <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>verifiedValue</var>.
+ <li><p>Otherwise, <a lt="change an attribute">change</a> <var>attribute</var> to <var>value</var>.
 </ol>
 
 <p>The {{Attr/value}} setter steps are to <a>set an existing attribute value</a> with <a>this</a>
@@ -8226,54 +7983,56 @@ is used by {{Text}}, {{ProcessingInstruction}}, and {{Comment}} <a for=/>nodes</
 <p>Each <a for=/>node</a> inheriting from the {{CharacterData}} interface has an associated mutable
 string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
 
-<div algorithm>
-<p>To <dfn export id=concept-cd-replace>replace data</dfn> of a <a for=/>node</a> <var>node</var>
-with an integer <var>offset</var>, integer <var>count</var>, and string <var>data</var>:
+<p>To <dfn export id=concept-cd-replace>replace data</dfn> of node <var>node</var> with offset
+<var>offset</var>, count <var>count</var>, and data <var>data</var>, run these steps:
 
 <ol>
- <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li><p>If <var>offset</var> + <var>count</var> is greater than <var>length</var>, then set
- <var>count</var> to <var>length</var> &minus; <var>offset</var>.
+ <li>If <var>offset</var> plus <var>count</var> is greater than <var>length</var>, then set
+ <var>count</var> to <var>length</var> minus <var>offset</var>.
 
  <li><p><a>Queue a mutation record</a> of "<code>characterData</code>" for <var>node</var> with
  null, null, <var>node</var>'s <a for=CharacterData>data</a>, « », « », null, and null.
 
- <li><p>Insert <var>data</var> into <var>node</var>'s <a for=CharacterData>data</a> after
- <var>offset</var> <a>code units</a>.
+ <li>Insert <var>data</var> into <var>node</var>'s
+ <a for=CharacterData>data</a> after <var>offset</var>
+ <a>code units</a>.
 
- <li><p>Let <var>deleteOffset</var> be <var>offset</var> + <var>data</var>'s
- <a for=string>length</a>.
+ <li>Let <var>delete offset</var> be <var>offset</var> + <var>data</var>'s <a for=string>length</a>.
 
- <li><p>Starting from <var>deleteOffset</var> <a>code units</a>, remove <var>count</var>
- <a>code units</a> from <var>node</var>'s <a for=CharacterData>data</a>.
+ <li>Starting from <var>delete offset</var>
+ <a>code units</a>, remove
+ <var>count</var>
+ <a>code units</a> from
+ <var>node</var>'s <a for=CharacterData>data</a>.
 
  <!-- ranges -->
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
  <a for=range>start offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> + <var>count</var>: set its <a for=range>start offset</a> to <var>offset</var>.
+ <var>offset</var> plus <var>count</var>, set its <a for=range>start offset</a> to
+ <var>offset</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
  <a for=range>end offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> + <var>count</var>: set its <a for=range>end offset</a> to <var>offset</var>.
+ <var>offset</var> plus <var>count</var>, set its <a for=range>end offset</a> to <var>offset</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
- <a for=range>start offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
+ <a for=range>start offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>start offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
  <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
- <a for=range>end offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
+ <a for=range>end offset</a> is greater than <var>offset</var> plus <var>count</var>, increase its
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
  <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
 </ol>
-</div>
 <!-- delete happens after insert for better cursor positioning with editing
 https://www.w3.org/Bugs/Public/show_bug.cgi?id=13153 -->
 
@@ -8300,72 +8059,64 @@ Authors who want WebKit-like behavior can always use replaceData() instead.
 
 XXX replaceData is the same as setting data these days -->
 
-<div algorithm>
-<p>To
-<dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=concept-cd-substring>substring data</dfn>
-of a <a for=/>node</a> <var>node</var> with an integer <var>offset</var> and integer
-<var>count</var>:
+
+To <dfn export for="CharacterData, Text, Comment, ProcessingInstruction" id=concept-cd-substring>substring data</dfn> with node
+<var>node</var>, offset <var>offset</var>, and count
+<var>count</var>, run these steps:
 
 <ol>
- <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li><p>If <var>offset</var> + <var>count</var> is greater than <var>length</var>, then return a
- string whose value is the <a>code units</a> from the <var>offset</var><sup>th</sup>
- <a>code unit</a> to the end of <var>node</var>'s <a for=CharacterData>data</a>.
+ <li>If <var>offset</var> plus <var>count</var> is
+ greater than <var>length</var>, return a string whose value is the
+ <a>code units</a> from the
+ <var>offset</var><sup>th</sup>
+ <a>code unit</a> to the end of
+ <var>node</var>'s <a for=CharacterData>data</a>, and then
+ return.
 
- <li><p>Return a string whose value is the <a>code units</a> from the <var>offset</var><sup>th</sup>
- <a>code unit</a> to the <var>offset</var>+<var>count</var><sup>th</sup> <a>code unit</a> in
- <var>node</var>'s <a for=CharacterData>data</a>.
+ <li>Return a string whose value is the
+ <a>code units</a> from the
+ <var>offset</var><sup>th</sup>
+ <a>code unit</a> to the
+ <var>offset</var>+<var>count</var><sup>th</sup>
+ <a>code unit</a> in <var>node</var>'s
+ <a for=CharacterData>data</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=CharacterData><code>data</code></dfn> getter steps are to return
-<a>this</a>'s <a for=CharacterData>data</a>. Its setter steps are to <a>replace data</a> of
-<a>this</a> with 0, <a>this</a>'s <a for=Node>length</a>, and the given value.
-</div>
+<a>this</a>'s <a for=CharacterData>data</a>. Its setter must <a>replace data</a> with node
+<a>this</a>, offset 0, count <a>this</a>'s <a for=Node>length</a>, and data new value.
 
-<div algorithm>
 <p>The <dfn attribute for=CharacterData><code>length</code></dfn> getter steps are to return
 <a>this</a>'s <a for=Node>length</a>.
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>substringData(<var>offset</var>, <var>count</var>)</code></dfn>
-method steps are to return the result of <a>substringing data</a> of <a>this</a> with
-<var>offset</var> and <var>count</var>.
-</div>
+method steps are to return the result of running <a>substring data</a> with node <a>this</a>,
+offset <var>offset</var>, and count <var>count</var>.
 
-<div algorithm>
 <p>The <dfn method for=CharacterData><code>appendData(<var>data</var>)</code></dfn> method steps are
-to <a>replace data</a> of <a>this</a> with <a>this</a>'s <a for=Node>length</a>, 0, and
-<var>data</var>.
-</div>
+to <a>replace data</a> with node <a>this</a>, offset <a>this</a>'s <a for=Node>length</a>, count 0,
+and data <var>data</var>.
 
-<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>insertData(<var>offset</var>, <var>data</var>)</code></dfn>
-method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, 0, and
-<var>data</var>.
-</div>
+method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count 0,
+and data <var>data</var>.
 
-<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>deleteData(<var>offset</var>, <var>count</var>)</code></dfn>
-method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, <var>count</var>, and
-the empty string.
-</div>
+method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count
+<var>count</var>, and data the empty string.
 
-<div algorithm>
 <p>The
 <dfn method for=CharacterData><code>replaceData(<var>offset</var>, <var>count</var>, <var>data</var>)</code></dfn>
-method steps are to <a>replace data</a> of <a>this</a> with <var>offset</var>, <var>count</var>, and
-<var>data</var>.
-</div>
+method steps are to <a>replace data</a> with node <a>this</a>, offset <var>offset</var>, count
+<var>count</var>, and data <var>data</var>.
 
 
 <h3 id=interface-text>Interface {{Text}}</h3>
@@ -8398,76 +8149,69 @@ interface Text : CharacterData {
 
 <hr>
 
-<div algorithm>
 <p>An <dfn export>exclusive {{Text}} node</dfn> is a {{Text}} <a for=/>node</a> that is not a
 {{CDATASection}} <a for=/>node</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn export>contiguous {{Text}} nodes</dfn> of a <a for=/>node</a> <var>node</var> are
 <var>node</var>, <var>node</var>'s <a>previous sibling</a> {{Text}} <a for=/>node</a>, if any, and
 its <a>contiguous <code>Text</code> nodes</a>, and <var>node</var>'s <a for=tree>next sibling</a>
 {{Text}} <a for=/>node</a>, if any, and its <a>contiguous <code>Text</code> nodes</a>, avoiding any
 duplicates.
-</div>
 
-<div algorithm>
 <p>The <dfn export>contiguous exclusive {{Text}} nodes</dfn> of a <a for=/>node</a> <var>node</var>
 are <var>node</var>, <var>node</var>'s <a>previous sibling</a>
 <a>exclusive <code>Text</code> node</a>, if any, and its
 <a>contiguous exclusive <code>Text</code> nodes</a>, and <var>node</var>'s
 <a for=tree>next sibling</a> <a>exclusive <code>Text</code> node</a>, if any, and its
 <a>contiguous exclusive <code>Text</code> nodes</a>, avoiding any duplicates.
-</div>
 
-<div algorithm>
 <p>The <dfn export id=concept-child-text-content>child text content</dfn> of a <a for=/>node</a>
 <var>node</var> is the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
 the {{Text}} <a for=/>node</a> <a for=tree>children</a> of <var>node</var>, in <a>tree order</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn export id=concept-descendant-text-content>descendant text content</dfn> of a
 <a for=/>node</a> <var>node</var> is the <a for=string>concatenation</a> of the
 <a for=CharacterData>data</a> of all the {{Text}} <a for=/>node</a> <a for=tree>descendants</a> of
 <var>node</var>, in <a>tree order</a>.
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn constructor for=Text lt=Text(data)><code>new Text(<var>data</var>)</code></dfn>
 constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var> and
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
-</div>
 
-<div algorithm>
 <p>To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text}}
-<a for=/>node</a> <var>node</var> with integer <var>offset</var>:
+<a for=/>node</a> <var>node</var> with offset <var>offset</var>, run these steps:
 
 <ol>
- <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
+ <li>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
 
- <li><p>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
+ <li>If <var>offset</var> is greater than <var>length</var>, then <a>throw</a> an
  "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li><p>Let <var>count</var> be <var>length</var> &minus; <var>offset</var>.
+ <li>Let <var>count</var> be <var>length</var> minus
+ <var>offset</var>.
 
- <li><p>Let <var>newData</var> be the result of <a>substringing data</a> of <var>node</var> with
- <var>offset</var> and <var>count</var>.
+ <li>Let <var>new data</var> be the result of
+ <a lt="substring data">substringing data</a> with node
+ <var>node</var>, offset <var>offset</var>, and count
+ <var>count</var>.
 
- <li><p>Let <var>newNode</var> be a new {{Text}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>node</var>'s <a for=Node>node document</a> and
- <a for=CharacterData>data</a> is <var>newData</var>.
+ <li>Let <var>new node</var> be a new {{Text}}
+ <a for=/>node</a>, with the same
+ <a for=Node>node document</a> as
+ <var>node</var>. Set <var>new node</var>'s
+ <a for=CharacterData>data</a> to <var>new data</var>.
 
- <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
+ <li>Let <var>parent</var> be <var>node</var>'s
+ <a for=tree>parent</a>.
 
  <li>
-  <p>If <var>parent</var> is non-null:
+  <p>If <var>parent</var> is not null:
 
   <ol>
-   <li><p><a for=/>Insert</a> <var>newNode</var> into <var>parent</var> before <var>node</var>'s
+   <li><p><a for=/>Insert</a> <var>new node</var> into <var>parent</var> before <var>node</var>'s
    <a for=tree>next sibling</a>.
    <!-- Do this before we replace data, so that the data replacement won't
    mutate ranges prematurely:
@@ -8475,12 +8219,12 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 
    <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
    <a for=range>start offset</a> is greater than <var>offset</var>, set its
-   <a for=range>start node</a> to <var>newNode</var> and decrease its <a for=range>start offset</a>
+   <a for=range>start node</a> to <var>new node</var> and decrease its <a for=range>start offset</a>
    by <var>offset</var>.
 
    <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
    <a for=range>end offset</a> is greater than <var>offset</var>, set its <a for=range>end node</a>
-   to <var>newNode</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
+   to <var>new node</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
 
    <!-- This shit is complicated:
         https://www.w3.org/Bugs/Public/show_bug.cgi?id=19968 -->
@@ -8493,23 +8237,19 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
    increase its <a for=range>end offset</a> by 1.
   </ol>
 
- <li><p><a>Replace data</a> of <var>node</var> with <var>offset</var>, <var>count</var>, and
- the empty string.
+ <li><a>Replace data</a> with node
+ <var>node</var>, offset <var>offset</var>, count
+ <var>count</var>, and data the empty string.
 
- <li><p>Return <var>newNode</var>.
+ <li>Return <var>new node</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Text><code>splitText(<var>offset</var>)</code></dfn> method steps are to
 <a lt="split a Text node">split</a> <a>this</a> with offset <var>offset</var>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=Text><code>wholeText</code></dfn> getter steps are to return the
 <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of the
 <a>contiguous <code>Text</code> nodes</a> of <a>this</a>, in <a>tree order</a>.
-</div>
 
 
 <h3 id=interface-cdatasection>Interface {{CDATASection}}</h3>
@@ -8531,10 +8271,8 @@ interface ProcessingInstruction : CharacterData {
 <p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
 <dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
 
-<div algorithm>
 <p>The <dfn attribute for=ProcessingInstruction>target</dfn> getter steps are to return
 <a>this</a>'s <a for=ProcessingInstruction>target</a>.
-</div>
 
 
 <h3 id=interface-comment>Interface {{Comment}}</h3>
@@ -8552,12 +8290,10 @@ interface Comment : CharacterData {
  <a for=CharacterData>data</a> is <var>data</var>.
 </dl>
 
-<div algorithm>
 <p>The <dfn constructor for=Comment lt=Comment(data)><code>new Comment(<var>data</var>)</code></dfn>
 constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var> and
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
-</div>
 
 
 
@@ -8638,7 +8374,6 @@ when a mutation occurs.
 be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <a for=Node>length</a>, inclusive.
 
-<div algorithm="boundary point/position">
 <p>The <dfn export id=concept-range-bp-position for="boundary point">position</dfn> of a
 <a>boundary point</a> (<var>nodeA</var>, <var>offsetA</var>) relative to a <a>boundary point</a>
 (<var>nodeB</var>, <var>offsetB</var>) is
@@ -8675,7 +8410,6 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 
  <li><p>Return <a for="boundary point">before</a>.
 </ol>
-</div>
 
 
 <h3 id=interface-abstractrange>Interface {{AbstractRange}}</h3>
@@ -8708,10 +8442,8 @@ interface AbstractRange {
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
 
-<div algorithm>
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
-</div>
 
 <dl class=domintro>
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
@@ -8730,31 +8462,21 @@ interface AbstractRange {
  <dd>Returns true if <var>range</var> is <a for=range>collapsed</a>; otherwise false.
 </dl>
 
-<div algorithm>
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start node</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end node</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn id=dom-range-collapsed attribute for=AbstractRange><code>collapsed</code></dfn>
 getter steps are to return true if <a>this</a> is <a for=range>collapsed</a>; otherwise false.
-</div>
 
 
 <h3 id=interface-staticrange>Interface {{StaticRange}}</h3>
@@ -8778,7 +8500,6 @@ interface StaticRange : AbstractRange {
  <dd><p>Returns a new <a>range</a> object that does not update when the <a>node tree</a> mutates.
 </dl>
 
-<div algorithm>
 <p>The
 <dfn constructor for=StaticRange lt="StaticRange(init)"><code>new StaticRange(<var>init</var>)</code></dfn>
 constructor steps are:
@@ -8794,9 +8515,7 @@ constructor steps are:
  (<var>init</var>["{{StaticRangeInit/endContainer}}"],
  <var>init</var>["{{StaticRangeInit/endOffset}}"]).
 </ol>
-</div>
 
-<div algorithm>
 <p>A {{StaticRange}} is <dfn for=StaticRange export>valid</dfn> if all of the following are true:
 
 <ul>
@@ -8811,7 +8530,6 @@ constructor steps are:
  <li><p>Its <a for=range>start</a> is <a for="boundary point">before</a> or
  <a for="boundary point">equal</a> to its <a for=range>end</a>.
 </ul>
-</div>
 
 
 <h3 id=interface-range>Interface {{Range}}</h3>
@@ -8928,13 +8646,13 @@ but not its <a for=range>end node</a>, or vice versa.
  </ul>
 </div>
 
-<div algorithm>
-<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are:
+<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are as
+follows:
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
- <li><p><a>Assert</a>: <var>parent</var> is non-null.
+ <li><p><a>Assert</a>: <var>parent</var> is not null.
 
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
@@ -8953,7 +8671,6 @@ but not its <a for=range>end node</a>, or vice versa.
  <a for=range>end offset</a> is greater than <var>index</var>, decrease its
  <a for=range>end offset</a> by 1.
 </ol>
-</div>
 
 <hr>
 
@@ -8962,50 +8679,50 @@ but not its <a for=range>end node</a>, or vice versa.
  <dd>Returns a new <a>live range</a>.
 </dl>
 
-<div algorithm>
 <p>The <dfn constructor for=Range lt="Range()"><code>new Range()</code></dfn> constructor steps are
 to set <a>this</a>'s <a for=range>start</a> and <a for=range>end</a> to
 (<a>current global object</a>'s <a>associated <code>Document</code></a>, 0).
-</div>
 
 <hr>
 
 <dl class=domintro>
- <dt><var ignore>container</var> = <var>range</var> . {{Range/commonAncestorContainer}}
+ <dt><var>container</var> = <var>range</var> . {{Range/commonAncestorContainer}}
  <dd>Returns the <a for=/>node</a>, furthest away from the <a for=/>document</a>, that is an
  <a for=tree>ancestor</a> of both <var>range</var>'s <a for=range>start node</a> and
  <a for=range>end node</a>.
 </dl>
 
-<div algorithm>
 <p>The <dfn attribute for=Range><code>commonAncestorContainer</code></dfn> getter steps are:
 
 <ol>
- <li><p>Let <var>container</var> be <a for=range>start node</a>.
+ <li>Let <var>container</var> be
+ <a for=range>start node</a>.
 
- <li><p>While <var>container</var> is not an <a for=tree>inclusive ancestor</a> of
- <a for=range>end node</a>: set <var>container</var> to <var>container</var>'s
+ <li>While <var>container</var> is not an
+ <a for=tree>inclusive ancestor</a> of
+ <a for=range>end node</a>, let
+ <var>container</var> be <var>container</var>'s
  <a for=tree>parent</a>.
 
- <li><p>Return <var>container</var>.
+ <li>Return <var>container</var>.
 </ol>
-</div>
 
 <hr>
 
-<div algorithm>
 <p>To
 <dfn export id=concept-range-bp-set lt="set the start|set the end" for=Range>set the start or end</dfn>
-of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>):
+of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</var>), run these
+steps:
 
 <ol>
- <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
- <li><p>If <var>offset</var> is greater than <var>node</var>'s <a for=Node>length</a>, then
+ <li>If <var>offset</var> is greater than <var>node</var>'s <a for=Node>length</a>, then
  <a>throw</a> an "{{IndexSizeError!!exception}}" {{DOMException}}.
 
- <li><p>Let <var>boundaryPoint</var> be the <a>boundary point</a>
+ <li>Let <var>bp</var> be the
+ <a>boundary point</a>
  (<var>node</var>, <var>offset</var>).
 
  <li>
@@ -9013,54 +8730,60 @@ of a <var>range</var> to a <a>boundary point</a> (<var>node</var>, <var>offset</
    <dt>If these steps were invoked as "set the start"
    <dd>
     <ol>
-     <li><p>If <var>range</var>'s <a for="live range">root</a> is not <var>node</var>'s
-     <a for=tree>root</a> or <var>boundaryPoint</var> is <a for="boundary point">after</a>
-     <var>range</var>'s <a for=range>end</a>, then set <var>range</var>'s <a for=range>end</a>
-     to <var>boundaryPoint</var>.
+     <li>If <var>range</var>'s
+     <a for="live range">root</a> is not equal to
+     <var>node</var>'s <a for=tree>root</a>,
+     or if <var>bp</var> is
+     <a for="boundary point">after</a> the
+     <var>range</var>'s <a for=range>end</a>, set
+     <var>range</var>'s <a for=range>end</a>
+     to <var>bp</var>.
 
-     <li><p>Set <var>range</var>'s <a for=range>start</a> to <var>boundaryPoint</var>.
+     <li>Set <var>range</var>'s
+     <a for=range>start</a> to <var>bp</var>.
     </ol>
    <dt>If these steps were invoked as "set the end"
    <dd>
     <ol>
-     <li><p>If <var>range</var>'s <a for="live range">root</a> is not <var>node</var>'s
-     <a for=tree>root</a> or <var>boundaryPoint</var> is <a for="boundary point">before</a>
-     <var>range</var>'s <a for=range>start</a>, then set <var>range</var>'s <a for=range>start</a>
-     to <var>boundaryPoint</var>.
+     <li>If <var>range</var>'s
+     <a for="live range">root</a> is not equal to
+     <var>node</var>'s <a for=tree>root</a>,
+     or if <var>bp</var> is
+     <a for="boundary point">before</a> the
+     <var>range</var>'s <a for=range>start</a>, set
+     <var>range</var>'s <a for=range>start</a>
+     to <var>bp</var>.
 
-     <li><p>Set <var>range</var>'s <a for=range>end</a> to <var>boundaryPoint</var>.
+     <li>Set <var>range</var>'s
+     <a for=range>end</a> to <var>bp</var>.
     </ol>
   </dl>
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setStart(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the start</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setEnd(<var>node</var>, <var>offset</var>)</code></dfn> method
 steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
 (<var>node</var>, <var>offset</var>).
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setStartBefore(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
+ <li>Let <var>parent</var> be <var>node</var>'s
+ <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><p><a>Set the start</a> of <a>this</a> to <a>boundary point</a>
- (<var>parent</var>, <var>node</var>'s <a for=tree>index</a>).
+ <li><a>Set the start</a> of
+ <a>this</a> to
+ <a>boundary point</a>
+ (<var>parent</var>, <var>node</var>'s
+ <a for=tree>index</a>).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setStartAfter(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
@@ -9072,23 +8795,22 @@ steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
  <li><p><a>Set the start</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setEndBefore(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
- <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
+ <li>Let <var>parent</var> be <var>node</var>'s
+ <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
+ <li>If <var>parent</var> is null, then <a>throw</a> an "{{InvalidNodeTypeError!!exception}}"
  {{DOMException}}.
 
- <li><p><a>Set the end</a> of <a>this</a> to <a>boundary point</a>
+ <li><a>Set the end</a> of
+ <a>this</a> to
+ <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a>).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>setEndAfter(<var>node</var>)</code></dfn> method steps are:
 
 <ol>
@@ -9100,17 +8822,13 @@ steps are to <a>set the end</a> of <a>this</a> to <a>boundary point</a>
  <li><p><a>Set the end</a> of <a>this</a> to <a>boundary point</a>
  (<var>parent</var>, <var>node</var>'s <a for=tree>index</a> plus 1).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>collapse(<var>toStart</var>)</code></dfn> method steps are to, if
 <var>toStart</var> is true, set <a for=range>end</a> to <a for=range>start</a>; otherwise set
 <a for=range>start</a> to <a for=range>end</a>.
-</div>
 
-<div algorithm>
 <p>To <dfn export id=concept-range-select for=range>select</dfn> a <a for=/>node</a> <var>node</var>
-within a <a>range</a> <var>range</var>:
+within a <a>range</a> <var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -9126,19 +8844,15 @@ within a <a>range</a> <var>range</var>:
  <li><p>Set <var>range</var>'s <a for=range>end</a> to <a>boundary point</a>
  (<var>parent</var>, <var>index</var> plus 1).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>selectNode(<var>node</var>)</code></dfn> method steps are to
 <a for=range>select</a> <var>node</var> within <a>this</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>selectNodeContents(<var>node</var>)</code></dfn> method steps
 are:
 
 <ol>
- <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li><p>If <var>node</var> is a <a>doctype</a>, <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>length</var> be the <a for=Node>length</a> of <var>node</var>.
@@ -9147,11 +8861,9 @@ are:
 
  <li><p>Set <a for=range>end</a> to the <a>boundary point</a> (<var>node</var>, <var>length</var>).
 </ol>
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The
 <dfn method for=Range><code>compareBoundaryPoints(<var>how</var>, <var>sourceRange</var>)</code></dfn>
 method steps are:
@@ -9189,51 +8901,57 @@ method steps are:
  Opera) instead of a nonstandard exception type.
  -->
 
- <li><p>If <a>this</a>'s <a for="live range">root</a> is not <var>sourceRange</var>'s
- <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}"
- {{DOMException}}.
-
- <li><p>Let <var>thisPoint</var> and <var>sourcePoint</var> be null.
+ <li>If <a>this</a>'s <a for="live range">root</a> is not the same as <var>sourceRange</var>'s
+ <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
 
  <li>
-  <p>Switch on <var>how</var>:
-
+  If <var>how</var> is:
   <dl class=switch>
    <dt>{{Range/START_TO_START}}:
-   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>start</a> and
-   <var>sourcePoint</var> to <var>sourceRange</var>'s <a for=range>start</a>.
+   <dd>
+    Let <var>this point</var> be <a>this</a>'s
+    <a for=range>start</a>.
+    Let <var>other point</var> be <var>sourceRange</var>'s
+    <a for=range>start</a>.
 
    <dt>{{Range/START_TO_END}}:
-   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>end</a> and <var>sourcePoint</var>
-   to <var>sourceRange</var>'s <a for=range>start</a>.
+   <dd>
+    Let <var>this point</var> be <a>this</a>'s
+    <a for=range>end</a>.
+    Let <var>other point</var> be <var>sourceRange</var>'s
+    <a for=range>start</a>.
 
-   <dt>{{Range/END_TO_END}}:
-   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>end</a> and <var>sourcePoint</var>
-   to <var>sourceRange</var>'s <a for=range>end</a>.
+    <dt>{{Range/END_TO_END}}:
+    <dd>
+     Let <var>this point</var> be <a>this</a>'s
+     <a for=range>end</a>.
+     Let <var>other point</var> be <var>sourceRange</var>'s
+     <a for=range>end</a>.
 
-   <dt>{{Range/END_TO_START}}:
-   <dd><p>Set <var>thisPoint</var> to <a>this</a>'s <a for=range>start</a> and
-   <var>sourcePoint</var> to <var>sourceRange</var>'s <a for=range>end</a>.
-  </dl>
+    <dt>{{Range/END_TO_START}}:
+    <dd>
+     Let <var>this point</var> be <a>this</a>'s
+     <a for=range>start</a>.
+     Let <var>other point</var> be <var>sourceRange</var>'s
+     <a for=range>end</a>.
+   </dl>
 
- <li>
-  <p>Switch on the <a for="boundary point">position</a> of <var>thisPoint</var> relative to
-  <var>sourcePoint</var>:
+  <li>
+   <p>If the <a for="boundary point">position</a> of <var>this point</var> relative to
+   <var>other point</var> is
 
-  <dl class=switch>
-   <dt><a for="boundary point">before</a>
-   <dd>Return &minus;1.
+   <dl class=switch>
+    <dt><a for="boundary point">before</a>
+    <dd>Return &minus;1.
 
-   <dt><a for="boundary point">equal</a>
-   <dd>Return 0.
+    <dt><a for="boundary point">equal</a>
+    <dd>Return 0.
 
-   <dt><a for="boundary point">after</a>
-   <dd>Return 1.
-  </dl>
+    <dt><a for="boundary point">after</a>
+    <dd>Return 1.
+   </dl>
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>deleteContents()</code></dfn> method steps are:
 
 <ol>
@@ -9243,73 +8961,83 @@ method steps are:
  are all the substeps of the next step actually no-ops, or could some have
  side effects? -->
 
- <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
- <var>originalEndNode</var>, and <var>originalEndOffset</var> be <a>this</a>'s
- <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
+ <li>Let <var>original start node</var>,
+ <var>original start offset</var>, <var>original end node</var>,
+ and <var>original end offset</var> be <a>this</a>'s
+ <a for=range>start node</a>,
+ <a for=range>start offset</a>,
+ <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
+ <li><p>If <var>original start node</var> is <var>original end node</var> and it is a
+ {{CharacterData}} <a for=/>node</a>, then
+ <a>replace data</a> with node
+ <var>original start node</var>, offset
+ <var>original start offset</var>, count
+ <var>original end offset</var> minus
+ <var>original start offset</var>, and data the empty string, and then return.
+
+ <li>Let <var>nodes to remove</var> be a list of all the
+ <a for=/>nodes</a> that are <a for="live range">contained</a> in
+ <a>this</a>, in
+ <a>tree order</a>, omitting any
+ <a for=/>node</a> whose
+ <a for=tree>parent</a> is also
+ <a for="live range">contained</a> in <a>this</a>.
+
+ <li>If <var>original start node</var> is an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set
+ <var>new node</var> to <var>original start node</var> and
+ <var>new offset</var> to <var>original start offset</var>.
+
  <li>
-  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
-  <a for=/>node</a>:
-
+  Otherwise:
   <ol>
-   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
-   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>, and the empty string.
+   <li>Let <var>reference node</var> equal
+   <var>original start node</var>.
 
-   <li><p>Return.
-  </ol>
-
- <li><p>Let <var>nodesToRemove</var> be a list of all the <a for=/>nodes</a> that are
- <a for="live range">contained</a> in <a>this</a>, in <a>tree order</a>, omitting any
- <a for=/>node</a> whose <a for=tree>parent</a> is also <a for="live range">contained</a> in
- <a>this</a>.
-
- <li><p>Let <var>newNode</var> and <var>newOffset</var> be null.
-
- <li><p>If <var>originalStartNode</var> is an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>, then set <var>newNode</var> to <var>originalStartNode</var> and
- <var>newOffset</var> to <var>originalStartOffset</var>.
-
- <li>
-  <p>Otherwise:
-
-  <ol>
-   <li><p>Let <var>referenceNode</var> be <var>originalStartNode</var>.
-
-   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is non-null and is not an
-   <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
-   its <a for=tree>parent</a>.
+   <li>While <var>reference node</var>'s
+   <a for=tree>parent</a> is not null and is not an
+   <a for=tree>inclusive ancestor</a> of
+   <var>original end node</var>, set <var>reference node</var>
+   to its <a for=tree>parent</a>.
 
    <li>
-    <p>Set <var>newNode</var> to <var>referenceNode</var>'s <a for=tree>parent</a> and
-    <var>newOffset</var> to <var>referenceNode</var>'s <a for=tree>index</a> + 1.
+    Set <var>new node</var> to the
+    <a for=tree>parent</a> of
+    <var>reference node</var>, and <var>new offset</var> to one
+    plus the <a for=tree>index</a> of
+    <var>reference node</var>.
 
-    <p class=note>If <var>referenceNode</var>'s <a for=tree>parent</a> were null, it would be the
-    <a for="live range">root</a> of <a>this</a>. And then it would be an
-    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var> and we could not reach this
-    point.
+    <p class=note>If <var>reference node</var>'s
+    <a for=tree>parent</a> were null, it would be the
+    <a for="live range">root</a> of
+    <a>this</a>, so would be an
+    <a for=tree>inclusive ancestor</a> of
+    <var>original end node</var>, and we could not reach this point.
   </ol>
 
- <li><p>If <var>originalStartNode</var> is a {{CharacterData}} <a for=/>node</a>, then
- <a>replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
- <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>, and
- the empty string.
+ <li><p>If <var>original start node</var> is a {{CharacterData}} <a for=/>node</a>, then
+ <a>replace data</a> with node <var>original start node</var>, offset
+ <var>original start offset</var>, count <var>original start node</var>'s <a for=Node>length</a>
+ &minus; <var>original start offset</var>, data the empty string.
 
- <li><p>For each <var>node</var> of <var>nodesToRemove</var>, in <a>tree order</a>:
+ <li><p>For each <var>node</var> in <var>nodes to remove</var>, in <a>tree order</a>,
  <a for=/>remove</a> <var>node</var>.
 
- <li><p>If <var>originalEndNode</var> is a {{CharacterData}} <a for=/>node</a>, then
- <a>replace data</a> of <var>originalEndNode</var> with 0, <var>originalEndOffset</var>, and
- the empty string.
+ <li><p>If <var>original end node</var> is a {{CharacterData}} <a for=/>node</a>, then
+ <a>replace data</a> with node
+ <var>original end node</var>, offset 0, count
+ <var>original end offset</var> and data the empty string.
 
- <li><p>Set <a for=range>start</a> and <a for=range>end</a> to
- (<var>newNode</var>, <var>newOffset</var>).
+ <li>Set <a for=range>start</a> and
+ <a for=range>end</a> to
+ (<var>new node</var>, <var>new offset</var>).
 </ol>
-</div>
 
-<div algorithm>
 <p>To <dfn export id=concept-range-extract for="live range">extract</dfn> a <a>live range</a>
-<var>range</var>:
+<var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -9324,65 +9052,88 @@ method steps are:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
- <var>originalEndNode</var>, and <var>originalEndOffset</var> be <var>range</var>'s
- <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
+ <li>Let <var>original start node</var>, <var>original start offset</var>,
+ <var>original end node</var>, and <var>original end offset</var> be
+ <var>range</var>'s <a for=range>start node</a>,
+ <a for=range>start offset</a>,
+ <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
  <li>
-  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
+  <p>If <var>original start node</var> is <var>original end node</var> and it is a {{CharacterData}}
   <a for=/>node</a>:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
+   <li>Let <var>clone</var> be a
+   <a lt="clone a node">clone</a> of
+   <var>original start node</var>.
 
-   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
-   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
-   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>.
+   <li>Set the <a for=CharacterData>data</a> of
+   <var>clone</var> to the result of
+   <a lt="substring data">substringing data</a> with node
+   <var>original start node</var>, offset
+   <var>original start offset</var>, and count
+   <var>original end offset</var> minus
+   <var>original start offset</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
-   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>, and the empty string.
+   <li><a>Replace data</a> with node
+   <var>original start node</var>, offset
+   <var>original start offset</var>, count
+   <var>original end offset</var> minus
+   <var>original start offset</var>, and data the empty string.
 
    <li>Return <var>fragment</var>.
   </ol>
 
- <li><p>Let <var>commonAncestor</var> be <var>originalStartNode</var>.
+ <li>Let <var>common ancestor</var> be
+ <var>original start node</var>.
 
- <li><p>While <var>commonAncestor</var> is not an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>: set <var>commonAncestor</var> to its own <a for=tree>parent</a>.
+ <li>While <var>common ancestor</var> is not an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set <var>common ancestor</var> to
+ its own <a for=tree>parent</a>.
 
- <li><p>Let <var>firstPartiallyContainedChild</var> be null.
+ <li>Let <var>first partially contained child</var> be null.
 
- <li>If <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>, then set <var>firstPartiallyContainedChild</var> to the first
- <a for=tree>child</a> of <var>commonAncestor</var> that is
- <a for="live range">partially contained</a> in <var>range</var>.
+ <li>If <var>original start node</var> is <em>not</em> an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set <var>first partially contained child</var>
+ to the first <a for=tree>child</a> of
+ <var>common ancestor</var> that is <a for="live range">partially contained</a> in
+ <var>range</var>.
 
- <li><p>Let <var>lastPartiallyContainedChild</var> be null.
+ <li>Let <var>last partially contained child</var> be null.
 
  <li>
-  <p>If <var>originalEndNode</var> is not an <a for=tree>inclusive ancestor</a> of
-  <var>originalStartNode</var>, then set <var>lastPartiallyContainedChild</var> to the last
-  <a for=tree>child</a> of <var>commonAncestor</var> that is
+  If <var>original end node</var> is <em>not</em> an
+  <a for=tree>inclusive ancestor</a> of
+  <var>original start node</var>, set
+  <var>last partially contained child</var> to the last
+  <a for=tree>child</a> of <var>common ancestor</var> that is
   <a for="live range">partially contained</a> in <var>range</var>.
 
-  <p class=note>These variable assignments do actually always make sense. For instance, if
-  <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
-  <var>originalEndNode</var>, <var>originalStartNode</var> is itself
+  <p class=note>These variable assignments do actually always make sense.
+  For instance, if <var>original start node</var> is not an
+  <a for=tree>inclusive ancestor</a> of
+  <var>original end node</var>, <var>original start node</var> is itself
   <a for="live range">partially contained</a> in <var>range</var>, and so are all its
-  <a for=tree>ancestors</a> up until a <a for=tree>child</a> of <var>commonAncestor</var>.
-  <var>commonAncestor</var> cannot be <var>originalStartNode</var>, because it has to be an
-  <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>. The other case is similar. Also,
-  notice that the two <a for=tree>children</a> will never be equal if both are defined.
+  <a for=tree>ancestors</a> up until a
+  <a for=tree>child</a> of <var>common ancestor</var>.
+  <var>common ancestor</var> cannot be <var>original start node</var>, because
+  it has to be an <a for=tree>inclusive ancestor</a> of
+  <var>original end node</var>. The other case is similar. Also, notice that the two
+  <a for=tree>children</a> will never be equal if both are defined.
 
- <li><p>Let <var>containedChildren</var> be a list of all <a for=tree>children</a> of
- <var>commonAncestor</var> that are <a for="live range">contained</a> in <var>range</var>, in
- <a>tree order</a>.
+ <li>Let <var>contained children</var> be a list of all
+ <a for=tree>children</a> of
+ <var>common ancestor</var> that are <a for="live range">contained</a> in
+ <var>range</var>, in <a>tree order</a>.
 
  <li>
-  <p>If any member of <var>containedChildren</var> is a <a>doctype</a>, then <a>throw</a> a
+  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
   <!-- Firefox 4.0 actually removes the non-DocumentType nodes before
   throwing the exception. Opera 11.00 removes the DocumentType too, and
@@ -9395,132 +9146,153 @@ method steps are:
   partially contained. It cannot be a boundary point of a range, and it
   cannot be the ancestor of anything.
 
- <li><p>Let <var>newNode</var> and <var>newOffset</var> be null.
-
- <li><p>If <var>originalStartNode</var> is an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>, then set <var>newNode</var> to <var>originalStartNode</var> and
- <var>newOffset</var> to <var>originalStartOffset</var>.
+ <li>If <var>original start node</var> is an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set <var>new node</var> to
+ <var>original start node</var> and <var>new offset</var> to
+ <var>original start offset</var>.
 
  <li>
-  <p>Otherwise:
-
+  Otherwise:
   <ol>
-   <li><p>Let <var>referenceNode</var> be <var>originalStartNode</var>.
+   <li>Let <var>reference node</var> equal <var>original start node</var>.
 
-   <li><p>While <var>referenceNode</var>'s <a for=tree>parent</a> is non-null and is not an
-   <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>: set <var>referenceNode</var> to
-   its <a for=tree>parent</a>.
+   <li>While <var>reference node</var>'s
+   <a for=tree>parent</a> is not null and is not an
+   <a for=tree>inclusive ancestor</a> of
+   <var>original end node</var>, set <var>reference node</var> to its
+   <a for=tree>parent</a>.
 
    <li>
-    <p>Set <var>newNode</var> to the <a for=tree>parent</a> of <var>referenceNode</var>, and
-    <var>newOffset</var> to <var>referenceNode</var>'s <a for=tree>index</a> + 1.
+    Set <var>new node</var> to the
+    <a for=tree>parent</a> of <var>reference node</var>, and
+    <var>new offset</var> to one plus <var>reference node</var>'s
+    <a for=tree>index</a>.
 
-    <p class=note>If <var>referenceNode</var>'s <a for=tree>parent</a> is null, it would be the
-    <a for="live range">root</a> of <var>range</var>. And then it would be an
-    <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var> and we could not reach this
-    point.
+    <p class=note>If <var>reference node</var>'s
+    <a for=tree>parent</a> is null, it would be the
+    <a for="live range">root</a> of <var>range</var>, so would be an
+    <a for=tree>inclusive ancestor</a> of
+    <var>original end node</var>, and we could not reach this point.
   </ol>
 
   <!-- Now we start with mutations, so we can't refer to this anymore unless we carefully consider
   how it will have mutated. -->
 
  <li>
-  <p>If <var>firstPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>firstPartiallyContainedChild</var> is
-  <var>originalStartNode</var>.
+  <p class=note>In this case, <var>first partially contained child</var> is
+  <var>original start node</var>.
 
   <ol>
    <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>originalStartNode</var>.
+   <var>original start node</var>.
 
    <li><p>Set the <a for=CharacterData>data</a> of <var>clone</var> to the result of
-   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
-   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>.
+   <a lt="substring data">substringing data</a> with node <var>original start node</var>, offset
+   <var>original start offset</var>, and count <var>original start node</var>'s
+   <a for=Node>length</a> &minus; <var>original start offset</var>.
 
    <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
 
-   <li><p><a>Replace data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var>,
-   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>, and
-   the empty string.
+   <li><p><a>Replace data</a> with node <var>original start node</var>, offset
+   <var>original start offset</var>, count <var>original start node</var>'s <a for=Node>length</a>
+   &minus; <var>original start offset</var>, and data the empty string.
   </ol>
 
  <li>
-  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is non-null:
+  Otherwise, if <var>first partially contained child</var> is not
+  null:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>firstPartiallyContainedChild</var>.
+   <li>Let <var>clone</var> be a
+   <a lt="clone a node">clone</a> of
+   <var>first partially contained child</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
-   (<var>originalStartNode</var>, <var>originalStartOffset</var>) and whose <a for=range>end</a> is
-   (<var>firstPartiallyContainedChild</var>, <var>firstPartiallyContainedChild</var>'s
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
+   (<var>original start node</var>, <var>original start offset</var>) and
+   whose <a for=range>end</a> is
+   (<var>first partially contained child</var>, <var>first partially contained child</var>'s
    <a for=Node>length</a>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">extracting</a>
    <var>subrange</var>.
 
-   <li><a>Append</a> <var>subfragment</var> to <var>clone</var>.
+   <li><a>Append</a> <var>subfragment</var> to
+   <var>clone</var>.
   </ol>
 
- <li><p>For each <var>contained child</var> of <var>containedChildren</var>: <a>append</a>
- <var>contained child</var> to <var>fragment</var>.
+ <li>For each <var>contained child</var> in <var>contained children</var>,
+ <a>append</a> <var>contained child</var> to
+ <var>fragment</var>.
 
  <li>
-  <p>If <var>lastPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>lastPartiallyContainedChild</var> is
-  <var>originalEndNode</var>.
+  <p class=note>In this case, <var>last partially contained child</var> is
+  <var>original end node</var>.
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalEndNode</var>.
+   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>original end node</var>.
 
-   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
-   <a>substringing data</a> of <var>originalEndNode</var> with 0 and <var>originalEndOffset</var>.
+   <li>Set the <a for=CharacterData>data</a> of
+   <var>clone</var> to the result of
+   <a lt="substring data">substringing data</a> with node
+   <var>original end node</var>, offset 0, and count
+   <var>original end offset</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p><a>Replace data</a> of <var>originalEndNode</var> with 0, <var>originalEndOffset</var>,
-   and the empty string.
+   <li><a>Replace data</a> with node
+   <var>original end node</var>, offset 0, count
+   <var>original end offset</var>, and data the empty string.
   </ol>
 
  <li>
-  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is non-null:
+  Otherwise, if <var>last partially contained child</var> is not
+  null:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>lastPartiallyContainedChild</var>.
+   <li>Let <var>clone</var> be a
+   <a lt="clone a node">clone</a> of
+   <var>last partially contained child</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
-   (<var>lastPartiallyContainedChild</var>, 0) and whose <a for=range>end</a> is
-   (<var>originalEndNode</var>, <var>originalEndOffset</var>).
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
+   (<var>last partially contained child</var>, 0) and whose
+   <a for=range>end</a> is
+   (<var>original end node</var>, <var>original end offset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">extracting</a>
    <var>subrange</var>.
 
-   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
+   <li><a>Append</a> <var>subfragment</var> to
+   <var>clone</var>.
   </ol>
 
- <li><p>Set <var>range</var>'s <a for=range>start</a> and <a for=range>end</a> to
- (<var>newNode</var>, <var>newOffset</var>).
+ <li>Set <var>range</var>'s <a for=range>start</a> and
+ <a for=range>end</a> to
+ (<var>new node</var>, <var>new offset</var>).
 
- <li><p>Return <var>fragment</var>.
+ <li>Return <var>fragment</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>extractContents()</code></dfn> method steps are to return the
 result of <a for="live range">extracting</a> <a>this</a>.
-</div>
 
-<div algorithm>
 <p>To
 <dfn export id=concept-range-clone for="live range" lt="clone the contents|cloning the contents">clone the contents</dfn>
-of a <a>live range</a> <var>range</var>:
+of a <a>live range</a> <var>range</var>, run these steps:
 
 <ol>
  <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
@@ -9535,62 +9307,82 @@ of a <a>live range</a> <var>range</var>:
  Otherwise, the following steps are all no-ops. But it's simplest to include
  this step anyway. -->
 
- <li><p>Let <var>originalStartNode</var>, <var>originalStartOffset</var>,
- <var>originalEndNode</var>, and <var>originalEndOffset</var> be <var>range</var>'s
- <a for=range>start node</a>, <a for=range>start offset</a>, <a for=range>end node</a>, and
+ <li>Let <var>original start node</var>, <var>original start offset</var>,
+ <var>original end node</var>, and <var>original end offset</var> be
+ <var>range</var>'s <a for=range>start node</a>,
+ <a for=range>start offset</a>,
+ <a for=range>end node</a>, and
  <a for=range>end offset</a>, respectively.
 
  <li>
-  <p>If <var>originalStartNode</var> is <var>originalEndNode</var> and it is a {{CharacterData}}
+  <p>If <var>original start node</var> is <var>original end node</var> and it is a {{CharacterData}}
   <a for=/>node</a>:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
+   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>original start node</var>.
 
-   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
-   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
-   <var>originalEndOffset</var> &minus; <var>originalStartOffset</var>.
+   <li>Set the <a for=CharacterData>data</a> of
+   <var>clone</var> to the result of
+   <a lt="substring data">substringing data</a> with node
+   <var>original start node</var>, offset
+   <var>original start offset</var>, and count
+   <var>original end offset</var> minus
+   <var>original start offset</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p>Return <var>fragment</var>.
+   <li>Return <var>fragment</var>.
   </ol>
 
- <li><p>Let <var>commonAncestor</var> be <var>originalStartNode</var>.
+ <li>Let <var>common ancestor</var> be
+ <var>original start node</var>.
 
- <li><p>While <var>commonAncestor</var> is not an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>: set <var>commonAncestor</var> to its own <a for=tree>parent</a>.
+ <li>While <var>common ancestor</var> is not an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set
+ <var>common ancestor</var> to its own
+ <a for=tree>parent</a>.
 
- <li><p>Let <var>firstPartiallyContainedChild</var> be null.
+ <li>Let <var>first partially contained child</var> be null.
 
- <li><p>If <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
- <var>originalEndNode</var>, then set <var>firstPartiallyContainedChild</var> to the first
- <a for=tree>child</a> of <var>commonAncestor</var> that is
- <a for="live range">partially contained</a> in <var>range</var>.
+ <li>If <var>original start node</var> is <em>not</em> an
+ <a for=tree>inclusive ancestor</a> of
+ <var>original end node</var>, set <var>first partially contained child</var>
+ to the first <a for=tree>child</a> of
+ <var>common ancestor</var> that is <a for="live range">partially contained</a> in
+ <var>range</var>.
 
- <li><p>Let <var>lastPartiallyContainedChild</var> be null.
+ <li>Let <var>last partially contained child</var> be null.
 
  <li>
-  <p>If <var>originalEndNode</var> is not an <a for=tree>inclusive ancestor</a> of
-  <var>originalStartNode</var>, then set <var>lastPartiallyContainedChild</var> to the last
-  <a for=tree>child</a> of <var>commonAncestor</var> that is
+  If <var>original end node</var> is <em>not</em> an
+  <a for=tree>inclusive ancestor</a> of
+  <var>original start node</var>, set
+  <var>last partially contained child</var> to the last
+  <a for=tree>child</a> of <var>common ancestor</var> that is
   <a for="live range">partially contained</a> in <var>range</var>.
 
-  <p class=note>These variable assignments do actually always make sense. For instance, if
-  <var>originalStartNode</var> is not an <a for=tree>inclusive ancestor</a> of
-  <var>originalEndNode</var>, <var>originalStartNode</var> is itself
+  <p class=note>These variable assignments do actually always make sense.
+  For instance, if <var>original start node</var> is not an
+  <a for=tree>inclusive ancestor</a> of
+  <var>original end node</var>, <var>original start node</var> is itself
   <a for="live range">partially contained</a> in <var>range</var>, and so are all its
-  <a for=tree>ancestors</a> up until a <a for=tree>child</a> of <var>commonAncestor</var>.
-  <var>commonAncestor</var> cannot be <var>originalStartNode</var>, because it has to be an
-  <a for=tree>inclusive ancestor</a> of <var>originalEndNode</var>. The other case is similar. Also,
-  notice that the two <a for=tree>children</a> will never be equal if both are defined.
+  <a for=tree>ancestors</a> up until a
+  <a for=tree>child</a> of <var>common ancestor</var>.
+  <var>common ancestor</var> cannot be <var>original start node</var>, because
+  it has to be an <a for=tree>inclusive ancestor</a> of
+  <var>original end node</var>. The other case is similar. Also, notice that the two
+  <a for=tree>children</a> will never be equal if both are defined.
 
- <li><p>Let <var>containedChildren</var> be a list of all <a for=tree>children</a> of
- <var>commonAncestor</var> that are <a for="live range">contained</a> in <var>range</var>, in
- <a>tree order</a>.
+ <li>Let <var>contained children</var> be a list of all
+ <a for=tree>children</a> of
+ <var>common ancestor</var> that are <a for="live range">contained</a> in
+ <var>range</var>, in <a>tree order</a>.
 
  <li>
-  <p>If any member of <var>containedChildren</var> is a <a>doctype</a>, then <a>throw</a> a
+  <p>If any member of <var>contained children</var> is a <a>doctype</a>, then <a>throw</a> a
   "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
   <p class=note>We do not have to worry about the first or last partially
@@ -9599,103 +9391,119 @@ of a <a>live range</a> <var>range</var>:
   cannot be the ancestor of anything.
 
  <li>
-  <p>If <var>firstPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>first partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>firstPartiallyContainedChild</var> is
-  <var>originalStartNode</var>.
+  <p class=note>In this case, <var>first partially contained child</var> is
+  <var>original start node</var>.
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalStartNode</var>.
+   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>original start node</var>.
 
    <li><p>Set the <a for=CharacterData>data</a> of <var>clone</var> to the result of
-   <a>substringing data</a> of <var>originalStartNode</var> with <var>originalStartOffset</var> and
-   <var>originalStartNode</var>'s <a for=Node>length</a> &minus; <var>originalStartOffset</var>.
+   <a lt="substring data">substringing data</a> with node <var>original start node</var>, offset
+   <var>original start offset</var>, and count <var>original start node</var>'s
+   <a for=Node>length</a> &minus; <var>original start offset</var>.
 
    <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
   </ol>
 
  <li>
-  <p>Otherwise, if <var>firstPartiallyContainedChild</var> is non-null:
+  Otherwise, if <var>first partially contained child</var> is not
+  null:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>firstPartiallyContainedChild</var>.
+   <li>Let <var>clone</var> be a
+   <a lt="clone a node">clone</a> of
+   <var>first partially contained child</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
-   (<var>originalStartNode</var>, <var>originalStartOffset</var>) and whose <a for=range>end</a> is
-   (<var>firstPartiallyContainedChild</var>, <var>firstPartiallyContainedChild</var>'s
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
+   (<var>original start node</var>, <var>original start offset</var>) and
+   whose <a for=range>end</a> is
+   (<var>first partially contained child</var>, <var>first partially contained child</var>'s
    <a for=Node>length</a>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">cloning the contents</a>
    of <var>subrange</var>.
 
-   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
+   <li><a>Append</a> <var>subfragment</var> to
+   <var>clone</var>.
   </ol>
 
  <li>
-  <p>For each <var>contained child</var> of <var>containedChildren</var>:
+  For each <var>contained child</var> in
+  <var>contained children</var>:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>contained child</var>
-   with <a for="clone a node"><i>subtree</i></a> set to true.
+   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>contained child</var> with the <i>clone children flag</i> set.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var> to
+   <var>fragment</var>.
   </ol>
 
  <li>
-  <p>If <var>lastPartiallyContainedChild</var> is a {{CharacterData}} <a for=/>node</a>:
+  <p>If <var>last partially contained child</var> is a {{CharacterData}} <a for=/>node</a>:
 
-  <p class=note>In this case, <var>lastPartiallyContainedChild</var> is
-  <var>originalEndNode</var>.
+  <p class=note>In this case, <var>last partially contained child</var> is
+  <var>original end node</var>.
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of <var>originalEndNode</var>.
+   <li>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
+   <var>original end node</var>.
 
-   <li><p>Set <var>clone</var>'s <a for=CharacterData>data</a> to the result of
-   <a>substringing data</a> of <var>originalEndNode</var> with 0 and <var>originalEndOffset</var>.
+   <li>Set the <a for=CharacterData>data</a> of
+   <var>clone</var> to the result of
+   <a lt="substring data">substringing data</a> with node
+   <var>original end node</var>, offset 0, and count
+   <var>original end offset</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var> to
+   <var>fragment</var>.
   </ol>
 
  <li>
-  <p>Otherwise, if <var>lastPartiallyContainedChild</var> is non-null:
+  Otherwise, if <var>last partially contained child</var> is not
+  null:
 
   <ol>
-   <li><p>Let <var>clone</var> be a <a lt="clone a node">clone</a> of
-   <var>lastPartiallyContainedChild</var>.
+   <li>Let <var>clone</var> be a
+   <a lt="clone a node">clone</a> of
+   <var>last partially contained child</var>.
 
-   <li><p><a>Append</a> <var>clone</var> to <var>fragment</var>.
+   <li><a>Append</a> <var>clone</var>
+   to <var>fragment</var>.
 
-   <li><p>Let <var>subrange</var> be a new <a>live range</a> whose <a for=range>start</a> is
-   (<var>lastPartiallyContainedChild</var>, 0) and whose <a for=range>end</a> is
-   (<var>originalEndNode</var>, <var>originalEndOffset</var>).
+   <li>Let <var>subrange</var> be a new <a>live range</a>
+   whose <a for=range>start</a> is
+   (<var>last partially contained child</var>, 0) and whose
+   <a for=range>end</a> is
+   (<var>original end node</var>, <var>original end offset</var>).
 
    <li><p>Let <var>subfragment</var> be the result of <a for="live range">cloning the contents</a>
    of <var>subrange</var>.
 
-   <li><p><a>Append</a> <var>subfragment</var> to <var>clone</var>.
+   <li><a>Append</a> <var>subfragment</var> to
+   <var>clone</var>.
   </ol>
 
- <li><p>Return <var>fragment</var>.
+ <li>Return <var>fragment</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>cloneContents()</code></dfn> method steps are to return the
 result of <a for="live range">cloning the contents</a> of <a>this</a>.
-</div>
 
-<div algorithm>
 <p>To <dfn export id=concept-range-insert for="live range">insert</dfn> a <a for=/>node</a>
-<var>node</var> into a <a>live range</a> <var>range</var>:
+<var>node</var> into a <a>live range</a> <var>range</var>, run these steps:
 
 <ol>
- <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or
- {{Comment}} <a for=/>node</a>, is a {{Text}} <a for=/>node</a> whose <a for=tree>parent</a> is
- null, or is <var>node</var>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}"
- {{DOMException}}.
+ <li>If <var>range</var>'s <a for=range>start node</a> is a {{ProcessingInstruction}} or {{Comment}}
+ <a for=/>node</a>, is a {{Text}} <a for=/>node</a> whose <a for=tree>parent</a> is null, or is
+ <var>node</var>, then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
 
  <!--
  Behavior for Text node with null parent:
@@ -9713,18 +9521,25 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  HierarchyRequestError.  Opera Next 12.00 alpha splits the comment, same as a
  text node.
  -->
- <li><p>Let <var>referenceNode</var> be null.
+ <li>Let <var>referenceNode</var> be null.
 
- <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then set
- <var>referenceNode</var> to that {{Text}} <a for=/>node</a>.
- <!-- This will change when we split it. -->
+ <li>If <var>range</var>'s <a for=range>start node</a>
+ is a {{Text}} <a for=/>node</a>,
+ set <var>referenceNode</var> to that {{Text}}
+ <a for=/>node</a>. <!-- This will change when we split
+ it. -->
 
- <li><p>Otherwise, set <var>referenceNode</var> to the <a for=tree>child</a> of <var>range</var>'s
- <a for=range>start node</a> whose <a for=tree>index</a> is <var>range</var>'s
- <a for=range>start offset</a> if there is such a <a for=tree>child</a>; otherwise null.
+ <li>Otherwise, set <var>referenceNode</var> to the
+ <a for=tree>child</a> of
+ <a for=range>start node</a> whose
+ <a for=tree>index</a> is
+ <a for=range>start offset</a>, and null if
+ there is no such <a for=tree>child</a>.
 
- <li><p>Let <var>parent</var> be <var>range</var>'s <a for=range>start node</a> if
- <var>referenceNode</var> is null; otherwise <var>referenceNode</var>'s <a for=tree>parent</a>.
+ <li>Let <var>parent</var> be <var>range</var>'s
+ <a for=range>start node</a> if <var>referenceNode</var>
+ is null, and <var>referenceNode</var>'s
+ <a for=tree>parent</a> otherwise.
 
  <!-- IE9 and Chrome 12 dev throw an exception before splitting the text
  node if the insertBefore() is going to throw an exception (at least if the
@@ -9734,14 +9549,14 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
 
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
- <li><p><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
+ <li><a>Ensure pre-insert validity</a> of <var>node</var> into <var>parent</var> before
  <var>referenceNode</var>.
 
- <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then set
- <var>referenceNode</var> to the result of <a lt="split a Text node">splitting</a> it with offset
- <var>range</var>'s <a for=range>start offset</a>.
+ <li>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, set
+ <var>referenceNode</var> to the result of <a lt="split a Text node">splitting</a> it with
+ offset <var>range</var>'s <a for=range>start offset</a>.
 
- <li><p>If <var>node</var> is <var>referenceNode</var>, then set <var>referenceNode</var> to its
+ <li>If <var>node</var> is <var>referenceNode</var>, set <var>referenceNode</var> to its
  <a for=tree>next sibling</a>.
  <!-- Because we're about to remove node from its parent. -->
 
@@ -9775,19 +9590,16 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  <li><p>Increase <var>newOffset</var> by <var>node</var>'s <a for=Node>length</a> if <var>node</var>
  is a {{DocumentFragment}} <a for=/>node</a>; otherwise 1.
 
- <li><p><a>Pre-insert</a> <var>node</var> into <var>parent</var> before <var>referenceNode</var>.
+ <li><a>Pre-insert</a>
+ <var>node</var> into <var>parent</var> before <var>referenceNode</var>.
 
  <li><p>If <var>range</var> is <a for=range>collapsed</a>, then set <var>range</var>'s
  <a for=range>end</a> to (<var>parent</var>, <var>newOffset</var>).
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>insertNode(<var>node</var>)</code></dfn> method steps are to
 <a for="live range">insert</a> <var>node</var> into <a>this</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>surroundContents(<var>newParent</var>)</code></dfn> method steps
 are:
 
@@ -9834,18 +9646,13 @@ check first thing, which matches everyone but Firefox.
  but it makes a difference in at least one corner case (when the original
  range lies in a single text node). -->
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>cloneRange()</code></dfn> method steps are to return a new
 <a>live range</a> with the same <a for=range>start</a> and <a for=range>end</a> as <a>this</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{Range}} object) was removed, but the method itself
 is preserved for compatibility.</span>
-</div>
 
 <hr>
 
@@ -9859,19 +9666,20 @@ is preserved for compatibility.</span>
  <var>node</var>.
 </dl>
 
-<div algorithm>
+<div class=impl>
+
 <p>The <dfn method for=Range><code>isPointInRange(<var>node</var>, <var>offset</var>)</code></dfn>
 method steps are:
 <!-- Tested October 2011 on Firefox 9.0a2 and Chrome 16 dev.  IE9 and Opera
 11.50 don't support the method. -->
 
 <ol>
- <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
- then return false.
+ <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
+ <a for="live range">root</a>, return false.
  <!-- This happens even if the offset is negative or too large, or if the node
  is a doctype, in both Firefox 9.0a2 and Chrome 16 dev. -->
 
- <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- Firefox 9.0a2 doesn't throw.  It ignores the offset and returns true or
  false depending on whether the doctype itself is in the range.  This makes
@@ -9888,27 +9696,27 @@ method steps are:
  APIs, so I go with Chrome 16 dev.  This is probably an authoring bug, so it's
  best to throw anyway. -->
 
- <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">before</a>
- <a for=range>start</a> or <a for="boundary point">after</a> <a for=range>end</a>, then return
- false.
+ <li>If (<var>node</var>, <var>offset</var>) is
+ <a for="boundary point">before</a>
+ <a for=range>start</a> or
+ <a for="boundary point">after</a>
+ <a for=range>end</a>, return false.
 
- <li><p>Return true.
+ <li>Return true.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>comparePoint(<var>node</var>, <var>offset</var>)</code></dfn>
 method steps are:
 <!-- IE9 doesn't support this method at all.  Firefox 12.0a1, Chrome 17 dev,
 and Opera Next 12.00 alpha all do. -->
 
 <ol>
- <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
- then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
+ <li>If <var>node</var>'s <a for=tree>root</a> is different from <a>this</a>'s
+ <a for="live range">root</a>, then <a>throw</a> a "{{WrongDocumentError!!exception}}" {{DOMException}}.
  <!-- Opera Next 12.00 alpha seems to return -1 in this case.  The spec matches
  Firefox 12.0a1 and Chrome 17 dev. -->
 
- <li><p>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
+ <li>If <var>node</var> is a <a>doctype</a>, then <a>throw</a> an
  "{{InvalidNodeTypeError!!exception}}" {{DOMException}}.
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw and seem to just ignore the offset instead.  See
@@ -9919,52 +9727,60 @@ and Opera Next 12.00 alpha all do. -->
  <!-- This matches Chrome 17 dev instead of Firefox 12.0a1 and Opera Next 12.00
  alpha, which don't throw.  See comment for isPointInRange(). -->
 
- <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">before</a>
- <a for=range>start</a>, then return &minus;1.
+ <li>If (<var>node</var>, <var>offset</var>) is
+ <a for="boundary point">before</a>
+ <a for=range>start</a>, return &minus;1.
 
- <li><p>If (<var>node</var>, <var>offset</var>) is <a for="boundary point">after</a>
- <a for=range>end</a>, then return 1.
+ <li>If (<var>node</var>, <var>offset</var>) is
+ <a for="boundary point">after</a>
+ <a for=range>end</a>, return 1.
 
- <li><p>Return 0.
+ <li>Return 0.
 </ol>
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn method for=Range><code>intersectsNode(<var>node</var>)</code></dfn> method steps are:
 <!-- Supported by Chrome 17 dev and Opera Next 12.00 alpha, but not IE9 or
 Firefox 12.0a1. -->
 
 <ol>
- <li><p>If <var>node</var>'s <a for=tree>root</a> is not <a>this</a>'s <a for="live range">root</a>,
- then return false.
+ <li>If <var>node</var>'s <a for=tree>root</a>
+ is different from <a>this</a>'s
+ <a for="live range">root</a>, return false.
+ <!-- It seems like for doctypes, Opera Next 12.00 alpha throws
+ InvalidNodeTypeError instead of returning false.  The spec follows Chrome
+ 17 dev. -->
 
- <li><p>Let <var>parent</var> be <var>node</var>'s
+ <li>Let <var>parent</var> be <var>node</var>'s
  <a for=tree>parent</a>.
 
- <li><p>If <var>parent</var> is null, then return true.
+ <li>If <var>parent</var> is null, return true.
  <!-- browsers currently throw, but are willing to change
       https://www.w3.org/Bugs/Public/show_bug.cgi?id=16759 -->
 
- <li><p>Let <var>offset</var> be <var>node</var>'s <a for=tree>index</a>.
+ <li>Let <var>offset</var> be <var>node</var>'s
+ <a for=tree>index</a>.
 
- <li><p>If (<var>parent</var>, <var>offset</var>) is <a for="boundary point">before</a>
- <a for=range>end</a> and (<var>parent</var>, <var>offset</var> + 1) is
- <a for="boundary point">after</a> <a for=range>start</a>, then return true.
+ <li>If (<var>parent</var>, <var>offset</var>) is
+ <a for="boundary point">before</a>
+ <a for=range>end</a> and (<var>parent</var>,
+ <var>offset</var> plus 1) is
+ <a for="boundary point">after</a>
+ <a for=range>start</a>, return true.
 
- <li><p>Return false.
+ <li>Return false.
 </ol>
+
 </div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn export for=Range id=dom-range-stringifier>stringification behavior</dfn> must run
 these steps:
 
 <ol>
- <li><p>Let <var>string</var> be the empty string.
+ <li><p>Let <var>s</var> be the empty string.
 
  <li><p>If <a>this</a>'s <a for=range>start node</a> is <a>this</a>'s <a for=range>end node</a> and
  it is a {{Text}} <a for=/>node</a>, then return the substring of that {{Text}} <a for=/>node</a>'s
@@ -9973,19 +9789,18 @@ these steps:
 
  <li><p>If <a>this</a>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then append
  the substring of that <a for=/>node</a>'s <a for=CharacterData>data</a> from <a>this</a>'s
- <a for=range>start offset</a> until the end to <var>string</var>.
+ <a for=range>start offset</a> until the end to <var>s</var>.
 
  <li><p>Append the <a for=string>concatenation</a> of the <a for=CharacterData>data</a> of all
  {{Text}} <a for=/>nodes</a> that are <a for="live range">contained</a> in <a>this</a>, in
- <a>tree order</a>, to <var>string</var>.
+ <a>tree order</a>, to <var>s</var>.
 
  <li><p>If <a>this</a>'s <a for=range>end node</a> is a {{Text}} <a for=/>node</a>, then
  append the substring of that <a for=/>node</a>'s <a for=CharacterData>data</a> from its start until
- <a>this</a>'s <a for=range>end offset</a> to <var>string</var>.
+ <a>this</a>'s <a for=range>end offset</a> to <var>s</var>.
 
- <li><p>Return <var>string</var>.
+ <li><p>Return <var>s</var>.
 </ol>
-</div>
 
 <hr>
 
@@ -10001,21 +9816,20 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 <p>{{NodeIterator}} and {{TreeWalker}} objects can be used to filter and traverse <a for=/>node</a>
 <a>trees</a>.
 
-<p>Each {{NodeIterator}} and {{TreeWalker}} object has an associated boolean
-<dfn id=concept-traversal-active for=traversal>is active</dfn> to avoid recursive invocations. It is
-initially false.
+<p>Each {{NodeIterator}} and {{TreeWalker}} object has an associated
+<dfn noexport id=concept-traversal-active for=traversal>active flag</dfn> to avoid recursive
+invocations. It is initially unset.
 
 <p>Each {{NodeIterator}} and {{TreeWalker}} object also has an associated
-<dfn id=concept-traversal-root for=traversal>root</dfn> (a <a for=/>node</a>), a
-<dfn id=concept-traversal-whattoshow for=traversal>whatToShow</dfn> (a bitmask), and a
-<dfn id=concept-traversal-filter for=traversal>filter</dfn> (a callback).
+<dfn noexport id=concept-traversal-root for=traversal>root</dfn> (a <a for=/>node</a>), a
+<dfn noexport id=concept-traversal-whattoshow for=traversal>whatToShow</dfn> (a bitmask), and a
+<dfn noexport id=concept-traversal-filter for=traversal>filter</dfn> (a callback).
 
-<div algorithm>
 <p>To <dfn noexport id=concept-node-filter>filter</dfn> a <a for=/>node</a> <var>node</var> within
-a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>:
+a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>, run these steps:
 
 <ol>
- <li><p>If <var>traverser</var>'s <a for=traversal>is active</a> is true, then throw an
+ <li><p>If <var>traverser</var>'s <a for=traversal>active flag</a> is set, then throw an
  "{{InvalidStateError!!exception}}" {{DOMException}}.
 
  <li><p>Let <var>n</var> be <var>node</var>'s {{Node/nodeType}} attribute value &minus; 1.
@@ -10028,18 +9842,17 @@ a {{NodeIterator}} or {{TreeWalker}} object <var>traverser</var>:
  <li><p>If <var>traverser</var>'s <a for=traversal>filter</a> is null, then return
  {{NodeFilter/FILTER_ACCEPT}}.
 
- <li><p>Set <var>traverser</var>'s <a for=traversal>is active</a> to true.
+ <li><p>Set <var>traverser</var>'s <a for=traversal>active flag</a>.
 
  <li><p>Let <var>result</var> be the return value of <a>call a user object's operation</a> with
  <var>traverser</var>'s <a for=traversal>filter</a>, "<code>acceptNode</code>", and
- « <var>node</var> ». If this throws an exception, then set <var>traverser</var>'s
- <a for=traversal>is active</a> to false and rethrow the exception.
+ « <var>node</var> ». If this throws an exception, then unset <var>traverser</var>'s
+ <a for=traversal>active flag</a> and rethrow the exception.
 
- <li><p>Set <var>traverser</var>'s <a for=traversal>is active</a> to false.
+ <li><p>Unset <var>traverser</var>'s <a for=traversal>active flag</a>.
 
  <li><p>Return <var>result</var>.
 </ol>
-</div>
 
 
 <h3 id="interface-nodeiterator">Interface {{NodeIterator}}</h3>
@@ -10072,13 +9885,11 @@ filter matches any <a for=/>node</a>.
 <a for=/>node</a>) and <dfn for=NodeIterator>pointer before reference</dfn> (a boolean).
 
 <p class=note>As mentioned earlier, {{NodeIterator}} objects have an associated
-<a for=traversal>is active</a>, <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and
+<a for=traversal>active flag</a>, <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and
 <a for=traversal>filter</a> as well.
 
-<div algorithm>
 <p>The <dfn id=nodeiterator-pre-removing-steps><code>NodeIterator</code> pre-remove steps</dfn>
-given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
-<var>toBeRemovedNode</var>, are:
+given a <var>nodeIterator</var> and <var>toBeRemovedNode</var>, are as follows:
 
 <ol>
  <li><p>If <var>toBeRemovedNode</var> is not an <a for=tree>inclusive ancestor</a> of
@@ -10092,52 +9903,44 @@ given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
    <li><p>Let <var>next</var> be <var>toBeRemovedNode</var>'s first <a>following</a>
    <a for=/>node</a> that is an <a>inclusive descendant</a> of <var>nodeIterator</var>'s
    <a for=traversal>root</a> and is not an <a>inclusive descendant</a> of
-   <var>toBeRemovedNode</var>, if there is such a <a for=/>node</a>; otherwise null.
+   <var>toBeRemovedNode</var>, and null if there is no such <a for=/>node</a>.
 
    <li><p>If <var>next</var> is non-null, then set <var>nodeIterator</var>'s
    <a for=NodeIterator>reference</a> to <var>next</var> and return.
 
-   <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> to false.
+   <li>
+    <p>Otherwise, set <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> to
+    false.
+
+    <p class=note>Steps are not terminated here.
   </ol>
 
  <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>reference</a> to
  <var>toBeRemovedNode</var>'s <a for=tree>parent</a>, if <var>toBeRemovedNode</var>'s
- <a>previous sibling</a> is null; otherwise to the <a>inclusive descendant</a> of
- <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears last in <a>tree order</a>.
+ <a>previous sibling</a> is null, and to the <a>inclusive descendant</a> of
+ <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears last in <a>tree order</a>
+ otherwise.
 </ol>
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>root</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>root</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>referenceNode</code></dfn> getter steps are to return
 <a>this</a>'s <a for=NodeIterator>reference</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>pointerBeforeReferenceNode</code></dfn> getter steps
 are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>whatToShow</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>whatToShow</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>filter</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>filter</a>.
-</div>
 
-<div algorithm>
 <p>To <dfn export id=concept-nodeiterator-traverse for=NodeIterator>traverse</dfn>, given a
-{{NodeIterator}} object <var>iterator</var> and "<code>next</code>" or "<code>previous</code>"
-<var>type</var>:
+{{NodeIterator}} object <var>iterator</var> and a direction <var>direction</var>, run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be <var>iterator</var>'s <a for=NodeIterator>reference</a>.
@@ -10150,28 +9953,27 @@ are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 
   <ol>
    <li>
-    <p>If <var>type</var> is <code>next</code>":
+    <p>Branch on <var>direction</var>:
 
-    <ol>
-     <li><p>If <var>beforeNode</var> is false, then set <var>node</var> to the first
-     <a for=/>node</a> <a>following</a> <var>node</var> in <var>iterator</var>'s
-     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
-     null.
+    <dl class=switch>
+     <dt>next
+     <dd>
+      <p>If <var>beforeNode</var> is false, then set <var>node</var> to the first <a for=/>node</a>
+      <a>following</a> <var>node</var> in <var>iterator</var>'s
+      <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then
+      return null.
 
-     <li><p>If <var>beforeNode</var> is true, then set it to false.
-    </ol>
+      <p>If <var>beforeNode</var> is true, then set it to false.
 
-   <li>
-    <p>Otherwise:
+     <dt>previous
+     <dd>
+      <p>If <var>beforeNode</var> is true, then set <var>node</var> to the first <a for=/>node</a>
+      <a>preceding</a> <var>node</var> in <var>iterator</var>'s
+      <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then
+      return null.
 
-    <ol>
-     <li><p>If <var>beforeNode</var> is true, then set <var>node</var> to the first
-     <a for=/>node</a> <a>preceding</a> <var>node</var> in <var>iterator</var>'s
-     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
-     null.
-
-     <li><p>If <var>beforeNode</var> is false, then set it to true.
-    </ol>
+      <p>If <var>beforeNode</var> is false, then set it to true.
+    </dl>
 
    <li><p>Let <var>result</var> be the result of <a for=/>filtering</a> <var>node</var> within
    <var>iterator</var>.
@@ -10186,23 +9988,16 @@ are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 
  <li><p>Return <var>node</var>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=NodeIterator><code>nextNode()</code></dfn> method steps are to return the
-result of <a for=NodeIterator>traversing</a> with <a>this</a> and "<code>next</code>".
-</div>
+result of <a for=NodeIterator>traversing</a> with <a>this</a> and next.
 
-<div algorithm>
 <p>The <dfn method for=NodeIterator><code>previousNode()</code></dfn> method steps are to return the
-result of <a for=NodeIterator>traversing</a> with <a>this</a> and "<code>previous</code>".
-</div>
+result of <a for=NodeIterator>traversing</a> with <a>this</a> and previous.
 
-<div algorithm>
 <p>The <dfn method for=NodeIterator><code>detach()</code></dfn> method steps are to do nothing.
 <span class=note>Its functionality (disabling a {{NodeIterator}} object) was removed, but the method
 itself is preserved for compatibility.</span>
-</div>
 
 
 <h3 id=interface-treewalker>Interface {{TreeWalker}}</h3>
@@ -10233,34 +10028,23 @@ method on {{Document}} objects.
 <p class=note>As mentioned earlier {{TreeWalker}} objects have an associated
 <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and <a for=traversal>filter</a> as well.
 
-<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>root</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>root</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>whatToShow</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>whatToShow</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>filter</code></dfn> getter steps are to return
 <a>this</a>'s <a for=traversal>filter</a>.
-</div>
 
-<div algorithm>
 <p>The <dfn attribute for=TreeWalker><code>currentNode</code></dfn> getter steps are to return
 <a>this</a>'s <a for=TreeWalker>current</a>.
-</div>
 
-<div algorithm="TreeWalker/currentNode setter">
 <p>The {{TreeWalker/currentNode}} setter steps are to set <a>this</a>'s
 <a for=TreeWalker>current</a> to the given value.
-</div>
 
 <hr>
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>parentNode()</code></dfn> method steps are:
 
 <ol>
@@ -10280,18 +10064,15 @@ method on {{Document}} objects.
 
  <li><p>Return null.
 </ol>
-</div>
 
-<div algorithm>
 <p>To <dfn noexport for=TreeWalker id=concept-traverse-children>traverse children</dfn>, given a
-{{TreeWalker}} object <var>walker</var> and "<code>first</code>" or "<code>last</code>"
-<var>type</var>:
+<var>walker</var> and <var>type</var>, run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be <var>walker</var>'s <a for=TreeWalker>current</a>.
 
  <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>first child</a> if <var>type</var> is
- "<code>first</code>"; otherwise to <var>node</var>'s <a for=tree>last child</a>.
+ first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
 
  <li>
   <p>While <var>node</var> is non-null:
@@ -10308,7 +10089,7 @@ method on {{Document}} objects.
 
     <ol>
      <li><p>Let <var>child</var> be <var>node</var>'s <a for=tree>first child</a> if <var>type</var>
-     is "<code>first</code>"; otherwise <var>node</var>'s <a for=tree>last child</a>.
+     is first, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is last.
 
      <li><p>If <var>child</var> is non-null, then set <var>node</var> to <var>child</var> and
      <a for=iteration>continue</a>.
@@ -10319,8 +10100,8 @@ method on {{Document}} objects.
 
     <ol>
      <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
-     <var>type</var> is "<code>first</code>"; otherwise <var>node</var>'s
-     <a for=tree>previous sibling</a>.
+     <var>type</var> is first, and <var>node</var>'s <a for=tree>previous sibling</a> if
+     <var>type</var> is last.
 
      <li><p>If <var>sibling</var> is non-null, then set <var>node</var> to <var>sibling</var> and
      <a for=iteration>break</a>.
@@ -10336,21 +10117,15 @@ method on {{Document}} objects.
 
  <li><p>Return null.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>firstChild()</code></dfn> method steps are to
-<a>traverse children</a> with <a>this</a> and "<code>first</code>".
-</div>
+<a>traverse children</a> with <a>this</a> and first.
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>lastChild()</code></dfn> method steps are to
-<a>traverse children</a> with <a>this</a> and "<code>last</code>".
-</div>
+<a>traverse children</a> with <a>this</a> and last.
 
-<div algorithm>
-<p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a {{TreeWalker}}
-object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var>type</var>:
+<p>To <dfn noexport id=concept-traverse-siblings>traverse siblings</dfn>, given a <var>walker</var>
+and <var>type</var>, run these steps:
 
 <ol>
  <li><p>Let <var>node</var> be <var>walker</var>'s <a for=TreeWalker>current</a>.
@@ -10362,8 +10137,8 @@ object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var
 
   <ol>
    <li><p>Let <var>sibling</var> be <var>node</var>'s <a for=tree>next sibling</a> if
-   <var>type</var> is "<code>next</code>"; otherwise <var>node</var>'s
-   <a for=tree>previous sibling</a>.
+   <var>type</var> is next, and <var>node</var>'s <a for=tree>previous sibling</a> if
+   <var>type</var> is previous.
 
    <li>
     <p>While <var>sibling</var> is non-null:
@@ -10378,12 +10153,12 @@ object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var
      <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
 
      <li><p>Set <var>sibling</var> to <var>node</var>'s <a for=tree>first child</a> if
-     <var>type</var> is "<code>next</code>"; otherwise to <var>node</var>'s
-     <a for=tree>last child</a>.
+     <var>type</var> is next, and <var>node</var>'s <a for=tree>last child</a> if <var>type</var> is
+     previous.
 
      <li><p>If <var>result</var> is {{NodeFilter/FILTER_REJECT}} or <var>sibling</var> is null, then
      set <var>sibling</var> to <var>node</var>'s <a for=tree>next sibling</a> if <var>type</var> is
-     "<code>next</code>"; otherwise to <var>node</var>'s <a for=tree>previous sibling</a>.
+     next, and <var>node</var>'s <a for=tree>previous sibling</a> if <var>type</var> is previous.
     </ol>
 
    <li><p>Set <var>node</var> to <var>node</var>'s <a for=tree>parent</a>.
@@ -10395,19 +10170,13 @@ object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var
    {{NodeFilter/FILTER_ACCEPT}}, then return null.
   </ol>
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>nextSibling()</code></dfn> method steps are to
-<a>traverse siblings</a> with <a>this</a> and "<code>next</code>".
-</div>
+<a>traverse siblings</a> with <a>this</a> and next.
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>previousSibling()</code></dfn> method steps are to
-<a>traverse siblings</a> with <a>this</a> and "<code>previous</code>".
-</div>
+<a>traverse siblings</a> with <a>this</a> and previous.
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>previousNode()</code></dfn> method steps are:
 
 <ol>
@@ -10457,9 +10226,7 @@ object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var
 
  <li><p>Return null.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=TreeWalker><code>nextNode()</code></dfn> method steps are:
 
 <ol>
@@ -10510,7 +10277,6 @@ object <var>walker</var> and "<code>next</code>" or "<code>previous</code>" <var
    <a for=TreeWalker>current</a> to <var>node</var> and return <var>node</var>.
   </ol>
 </ol>
-</div>
 
 
 <h3 id="interface-nodefilter">Interface {{NodeFilter}}</h3>
@@ -10598,89 +10364,72 @@ interface DOMTokenList {
 <dfn export id=concept-dtl-tokens for=DOMTokenList>token set</dfn> (a <a for=/>set</a>), which is
 initially empty.
 
-<p>A {{DOMTokenList}} object also has an associated <dfn for=DOMTokenList>element</dfn>
-(an <a for=/>element</a>) and an <dfn for=DOMTokenList>attribute name</dfn> (an <a>attribute</a>'s
-<a for=Attr>local name</a>).
+<p>A {{DOMTokenList}} object also has an associated <a for=/>element</a> and an <a>attribute</a>'s
+<a for=Attr>local name</a>.
 
 <a lt="Other applicable specifications">Specifications</a> may define
 <dfn export for=Node id=concept-supported-tokens>supported tokens</dfn> for a {{DOMTokenList}}'s
-<a for=DOMTokenList>element</a> and <a for=DOMTokenList>attribute name</a>.
+associated <a>attribute</a>'s <a for=Attr>local name</a>.
 
-<div algorithm>
-<p>A {{DOMTokenList}} object <var>set</var>'s
+<p>A {{DOMTokenList}} object's
 <dfn export id=concept-domtokenlist-validation for=DOMTokenList>validation steps</dfn> for a given
 <var>token</var> are:
 
 <ol>
- <li><p>If <var>set</var>'s <a for=DOMTokenList>element</a> and
- <a for=DOMTokenList>attribute name</a> does not define <a for=Node>supported tokens</a>, then
- <a>throw</a> a <code>TypeError</code>.
+ <li><p>If the associated <a>attribute</a>'s <a for=Attr>local name</a> does not define
+ <a for=Node>supported tokens</a>, <a>throw</a> a <code>TypeError</code>.
 
- <li><p>Let <var>lowercaseToken</var> be <var>token</var>, in <a>ASCII lowercase</a>.
+ <li><p>Let <var>lowercase token</var> be a copy of <var>token</var>, in <a>ASCII lowercase</a>.
 
- <li><p>If <var>lowercaseToken</var> is present in the <a for=Node>supported tokens</a> of
- <var>set</var>'s <a for=DOMTokenList>element</a> and <a for=DOMTokenList>attribute name</a>, then
- return true.
+ <li><p>If <var>lowercase token</var> is present in <a for=Node>supported tokens</a>, return true.
 
  <li><p>Return false.
 </ol>
-</div>
 
-<div algorithm>
-<p>A {{DOMTokenList}} object <var>set</var>'s
-<dfn id=concept-dtl-update for="DOMTokenList">update steps</dfn> are:
+<p>A {{DOMTokenList}} object's <dfn id=concept-dtl-update for="DOMTokenList">update steps</dfn> are:
 
 <ol>
- <li><p>If <a>get an attribute by namespace and local name</a> given null, <var>set</var>'s
- <a for=DOMTokenList>attribute name</a>, and <var>set</var>'s <a for=DOMTokenList>element</a>
- returns null and <var>set</var>'s <a>token set</a> is empty, then return.
+ <li><p>If the associated <a for=/>element</a> does not have an associated <a>attribute</a> and
+ <a>token set</a> is empty, then return.
 
- <li><p><a>Set an attribute value</a> given <var>set</var>'s <a for=DOMTokenList>element</a>,
- <var>set</var>'s <a for=DOMTokenList>attribute name</a>, and the result of running the
- <a>ordered set serializer</a> for <var>set</var>'s <a>token set</a>.
+ <li><p><a>Set an attribute value</a> for the associated <a for=/>element</a> using associated
+ <a>attribute</a>'s <a for=Attr>local name</a> and the result of running the <a>ordered set
+ serializer</a> for <a>token set</a>.
 </ol>
-</div>
 
-<div algorithm>
-<p>A {{DOMTokenList}} object <var>set</var>'s
-<dfn id=concept-dtl-serialize for=DOMTokenList>serialize steps</dfn> are to return the result of
-running <a>get an attribute value</a> given <var>set</var>'s <a for=DOMTokenList>element</a> and
-<var>set</var>'s <a for=DOMTokenList>attribute name</a>.
-</div>
+<p>A {{DOMTokenList}} object's <dfn id=concept-dtl-serialize for=DOMTokenList>serialize steps</dfn>
+are to return the result of running <a>get an attribute value</a> given the associated
+<a for=/>element</a> and the associated <a>attribute</a>'s <a for=Attr>local name</a>.</p>
 
 <hr>
 
-<div algorithm="DOMTokenList/attribute change steps">
-<p>A {{DOMTokenList}} object <var>set</var> has these <a>attribute change steps</a> for
-<var>set</var>'s <a for=DOMTokenList>element</a>:
+<p>A {{DOMTokenList}} object has these <a>attribute change steps</a> for its associated
+<a for=/>element</a>:
 
 <ol>
- <li><p>If <var>localName</var> is <var>set</var>'s <a for=DOMTokenList>attribute name</a>,
+ <li><p>If <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
  <var>namespace</var> is null, and <var>value</var> is null, then <a for=set>empty</a>
  <a>token set</a>.
 
- <li><p>Otherwise, if <var>localName</var> is <var>set</var>'s
- <a for=DOMTokenList>attribute name</a> and <var>namespace</var> is null, then set <var>set</var>'s
- <a>token set</a> to <var>value</var>, <a lt="ordered set parser">parsed</a>.
+ <li><p>Otherwise, if <var>localName</var> is associated attribute's <a for=Attr>local name</a>,
+ <var>namespace</var> is null, then set <a>token set</a> to <var>value</var>,
+ <a lt="ordered set parser">parsed</a>.
 </ol>
-</div>
 
-<div algorithm="DOMTokenList/created">
-<p>When a {{DOMTokenList}} object <var>set</var> is created:
+<p>When a {{DOMTokenList}} object is created, then:
 
 <ol>
- <li><p>Let <var>element</var> be <var>set</var>'s <a for=DOMTokenList>element</a>.
+ <li><p>Let <var>element</var> be associated <a for=/>element</a>.
 
- <li><p>Let <var>attributeName</var> be <var>set</var>'s <a for=DOMTokenList>attribute name</a>.
+ <li><p>Let <var>localName</var> be associated attribute's <a for=Attr>local name</a>.
 
  <li><p>Let <var>value</var> be the result of
  <a lt="get an attribute value">getting an attribute value</a> given <var>element</var> and
- <var>attributeName</var>.
+ <var>localName</var>.
 
- <li><p>Run the <a>attribute change steps</a> for <var>element</var>, <var>attributeName</var>,
+ <li><p>Run the <a>attribute change steps</a> for <var>element</var>, <var>localName</var>,
  <var>value</var>, <var>value</var>, and null.
 </ol>
-</div>
 
 <dl class=domintro>
  <dt><code><var>tokenlist</var> . {{DOMTokenList/length}}</code>
@@ -10741,16 +10490,13 @@ running <a>get an attribute value</a> given <var>set</var>'s <a for=DOMTokenList
   <p>Can be set, to change the associated attribute.
 </dl>
 
-<div algorithm>
-<p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> getter steps are to return
+<p>The <dfn attribute for=DOMTokenList><code>length</code></dfn> attribute' getter must return
 <a>this</a>'s <a>token set</a>'s <a for=set>size</a>.
-</div>
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to object's
-<a>token set</a>'s <a for=set>size</a> &minus; 1, unless <a>token set</a> <a for=set>is empty</a>,
+<a>token set</a>'s <a for=set>size</a> minus one, unless <a>token set</a> <a for=set>is empty</a>,
 in which case there are no <a>supported property indices</a>.
 
-<div algorithm>
 <p>The <dfn method for="DOMTokenList"><code>item(<var>index</var>)</code></dfn> method steps are:
 
 <ol>
@@ -10759,15 +10505,11 @@ in which case there are no <a>supported property indices</a>.
 
  <li><p>Return <a>this</a>'s <a>token set</a>[<var>index</var>].
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for="DOMTokenList"><code>contains(<var>token</var>)</code></dfn> method steps are
 to return true if <a>this</a>'s <a>token set</a>[<var>token</var>] <a for=set>exists</a>; otherwise
 false.
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="add(tokens)|add()"><code>add(<var>tokens</var>&hellip;)</code></dfn>
 method steps are:
@@ -10784,14 +10526,12 @@ method steps are:
    "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
- <li><p><a for=list>For each</a> <var>token</var> of <var>tokens</var>: <a for=set>append</a>
+ <li><p><a for=list>For each</a> <var>token</var> of <var>tokens</var>, <a for=set>append</a>
  <var>token</var> to <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="remove(tokens)|remove()"><code>remove(<var>tokens</var>&hellip;)</code></dfn>
 method steps are:
@@ -10808,14 +10548,12 @@ method steps are:
    "{{InvalidCharacterError!!exception}}" {{DOMException}}.
   </ol>
 
- <li><p>For each <var>token</var> of <var>tokens</var>: <a for=set>remove</a> <var>token</var> from
+ <li><p>For each <var>token</var> in <var>tokens</var>, <a for=set>remove</a> <var>token</var> from
  <a>this</a>'s <a>token set</a>.
 
  <li><p>Run the <a>update steps</a>.
 </ol>
-</div>
 
-<div algorithm>
 <p>The <dfn method for=DOMTokenList><code>toggle(<var>token</var>, <var>force</var>)</code></dfn>
 method steps are:
 
@@ -10842,12 +10580,10 @@ method steps are:
 
  <li><p>Return false.
 </ol>
-</div>
 
 <p class=note>The <a>update steps</a> are not always run for {{DOMTokenList/toggle()}}
 for web compatibility.
 
-<div algorithm>
 <p>The
 <dfn method for=DOMTokenList><code>replace(<var>token</var>, <var>newToken</var>)</code></dfn>
 method steps are:
@@ -10870,12 +10606,10 @@ method steps are:
 
  <li><p>Return true.
 </ol>
-</div>
 
 <p class=note>The <a>update steps</a> are not always run for {{DOMTokenList/replace()}}
 for web compatibility.
 
-<div algorithm>
 <p>The
 <dfn method for="DOMTokenList" lt="supports(token)"><code>supports(<var>token</var>)</code></dfn>
 method steps are:
@@ -10886,18 +10620,13 @@ method steps are:
 
  <li><p>Return <var>result</var>.
 </ol>
-</div>
 
-<div algorithm>
-<p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> getter steps are to return the
+<p>The <dfn attribute for=DOMTokenList><code>value</code></dfn> attribute must return the
 result of running <a>this</a>'s <a>serialize steps</a>.
-</div>
 
-<div algorithm="DOMTokenList/value setter">
-<p>The <a attribute for=DOMTokenList><code>value</code></a> setter steps are to
-<a>set an attribute value</a> for <a>this</a>'s <a for=DOMTokenList>element</a> using <a>this</a>'s
-<a for=DOMTokenList>attribute name</a> and the given value.
-</div>
+<p>Setting the {{DOMTokenList/value}} attribute must <a>set an attribute value</a> for the
+associated <a for=/>element</a> using associated <a>attribute</a>'s <a for=Attr>local name</a> and
+the given value.
 
 
 
@@ -11184,7 +10913,6 @@ Elliott Sprehn,
 Emilio Cobos Álvarez,
 Eric Bidelman,
 Erik Arvidsson,
-Evgeny Kapun<!-- abacabadabacaba; GitHub -->,
 François Daoust<!-- tidoust; GitHub -->,
 François Remy<!-- FremyCompany; GitHub -->,
 Gary Kacmarcik,
@@ -11208,7 +10936,6 @@ James Graham,
 James Greene,
 James M Snell,
 James Robinson,
-Jayson Chen,
 Jeffrey Yasskin,
 Jens Lindström,
 Jeremy Davis<!-- jeremydavis519; GitHub -->,

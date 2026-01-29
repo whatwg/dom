@@ -1,5 +1,7 @@
 <pre class=metadata>
 Group: WHATWG
+Status: RD
+Date: 2025-12-15
 H1: DOM
 Shortname: dom
 Text Macro: TWITTER thedomstandard
@@ -4936,16 +4938,11 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, true, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>reference target</a>, and
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, and
    <var>shadowRootRegistry</var>.
 
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
    to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
-
-   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s
-   <a for=ShadowRoot>keep custom element registry null</a> to <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>keep custom element registry null</a>.
 
    <li>
     <p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
@@ -5095,8 +5092,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
   </dl>
 
  <li><p>If <var>A</var> is an <a for=/>element</a>, each <a>attribute</a> in its
- <a for=Element>attribute list</a> <a for=Node>equals</a> an <a>attribute</a> in <var>B</var>'s
- <a for=Element>attribute list</a>.
+ <a for=Element>attribute list</a> has an <a>attribute</a> that <a for=Node>equals</a> an
+ <a>attribute</a> in <var>B</var>'s <a for=Element>attribute list</a>.
 
  <li><p><var>A</var> and <var>B</var> have the same number of <a for=tree>children</a>.
 
@@ -6554,7 +6551,6 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean clonable;
   readonly attribute boolean serializable;
   readonly attribute Element host;
-  attribute DOMString? referenceTarget;
 
   attribute EventHandler onslotchange;
 };
@@ -6591,9 +6587,6 @@ It is initially set to false.</p>
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>serializable</dfn> (a boolean).
 It is initially set to false.</p>
-
-<p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>reference target</dfn>
-(null or a string). It is initially set to null.</p>
 
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom element registry</dfn>
 (null or a {{CustomElementRegistry}} object). It is initially null.</p>
@@ -6767,7 +6760,6 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   boolean serializable = false;
-  DOMString? referenceTarget = null;
   CustomElementRegistry? customElementRegistry;
 };
 </pre>
@@ -7744,8 +7736,7 @@ are:
  <var>init</var>["{{ShadowRootInit/mode}}"], <var>init</var>["{{ShadowRootInit/clonable}}"],
  <var>init</var>["{{ShadowRootInit/serializable}}"],
  <var>init</var>["{{ShadowRootInit/delegatesFocus}}"],
- <var>init</var>["{{ShadowRootInit/slotAssignment}}"], and
- <var>init</var>["{{ShadowRootInit/referenceTarget}}"], and <var>registry</var>.
+ <var>init</var>["{{ShadowRootInit/slotAssignment}}"], and <var>registry</var>.
 
  <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
 </ol>
@@ -7755,8 +7746,7 @@ are:
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an
 <a for=/>element</a> <var>element</var>, a string <var>mode</var>, a boolean <var>clonable</var>,
 a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
-<var>slotAssignment</var>, null or a string <var>referenceTarget</var>, and null or a
-{{CustomElementRegistry}} object <var>registry</var>:
+<var>slotAssignment</var>, and null or a {{CustomElementRegistry}} object <var>registry</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -7829,8 +7819,6 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>clonable</a> to <var>clonable</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>serializable</a> to <var>serializable</var>.
-
- <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>reference target</a> to <var>referenceTarget</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>custom element registry</a> to
  <var>registry</var>.
@@ -11184,7 +11172,6 @@ Elliott Sprehn,
 Emilio Cobos Álvarez,
 Eric Bidelman,
 Erik Arvidsson,
-Evgeny Kapun<!-- abacabadabacaba; GitHub -->,
 François Daoust<!-- tidoust; GitHub -->,
 François Remy<!-- FremyCompany; GitHub -->,
 Gary Kacmarcik,
