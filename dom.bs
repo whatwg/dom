@@ -8695,16 +8695,9 @@ interface AbstractRange {
 <a for="boundary point">offset</a>.
 
 <p>A <a>range</a> has an associated <dfn export for=range id=concept-range-is-opaque>is opaque</dfn>
-flag, initially false. When true, the range's <a for=range>start node</a> and
-<a for=range>end node</a> are not exposed to scripts.
-
-<p class=note>{{OpaqueRange}} objects have their <a for=range>is opaque</a> flag set to true. Their
-internal start and end containers are real <a for=/>nodes</a>, but the
-{{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters return null to preserve
-encapsulation.
-
-<p class=note>For {{Range}} and {{StaticRange}} objects, {{AbstractRange/startContainer}} and
-{{AbstractRange/endContainer}} never return null.
+flag, initially false. When true, the {{AbstractRange/startContainer}} and
+{{AbstractRange/endContainer}} getters return null. Only {{OpaqueRange}} objects have this flag set
+to true.
 
 <div algorithm>
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
@@ -8713,13 +8706,13 @@ encapsulation.
 
 <dl class=domintro>
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>start node</a>, or null.
+ <dd>Returns <var>range</var>'s <a for=range>start node</a>.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>startOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start offset</a>.
 
  <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>endContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>end node</a>, or null.
+ <dd>Returns <var>range</var>'s <a for=range>end node</a>.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>endOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end offset</a>.
@@ -8731,7 +8724,8 @@ encapsulation.
 <div algorithm>
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start node</a>, or null.
+getter steps are to return null if <a>this</a>'s <a for=range>is opaque</a> flag is true; otherwise
+<a>this</a>'s <a for=range>start node</a>.
 </div>
 
 <div algorithm>
@@ -8741,7 +8735,8 @@ getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
 
 <div algorithm>
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end node</a>, or null.
+getter steps are to return null if <a>this</a>'s <a for=range>is opaque</a> flag is true; otherwise
+<a>this</a>'s <a for=range>end node</a>.
 </div>
 
 <div algorithm>
@@ -10004,6 +9999,8 @@ interface OpaqueRange : AbstractRange {
 </pre>
 
 <p>Objects implementing the {{OpaqueRange}} interface are known as {{OpaqueRange}} objects.
+{{OpaqueRange}} objects cannot be constructed directly; they are created by specifications defining
+elements that <a>support opaque ranges</a>.
 
 <dl class=domintro>
  <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
@@ -10021,63 +10018,30 @@ interface OpaqueRange : AbstractRange {
  a rectangle with zero width and height.
 </dl>
 
-<p>An {{OpaqueRange}} is a <a>range</a> whose <a for=range>is opaque</a> flag is true. It has a
-<a for=range>start</a> and <a for=range>end</a> <a>boundary point</a> just like any other
-range — each consisting of a <a for=/>node</a> (its container) and a non-negative integer (its
-offset). However, the containers are internal and not exposed to scripts; they represent
-encapsulated nodes within the element that the range was created from.
+<p>The {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} methods are
+defined in [[CSSOM-VIEW]].
 
-<p>An {{OpaqueRange}} has associated state:
-
-<ul>
- <li><p><dfn export for=OpaqueRange id=opaque-range-start-container>start container</dfn> (a
- <a for=/>node</a>), the internal node containing the range's start point.
-
- <li><p><dfn export for=OpaqueRange id=opaque-range-start>start offset</dfn> (a non-negative
- integer), an offset within the <a for=OpaqueRange>start container</a>.
-
- <li><p><dfn export for=OpaqueRange id=opaque-range-end-container>end container</dfn> (a
- <a for=/>node</a>), the internal node containing the range's end point.
-
- <li><p><dfn export for=OpaqueRange id=opaque-range-end>end offset</dfn> (a non-negative integer),
- an offset within the <a for=OpaqueRange>end container</a>.
-</ul>
-
-<p>The {{AbstractRange/startContainer}} getter steps for {{OpaqueRange}} objects are to return null.
-
-<p>The {{AbstractRange/startOffset}} getter steps for {{OpaqueRange}} objects are to return
-<a>this</a>'s <a for=OpaqueRange>start offset</a>.
-
-<p>The {{AbstractRange/endContainer}} getter steps for {{OpaqueRange}} objects are to return null.
-
-<p>The {{AbstractRange/endOffset}} getter steps for {{OpaqueRange}} objects are to return
-<a>this</a>'s <a for=OpaqueRange>end offset</a>.
-
-<p>The {{AbstractRange/collapsed}} getter steps for {{OpaqueRange}} objects are to return true if
-<a>this</a>'s <a for=OpaqueRange>start container</a> is <a>this</a>'s
-<a for=OpaqueRange>end container</a> and <a>this</a>'s <a for=OpaqueRange>start offset</a> is
-<a>this</a>'s <a for=OpaqueRange>end offset</a>; otherwise false.
+<p>An {{OpaqueRange}} is a <a>range</a> whose <a for=range>is opaque</a> flag is true.
 
 <p>An {{Element}}
 <dfn export id=supports-opaque-range>supports opaque ranges</dfn> if its specification defines that
 it does. In HTML, this includes certain {{HTMLInputElement}} types and {{HTMLTextAreaElement}}.
-Other specifications may designate additional elements, including custom elements that wish to
-expose encapsulated ranges to the outside world.
 
-<p>Specifications that define elements supporting opaque ranges determine the internal container
-nodes used. For HTML text controls, the internal container is the node representing the element's
-value text. For custom elements, the internal containers may be nodes within the element's shadow
-tree. In all cases, offsets are relative to these internal containers, and the containers themselves
-are never exposed to scripts.
+<p class=note>Other specifications can designate additional elements, including custom elements.
 
-<p>An {{OpaqueRange}} is live. When the underlying content changes, the range's
-<a for=OpaqueRange>start offset</a> and <a for=OpaqueRange>end offset</a> are updated automatically
-to preserve the same logical content. These updates mirror {{Range}} boundary adjustment behavior,
-but operate on the internal containers.
+<p>An {{OpaqueRange}} is live, meaning its offsets are automatically updated when the underlying
+content changes. Specifications that define elements supporting opaque ranges must specify:
 
-<p class=note>Specifications that introduce elements that <a>support opaque ranges</a> specify the
-internal container nodes, how {{OpaqueRange}} objects are obtained, detached, and updated when the
-underlying content changes.
+<ul>
+ <li><p>the internal container nodes used,
+
+ <li><p>how {{OpaqueRange}} objects are created and detached, and
+
+ <li><p><dfn export>opaque range update steps</dfn> to run when the underlying content changes
+ (e.g., when text is inserted or deleted). These steps should adjust offsets following the same
+ principles as the <a>live range</a> adjustments in the <a for=/>insert</a>, <a for=/>remove</a>,
+ <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms.
+</ul>
 
 
 <h2 id="traversal">Traversal</h2>
