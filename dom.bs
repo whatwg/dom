@@ -8694,10 +8694,14 @@ interface AbstractRange {
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
 
-<p class=note>Some ranges are not backed by the <a>node tree</a> (for example, {{OpaqueRange}}).
-For such ranges, {{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} are null, and
-offsets are interpreted as defined by the relevant specification (e.g., as indices into a host-defined
-string).
+<p>A <a>range</a> has an associated <dfn export for=range id=concept-range-is-opaque>is opaque</dfn>
+flag, initially false. When true, the range's <a for=range>start node</a> and
+<a for=range>end node</a> are not exposed to scripts.
+
+<p class=note>{{OpaqueRange}} objects have their <a for=range>is opaque</a> flag set to true. Their
+internal start and end containers are real <a for=/>nodes</a>, but the
+{{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters return null to preserve
+encapsulation.
 
 <p class=note>For {{Range}} and {{StaticRange}} objects, {{AbstractRange/startContainer}} and
 {{AbstractRange/endContainer}} never return null.
@@ -10003,62 +10007,77 @@ interface OpaqueRange : AbstractRange {
 
 <dl class=domintro>
  <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
- <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the opaque
- range string. If the user agent cannot compute geometry for the range (e.g. because the element it
- was created from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>),
- or if the range is {{AbstractRange/collapsed}} with no visible caret, returns an empty list.
+ <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the range.
+ If the user agent cannot compute geometry for the range (e.g. because the element it was created
+ from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>), or if the
+ range is {{AbstractRange/collapsed}} with no visible caret, returns an empty list.
 
  <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{OpaqueRange/getBoundingClientRect()}}</code>
- <dd>Returns a {{DOMRect}} that is the union of the rectangles from {{OpaqueRange/getClientRects()}}.
- For a {{AbstractRange/collapsed}} range with a visible caret, returns a rectangle of zero width whose
- height equals the line height at the caret position. If the user agent cannot compute geometry for the
- range (e.g. because the element it was created from is not <a>connected</a> or has computed
- <code>display</code> of <code>none</code>), returns a rectangle with zero width and height.
+ <dd>Returns a {{DOMRect}} that is the union of the rectangles from
+ {{OpaqueRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range with a visible caret,
+ returns a rectangle of zero width whose height equals the line height at the caret position. If
+ the user agent cannot compute geometry for the range (e.g. because the element it was created
+ from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>), returns
+ a rectangle with zero width and height.
 </dl>
 
-<p>An {{OpaqueRange}} is a range whose endpoints are defined as offsets in a host-defined
-<a href="#opaque-range-string">opaque range string</a> rather than in the <a>node tree</a>. It is not
-backed by the <a>node tree</a> and therefore has no associated container nodes; its
-{{AbstractRange/startContainer}} and {{AbstractRange/endContainer}} getters return null, and its
-{{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} getters return indices into that string.
+<p>An {{OpaqueRange}} is a <a>range</a> whose <a for=range>is opaque</a> flag is true. It has a
+<a for=range>start</a> and <a for=range>end</a> <a>boundary point</a> just like any other
+range — each consisting of a <a for=/>node</a> (its container) and a non-negative integer (its
+offset). However, the containers are internal and not exposed to scripts; they represent
+encapsulated nodes within the element that the range was created from.
 
 <p>An {{OpaqueRange}} has associated state:
 
 <ul>
- <li><p><dfn export for=OpaqueRange id=opaque-range-start>start offset</dfn> (a non-negative integer).
+ <li><p><dfn export for=OpaqueRange id=opaque-range-start-container>start container</dfn> (a
+ <a for=/>node</a>), the internal node containing the range's start point.
 
- <li><p><dfn export for=OpaqueRange id=opaque-range-end>end offset</dfn> (a non-negative integer).
+ <li><p><dfn export for=OpaqueRange id=opaque-range-start>start offset</dfn> (a non-negative
+ integer), an offset within the <a for=OpaqueRange>start container</a>.
+
+ <li><p><dfn export for=OpaqueRange id=opaque-range-end-container>end container</dfn> (a
+ <a for=/>node</a>), the internal node containing the range's end point.
+
+ <li><p><dfn export for=OpaqueRange id=opaque-range-end>end offset</dfn> (a non-negative integer),
+ an offset within the <a for=OpaqueRange>end container</a>.
 </ul>
+
+<p>The {{AbstractRange/startContainer}} getter steps for {{OpaqueRange}} objects are to return null.
 
 <p>The {{AbstractRange/startOffset}} getter steps for {{OpaqueRange}} objects are to return
 <a>this</a>'s <a for=OpaqueRange>start offset</a>.
+
+<p>The {{AbstractRange/endContainer}} getter steps for {{OpaqueRange}} objects are to return null.
 
 <p>The {{AbstractRange/endOffset}} getter steps for {{OpaqueRange}} objects are to return
 <a>this</a>'s <a for=OpaqueRange>end offset</a>.
 
 <p>The {{AbstractRange/collapsed}} getter steps for {{OpaqueRange}} objects are to return true if
-<a>this</a>'s <a for=OpaqueRange>start offset</a> equals <a for=OpaqueRange>end offset</a>; otherwise
-false.
+<a>this</a>'s <a for=OpaqueRange>start container</a> is <a>this</a>'s
+<a for=OpaqueRange>end container</a> and <a>this</a>'s <a for=OpaqueRange>start offset</a> is
+<a>this</a>'s <a for=OpaqueRange>end offset</a>; otherwise false.
 
-<p>An {{Element}} <var>el</var> <dfn export id=supports-opaque-range>supports opaque ranges</dfn> if
-its specification defines that it does. In HTML, this includes certain {{HTMLInputElement}} types and
-{{HTMLTextAreaElement}}, whose opaque-range behavior is defined over their <code>value</code>. Other
-specifications may designate additional elements, including custom elements.
+<p>An {{Element}}
+<dfn export id=supports-opaque-range>supports opaque ranges</dfn> if its specification defines that
+it does. In HTML, this includes certain {{HTMLInputElement}} types and {{HTMLTextAreaElement}}.
+Other specifications may designate additional elements, including custom elements that wish to
+expose encapsulated ranges to the outside world.
 
-<p>For an element <var>el</var> that <a>supports opaque ranges</a>, its
-<dfn export id=opaque-range-string>opaque range string</dfn> is a string defined by the relevant
-specification that represents the element's text for the purposes of opaque ranges. In HTML, this is
-typically the string exposed by the element's IDL <code>value</code> attribute. Offsets for
-{{OpaqueRange}} are indices into this string in the inclusive range [0, <code>string.length</code>].
+<p>Specifications that define elements supporting opaque ranges determine the internal container
+nodes used. For HTML text controls, the internal container is the node representing the element's
+value text. For custom elements, the internal containers may be nodes within the element's shadow
+tree. In all cases, offsets are relative to these internal containers, and the containers themselves
+are never exposed to scripts.
 
-<p>An {{OpaqueRange}} is live. When the underlying opaque range string changes, the range's
+<p>An {{OpaqueRange}} is live. When the underlying content changes, the range's
 <a for=OpaqueRange>start offset</a> and <a for=OpaqueRange>end offset</a> are updated automatically
 to preserve the same logical content. These updates mirror {{Range}} boundary adjustment behavior,
-but operate on UTF-16 code unit indices of the host's string.
+but operate on the internal containers.
 
-<p class=note>Specifications that introduce elements that <a>support opaque ranges</a> specify how
-{{OpaqueRange}} objects are obtained, detached, and updated when the underlying opaque range string
-changes.
+<p class=note>Specifications that introduce elements that <a>support opaque ranges</a> specify the
+internal container nodes, how {{OpaqueRange}} objects are obtained, detached, and updated when the
+underlying content changes.
 
 
 <h2 id="traversal">Traversal</h2>
