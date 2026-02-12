@@ -2994,8 +2994,9 @@ null.
 <div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-move-ext>moving steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed a <a for=/>node</a> <var>movedNode</var>, and a <a for=/>node</a>-or-null
-<var ignore>oldParent</var> as indicated in the <a for=/>move</a> algorithm below. Like the
+algorithm is passed a <a for=/>node</a> <var>movedNode</var>, a boolean
+<var ignore>isSubtreeRoot</var>, and a <a for=/>node</a> <var ignore>oldAncestor</var>
+as indicated in the <a for=/>move</a> algorithm below. Like the
 <a>insertion steps</a>, these steps must not modify the <a>node tree</a> that
 <var>movedNode</var> <a>participates</a> in, create <a for=/>browsing contexts</a>,
 <a lt="fire an event">fire events</a>, or otherwise execute JavaScript. These steps may queue tasks
@@ -3107,14 +3108,16 @@ to do these things asynchronously, however.
   <var>node</var>, in <a>shadow-including tree order</a>:
 
   <ol>
+   <li><p>Let <var>isSubtreeRoot</var> be true if <var>inclusiveDescendant</var> is
+   <var>node</var>; otherwise false.
+
    <li>
-    <p>If <var>inclusiveDescendant</var> is <var>node</var>, then run the <a>moving steps</a> with
-    <var>inclusiveDescendant</var> and <var>oldParent</var>. Otherwise, run the <a>moving steps</a>
-    with <var>inclusiveDescendant</var> and null.
+    <p>Run the <a>moving steps</a> with <var>inclusiveDescendant</var>, <var>isSubtreeRoot</var>,
+    and <var>oldParent</var>.
 
     <p class="note">Because the <a>move</a> algorithm is a separate primitive from
-    <a for=/>insert</a> and <a for=/>remove</a>, it does not invoke the traditional
-    <a>insertion steps</a> or <a>removing steps</a> for <var>inclusiveDescendant</var>.
+    <a for=/>insert</a> and <a for=/>remove</a>, it does not invoke the <a>insertion steps</a>
+    or <a>removing steps</a> for <var>inclusiveDescendant</var>.
    </li>
 
    <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a> and <var>newParent</var> is
@@ -3270,9 +3273,9 @@ from a <a for=/>node</a> <var>parent</var>:
 <div algorithm>
 <p><a lt="Other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-remove-ext>removing steps</dfn> for all or some <a for=/>nodes</a>. The
-algorithm is passed a <a for=/>node</a> <var ignore>removedNode</var> and a
-<a for=/>node</a>-or-null <var ignore>oldParent</var>, as indicated in the <a for=/>remove</a>
-algorithm below.
+algorithm is passed a <a for=/>node</a> <var ignore>removedNode</var>, a boolean
+<var ignore>isSubtreeRoot</var>, and a <a for=/>node</a> <var ignore>oldAncestor</var> as indicated
+in the <a for=/>remove</a> algorithm below.
 </div>
 
 <div algorithm=remove>
@@ -3313,7 +3316,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
   </ol>
 
- <li><p>Run the <a>removing steps</a> with <var>node</var> and <var>parent</var>.
+ <li><p>Run the <a>removing steps</a> with <var>node</var>, true, and <var>parent</var>.
 
  <li><p>Let <var>isParentConnected</var> be <var>parent</var>'s <a>connected</a>.
 
@@ -3330,7 +3333,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
   <a>shadow-including tree order</a>:
 
   <ol>
-   <li><p>Run the <a>removing steps</a> with <var>descendant</var> and null.
+   <li><p>Run the <a>removing steps</a> with <var>descendant</var>, false, and <var>parent</var>.
 
    <li><p>If <var>descendant</var> is <a for=Element>custom</a> and <var>isParentConnected</var>
    is true, then <a>enqueue a custom element callback reaction</a> with <var>descendant</var>,
