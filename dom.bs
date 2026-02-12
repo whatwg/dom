@@ -1935,6 +1935,7 @@ interface AbortSignal : EventTarget {
   readonly attribute boolean aborted;
   readonly attribute any reason;
   undefined throwIfAborted();
+  undefined addAbortCallback(VoidFunction callback);
 
   attribute EventHandler onabort;
 };</pre>
@@ -2045,6 +2046,26 @@ is [=AbortSignal/aborted=]; otherwise false.
 
 <p>The <dfn method for=AbortSignal>throwIfAborted()</dfn> method steps are to throw <a>this</a>'s
 <a for=AbortSignal>abort reason</a>, if <a>this</a> is [=AbortSignal/aborted=].
+
+<div algorithm>
+<p>The <dfn method for=AbortSignal><code>addAbortCallback(<var>callback</var>)</code></dfn> method steps are:
+
+ <ol>
+  <li><p>If <a>this</a> is [=AbortSignal/aborted=], then:
+   <ol>
+    <li><p><a spec=webidl>invoke</a> <var>callback</var> with « », and "<code>report</code>".
+
+    <li><p>Return.
+   </ol>
+
+
+  <li>
+   <p>[=AbortSignal/Add|Add the following abort steps=] to [=this=]:</p>
+   <ol>
+    <li><p><a spec=webidl>invoke</a> <var>callback</var> with « », and "<code>report</code>".
+   </ol>
+ </ol>
+</div>
 
 <div class=example id=example-throwifaborted>
  <p>This method is primarily useful for when functions accepting {{AbortSignal}}s want to throw (or
