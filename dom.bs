@@ -8676,9 +8676,9 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <pre class=idl>
 [Exposed=Window]
 interface AbstractRange {
-  readonly attribute Node startContainer;
+  readonly attribute Node? startContainer;
   readonly attribute unsigned long startOffset;
-  readonly attribute Node endContainer;
+  readonly attribute Node? endContainer;
   readonly attribute unsigned long endOffset;
   readonly attribute boolean collapsed;
 };
@@ -8700,6 +8700,11 @@ interface AbstractRange {
 <a for="boundary point">node</a>,  and its
 <dfn export id=concept-range-end-offset for=range>end offset</dfn> is its <a for=range>end</a>'s
 <a for="boundary point">offset</a>.
+
+<p>A <a>range</a> has an associated <dfn export for=range id=concept-range-is-opaque>is opaque</dfn>
+flag, initially false. When true, the {{AbstractRange/startContainer}} and
+{{AbstractRange/endContainer}} getters return null. Only {{OpaqueRange}} objects have this flag set
+to true.
 
 <div algorithm>
 <p>A <a>range</a> is <dfn for=range export>collapsed</dfn> if its <a for=range>start node</a> is its
@@ -8726,7 +8731,8 @@ interface AbstractRange {
 <div algorithm>
 <p>The
 <dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start node</a>.
+getter steps are to return null if <a>this</a>'s <a for=range>is opaque</a> flag is true; otherwise
+<a>this</a>'s <a for=range>start node</a>.
 </div>
 
 <div algorithm>
@@ -8736,7 +8742,8 @@ getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
 
 <div algorithm>
 <p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end node</a>.
+getter steps are to return null if <a>this</a>'s <a for=range>is opaque</a> flag is true; otherwise
+<a>this</a>'s <a for=range>end node</a>.
 </div>
 
 <div algorithm>
@@ -9987,6 +9994,61 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 [[DOM-Parsing]]
 [[CSSOM-VIEW]]
 
+
+<h3 id=interface-opaquerange>Interface {{OpaqueRange}}</h3>
+
+<pre class=idl>
+[Exposed=Window]
+interface OpaqueRange : AbstractRange {
+  DOMRectList getClientRects();
+  DOMRect getBoundingClientRect();
+};
+</pre>
+
+<p>Objects implementing the {{OpaqueRange}} interface are known as {{OpaqueRange}} objects.
+{{OpaqueRange}} objects cannot be constructed directly; they are created by specifications defining
+elements that <a>support opaque ranges</a>.
+
+<dl class=domintro>
+ <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
+ <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the range.
+ If the user agent cannot compute geometry for the range (e.g. because the element it was created
+ from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>), or if the
+ range is {{AbstractRange/collapsed}} with no visible caret, returns an empty list.
+
+ <dt><code><var ignore>rect</var> = <var ignore>range</var> . {{OpaqueRange/getBoundingClientRect()}}</code>
+ <dd>Returns a {{DOMRect}} that is the union of the rectangles from
+ {{OpaqueRange/getClientRects()}}. For a {{AbstractRange/collapsed}} range with a visible caret,
+ returns a rectangle of zero width whose height equals the line height at the caret position. If
+ the user agent cannot compute geometry for the range (e.g. because the element it was created
+ from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>), returns
+ a rectangle with zero width and height.
+</dl>
+
+<p>The {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} methods are
+defined in [[CSSOM-VIEW]].
+
+<p>An {{OpaqueRange}} is a <a>range</a> whose <a for=range>is opaque</a> flag is true.
+
+<p>An {{Element}}
+<dfn export id=supports-opaque-range>supports opaque ranges</dfn> if its specification defines that
+it does. In HTML, this includes certain {{HTMLInputElement}} types and {{HTMLTextAreaElement}}.
+
+<p class=note>Other specifications can designate additional elements, including custom elements.
+
+<p>An {{OpaqueRange}} is live, meaning its offsets are automatically updated when the underlying
+content changes. Specifications that define elements supporting opaque ranges must specify:
+
+<ul>
+ <li><p>the internal container nodes used,
+
+ <li><p>how {{OpaqueRange}} objects are created and detached, and
+
+ <li><p><dfn export>opaque range update steps</dfn> to run when the underlying content changes
+ (e.g., when text is inserted or deleted). These steps should adjust offsets following the same
+ principles as the <a>live range</a> adjustments in the <a for=/>insert</a>, <a for=/>remove</a>,
+ <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms.
+</ul>
 
 
 <h2 id="traversal">Traversal</h2>
