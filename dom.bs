@@ -30,10 +30,28 @@ urlPrefix: https://tc39.es/ecma262/#; spec: ECMASCRIPT
   text: current realm; url: current-realm
   text: realm; url: realm
   text: surrounding agent; url: surrounding-agent
+  text: execution context stack; url: execution-context-stack
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: current high resolution time; url: dfn-current-high-resolution-time
  type:dfn; text: relative high resolution coarse time; url: dfn-relative-high-resolution-coarse-time
+urlPrefix: https://tc39.es/proposal-async-context/; spec: PROPOSAL-ASYNCCONTEXT
+ type: dfn; text: Async Context Mapping; url: async-context-mapping
+ type: abstract-op; text: AsyncContextSnapshot; url: sec-asynccontextsnapshot
+
+# Link to HTML AsyncContext PR so the spec preview works
+urlPrefix: https://whatpr.org/html/12152/infrastructure.html; spec: HTML
+ type: dfn; text: run; for: Async Context Mapping
+</pre>
+
+<pre class=biblio>
+{
+    "PROPOSAL-ASYNCCONTEXT": {
+        "publisher": "Ecma",
+        "href": "https://tc39.es/proposal-async-context/",
+        "title": "AsyncContext"
+    }
+}
 </pre>
 
 <pre class=link-defaults>
@@ -1073,6 +1091,15 @@ and a <dfn export for=EventTarget>legacy-canceled-activation behavior</dfn> algo
 <p class=note>These algorithms only exist for checkbox and radio <{input}> elements and
 are not to be used for anything else. [[!HTML]]
 
+<p>Each {{EventTarget}} object has a <dfn for=EventTarget>preserved AsyncContext map</dfn>, which is
+a <a>map</a> from strings representing event types to <a>Async Context Mappings</a>.
+[[!PROPOSAL-ASYNCCONTEXT]]
+
+<p class=note>This map is used to implement the [{{PropagatesAsyncContextToEvents}}] WebIDL extended
+attribute. For simplicity, this map is defined on {{EventTarget}}, but it will always be empty
+unless <a>this</a> implements an interface which has a regular operation annotated with this
+extended attribute.
+
 <dl class=domintro>
  <dt><code><var>target</var> = new <a constructor for=EventTarget lt=EventTarget()>EventTarget</a>();</code>
  <dd><p>Creates a new {{EventTarget}} object, which can be used by developers to <a>dispatch</a> and
@@ -1763,8 +1790,21 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
- <var>legacy target override flag</var> set if set.
+ <li><p>If the <a lt="execution context stack">JavaScript execution context stack</a> is empty, and
+ if (<var>target</var>'s <a for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>]
+ <a for=map>exists</a>, then let <var>async context mapping</var> be (<var>target</var>'s
+ <a for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>]. Otherwise, let <var>async context
+ mapping</var> be <a abstract-op>AsyncContextSnapshot</a>().
+
+ <li>
+  <p>Return the result of <a for="Async Context Mapping">running</a> the following steps with
+  <var>async context mapping</var>:
+
+  <ol>
+   <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
+   <var>legacy target override flag</var> set if set.
+  </ol>
+ </li>
 </ol>
 </div>
 
@@ -1803,6 +1843,44 @@ they are for.
 iterations of the DOM had a concept of "default actions" associated with <a>events</a>
 that gave folks all the wrong ideas. <a>Events</a> do not represent or cause actions, they
 can only be used to influence an ongoing one.
+
+
+<h3 id="propagates-async-context-to-events">The <dfn extended-attribute lt="PropagatesAsyncContextToEvents">[PropagatesAsyncContextToEvents]</dfn> extended attribute</h3>
+
+<p>To enable integration with the TC39 AsyncContext proposal for events fired asynchronously as a
+result of a method call, we introduce the [{{PropagatesAsyncContextToEvents}}] WebIDL [=extended
+attribute=]. [[PROPOSAL-ASYNCCONTEXT]]
+
+<p>The [{{PropagatesAsyncContextToEvents}}] extended attribute must take either a string or a list of
+strings. It must not be used on anything other than a [=regular operation=] declared on an
+[=interface=] that inherits from {{EventTarget}}.
+
+<p>Regular operations annotated with [{{PropagatesAsyncContextToEvents}}] must run the following steps
+in place of the ones specified in their description:
+
+<ol>
+ <li><p>If the [{{PropagatesAsyncContextToEvents}}] extended attribute takes a list of strings, let
+ <var>event types</var> be that list. Otherwise, the argument is a string; let <var>event
+ types</var> be a list containing that string.
+
+ <li>
+  <p>For each <var>event type</var> in <var>event types</var>, set (<a>this</a>'s
+  <a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>] to
+  <a abstract-op>AsyncContextSnapshot</a>().
+
+  <p class=note>The return value of <a abstract-op>AsyncContextSnapshot</a>() will not change across
+  these invocations.
+ </li>
+
+ <li><p>Run the originally-specified steps for this regular operation. If the steps return a value
+ or throw an exception, return or throw it in turn.
+</ol>
+
+<p>Specifications should set this extended attribute on methods which will asynchronously cause events
+to be fired on the instance on which the method was called. This will cause the [=Async Context
+Mapping=] active when the method is called to be stored and eventually set when those events are
+fired. The list of strings which this attribute takes are the names of the events that the method
+will cause to be fired.
 
 
 
