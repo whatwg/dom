@@ -3624,6 +3624,7 @@ interface mixin NonDocumentTypeChildNode {
 };
 Element includes NonDocumentTypeChildNode;
 CharacterData includes NonDocumentTypeChildNode;
+Marker includes NonDocumentTypeChildNode;
 </pre>
 
 <dl class=domintro>
@@ -4424,6 +4425,7 @@ interface Node : EventTarget {
   const unsigned short DOCUMENT_TYPE_NODE = 10;
   const unsigned short DOCUMENT_FRAGMENT_NODE = 11;
   const unsigned short NOTATION_NODE = 12; // legacy
+  const unsigned short MARKER_NODE = 13;
   readonly attribute unsigned short nodeType;
   readonly attribute DOMString nodeName;
 
@@ -4523,6 +4525,9 @@ get a direct instance of it.
 
    <dt>{{DocumentFragment}}
    <dd><code>{{Node}} . {{Node/DOCUMENT_FRAGMENT_NODE}}</code> (11).
+
+   <dt>{{Marker}}
+   <dd><code>{{Node}} . {{Node/MARKER_NODE}}</code> (13).
   </dl>
 
  <dt><code><var>node</var> . {{Node/nodeName}}</code>
@@ -4556,6 +4561,9 @@ get a direct instance of it.
 
    <dt>{{DocumentFragment}}
    <dd>"<code>#document-fragment</code>".
+
+   <dt>{{Marker}}
+   <dd>"<code>#marker</code>".
   </dl>
 </dl>
 
@@ -4589,6 +4597,9 @@ statement, switching on the interface <a>this</a> <a>implements</a>:
 
  <dt>{{DocumentFragment}}
  <dd><dfn const for=Node>DOCUMENT_FRAGMENT_NODE</dfn> (11).
+
+ <dt>{{Marker}}
+ <dd><dfn const for=Node>MARKER_NODE</dfn> (13).
 </dl>
 
 <p>The <dfn attribute for=Node>nodeName</dfn> getter steps are to return the first matching
@@ -5036,6 +5047,10 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <dt>{{ProcessingInstruction}}
    <dd><p>Set <var>copy</var>'s <a for=ProcessingInstruction>target</a> and
    <a for=CharacterData>data</a> to those of <var>node</var>.
+
+   <dt>{{Marker}}
+   <dd><p>Set <var>copy</var>'s <a for=Marker>type</a> and <a for=Marker>name</a> to those of
+   <var>node</var>.
 
    <dt>Otherwise
    <dd><p>Do nothing.
@@ -8553,6 +8568,42 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 </div>
 
 
+<h3 id=interface-marker>Interface {{Marker}}</h3>
+
+<pre class=idl>
+enum MarkerType { "marker", "start", "end" };
+
+[Exposed=Window]
+interface Marker : Node {
+  constructor(MarkerType type, optional DOMString name = "");
+
+  readonly attribute MarkerType type;
+  readonly attribute DOMString name;
+};
+</pre>
+
+<dl class=domintro>
+ <dt><code><var ignore>marker</var> = new <a constructor lt="Marker()">Marker(<var>type</var> [, <var>name</var> = ""])</a></code>
+ <dd>Returns a new {{Marker}} <a for=/>node</a> whose <a for=Marker>type</a> is <var>type</var> and
+ <a for=Marker>name</a> is <var>name</var>.
+</dl>
+
+<p>{{Marker}} <a for=/>nodes</a> are simply known as
+<dfn export id=concept-marker lt="marker">markers</dfn>.
+
+<p><a>Markers</a> have an associated
+<dfn export id=concept-marker-type for=Marker>type</dfn> and
+<dfn export id=concept-marker-name for=Marker>name</dfn>.
+
+<div algorithm>
+<p>The <dfn constructor for=Marker lt="Marker(type)"><code>new Marker(<var>type</var>, <var>name</var>)</code></dfn>
+constructor steps are to set <a>this</a>'s <a for=Marker>type</a> to <var>type</var>, <a>this</a>'s
+<a for=Marker>name</a> to <var>name</var>, and <a>this</a>'s <a for=Node>node document</a> to
+<a>current global object</a>'s <a>associated <code>Document</code></a>.
+</div>
+
+
+
 
 <h2 id=ranges>Ranges</h2>
 
@@ -10530,6 +10581,7 @@ callback interface NodeFilter {
   const unsigned long SHOW_DOCUMENT_TYPE = 0x200;
   const unsigned long SHOW_DOCUMENT_FRAGMENT = 0x400;
   const unsigned long SHOW_NOTATION = 0x800; // legacy
+  const unsigned long SHOW_MARKER = 0x1000;
 
   unsigned short acceptNode(Node node);
 };
@@ -10561,6 +10613,7 @@ JavaScript function.
  <li><dfn const for=NodeFilter><code>SHOW_DOCUMENT</code></dfn> (256, 100 in hexadecimal);
  <li><dfn const for=NodeFilter><code>SHOW_DOCUMENT_TYPE</code></dfn> (512, 200 in hexadecimal);
  <li><dfn const for=NodeFilter><code>SHOW_DOCUMENT_FRAGMENT</code></dfn> (1024, 400 in hexadecimal).
+ <li><dfn const for=NodeFilter><code>SHOW_MARKER</code></dfn> (4096, 1000 in hexadecimal).
 </ul>
 
 
