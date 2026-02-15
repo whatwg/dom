@@ -479,6 +479,9 @@ signaling that something has occurred, e.g., that an image has completed downloa
 <p class=note>Other specifications use <a for=Event>relatedTarget</a> to define a
 <code>relatedTarget</code> attribute. [[UIEVENTS]]
 
+<p>An <a>event</a> has an associated <dfn export for=Event>source</dfn> (a
+<a>potential event target</a>). Unless stated otherwise it is null.
+
 <p>An <a>event</a> has an associated <dfn export for=Event>touch target list</dfn> (a
 <a for=/>list</a> of zero or more <a>potential event targets</a>). Unless stated otherwise it is the
 empty list.
@@ -6606,10 +6609,22 @@ is null.
 <hr>
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
-null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
-<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
-<a for=Event/path>invocation target</a>; otherwise <a for=/>shadow root</a>'s
-<a for=DocumentFragment>host</a>.
+the result of the following steps:</p>
+
+<ol>
+ <li><p>If <var>event</var>’s <a>composed flag</a> is set, return <a for=/>shadow root</a>’s
+ <a for=DocumentFragment>host</a>.</p></li>
+ <li><p>Let <var>target</var> be <var>event</var>’s <a for=Event>path</a>'s first struct's
+ <a for=Event/path>invocation target</a>.</p></li>
+ <li><p>Let <var>source</var> be <var>event</var>'s <a for=Event>source</a>.</p></li>
+ <li><p>If <a for=/>shadow root</a> is not the <a for=tree>root</a> of <var>target</var>, and either
+ <var>source</var> is null or <a for=/>shadow root</a> is not the <a for=tree>root</a> of
+ <var>source</var>, return <a for=/>shadow root</a>'s <a for=DocumentFragment>host</a>.</p></li>
+ <li><p>If <var>source</var> is not null, and <var>source</var>'s <a for=tree>root</a> is a
+ <a>shadow-including ancestor</a> of <a for=/>shadow root</a>, return the result of
+ <a>retargeting</a> <var>target</var> against <var>source</var>.</p></li>
+ <li><p>Return null.</p></li>
+</ol>
 
 <hr>
 
