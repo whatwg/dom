@@ -6005,11 +6005,15 @@ method steps are:
  "<code>?></code>", then <a>throw</a> an
  "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
 
- <li>Return a new {{ProcessingInstruction}}
+ <li>Let <var>pi</var> be a new {{ProcessingInstruction}}
  <a for=/>node</a>, with
  <a for=ProcessingInstruction>target</a> set to <var>target</var>,
  <a for=CharacterData>data</a> set to <var>data</var>, and
  <a for=Node>node document</a> set to <a>this</a>.
+
+ <li><a>Update attributes from data</a> for <var>pi</var>.
+
+ <li>Return <var>pi</var>.
 </ol>
 
 <hr>
@@ -8263,6 +8267,9 @@ with an integer <var>offset</var>, integer <var>count</var>, and string <var>dat
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
 
+ <li><p>If <var>node</var> is a {{ProcessingInstruction}} <a for=/>node</a>,
+ then <a>update attributes from data</a> for <var>node</var>.
+
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
  <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
 </ol>
@@ -8518,15 +8525,171 @@ interface CDATASection : Text {
 <pre class=idl>
 [Exposed=Window]
 interface ProcessingInstruction : CharacterData {
+  constructor(DOMString target, optional DOMString data = "");
+
   readonly attribute DOMString target;
+
+  DOMString? getAttribute(DOMString name);
+  undefined setAttribute(DOMString name, DOMString value);
+  undefined removeAttribute(DOMString name);
+  boolean hasAttribute(DOMString name);
 };</pre>
+
+<dl class=domintro>
+ <dt><code><var ignore>pi</var> = new <a constructor lt="ProcessingInstruction()">ProcessingInstruction(<var>target</var> [, <var>data</var> = ""])</a></code>
+ <dd>Returns a new {{ProcessingInstruction}} <a for=/>node</a> whose
+ <a for=ProcessingInstruction>target</a> is <var>target</var> and
+ <a for=CharacterData>data</a> is <var>data</var>.
+</dl>
+
+<div algorithm>
+<p>The <dfn constructor for=ProcessingInstruction lt=ProcessingInstruction(target)><code>new ProcessingInstruction(<var>target</var>, <var>data</var>)</code></dfn>
+constructor steps are:
+
+<ol>
+ <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production,
+ then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>data</var> contains the string
+ "<code>?></code>", then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <a>this</a>'s <a for=ProcessingInstruction>target</a> to <var>target</var>,
+ <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var>, and
+ <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
+ <a>associated <code>Document</code></a>.
+
+ <li><p><a>Update attributes from data</a> for <a>this</a>.
+</ol>
+</div>
 
 <p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
 <dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
 
+<p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
+<dfn export id=concept-pi-attribute-map for=ProcessingInstruction>attribute map</dfn>, which is a
+<a for=/>map</a>, initially empty.
+
 <div algorithm>
 <p>The <dfn attribute for=ProcessingInstruction>target</dfn> getter steps are to return
 <a>this</a>'s <a for=ProcessingInstruction>target</a>.
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>getAttribute(<var>name</var>)</code></dfn> method
+steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=Node>node document</a> is an <a>HTML document</a>, then set
+ <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Return <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
+ <a for=map>with default</a> null.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>setAttribute(<var>name</var>, <var>value</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=Node>node document</a> is an <a>HTML document</a>, then set
+ <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p><a for=map>Set</a> <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
+ to <var>value</var>.
+
+ <li><p><a>Update data from attributes</a> for <a>this</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>removeAttribute(<var>name</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=Node>node document</a> is an <a>HTML document</a>, then set
+ <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p><a for=map>Remove</a> <a>this</a>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>name</var>].
+
+ <li><p><a>Update data from attributes</a> for <a>this</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>hasAttribute(<var>name</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=Node>node document</a> is an <a>HTML document</a>, then set
+ <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Return true if <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
+ <a for=set>exists</a>; otherwise false.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update attributes from data</dfn> for a {{ProcessingInstruction}} <a for=/>node</a> <var>pi</var>:
+
+<ol>
+ <li><p><a for=map>Clear</a> <var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>.
+
+ <li><p>Let <var>context</var> be the result of <a>creating an element</a> given
+ <var>pi</var>'s <a>node document</a>, "<code>html</code>", and the <a>HTML namespace</a>.
+
+ <li><p>Let <var>markup</var> be the concatentation of "<code>&lt;attrs </code>",
+ <var>pi</var>'s <a for=CharacterData>data</a>, and
+ "<code>&gt;&lt;/attrs&gt;</code>".
+
+ <li><p>Let <var>fragment</var> be the result of invoking the <a>fragment parsing algorithm steps</a> with <var>context</var> and <var>markup</var>.
+
+ <li>
+  <p>If <var>fragment</var>'s <a>first child</a> is an <a for=/>element</a>:
+
+  <ol>
+   <li><p>Let <var>element</var> be the <a>first child</a> of <var>fragment</var>.
+
+   <li><p>Assert: <var>element</var> is an <a for=/>element</a> with <a for=Element>local name</a> "<code>attrs</code>".
+
+   <li><p><a for=list>For each</a> <var>attribute</var> of <var>element</var>'s
+   <a for=Element>attribute list</a>, set <var>pi</var>'s
+   <a for=ProcessingInstruction>attribute map</a>[<var>attribute</var>'s <a for=Attr>local name</a>]
+   to <var>attribute</var>'s <a for=Attr>value</a>.
+  </ol>
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update data from attributes</dfn> for a {{ProcessingInstruction}} <a for=/>node</a> <var>pi</var>:
+
+<ol>
+ <li><p>Let <var>data</var> be the empty string.
+
+ <li>
+  <p><a for=map>For each</a> <var>name</var> → <var>value</var> of <var>pi</var>'s
+  <a for=ProcessingInstruction>attribute map</a>:
+
+  <ol>
+   <li><p>If <var>data</var> is not the empty string, append U+0020 SPACE to <var>data</var>.
+
+   <li><p>Append <var>name</var> to <var>data</var>.
+
+   <li><p>Append U+003D (=) to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+
+   <li><p>Append the result of <a href="https://html.spec.whatwg.org/#escapingString">escaping a string</a>
+   given <var>value</var> to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+  </ol>
+
+ <li><p><a>Replace data</a> of <var>pi</var> with 0, <var>pi</var>'s <a for=Node>length</a>, and
+ <var>data</var>.
+</ol>
 </div>
 
 
