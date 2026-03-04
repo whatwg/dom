@@ -8534,6 +8534,7 @@ interface ProcessingInstruction : CharacterData {
   DOMString? getAttribute(DOMString name);
   undefined setAttribute(DOMString name, DOMString value);
   undefined removeAttribute(DOMString name);
+  boolean toggleAttribute(DOMString name, optional boolean force);
   boolean hasAttribute(DOMString name);
 };</pre>
 
@@ -8632,6 +8633,37 @@ method steps are:
  <a for=ProcessingInstruction>attribute map</a>[<var>name</var>].
 
  <li><p><a>Update data from attributes</a> for <a>this</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>toggleAttribute(<var>name</var>, <var>force</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <var>name</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>If <a>this</a>'s <a for=Node>node document</a> is an <a>HTML document</a>, then set
+ <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Let <var>attributes</var> be <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>.
+
+ <li>
+  <p>If <var>attributes</var>[<var>name</var>] does not <a for=set>exist</a>:
+
+  <ol>
+   <li><p>If <var>force</var> is not given or is true, set <var>attributes</var>[<var>name</var>]
+   to the empty string, <a>update data from attributes</a> for <a>this</a>, and then return true.
+
+   <li><p>Return false.
+  </ol>
+
+ <li><p>Otherwise, if <var>force</var> is not given or is false, <a for=map>remove</a>
+ <var>attributes</var>[<var>name</var>], <a>update data from attributes</a> for <a>this</a>, and
+ then return false.
+
+ <li><p>Return true.
 </ol>
 </div>
 
