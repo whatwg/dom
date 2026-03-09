@@ -815,7 +815,7 @@ method steps are:
 <ol>
  <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a for=Event>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 </ol>
 </div>
@@ -886,7 +886,7 @@ method steps are:
 <ol>
  <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a for=Event>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 
  <li><p>Set <a>this</a>'s {{CustomEvent/detail}} attribute to <var>detail</var>.
@@ -5997,23 +5997,13 @@ and <a for=Node>node document</a> is <a>this</a>.
 method steps are:
 
 <ol>
- <li>If <var>target</var> does not match the
- <code>[=XML/Name=]</code> production,
- then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- DOM3 does not check for "xml" -->
+ <li><p>Let <var>pi</var> be a new {{ProcessingInstruction}}
+ <a for=/>node</a>, with <a for=Node>node document</a> set to <a>this</a>.
 
- <li>If <var>data</var> contains the string
- "<code>?></code>", then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
+ <li><p><a for=ProcessingInstruction>Initialize</a> <var>pi</var> with <var>target</var> and
+ <var>data</var>.
 
- <li>Let <var>pi</var> be a new {{ProcessingInstruction}}
- <a for=/>node</a>, with
- <a for=ProcessingInstruction>target</a> set to <var>target</var>,
- <a for=CharacterData>data</a> set to <var>data</var>, and
- <a for=Node>node document</a> set to <a>this</a>.
-
- <li><a>Update attributes from data</a> for <var>pi</var>.
-
- <li>Return <var>pi</var>.
+ <li><p>Return <var>pi</var>.
 </ol>
 
 <hr>
@@ -8583,17 +8573,11 @@ interface ProcessingInstruction : CharacterData {
 constructor steps are:
 
 <ol>
- <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production,
- then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
-
- <li><p>If <var>data</var> contains the string
- "<code>?></code>", then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}.
-
- <li><p>Set <a>this</a>'s <a for=ProcessingInstruction>target</a> to <var>target</var>,
- <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var>, and
- <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
+ <li><p>Set <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
  <a>associated <code>Document</code></a>.
+
+ <li><p><a for=ProcessingInstruction>Initialize</a> <a>this</a> with <var>target</var> and
+ <var>data</var>.
 
  <li><p><a>Update attributes from data</a> for <a>this</a>.
 </ol>
@@ -8712,6 +8696,27 @@ method steps are:
 
  <li><p>Return true if <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
  <a for=set>exists</a>; otherwise false.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export for=ProcessingInstruction id=concept-pi-initialize>initialize</dfn> a
+{{ProcessingInstruction}} <a for=/>node</a> <var>pi</var> with <var>target</var> and
+<var>data</var>:
+
+<ol>
+ <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production, then
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <!-- DOM3 does not check for "xml" -->
+
+ <li><p>If <var>data</var> contains the string "<code>?></code>", then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
+
+ <li><p>Set <var>pi</var>'s <a for=ProcessingInstruction>target</a> to <var>target</var>.
+
+ <li><p>Set <var>pi</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p><a>Update attributes from data</a> for <var>pi</var>.
 </ol>
 </div>
 
