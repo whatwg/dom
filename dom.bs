@@ -6090,57 +6090,50 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
  <var>node</var>.
 
  <li>
-  <p>If <var>document</var> is not <var>oldDocument</var>:
+  <p>If <var>document</var> is not <var>oldDocument</var>, then for each
+  <var>inclusiveDescendant</var> of <var>node</var>'s <a>shadow-including inclusive descendants</a>,
+  in <a>shadow-including tree order</a>:
 
   <ol>
+   <li><p>Set <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to <var>document</var>.
+
    <li>
-    <p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-    <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>:
+    <p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a> and if any of the following
+    are true:
+
+    <ul>
+     <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is null
+     and <var>inclusiveDescendant</var>'s <a for=ShadowRoot>keep custom element registry null</a> is
+     false; or
+
+     <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
+     <a>is a global custom element registry</a>,
+    </ul>
+
+    <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
+    <var>document</var>'s <a>effective global custom element registry</a>.
+
+   <li>
+    <p>Otherwise, if <var>inclusiveDescendant</var> is an <a for=/>element</a>:
 
     <ol>
-     <li><p>Set <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to <var>document</var>.
+     <li><p>Set the <a for=Node>node document</a> of each <a>attribute</a> in
+     <var>inclusiveDescendant</var>'s <a for=Element>attribute list</a> to <var>document</var>.
 
-     <li>
-      <p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a> and if any of the following
-      are true:
+     <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null
+     or <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
+     <a for=CustomElementRegistry>is scoped</a> is false, then set
+     <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> to
+     <var>document</var>'s <a>effective global custom element registry</a>.
 
-      <ul>
-       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is null
-       and <var>inclusiveDescendant</var>'s <a for=ShadowRoot>keep custom element registry null</a>
-       is false; or
-
-       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
-       <a>is a global custom element registry</a>,
-      </ul>
-
-      <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
-      <var>document</var>'s <a>effective global custom element registry</a>.
-
-     <li>
-      <p>Otherwise, if <var>inclusiveDescendant</var> is an <a for=/>element</a>:
-
-      <ol>
-       <li><p>Set the <a for=Node>node document</a> of each <a>attribute</a> in
-       <var>inclusiveDescendant</var>'s <a for=Element>attribute list</a> to <var>document</var>.
-
-       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null
-       or <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
-       <a for=CustomElementRegistry>is scoped</a> is false, then set
-       <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> to
-       <var>document</var>'s <a>effective global custom element registry</a>.
-      </ol>
+     <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a>, then
+     <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
+     name "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>document</var> ».
+     <!-- attributeChangedCallback is also old, then new -->
     </ol>
 
-   <li><p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-   <a>shadow-including inclusive descendants</a> that is <a for=Element>custom</a>, in
-   <a>shadow-including tree order</a>: <a>enqueue a custom element callback reaction</a> with
-   <var>inclusiveDescendant</var>, callback name "<code>adoptedCallback</code>", and
-   « <var>oldDocument</var>, <var>document</var> ».
-   <!-- attributeChangedCallback is also old, then new -->
-
-   <li><p>For each <var>inclusiveDescendant</var> of <var>node</var>'s
-   <a>shadow-including inclusive descendants</a>, in <a>shadow-including tree order</a>: run the
-   <a>adopting steps</a> with <var>inclusiveDescendant</var> and <var>oldDocument</var>.
+   <li><p>Run the <a>adopting steps</a> with <var>inclusiveDescendant</var> and
+   <var>oldDocument</var>.
   </ol>
 </ol>
 </div>
