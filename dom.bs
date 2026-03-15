@@ -812,7 +812,7 @@ method steps are:
 <ol>
  <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a for=Event>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 </ol>
 </div>
@@ -883,7 +883,7 @@ method steps are:
 <ol>
  <li><p>If <a>this</a>'s <a>dispatch flag</a> is set, then return.
 
- <li><p><a>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
+ <li><p><a for=Event>Initialize</a> <a>this</a> with <var>type</var>, <var>bubbles</var>, and
  <var>cancelable</var>.
 
  <li><p>Set <a>this</a>'s {{CustomEvent/detail}} attribute to <var>detail</var>.
@@ -5994,19 +5994,13 @@ and <a for=Node>node document</a> is <a>this</a>.
 method steps are:
 
 <ol>
- <li>If <var>target</var> does not match the
- <code>[=XML/Name=]</code> production,
- then <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- DOM3 does not check for "xml" -->
+ <li><p>Let <var>pi</var> be a new {{ProcessingInstruction}}
+ <a for=/>node</a>, with <a for=Node>node document</a> set to <a>this</a>.
 
- <li>If <var>data</var> contains the string
- "<code>?></code>", then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
+ <li><p><a for=ProcessingInstruction>Initialize</a> <var>pi</var> with <var>target</var> and
+ <var>data</var>.
 
- <li>Return a new {{ProcessingInstruction}}
- <a for=/>node</a>, with
- <a for=ProcessingInstruction>target</a> set to <var>target</var>,
- <a for=CharacterData>data</a> set to <var>data</var>, and
- <a for=Node>node document</a> set to <a>this</a>.
+ <li><p>Return <var>pi</var>.
 </ol>
 
 <hr>
@@ -8218,7 +8212,8 @@ string called <dfn export id=concept-cd-data for=CharacterData>data</dfn>.
 
 <div algorithm>
 <p>To <dfn export id=concept-cd-replace>replace data</dfn> of a <a for=/>node</a> <var>node</var>
-with an integer <var>offset</var>, integer <var>count</var>, and string <var>data</var>:
+with an integer <var>offset</var>, integer <var>count</var>, string <var>data</var>, and an optional
+boolean <var>piAttributesAlreadyUpdated</var> (default false):
 
 <ol>
  <li><p>Let <var>length</var> be <var>node</var>'s <a for=Node>length</a>.
@@ -8259,6 +8254,10 @@ with an integer <var>offset</var>, integer <var>count</var>, and string <var>dat
  <a for=range>end offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
  <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
  <var>count</var>.
+
+ <li><p>If <var>node</var> is a {{ProcessingInstruction}} <a for=/>node</a> and
+ <var>piAttributesAlreadyUpdated</var> is false, then <a>update attributes from data</a> for
+ <var>node</var>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
  <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
@@ -8515,15 +8514,257 @@ interface CDATASection : Text {
 <pre class=idl>
 [Exposed=Window]
 interface ProcessingInstruction : CharacterData {
+  constructor(DOMString target, optional DOMString data = "");
+
   readonly attribute DOMString target;
+
+  boolean hasAttributes();
+  sequence&lt;DOMString> getAttributeNames();
+  DOMString? getAttribute(DOMString name);
+  undefined setAttribute(DOMString name, DOMString value);
+  undefined removeAttribute(DOMString name);
+  boolean toggleAttribute(DOMString name, optional boolean force);
+  boolean hasAttribute(DOMString name);
 };</pre>
+
+<dl class=domintro>
+ <dt><code><var ignore>pi</var> = new <a constructor lt="ProcessingInstruction()">ProcessingInstruction(<var>target</var> [, <var>data</var> = ""])</a></code>
+ <dd>Returns a new {{ProcessingInstruction}} <a for=/>node</a> whose
+ <a for=ProcessingInstruction>target</a> is <var>target</var> and
+ <a for=CharacterData>data</a> is <var>data</var>.
+
+ <dt><code><var>pi</var> . {{ProcessingInstruction/target}}</code>
+ <dd>Returns the <a for=ProcessingInstruction>target</a>.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=hasAttributes()>hasAttributes</a>()</code>
+ <dd><p>Returns true if <var>pi</var> has attributes; otherwise false.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=getAttributeNames()>getAttributeNames</a>()</code>
+ <dd><p>Returns the names of all of <var>pi</var>'s attributes. Cannot contain duplicates.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=getAttribute()>getAttribute</a>(<var>name</var>)</code>
+ <dd><p>Returns the value of <var>pi</var>'s attribute named <var>name</var>, and null if there is
+ no such attribute.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=setAttribute()>setAttribute</a>(<var>name</var>, <var>value</var>)</code>
+ <dd><p>Sets <var>pi</var>'s attribute named <var>name</var> to <var>value</var>.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=removeAttribute()>removeAttribute</a>(<var>name</var>)</code>
+ <dd><p>Removes <var>pi</var>'s attribute named <var>name</var>.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=toggleAttribute()>toggleAttribute</a>(<var>name</var> [, <var>force</var>])</code>
+ <dd>
+  <p>If <var>force</var> is not given, "toggles" <var>name</var>, removing it if it is
+  present and adding it if it is not present. If <var>force</var> is true, adds
+  <var>name</var>. If <var>force</var> is false, removes <var>name</var>.
+
+  <p>Returns true if <var>name</var> is now present; otherwise false.
+
+ <dt><code><var>pi</var> . <a method for=ProcessingInstruction lt=hasAttribute()>hasAttribute</a>(<var>name</var>)</code>
+ <dd><p>Returns true if <var>pi</var> has an attribute named <var>name</var>; otherwise false.
+</dl>
+
+<div algorithm>
+<p>The
+<dfn constructor for=ProcessingInstruction lt=ProcessingInstruction(target)><code>new ProcessingInstruction(<var>target</var>, <var>data</var>)</code></dfn>
+constructor steps are:
+
+<ol>
+ <li><p>Set <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
+ <a>associated <code>Document</code></a>.
+
+ <li><p><a for=ProcessingInstruction>Initialize</a> <a>this</a> with <var>target</var> and
+ <var>data</var>.
+
+ <li><p><a>Update attributes from data</a> for <a>this</a>.
+</ol>
+</div>
 
 <p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
 <dfn export id=concept-pi-target for=ProcessingInstruction>target</dfn>.
 
+<p>{{ProcessingInstruction}} <a for=/>nodes</a> have an associated
+<dfn export id=concept-pi-attribute-map for=ProcessingInstruction>attribute map</dfn>, which is a
+<a for=/>map</a>, initially empty.
+
 <div algorithm>
 <p>The <dfn attribute for=ProcessingInstruction>target</dfn> getter steps are to return
 <a>this</a>'s <a for=ProcessingInstruction>target</a>.
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>hasAttributes()</code></dfn> method steps are to
+return false if <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>
+<a for=map>is empty</a>; otherwise true.
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>getAttributeNames()</code></dfn> method steps
+are to return the result of <a for=map>getting the keys</a> of <a>this</a>'s
+<a for=ProcessingInstruction>attribute map</a>.
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>getAttribute(<var>name</var>)</code></dfn> method
+steps are:
+
+<ol>
+ <li><p>Set <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Return <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
+ <a for=map>with default</a> null.
+</ol>
+</div>
+
+<div algorithm>
+<p>The
+<dfn method for=ProcessingInstruction><code>setAttribute(<var>name</var>, <var>value</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <var>name</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p><a for=map>Set</a> <a>this</a>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>name</var>] to <var>value</var>.
+
+ <li><p><a>Update data from attributes</a> for <a>this</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>removeAttribute(<var>name</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>Set <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p><a for=map>Remove</a> <a>this</a>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>name</var>].
+
+ <li><p><a>Update data from attributes</a> for <a>this</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The
+<dfn method for=ProcessingInstruction><code>toggleAttribute(<var>name</var>, <var>force</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>If <var>name</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Let <var>attributes</var> be <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>.
+
+ <li>
+  <p>If <var>attributes</var>[<var>name</var>] does not <a for=set>exist</a>:
+
+  <ol>
+   <li><p>If <var>force</var> is not given or is true, set <var>attributes</var>[<var>name</var>]
+   to the empty string, <a>update data from attributes</a> for <a>this</a>, and then return true.
+
+   <li><p>Return false.
+  </ol>
+
+ <li><p>Otherwise, if <var>force</var> is not given or is false, <a for=map>remove</a>
+ <var>attributes</var>[<var>name</var>], <a>update data from attributes</a> for <a>this</a>, and
+ then return false.
+
+ <li><p>Return true.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=ProcessingInstruction><code>hasAttribute(<var>name</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>Set <var>name</var> to <var>name</var> in <a>ASCII lowercase</a>.
+
+ <li><p>Return true if <a>this</a>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
+ <a for=set>exists</a>; otherwise false.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export for=ProcessingInstruction id=concept-pi-initialize>initialize</dfn> a
+{{ProcessingInstruction}} <a for=/>node</a> <var>pi</var> with <var>target</var> and
+<var>data</var>:
+
+<ol>
+ <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production, then
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <!-- DOM3 does not check for "xml" -->
+
+ <li><p>If <var>data</var> contains the string "<code>?></code>", then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}. <!-- Gecko does this. -->
+
+ <li><p>Set <var>pi</var>'s <a for=ProcessingInstruction>target</a> to <var>target</var>.
+
+ <li><p>Set <var>pi</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p><a>Update attributes from data</a> for <var>pi</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update attributes from data</dfn> for a {{ProcessingInstruction}} <a for=/>node</a>
+<var>pi</var>:
+
+<ol>
+ <li><p><a for=map>Clear</a> <var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>.
+
+ <li><p>Let <var>document</var> be a new {{Document}} node whose <a for=Document>type</a> is
+ "<code>html</code>".
+
+ <li><p>Let <var>html</var> be the concatentation of "<code>&lt;html </code>",
+ <var>pi</var>'s <a for=CharacterData>data</a>, and "<code>&gt;</code>".
+
+ <li><p><a href="https://html.spec.whatwg.org/#parse-html-from-a-string">Parse HTML from a string</a>
+ given <var>document</var> and <var>html</var>.
+
+ <li><p><a for=list>For each</a> <var>attribute</var> of <var>document</var>'s
+ <a>document element</a>'s <a for=Element>attribute list</a>, set <var>pi</var>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>attribute</var>'s <a for=Attr>local name</a>]
+ to <var>attribute</var>'s <a for=Attr>value</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update data from attributes</dfn> for a {{ProcessingInstruction}} <a for=/>node</a>
+<var>pi</var>:
+
+<ol>
+ <li><p>Let <var>data</var> be the empty string.
+
+ <li>
+  <p><a for=map>For each</a> <var>name</var> → <var>value</var> of <var>pi</var>'s
+  <a for=ProcessingInstruction>attribute map</a>:
+
+  <ol>
+   <li><p>If <var>data</var> is not the empty string, then append U+0020 SPACE to <var>data</var>.
+
+   <li><p>Append <var>name</var> to <var>data</var>.
+
+   <li><p>Append U+003D (=) to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+
+   <li><p>Append the result of
+   <a href="https://html.spec.whatwg.org/#escapingString">escaping a string</a> given
+   <var>value</var> to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+  </ol>
+
+ <li><p><a>Replace data</a> of <var>pi</var> with 0, <var>pi</var>'s <a for=Node>length</a>,
+ <var>data</var>, and true.
+</ol>
 </div>
 
 
