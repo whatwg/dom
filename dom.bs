@@ -1773,7 +1773,8 @@ and an optional <var>legacyOutputDidListenersThrowFlag</var>, run these steps:
 <div algorithm>
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
-initialized, and a <var>legacy target override flag</var>, run these steps:
+initialized, a <var>legacy target override flag</var>, and an optional <span>Async Context
+Mapping</span> <var>async context mapping</var>, run these steps:
 
 <ol>
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
@@ -1790,11 +1791,12 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>If the <a lt="execution context stack">JavaScript execution context stack</a> is empty, and
- if (<var>target</var>'s <a for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>]
- <a for=map>exists</a>, then let <var>async context mapping</var> be (<var>target</var>'s
- <a for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>]. Otherwise, let <var>async context
- mapping</var> be <a abstract-op>AsyncContextSnapshot</a>().
+ <li><p>If <var>async context mapping</var> is not set, the <a lt="execution context
+ stack">JavaScript execution context stack</a> is empty, and (<var>target</var>'s <a
+ for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>] <a for=map>exists</a>, then set
+ <var>async context mapping</var> to (<var>target</var>'s <a for=EventTarget>preserved AsyncContext
+ map</a>)[<var>e</var>]. Otherwise, if <var>async context mapping</var> is not set, set it to <a
+ abstract-op>AsyncContextSnapshot</a>().
 
  <li>
   <p>Return the result of <a for="Async Context Mapping">running</a> the following steps with
@@ -1864,23 +1866,29 @@ place of the ones specified in their description:
  <var>event types</var> be that list. Otherwise, the argument is a string; let <var>event
  types</var> be a list containing that string.
 
- <li>
-  <p>For each <var>event type</var> in <var>event types</var>, set (<a>this</a>'s
-  <a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>] to
-  <a abstract-op>AsyncContextSnapshot</a>().
-
-  <p class=note>The return value of <a abstract-op>AsyncContextSnapshot</a>() will not change across
-  these invocations.
- </li>
+ <li><p><a for=EventTarget>Propagate AsyncContext for events</a> <var>event types</var> given
+ <a>this</a>.
 
  <li><p>Run the originally-specified steps for this regular operation. If the steps return a value
  or throw an exception, return or throw it in turn.
 </ol>
 
-<p>Specifications should set this extended attribute on methods which start an async operation which
-will eventually cause events to be fired on the instance on which the method was called.
-<span class="non-normative">An example of this is the {{XMLHttpRequest}} and its
-{{XMLHttpRequest/send}} method:</span> [[XHR]]
+<p algorithm>To <dfn export for=EventTarget>propagate AsyncContext for events</dfn> with a list of
+strings <var>event types</var>, given an {{EventTarget}} <var>target</var>, then for each
+<var>event type</var> in <var>event types</var>, set (<var>target</var>'s
+<a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>] to
+<a abstract-op>AsyncContextSnapshot</a>(). <span class=note>The return value of
+<a abstract-op>AsyncContextSnapshot</a>() will not change across these invocations.</span></p>
+
+<p algorithm>To <dfn export for=EventTarget>clear AsyncContext for events</dfn> with a list of
+strings <var>event types</var>, given an {{EventTarget}} <var>target</var>, then for each
+<var>event type</var> in <var>event types</var>, remove (<var>target</var>'s
+<a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>].</p>
+
+<p>Specifications should set the [{{PropagatesAsyncContextToEvents}}] extended attribute on methods
+which start an async operation which will eventually cause events to be fired on the instance on
+which the method was called. <span class="non-normative">An example of this is the
+{{XMLHttpRequest}} interface and its {{XMLHttpRequest/send}} method:</span> [[XHR]]
 
 <pre highlight=idl>
 [Exposed=(Window,DedicatedWorker,SharedWorker)]
