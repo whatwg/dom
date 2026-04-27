@@ -9993,6 +9993,7 @@ and {{Range/getBoundingClientRect()}} methods are defined in other specification
 <pre class=idl>
 [Exposed=Window]
 interface OpaqueRange : AbstractRange {
+  undefined disconnect();
   DOMRectList getClientRects();
   DOMRect getBoundingClientRect();
 };
@@ -10002,7 +10003,17 @@ interface OpaqueRange : AbstractRange {
 {{OpaqueRange}} objects cannot be constructed directly; they are created by specifications defining
 elements that <a>support opaque ranges</a>.
 
+<p>An {{OpaqueRange}} has an
+<dfn export for=OpaqueRange>associated element</dfn> (an {{Element}} or null), initially null. It is
+set by the specification that creates the {{OpaqueRange}}.
+
 <dl class=domintro>
+ <dt><code><var ignore>range</var> . {{OpaqueRange/disconnect()}}</code>
+ <dd>Disconnects the range from its element and stops live updates. Afterwards, the range's
+ {{AbstractRange/startOffset}} and {{AbstractRange/endOffset}} are 0, and
+ {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} return empty results.
+ Calling this method on a range that is already disconnected has no effect.
+
  <dt><code><var ignore>rects</var> = <var ignore>range</var> . {{OpaqueRange/getClientRects()}}</code>
  <dd>Returns a {{DOMRectList}} of client rectangles that enclose the selected portion of the range.
  If the user agent cannot compute geometry for the range (e.g. because the element it was created
@@ -10017,6 +10028,27 @@ elements that <a>support opaque ranges</a>.
  from is not <a>connected</a> or has computed <code>display</code> of <code>none</code>), returns
  a rectangle with zero width and height.
 </dl>
+
+<div algorithm>
+<p>The <dfn method for=OpaqueRange><code>disconnect()</code></dfn> method steps are:
+
+<ol>
+ <li><p>Let <var>element</var> be <a>this</a>'s <a for=OpaqueRange>associated element</a>.
+
+ <li>
+  <p>If <var>element</var> is not null:
+
+  <ol>
+   <li><p>Run the <a>opaque range disconnect steps</a> given <var>element</var> and <a>this</a>.
+
+   <li><p>Set <a>this</a>'s <a for=OpaqueRange>associated element</a> to null.
+  </ol>
+
+ <li><p>Set <a>this</a>'s <a for=range>start offset</a> to 0.
+
+ <li><p>Set <a>this</a>'s <a for=range>end offset</a> to 0.
+</ol>
+</div>
 
 <p>The {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} methods are
 defined in [[CSSOM-VIEW]].
@@ -10041,6 +10073,9 @@ content changes. Specifications that define elements supporting opaque ranges mu
  (e.g., when text is inserted or deleted). These steps should adjust offsets following the same
  principles as the <a>live range</a> adjustments in the <a for=/>insert</a>, <a for=/>remove</a>,
  <a>replace data</a>, and <a lt="split a Text node">split</a> algorithms.
+
+ <li><p><dfn export>opaque range disconnect steps</dfn>, given an element and an
+ {{OpaqueRange}}, to run when {{OpaqueRange/disconnect()}} is called.
 </ul>
 
 
