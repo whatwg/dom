@@ -8683,13 +8683,7 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 
 <pre class=idl>
 [Exposed=Window]
-interface AbstractRange {
-  readonly attribute Node startContainer;
-  readonly attribute unsigned long startOffset;
-  readonly attribute Node endContainer;
-  readonly attribute unsigned long endOffset;
-  readonly attribute boolean collapsed;
-};
+interface AbstractRange {};
 </pre>
 
 <p>Objects implementing the {{AbstractRange}} interface are known as
@@ -8714,46 +8708,59 @@ interface AbstractRange {
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
 </div>
 
+
+<h3 id=mixin-boundarypointsrange>Mixin {{BoundaryPointsRange}}</h3>
+
+<pre class=idl>
+interface mixin BoundaryPointsRange {
+  readonly attribute Node startContainer;
+  readonly attribute unsigned long startOffset;
+  readonly attribute Node endContainer;
+  readonly attribute unsigned long endOffset;
+  readonly attribute boolean collapsed;
+};
+</pre>
+
 <dl class=domintro>
- <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
+ <dt><code><var>node</var> = <var>range</var> . <a attribute for=BoundaryPointsRange>startContainer</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start node</a>.
 
- <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>startOffset</a></code>
+ <dt><code><var>offset</var> = <var>range</var> . <a attribute for=BoundaryPointsRange>startOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start offset</a>.
 
- <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>endContainer</a></code>
+ <dt><code><var>node</var> = <var>range</var> . <a attribute for=BoundaryPointsRange>endContainer</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end node</a>.
 
- <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>endOffset</a></code>
+ <dt><code><var>offset</var> = <var>range</var> . <a attribute for=BoundaryPointsRange>endOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end offset</a>.
 
- <dt><code><var ignore>collapsed</var> = <var>range</var> . <a attribute for=AbstractRange>collapsed</a></code>
+ <dt><code><var ignore>collapsed</var> = <var>range</var> . <a attribute for=BoundaryPointsRange>collapsed</a></code>
  <dd>Returns true if <var>range</var> is <a for=range>collapsed</a>; otherwise false.
 </dl>
 
 <div algorithm>
 <p>The
-<dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
+<dfn id=dom-range-startcontainer attribute for=BoundaryPointsRange><code>startContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start node</a>.
 </div>
 
 <div algorithm>
-<p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
+<p>The <dfn id=dom-range-startoffset attribute for=BoundaryPointsRange><code>startOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
 </div>
 
 <div algorithm>
-<p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
+<p>The <dfn id=dom-range-endcontainer attribute for=BoundaryPointsRange><code>endContainer</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end node</a>.
 </div>
 
 <div algorithm>
-<p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
+<p>The <dfn id=dom-range-endoffset attribute for=BoundaryPointsRange><code>endOffset</code></dfn>
 getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
 </div>
 
 <div algorithm>
-<p>The <dfn id=dom-range-collapsed attribute for=AbstractRange><code>collapsed</code></dfn>
+<p>The <dfn id=dom-range-collapsed attribute for=BoundaryPointsRange><code>collapsed</code></dfn>
 getter steps are to return true if <a>this</a> is <a for=range>collapsed</a>; otherwise false.
 </div>
 
@@ -8772,6 +8779,8 @@ dictionary StaticRangeInit {
 interface StaticRange : AbstractRange {
   constructor(StaticRangeInit init);
 };
+
+StaticRange includes BoundaryPointsRange;
 </pre>
 
 <dl class=domintro>
@@ -8856,6 +8865,8 @@ interface Range : AbstractRange {
 
   stringifier;
 };
+
+Range includes BoundaryPointsRange;
 </pre>
 
 <p>Objects implementing the {{Range}} interface are known as
