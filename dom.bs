@@ -16,6 +16,13 @@ Indent: 1
 urlPrefix: https://www.w3.org/TR/xml/#NT-; spec: XML
  type: dfn
   text: Name; url: Name; for: XML
+urlPrefix: https://www.w3.org/TR/xml-stylesheet/#; spec: XML-STYLESHEET
+ type: dfn
+  text: rules for parsing pseudo-attributes from a string; url: dt-parsing
+  text: parsing result; url: dt-parsing-result
+  text: pseudo-attribute; url: dt-pseudo-attribute
+  text: name; url: dt-name; for: pseudo-attribute
+  text: value; url: dt-value; for: pseudo-attribute
 url: https://w3c.github.io/DOM-Parsing/#dom-range-createcontextualfragment
  type: method; text: createContextualFragment(); for: Range
 type: interface
@@ -50,14 +57,15 @@ spec:html; type:element
 <p>This specification depends on the Infra Standard. [[!INFRA]]
 
 <p>Some of the terms used in this specification are defined in <cite>Encoding</cite>,
-<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>, and
-<cite>Namespaces in XML</cite>.
+<cite>Selectors</cite>, <cite>Trusted Types</cite>, <cite>Web IDL</cite>, <cite>XML</cite>,
+<cite>Namespaces in XML</cite>, and <cite>Associating Style Sheets with XML documents</cite>.
 [[!ENCODING]]
 [[!SELECTORS4]]
 [[!TRUSTED-TYPES]]
 [[!WEBIDL]]
 [[!XML]]
 [[!XML-NAMES]]
+[[!XML-STYLESHEET]]
 
 <p>When extensions are needed, the DOM Standard can be updated accordingly, or a new standard
 can be written that hooks into the provided extensibility hooks for
@@ -8729,19 +8737,16 @@ method steps are:
 <ol>
  <li><p><a for=map>Clear</a> <var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>.
 
- <li><p>Let <var>document</var> be a new {{Document}} node whose <a for=Document>type</a> is
- "<code>html</code>".
+ <li><p>Let <var>result</var> be the <a>parsing result</a> of invoking the
+ <a>rules for parsing pseudo-attributes from a string</a> given <var>pi</var>'s
+ <a for=CharacterData>data</a>.
 
- <li><p>Let <var>html</var> be the concatenation of "<code>&lt;html </code>",
- <var>pi</var>'s <a for=CharacterData>data</a>, and "<code>&gt;</code>".
+ <li><p>If <var>result</var> is an error, then return.
 
- <li><p><a href="https://html.spec.whatwg.org/#parse-html-from-a-string">Parse HTML from a string</a>
- given <var>document</var> and <var>html</var>.
-
- <li><p><a for=list>For each</a> <var>attribute</var> of <var>document</var>'s
- <a>document element</a>'s <a for=Element>attribute list</a>, set <var>pi</var>'s
- <a for=ProcessingInstruction>attribute map</a>[<var>attribute</var>'s <a for=Attr>local name</a>]
- to <var>attribute</var>'s <a for=Attr>value</a>.
+ <li><p>For each <a>pseudo-attribute</a> <var>pseudoAttr</var> of <var>result</var>, set
+ <var>pi</var>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>pseudoAttr</var>'s [=pseudo-attribute/name=]]
+ to <var>pseudoAttr</var>'s [=pseudo-attribute/value=].
 </ol>
 </div>
 
