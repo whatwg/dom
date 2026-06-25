@@ -8591,6 +8591,91 @@ interface ProcessingInstruction : CharacterData {
 <a for=/>map</a>, initially empty.
 
 <div algorithm>
+<p>To <dfn export for=ProcessingInstruction>initialize</dfn> a {{ProcessingInstruction}}
+<a for=/>node</a> <var>pi</var>, with <var>target</var> and <var>data</var>:
+
+<ol>
+ <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production, then
+ <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>If <var>data</var> contains the string "<code>?></code>", then <a>throw</a> an
+ "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+ <li><p>Set <var>pi</var>'s <a for=ProcessingInstruction>target</a> to <var>target</var>.
+
+ <li><p>Set <var>pi</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p><a>Update attributes from data</a> given <var>pi</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update attributes from data</dfn>, given a {{ProcessingInstruction}} <a for=/>node</a>
+<var>pi</var>:
+
+<ol>
+ <li><p><a for=map>Clear</a> <var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>.
+
+ <li><p>Let <var>result</var> be the <a>parsing result</a> of invoking the
+ <a>rules for parsing pseudo-attributes from a string</a> given <var>pi</var>'s
+ <a for=CharacterData>data</a>.
+
+ <li><p>If <var>result</var> is an error, then return.
+
+ <li><p>For each <a>pseudo-attribute</a> <var>pseudoAttr</var> of <var>result</var>:
+ <a for=map>set</a> <var>pi</var>'s
+ <a for=ProcessingInstruction>attribute map</a>[<var>pseudoAttr</var>'s [=pseudo-attribute/name=]]
+ to <var>pseudoAttr</var>'s [=pseudo-attribute/value=].
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>update data from attributes</dfn>, given a {{ProcessingInstruction}} <a for=/>node</a>
+<var>pi</var>:
+
+<ol>
+ <li><p>Let <var>data</var> be the empty string.
+
+ <li>
+  <p><a for=map>For each</a> <var>name</var> → <var>value</var> of <var>pi</var>'s
+  <a for=ProcessingInstruction>attribute map</a>:
+
+  <ol>
+   <li><p>If <var>data</var> is not the empty string, then append U+0020 SPACE to <var>data</var>.
+
+   <li><p>Append <var>name</var> to <var>data</var>.
+
+   <li><p>Append U+003D (=) to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+
+   <li><p>Replace any U+0026 (&amp;) in <var>value</var> with "<code>&amp;amp;</code>".
+
+   <li><p>Replace any U+003C (&lt;) in <var>value</var> with "<code>&amp;lt;</code>".
+
+   <li><p>Replace any U+003D (&gt;) in <var>value</var> with "<code>&amp;gt;</code>".
+
+   <li><p>Replace any U+0022 (") in <var>value</var> with "<code>&amp;quot;</code>".
+
+   <li><p>Append <var>value</var> to <var>data</var>.
+
+   <li><p>Append U+0022 (") to <var>data</var>.
+  </ol>
+
+ <li><p><a>Replace data</a> of <var>pi</var> with 0, <var>pi</var>'s <a for=Node>length</a>,
+ <var>data</var>, and true.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export>get a processing instruction attribute</dfn>, given a {{ProcessingInstruction}}
+<a for=/>node</a> <var>pi</var> and a string <var>name</var>, return <var>pi</var>'s
+<a for=ProcessingInstruction>attribute map</a>[<var>name</var>] <a for=map>with default</a> null.
+</div>
+
+<hr>
+
+<div algorithm>
 <p>The
 <dfn constructor for=ProcessingInstruction lt=ProcessingInstruction(target)><code>new ProcessingInstruction(<var>target</var>, <var>data</var>)</code></dfn>
 constructor steps are:
@@ -8690,90 +8775,6 @@ method steps are:
 method steps are to return true if <a>this</a>'s
 <a for=ProcessingInstruction>attribute map</a>[<var>name</var>] <a for=set>exists</a>; otherwise
 false.
-</div>
-
-<div algorithm>
-<p>To <dfn export for=ProcessingInstruction>initialize</dfn> a {{ProcessingInstruction}}
-<a for=/>node</a> <var>pi</var>, with <var>target</var> and <var>data</var>:
-
-<ol>
- <li><p>If <var>target</var> does not match the <code>[=XML/Name=]</code> production, then
- <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
-
- <li><p>If <var>data</var> contains the string "<code>?></code>", then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}.
-
- <li><p>Set <var>pi</var>'s <a for=ProcessingInstruction>target</a> to <var>target</var>.
-
- <li><p>Set <var>pi</var>'s <a for=CharacterData>data</a> to <var>data</var>.
-
- <li><p><a>Update attributes from data</a> given <var>pi</var>.
-</ol>
-</div>
-
-<div algorithm>
-<p>To <dfn>update attributes from data</dfn>, given a {{ProcessingInstruction}} <a for=/>node</a>
-<var>pi</var>:
-
-<ol>
- <li><p><a for=map>Clear</a> <var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>.
-
- <li><p>Let <var>result</var> be the <a>parsing result</a> of invoking the
- <a>rules for parsing pseudo-attributes from a string</a> given <var>pi</var>'s
- <a for=CharacterData>data</a>.
-
- <li><p>If <var>result</var> is an error, then return.
-
- <li><p>For each <a>pseudo-attribute</a> <var>pseudoAttr</var> of <var>result</var>:
- <a for=map>set</a> <var>pi</var>'s
- <a for=ProcessingInstruction>attribute map</a>[<var>pseudoAttr</var>'s [=pseudo-attribute/name=]]
- to <var>pseudoAttr</var>'s [=pseudo-attribute/value=].
-</ol>
-</div>
-
-<div algorithm>
-<p>To <dfn>update data from attributes</dfn>, given a {{ProcessingInstruction}} <a for=/>node</a>
-<var>pi</var>:
-
-<ol>
- <li><p>Let <var>data</var> be the empty string.
-
- <li>
-  <p><a for=map>For each</a> <var>name</var> → <var>value</var> of <var>pi</var>'s
-  <a for=ProcessingInstruction>attribute map</a>:
-
-  <ol>
-   <li><p>If <var>data</var> is not the empty string, then append U+0020 SPACE to <var>data</var>.
-
-   <li><p>Append <var>name</var> to <var>data</var>.
-
-   <li><p>Append U+003D (=) to <var>data</var>.
-
-   <li><p>Append U+0022 (") to <var>data</var>.
-
-   <li><p>Replace any U+0026 (&amp;) in <var>value</var> with "<code>&amp;amp;</code>".
-
-   <li><p>Replace any U+003C (&lt;) in <var>value</var> with "<code>&amp;lt;</code>".
-
-   <li><p>Replace any U+003D (&gt;) in <var>value</var> with "<code>&amp;gt;</code>".
-
-   <li><p>Replace any U+0022 (") in <var>value</var> with "<code>&amp;quot;</code>".
-
-   <li><p>Append <var>value</var> to <var>data</var>.
-
-   <li><p>Append U+0022 (") to <var>data</var>.
-  </ol>
-
- <li><p><a>Replace data</a> of <var>pi</var> with 0, <var>pi</var>'s <a for=Node>length</a>,
- <var>data</var>, and true.
-</ol>
-</div>
-
-<div algorithm>
-<p>To <dfn export id=concept-pi-get-attribute>get a processing instruction attribute</dfn>, given a
-{{ProcessingInstruction}} <a for=/>node</a> <var>pi</var> and a string <var>name</var>, return
-<var>pi</var>'s <a for=ProcessingInstruction>attribute map</a>[<var>name</var>]
-<a for=map>with default</a> null.
 </div>
 
 
