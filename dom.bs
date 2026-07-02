@@ -6297,10 +6297,9 @@ method steps are:
 <ol>
  <li><p>Let <var>iterator</var> be a new {{NodeIterator}} object.
 
- <li><p>Set <var>iterator</var>'s <a for=traversal>root</a> and <var>iterator</var>'s
- <a for=NodeIterator>reference</a> to <var>root</var>.
+ <li><p>Set <var>iterator</var>'s <a for=traversal>root</a> to <var>root</var>.
 
- <li><p>Set <var>iterator</var>'s <a for=NodeIterator>pointer before reference</a> to true.
+ <li><p>Set <var>iterator</var>'s <a for=NodeIterator>reference</a> to (<var>root</var>, true).
 
  <li><p>Set <var>iterator</var>'s <a for=traversal>whatToShow</a> to <var>whatToShow</var>.
 
@@ -10306,8 +10305,13 @@ interface NodeIterator {
 <a for=/>collection</a> rooted at the {{NodeIterator}} object's <a for=traversal>root</a>, whose
 filter matches any <a for=/>node</a>.
 
+<p>A <dfn>node pointer</dfn> is a <a for=/>tuple</a> consisting of a
+<dfn for="node pointer">node</dfn> (a <a for=/>node</a>) and a
+<dfn for="node pointer">pointer before</dfn> (a boolean).
+
 <p>Each {{NodeIterator}} object also has an associated <dfn for=NodeIterator>reference</dfn> (a
-<a for=/>node</a>) and <dfn for=NodeIterator>pointer before reference</dfn> (a boolean).
+<a>node pointer</a>) and <dfn for=NodeIterator>candidate reference</dfn> (null or a
+<a>node pointer</a>, and initially null).
 
 <p class=note>As mentioned earlier, {{NodeIterator}} objects have an associated
 <a for=traversal>is active</a>, <a for=traversal>root</a>, <a for=traversal>whatToShow</a>, and
@@ -10319,13 +10323,32 @@ given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
 <var>toBeRemovedNode</var>, are:
 
 <ol>
+ <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>reference</a> to the result of
+ <a for=NodeIterator>adjusting</a> <var>nodeIterator</var>'s <a for=NodeIterator>reference</a>
+ given <var>nodeIterator</var> and <var>toBeRemovedNode</var>.
+
+ <li><p>If <var>nodeIterator</var>'s <a for=NodeIterator>candidate reference</a> is non-null, then set
+ <var>nodeIterator</var>'s <a for=NodeIterator>candidate reference</a> to the result of
+ <a for=NodeIterator>adjusting</a> <var>nodeIterator</var>'s <a for=NodeIterator>candidate reference</a>
+ given <var>nodeIterator</var> and <var>toBeRemovedNode</var>.
+</ol>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>To <dfn for=NodeIterator>adjust</dfn> a <a>node pointer</a> <var>nodePointer</var>, given a
+{{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a> <var>toBeRemovedNode</var>,
+perform the following steps. They return a <a>node pointer</a>.
+
+<ol>
  <li><p>If <var>toBeRemovedNode</var> is not an <a for=tree>inclusive ancestor</a> of
- <var>nodeIterator</var>'s <a for=NodeIterator>reference</a>, or <var>toBeRemovedNode</var> is an
+ <var>nodePointer</var>'s <a for="node pointer">node</a>, or <var>toBeRemovedNode</var> is an
  <a for=tree>inclusive ancestor</a> of <var>nodeIterator</var>'s <a for=traversal>root</a>, then
- return.
+ return <var>nodePointer</var>.
 
  <li>
-  <p>If <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> is true:
+  <p>If <var>nodePointer</var>'s <a for="node pointer">pointer before</a> is true:
 
   <ol>
    <li><p>Let <var>next</var> be <var>toBeRemovedNode</var>'s first <a>following</a>
@@ -10333,16 +10356,15 @@ given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
    <a for=traversal>root</a> and is not an <a>inclusive descendant</a> of
    <var>toBeRemovedNode</var>, if there is such a <a for=/>node</a>; otherwise null.
 
-   <li><p>If <var>next</var> is non-null, then set <var>nodeIterator</var>'s
-   <a for=NodeIterator>reference</a> to <var>next</var> and return.
-
-   <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>pointer before reference</a> to false.
+   <li><p>If <var>next</var> is non-null, then return (<var>next</var>, true).
   </ol>
 
- <li><p>Set <var>nodeIterator</var>'s <a for=NodeIterator>reference</a> to
- <var>toBeRemovedNode</var>'s <a for=tree>parent</a>, if <var>toBeRemovedNode</var>'s
- <a>previous sibling</a> is null; otherwise to the <a>inclusive descendant</a> of
- <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears last in <a>tree order</a>.
+ <li><p>Let <var>newNode</var> be <var>toBeRemovedNode</var>'s <a for=tree>parent</a>, if
+ <var>toBeRemovedNode</var>'s <a>previous sibling</a> is null; otherwise the
+ <a>inclusive descendant</a> of <var>toBeRemovedNode</var>'s <a>previous sibling</a> that appears
+ last in <a>tree order</a>.
+
+ <li><p>Return (<var>newNode</var>, false).
 </ol>
 </div>
 
@@ -10355,12 +10377,13 @@ given a {{NodeIterator}} object <var>nodeIterator</var> and <a for=/>node</a>
 
 <div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>referenceNode</code></dfn> getter steps are to return
-<a>this</a>'s <a for=NodeIterator>reference</a>.
+<a>this</a>'s <a for=NodeIterator>reference</a>'s <a for="node pointer">node</a>.
 </div>
 
 <div algorithm>
 <p>The <dfn attribute for=NodeIterator><code>pointerBeforeReferenceNode</code></dfn> getter steps
-are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
+are to return <a>this</a>'s <a for=NodeIterator>reference</a>'s
+<a for="node pointer">pointer before</a>.
 </div>
 
 <div algorithm>
@@ -10379,51 +10402,84 @@ are to return <a>this</a>'s <a for=NodeIterator>pointer before reference</a>.
 <var>type</var>:
 
 <ol>
- <li><p>Let <var>node</var> be <var>iterator</var>'s <a for=NodeIterator>reference</a>.
+ <li><p>Set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to <var>iterator</var>'s
+ <a for=NodeIterator>reference</a>.
 
- <li><p>Let <var>beforeNode</var> be <var>iterator</var>'s
- <a for=NodeIterator>pointer before reference</a>.
+ <li><p>Let <var>result</var> be null.
 
  <li>
   <p>While true:
 
   <ol>
    <li>
-    <p>If <var>type</var> is <code>next</code>":
+    <p>If <var>type</var> is "<code>next</code>":
 
     <ol>
-     <li><p>If <var>beforeNode</var> is false, then set <var>node</var> to the first
-     <a for=/>node</a> <a>following</a> <var>node</var> in <var>iterator</var>'s
-     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
-     null.
+     <li>
+      <p>If <var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s
+      <a for="node pointer">pointer before</a> is false:
 
-     <li><p>If <var>beforeNode</var> is true, then set it to false.
+      <ol>
+       <li><p>Let <var>following</var> be the first <a for=/>node</a> <a>following</a>
+       <var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s <a for="node pointer">node</a> in
+       <var>iterator</var>'s <a for=NodeIterator>iterator collection</a>. If there is no such
+       <a for=/>node</a>, then <a for=iteration>break</a>.
+
+       <li><p>Set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to
+       (<var>following</var>, false).
+      </ol>
+
+     <li><p>Otherwise, set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to
+     (<var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s <a for="node pointer">node</a>,
+     false).
     </ol>
 
    <li>
     <p>Otherwise:
 
     <ol>
-     <li><p>If <var>beforeNode</var> is true, then set <var>node</var> to the first
-     <a for=/>node</a> <a>preceding</a> <var>node</var> in <var>iterator</var>'s
-     <a for=NodeIterator>iterator collection</a>. If there is no such <a for=/>node</a>, then return
-     null.
+     <li>
+      <p>If <var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s
+      <a for="node pointer">pointer before</a> is true:
 
-     <li><p>If <var>beforeNode</var> is false, then set it to true.
+      <ol>
+       <li><p>Let <var>preceding</var> be the first <a for=/>node</a> <a>preceding</a>
+       <var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s <a for="node pointer">node</a> in
+       <var>iterator</var>'s <a for=NodeIterator>iterator collection</a>. If there is no such
+       <a for=/>node</a>, then <a for=iteration>break</a>.
+
+       <li><p>Set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to
+       (<var>preceding</var>, true).
+      </ol>
+
+     <li><p>Otherwise, set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to
+     (<var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s <a for="node pointer">node</a>,
+     true).
     </ol>
 
-   <li><p>Let <var>result</var> be the result of <a for=/>filtering</a> <var>node</var> within
-   <var>iterator</var>.
+   <li><p>Let <var>node</var> be <var>iterator</var>'s <a for=NodeIterator>candidate reference</a>'s
+   <a for="node pointer">node</a>.
 
-   <li><p>If <var>result</var> is {{NodeFilter/FILTER_ACCEPT}}, then <a for=iteration>break</a>.
+   <li><p>Let <var>filterResult</var> be the result of <a for=/>filtering</a> <var>node</var> within
+   <var>iterator</var>. If this throws an exception, then set <var>iterator</var>'s
+   <a for=NodeIterator>candidate reference</a> to null and rethrow that exception.
+
+   <li>
+    <p>If <var>filterResult</var> is {{NodeFilter/FILTER_ACCEPT}}:
+
+    <ol>
+     <li><p>Set <var>iterator</var>'s <a for=NodeIterator>reference</a> to <var>iterator</var>'s
+     <a for=NodeIterator>candidate reference</a>.
+
+     <li><p>Set <var>result</var> to <var>node</var>.
+
+     <li><p><a for=iteration>Break</a>.
+    </ol>
   </ol>
 
- <li><p>Set <var>iterator</var>'s <a for=NodeIterator>reference</a> to <var>node</var>.
+ <li><p>Set <var>iterator</var>'s <a for=NodeIterator>candidate reference</a> to null.
 
- <li><p>Set <var>iterator</var>'s <a for=NodeIterator>pointer before reference</a> to
- <var>beforeNode</var>.
-
- <li><p>Return <var>node</var>.
+ <li><p>Return <var>result</var>.
 </ol>
 </div>
 
