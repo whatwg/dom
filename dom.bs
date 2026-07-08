@@ -2701,7 +2701,8 @@ boolean <var>open</var> (default false):
 <div algorithm>
 <p>To <dfn id=concept-node-ensure-pre-insertion-validity>ensure pre-insert validity</dfn> given a
 <a for=/>node</a> <var>node</var>, a <a for=/>node</a> <var>parent</var>, null or a
-<a for=/>node</a> <var>child</var>, and a boolean <var>isReplace</var>:
+<a for=/>node</a> <var>child</var>, and a <a for=/>list</a> of <a for=/>nodes</a>
+<var>childrenToExclude</var>:
 
 <ol>
  <li><p>If <var>parent</var> is not a {{Document}}, {{DocumentFragment}}, or {{Element}}
@@ -2732,9 +2733,6 @@ boolean <var>open</var> (default false):
 
  <li><p>If <var>node</var> is a {{CharacterData}} <a for=/>node</a>, then return.
 
- <li><p>Let <var>childToExclude</var> be <var>child</var> if <var>isReplace</var> is true; otherwise
- null.
-
  <li>
   <p>If <var>node</var> is a {{DocumentFragment}} <a for=/>node</a>:
 
@@ -2754,13 +2752,14 @@ boolean <var>open</var> (default false):
     <p>If any of the following are true:
 
     <ul>
-     <li><p><var>parent</var> has an <a for=/>element</a> <a for=tree>child</a> that is not
-     <var>childToExclude</var>;
+     <li><p><var>parent</var> has an <a for=/>element</a> <a for=tree>child</a> that
+     <var>childrenToExclude</var> does not <a for=list>contain</a>;
 
      <li><p><var>child</var> is non-null and a <a>doctype</a> is <a>following</a> <var>child</var>;
      or
 
-     <li><p><var>isReplace</var> is false and <var>child</var> is a <a>doctype</a>,
+     <li><p><var>child</var> is a <a>doctype</a> that <var>childrenToExclude</var> does not
+     <a for=list>contain</a>,
     </ul>
 
     <p>then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
@@ -2774,14 +2773,14 @@ boolean <var>open</var> (default false):
   <p>If any of the following are true:
 
   <ul>
-   <li><p><var>parent</var> has a <a>doctype</a> <a for=tree>child</a> that is not
-   <var>childToExclude</var>;
+   <li><p><var>parent</var> has a <a>doctype</a> <a for=tree>child</a> that
+   <var>childrenToExclude</var> does not <a for=list>contain</a>;
 
    <li><p><var>child</var> is non-null and an <a for=/>element</a> is <a>preceding</a>
    <var>child</var>; or
 
    <li><p><var>child</var> is null and <var>parent</var> has an <a for=/>element</a>
-   <a for=tree>child</a>,
+   <a for=tree>child</a> that <var>childrenToExclude</var> does not <a for=list>contain</a>,
   </ul>
 
   <p>then <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.
@@ -2794,7 +2793,7 @@ into a <a for=/>node</a> <var>parent</var> before null or <a for=/>node</a> <var
 
 <ol>
  <li><p><a>Ensure pre-insert validity</a> given <var>node</var>, <var>parent</var>,
- <var>child</var>, and false.
+ <var>child</var>, and « ».
 
  <li><p>Let <var>referenceChild</var> be <var>child</var>.
 
@@ -3183,7 +3182,7 @@ a <a for=/>node</a> <var>node</var> within a <a for=/>node</a> <var>parent</var>
 
 <ol>
  <li><p><a>Ensure pre-insert validity</a> given <var>node</var>, <var>parent</var>,
- <var>child</var>, and true.
+ <var>child</var>, and « <var>child</var> ».
 
  <li><p>Let <var>referenceChild</var> be <var>child</var>'s <a for=tree>next sibling</a>.
 
@@ -3581,7 +3580,8 @@ are:
  <li><p>Let <var>node</var> be the result of <a>converting nodes into a node</a> given
  <var>nodes</var> and <a>this</a>'s <a for=Node>node document</a>.
 
- <li><p><a>Ensure pre-insert validity</a> given <var>node</var>, <a>this</a>, null, and false.
+ <li><p><a>Ensure pre-insert validity</a> given <var>node</var>, <a>this</a>, null, and
+ <a>this</a>'s <a for=tree>children</a>.
 
  <li><p><a for=Node>Replace all</a> with <var>node</var> within <a>this</a>.
 </ol>
@@ -9967,7 +9967,7 @@ result of <a for="live range">cloning the contents</a> of <a>this</a>.
  IE9 doesn't call splitText() if the offset is 0. This makes sense, but I go
  with what all other browsers do. -->
  <li><p><a>Ensure pre-insert validity</a> given <var>node</var>, <var>parent</var>,
- <var>referenceNode</var>, and false.
+ <var>referenceNode</var>, and « ».
 
  <li><p>If <var>range</var>'s <a for=range>start node</a> is a {{Text}} <a for=/>node</a>, then set
  <var>referenceNode</var> to the result of <a lt="split a Text node">splitting</a> it with offset
