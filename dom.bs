@@ -492,15 +492,20 @@ empty list.
 {{TouchEvent}} interface and related interfaces. [[TOUCH-EVENTS]]
 
 <p>An <a>event</a> has an associated <dfn export for=Event>path</dfn>. A <a for=Event>path</a> is a
-<a for=/>list</a> of <a for=/>structs</a>. Each <a for=/>struct</a> consists of an
-<dfn for=Event/path>invocation target</dfn> (an {{EventTarget}} object), an
-<dfn for=Event/path>invocation-target-in-shadow-tree</dfn> (a boolean), a
-<dfn for=Event/path>shadow-adjusted target</dfn> (a <a>potential event target</a>), a
-<dfn id=event-path-relatedtarget for=Event/path>relatedTarget</dfn> (a
-<a>potential event target</a>), a <dfn for=Event/path>touch target list</dfn> (a <a for=/>list</a>
-of <a>potential event targets</a>), a <dfn for=Event/path>root-of-closed-tree</dfn> (a boolean), and
-a <dfn for=Event/path>slot-in-closed-tree</dfn> (a boolean). A <a for=Event>path</a> is initially
-the empty list.
+<a for=/>list</a> of <a>event path items</a>. An <dfn>event path item</dfn> is a <a for=/>struct</a>
+consisting of an <dfn id=event-path-invocation-target for="event path item">invocation target</dfn>
+(an {{EventTarget}} object), an
+<dfn id=event-path-invocation-target-in-shadow-tree for="event path item">invocation-target-in-shadow-tree</dfn>
+(a boolean), a
+<dfn id=event-path-shadow-adjusted-target for="event path item">shadow-adjusted target</dfn> (a
+<a>potential event target</a>), a
+<dfn id=event-path-relatedtarget for="event path item">relatedTarget</dfn> (a
+<a>potential event target</a>), a
+<dfn id=event-path-touch-target-list for="event path item">touch target list</dfn> (a
+<a for=/>list</a> of <a>potential event targets</a>), a
+<dfn id=event-path-root-of-closed-tree for="event path item">root-of-closed-tree</dfn> (a boolean),
+and a <dfn id=event-path-slot-in-closed-tree for="event path item">slot-in-closed-tree</dfn> (a
+boolean). A <a for=Event>path</a> is initially the empty list.
 
 <dl class=domintro>
  <dt><code><var>event</var> = new <a constructor lt="Event()">Event</a>(<var>type</var> [, <var>eventInitDict</var>])</code>
@@ -525,7 +530,7 @@ the empty list.
  invoked.
 
  <dt><code><var>event</var> . {{Event/composedPath()}}</code>
- <dd>Returns the <a for=Event/path>invocation target</a> objects of <var>event</var>'s
+ <dd>Returns the <a for="event path item">invocation target</a> objects of <var>event</var>'s
  <a for=Event>path</a> (objects on which listeners will be invoked), except for any
  <a for=/>nodes</a> in <a for=/>shadow trees</a> of which the <a for=/>shadow root</a>'s
  <a for=ShadowRoot>mode</a> is "<code>closed</code>" that are not reachable from <var>event</var>'s
@@ -621,15 +626,15 @@ was initialized to. When an <a>event</a> is created the attribute must be initia
   <p>While <var>index</var> is greater than or equal to 0:
 
   <ol>
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
-   then increase <var>currentTargetHiddenSubtreeLevel</var> by 1.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for="event path item">root-of-closed-tree</a> is
+   true, then increase <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>invocation target</a> is
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for="event path item">invocation target</a> is
    <var>currentTarget</var>, then set <var>currentTargetIndex</var> to <var>index</var> and
    <a for=iteration>break</a>.
 
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
-   then decrease <var>currentTargetHiddenSubtreeLevel</var> by 1.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for="event path item">slot-in-closed-tree</a> is
+   true, then decrease <var>currentTargetHiddenSubtreeLevel</var> by 1.
 
    <li><p>Decrease <var>index</var> by 1.
   </ol>
@@ -643,15 +648,16 @@ was initialized to. When an <a>event</a> is created the attribute must be initia
   <p>While <var>index</var> is greater than or equal to 0:
 
   <ol>
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true,
-   then increase <var>currentHiddenLevel</var> by 1.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for="event path item">root-of-closed-tree</a> is
+   true, then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
    <a for=list>prepend</a> <var>path</var>[<var>index</var>]'s
-   <a for=Event/path>invocation target</a> to <var>composedPath</var>.
+   <a for="event path item">invocation target</a> to <var>composedPath</var>.
 
    <li>
-    <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true:
+    <p>If <var>path</var>[<var>index</var>]'s <a for="event path item">slot-in-closed-tree</a> is
+    true:
 
     <ol>
      <li><p>Decrease <var>currentHiddenLevel</var> by 1.
@@ -672,15 +678,16 @@ was initialized to. When an <a>event</a> is created the attribute must be initia
   <p>While <var>index</var> is less than <var>path</var>'s <a for=list>size</a>:
 
   <ol>
-   <li><p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>slot-in-closed-tree</a> is true,
-   then increase <var>currentHiddenLevel</var> by 1.
+   <li><p>If <var>path</var>[<var>index</var>]'s <a for="event path item">slot-in-closed-tree</a> is
+   true, then increase <var>currentHiddenLevel</var> by 1.
 
    <li><p>If <var>currentHiddenLevel</var> is less than or equal to <var>maxHiddenLevel</var>, then
    <a for=list>append</a> <var>path</var>[<var>index</var>]'s
-   <a for=Event/path>invocation target</a> to <var>composedPath</var>.
+   <a for="event path item">invocation target</a> to <var>composedPath</var>.
 
    <li>
-    <p>If <var>path</var>[<var>index</var>]'s <a for=Event/path>root-of-closed-tree</a> is true:
+    <p>If <var>path</var>[<var>index</var>]'s <a for="event path item">root-of-closed-tree</a> is
+    true:
 
     <ol>
      <li><p>Decrease <var>currentHiddenLevel</var> by 1.
@@ -1486,12 +1493,12 @@ property of the event being dispatched.
      <li><p>Set <var>slot-in-closed-tree</var> to false.
     </ol>
 
-   <li><p>Let <var>clearTargetsStruct</var> be the last struct in <var>event</var>'s
-   <a for=Event>path</a> whose <a for=Event/path>shadow-adjusted target</a> is non-null.
+   <li><p>Let <var>clearTargetsItem</var> be the last <a>event path item</a> in <var>event</var>'s
+   <a for=Event>path</a> whose <a for="event path item">shadow-adjusted target</a> is non-null.
 
-   <li><p>If <var>clearTargetsStruct</var>'s <a for=Event/path>shadow-adjusted target</a>,
-   <var>clearTargetsStruct</var>'s <a for=Event/path>relatedTarget</a>, or an {{EventTarget}} object
-   in <var>clearTargetsStruct</var>'s <a for=Event/path>touch target list</a> is a <a for=/>node</a>
+   <li><p>If <var>clearTargetsItem</var>'s <a for="event path item">shadow-adjusted target</a>,
+   <var>clearTargetsItem</var>'s <a for="event path item">relatedTarget</a>, or an {{EventTarget}} object
+   in <var>clearTargetsItem</var>'s <a for="event path item">touch target list</a> is a <a for=/>node</a>
    whose <a for=tree>root</a> is a <a for=/>shadow root</a>: set <var>clearTargets</var> to true.
 
    <li><p>If <var>activationTarget</var> is non-null and <var>activationTarget</var> has
@@ -1499,25 +1506,25 @@ property of the event being dispatched.
    <a for=EventTarget>legacy-pre-activation behavior</a>.
 
    <li>
-    <p><a for=list>For each</a> <var>struct</var> of <var>event</var>'s <a for=Event>path</a>, in
+    <p><a for=list>For each</a> <var>item</var> of <var>event</var>'s <a for=Event>path</a>, in
     reverse order:
 
     <ol>
-     <li><p>If <var>struct</var>'s <a for=Event/path>shadow-adjusted target</a> is non-null, then
+     <li><p>If <var>item</var>'s <a for="event path item">shadow-adjusted target</a> is non-null, then
      set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
      <li><p>Otherwise, set <var>event</var>'s {{Event/eventPhase}} attribute to
      {{Event/CAPTURING_PHASE}}.
 
-     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>capturing</code>", and
+     <li><p><a>Invoke</a> with <var>item</var>, <var>event</var>, "<code>capturing</code>", and
      <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
 
    <li>
-    <p><a for=list>For each</a> <var>struct</var> of <var>event</var>'s <a for=Event>path</a>:
+    <p><a for=list>For each</a> <var>item</var> of <var>event</var>'s <a for=Event>path</a>:
 
     <ol>
-     <li><p>If <var>struct</var>'s <a for=Event/path>shadow-adjusted target</a> is non-null, then
+     <li><p>If <var>item</var>'s <a for="event path item">shadow-adjusted target</a> is non-null, then
      set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/AT_TARGET}}.
 
      <li>
@@ -1530,7 +1537,7 @@ property of the event being dispatched.
        <li><p>Set <var>event</var>'s {{Event/eventPhase}} attribute to {{Event/BUBBLING_PHASE}}.
       </ol>
 
-     <li><p><a>Invoke</a> with <var>struct</var>, <var>event</var>, "<code>bubbling</code>", and
+     <li><p><a>Invoke</a> with <var>item</var>, <var>event</var>, "<code>bubbling</code>", and
      <var>legacyOutputDidListenersThrowFlag</var> if given.
     </ol>
   </ol>
@@ -1588,38 +1595,43 @@ steps:
  <li><p>If <var>invocationTarget</var> is a <a for=/>shadow root</a> whose <a for=ShadowRoot>mode</a>
  is "<code>closed</code>", then set <var>root-of-closed-tree</var> to true.
 
- <li><p><a for=list>Append</a> a new <a for=/>struct</a> to <var>event</var>'s <a for=Event>path</a>
- whose <a for=Event/path>invocation target</a> is <var>invocationTarget</var>,
- <a for=Event/path>invocation-target-in-shadow-tree</a> is <var>invocationTargetInShadowTree</var>,
- <a for=Event/path>shadow-adjusted target</a> is <var>shadowAdjustedTarget</var>,
- <a for=Event/path>relatedTarget</a> is <var>relatedTarget</var>,
- <a for=Event/path>touch target list</a> is <var>touchTargets</var>,
- <a for=Event/path>root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
- <a for=Event/path>slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
+ <li><p><a for=list>Append</a> a new <a>event path item</a> to <var>event</var>'s
+ <a for=Event>path</a> whose
+ <a for="event path item">invocation target</a> is <var>invocationTarget</var>,
+ <a for="event path item">invocation-target-in-shadow-tree</a> is <var>invocationTargetInShadowTree</var>,
+ <a for="event path item">shadow-adjusted target</a> is <var>shadowAdjustedTarget</var>,
+ <a for="event path item">relatedTarget</a> is <var>relatedTarget</var>,
+ <a for="event path item">touch target list</a> is <var>touchTargets</var>,
+ <a for="event path item">root-of-closed-tree</a> is <var>root-of-closed-tree</var>, and
+ <a for="event path item">slot-in-closed-tree</a> is <var>slot-in-closed-tree</var>.
 </ol>
 </div>
 
 <div algorithm>
-<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given a <var>struct</var>,
-<var>event</var>, <var>phase</var>, and an optional <var>legacyOutputDidListenersThrowFlag</var>,
-run these steps:
+<p>To <dfn noexport id=concept-event-listener-invoke>invoke</dfn>, given an <a>event path item</a>
+<var>pathItem</var>, an <a>event</a> <var>event</var>, a string <var>phase</var>, and an optional
+<var>legacyOutputDidListenersThrowFlag</var>:
 
 <ol>
- <li><p>Set <var>event</var>'s <a for=Event>target</a> to the
- <a for=Event/path>shadow-adjusted target</a> of the last struct in <var>event</var>'s
- <a for=Event>path</a>, that is either <var>struct</var> or preceding <var>struct</var>, whose
- <a for=Event/path>shadow-adjusted target</a> is non-null.
+ <li><p>Let <var>targetItem</var> be <var>pathItem</var>.
 
- <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>struct</var>'s
- <a for=Event/path>relatedTarget</a>.
+ <li><p>While <var>targetItem</var>'s <a for="event path item">shadow-adjusted target</a> is null: set
+ <var>targetItem</var> to the <a>event path item</a> preceding <var>targetItem</var> in
+ <var>event</var>'s <a for=Event>path</a>.
 
- <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>struct</var>'s
- <a for=Event/path>touch target list</a>.
+ <li><p>Set <var>event</var>'s <a for=Event>target</a> to <var>targetItem</var>'s
+ <a for="event path item">shadow-adjusted target</a>.
+
+ <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>pathItem</var>'s
+ <a for="event path item">relatedTarget</a>.
+
+ <li><p>Set <var>event</var>'s <a for=Event>touch target list</a> to <var>pathItem</var>'s
+ <a for="event path item">touch target list</a>.
 
  <li><p>If <var>event</var>'s <a>stop propagation flag</a> is set, then return.
 
- <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>struct</var>'s
- <a for=Event/path>invocation target</a>.
+ <li><p>Initialize <var>event</var>'s {{Event/currentTarget}} attribute to <var>pathItem</var>'s
+ <a for="event path item">invocation target</a>.
 
  <li>
   <p>Let <var>listeners</var> be a <a for=list>clone</a> of <var>event</var>'s
@@ -1628,8 +1640,8 @@ run these steps:
   <p class=note>This avoids <a>event listeners</a> added after this point from being
   run. Note that removal still has an effect due to the <a for="event listener">removed</a> field.
 
- <li><p>Let <var>invocationTargetInShadowTree</var> be <var>struct</var>'s
- <a for=Event/path>invocation-target-in-shadow-tree</a>.
+ <li><p>Let <var>invocationTargetInShadowTree</var> be <var>pathItem</var>'s
+ <a for="event path item">invocation-target-in-shadow-tree</a>.
 
  <li><p>Let <var>found</var> be the result of running <a>inner invoke</a> with <var>event</var>,
  <var>listeners</var>, <var>phase</var>, <var>invocationTargetInShadowTree</var>, and
@@ -6598,8 +6610,8 @@ is null.
 
 <p>A <a for=/>shadow root</a>'s <a>get the parent</a> algorithm, given an <var>event</var>, returns
 null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow root</a> is the
-<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first struct's
-<a for=Event/path>invocation target</a>; otherwise <a for=/>shadow root</a>'s
+<a for=tree>root</a> of <var>event</var>'s <a for=Event>path</a>'s first <a>event path item</a>'s
+<a for="event path item">invocation target</a>; otherwise <a for=/>shadow root</a>'s
 <a for=DocumentFragment>host</a>.
 
 <hr>
