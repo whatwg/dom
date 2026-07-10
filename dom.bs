@@ -3448,14 +3448,13 @@ standards that want to define APIs shared between <a for=/>documents</a> and
 strings <var>nodes</var>, and <a for=/>document</a> <var>document</var>:
 
 <ol>
- <li><p>Replace each string of <var>nodes</var> with a new {{Text}} <a for=/>node</a> whose
- <a for=CharacterData>data</a> is the string and <a for=Node>node document</a> is
- <var>document</var>.
+ <li><p>Replace each string in <var>nodes</var> with the result of <a>creating a text node</a> given
+ <var>document</var> and the string.
 
  <li><p>If <var>nodes</var>'s <a for=list>size</a> is 1, then return <var>nodes</var>[0].
 
- <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>document</var>.
+ <li><p>Let <var>fragment</var> be the result of <a>creating a document fragment</a> given
+ <var>document</var>.
 
  <li><p>For each <var>node</var> of <var>nodes</var>: <a>append</a> <var>node</var> to
  <var>fragment</var>.
@@ -4508,6 +4507,21 @@ get a direct instance of it.
 
 <p class=note>Each <a for=/>node</a> also has a <a>registered observer list</a>.
 
+<div algorithm>
+<p>To <dfn export>create a node</dfn> that implements an interface <var>interface</var>, given a
+<a for=/>document</a> <var>document</var>:
+
+<ol>
+ <li><p><a for=/>Assert</a>: <var>interface</var> is neither {{Document}} nor an interface that
+ inherits from {{Document}}. <span class=note>To create a <a for=/>document</a>, use
+ <a>create a document</a> instead.</span>
+
+ <li><p>Return a new <a for=/>node</a> that <a>implements</a> <var>interface</var>, in
+ <var>document</var>'s <a>relevant realm</a>, with its <a for=Node>node document</a> set to
+ <var>document</var>.
+</ol>
+</div>
+
 <hr>
 
 <dl class=domintro>
@@ -4797,9 +4811,9 @@ return the result of running <a>get text content</a> with <a>this</a>.
 <ol>
  <li><p>Let <var>node</var> be null.
 
- <li><p>If <var>string</var> is not the empty string, then set <var>node</var> to a new {{Text}}
- <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>string</var> and
- <a for=Node>node document</a> is <var>parent</var>'s <a for=Node>node document</a>.
+ <li><p>If <var>string</var> is not the empty string, then set <var>node</var> to the result of
+ <a>creating a text node</a> given <var>parent</var>'s <a for=Node>node document</a> and
+ <var>string</var>.
 
  <li><p><a for=Node>Replace all</a> with <var>node</var> within <var>parent</var>.
 </ol>
@@ -5021,10 +5035,16 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
     </ol>
   </ol>
 
+ <li><p>Otherwise, if <var>node</var> is a <a for=/>document</a>, set <var>copy</var> to the result
+ of <a>creating a document</a> that implements the same interfaces as <var>node</var>, given
+ <var>document</var>'s <a>relevant realm</a>.
+
+ <li><p>Otherwise, set <var>copy</var> to the result of <a>creating a node</a> that
+ <a>implements</a> the same interfaces as <var>node</var>, given <var>document</var>.
+
  <li>
-  <p>Otherwise, set <var>copy</var> to a <a for=/>node</a> that <a>implements</a> the same
-  interfaces as <var>node</var>, and fulfills these additional requirements, switching on the
-  interface <var>node</var> <a>implements</a>:
+  <p>Fulfill these additional requirements, switching on the interface <var>node</var>
+  <a>implements</a>:
 
   <dl class=switch>
    <dt>{{Document}}
@@ -5642,6 +5662,19 @@ null if <var>event</var>'s {{Event/type}} attribute value is "<code>load</code>"
 <a for=/>document</a> does not have a <a for=Document>browsing context</a>; otherwise the
 <a for=/>document</a>'s <a>relevant global object</a>.
 
+<div algorithm>
+<p>To <dfn export>create a document</dfn> that implements an interface <var>interface</var>,
+given a <a for=/>realm</a> <var>realm</var>:
+
+<ol>
+ <li><p><a for=/>Assert</a>: <var>interface</var> is {{Document}} or an interface that inherits from
+ {{Document}}.
+
+ <li><p>Return a new <a for=/>node</a> that <a>implements</a> <var>interface</var>, in
+ <var>realm</var>.
+</ol>
+</div>
+
 <hr>
 
 <dl class=domintro>
@@ -5987,12 +6020,10 @@ parameter is allowed to be a string for web compatibility.
 </div>
 
 <p>The <dfn method for=Document><code>createDocumentFragment()</code></dfn> method steps are to
-return a new {{DocumentFragment}} <a for=/>node</a> whose <a for=Node>node document</a> is
-<a>this</a>.
+return the result of <a>creating a document fragment</a> given <a>this</a>.
 
 <p>The <dfn method for=Document><code>createTextNode(<var>data</var>)</code></dfn> method steps are
-to return a new {{Text}} <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>data</var>
-and <a for=Node>node document</a> is <a>this</a>.
+to return the result of <a>creating a text node</a> given <a>this</a> and <var>data</var>.
 
 <p>The <dfn method for=Document><code>createCDATASection(<var>data</var>)</code></dfn> method steps
 are:
@@ -6004,27 +6035,21 @@ are:
  <li><p>If <var>data</var> contains the string "<code>]]></code>", then <a>throw</a> an
  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
- <li><p>Return a new {{CDATASection}} <a for=/>node</a> with its <a for=CharacterData>data</a> set
- to <var>data</var> and <a for=Node>node document</a> set to <a>this</a>.
+ <li><p>Let <var>node</var> be the result of <a>creating a node</a> that implements
+ {{CDATASection}}, given <a>this</a>.
+
+ <li><p>Set <var>node</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p>Return <var>node</var>.
 </ol>
 
-<p>The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method steps are
-to return a new {{Comment}} <a for=/>node</a> whose <a for=CharacterData>data</a> is <var>data</var>
-and <a for=Node>node document</a> is <a>this</a>.
+<p>The <dfn method for=Document><code>createComment(<var>data</var>)</code></dfn> method steps are to
+return the result of <a>creating a comment node</a> given <a>this</a> and <var>data</var>.
 
 <p>The
 <dfn method for=Document><code>createProcessingInstruction(<var>target</var>, <var>data</var>)</code></dfn>
-method steps are:
-
-<ol>
- <li><p>Let <var>pi</var> be a new {{ProcessingInstruction}}
- <a for=/>node</a>, with <a for=Node>node document</a> set to <a>this</a>.
-
- <li><p><a for=ProcessingInstruction>Initialize</a> <var>pi</var> with <var>target</var> and
- <var>data</var>.
-
- <li><p>Return <var>pi</var>.
-</ol>
+method steps are to return the result of <a>creating a processing instruction node</a> given
+<a>this</a>, <var>target</var>, and <var>data</var>.
 
 <hr>
 
@@ -6216,8 +6241,7 @@ steps are:
  <li>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
- <li>Return a new <a>attribute</a> whose <a for=Attr>local name</a> is <var>localName</var> and
- <a for=Node>node document</a> is <a>this</a>.
+ <li><p>Return the result of <a>creating an attribute</a> given <a>this</a> and <var>localName</var>.
 </ol>
 
 <p>The
@@ -6229,9 +6253,8 @@ method steps are:
  [=validate and extract|validating and extracting=] <var>namespace</var> and
  <var>qualifiedName</var> given "<code>attribute</code>".
 
- <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
- <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
- <var>localName</var>, and <a for=Node>node document</a> is <a>this</a>.
+ <li><p>Return the result of <a>creating an attribute</a> given <a>this</a>, <var>localName</var>,
+ <var>namespace</var>, and <var>prefix</var>.
 </ol>
 
 <hr>
@@ -6403,10 +6426,8 @@ method steps are:
  <li><p>If <var>name</var> is not a <a>valid doctype name</a>, then throw an "{{InvalidCharacterError}}"
  {{DOMException}}.
 
- <li><p>Return a new <a>doctype</a>, with <var>name</var> as its
- <a for=DocumentType>name</a>, <var>publicId</var> as its <a>public ID</a>, and <var>systemId</var>
- as its <a>system ID</a>, and with its <a for=Node>node document</a> set to the associated
- <a for=/>document</a> of <a>this</a>.
+ <li><p>Return the result of <a>creating a doctype</a> given the associated <a for=/>document</a> of
+ <a>this</a>, <var>name</var>, <var>publicId</var>, and <var>systemId</var>.
 </ol>
 
 <p>The
@@ -6414,7 +6435,8 @@ method steps are:
 method steps are:
 
 <ol>
- <li><p>Let <var>document</var> be a new {{XMLDocument}}.
+ <li><p>Let <var>document</var> be the result of <a>creating a document</a> that implements
+ {{XMLDocument}}, given <a>this</a>'s <a>relevant realm</a>.
 
  <li><p>Let <var>element</var> be null.
 
@@ -6451,13 +6473,16 @@ method steps are:
 method steps are:
 
 <ol>
- <li><p>Let <var>doc</var> be a new <a for=/>document</a> that is an <a>HTML document</a>.
+ <li><p>Let <var>doc</var> be the result of <a>creating a document</a> that implements
+ {{Document}}, given <a>this</a>'s <a>relevant realm</a>.
 
- <li><p>Set <var>doc</var>'s <a for=Document>content type</a> to "<code>text/html</code>".
+ <li><p>Set <var>doc</var>'s <a for=Document>type</a> to "<code>html</code>" and
+ <a for=Document>content type</a> to "<code>text/html</code>".
 
- <li><p><a>Append</a> a new <a>doctype</a>, with "<code>html</code>" as its
- <a for=DocumentType>name</a> and with its <a for=Node>node document</a> set to <var>doc</var>, to
- <var>doc</var>.
+ <li><p>Let <var>doctype</var> be the result of <a>creating a doctype</a> given <var>doc</var> and
+ "<code>html</code>".
+
+ <li><p><a>Append</a> <var>doctype</var> to <var>doc</var>.
 
  <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
  "<code>html</code>", and the <a>HTML namespace</a>, to <var>doc</var>.
@@ -6472,9 +6497,10 @@ method steps are:
    <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
    "<code>title</code>", and the <a>HTML namespace</a>, to the <{head}> element created earlier.
 
-   <li><p><a>Append</a> a new {{Text}} <a for=/>node</a>, with its <a for=CharacterData>data</a> set
-   to <var>title</var> (which could be the empty string) and its <a for=Node>node document</a> set
-   to <var>doc</var>, to the <{title}> element created earlier.
+   <li><p>Let <var>text</var> be the result of <a>creating a text node</a> given <var>doc</var> and
+   <var>title</var> (which could be the empty string).
+
+   <li><p><a>Append</a> <var>text</var> to the <{title}> element created earlier.
   </ol>
 
  <li><p><a>Append</a> the result of <a>creating an element</a> given <var>doc</var>,
@@ -6518,6 +6544,22 @@ interface DocumentType : Node {
 <p>When a <a>doctype</a> is created, its <a for=DocumentType>name</a> is always given. Unless
 explicitly given when a <a>doctype</a> is created, its <a>public ID</a> and <a>system ID</a> are the
 empty string.
+
+<div algorithm>
+<p>To <dfn export>create a doctype</dfn> given a <a for=/>document</a> <var>document</var>, a string
+<var>name</var>, and optionally a string <var>publicId</var> (default the empty string) and a string
+<var>systemId</var> (default the empty string):
+
+<ol>
+ <li><p>Let <var>doctype</var> be the result of <a>creating a node</a> that implements
+ {{DocumentType}}, given <var>document</var>.
+
+ <li><p>Set <var>doctype</var>'s <a for=DocumentType>name</a> to <var>name</var>, <a>public ID</a> to
+ <var>publicId</var>, and <a>system ID</a> to <var>systemId</var>.
+
+ <li><p>Return <var>doctype</var>.
+</ol>
+</div>
 
 <p>The <dfn attribute for=DocumentType><code>name</code></dfn> getter steps are to return
 <a>this</a>'s <a for=DocumentType>name</a>.
@@ -6567,7 +6609,11 @@ or if <var>B</var>'s <a for=tree>root</a> has a non-null <a for=DocumentFragment
 concept is useful for HTML's <{template}> element and for <a for=/>shadow roots</a>, and impacts the
 <a>pre-insert</a> and <a>replace</a> algorithms.
 
-<hr>
+<div algorithm>
+<p>To <dfn export>create a document fragment</dfn> given a <a for=/>document</a>
+<var>document</var>: return the result of <a>creating a node</a> that implements
+{{DocumentFragment}}, given <var>document</var>.
+</div>
 
 <div algorithm>
 <p>The
@@ -7083,13 +7129,15 @@ a string-or-null <var>prefix</var>, a string <var>state</var>, a string-or-null 
 null or a {{CustomElementRegistry}} object <var>registry</var>:
 
 <ol>
- <li><p>Let <var>element</var> be a new <a for=/>element</a> that implements <var>interface</var>,
- with <a for=Element>namespace</a> set to <var>namespace</var>, <a for=Element>namespace prefix</a>
- set to <var>prefix</var>, <a for=Element>local name</a> set to <var>localName</var>,
- <a for=Element>custom element registry</a> set to <var>registry</var>,
- <a for=Element>custom element state</a> set to <var>state</var>,
- <a for=Element>custom element definition</a> set to null, <a for=Element><code>is</code> value</a>
- set to <var>is</var>, and <a for=Node>node document</a> set to <var>document</var>.
+ <li><p>Let <var>element</var> be the result of <a>creating a node</a> that implements
+ <var>interface</var>, given <var>document</var>.
+
+ <li><p>Set <var>element</var>'s <a for=Element>namespace</a> to <var>namespace</var>,
+ <a for=Element>namespace prefix</a> to <var>prefix</var>, <a for=Element>local name</a> to
+ <var>localName</var>, <a for=Element>custom element registry</a> to <var>registry</var>,
+ <a for=Element>custom element state</a> to <var>state</var>,
+ <a for=Element>custom element definition</a> to null, and <a for=Element><code>is</code> value</a>
+ to <var>is</var>.
 
  <li><p><a for=/>Assert</a>: <var>element</var>'s <a for=Element>attribute list</a>
  <a for=list>is empty</a>.
@@ -7291,12 +7339,10 @@ an optional null or string <var>prefix</var> (default null), and an optional nul
  <a lt="get an attribute by namespace and local name">getting an attribute</a> given
  <var>namespace</var>, <var>localName</var>, and <var>element</var>.
 
- <li>If <var>attribute</var> is null, create an <a>attribute</a> whose <a for=Attr>namespace</a> is
- <var>namespace</var>, <a for=Attr>namespace prefix</a> is <var>prefix</var>,
- <a for=Attr>local name</a> is <var>localName</var>, <a for=Attr>value</a> is <var>value</var>, and
- <a for=Node>node document</a> is <var>element</var>'s <a for=Node>node document</a>, then
- <a lt="append an attribute">append</a> this <a>attribute</a> to <var>element</var>, and then
- return.
+ <li>If <var>attribute</var> is null, then <a lt="append an attribute">append</a> the result of
+ <a>creating an attribute</a> given <var>element</var>'s <a for=Node>node document</a>,
+ <var>localName</var>, <var>namespace</var>, <var>prefix</var>, and <var>value</var> to
+ <var>element</var>, and then return.
 
  <li><p><a lt="change an attribute">Change</a> <var>attribute</var> to <var>value</var>.
 </ol>
@@ -7581,9 +7627,8 @@ method steps are:
  <li><p>If <var>attribute</var> is non-null, then <a lt="change an attribute">change</a>
  <var>attribute</var> to <var>verifiedValue</var> and return.
 
- <li><p>Set <var>attribute</var> to a new <a>attribute</a> whose <a for=Attr>local name</a> is
- <var>qualifiedName</var>, <a for=Attr>value</a> is <var>verifiedValue</var>, and
- <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>.
+ <li><p>Set <var>attribute</var> to the result of <a>creating an attribute</a> given <a>this</a>'s
+ <a for=Node>node document</a>, <var>qualifiedName</var>, null, null, and <var>verifiedValue</var>.
 
  <li><p><a lt="append an attribute">Append</a> <var>attribute</var> to <a>this</a>.
 </ol>
@@ -7662,11 +7707,9 @@ method steps are:
   <p>If <var>attribute</var> is null:
 
   <ol>
-   <li><p>If <var>force</var> is not given or is true, create an <a>attribute</a> whose
-   <a for=Attr>local name</a> is <var>qualifiedName</var>, <a for=Attr>value</a> is the empty
-   string, and <a for=Node>node document</a> is <a>this</a>'s <a for=Node>node document</a>, then
-   <a lt="append an attribute">append</a> this <a>attribute</a> to <a>this</a>, and then return
-   true.
+   <li><p>If <var>force</var> is not given or is true, then <a lt="append an attribute">append</a>
+   the result of <a>creating an attribute</a> given <a>this</a>'s <a for=Node>node document</a> and
+   <var>qualifiedName</var> to <a>this</a>, and then return true.
 
    <li><p>Return false.
   </ol>
@@ -7853,9 +7896,12 @@ a boolean <var>serializable</var>, a boolean <var>delegatesFocus</var>, a string
     </ol>
   </ol>
 
- <li><p>Let <var>shadow</var> be a new <a for=/>shadow root</a> whose <a for=Node>node document</a>
- is <var>element</var>'s <a for=Node>node document</a>, <a for=DocumentFragment>host</a> is
- <var>element</var>, and <a for=ShadowRoot>mode</a> is <var>mode</var>.
+ <li><p>Let <var>shadow</var> be the result of <a>creating a node</a> that implements
+ {{ShadowRoot}}, given <var>element</var>'s <a for=Node>node document</a>.
+
+ <li><p>Set <var>shadow</var>'s <a for=DocumentFragment>host</a> to <var>element</var>.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>mode</a> to <var>mode</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>delegates focus</a> to <var>delegatesFocus</var>.
 
@@ -8013,9 +8059,8 @@ method steps are to return the result of running <a>insert adjacent</a>, give <a
 method steps are:
 
 <ol>
- <li><p>Let <var>text</var> be a new {{Text}} <a for=/>node</a> whose <a for=CharacterData>data</a>
- is <var>data</var> and <a for=Node>node document</a> is <a>this</a>'s
- <a for=Node>node document</a>.
+ <li><p>Let <var>text</var> be the result of <a>creating a text node</a> given <a>this</a>'s
+ <a for=Node>node document</a> and <var>data</var>.
 
  <li><p>Run <a>insert adjacent</a>, given <a>this</a>, <var>where</var>, and <var>text</var>.
 </ol>
@@ -8177,13 +8222,23 @@ to as <em>content attributes</em> to avoid confusion with IDL attributes.
 
 <p class=note>User agents could have this as an internal slot as an optimization.
 
-<p>When an <a>attribute</a> is created, its
-<a for=Attr>local name</a> is given. Unless explicitly
-given when an <a>attribute</a> is created, its
-<a for=Attr>namespace</a>,
-<a for=Attr>namespace prefix</a>, and
-<a for=Attr>element</a> are set to null, and its
-<a for=Attr>value</a> is set to the empty string.
+<div algorithm>
+<p>To <dfn export>create an attribute</dfn> given a <a for=/>document</a> <var>document</var>, a
+string <var>localName</var>, and optionally a string-or-null <var>namespace</var> (default null), a
+string-or-null <var>prefix</var> (default null), and a string <var>value</var> (default the empty
+string):
+
+<ol>
+ <li><p>Let <var>attribute</var> be the result of <a>creating a node</a> that implements {{Attr}},
+ given <var>document</var>.
+
+ <li><p>Set <var>attribute</var>'s <a for=Attr>namespace</a> to <var>namespace</var>,
+ <a for=Attr>namespace prefix</a> to <var>prefix</var>, <a for=Attr>local name</a> to
+ <var>localName</var>, and <a for=Attr>value</a> to <var>value</var>.
+
+ <li><p>Return <var>attribute</var>.
+</ol>
+</div>
 
 <p>An
 <dfn export id=concept-named-attribute lt="named attribute"><code><var>A</var></code> attribute</dfn>
@@ -8487,6 +8542,20 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 </div>
 
 <div algorithm>
+<p>To <dfn export>create a text node</dfn> given a <a for=/>document</a> <var>document</var> and a
+string <var>data</var>:
+
+<ol>
+ <li><p>Let <var>text</var> be the result of <a>creating a node</a> that implements {{Text}}, given
+ <var>document</var>.
+
+ <li><p>Set <var>text</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p>Return <var>text</var>.
+</ol>
+</div>
+
+<div algorithm>
 <p>To <dfn export id=concept-text-split lt="split a Text node">split</dfn> a {{Text}}
 <a for=/>node</a> <var>node</var> with integer <var>offset</var>:
 
@@ -8501,9 +8570,8 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
  <li><p>Let <var>newData</var> be the result of <a>substringing data</a> of <var>node</var> with
  <var>offset</var> and <var>count</var>.
 
- <li><p>Let <var>newNode</var> be a new {{Text}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>node</var>'s <a for=Node>node document</a> and
- <a for=CharacterData>data</a> is <var>newData</var>.
+ <li><p>Let <var>newNode</var> be the result of <a>creating a text node</a> given <var>node</var>'s
+ <a for=Node>node document</a> and <var>newData</var>.
 
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
@@ -8642,6 +8710,21 @@ interface ProcessingInstruction : CharacterData {
  <li><p>Set <var>pi</var>'s <a for=CharacterData>data</a> to <var>data</var>.
 
  <li><p><a>Update attributes from data</a> given <var>pi</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export>create a processing instruction node</dfn> given a <a for=/>document</a>
+<var>document</var>, a string <var>target</var>, and a string <var>data</var>:
+
+<ol>
+ <li><p>Let <var>pi</var> be the result of <a>creating a node</a> that implements
+ {{ProcessingInstruction}}, given <var>document</var>.
+
+ <li><p><a for=ProcessingInstruction>Initialize</a> <var>pi</var> with <var>target</var> and
+ <var>data</var>.
+
+ <li><p>Return <var>pi</var>.
 </ol>
 </div>
 
@@ -8834,6 +8917,20 @@ interface Comment : CharacterData {
 constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var>data</var> and
 <a>this</a>'s <a for=Node>node document</a> to <a>current global object</a>'s
 <a>associated <code>Document</code></a>.
+</div>
+
+<div algorithm>
+<p>To <dfn export>create a comment node</dfn> given a <a for=/>document</a> <var>document</var> and
+a string <var>data</var>:
+
+<ol>
+ <li><p>Let <var>comment</var> be the result of <a>creating a node</a> that implements {{Comment}},
+ given <var>document</var>.
+
+ <li><p>Set <var>comment</var>'s <a for=CharacterData>data</a> to <var>data</var>.
+
+ <li><p>Return <var>comment</var>.
+</ol>
 </div>
 
 
@@ -9594,9 +9691,8 @@ method steps are:
 <var>range</var>:
 
 <ol>
- <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>range</var>'s <a for=range>start node</a>'s
- <a for=Node>node document</a>.
+ <li><p>Let <var>fragment</var> be the result of <a>creating a document fragment</a> given
+ <var>range</var>'s <a for=range>start node</a>'s <a for=Node>node document</a>.
 
  <li><p>If <var>range</var> is <a for=range>collapsed</a>, then return <var>fragment</var>.
  <!-- This is only really needed when the start and end nodes are
@@ -9800,9 +9896,8 @@ result of <a for="live range">extracting</a> <a>this</a>.
 of a <a>live range</a> <var>range</var>:
 
 <ol>
- <li><p>Let <var>fragment</var> be a new {{DocumentFragment}} <a for=/>node</a> whose
- <a for=Node>node document</a> is <var>range</var>'s <a for=range>start node</a>'s
- <a for=Node>node document</a>.
+ <li><p>Let <var>fragment</var> be the result of <a>creating a document fragment</a> given
+ <var>range</var>'s <a for=range>start node</a>'s <a for=Node>node document</a>.
 
  <li><p>If <var>range</var> is <a for=range>collapsed</a>, then return <var>fragment</var>.
  <!-- This is only really needed when the start and end nodes are
