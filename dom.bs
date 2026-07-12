@@ -3820,11 +3820,11 @@ the data.
 When a <a>collection</a> is created, a
 filter and a root are associated with it.
 
-The <a>collection</a> then
-<dfn export for=collection lt="represented by the collection" id=represented-by-the-collection>represents</dfn>
-a view of the subtree rooted at the <a>collection's</a> root, containing only nodes that match the
-given filter. The view is linear. In the absence of specific requirements to the contrary, the nodes
-within the <a>collection</a> must be sorted in <a>tree order</a>.
+A <a>collection</a>'s
+<dfn export for=collection lt="nodes|elements" id=represented-by-the-collection>nodes</dfn>
+are the <a for=/>nodes</a>, in the subtree rooted at the <a>collection's</a> root, that match the
+given filter. This is a linear view; in the absence of specific requirements to the contrary, the
+<a for=/>nodes</a> are sorted in <a>tree order</a>.
 
 
 <h5 id=interface-nodelist>Interface {{NodeList}}</h5>
@@ -3851,16 +3851,15 @@ interface NodeList {
 </dl>
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to one less than
-the number of nodes <a for=collection>represented by the collection</a>. If there are no such
-elements, then there are no <a>supported property indices</a>.
+the size of the <a>collection</a>'s <a for=collection>nodes</a>. If that size is zero, then there
+are no <a>supported property indices</a>.
 
-<p>The <dfn attribute for=NodeList>length</dfn> attribute must return the number of nodes
-<a for=collection>represented by the collection</a>.
+<p>The <dfn attribute for=NodeList>length</dfn> getter steps are to return the size of
+<a>this</a>'s <a for=collection>nodes</a>.
 
-<p>The <dfn method for=NodeList><code>item(<var>index</var>)</code></dfn> method must return the
-<var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>. If there is no
-<var>index</var><sup>th</sup> <a for=/>node</a> in the <a>collection</a>, then the method must
-return null.
+<p>The <dfn method for=NodeList><code>item(<var>index</var>)</code></dfn> method steps are to return
+the <var>index</var><sup>th</sup> <a for=/>node</a> in <a>this</a>'s <a for=collection>nodes</a>, or
+null if there is no such <a for=/>node</a>.
 
 
 <h5 id=interface-htmlcollection>Interface {{HTMLCollection}}</h5>
@@ -3901,16 +3900,15 @@ it (use <code>sequence&lt;T></code> in IDL instead).
 </dl>
 
 <p>The object's <a>supported property indices</a> are the numbers in the range zero to one less than
-the number of elements <a for=collection>represented by the collection</a>. If there are no such
-elements, then there are no <a>supported property indices</a>.
+the size of the <a>collection</a>'s <a for=collection>elements</a>. If that size is zero, then there
+are no <a>supported property indices</a>.
 
 <p>The <dfn attribute for=HTMLCollection><code>length</code></dfn> getter steps are to return the
-number of nodes <a for=collection>represented by the collection</a>.
+size of <a>this</a>'s <a for=collection>elements</a>.
 
 <p>The <dfn method for=HTMLCollection><code>item(<var>index</var>)</code></dfn> method steps are to
-return the <var>index</var><sup>th</sup> <a for=/>element</a> in the <a>collection</a>. If there
-is no <var>index</var><sup>th</sup> <a for=/>element</a> in the <a>collection</a>, then the method
-must return null.
+return the <var>index</var><sup>th</sup> <a for=/>element</a> in <a>this</a>'s
+<a for=collection>elements</a>, or null if there is no such <a for=/>element</a>.
 
 <p>The <a>supported property names</a> are the values from the list returned by these steps:
 
@@ -3918,8 +3916,7 @@ must return null.
  <li><p>Let <var>result</var> be an empty list.
 
  <li>
-  <p>For each <var>element</var> <a for=collection>represented by the collection</a>, in
-  <a>tree order</a>:
+  <p>For each <var>element</var> of <a>this</a>'s <a for=collection>elements</a>:
 
   <ol>
    <li><p>If <var>element</var> has an <a for=Element>ID</a> which is not in <var>result</var>,
@@ -3935,25 +3932,35 @@ must return null.
  <li><p>Return <var>result</var>.
 </ol>
 
-<p>The <dfn method for=HTMLCollection><code>namedItem(<var>key</var>)</code></dfn> method steps are:
+<div algorithm>
+<p>To <dfn export>find a named element</dfn> in a
+<a for=/>list</a> of <a for=/>elements</a> <var>elements</var> given a string <var>key</var>:
 
 <ol>
- <li><p>If <var>key</var> is the empty string, return null.
+ <li><p>If <var>key</var> is the empty string, then return null.
 
  <li>
-  <p>Return the first <a for=/>element</a> in the <a>collection</a> for which at least one of
-  the following is true:
+  <p>If <var>elements</var> contains an <a for=/>element</a> for which one of the following is
+  true:
 
   <ul>
-   <li>it has an <a for=Element>ID</a> which is <var>key</var>;
+   <li>its <a for=Element>ID</a> is <var>key</var>; or
 
    <li>it is in the <a>HTML namespace</a> and <a lt="has an attribute">has</a> a
    <a lt="named attribute"><code>name</code> attribute</a> whose <a for=Attr>value</a> is
-   <var>key</var>;
+   <var>key</var>,
   </ul>
 
-  <p>or null if there is no such <a for=/>element</a>.
+  <p>then return the first such <a for=/>element</a>.
+
+ <li><p>Return null.
 </ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=HTMLCollection><code>namedItem(<var>key</var>)</code></dfn> method steps are
+to <a>find a named element</a> in <a>this</a>'s <a for=collection>elements</a> given <var>key</var>.
+</div>
 
 
 
