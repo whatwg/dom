@@ -6989,8 +6989,35 @@ null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>
        <li><p>Set <var>result</var> to the result of <a>constructing</a> <var>C</var>, with no
        arguments.
 
-       <li><p>Assert: <var>result</var>'s <a for=Element>custom element state</a> and
-       <a for=Element>custom element definition</a> are initialized.
+       <li>
+        <p><a for=/>Assert</a>: one of the following is true:
+
+        <ul class=brief>
+         <li><var>result</var>'s <a for=Element>custom element state</a> is "<code>custom</code>"
+         and its <a for=Element>custom element definition</a> is non-null;
+         <li><var>result</var>'s <a for=Element>custom element state</a> is
+         "<code>precustomized</code>"; or
+         <li><var>result</var>'s <a for=Element>custom element state</a> is neither
+         "<code>custom</code>" nor "<code>precustomized</code>" and its
+         <a for=Element>custom element definition</a> is null.
+        </ul>
+
+        <div class=example id=example-return-override>
+         <pre><code class=lang-javascript>
+          customElements.define("x-example", class extends HTMLElement {
+            constructor() {
+              // Non-conformant: returns an existing element instead of calling super().
+              return document.createElement("p");
+            }
+          });
+
+          document.createElement("x-example");
+         </code></pre>
+
+         <p>Here <var>result</var> is the <code>p</code> <a for=/>element</a>, whose
+         <a for=Element>custom element state</a> is "<code>uncustomized</code>" and whose
+         <a for=Element>custom element definition</a> is null.
+        </div>
 
        <li>
         <p>Assert: <var>result</var>'s <a for=Element>namespace</a> is the <a>HTML namespace</a>.
