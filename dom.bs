@@ -1768,6 +1768,9 @@ optionally using an <var>eventConstructor</var>, with a description of how IDL a
 initialized, and a <var>legacy target override flag</var>, run these steps:
 
 <ol>
+ <li><p>Let <var>recordingTimingAsTask</var> be the result of calling <a>start recording task time if
+ needed</a> given <var>target</var>'s <a>relevant settings object</a>.
+
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
  {{Event}}.
 
@@ -1782,8 +1785,20 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
+ <li><p>Let <var>result</var> be the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
  <var>legacy target override flag</var> set if set.
+
+ <li>
+  <p>If <var>recordingTimingAsTask</var> is true:
+
+  <ol>
+   <li><a>Assert</a>: <var>target</var>'s <a>relevant settings object</a> is a {{Document}}.
+
+   <li><p><a>Record task end time</a> given the <a>unsafe shared current time</a> and <var>target</var>'s
+   <a>relevant settings object</a>.
+  </ol>
+
+ <li><p>Return <var>result</var>.
 </ol>
 </div>
 
