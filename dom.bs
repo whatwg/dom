@@ -9081,9 +9081,7 @@ be between 0 and the <a>boundary point</a>'s <a for="boundary point">node</a>'s
 <pre class=idl>
 [Exposed=Window]
 interface AbstractRange {
-  readonly attribute Node startContainer;
   readonly attribute unsigned long startOffset;
-  readonly attribute Node endContainer;
   readonly attribute unsigned long endOffset;
   readonly attribute boolean collapsed;
 };
@@ -9111,15 +9109,15 @@ interface AbstractRange {
 <a for=range>end node</a> and its <a for=range>start offset</a> is its <a for=range>end offset</a>.
 </div>
 
-<dl class=domintro>
- <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>startContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>start node</a>.
+<p>Each <a>range</a> has associated
+<dfn for=AbstractRange export>get start offset</dfn> steps,
+<dfn for=AbstractRange export>get end offset</dfn> steps, and
+<dfn for=AbstractRange export>get collapsed</dfn> steps, which are to be defined by a
+subclass.
 
+<dl class=domintro>
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>startOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>start offset</a>.
-
- <dt><code><var>node</var> = <var>range</var> . <a attribute for=AbstractRange>endContainer</a></code>
- <dd>Returns <var>range</var>'s <a for=range>end node</a>.
 
  <dt><code><var>offset</var> = <var>range</var> . <a attribute for=AbstractRange>endOffset</a></code>
  <dd>Returns <var>range</var>'s <a for=range>end offset</a>.
@@ -9129,29 +9127,68 @@ interface AbstractRange {
 </dl>
 
 <div algorithm>
-<p>The
-<dfn id=dom-range-startcontainer attribute for=AbstractRange><code>startContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start node</a>.
-</div>
-
-<div algorithm>
 <p>The <dfn id=dom-range-startoffset attribute for=AbstractRange><code>startOffset</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>start offset</a>.
-</div>
-
-<div algorithm>
-<p>The <dfn id=dom-range-endcontainer attribute for=AbstractRange><code>endContainer</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end node</a>.
+getter steps are to return the result of running <a>this</a>'s
+<a for=AbstractRange>get start offset</a>.
 </div>
 
 <div algorithm>
 <p>The <dfn id=dom-range-endoffset attribute for=AbstractRange><code>endOffset</code></dfn>
-getter steps are to return <a>this</a>'s <a for=range>end offset</a>.
+getter steps are to return the result of running <a>this</a>'s
+<a for=AbstractRange>get end offset</a>.
 </div>
 
 <div algorithm>
 <p>The <dfn id=dom-range-collapsed attribute for=AbstractRange><code>collapsed</code></dfn>
-getter steps are to return true if <a>this</a> is <a for=range>collapsed</a>; otherwise false.
+getter steps are to return the result of running <a>this</a>'s
+<a for=AbstractRange>get collapsed</a>.
+</div>
+
+
+<h3 id=interface-noderange>Interface {{NodeRange}}</h3>
+
+<pre class=idl>
+[Exposed=Window]
+interface NodeRange : AbstractRange {
+  readonly attribute Node startContainer;
+  readonly attribute Node endContainer;
+};
+</pre>
+
+<dl class=domintro>
+ <dt><code><var>node</var> = <var>range</var> . <a attribute for=NodeRange>startContainer</a></code>
+ <dd>Returns <var>range</var>'s <a for=range>start node</a>.
+
+ <dt><code><var>node</var> = <var>range</var> . <a attribute for=NodeRange>endContainer</a></code>
+ <dd>Returns <var>range</var>'s <a for=range>end node</a>.
+</dl>
+
+<div algorithm="NodeRange get start offset">
+<p>The <a for=AbstractRange>get start offset</a> steps are to return <a>this</a>'s
+<a for=range>start offset</a>.
+</div>
+
+<div algorithm="NodeRange get end offset">
+<p>The <a for=AbstractRange>get end offset</a> steps are to return <a>this</a>'s
+<a for=range>end offset</a>.
+</div>
+
+<div algorithm="NodeRange get collapsed">
+<p>The <a for=AbstractRange>get collapsed</a> steps are to return true if <a>this</a> is
+<a for=range>collapsed</a>; otherwise false.
+</div>
+
+<hr>
+
+<div algorithm>
+<p>The
+<dfn id=dom-range-startcontainer attribute for=NodeRange><code>startContainer</code></dfn>
+getter steps are to return <a>this</a>'s <a for=range>start node</a>.
+</div>
+
+<div algorithm>
+<p>The <dfn id=dom-range-endcontainer attribute for=NodeRange><code>endContainer</code></dfn>
+getter steps are to return <a>this</a>'s <a for=range>end node</a>.
 </div>
 
 
@@ -9166,7 +9203,7 @@ dictionary StaticRangeInit {
 };
 
 [Exposed=Window]
-interface StaticRange : AbstractRange {
+interface StaticRange : NodeRange {
   constructor(StaticRangeInit init);
 };
 </pre>
@@ -9216,7 +9253,7 @@ constructor steps are:
 
 <pre class=idl>
 [Exposed=Window]
-interface Range : AbstractRange {
+interface Range : NodeRange {
   constructor();
 
   readonly attribute Node commonAncestorContainer;
