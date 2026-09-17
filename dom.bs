@@ -1383,7 +1383,7 @@ property of the event being dispatched.
 
  <li>
   <p>Let <var>targetOverride</var> be <var>target</var>, if <var>legacy target override flag</var>
-  is true, and <var>target</var>'s <a>associated <code>Document</code></a> otherwise.
+  is false, and <var>target</var>'s <a>associated <code>Document</code></a> otherwise.
   [[!HTML]]
 
   <p class=note><var>legacy target override flag</var> is only used by HTML and only when
@@ -1766,7 +1766,7 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
 initialized, an optional boolean <var>legacy target override flag</var> (default false), and an
-optional {{EventTarget}} object <var>relatedTarget</var>:
+optional {{EventTarget}} object <var>relatedTarget</var> (default null):
 
 <ol>
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
@@ -1777,8 +1777,7 @@ optional {{EventTarget}} object <var>relatedTarget</var>:
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>e</var>.
 
- <li><p>If <var>relatedTarget</var> is given, then set <var>event</var>'s <a
- for=Event>relatedTarget</a> to <var>relatedTarget</var>.
+ <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>relatedTarget</var>.
 
  <li>
   <p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of this
@@ -6634,8 +6633,8 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean serializable;
   readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute boolean clonable;
-  readonly attribute Element host;
   attribute DOMString? referenceTarget;
+  readonly attribute Element host;
 
   attribute EventHandler onslotchange;
 };
@@ -6711,14 +6710,14 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 <p>The <dfn attribute for=ShadowRoot><code>clonable</code></dfn> getter steps are to return
 <a>this</a>'s <a for=ShadowRoot>clonable</a>.
 
-<p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
-<a>this</a>'s <a for=DocumentFragment>host</a>.
-
 <p>The <dfn attribute for=ShadowRoot><code>referenceTarget</code></dfn> getter steps are to return
 <a>this</a>'s <a for=ShadowRoot>reference target</a>.
 
 <p>The {{ShadowRoot/referenceTarget}} setter
 steps are to set <a>this</a>'s <a for=ShadowRoot>reference target</a> to the given value.
+
+<p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
+<a>this</a>'s <a for=DocumentFragment>host</a>.
 
 <hr>
 
