@@ -1375,19 +1375,15 @@ property of the event being dispatched.
 
 <div algorithm>
 <p>To <dfn export id=concept-event-dispatch>dispatch</dfn> an <a>event</a> <var>event</var> to an
-{{EventTarget}} object <var>target</var>, with an optional <var>legacy target override flag</var>
-(default false) and an optional <var>legacyOutputDidListenersThrowFlag</var>:
+{{EventTarget}} object <var>target</var>, with an optional {{EventTarget}} object
+<var>legacyTargetOverride</var> (default <var>target</var>) and an optional
+<var>legacyOutputDidListenersThrowFlag</var>:
+
+<p class=note>A <var>legacyTargetOverride</var> that is not <var>target</var> is only used by HTML
+and only when <var>target</var> is a {{Window}} object.
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
-
- <li>
-  <p>Let <var>targetOverride</var> be <var>target</var>, if <var>legacy target override flag</var>
-  is false, and <var>target</var>'s <a>associated <code>Document</code></a> otherwise.
-  [[!HTML]]
-
-  <p class=note><var>legacy target override flag</var> is only used by HTML and only when
-  <var>target</var> is a {{Window}} object.
 
  <li><p>Let <var>activationTarget</var> be null.
 
@@ -1408,7 +1404,7 @@ property of the event being dispatched.
    <var>touchTarget</var> against <var>target</var> to <var>touchTargets</var>.
 
    <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
-   <var>targetOverride</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and false.
+   <var>legacyTargetOverride</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and false.
 
    <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object
    and <var>event</var>'s {{Event/type}} attribute is "<code>click</code>"; otherwise false.
@@ -1765,8 +1761,10 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
 <div algorithm>
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
-initialized, an optional boolean <var>legacy target override flag</var> (default false), and an
-optional {{EventTarget}} object <var>relatedTarget</var> (default null):
+initialized, an optional {{EventTarget}} object
+<dfn export for="fire an event"><var>legacyTargetOverride</var></dfn> (default
+<var>target</var>), and an optional {{EventTarget}} object
+<dfn export for="fire an event"><var>relatedTarget</var></dfn> (default null):
 
 <ol>
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
@@ -1786,7 +1784,7 @@ optional {{EventTarget}} object <var>relatedTarget</var> (default null):
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
  <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var> with
- <var>legacy target override flag</var>.
+  <var>legacyTargetOverride</var>.
 </ol>
 </div>
 
