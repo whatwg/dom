@@ -10043,19 +10043,25 @@ interface OpaqueRange : AbstractRange {
 <p>Objects implementing the {{OpaqueRange}} interface are known as
 <dfn export lt="opaque range">opaque ranges</dfn>.
 
-<p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are not
-exposed. This allows the <a>opaque range</a> to represent content whose nodes are encapsulated from
-web developers.
+<p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are the same
+{{Text}} <a for=/>node</a>, which is not exposed. This allows the <a>opaque range</a> to represent text
+whose node is encapsulated from web developers. Its <a for=range>start offset</a> and
+<a for=range>end offset</a> are offsets, in <a>code units</a>, into that node's
+<a for=CharacterData>data</a>.
 
 <p>{{OpaqueRange}} objects cannot be constructed directly.
+
+<p>{{OpaqueRange}} objects do not expose methods to directly change their <a>boundary points</a>.
+Their <a>boundary points</a> are updated as part of the <a>live range</a> adjustments when their
+{{Text}} <a for=/>node</a> is mutated.
 
 <div algorithm>
 <p>To <dfn export>create an opaque range</dfn> given a <a>boundary point</a> <var>start</var> and a
 <a>boundary point</a> <var>end</var>:
 
 <ol>
- <li><p><a for=/>Assert</a>: <var>start</var>'s <a for="boundary point">node</a> and
- <var>end</var>'s <a for="boundary point">node</a> have the same <a for=tree>root</a>.
+ <li><p><a for=/>Assert</a>: <var>start</var>'s <a for="boundary point">node</a> is a {{Text}}
+ <a for=/>node</a> and is <var>end</var>'s <a for="boundary point">node</a>.
 
  <li><p><a for=/>Assert</a>: <var>start</var> is <a for="boundary point">before</a> or
  <a for="boundary point">equal</a> to <var>end</var>.
