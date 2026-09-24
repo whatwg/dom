@@ -4956,12 +4956,25 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
  <li><p>If <var>parent</var> is non-null, then <a for=/>append</a> <var>copy</var> to
  <var>parent</var>.
 
- <li><p>If <var>subtree</var> is true, then for each <var>child</var> of <var>node</var>'s
- <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
- <a for="clone a node"><i>document</i></a> set to <var>document</var>,
- <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
- <a for="clone a node"><i>parent</i></a> set to <var>copy</var>, and
- <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>.
+ <li>
+  <p>If <var>subtree</var> is true:
+
+  <ol>
+   <li><p>Let <var>childFallbackRegistry</var> be <var>fallbackRegistry</var>.
+
+   <li><p>If <var>node</var> is an <a for=/>element</a>, its
+   <a for=Element>custom element registry</a> is null, and its
+   <a for=Element>keep custom element registry null</a> is true, then set
+   <var>childFallbackRegistry</var> to null.
+
+   <li><p>For each <var>child</var> of <var>node</var>'s <a for=tree>children</a>, in
+   <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
+   <a for="clone a node"><i>document</i></a> set to <var>document</var>,
+   <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
+   <a for="clone a node"><i>parent</i></a> set to <var>copy</var>, and
+   <a for="clone a node"><i>fallbackRegistry</i></a> set to
+   <var>childFallbackRegistry</var>.
+  </ol>
 
  <li>
   <p>If <var>node</var> is an <a for=/>element</a>, <var>node</var> is a
@@ -5021,7 +5034,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
   <ol>
    <li><p>Let <var>registry</var> be <var>node</var>'s <a for=Element>custom element registry</a>.
 
-   <li><p>If <var>registry</var> is null, then set <var>registry</var> to
+   <li><p>If <var>registry</var> is null and <var>node</var>'s
+   <a for=Element>keep custom element registry null</a> is false, then set <var>registry</var> to
    <var>fallbackRegistry</var>.
 
    <li><p>If <var>registry</var> <a>is a global custom element registry</a>, then set
@@ -5032,6 +5046,9 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
    <a for=Element>namespace</a>, <var>node</var>'s <a for=Element>namespace prefix</a>,
    <var>node</var>'s <a><code>is</code> value</a>, false, and <var>registry</var>.
+
+   <li><p>Set <var>copy</var>'s <a for=Element>keep custom element registry null</a> to
+   <var>node</var>'s <a for=Element>keep custom element registry null</a>.
 
    <li>
     <p><a for=list>For each</a> <var>attribute</var> of <var>node</var>'s
@@ -6174,9 +6191,18 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
      <var>inclusiveDescendant</var>'s <a for=Element>attribute list</a> to <var>document</var>.
 
      <li>
-      <p>If <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null or
-      <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>'s
-      <a for=CustomElementRegistry>is scoped</a> is false:
+      <p>If any of the following are true:
+
+      <ul>
+       <li><p><var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is null
+       and <var>inclusiveDescendant</var>'s
+       <a for=Element>keep custom element registry null</a> is false; or
+
+       <li><p><var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a>
+       <a>is a global custom element registry</a>,
+      </ul>
+
+      <p>then:
 
       <ol>
        <li><p>Let <var>registry</var> be null.
@@ -6875,6 +6901,9 @@ developers to pass a {{ShadowRoot}} node instead of a dictionary to {{Element/at
  <dt><dfn export for=Element>custom element registry</dfn>
  <dd>Null or a {{CustomElementRegistry}} object.
 
+ <dt><dfn export for=Element>keep custom element registry null</dfn>
+ <dd>A boolean. It is initially false.
+
  <dt><dfn export id=concept-element-custom-element-state for=Element>custom element state</dfn>
  <dd>"<code>undefined</code>", "<code>failed</code>", "<code>uncustomized</code>",
  "<code>precustomized</code>", or "<code>custom</code>".
@@ -6885,6 +6914,11 @@ developers to pass a {{ShadowRoot}} node instead of a dictionary to {{Element/at
  <dt><dfn export id=concept-element-is-value for=Element><code>is</code> value</dfn>
  <dd>Null or a <a for=/>valid custom element name</a>.
 </dl>
+
+<p class=note>Other specifications can set an <a for=/>element</a>'s
+<a for=Element>keep custom element registry null</a> to true to preserve an intentionally null
+<a for=Element>custom element registry</a> during cloning and adoption. It only matters while the
+element's <a for=Element>custom element registry</a> is null.
 
 <p>When an <a for=/>element</a> is <a lt="create an element">created</a>, all of these values are
 initialized.
