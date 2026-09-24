@@ -10043,33 +10043,51 @@ interface OpaqueRange : AbstractRange {
 <p>Objects implementing the {{OpaqueRange}} interface are known as
 <dfn export lt="opaque range">opaque ranges</dfn>.
 
-<p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are the same
-{{Text}} <a for=/>node</a>, which is not exposed. This allows the <a>opaque range</a> to represent text
-whose node is encapsulated from web developers. Its <a for=range>start offset</a> and
-<a for=range>end offset</a> are offsets, in <a>code units</a>, into that node's
-<a for=CharacterData>data</a>.
+<p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are not
+exposed. This allows the <a>opaque range</a> to represent content whose nodes are encapsulated from
+web developers.
+
+<p>An <a>opaque range</a> has an associated
+<dfn for=OpaqueRange export>exposed start offset</dfn> and
+<dfn for=OpaqueRange export>exposed end offset</dfn>, which are non-negative integers. These do not
+necessarily correspond to its <a for=range>start offset</a> and <a for=range>end offset</a>.
 
 <p>{{OpaqueRange}} objects cannot be constructed directly.
 
-<p>{{OpaqueRange}} objects do not expose methods to directly change their <a>boundary points</a>.
-Their <a>boundary points</a> are updated as part of the <a>live range</a> adjustments when their
-{{Text}} <a for=/>node</a> is mutated.
+<p>{{OpaqueRange}} objects do not expose methods to directly change their <a>boundary points</a> or
+their <a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>.
+Their <a>boundary points</a> are updated as part of the <a>live range</a> adjustments. The
+specification creating an <a>opaque range</a> defines the meaning of its
+<a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>, and how
+they are updated. It must ensure that the exposed offsets are equal if and only if the
+<a>opaque range</a> is <a for=range>collapsed</a>.
 
 <div algorithm>
 <p>To <dfn export>create an opaque range</dfn> given a <a>boundary point</a> <var>start</var> and a
-<a>boundary point</a> <var>end</var>:
+<a>boundary point</a> <var>end</var>, and non-negative integers <var>exposedStartOffset</var> and
+<var>exposedEndOffset</var>:
 
 <ol>
- <li><p><a for=/>Assert</a>: <var>start</var>'s <a for="boundary point">node</a> is a {{Text}}
- <a for=/>node</a> and is <var>end</var>'s <a for="boundary point">node</a>.
+ <li><p><a for=/>Assert</a>: <var>start</var>'s <a for="boundary point">node</a> and
+ <var>end</var>'s <a for="boundary point">node</a> have the same <a for=tree>root</a>.
 
  <li><p><a for=/>Assert</a>: <var>start</var> is <a for="boundary point">before</a> or
  <a for="boundary point">equal</a> to <var>end</var>.
+
+ <li><p><a for=/>Assert</a>: <var>exposedStartOffset</var> is less than or equal to
+ <var>exposedEndOffset</var>.
+
+ <li><p><a for=/>Assert</a>: <var>start</var> is <var>end</var> if and only if
+ <var>exposedStartOffset</var> is <var>exposedEndOffset</var>.
 
  <li><p>Let <var>range</var> be a new {{OpaqueRange}} object.
 
  <li><p>Set <var>range</var>'s <a for=range>start</a> to <var>start</var> and
  <a for=range>end</a> to <var>end</var>.
+
+ <li><p>Set <var>range</var>'s <a for=OpaqueRange>exposed start offset</a> to
+ <var>exposedStartOffset</var> and its <a for=OpaqueRange>exposed end offset</a> to
+ <var>exposedEndOffset</var>.
 
  <li><p>Return <var>range</var>.
 </ol>
@@ -10077,17 +10095,18 @@ Their <a>boundary points</a> are updated as part of the <a>live range</a> adjust
 
 <div algorithm="OpaqueRange get start offset">
 <p>The <a for=AbstractRange>get start offset</a> steps are to return <a>this</a>'s
-<a for=range>start offset</a>.
+<a for=OpaqueRange>exposed start offset</a>.
 </div>
 
 <div algorithm="OpaqueRange get end offset">
 <p>The <a for=AbstractRange>get end offset</a> steps are to return <a>this</a>'s
-<a for=range>end offset</a>.
+<a for=OpaqueRange>exposed end offset</a>.
 </div>
 
 <div algorithm="OpaqueRange get collapsed">
-<p>The <a for=AbstractRange>get collapsed</a> steps are to return true if <a>this</a> is
-<a for=range>collapsed</a>; otherwise false.
+<p>The <a for=AbstractRange>get collapsed</a> steps are to return true if <a>this</a>'s
+<a for=OpaqueRange>exposed start offset</a> is its <a for=OpaqueRange>exposed end offset</a>;
+otherwise false.
 </div>
 
 <p>The {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} methods are
