@@ -1707,25 +1707,35 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
    <a>remove an event listener</a> given <var>event</var>'s {{Event/currentTarget}} attribute value
    and <var>listener</var>.
 
-   <li><p>Let <var>global</var> be <var>listener</var> <a for="event listener">callback</a>'s
-   <a>associated realm</a>'s <a for=realm>global object</a>.
+   <li><p>Let <var>targetGlobal</var> be <var>event</var>'s {{Event/currentTarget}}'s
+   <a for=Node>node document</a>'s <a>relevant global object</a> if <var>event</var>'s
+   {{Event/currentTarget}} is a <a for=/>node</a>; otherwise <var>event</var>'s
+   {{Event/currentTarget}}'s <a>relevant global object</a>.
+
+   <li><p>Let <var>listenerGlobal</var> be <var>listener</var>
+   <a for="event listener">callback</a>'s <a>associated realm</a>'s <a for=realm>global object</a>.
+
+   <li><p>If <var>targetGlobal</var> or <var>listenerGlobal</var> is a {{Window}} object whose
+   <a>associated <code>Document</code></a> is not <a>fully active</a>, then
+   <a for=iteration>continue</a>.
 
    <li><p>Let <var>currentEvent</var> be undefined.
 
    <li>
-    <p>If <var>global</var> is a {{Window}} object:
+    <p>If <var>listenerGlobal</var> is a {{Window}} object:
 
     <ol>
-     <li><p>Set <var>currentEvent</var> to <var>global</var>'s <a for=Window>current event</a>.
+     <li><p>Set <var>currentEvent</var> to <var>listenerGlobal</var>'s
+     <a for=Window>current event</a>.
 
-     <li><p>If <var>invocationTargetInShadowTree</var> is false, then set <var>global</var>'s
-     <a for=Window>current event</a> to <var>event</var>.
+     <li><p>If <var>invocationTargetInShadowTree</var> is false, then set
+     <var>listenerGlobal</var>'s <a for=Window>current event</a> to <var>event</var>.
     </ol>
 
    <li><p>If <var>listener</var>'s <a for="event listener">passive</a> is true, then set
    <var>event</var>'s <a>in passive listener flag</a>.
 
-   <li><p>If <var>global</var> is a {{Window}} object, then
+   <li><p>If <var>listenerGlobal</var> is a {{Window}} object, then
    <a>record timing info for event listener</a> given <var>event</var> and <var>listener</var>.
 
    <li>
@@ -1748,7 +1758,7 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
 
    <li><p>Unset <var>event</var>'s <a>in passive listener flag</a>.
 
-   <li><p>If <var>global</var> is a {{Window}} object, then set <var>global</var>'s
+   <li><p>If <var>listenerGlobal</var> is a {{Window}} object, then set <var>listenerGlobal</var>'s
    <a for=Window>current event</a> to <var>currentEvent</var>.
 
    <li><p>If <var>event</var>'s <a>stop immediate propagation flag</a> is set, then
