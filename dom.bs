@@ -8566,12 +8566,12 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
 
 <h3 id=introduction-to-dom-ranges>Introduction to "DOM Ranges"</h3>
 
-<p>{{StaticRange}} and {{Range}} objects (<a>ranges</a>) represent a sequence of content within a
-<a>node tree</a>. Each <a>range</a> has a <a for=range>start</a> and an <a for=range>end</a> which
-are <a>boundary points</a>. A <a>boundary point</a> is a <a for=/>tuple</a> consisting of a
-<a for="boundary point">node</a> and an <a for="boundary point">offset</a>. So in other words, a
-<a>range</a> represents a piece of content within a <a>node tree</a> between two
-<a>boundary points</a>.
+<p>{{StaticRange}}, {{Range}}, and {{OpaqueRange}} objects (<a>ranges</a>) represent a sequence of
+content within a <a>node tree</a>. Each <a>range</a> has a <a for=range>start</a> and an
+<a for=range>end</a> which are <a>boundary points</a>. A <a>boundary point</a> is a
+<a for=/>tuple</a> consisting of a <a for="boundary point">node</a> and an
+<a for="boundary point">offset</a>. So in other words, a <a>range</a> represents a piece of content
+within a <a>node tree</a> between two <a>boundary points</a>.
 
 <p><a>Ranges</a> are frequently used in editing for selecting and copying content.
 
@@ -8609,9 +8609,9 @@ range.setEnd(secondText, 4)
 <a>node tree</a> above cannot be represented by a <a>range</a>. <a>Ranges</a> are only useful for
 <a for=/>nodes</a>.
 
-<p>{{Range}} objects, unlike {{StaticRange}} objects, are affected by mutations to the
-<a>node tree</a>. Therefore they are also known as <a>live ranges</a>. Such mutations will not
-invalidate them and will try to ensure that it still represents the same piece of content.
+<p>{{Range}} and {{OpaqueRange}} objects, unlike {{StaticRange}} objects, are affected by mutations
+to the <a>node tree</a>. Therefore they are also known as <a>live ranges</a>. Such mutations will
+not invalidate them and will try to ensure that they still represent the same piece of content.
 Necessarily, a <a>live range</a> might itself be modified as part of the mutation to the
 <a>node tree</a> when, e.g., part of the content it represents is mutated.
 
@@ -8620,7 +8620,7 @@ Necessarily, a <a>live range</a> might itself be modified as part of the mutatio
 algorithms for details.
 
 <p>Updating <a>live ranges</a> in response to <a>node tree</a> mutations can be expensive. For every
-<a>node tree</a> change, all affected {{Range}} objects need to be updated. Even if the application
+<a>node tree</a> change, all affected <a>live ranges</a> need to be updated. Even if the application
 is uninterested in some <a>live ranges</a>, it still has to pay the cost of keeping them up-to-date
 when a mutation occurs.
 
@@ -8895,7 +8895,7 @@ interface Range : NodeRange {
 };
 </pre>
 
-<p>Objects implementing the {{Range}} interface are known as
+<p>Objects implementing the {{Range}} or {{OpaqueRange}} interfaces are known as
 <dfn export id=concept-live-range>live ranges</dfn>.
 
 <p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
@@ -10028,6 +10028,87 @@ these steps:
 and {{Range/getBoundingClientRect()}} methods are defined in other specifications.
 [[DOM-Parsing]]
 [[CSSOM-VIEW]]
+
+
+<h3 id=interface-opaquerange>Interface {{OpaqueRange}}</h3>
+
+<pre class=idl>
+[Exposed=Window]
+interface OpaqueRange : AbstractRange {
+  DOMRectList getClientRects();
+  DOMRect getBoundingClientRect();
+};
+</pre>
+
+<p>Objects implementing the {{OpaqueRange}} interface are known as
+<dfn export lt="opaque range">opaque ranges</dfn>.
+
+<p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are not
+exposed. This allows the <a>opaque range</a> to represent content whose nodes are encapsulated from
+web developers.
+
+<p>An <a>opaque range</a> has an associated
+<dfn for=OpaqueRange export>exposed start offset</dfn> and
+<dfn for=OpaqueRange export>exposed end offset</dfn>, which are non-negative integers. These do not
+necessarily correspond to its <a for=range>start offset</a> and <a for=range>end offset</a>.
+
+<p>{{OpaqueRange}} objects do not expose methods to directly change their <a>boundary points</a> or
+their <a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>.
+Their <a>boundary points</a> are updated as part of the <a>live range</a> adjustments. The
+specification creating an <a>opaque range</a> defines the meaning of its
+<a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>, and how
+they are updated. It must ensure that the exposed offsets are equal if and only if the
+<a>opaque range</a> is <a for=range>collapsed</a>.
+
+<div algorithm>
+<p>To <dfn export>create an opaque range</dfn> given a <a>boundary point</a> <var>start</var> and a
+<a>boundary point</a> <var>end</var>, and non-negative integers <var>exposedStartOffset</var> and
+<var>exposedEndOffset</var>:
+
+<ol>
+ <li><p><a for=/>Assert</a>: <var>start</var>'s <a for="boundary point">node</a> and
+ <var>end</var>'s <a for="boundary point">node</a> have the same <a for=tree>root</a>.
+
+ <li><p><a for=/>Assert</a>: <var>start</var> is <a for="boundary point">before</a> or
+ <a for="boundary point">equal</a> to <var>end</var>.
+
+ <li><p><a for=/>Assert</a>: <var>exposedStartOffset</var> is less than or equal to
+ <var>exposedEndOffset</var>.
+
+ <li><p><a for=/>Assert</a>: <var>start</var> is <var>end</var> if and only if
+ <var>exposedStartOffset</var> is <var>exposedEndOffset</var>.
+
+ <li><p>Let <var>range</var> be a new {{OpaqueRange}} object.
+
+ <li><p>Set <var>range</var>'s <a for=range>start</a> to <var>start</var> and
+ <a for=range>end</a> to <var>end</var>.
+
+ <li><p>Set <var>range</var>'s <a for=OpaqueRange>exposed start offset</a> to
+ <var>exposedStartOffset</var> and its <a for=OpaqueRange>exposed end offset</a> to
+ <var>exposedEndOffset</var>.
+
+ <li><p>Return <var>range</var>.
+</ol>
+</div>
+
+<div algorithm="OpaqueRange get start offset">
+<p>The <a for=AbstractRange>get start offset</a> steps are to return <a>this</a>'s
+<a for=OpaqueRange>exposed start offset</a>.
+</div>
+
+<div algorithm="OpaqueRange get end offset">
+<p>The <a for=AbstractRange>get end offset</a> steps are to return <a>this</a>'s
+<a for=OpaqueRange>exposed end offset</a>.
+</div>
+
+<div algorithm="OpaqueRange get collapsed">
+<p>The <a for=AbstractRange>get collapsed</a> steps are to return true if <a>this</a>'s
+<a for=OpaqueRange>exposed start offset</a> is its <a for=OpaqueRange>exposed end offset</a>;
+otherwise false.
+</div>
+
+<p>The {{OpaqueRange/getClientRects()}} and {{OpaqueRange/getBoundingClientRect()}} methods are
+defined in [[CSSOM-VIEW]].
 
 
 
