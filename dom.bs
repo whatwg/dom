@@ -1375,19 +1375,15 @@ property of the event being dispatched.
 
 <div algorithm>
 <p>To <dfn export id=concept-event-dispatch>dispatch</dfn> an <a>event</a> <var>event</var> to an
-{{EventTarget}} object <var>target</var>, with an optional <var>legacy target override flag</var> and
-an optional <var>legacyOutputDidListenersThrowFlag</var>:
+{{EventTarget}} object <var>target</var>, with an optional {{EventTarget}} object
+<var>legacyTargetOverride</var> (default <var>target</var>) and an optional
+<var>legacyOutputDidListenersThrowFlag</var>:
+
+<p class=note>A <var>legacyTargetOverride</var> that is not <var>target</var> is only used by HTML
+and only when <var>target</var> is a {{Window}} object.
 
 <ol>
  <li><p>Set <var>event</var>'s <a>dispatch flag</a>.
-
- <li>
-  <p>Let <var>targetOverride</var> be <var>target</var>, if <var>legacy target override flag</var>
-  is not given, and <var>target</var>'s <a>associated <code>Document</code></a> otherwise.
-  [[!HTML]]
-
-  <p class=note><var>legacy target override flag</var> is only used by HTML and only when
-  <var>target</var> is a {{Window}} object.
 
  <li><p>Let <var>activationTarget</var> be null.
 
@@ -1408,7 +1404,7 @@ an optional <var>legacyOutputDidListenersThrowFlag</var>:
    <var>touchTarget</var> against <var>target</var> to <var>touchTargets</var>.
 
    <li><p><a>Append to an event path</a> with <var>event</var>, <var>target</var>,
-   <var>targetOverride</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and false.
+   <var>legacyTargetOverride</var>, <var>relatedTarget</var>, <var>touchTargets</var>, and false.
 
    <li><p>Let <var>isActivationEvent</var> be true, if <var>event</var> is a {{MouseEvent}} object
    and <var>event</var>'s {{Event/type}} attribute is "<code>click</code>"; otherwise false.
@@ -1772,10 +1768,13 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
 
 <h3 id=firing-events>Firing events</h3>
 
-<div algorithm>
+<div algorithm="fire an event">
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
-initialized, and a <var>legacy target override flag</var>, run these steps:
+initialized, an optional {{EventTarget}} object
+<dfn export for="fire an event"><var>legacyTargetOverride</var></dfn> (default
+<var>target</var>), and an optional {{EventTarget}} object
+<dfn export for="fire an event"><var>relatedTarget</var></dfn> (default null):
 
 <ol>
  <li><p>If <var>eventConstructor</var> is not given, then let <var>eventConstructor</var> be
@@ -1786,14 +1785,16 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
  <li><p>Initialize <var>event</var>'s {{Event/type}} attribute to <var>e</var>.
 
+ <li><p>Set <var>event</var>'s <a for=Event>relatedTarget</a> to <var>relatedTarget</var>.
+
  <li>
   <p>Initialize any other IDL attributes of <var>event</var> as described in the invocation of this
   algorithm.
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
- <var>legacy target override flag</var> set if set.
+ <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var> with
+ <var>legacyTargetOverride</var>.
 </ol>
 </div>
 
@@ -4982,7 +4983,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, true, and
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, true, <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>reference target</a>, and
    <var>shadowRootRegistry</var>.
 
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
@@ -6639,6 +6641,7 @@ interface ShadowRoot : DocumentFragment {
   readonly attribute boolean serializable;
   readonly attribute SlotAssignmentMode slotAssignment;
   readonly attribute boolean clonable;
+  attribute DOMString? referenceTarget;
   readonly attribute Element host;
 
   attribute EventHandler onslotchange;
@@ -6677,6 +6680,9 @@ It is initially set to false.
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>clonable</dfn> (a boolean).
 It is initially set to false.
 
+<p><a for=/>Shadow roots</a> have an associated <dfn export for=ShadowRoot>reference target</dfn>
+(null or a string). It is initially set to null.
+
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom element registry</dfn>
 (null or a {{CustomElementRegistry}} object). It is initially null.
 
@@ -6711,6 +6717,12 @@ null if <var>event</var>'s <a>composed flag</a> is unset and <a for=/>shadow roo
 
 <p>The <dfn attribute for=ShadowRoot><code>clonable</code></dfn> getter steps are to return
 <a>this</a>'s <a for=ShadowRoot>clonable</a>.
+
+<p>The <dfn attribute for=ShadowRoot><code>referenceTarget</code></dfn> getter steps are to return
+<a>this</a>'s <a for=ShadowRoot>reference target</a>.
+
+<p>The {{ShadowRoot/referenceTarget}} setter
+steps are to set <a>this</a>'s <a for=ShadowRoot>reference target</a> to the given value.
 
 <p>The <dfn attribute for=ShadowRoot><code>host</code></dfn> getter steps are to return
 <a>this</a>'s <a for=DocumentFragment>host</a>.
@@ -6849,6 +6861,7 @@ dictionary ShadowRootInit {
   boolean serializable = false;
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
+  DOMString? referenceTarget = null;
   CustomElementRegistry? customElementRegistry;
 };
 </pre>
@@ -7870,7 +7883,8 @@ are:
  <var>init</var>["{{ShadowRootInit/delegatesFocus}}"],
  <var>init</var>["{{ShadowRootInit/serializable}}"],
  <var>init</var>["{{ShadowRootInit/slotAssignment}}"],
- <var>init</var>["{{ShadowRootInit/clonable}}"], and <var>registry</var>.
+ <var>init</var>["{{ShadowRootInit/clonable}}"],
+ <var>init</var>["{{ShadowRootInit/referenceTarget}}"], and <var>registry</var>.
 
  <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
 </ol>
@@ -7879,8 +7893,9 @@ are:
 <div algorithm>
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an <a for=/>element</a>
 <var>element</var>, a string <var>mode</var>, a boolean <var>delegatesFocus</var>, a boolean
-<var>serializable</var>, a string <var>slotAssignment</var>, a boolean <var>clonable</var>, and null
-or a {{CustomElementRegistry}} object <var>registry</var>:
+<var>serializable</var>, a string <var>slotAssignment</var>, a boolean <var>clonable</var>, null or
+a string <var>referenceTarget</var>, and null or a {{CustomElementRegistry}} object
+<var>registry</var>:
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -7951,6 +7966,9 @@ or a {{CustomElementRegistry}} object <var>registry</var>:
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>slot assignment</a> to <var>slotAssignment</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>clonable</a> to <var>clonable</var>.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>reference target</a> to
+ <var>referenceTarget</var>.
 
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>custom element registry</a> to
  <var>registry</var>.
