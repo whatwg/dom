@@ -3029,6 +3029,44 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
      <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
      <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>'s
      <a for=CustomElementRegistry>scoped document set</a>.
+
+     <li><p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a>,
+     <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a> is non-null,
+     and <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a>'s
+     <a for=CustomAttributeRegistry>is scoped</a> is true, then <a for=set>append</a>
+     <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
+     <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a>'s
+     <a for=CustomAttributeRegistry>scoped document set</a>.
+
+     <li>
+      <p>If <var>inclusiveDescendant</var> is an <a for=/>element</a>:
+
+      <ol>
+       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a> is
+       non-null and <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a>'s
+       <a for=CustomAttributeRegistry>is scoped</a> is true, then <a for=set>append</a>
+       <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to
+       <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a>'s
+       <a for=CustomAttributeRegistry>scoped document set</a>.
+
+       <li>
+        <p>For each <var>attribute</var> of <var>inclusiveDescendant</var>'s
+        <a for=Element>attribute list</a>:
+
+        <ol>
+         <li><p>If <var>attribute</var> is <a for=Attr>custom</a>, then
+         <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback
+         name "<code>connectedCallback</code>", and « ».
+
+         <li>
+          <p>Otherwise, <a lt="try to upgrade an attribute">try to upgrade</a>
+          <var>attribute</var>.
+
+          <p class=note>If this successfully upgrades <var>attribute</var>, its
+          <code>connectedCallback</code> will be enqueued automatically during the
+          <a>upgrade an attribute</a> algorithm.
+        </ol>
+      </ol>
     </ol>
   </ol>
 
@@ -3205,6 +3243,12 @@ to do these things asynchronously, however.
    <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a> and <var>newParent</var> is
    <a>connected</a>, then <a>enqueue a custom element callback reaction</a> with
    <var>inclusiveDescendant</var>, callback name "<code>connectedMoveCallback</code>", and « ».
+
+   <li><p>If <var>inclusiveDescendant</var> is an <a for=/>element</a> and <var>newParent</var> is
+   <a>connected</a>, then for each <var>attribute</var> of <var>inclusiveDescendant</var>'s
+   <a for=Element>attribute list</a> that is <a for=Attr>custom</a>:
+   <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+   "<code>connectedMoveCallback</code>", and « ».
   </ol>
  </li>
 
@@ -3368,6 +3412,11 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
   <p class=note>It is intentional for now that <a for=Element>custom</a> <a for=/>elements</a> do
   not get <var>parent</var> passed. This might change in the future if there is a need.
 
+ <li><p>If <var>node</var> is an <a for=/>element</a> and <var>isParentConnected</var> is true,
+ then for each <var>attribute</var> of <var>node</var>'s <a for=Element>attribute list</a> that is
+ <a for=Attr>custom</a>: <a>enqueue a custom attribute callback reaction</a> with
+ <var>attribute</var>, callback name "<code>disconnectedCallback</code>", and « ».
+
  <li>
   <p>For each <a>shadow-including descendant</a> <var>descendant</var> of <var>node</var>, in
   <a>shadow-including tree order</a>:
@@ -3378,6 +3427,12 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
    <li><p>If <var>descendant</var> is <a for=Element>custom</a> and <var>isParentConnected</var>
    is true, then <a>enqueue a custom element callback reaction</a> with <var>descendant</var>,
    callback name "<code>disconnectedCallback</code>", and « ».
+
+   <li><p>If <var>descendant</var> is an <a for=/>element</a> and <var>isParentConnected</var> is
+   true, then for each <var>attribute</var> of <var>descendant</var>'s
+   <a for=Element>attribute list</a> that is <a for=Attr>custom</a>:
+   <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+   "<code>disconnectedCallback</code>", and « ».
   </ol>
  </li>
 
@@ -3430,6 +3485,7 @@ method steps are to return the result of <a>getting an element by ID</a> given <
 <pre class=idl>
 interface mixin DocumentOrShadowRoot {
   readonly attribute CustomElementRegistry? customElementRegistry;
+  readonly attribute CustomAttributeRegistry? customAttributeRegistry;
 };
 Document includes DocumentOrShadowRoot;
 ShadowRoot includes DocumentOrShadowRoot;
@@ -3439,6 +3495,10 @@ ShadowRoot includes DocumentOrShadowRoot;
  <dt><code><var>registry</var> = <var>documentOrShadowRoot</var> . {{DocumentOrShadowRoot/customElementRegistry}}</code>
  <dd><p>Returns <var>documentOrShadowRoot</var>'s {{CustomElementRegistry}} object, if any;
  otherwise null.
+
+ <dt><code><var>registry</var> = <var>documentOrShadowRoot</var> . {{DocumentOrShadowRoot/customAttributeRegistry}}</code>
+ <dd><p>Returns the {{CustomAttributeRegistry}} object used by attributes within
+ <var>documentOrShadowRoot</var>, if any; otherwise null.
 </dl>
 
 <div algorithm>
@@ -3452,6 +3512,20 @@ are:
  <li><p><a for=/>Assert</a>: <a>this</a> is a {{ShadowRoot}} <a for=/>node</a>.
 
  <li><p>Return <a>this</a>'s <a for=ShadowRoot>custom element registry</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=DocumentOrShadowRoot><code>customAttributeRegistry</code></dfn> getter
+steps are:
+
+<ol>
+ <li><p>If <a>this</a> is a <a for=/>document</a>, then return <a>this</a>'s
+ <a for=Document>custom attribute registry</a>.
+
+ <li><p><a for=/>Assert</a>: <a>this</a> is a {{ShadowRoot}} <a for=/>node</a>.
+
+ <li><p>Return <a>this</a>'s <a for=ShadowRoot>custom attribute registry</a>.
 </ol>
 </div>
 
@@ -5046,16 +5120,17 @@ and <{template}>. SVG ought to do the same for its <{script}> elements, but does
 and an optional <a for=/>document</a> <dfn export for="clone a node"><var>document</var></dfn>
 (default <var>node</var>'s <a for=Node>node document</a>), boolean
 <dfn export for="clone a node"><var>subtree</var></dfn> (default false), <a for=/>node</a>-or-null
-<dfn export for="clone a node"><var>parent</var></dfn> (default null), and null or a
+<dfn export for="clone a node"><var>parent</var></dfn> (default null), null or a
 {{CustomElementRegistry}} object <dfn export for="clone a node"><var>fallbackRegistry</var></dfn>
-(default null):
+(default null), and null or a {{CustomAttributeRegistry}} object
+<dfn export for="clone a node"><var>fallbackAttributeRegistry</var></dfn> (default null):
 
 <ol>
  <li><p><a for=/>Assert</a>: <var>node</var> is not a <a for=/>document</a> or <var>node</var> is
  <var>document</var>.
 
  <li><p>Let <var>copy</var> be the result of <a>cloning a single node</a> given <var>node</var>,
- <var>document</var>, and <var>fallbackRegistry</var>.
+ <var>document</var>, <var>fallbackRegistry</var>, and <var>fallbackAttributeRegistry</var>.
 
  <li><p>Run any <a>cloning steps</a> defined for <var>node</var> in
  <a>other applicable specifications</a> and pass <var>node</var>, <var>copy</var>, and
@@ -5068,8 +5143,10 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
  <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
  <a for="clone a node"><i>document</i></a> set to <var>document</var>,
  <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
- <a for="clone a node"><i>parent</i></a> set to <var>copy</var>, and
- <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>.
+ <a for="clone a node"><i>parent</i></a> set to <var>copy</var>,
+ <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>, and
+ <a for="clone a node"><i>fallbackAttributeRegistry</i></a> set to
+ <var>fallbackAttributeRegistry</var>.
 
  <li>
   <p>If <var>node</var> is an <a for=/>element</a>, <var>node</var> is a
@@ -5086,12 +5163,21 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <var>shadowRootRegistry</var> to <var>document</var>'s
    <a for=Document>custom element registry</a>'s <a>effective global custom element registry</a>.
 
+   <li><p>Let <var>shadowRootAttributeRegistry</var> be <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>custom attribute registry</a>.
+
+   <li><p>If <var>shadowRootAttributeRegistry</var>
+   <a>is a global custom attribute registry</a>, then set
+   <var>shadowRootAttributeRegistry</var> to <var>document</var>'s
+   <a for=Document>custom attribute registry</a>'s
+   <a>effective global custom attribute registry</a>.
+
    <li><p><a>Attach a shadow root</a> with <var>copy</var>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>mode</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>delegates focus</a>, <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>serializable</a>, <var>node</var>'s
-   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, true, and
-   <var>shadowRootRegistry</var>.
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>slot assignment</a>, true,
+   <var>shadowRootRegistry</var>, and <var>shadowRootAttributeRegistry</var>.
 
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>
    to <var>node</var>'s <a for=Element>shadow root</a>'s <a for=ShadowRoot>declarative</a>.
@@ -5099,6 +5185,10 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s
    <a for=ShadowRoot>keep custom element registry null</a> to <var>node</var>'s
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>keep custom element registry null</a>.
+
+   <li><p>Set <var>copy</var>'s <a for=Element>shadow root</a>'s
+   <a for=ShadowRoot>keep custom attribute registry null</a> to <var>node</var>'s
+   <a for=Element>shadow root</a>'s <a for=ShadowRoot>keep custom attribute registry null</a>.
 
    <li>
     <p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
@@ -5108,7 +5198,8 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
     <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>.
 
     <p class="note">This intentionally does not pass the
-    <a for="clone a node"><i>fallbackRegistry</i></a> argument.
+    <a for="clone a node"><i>fallbackRegistry</i></a> and
+    <a for="clone a node"><i>fallbackAttributeRegistry</i></a> arguments.
   </ol>
 
  <li><p>Return <var>copy</var>.
@@ -5117,8 +5208,9 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 
 <div algorithm>
 <p>To <dfn>clone a single node</dfn> given a <a for=/>node</a> <var>node</var>,
-<a for=/>document</a> <var>document</var>, and null or a {{CustomElementRegistry}} object
-<var>fallbackRegistry</var>:
+<a for=/>document</a> <var>document</var>, null or a {{CustomElementRegistry}} object
+<var>fallbackRegistry</var>, and null or a {{CustomAttributeRegistry}} object
+<var>fallbackAttributeRegistry</var>:
 
 <ol>
  <li><p>Let <var>copy</var> be null.
@@ -5136,10 +5228,22 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <var>registry</var> to <var>document</var>'s <a for=Document>custom element registry</a>'s
    <a>effective global custom element registry</a>.
 
+   <li><p>Let <var>attributeRegistry</var> be <var>node</var>'s
+   <a for=Element>custom attribute registry</a>.
+
+   <li><p>If <var>attributeRegistry</var> is null, then set <var>attributeRegistry</var> to
+   <var>fallbackAttributeRegistry</var>.
+
+   <li><p>If <var>attributeRegistry</var> <a>is a global custom attribute registry</a>, then set
+   <var>attributeRegistry</var> to <var>document</var>'s
+   <a for=Document>custom attribute registry</a>'s
+   <a>effective global custom attribute registry</a>.
+
    <li><p>Set <var>copy</var> to the result of <a>creating an element</a>, given
    <var>document</var>, <var>node</var>'s <a for=Element>local name</a>, <var>node</var>'s
    <a for=Element>namespace</a>, <var>node</var>'s <a for=Element>namespace prefix</a>,
-   <var>node</var>'s <a><code>is</code> value</a>, false, and <var>registry</var>.
+   <var>node</var>'s <a><code>is</code> value</a>, false, <var>registry</var>, and
+   <var>attributeRegistry</var>.
 
    <li>
     <p><a for=list>For each</a> <var>attribute</var> of <var>node</var>'s
@@ -5147,7 +5251,7 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
 
     <ol>
      <li><p>Let <var>copyAttribute</var> be the result of <a>cloning a single node</a> given
-     <var>attribute</var>, <var>document</var>, and null.
+     <var>attribute</var>, <var>document</var>, null, and null.
 
      <li><p><a lt="append an attribute">Append</a> <var>copyAttribute</var> to <var>copy</var>.
     </ol>
@@ -5180,6 +5284,11 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
      <a for=CustomElementRegistry>is scoped</a> is true, then set <var>copy</var>'s
      <a for=Document>custom element registry</a> to <var>node</var>'s
      <a for=Document>custom element registry</a>.
+
+     <li><p>If <var>node</var>'s <a for=Document>custom attribute registry</a> is non-null and its
+     <a for=CustomAttributeRegistry>is scoped</a> is true, then set <var>copy</var>'s
+     <a for=Document>custom attribute registry</a> to <var>node</var>'s
+     <a for=Document>custom attribute registry</a>.
     </ol>
 
    <dt>{{DocumentType}}
@@ -5702,8 +5811,8 @@ interface Document : Node {
   [CEReactions, NewObject] Node importNode(Node node, optional (boolean or ImportNodeOptions) options = false);
   [CEReactions] Node adoptNode(Node node);
 
-  [NewObject] Attr createAttribute(DOMString localName);
-  [NewObject] Attr createAttributeNS(DOMString? namespace, DOMString qualifiedName);
+  [CEReactions, NewObject] Attr createAttribute(DOMString localName, optional AttributeCreationOptions options = {});
+  [CEReactions, NewObject] Attr createAttributeNS(DOMString? namespace, DOMString qualifiedName, optional AttributeCreationOptions options = {});
 
   [NewObject] Event createEvent(DOMString interface); // legacy
 
@@ -5719,12 +5828,18 @@ interface XMLDocument : Document {};
 
 dictionary ElementCreationOptions {
   CustomElementRegistry? customElementRegistry;
+  CustomAttributeRegistry? customAttributeRegistry;
   DOMString is;
 };
 
 dictionary ImportNodeOptions {
   CustomElementRegistry customElementRegistry;
+  CustomAttributeRegistry customAttributeRegistry;
   boolean selfOnly = false;
+};
+
+dictionary AttributeCreationOptions {
+  CustomAttributeRegistry? customAttributeRegistry;
 };
 </pre>
 
@@ -5740,8 +5855,9 @@ known as <dfn export id=concept-document lt="document">documents</dfn>.
 <dfn export for=Document id=concept-document-origin>origin</dfn> (an <a for=/>origin</a>),
 <dfn export for=Document id=concept-document-type>type</dfn> ("<code>xml</code>" or "<code>html</code>"),
 <dfn export for=Document id=concept-document-mode>mode</dfn> ("<code>no-quirks</code>", "<code>quirks</code>", or "<code>limited-quirks</code>"),
-<dfn export for=Document>allow declarative shadow roots</dfn> (a boolean), and
-<dfn export for=Document>custom element registry</dfn> (null or a {{CustomElementRegistry}} object).
+<dfn export for=Document>allow declarative shadow roots</dfn> (a boolean),
+<dfn export for=Document>custom element registry</dfn> (null or a {{CustomElementRegistry}} object), and
+<dfn export for=Document>custom attribute registry</dfn> (null or a {{CustomAttributeRegistry}} object).
 [[!ENCODING]]
 [[!URL]]
 [[!HTML]]
@@ -5751,8 +5867,9 @@ known as <dfn export id=concept-document lt="document">documents</dfn>.
 "<code>application/xml</code>", <a for=Document>URL</a> is "<code>about:blank</code>",
 <a for=Document>origin</a> is an <a>opaque origin</a>,
 <a for=Document>type</a> is "<code>xml</code>", <a for=Document>mode</a> is
-"<code>no-quirks</code>", <a for=Document>allow declarative shadow roots</a> is false, and
-<a for=Document>custom element registry</a> is null.
+"<code>no-quirks</code>", <a for=Document>allow declarative shadow roots</a> is false,
+<a for=Document>custom element registry</a> is null, and
+<a for=Document>custom attribute registry</a> is null.
 
 <p>A <a for=/>document</a> is said to be an <dfn export>XML document</dfn> if its
 <a for=Document>type</a> is "<code>xml</code>"; otherwise an <dfn export>HTML document</dfn>.
@@ -5976,6 +6093,9 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customElementRegistry}} can be
   used to set the {{CustomElementRegistry}}.
 
+  <p>When supplied, <var>options</var>'s {{ElementCreationOptions/customAttributeRegistry}} can be
+  used to set the {{CustomAttributeRegistry}}.
+
   <p>When supplied, <var>options</var>'s {{ElementCreationOptions/is}} can be used to create a
   <a>customized built-in element</a>.
 
@@ -6071,7 +6191,7 @@ method steps are:
  <li><p>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
- <li><p>Let <var>registry</var> and <var>is</var> be the result of
+ <li><p>Let <var>registry</var>, <var>is</var>, and <var>attributeRegistry</var> be the result of
  <a>flattening element creation options</a> given <var>options</var> and <a>this</a>.
 
  <li><p>Let <var>namespace</var> be the <a>HTML namespace</a>, if <a>this</a> is an
@@ -6079,7 +6199,8 @@ method steps are:
  "<code>application/xhtml+xml</code>"; otherwise null.
 
  <li><p>Return the result of <a>creating an element</a> given <a>this</a>, <var>localName</var>,
- <var>namespace</var>, null, <var>is</var>, true, and <var>registry</var>.
+ <var>namespace</var>, null, <var>is</var>, true, <var>registry</var>, and
+ <var>attributeRegistry</var>.
 </ol>
 </div>
 
@@ -6092,12 +6213,12 @@ method steps are:
  [=validate and extract|validating and extracting=] <var>namespace</var> and
  <var>qualifiedName</var> given "<code>element</code>".
 
- <li><p>Let <var>registry</var> and <var>is</var> be the result of
+ <li><p>Let <var>registry</var>, <var>is</var>, and <var>attributeRegistry</var> be the result of
  <a>flattening element creation options</a> given <var>options</var> and <a>this</a>.
 
  <li><p>Return the result of <a>creating an element</a> given <var>document</var>,
- <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, true, and
- <var>registry</var>.
+ <var>localName</var>, <var>namespace</var>, <var>prefix</var>, <var>is</var>, true,
+ <var>registry</var>, and <var>attributeRegistry</var>.
 </ol>
 </div>
 
@@ -6118,6 +6239,9 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
  given <var>document</var>.
 
  <li><p>Let <var>is</var> be null.
+
+ <li><p>Let <var>attributeRegistry</var> be the result of
+ <a>looking up a custom attribute registry</a> given <var>document</var>.
 
  <li>
   <p>If <var>options</var> is a dictionary:
@@ -6142,9 +6266,18 @@ dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
    <a for=CustomElementRegistry>is scoped</a> is false, and <var>registry</var> is not
    <var>document</var>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
    "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+   <li><p>If <var>options</var>["{{ElementCreationOptions/customAttributeRegistry}}"]
+   <a for=map>exists</a>, then set <var>attributeRegistry</var> to
+   <var>options</var>["{{ElementCreationOptions/customAttributeRegistry}}"].
+
+   <li><p>If <var>attributeRegistry</var> is non-null, <var>attributeRegistry</var>'s
+   <a for=CustomAttributeRegistry>is scoped</a> is false, and <var>attributeRegistry</var> is not
+   <var>document</var>'s <a for=Document>custom attribute registry</a>, then <a>throw</a> a
+   "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
 
- <li><p>Return <var>registry</var> and <var>is</var>.
+ <li><p>Return <var>registry</var>, <var>is</var>, and <var>attributeRegistry</var>.
 </ol>
 
 <p class=note>{{Document/createElement()}} and {{Document/createElementNS()}}'s <var>options</var>
@@ -6191,6 +6324,9 @@ method steps are to return the result of <a>creating a processing instruction no
   <p><var>options</var>'s {{ImportNodeOptions/customElementRegistry}} can be used to set the
   {{CustomElementRegistry}} of elements that have none.
 
+  <p><var>options</var>'s {{ImportNodeOptions/customAttributeRegistry}} can be used to set the
+  {{CustomAttributeRegistry}} of elements that have none.
+
   <p>If <var>node</var> is a <a for=/>document</a> or a <a for=/>shadow root</a>, throws a
   "{{NotSupportedError!!exception}}" {{DOMException}}.
 
@@ -6215,6 +6351,8 @@ method steps are:
 
  <li><p>Let <var>registry</var> be null.
 
+ <li><p>Let <var>attributeRegistry</var> be null.
+
  <li><p>If <var>options</var> is a boolean, then set <var>subtree</var> to <var>options</var>.
 
  <li>
@@ -6230,15 +6368,27 @@ method steps are:
    <li><p>If <var>registry</var>'s <a for=CustomElementRegistry>is scoped</a> is false and
    <var>registry</var> is not <a>this</a>'s <a for=Document>custom element registry</a>, then
    <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+   <li><p>If <var>options</var>["{{ImportNodeOptions/customAttributeRegistry}}"]
+   <a for=map>exists</a>, then set <var>attributeRegistry</var> to it.
+
+   <li><p>If <var>attributeRegistry</var> is non-null, <var>attributeRegistry</var>'s
+   <a for=CustomAttributeRegistry>is scoped</a> is false, and <var>attributeRegistry</var> is not
+   <a>this</a>'s <a for=Document>custom attribute registry</a>, then <a>throw</a> a
+   "{{NotSupportedError!!exception}}" {{DOMException}}.
   </ol>
 
  <li><p>If <var>registry</var> is null, then set <var>registry</var> to the result of
  <a for=/>looking up a custom element registry</a> given <a>this</a>.
 
+ <li><p>If <var>attributeRegistry</var> is null, then set <var>attributeRegistry</var> to the
+ result of <a>looking up a custom attribute registry</a> given <a>this</a>.
+
  <li><p>Return the result of <a>cloning a node</a> given <var>node</var> with
  <a for="clone a node"><i>document</i></a> set to <a>this</a>,
- <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>, and
- <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>registry</var>.
+ <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
+ <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>registry</var>, and
+ <a for="clone a node"><i>fallbackAttributeRegistry</i></a> set to <var>attributeRegistry</var>.
 </ol>
 </div>
 
@@ -6259,6 +6409,9 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then <a for=/>remove</a>
  <var>node</var>.
 
+ <li><p>If <var>node</var> is an <a>attribute</a> and <var>node</var>'s <a for=Attr>element</a> is
+ non-null, then <a lt="remove an attribute">remove</a> <var>node</var>.
+
  <li>
   <p>If <var>document</var> is not <var>oldDocument</var>, then for each
   <var>inclusiveDescendant</var> of <var>node</var>'s <a>shadow-including inclusive descendants</a>,
@@ -6268,21 +6421,41 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
    <li><p>Set <var>inclusiveDescendant</var>'s <a for=Node>node document</a> to <var>document</var>.
 
    <li>
-    <p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a> and if any of the following
-    are true:
+    <p>If <var>inclusiveDescendant</var> is a <a for=/>shadow root</a>:
 
-    <ul>
-     <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is null
-     and <var>inclusiveDescendant</var>'s <a for=ShadowRoot>keep custom element registry null</a> is
-     false; or
+    <ol>
+     <li>
+      <p>If any of the following are true:
 
-     <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
-     <a>is a global custom element registry</a>,
-    </ul>
+      <ul>
+       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> is
+       null and <var>inclusiveDescendant</var>'s
+       <a for=ShadowRoot>keep custom element registry null</a> is false; or
 
-    <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
-    <var>document</var>'s <a for=Document>custom element registry</a>'s
-    <a>effective global custom element registry</a>.
+       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a>
+       <a>is a global custom element registry</a>,
+      </ul>
+
+      <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom element registry</a> to
+      <var>document</var>'s <a for=Document>custom element registry</a>'s
+      <a>effective global custom element registry</a>.
+
+     <li>
+      <p>If any of the following are true:
+
+      <ul>
+       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a> is
+       null and <var>inclusiveDescendant</var>'s
+       <a for=ShadowRoot>keep custom attribute registry null</a> is false; or
+
+       <li><p><var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a>
+       <a>is a global custom attribute registry</a>,
+      </ul>
+
+      <p>then set <var>inclusiveDescendant</var>'s <a for=ShadowRoot>custom attribute registry</a>
+      to <var>document</var>'s <a for=Document>custom attribute registry</a>'s
+      <a>effective global custom attribute registry</a>.
+    </ol>
 
    <li>
     <p>Otherwise, if <var>inclusiveDescendant</var> is an <a for=/>element</a>:
@@ -6313,11 +6486,43 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
        <var>registry</var>'s <a>effective global custom element registry</a>.
       </ol>
 
+     <li>
+      <p>If <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a> is null
+      or <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a>'s
+      <a for=CustomAttributeRegistry>is scoped</a> is false:
+
+      <ol>
+       <li><p>Let <var>attributeRegistry</var> be null.
+
+       <li><p>If <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a> is
+       non-null, <var>inclusiveDescendant</var>'s <a for=tree>parent</a> is null, or
+       <var>inclusiveDescendant</var>'s <a for=tree>parent</a> is an
+       <a>exclusive <code>DocumentFragment</code> node</a>, then set <var>attributeRegistry</var>
+       to <var>document</var>'s <a for=Document>custom attribute registry</a>.
+
+       <li><p>Otherwise, set <var>attributeRegistry</var> to the result of
+       <a>looking up a custom attribute registry</a> given <var>inclusiveDescendant</var>'s
+       <a for=tree>parent</a>.
+
+       <li><p>Set <var>inclusiveDescendant</var>'s <a for=Element>custom attribute registry</a> to
+       <var>attributeRegistry</var>'s <a>effective global custom attribute registry</a>.
+      </ol>
+
      <li><p>If <var>inclusiveDescendant</var> is <a for=Element>custom</a>, then
      <a>enqueue a custom element callback reaction</a> with <var>inclusiveDescendant</var>, callback
      name "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>document</var> ».
      <!-- attributeChangedCallback is also old, then new -->
+
+     <li><p>For each <var>attribute</var> of <var>inclusiveDescendant</var>'s
+     <a for=Element>attribute list</a> that is <a for=Attr>custom</a>:
+     <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+     "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>document</var> ».
     </ol>
+
+   <li><p>Otherwise, if <var>inclusiveDescendant</var> is an <a>attribute</a> that is
+   <a for=Attr>custom</a>, then <a>enqueue a custom attribute callback reaction</a> with
+   <var>inclusiveDescendant</var>, callback name "<code>adoptedCallback</code>", and
+   « <var>oldDocument</var>, <var>document</var> ».
 
    <li><p>Run the <a>adopting steps</a> with <var>inclusiveDescendant</var> and
    <var>oldDocument</var>.
@@ -6357,10 +6562,43 @@ algorithm is passed <var ignore>node</var> and <var ignore>oldDocument</var>, as
  <li><p>Return null.
 </ol>
 
+<p>Null or a {{CustomAttributeRegistry}} object <var>registry</var>
+<dfn export>is a global custom attribute registry</dfn> if <var>registry</var> is non-null and
+<var>registry</var>'s <a for=CustomAttributeRegistry>is scoped</a> is false.
+
+<p>Null or a {{CustomAttributeRegistry}} object <var>registry</var>'s
+<dfn export>effective global custom attribute registry</dfn> is:
+
+<ol>
+ <li><p>If <var>registry</var> <a>is a global custom attribute registry</a>, then return
+ <var>registry</var>.
+
+ <li><p>Return null.
+</ol>
+
+<div algorithm>
+<p>To <dfn export>look up a custom attribute registry</dfn>, given a {{Node}} object
+<var>node</var>:
+
+<ol>
+ <li><p>If <var>node</var> is an {{Element}} object, then return <var>node</var>'s
+ <a for=Element>custom attribute registry</a>.
+
+ <li><p>If <var>node</var> is a {{ShadowRoot}} object, then return <var>node</var>'s
+ <a for=ShadowRoot>custom attribute registry</a>.
+
+ <li><p>If <var>node</var> is a {{Document}} object, then return <var>node</var>'s
+ <a for=Document>custom attribute registry</a>.
+
+ <li><p>Return null.
+</ol>
+</div>
+
 <hr>
 
-<p>The <dfn method for=Document><code>createAttribute(<var>localName</var>)</code></dfn> method
-steps are:
+<p>The
+<dfn method for=Document><code>createAttribute(<var>localName</var>, <var>options</var>)</code></dfn>
+method steps are:
 
 <ol>
  <li><p>If <var>localName</var> is not a <a>valid attribute local name</a>, then
@@ -6369,11 +6607,28 @@ steps are:
  <li>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
  <var>localName</var> in <a>ASCII lowercase</a>.
 
- <li><p>Return the result of <a>creating an attribute</a> given <a>this</a> and <var>localName</var>.
+ <li><p>Let <var>registry</var> be the result of <a>flattening attribute creation options</a>
+ given <var>options</var> and <a>this</a>.
+
+ <li><p>Let <var>attribute</var> be the result of <a>creating an attribute</a> given <a>this</a> and
+ <var>localName</var>.
+
+ <li><p>Let <var>definition</var> be the result of <a>looking up a custom attribute definition</a>
+ given <var>registry</var>, null, and <var>localName</var>.
+
+ <li>
+  <p>If <var>definition</var> is non-null, then <a>construct a custom attribute</a> given
+  <var>attribute</var>, <var>definition</var>, and <var>registry</var>.
+
+  <p class=note>This runs the <a>custom attribute constructor</a> synchronously. If it throws, the
+  exception is reported and <var>attribute</var> is returned with its
+  <a for=Attr>custom attribute state</a> set to "<code>failed</code>".
+
+ <li><p>Return <var>attribute</var>.
 </ol>
 
 <p>The
-<dfn method for=Document><code>createAttributeNS(<var>namespace</var>, <var>qualifiedName</var>)</code></dfn>
+<dfn method for=Document><code>createAttributeNS(<var>namespace</var>, <var>qualifiedName</var>, <var>options</var>)</code></dfn>
 method steps are:
 
 <ol>
@@ -6381,9 +6636,52 @@ method steps are:
  [=validate and extract|validating and extracting=] <var>namespace</var> and
  <var>qualifiedName</var> given "<code>attribute</code>".
 
- <li><p>Return the result of <a>creating an attribute</a> given <a>this</a>, <var>localName</var>,
- <var>namespace</var>, and <var>prefix</var>.
+ <li><p>Let <var>registry</var> be the result of <a>flattening attribute creation options</a>
+ given <var>options</var> and <a>this</a>.
+
+ <li><p>Let <var>attribute</var> be the result of <a>creating an attribute</a> given <a>this</a>,
+ <var>localName</var>, <var>namespace</var>, and <var>prefix</var>.
+
+ <li>
+  <p>If <var>namespace</var> is null:
+
+  <ol>
+   <li><p>Let <var>definition</var> be the result of
+   <a>looking up a custom attribute definition</a> given <var>registry</var>, null, and
+   <var>localName</var>.
+
+   <li><p>If <var>definition</var> is non-null, then <a>construct a custom attribute</a> given
+   <var>attribute</var>, <var>definition</var>, and <var>registry</var>.
+  </ol>
+
+  <p class=note>As with {{Document/createAttribute()}}, this runs the
+  <a>custom attribute constructor</a> synchronously; if it throws, the exception is reported and
+  <var>attribute</var> is returned with its <a for=Attr>custom attribute state</a> set to
+  "<code>failed</code>". Attributes in a non-null namespace are never constructed.
+
+ <li><p>Return <var>attribute</var>.
 </ol>
+
+<div algorithm>
+<p>To <dfn>flatten attribute creation options</dfn>, given an {{AttributeCreationOptions}}
+dictionary <var>options</var> and a <a for=/>document</a> <var>document</var>:
+
+<ol>
+ <li><p>Let <var>registry</var> be <var>document</var>'s
+ <a for=Document>custom attribute registry</a>.
+
+ <li><p>If <var>options</var>["{{AttributeCreationOptions/customAttributeRegistry}}"]
+ <a for=map>exists</a>, then set <var>registry</var> to
+ <var>options</var>["{{AttributeCreationOptions/customAttributeRegistry}}"].
+
+ <li><p>If <var>registry</var> is non-null, <var>registry</var>'s
+ <a for=CustomAttributeRegistry>is scoped</a> is false, and <var>registry</var> is not
+ <var>document</var>'s <a for=Document>custom attribute registry</a>, then <a>throw</a> a
+ "{{NotSupportedError!!exception}}" {{DOMException}}.
+
+ <li><p>Return <var>registry</var>.
+</ol>
+</div>
 
 <hr>
 
@@ -6798,11 +7096,22 @@ It is initially set to false.
 <p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom element registry</dfn>
 (null or a {{CustomElementRegistry}} object). It is initially null.
 
+<p><a for=/>Shadow roots</a> have an associated <dfn for=ShadowRoot>custom attribute registry</dfn>
+(null or a {{CustomAttributeRegistry}} object). It is initially null.
+
 <p><a for=/>Shadow roots</a> have an associated
 <dfn for=ShadowRoot>keep custom element registry null</dfn> (a boolean). It is initially false.
 
 <p class=note>This can only ever be true in combination with declarative shadow roots. And it only
 matters for as long as the <a for=/>shadow root</a>'s <a for=ShadowRoot>custom element registry</a>
+is null.
+
+<p><a for=/>Shadow roots</a> have an associated
+<dfn export for=ShadowRoot>keep custom attribute registry null</dfn> (a boolean). It is initially
+false.
+
+<p class=note>This can only ever be true in combination with declarative shadow roots. And it only
+matters for as long as the <a for=/>shadow root</a>'s <a for=ShadowRoot>custom attribute registry</a>
 is null.
 
 <hr>
@@ -6948,6 +7257,7 @@ interface Element : Node {
   readonly attribute ShadowRoot? shadowRoot;
 
   readonly attribute CustomElementRegistry? customElementRegistry;
+  readonly attribute CustomAttributeRegistry? customAttributeRegistry;
 
   Element? closest(DOMString selectors);
   boolean matches(DOMString selectors);
@@ -6968,12 +7278,14 @@ dictionary ShadowRootInit {
   SlotAssignmentMode slotAssignment = "named";
   boolean clonable = false;
   CustomElementRegistry? customElementRegistry;
+  CustomAttributeRegistry? customAttributeRegistry;
 };
 </pre>
 
 <p class=note>{{ShadowRootInit}} somewhat unusually allows both <code>undefined</code> and
-<code>null</code> to be passed to its {{ShadowRootInit/customElementRegistry}} member to allow web
-developers to pass a {{ShadowRoot}} node instead of a dictionary to {{Element/attachShadow()}}.
+<code>null</code> to be passed to its {{ShadowRootInit/customElementRegistry}} and
+{{ShadowRootInit/customAttributeRegistry}} members to allow web developers to pass a
+{{ShadowRoot}} node instead of a dictionary to {{Element/attachShadow()}}.
 
 <p>{{Element}} <a for=/>nodes</a> are simply known as
 <dfn export id=concept-element lt=element>elements</dfn>.
@@ -6992,6 +7304,9 @@ developers to pass a {{ShadowRoot}} node instead of a dictionary to {{Element/at
 
  <dt><dfn export for=Element>custom element registry</dfn>
  <dd>Null or a {{CustomElementRegistry}} object.
+
+ <dt><dfn export for=Element>custom attribute registry</dfn>
+ <dd>Null or a {{CustomAttributeRegistry}} object.
 
  <dt><dfn export id=concept-element-custom-element-state for=Element>custom element state</dfn>
  <dd>"<code>undefined</code>", "<code>failed</code>", "<code>uncustomized</code>",
@@ -7085,14 +7400,20 @@ value of these steps:
 <p>To <dfn export id=concept-create-element>create an element</dfn>, given a <a for=/>document</a>
 <var>document</var>, string <var>localName</var>, string-or-null <var>namespace</var>, and
 optionally a string-or-null <var>prefix</var> (default null), string-or-null <var>is</var> (default
-null), boolean <var>synchronousCustomElements</var> (default false), and "<code>default</code>",
-null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>default</code>"):
+null), boolean <var>synchronousCustomElements</var> (default false), "<code>default</code>",
+null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>default</code>"),
+and "<code>default</code>", null, or a {{CustomAttributeRegistry}} object
+<var>attributeRegistry</var> (default "<code>default</code>"):
 
 <ol>
  <li><p>Let <var>result</var> be null.
 
  <li><p>If <var>registry</var> is "<code>default</code>", then set <var>registry</var> to the result
  of <a for=/>looking up a custom element registry</a> given <var>document</var>.
+
+ <li><p>If <var>attributeRegistry</var> is "<code>default</code>", then set
+ <var>attributeRegistry</var> to the result of <a>looking up a custom attribute registry</a> given
+ <var>document</var>.
 
  <li><p>Let <var>definition</var> be the result of
  <a for=/>looking up a custom element definition</a> given <var>registry</var>,
@@ -7275,6 +7596,9 @@ null, or a {{CustomElementRegistry}} object <var>registry</var> (default "<code>
   </ol>
  </li>
 
+ <li><p>Set <var>result</var>'s <a for=Element>custom attribute registry</a> to
+ <var>attributeRegistry</var>.
+
  <li><p>Return <var>result</var>.
 </ol>
 </div>
@@ -7346,6 +7670,10 @@ null or a {{CustomElementRegistry}} object <var>registry</var>:
 
  <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>attribute</var>'s
  <a for=Attr>element</a>, <var>oldValue</var>, and <var>value</var>.
+
+ <li><p>If <var>attribute</var> is <a for=Attr>custom</a>, then
+ <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+ "<code>attributeChangedCallback</code>", and « <var>oldValue</var>, <var>value</var> ».
 </ol>
 </div>
 
@@ -7359,11 +7687,40 @@ null or a {{CustomElementRegistry}} object <var>registry</var>:
 
  <li><p>Set <var>attribute</var>'s <a for=Attr>element</a> to <var>element</var>.
 
+ <li><p>Let <var>oldDocument</var> be <var>attribute</var>'s <a for=Node>node document</a>.
+
  <li><p>Set <var>attribute</var>'s <a for=Node>node document</a> to <var>element</var>'s
  <a for=Node>node document</a>.
 
+ <li><p>If <var>attribute</var> is <a for=Attr>custom</a> and <var>oldDocument</var> is not
+ <var>element</var>'s <a for=Node>node document</a>, then
+ <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+ "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>element</var>'s
+ <a for=Node>node document</a> ».
+
  <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>element</var>, null, and
  <var>attribute</var>'s <a for=Attr>value</a>.
+
+ <li>
+  <p>If <var>attribute</var> is <a for=Attr>custom</a>:
+
+  <ol>
+   <li><p><a>Enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback
+   name "<code>attributeChangedCallback</code>", and « null, <var>attribute</var>'s
+   <a for=Attr>value</a> ».
+
+   <li><p>If <var>element</var> is <a>connected</a>, then
+   <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+   "<code>connectedCallback</code>", and « ».
+  </ol>
+
+ <li>
+  <p>Otherwise, <a lt="try to upgrade an attribute">try to upgrade</a> <var>attribute</var>.
+
+  <p class=note>This happens regardless of whether <var>element</var> is <a>connected</a>. An
+  <a>attribute</a> for which no <a spec=html>custom attribute definition</a> can be found yet is
+  upgraded later, when <var>element</var> is <a for=/>inserted</a> into a <a for=/>document</a> or a
+  matching definition is registered while <var>element</var> is <a>connected</a>.
 </ol>
 </div>
 
@@ -7381,6 +7738,19 @@ null or a {{CustomElementRegistry}} object <var>registry</var>:
 
  <li><p><a>Handle attribute changes</a> for <var>attribute</var> with <var>element</var>,
  <var>attribute</var>'s <a for=Attr>value</a>, and null.
+
+ <li>
+  <p>If <var>attribute</var> is <a for=Attr>custom</a>:
+
+  <ol>
+   <li><p><a>Enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback
+   name "<code>attributeChangedCallback</code>", and « <var>attribute</var>'s
+   <a for=Attr>value</a>, null ».
+
+   <li><p>If <var>element</var> is <a>connected</a>, then
+   <a>enqueue a custom attribute callback reaction</a> with <var>attribute</var>, callback name
+   "<code>disconnectedCallback</code>", and « ».
+  </ol>
 </ol>
 </div>
 
@@ -7396,14 +7766,50 @@ null or a {{CustomElementRegistry}} object <var>registry</var>:
 
  <li><p>Set <var>newAttribute</var>'s <a for=Attr>element</a> to <var>element</var>.
 
+ <li><p>Let <var>oldDocument</var> be <var>newAttribute</var>'s <a for=Node>node document</a>.
+
  <li><p>Set <var>newAttribute</var>'s <a for=Node>node document</a> to <var>element</var>'s
  <a for=Node>node document</a>.
+
+ <li><p>If <var>newAttribute</var> is <a for=Attr>custom</a> and <var>oldDocument</var> is not
+ <var>element</var>'s <a for=Node>node document</a>, then
+ <a>enqueue a custom attribute callback reaction</a> with <var>newAttribute</var>, callback name
+ "<code>adoptedCallback</code>", and « <var>oldDocument</var>, <var>element</var>'s
+ <a for=Node>node document</a> ».
 
  <li><p>Set <var>oldAttribute</var>'s <a for=Attr>element</a> to null.
 
  <li><p><a>Handle attribute changes</a> for <var>oldAttribute</var> with <var>element</var>,
  <var>oldAttribute</var>'s <a for=Attr>value</a>, and <var>newAttribute</var>'s
  <a for=Attr>value</a>.
+
+ <li>
+  <p>If <var>oldAttribute</var> is <a for=Attr>custom</a>:
+
+  <ol>
+   <li><p><a>Enqueue a custom attribute callback reaction</a> with <var>oldAttribute</var>,
+   callback name "<code>attributeChangedCallback</code>", and « <var>oldAttribute</var>'s
+   <a for=Attr>value</a>, null ».
+
+   <li><p>If <var>element</var> is <a>connected</a>, then
+   <a>enqueue a custom attribute callback reaction</a> with <var>oldAttribute</var>, callback name
+   "<code>disconnectedCallback</code>", and « ».
+  </ol>
+
+ <li>
+  <p>If <var>newAttribute</var> is <a for=Attr>custom</a>:
+
+  <ol>
+   <li><p><a>Enqueue a custom attribute callback reaction</a> with <var>newAttribute</var>,
+   callback name "<code>attributeChangedCallback</code>", and « null, <var>newAttribute</var>'s
+   <a for=Attr>value</a> ».
+
+   <li><p>If <var>element</var> is <a>connected</a>, then
+   <a>enqueue a custom attribute callback reaction</a> with <var>newAttribute</var>, callback name
+   "<code>connectedCallback</code>", and « ».
+  </ol>
+
+ <li><p>Otherwise, <a lt="try to upgrade an attribute">try to upgrade</a> <var>newAttribute</var>.
 </ol>
 </div>
 
@@ -7459,6 +7865,10 @@ string <var>namespace</var> (default null):
 <a for=/>attribute</a> <var>attr</var> and an <a for=/>element</a> <var>element</var>:
 
 <ol>
+ <li><p>If <var>attr</var>'s <a for=Attr>custom attribute definition</a> is non-null and
+ <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>, then
+ <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+
  <li><p>Let <var>verifiedValue</var> be the result of calling
  <a>get trusted type compliant attribute value</a> with <var>attr</var>'s
  <a for=Attr>local name</a>, <var>attr</var>'s <a for=Attr>namespace</a>, <var>element</var>, and
@@ -7983,12 +8393,24 @@ are:
  <a>node document</a>'s <a for=Document>custom element registry</a>, then <a>throw</a> a
  "{{NotSupportedError!!exception}}" {{DOMException}}.
 
+ <li><p>Let <var>attributeRegistry</var> be <a>this</a>'s <a>node document</a>'s
+ <a for=Document>custom attribute registry</a>.
+
+ <li><p>If <var>init</var>["{{ShadowRootInit/customAttributeRegistry}}"] <a for=map>exists</a>,
+ then set <var>attributeRegistry</var> to it.
+
+ <li><p>If <var>attributeRegistry</var> is non-null, <var>attributeRegistry</var>'s
+ <a for=CustomAttributeRegistry>is scoped</a> is false, and <var>attributeRegistry</var> is not
+ <a>this</a>'s <a>node document</a>'s <a for=Document>custom attribute registry</a>, then
+ <a>throw</a> a "{{NotSupportedError!!exception}}" {{DOMException}}.
+
  <li><p>Run <a>attach a shadow root</a> with <a>this</a>,
  <var>init</var>["{{ShadowRootInit/mode}}"],
  <var>init</var>["{{ShadowRootInit/delegatesFocus}}"],
  <var>init</var>["{{ShadowRootInit/serializable}}"],
  <var>init</var>["{{ShadowRootInit/slotAssignment}}"],
- <var>init</var>["{{ShadowRootInit/clonable}}"], and <var>registry</var>.
+ <var>init</var>["{{ShadowRootInit/clonable}}"], <var>registry</var>, and
+ <var>attributeRegistry</var>.
 
  <li><p>Return <a>this</a>'s <a for=Element>shadow root</a>.
 </ol>
@@ -7997,8 +8419,10 @@ are:
 <div algorithm>
 <p>To <dfn id=concept-attach-a-shadow-root>attach a shadow root</dfn>, given an <a for=/>element</a>
 <var>element</var>, a string <var>mode</var>, a boolean <var>delegatesFocus</var>, a boolean
-<var>serializable</var>, a string <var>slotAssignment</var>, a boolean <var>clonable</var>, and null
-or a {{CustomElementRegistry}} object <var>registry</var>:
+<var>serializable</var>, a string <var>slotAssignment</var>, a boolean <var>clonable</var>, null
+or a {{CustomElementRegistry}} object <var>registry</var>, and an optional
+"<code>default</code>", null, or {{CustomAttributeRegistry}} object <var>attributeRegistry</var>
+(default "<code>default</code>"):
 
 <ol>
  <li><p>If <var>element</var>'s <a for=Element>namespace</a> is not the <a>HTML namespace</a>,
@@ -8073,6 +8497,13 @@ or a {{CustomElementRegistry}} object <var>registry</var>:
  <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>custom element registry</a> to
  <var>registry</var>.
 
+ <li><p>If <var>attributeRegistry</var> is "<code>default</code>", then set
+ <var>attributeRegistry</var> to <var>element</var>'s <a for=Node>node document</a>'s
+ <a for=Document>custom attribute registry</a>.
+
+ <li><p>Set <var>shadow</var>'s <a for=ShadowRoot>custom attribute registry</a> to
+ <var>attributeRegistry</var>.
+
  <li><p>Set <var>element</var>'s <a for=Element>shadow root</a> to <var>shadow</var>.
 </ol>
 </div>
@@ -8100,6 +8531,16 @@ or a {{CustomElementRegistry}} object <var>registry</var>:
 <div algorithm>
 <p>The <dfn attribute for=Element><code>customElementRegistry</code></dfn> getter steps are to
 return <a>this</a>'s <a for=Element>custom element registry</a>.
+</div>
+
+<dl class=domintro>
+ <dt><code><var>registry</var> = <var>element</var> . {{Element/customAttributeRegistry}}</code>
+ <dd><p>Returns <var>element</var>'s {{CustomAttributeRegistry}} object, if any; otherwise null.
+</dl>
+
+<div algorithm>
+<p>The <dfn attribute for=Element><code>customAttributeRegistry</code></dfn> getter steps are to
+return <a>this</a>'s <a for=Element>custom attribute registry</a>.
 </div>
 
 <hr>
@@ -8342,6 +8783,8 @@ method steps are:
 <pre class=idl>
 [Exposed=Window]
 interface Attr : Node {
+  [CustomAttrConstructor] constructor();
+
   readonly attribute DOMString? namespaceURI;
   readonly attribute DOMString? prefix;
   readonly attribute DOMString localName;
@@ -8374,6 +8817,33 @@ to as <em>content attributes</em> to avoid confusion with IDL attributes.
 <a for=Attr>local name</a>, otherwise.
 
 <p class=note>User agents could have this as an internal slot as an optimization.
+
+<p><a>Attributes</a> also have a
+<dfn export id=concept-attribute-custom-attribute-state for=Attr>custom attribute state</dfn>
+("<code>undefined</code>", "<code>failed</code>", "<code>precustomized</code>", or
+"<code>custom</code>"), initially "<code>undefined</code>", and a
+<dfn export id=concept-attribute-custom-attribute-definition for=Attr>custom attribute
+definition</dfn> (null or a <a spec=html>custom attribute definition</a>), initially null. An
+<a>attribute</a> whose <a for=Attr>custom attribute state</a> is "<code>custom</code>" is said to
+be <dfn export id=concept-attribute-custom for=Attr>custom</dfn>. [[!HTML]]
+
+<p class=note>These mirror an <a for=/>element</a>'s <a for=Element>custom element state</a> and
+<a for=Element>custom element definition</a>. For an <a>attribute</a> attached to an
+<a for=/>element</a>, the <a for=Element>custom attribute registry</a> in effect for its
+<a for=Attr>element</a>, as established by the <a>look up a custom attribute registry</a>
+algorithm, is used when trying to upgrade it via the <a>upgrade an attribute</a> algorithm. Direct
+construction and the {{Document}} creation methods can also create <a for=Attr>custom</a>
+<a>attributes</a> that have no <a for=Attr>element</a>. Once an <a>attribute</a> is
+<a for=Attr>custom</a>, it keeps its original <a for=Attr>custom attribute definition</a>.
+Mirroring <a for=Element>custom</a> <a for=/>elements</a>, <a for=Attr>custom</a>
+<a>attributes</a> only apply to <a for=/>elements</a> in the <a>HTML namespace</a>;
+<a for=/>elements</a> in other namespaces never have <a for=Attr>custom</a> <a>attributes</a>.
+[[!HTML]]
+
+<p>The <code>new Attr()</code> constructor is annotated with the
+[{{CustomAttrConstructor}}] <a>extended attribute</a>, whose behavior is defined by HTML. It
+cannot be used to create an <a>attribute</a> directly; instead, it supports <a for=Attr>custom</a>
+<a>attributes</a> defined as subclasses of {{Attr}}. [[!HTML]]
 
 <div algorithm>
 <p>To <dfn export>create an attribute</dfn> given a <a for=/>document</a> <var>document</var>, a
