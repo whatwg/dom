@@ -2871,13 +2871,13 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
   <p>If <var>child</var> is non-null:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
-   its <a for=range>start offset</a> by <var>count</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>parent</var> and <a for=range>start offset</a> is greater than <var>child</var>'s
+   <a for=tree>index</a>: increase its <a for=range>start offset</a> by <var>count</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
-   its <a for=range>end offset</a> by <var>count</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>parent</var> and <a for=range>end offset</a> is greater than <var>child</var>'s
+   <a for=tree>index</a>: increase its <a for=range>end offset</a> by <var>count</var>.
   </ol>
 
  <li><p>Let <var>previousSibling</var> be <var>child</var>'s <a>previous sibling</a> or
@@ -3038,7 +3038,7 @@ to do these things asynchronously, however.
 
  <li><p><a>Assert</a>: <var>oldParent</var> is non-null.
 
- <li><p>Run the <a>live range pre-remove steps</a>, given <var>node</var>.
+ <li><p>Run the <a>live and opaque range pre-remove steps</a>, given <var>node</var>.
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
@@ -3072,13 +3072,13 @@ to do these things asynchronously, however.
   <p>If <var>child</var> is non-null:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>newParent</var> and
-   <a for=range>start offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
-   its <a for=range>start offset</a> by 1.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>newParent</var> and <a for=range>start offset</a> is greater than <var>child</var>'s
+   <a for=tree>index</a>: increase its <a for=range>start offset</a> by 1.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>newParent</var> and
-   <a for=range>end offset</a> is greater than <var>child</var>'s <a for=tree>index</a>: increase
-   its <a for=range>end offset</a> by 1.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>newParent</var> and <a for=range>end offset</a> is greater than <var>child</var>'s
+   <a for=tree>index</a>: increase its <a for=range>end offset</a> by 1.
   </ol>
 
  <li><p>Let <var>newPreviousSibling</var> be <var>child</var>'s <a>previous sibling</a> if
@@ -3284,7 +3284,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
 
  <li><p>Assert: <var>parent</var> is non-null.
 
- <li><p>Run the <a>live range pre-remove steps</a>, given <var>node</var>.
+ <li><p>Run the <a>live and opaque range pre-remove steps</a>, given <var>node</var>.
 
  <li><p>For each {{NodeIterator}} object <var>iterator</var> whose
  <a for=traversal>root</a>'s <a for=Node>node document</a> is <var>node</var>'s
@@ -4836,23 +4836,23 @@ each <a for=tree>descendant</a> <a>exclusive <code>Text</code> node</a> <var>nod
   <p>While <var>currentNode</var> is an <a>exclusive <code>Text</code> node</a>:
 
   <ol>
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>:
-   add <var>length</var> to its <a for=range>start offset</a> and set its
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>currentNode</var>: add <var>length</var> to its <a for=range>start offset</a> and set its
    <a for=range>start node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>: add
-   <var>length</var> to its <a for=range>end offset</a> and set its <a for=range>end node</a> to
-   <var>node</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>currentNode</var>: add <var>length</var> to its <a for=range>end offset</a> and set its
+   <a for=range>end node</a> to <var>node</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>currentNode</var>'s
-   <a for=tree>parent</a> and <a for=range>start offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>: set its <a for=range>start node</a> to <var>node</var> and its
-   <a for=range>start offset</a> to <var>length</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>currentNode</var>'s <a for=tree>parent</a> and <a for=range>start offset</a> is
+   <var>currentNode</var>'s <a for=tree>index</a>: set its <a for=range>start node</a> to
+   <var>node</var> and its <a for=range>start offset</a> to <var>length</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>currentNode</var>'s
-   <a for=tree>parent</a> and <a for=range>end offset</a> is <var>currentNode</var>'s
-   <a for=tree>index</a>: set its <a for=range>end node</a> to <var>node</var> and its
-   <a for=range>end offset</a> to <var>length</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>currentNode</var>'s <a for=tree>parent</a> and <a for=range>end offset</a> is
+   <var>currentNode</var>'s <a for=tree>index</a>: set its <a for=range>end node</a> to
+   <var>node</var> and its <a for=range>end offset</a> to <var>length</var>.
 
    <li><p>Add <var>currentNode</var>'s <a for=Node>length</a> to <var>length</var>.
 
@@ -8253,23 +8253,25 @@ with an integer <var>offset</var>, integer <var>count</var>, and string <var>dat
  <a>code units</a> from <var>node</var>'s <a for=CharacterData>data</a>.
 
  <!-- ranges -->
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
- <a for=range>start offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> + <var>count</var>: set its <a for=range>start offset</a> to <var>offset</var>.
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+ <var>node</var> and <a for=range>start offset</a> is greater than <var>offset</var> but less than
+ or equal to <var>offset</var> + <var>count</var>: set its <a for=range>start offset</a> to
+ <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
- <a for=range>end offset</a> is greater than <var>offset</var> but less than or equal to
- <var>offset</var> + <var>count</var>: set its <a for=range>end offset</a> to <var>offset</var>.
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+ <var>node</var> and <a for=range>end offset</a> is greater than <var>offset</var> but less than or
+ equal to <var>offset</var> + <var>count</var>: set its <a for=range>end offset</a> to
+ <var>offset</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
- <a for=range>start offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
- <a for=range>start offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
- <var>count</var>.
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+ <var>node</var> and <a for=range>start offset</a> is greater than <var>offset</var> +
+ <var>count</var>: increase its <a for=range>start offset</a> by <var>data</var>'s
+ <a for=string>length</a> and decrease it by <var>count</var>.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
- <a for=range>end offset</a> is greater than <var>offset</var> + <var>count</var>: increase its
- <a for=range>end offset</a> by <var>data</var>'s <a for=string>length</a> and decrease it by
- <var>count</var>.
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+ <var>node</var> and <a for=range>end offset</a> is greater than <var>offset</var> +
+ <var>count</var>: increase its <a for=range>end offset</a> by <var>data</var>'s
+ <a for=string>length</a> and decrease it by <var>count</var>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
  <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
@@ -8474,24 +8476,25 @@ constructor steps are to set <a>this</a>'s <a for=CharacterData>data</a> to <var
    mutate ranges prematurely:
    https://www.w3.org/Bugs/Public/show_bug.cgi?id=15325 -->
 
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>node</var> and
-   <a for=range>start offset</a> is greater than <var>offset</var>, set its
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>node</var> and <a for=range>start offset</a> is greater than <var>offset</var>, set its
    <a for=range>start node</a> to <var>newNode</var> and decrease its <a for=range>start offset</a>
    by <var>offset</var>.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>node</var> and
-   <a for=range>end offset</a> is greater than <var>offset</var>, set its <a for=range>end node</a>
-   to <var>newNode</var> and decrease its <a for=range>end offset</a> by <var>offset</var>.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>node</var> and <a for=range>end offset</a> is greater than <var>offset</var>, set its
+   <a for=range>end node</a> to <var>newNode</var> and decrease its <a for=range>end offset</a> by
+   <var>offset</var>.
 
    <!-- This shit is complicated:
         https://www.w3.org/Bugs/Public/show_bug.cgi?id=19968 -->
-   <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
-   <a for=range>start offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
-   increase its <a for=range>start offset</a> by 1.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+   <var>parent</var> and <a for=range>start offset</a> is equal to the <a for=tree>index</a> of
+   <var>node</var> plus 1, increase its <a for=range>start offset</a> by 1.
 
-   <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
-   <a for=range>end offset</a> is equal to the <a for=tree>index</a> of <var>node</var> plus 1,
-   increase its <a for=range>end offset</a> by 1.
+   <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+   <var>parent</var> and <a for=range>end offset</a> is equal to the <a for=tree>index</a> of
+   <var>node</var> plus 1, increase its <a for=range>end offset</a> by 1.
   </ol>
 
  <li><p><a>Replace data</a> of <var>node</var> with <var>offset</var>, <var>count</var>, and
@@ -8610,17 +8613,18 @@ range.setEnd(secondText, 4)
 <a for=/>nodes</a>.
 
 <p>{{Range}} and {{OpaqueRange}} objects, unlike {{StaticRange}} objects, are affected by mutations
-to the <a>node tree</a>. Therefore they are also known as <a>live ranges</a>. Such mutations will
-not invalidate them and will try to ensure that they still represent the same piece of content.
-Necessarily, a <a>live range</a> might itself be modified as part of the mutation to the
-<a>node tree</a> when, e.g., part of the content it represents is mutated.
+to the <a>node tree</a>. Therefore they are also known as <a>live ranges</a> and
+<a>opaque ranges</a>, respectively. Such mutations will not invalidate them and will try to ensure
+that they still represent the same piece of content. Necessarily, a <a>live range</a> or
+<a>opaque range</a> might itself be modified as part of the mutation to the <a>node tree</a> when,
+e.g., part of the content it represents is mutated.
 
 <p class=note>See the <a for=/>insert</a> and <a for=/>remove</a> algorithms, the
 {{Node/normalize()}} method, and the <a>replace data</a> and <a lt="split a Text node">split</a>
 algorithms for details.
 
 <p>Updating <a>live ranges</a> in response to <a>node tree</a> mutations can be expensive. For every
-<a>node tree</a> change, all affected <a>live ranges</a> need to be updated. Even if the application
+<a>node tree</a> change, all affected {{Range}} objects need to be updated. Even if the application
 is uninterested in some <a>live ranges</a>, it still has to pay the cost of keeping them up-to-date
 when a mutation occurs.
 
@@ -8895,7 +8899,7 @@ interface Range : NodeRange {
 };
 </pre>
 
-<p>Objects implementing the {{Range}} or {{OpaqueRange}} interfaces are known as
+<p>Objects implementing the {{Range}} interface are known as
 <dfn export id=concept-live-range>live ranges</dfn>.
 
 <p class=note>Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
@@ -8967,8 +8971,8 @@ but not its <a for=range>end node</a>, or vice versa.
 </div>
 
 <div algorithm>
-<p>The <dfn>live range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>, are:
-
+<p>The <dfn>live and opaque range pre-remove steps</dfn> given a <a for=/>node</a> <var>node</var>,
+are:
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
 
@@ -8976,19 +8980,20 @@ but not its <a for=range>end node</a>, or vice versa.
 
  <li><p>Let <var>index</var> be <var>node</var>'s <a for=tree>index</a>.
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is an
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is an
  <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>start</a> to
  (<var>parent</var>, <var>index</var>).
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is an <a>inclusive descendant</a>
- of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>, <var>index</var>).
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is an
+ <a>inclusive descendant</a> of <var>node</var>, set its <a for=range>end</a> to (<var>parent</var>,
+ <var>index</var>).
 
- <li><p>For each <a>live range</a> whose <a for=range>start node</a> is <var>parent</var> and
- <a for=range>start offset</a> is greater than <var>index</var>, decrease its
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>start node</a> is
+ <var>parent</var> and <a for=range>start offset</a> is greater than <var>index</var>, decrease its
  <a for=range>start offset</a> by 1.
 
- <li><p>For each <a>live range</a> whose <a for=range>end node</a> is <var>parent</var> and
- <a for=range>end offset</a> is greater than <var>index</var>, decrease its
+ <li><p>For each <a>live range</a> and <a>opaque range</a> whose <a for=range>end node</a> is
+ <var>parent</var> and <a for=range>end offset</a> is greater than <var>index</var>, decrease its
  <a for=range>end offset</a> by 1.
 </ol>
 </div>
@@ -10043,6 +10048,11 @@ interface OpaqueRange : AbstractRange {
 <p>Objects implementing the {{OpaqueRange}} interface are known as
 <dfn export lt="opaque range">opaque ranges</dfn>.
 
+<p class=note>Like <a>live ranges</a>, <a>opaque ranges</a> are affected by mutations to the
+<a>node tree</a>. Algorithms that modify a <a>tree</a> (in particular the <a for=/>insert</a>,
+<a for=/>remove</a>, <a for=/>move</a>, <a>replace data</a>, and <a lt="split a Text node">split</a>
+algorithms) modify <a>opaque ranges</a> associated with that <a>tree</a>.
+
 <p>An <a>opaque range</a>'s <a for=range>start node</a> and <a for=range>end node</a> are not
 exposed. This allows the <a>opaque range</a> to represent content whose nodes are encapsulated from
 web developers.
@@ -10054,7 +10064,7 @@ necessarily correspond to its <a for=range>start offset</a> and <a for=range>end
 
 <p>{{OpaqueRange}} objects do not expose methods to directly change their <a>boundary points</a> or
 their <a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>.
-Their <a>boundary points</a> are updated as part of the <a>live range</a> adjustments. The
+Their <a>boundary points</a> are updated by the algorithms that modify a <a>tree</a>. The
 specification creating an <a>opaque range</a> defines the meaning of its
 <a for=OpaqueRange>exposed start offset</a> and <a for=OpaqueRange>exposed end offset</a>, and how
 they are updated. It must ensure that the exposed offsets are equal if and only if the
