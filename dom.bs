@@ -1061,6 +1061,17 @@ when something has occurred.
 <p class=note>Although <a for="event listener">callback</a> is an {{EventListener}}
 object, an <a>event listener</a> is a broader concept as can be seen above.
 
+<div algorithm>
+<p>To <dfn export id=concept-event-listener-global>get the global</dfn> of an
+<a>event listener</a> <var>listener</var>: return <var>listener</var>
+<a for="event listener">callback</a>'s <a>associated realm</a>'s <a for=realm>global object</a>.
+
+<p><a lt="Other applicable specifications">Specifications</a> may override this for
+<a>event listeners</a> they create themselves, when <a for="event listener">callback</a> is not the
+object the author supplied. HTML does so for the <a>event listener</a> of an
+<a spec=html>event handler</a>. [[HTML]]
+</div>
+
 <p>Each {{EventTarget}} object also has an associated <dfn export>get the parent</dfn> algorithm,
 which takes an <a>event</a> <var>event</var>, and returns an {{EventTarget}} object. Unless
 specified otherwise it returns null.
@@ -1712,8 +1723,8 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
    {{Event/currentTarget}} is a <a for=/>node</a>; otherwise <var>event</var>'s
    {{Event/currentTarget}}'s <a>relevant global object</a>.
 
-   <li><p>Let <var>listenerGlobal</var> be <var>listener</var>
-   <a for="event listener">callback</a>'s <a>associated realm</a>'s <a for=realm>global object</a>.
+   <li><p>Let <var>listenerGlobal</var> be the result of <a>getting the global</a> of
+   <var>listener</var>.
 
    <li><p>If <var>targetGlobal</var> or <var>listenerGlobal</var> is a {{Window}} object whose
    <a>associated <code>Document</code></a> is not <a>fully active</a>, then
@@ -1745,9 +1756,8 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
     <var>exception</var>:
 
     <ol>
-     <li><p><a lt="report an exception">Report</a> <var>exception</var> for <var>listener</var>'s
-     <a for="event listener">callback</a>'s corresponding JavaScript object's
-     <a>associated realm</a>'s <a for="realm">global object</a>.
+     <li><p><a lt="report an exception">Report</a> <var>exception</var> for
+     <var>listenerGlobal</var>.
 
      <li>
       <p>Set <var>legacyOutputDidListenersThrowFlag</var> if given.
