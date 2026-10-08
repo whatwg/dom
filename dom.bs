@@ -2982,6 +2982,9 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
      <li><p>If <var>inclusiveDescendant</var> is not <a>connected</a>, then
      <a for=iteration>continue</a>.
 
+     <li><p><a>Queue a connectedness mutation record</a> of "<code>connected</code>" for
+     <var>inclusiveDescendant</var>.
+
      <li>
       <p>If <var>inclusiveDescendant</var> is an <a for=/>element</a> and
       <var>inclusiveDescendant</var>'s <a for=Element>custom element registry</a> is non-null:
@@ -3344,6 +3347,9 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
 
  <li><p>Let <var>isParentConnected</var> be <var>parent</var>'s <a>connected</a>.
 
+ <li><p>If <var>isParentConnected</var> is true, then <a>queue a connectedness mutation record</a>
+ of "<code>disconnected</code>" for <var>node</var>.
+
  <li>
   <p>If <var>node</var> is <a for=Element>custom</a> and <var>isParentConnected</var> is true, then
   <a>enqueue a custom element callback reaction</a> with <var>node</var>, callback name
@@ -3358,6 +3364,9 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
 
   <ol>
    <li><p>Run the <a>removing steps</a> with <var>descendant</var>, false, and <var>parent</var>.
+
+   <li><p>If <var>isParentConnected</var> is true, then <a>queue a connectedness mutation record</a>
+   of "<code>disconnected</code>" for <var>descendant</var>.
 
    <li><p>If <var>descendant</var> is <a for=Element>custom</a> and <var>isParentConnected</var>
    is true, then <a>enqueue a custom element callback reaction</a> with <var>descendant</var>,
@@ -4095,15 +4104,18 @@ former <a for=tree>parent</a>. They are removed the next time mutation observers
 
 <div algorithm>
 <p>To <dfn>remove transient registered observers</dfn> for a {{MutationObserver}} object
-<var>observer</var>:
+<var>observer</var>, optionally given a <a>registered observer</a> <var>source</var>:
 
 <ol>
  <li><p><a for=set>For each</a> <var>node</var> of <var>observer</var>'s
  <a for=MutationObserver>transient node set</a>: <a for=list>remove</a> all
  <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
- <var>observer</var> from <var>node</var>'s <a>registered observer list</a>.
+ <var>observer</var> and, if <var>source</var> is given, whose
+ <a for="transient registered observer">source</a> is <var>source</var>, from <var>node</var>'s
+ <a>registered observer list</a>.
 
- <li><p><a for=set>Empty</a> <var>observer</var>'s <a for=MutationObserver>transient node set</a>.
+ <li><p>If <var>source</var> is not given, then <a for=set>empty</a> <var>observer</var>'s
+ <a for=MutationObserver>transient node set</a>.
 </ol>
 </div>
 
@@ -4116,6 +4128,7 @@ interface MutationObserver {
   constructor(MutationCallback callback);
 
   undefined observe(Node target, optional MutationObserverInit options = {});
+  undefined unobserve(Node target);
   undefined disconnect();
   sequence&lt;MutationRecord> takeRecords();
 };
@@ -4126,6 +4139,7 @@ dictionary MutationObserverInit {
   boolean childList = false;
   boolean attributes;
   boolean characterData;
+  boolean connectedness = false;
   boolean subtree = false;
   boolean attributeOldValue;
   boolean characterDataOldValue;
@@ -4184,6 +4198,10 @@ dictionary MutationObserverInit {
    {{MutationObserverInit/characterDataOldValue}}
    is specified.
 
+   <dt>{{MutationObserverInit/connectedness}}
+   <dd>Set to true if changes to whether <var>target</var> is <a>connected</a> are to be observed.
+   This is not affected by {{MutationObserverInit/subtree}}.
+
    <dt>{{MutationObserverInit/subtree}}
    <dd>Set to true if mutations to not just <var>target</var>, but
    also <var>target</var>'s
@@ -4212,6 +4230,12 @@ dictionary MutationObserverInit {
    observed and {{MutationObserverInit/attributes}} is true
    or omitted.
   </dl>
+
+ <dt><code><var>observer</var> . {{unobserve(target)}}</code>
+ <dd>Stops <var>observer</var> from observing <var>target</var> as requested through {{observe()}}.
+ <var>target</var> can still be observed through another <a for=/>node</a> that <var>observer</var>
+ observes with {{MutationObserverInit/subtree}} set to true. Unlike {{disconnect()}}, already queued
+ records are kept, as they can also be the result of observing other nodes.
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
  <dd>Stops <var>observer</var> from observing any mutations. Until the {{observe()}} method is used
@@ -4254,8 +4278,9 @@ method steps are:
  true.
 
  <li><p>If none of <var>options</var>["{{MutationObserverInit/childList}}"],
- <var>options</var>["{{MutationObserverInit/attributes}}"], and
- <var>options</var>["{{MutationObserverInit/characterData}}"] is true, then <a>throw</a> a
+ <var>options</var>["{{MutationObserverInit/attributes}}"],
+ <var>options</var>["{{MutationObserverInit/characterData}}"], and
+ <var>options</var>["{{MutationObserverInit/connectedness}}"] is true, then <a>throw</a> a
  <code>TypeError</code>.
 
  <li><p>If <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] is true and
@@ -4284,10 +4309,7 @@ method steps are:
   <p>If <var>registered</var> is non-null:
 
   <ol>
-   <li><p><a for=set>For each</a> <var>node</var> of <a>this</a>'s
-   <a for=MutationObserver>transient node set</a>: <a for=list>remove</a> all
-   <a>transient registered observers</a> whose <a for="transient registered observer">source</a> is
-   <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
+   <li><p><a>Remove transient registered observers</a> for <a>this</a> given <var>registered</var>.
 
    <li><p>Set <var>registered</var>'s <a for="registered observer">options</a> to
    <var>options</var>.
@@ -4305,6 +4327,27 @@ method steps are:
    <li><p><a for=list>Append</a> a weak reference to <var>target</var> to <a>this</a>'s
    <a for=MutationObserver>node list</a>.
   </ol>
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn method for=MutationObserver><code>unobserve(<var>target</var>)</code></dfn> method steps
+are:
+
+<ol>
+ <li><p>Let <var>registered</var> be the <a>registered observer</a> in <var>target</var>'s
+ <a>registered observer list</a> that is not a <a>transient registered observer</a> and whose
+ <a for="registered observer">observer</a> is <a>this</a>, if any; otherwise null.
+
+ <li><p>If <var>registered</var> is null, then return.
+
+ <li><p><a>Remove transient registered observers</a> for <a>this</a> given <var>registered</var>.
+
+ <li><p><a for=list>Remove</a> <var>registered</var> from <var>target</var>'s
+ <a>registered observer list</a>.
+
+ <li><p><a for=list>Remove</a> the weak reference to <var>target</var> from <a>this</a>'s
+ <a for=MutationObserver>node list</a>.
 </ol>
 </div>
 
@@ -4440,6 +4483,49 @@ method steps are:
 </ol>
 </div>
 
+<div algorithm>
+<p>To <dfn>queue a connectedness mutation record</dfn> of <var>type</var> for <var>target</var>:
+
+<ol>
+ <li><p>Let <var>interestedObservers</var> be an empty <a for=/>set</a>.
+
+ <li><p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
+ <a>registered observer list</a>: if <var>registered</var> is not a
+ <a>transient registered observer</a> and <var>registered</var>'s
+ <a for="registered observer">options</a>["{{MutationObserverInit/connectedness}}"] is true, then
+ <a for=set>append</a> <var>registered</var>'s <a for="registered observer">observer</a> to
+ <var>interestedObservers</var>.
+
+ <li><p>If <var>interestedObservers</var> <a for=set>is empty</a>, then return.
+
+ <li>
+  <p><a for=set>For each</a> <var>observer</var> of <var>interestedObservers</var>:
+
+  <ol>
+   <li><p>Let <var>record</var> be a new {{MutationRecord}} object with its {{MutationRecord/type}}
+   set to <var>type</var>, {{MutationRecord/target}} set to <var>target</var>,
+   {{MutationRecord/attributeName}}, {{MutationRecord/attributeNamespace}}, and
+   {{MutationRecord/oldValue}} set to null, {{MutationRecord/addedNodes}} and
+   {{MutationRecord/removedNodes}} set to « », and {{MutationRecord/previousSibling}} and
+   {{MutationRecord/nextSibling}} set to null.
+
+   <li><p><a for=queue>Enqueue</a> <var>record</var> to <var>observer</var>'s
+   <a for=MutationObserver>record queue</a>.
+
+   <li><p><a for=set>Append</a> <var>observer</var> to the <a>surrounding agent</a>'s
+   <a>pending mutation observers</a>.
+  </ol>
+
+ <li><p><a>Queue a mutation observer microtask</a>.
+</ol>
+
+<p class=note>These records are queued even when <a for=/>insert</a> or <a for=/>remove</a> is
+invoked with <i>suppressObservers</i> set to true, as that only applies to tree mutation records. As
+a result, they are queued before the tree mutation record for the insertion or removal that caused
+them. The <a for=/>move</a> algorithm does not change whether a <a for=/>node</a> is
+<a>connected</a> and therefore does not queue these records.
+</div>
+
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
 
@@ -4460,24 +4546,19 @@ interface MutationRecord {
 
 <dl class=domintro>
  <dt><code><var>record</var> . {{MutationRecord/type}}</code>
- <dd>Returns "<code>attributes</code>" if it was an
- <a>attribute</a> mutation.
- "<code>characterData</code>" if it was a mutation to a
- {{CharacterData}} <a for=/>node</a>. And
- "<code>childList</code>" if it was a mutation to the
- <a>tree</a> of
- <a for=/>nodes</a>.
+ <dd>Returns "<code>attributes</code>" if it was an <a>attribute</a> mutation.
+ "<code>characterData</code>" if it was a mutation to a {{CharacterData}} <a for=/>node</a>.
+ "<code>childList</code>" if it was a mutation to the <a>tree</a> of <a for=/>nodes</a>. And
+ "<code>connected</code>" or "<code>disconnected</code>" if the target became <a>connected</a> or
+ stopped being <a>connected</a>, respectively.
 
  <dt><code><var>record</var> . {{MutationRecord/target}}</code>
- <dd>Returns the <a for=/>node</a> the mutation
- affected, depending on the {{MutationRecord/type}}.
- For "<code>attributes</code>", it is the
- <a for=/>element</a> whose
- <a>attribute</a> changed. For
- "<code>characterData</code>", it is the {{CharacterData}}
- <a for=/>node</a>. For "<code>childList</code>",
- it is the <a for=/>node</a> whose
- <a for=tree>children</a> changed.
+ <dd>Returns the <a for=/>node</a> the mutation affected, depending on the {{MutationRecord/type}}.
+ For "<code>attributes</code>", it is the <a for=/>element</a> whose <a>attribute</a> changed. For
+ "<code>characterData</code>", it is the {{CharacterData}} <a for=/>node</a>. For
+ "<code>childList</code>", it is the <a for=/>node</a> whose <a for=tree>children</a> changed. For
+ "<code>connected</code>" and "<code>disconnected</code>", it is the <a for=/>node</a> whose
+ connectedness changed.
 
  <dt><code><var>record</var> . {{MutationRecord/addedNodes}}</code>
  <dt><code><var>record</var> . {{MutationRecord/removedNodes}}</code>
@@ -4496,15 +4577,10 @@ interface MutationRecord {
  <dd>Returns the <a for=Attr>namespace</a> of the changed <a>attribute</a>; otherwise null.
 
  <dt><code><var>record</var> . {{MutationRecord/oldValue}}</code>
- <dd>The return value depends on
- {{MutationRecord/type}}. For
- "<code>attributes</code>", it is the
- <a for=Attr>value</a> of the
- changed <a>attribute</a> before the change.
- For "<code>characterData</code>", it is the
- <a for=CharacterData>data</a> of the changed
- <a for=/>node</a> before the change. For
- "<code>childList</code>", it is null.
+ <dd>The return value depends on {{MutationRecord/type}}. For "<code>attributes</code>", it is the
+ <a for=Attr>value</a> of the changed <a>attribute</a> before the change. For
+ "<code>characterData</code>", it is the <a for=CharacterData>data</a> of the changed
+ <a for=/>node</a> before the change. Otherwise, it is null.
 </dl>
 
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
