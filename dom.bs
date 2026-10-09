@@ -3134,6 +3134,8 @@ to do these things asynchronously, however.
    <li><p>Run <a>assign slottables for a tree</a> with <var>node</var>.
   </ol>
 
+ <li><p><a>Add transient registered observers</a> given <var>node</var> and <var>oldParent</var>.
+
  <!-- Start insertion-related bookkeeping steps -->
  <li>
   <p>If <var>child</var> is non-null:
@@ -3363,16 +3365,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
   </ol>
  </li>
 
- <li><p>For each <a for=tree>inclusive ancestor</a> <var>inclusiveAncestor</var> of
- <var>parent</var>, and then <a for=list>for each</a> <var>registered</var> of
- <var>inclusiveAncestor</var>'s <a>registered observer list</a>, if <var>registered</var>'s
- <a for="registered observer">options</a>["{{MutationObserverInit/subtree}}"] is true, then
- <a for=list>append</a> a new <a>transient registered observer</a> whose
- <a for="registered observer">observer</a> is <var>registered</var>'s
- <a for="registered observer">observer</a>, <a for="registered observer">options</a> is
- <var>registered</var>'s <a for="registered observer">options</a>, and
- <a for="transient registered observer">source</a> is <var>registered</var> to <var>node</var>'s
- <a>registered observer list</a>.
+ <li><p><a>Add transient registered observers</a> given <var>node</var> and <var>parent</var>.
 
  <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
@@ -3976,6 +3969,9 @@ must return null.
 <dfn id=mutation-observer-list>pending mutation observers</dfn> (a <a for=/>set</a> of zero or more
 {{MutationObserver}} objects), which is initially empty.
 
+<p>Each <a>similar-origin window agent</a> also has a <dfn noexport>mutation observer counter</dfn>
+(a number), which is initially 0.
+
 <div algorithm>
 <p>To
 <dfn id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>:
@@ -3996,8 +3992,10 @@ must return null.
 <ol>
  <li><p>Set the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> to false.
 
- <li><p>Let <var>notifySet</var> be a <a for=set>clone</a> of the <a>surrounding agent</a>'s
- <a>pending mutation observers</a>.
+ <li><p>Let <var>notifyList</var> be the result of <a for=set>sorting</a> the
+ <a>surrounding agent</a>'s <a>pending mutation observers</a> in ascending order, with <var>a</var>
+ being less than <var>b</var> if <var>a</var>'s <a for=MutationObserver>creation index</a> is less
+ than <var>b</var>'s <a for=MutationObserver>creation index</a>.
 
  <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s <a>pending mutation observers</a>.
 
@@ -4007,7 +4005,7 @@ must return null.
  <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s <a>signal slots</a>.
 
  <li>
-  <p><a for=set>For each</a> <var>mo</var> of <var>notifySet</var>:
+  <p><a for=list>For each</a> <var>mo</var> of <var>notifyList</var>:
 
   <ol>
    <li><p>Let <var>records</var> be a <a for=queue>clone</a> of <var>mo</var>'s
@@ -4015,10 +4013,7 @@ must return null.
 
    <li><p><a for=queue>Empty</a> <var>mo</var>'s <a for=MutationObserver>record queue</a>.
 
-   <li><p><a for=list>For each</a> <var>node</var> of <var>mo</var>'s
-   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
-   <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
-   <var>mo</var> from <var>node</var>'s <a>registered observer list</a>.
+   <li><p><a>Remove transient registered observers</a> for <var>mo</var>.
 
    <li><p>If <var>records</var> <a for=queue>is not empty</a>, then <a spec=webidl>invoke</a>
    <var>mo</var>'s <a for=MutationObserver>callback</a> with « <var>records</var>, <var>mo</var> »
@@ -4042,12 +4037,75 @@ zero or more <a>registered observers</a>), which is initially empty.
 
 <p>A <dfn noexport id=transient-registered-observer>transient registered observer</dfn> is a
 <a>registered observer</a> that also consists of a
-<dfn for="transient registered observer">source</dfn> (a <a>registered observer</a>).
+<dfn for="transient registered observer">source</dfn> (a <a>registered observer</a> that is not a
+<a>transient registered observer</a>).
 
-<p class=note><a>Transient registered observers</a> are used to track mutations within
-a given <a for=/>node</a>'s <a for=tree>descendants</a> after <a for=/>node</a> has been removed so
+<p class=note><a>Transient registered observers</a> are used to track mutations within a given
+<a for=/>node</a>'s <a for=tree>descendants</a> after <a for=/>node</a> has been removed or moved so
 they do not get lost when {{MutationObserverInit/subtree}} is set to true on <a for=/>node</a>'s
-<a for=tree>parent</a>.
+former <a for=tree>parent</a>. They are removed the next time mutation observers are notified.
+
+<div algorithm>
+<p>To <dfn>add transient registered observers</dfn> given a <a for=/>node</a> <var>node</var> and a
+<a for=/>node</a> <var>parent</var>:
+
+<ol>
+ <li>
+  <p>For each <a for=tree>inclusive ancestor</a> <var>inclusiveAncestor</var> of <var>parent</var>,
+  and then <a for=list>for each</a> <var>registered</var> of <var>inclusiveAncestor</var>'s
+  <a>registered observer list</a>:
+
+  <ol>
+   <li><p>If <var>registered</var>'s
+   <a for="registered observer">options</a>["{{MutationObserverInit/subtree}}"] is false, then
+   <a for=iteration>continue</a>.
+
+   <li><p>Let <var>observer</var> be <var>registered</var>'s
+   <a for="registered observer">observer</a>.
+
+   <li><p>Let <var>source</var> be <var>registered</var>'s
+   <a for="transient registered observer">source</a> if <var>registered</var> is a
+   <a>transient registered observer</a>; otherwise <var>registered</var>.
+
+   <li><p>If <var>node</var>'s <a>registered observer list</a> <a for=list>contains</a> a
+   <a>transient registered observer</a> whose <a for="transient registered observer">source</a> is
+   <var>source</var>, then <a for=iteration>continue</a>.
+
+   <li><p><a for=list>Append</a> a new <a>transient registered observer</a> whose
+   <a for="registered observer">observer</a> is <var>observer</var>,
+   <a for="registered observer">options</a> is <var>source</var>'s
+   <a for="registered observer">options</a>, and <a for="transient registered observer">source</a>
+   is <var>source</var> to <var>node</var>'s <a>registered observer list</a>.
+
+   <li><p><a for=set>Append</a> a weak reference to <var>node</var> to <var>observer</var>'s
+   <a for=MutationObserver>transient node set</a>.
+
+   <li>
+    <p><a for=set>Append</a> <var>observer</var> to the <a>surrounding agent</a>'s
+    <a>pending mutation observers</a>.
+
+    <p class=note>This ensures <var>node</var>'s <a>transient registered observers</a> are removed
+    the next time mutation observers are notified, even if no {{MutationRecord}} object is queued
+    for <var>observer</var>.
+
+   <li><p><a>Queue a mutation observer microtask</a>.
+  </ol>
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn>remove transient registered observers</dfn> for a {{MutationObserver}} object
+<var>observer</var>:
+
+<ol>
+ <li><p><a for=set>For each</a> <var>node</var> of <var>observer</var>'s
+ <a for=MutationObserver>transient node set</a>: <a for=list>remove</a> all
+ <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
+ <var>observer</var> from <var>node</var>'s <a>registered observer list</a>.
+
+ <li><p><a for=set>Empty</a> <var>observer</var>'s <a for=MutationObserver>transient node set</a>.
+</ol>
+</div>
 
 
 <h4 id=interface-mutationobserver>Interface {{MutationObserver}}</h4>
@@ -4082,7 +4140,10 @@ dictionary MutationObserverInit {
 
 <ul class=brief>
  <li>A <dfn for=MutationObserver id=concept-mo-callback>callback</dfn> set on creation.
+ <li>A <dfn for=MutationObserver>creation index</dfn> (a number) set on creation.
  <li>A <dfn for=MutationObserver>node list</dfn> (a <a for=/>list</a> of weak references to
+ <a for=/>nodes</a>), which is initially empty.
+ <li>A <dfn for=MutationObserver>transient node set</dfn> (a <a for=/>set</a> of weak references to
  <a for=/>nodes</a>), which is initially empty.
  <li>A <dfn for=MutationObserver id=concept-mo-queue>record queue</dfn> (a <a for=/>queue</a> of
  zero or more {{MutationRecord}} objects), which is initially empty.
@@ -4164,8 +4225,16 @@ dictionary MutationObserverInit {
 <div algorithm>
 <p>The
 <dfn constructor for=MutationObserver lt=MutationObserver(callback)><code>new MutationObserver(<var>callback</var>)</code></dfn>
-constructor steps are to set <a>this</a>'s <a for=MutationObserver>callback</a> to
-<var>callback</var>.
+constructor steps are:
+
+<ol>
+ <li><p>Set <a>this</a>'s <a for=MutationObserver>callback</a> to <var>callback</var>.
+
+ <li><p>Set <a>this</a>'s <a for=MutationObserver>creation index</a> to <a>this</a>'s
+ <a>relevant agent</a>'s <a>mutation observer counter</a>.
+
+ <li><p>Increase <a>this</a>'s <a>relevant agent</a>'s <a>mutation observer counter</a> by 1.
+</ol>
 </div>
 
 <div algorithm>
@@ -4202,13 +4271,21 @@ method steps are:
  <code>TypeError</code>.
 
  <li>
-  <p><a for=list>For each</a> <var>registered</var> of <var>target</var>'s
-  <a>registered observer list</a>: if <var>registered</var>'s
-  <a for="registered observer">observer</a> is <a>this</a>:
+  <p>Let <var>registered</var> be the <a>registered observer</a> in <var>target</var>'s
+  <a>registered observer list</a> that is not a <a>transient registered observer</a> and whose
+  <a for="registered observer">observer</a> is <a>this</a>, if any; otherwise null.
+
+  <p class=note>If <var>target</var> was in a subtree that <a>this</a> observes and was removed or
+  moved, <var>target</var>'s <a>registered observer list</a> can also contain
+  <a>transient registered observers</a> whose <a for="registered observer">observer</a> is
+  <a>this</a>. These are ignored, as they are removed the next time mutation observers are notified.
+
+ <li>
+  <p>If <var>registered</var> is non-null:
 
   <ol>
-   <li><p><a for=list>For each</a> <var>node</var> of <a>this</a>'s
-   <a for=MutationObserver>node list</a>: <a for=list>remove</a> all
+   <li><p><a for=set>For each</a> <var>node</var> of <a>this</a>'s
+   <a for=MutationObserver>transient node set</a>: <a for=list>remove</a> all
    <a>transient registered observers</a> whose <a for="transient registered observer">source</a> is
    <var>registered</var> from <var>node</var>'s <a>registered observer list</a>.
 
@@ -4239,6 +4316,10 @@ method steps are:
  <a for=MutationObserver>node list</a>: <a for=list>remove</a> any <a>registered observer</a> from
  <var>node</var>'s <a>registered observer list</a> for which <a>this</a> is the
  <a for="registered observer">observer</a>.
+
+ <li><p><a>Remove transient registered observers</a> for <a>this</a>.
+
+ <li><p><a for=list>Empty</a> <a>this</a>'s <a for=MutationObserver>node list</a>.
 
  <li><p><a for=queue>Empty</a> <a>this</a>'s <a for=MutationObserver>record queue</a>.
 </ol>
@@ -4317,6 +4398,8 @@ method steps are:
      <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to <var>oldValue</var>.
     </ol>
   </ol>
+
+ <li><p>If <var>interestedObservers</var> <a for=map>is empty</a>, then return.
 
  <li>
   <p><a for=map>For each</a> <var>observer</var> → <var>mappedOldValue</var> of
