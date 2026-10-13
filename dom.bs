@@ -3972,6 +3972,10 @@ must return null.
 <p>Each <a>similar-origin window agent</a> also has a <dfn noexport>mutation observer counter</dfn>
 (a number), which is initially 0.
 
+<p>Each <a>similar-origin window agent</a> also has
+<dfn export>pending focus reset documents</dfn> (a <a for=/>set</a> of zero or more
+<a for=/>documents</a>), which is initially empty.
+
 <div algorithm>
 <p>To
 <dfn id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>:
@@ -3983,6 +3987,17 @@ must return null.
  <li><p>Set the <a>surrounding agent</a>'s <a>mutation observer microtask queued</a> to true.
 
  <li><p><a lt="queue a microtask">Queue</a> a <a>microtask</a> to <a>notify mutation observers</a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export>signal a focus reset</dfn> for a <a for=/>document</a> <var>document</var>:
+
+<ol>
+ <li><p><a for=set>Append</a> <var>document</var> to <var>document</var>'s <a>relevant agent</a>'s
+ <a>pending focus reset documents</a>.
+
+ <li><p><a>Queue a mutation observer microtask</a>.
 </ol>
 </div>
 
@@ -4023,6 +4038,15 @@ must return null.
  <li><p><a for=set>For each</a> <var>slot</var> of <var>signalSet</var>: <a>fire an event</a> named
  <dfn event for=HTMLSlotElement>slotchange</dfn>, with its {{Event/bubbles}} attribute set to true,
  at <var>slot</var>.
+
+ <li><p>Let <var>focusResetDocuments</var> be a <a for=set>clone</a> of the
+ <a>surrounding agent</a>'s <a>pending focus reset documents</a>.
+
+ <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s
+ <a>pending focus reset documents</a>.
+
+ <li><p><a for=set>For each</a> <var>doc</var> of <var>focusResetDocuments</var>:
+ <a>fire an event</a> named <dfn event for=Document>focusreset</dfn> at <var>doc</var>.
 </ol>
 </div>
 
