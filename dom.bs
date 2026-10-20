@@ -3977,6 +3977,12 @@ must return null.
 <a for=/>documents</a>), which is initially empty.
 
 <div algorithm>
+<p><a lt="Other applicable specifications">Specifications</a> may define
+<dfn export>focus reset relevance steps</dfn>, which are passed a <a for=/>document</a>
+<var ignore>document</var> and return a boolean. Unless otherwise specified, they return true.
+</div>
+
+<div algorithm>
 <p>To
 <dfn id=queue-a-mutation-observer-compound-microtask>queue a mutation observer microtask</dfn>:
 
@@ -3994,7 +4000,9 @@ must return null.
 <p>To <dfn export>signal a focus reset</dfn> for a <a for=/>document</a> <var>document</var>:
 
 <ol>
- <li><p><a for=set>Append</a> <var>document</var> to <var>document</var>'s <a>relevant agent</a>'s
+ <li><p><a>Assert</a>: <var>document</var>'s <a>relevant agent</a> is the <a>surrounding agent</a>.
+
+ <li><p><a for=set>Append</a> <var>document</var> to the <a>surrounding agent</a>'s
  <a>pending focus reset documents</a>.
 
  <li><p><a>Queue a mutation observer microtask</a>.
@@ -4045,8 +4053,13 @@ must return null.
  <li><p><a for=set>Empty</a> the <a>surrounding agent</a>'s
  <a>pending focus reset documents</a>.
 
- <li><p><a for=set>For each</a> <var>doc</var> of <var>focusResetDocuments</var>:
- <a>fire an event</a> named <dfn event for=Document>focusreset</dfn> at <var>doc</var>.
+ <li>
+  <p><a for=set>For each</a> <var>doc</var> of <var>focusResetDocuments</var>: if the
+  <a>focus reset relevance steps</a> given <var>doc</var> return true, then <a>fire an event</a>
+  named <dfn event for=Document>focusreset</dfn> at <var>doc</var>.
+
+  <p class=note>A <a for=/>document</a> can stop being relevant between being signaled and this
+  step, e.g., when the element that contains it is removed.
 </ol>
 </div>
 
