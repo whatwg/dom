@@ -2919,8 +2919,9 @@ that all pending <a>node tree</a> insertions completely finish before more inser
 <div algorithm>
 <p><a lt="other applicable specifications">Specifications</a> may define
 <dfn export id=concept-node-children-changed-ext>children changed steps</dfn> for all or some
-<a for=/>nodes</a>. The algorithm is passed no argument and is called from <a for=/>insert</a>,
-<a for=/>remove</a>, and <a for=/>replace data</a>.
+<a for=/>nodes</a>. The algorithm is passed a boolean <var>isMove</var> and is called from
+<a for=/>insert</a>, <a>move</a>, <a for=/>remove</a>, and <a for=/>replace data</a>.
+<var>isMove</var> is true when it is called from <a>move</a> and false otherwise.
 </div>
 
 <div algorithm=insert>
@@ -3035,7 +3036,7 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
  <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
- <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var> with false.
 
  <li>
   <p>Let <var>staticNodeList</var> be a <a for=/>list</a> of <a for=/>nodes</a>, initially « ».
@@ -3213,6 +3214,10 @@ to do these things asynchronously, however.
 
  <li><p><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
  <var>newPreviousSibling</var>, and <var>child</var>.
+
+ <li><p>Run the <a>children changed steps</a> for <var>oldParent</var> with true.
+
+ <li><p>Run the <a>children changed steps</a> for <var>newParent</var> with true.
 </ol>
 </div>
 
@@ -3387,7 +3392,7 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
  <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
  <var>oldNextSibling</var>.
 
- <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+ <li><p>Run the <a>children changed steps</a> for <var>parent</var> with false.
 </ol>
 </div>
 
@@ -8523,7 +8528,7 @@ boolean <var>piAttributesAlreadyUpdated</var> (default false):
  <var>node</var>.
 
  <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
- <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
+ <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a> with false.
 </ol>
 </div>
 <!-- delete happens after insert for better cursor positioning with editing
