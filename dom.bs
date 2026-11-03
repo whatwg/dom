@@ -41,6 +41,24 @@ urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: current high resolution time; url: dfn-current-high-resolution-time
  type:dfn; text: relative high resolution coarse time; url: dfn-relative-high-resolution-coarse-time
+urlPrefix: https://tc39.es/proposal-async-context/; spec: PROPOSAL-ASYNCCONTEXT
+ type: dfn; text: Async Context Mapping; url: async-context-mapping
+ type: abstract-op; text: AsyncContextSnapshot; url: sec-asynccontextsnapshot
+
+# Link to HTML AsyncContext PR so the spec preview works
+# TODO: switch to https://html.spec.whatwg.org/multipage/ once whatwg/html#13063 lands
+urlPrefix: https://whatpr.org/html/13063/infrastructure.html; spec: HTML
+ type: dfn; text: run; for: Async Context Mapping; url: async-context-mapping-run
+</pre>
+
+<pre class=biblio>
+{
+    "PROPOSAL-ASYNCCONTEXT": {
+        "publisher": "Ecma",
+        "href": "https://tc39.es/proposal-async-context/",
+        "title": "AsyncContext"
+    }
+}
 </pre>
 
 <pre class=link-defaults>
@@ -1775,7 +1793,8 @@ string <var>phase</var>, a boolean <var>invocationTargetInShadowTree</var>, and 
 <div algorithm>
 <p>To <dfn export id=concept-event-fire>fire an event</dfn> named <var>e</var> at <var>target</var>,
 optionally using an <var>eventConstructor</var>, with a description of how IDL attributes are to be
-initialized, and a <var>legacy target override flag</var>, run these steps:
+initialized, a <var>legacy target override flag</var>, and an optional <a>Async Context Mapping</a>
+<var>async context mapping</var>, run these steps:
 
 <ol>
  <li><p>Let <var>recordingTimingAsTask</var> be the result of calling
@@ -1796,8 +1815,17 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>Let <var>result</var> be the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
- <var>legacy target override flag</var> set if set.
+ <li><p>If <var>async context mapping</var> is not given, then set it to
+ <a abstract-op>AsyncContextSnapshot</a>().
+
+ <li>
+  <p>Let <var>result</var> be the result of <a for="Async Context Mapping">running</a> the
+  following steps with <var>async context mapping</var>:
+
+  <ol>
+   <li><p>Return the result of <a>dispatching</a> <var>event</var> at <var>target</var>, with
+   <var>legacy target override flag</var> set if set.
+  </ol>
 
  <li>
   <p>If <var>recordingTimingAsTask</var> is true:
@@ -1824,6 +1852,10 @@ initialized, and a <var>legacy target override flag</var>, run these steps:
 
  <p>Or, when a custom constructor is needed, "<a>fire an event</a> named <code>click</code> at
  <var>target</var> using {{MouseEvent}} with its {{UIEvent/detail}} attribute initialized to 1".
+
+ <p>When the <a>event</a> needs to be dispatched with a given <a>Async Context Mapping</a>
+ <var>acMapping</var>, one could write "<a>fire an event</a> named <code>load</code> at
+ <var>target</var> with <var>acMapping</var>".
 
  <p>Occasionally the return value is important:
 
