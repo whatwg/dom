@@ -37,6 +37,7 @@ urlPrefix: https://tc39.es/ecma262/#; spec: ECMASCRIPT
   text: current realm; url: current-realm
   text: realm; url: realm
   text: surrounding agent; url: surrounding-agent
+  text: execution context stack; url: execution-context-stack
 urlPrefix: https://w3c.github.io/hr-time/#; spec: HR-TIME
  type:typedef; urlPrefix: dom-; text: DOMHighResTimeStamp
  type:dfn; text: current high resolution time; url: dfn-current-high-resolution-time
@@ -1103,6 +1104,17 @@ and a <dfn export for=EventTarget>legacy-canceled-activation behavior</dfn> algo
 <p class=note>These algorithms only exist for checkbox and radio <{input}> elements and
 are not to be used for anything else. [[!HTML]]
 
+<p>Each {{EventTarget}} object has a <dfn for=EventTarget>preserved AsyncContext map</dfn>, which is
+a <a>map</a> from strings representing event types to <a>Async Context Mappings</a>. This map is
+initially empty. [[!PROPOSAL-ASYNCCONTEXT]]
+
+<p class=note>This map is used to implement the [{{PropagatesAsyncContextToEvents}}] WebIDL extended
+attribute. For simplicity, the map is defined on {{EventTarget}}, but it will always be empty unless
+<a>this</a> implements an interface which has a regular operation or a constructor operation
+annotated with this extended attribute, or a specification explicitly
+<a for=EventTarget lt="propagate AsyncContext for events">propagates AsyncContext for events</a>
+on it.
+
 <dl class=domintro>
  <dt><code><var>target</var> = new <a constructor for=EventTarget lt=EventTarget()>EventTarget</a>();</code>
  <dd><p>Creates a new {{EventTarget}} object, which can be used by developers to <a>dispatch</a> and
@@ -1815,8 +1827,12 @@ initialized, a <var>legacy target override flag</var>, and an optional <a>Async 
 
   <p class=note>This also allows for the {{Event/isTrusted}} attribute to be set to false.
 
- <li><p>If <var>async context mapping</var> is not given, then set it to
- <a abstract-op>AsyncContextSnapshot</a>().
+ <li><p>If <var>async context mapping</var> is not set, the <a lt="execution context
+ stack">JavaScript execution context stack</a> is empty, and (<var>target</var>'s <a
+ for=EventTarget>preserved AsyncContext map</a>)[<var>e</var>] <a for=map>exists</a>, then set
+ <var>async context mapping</var> to (<var>target</var>'s <a for=EventTarget>preserved AsyncContext
+ map</a>)[<var>e</var>]. Otherwise, if <var>async context mapping</var> is not set, set it to <a
+ abstract-op>AsyncContextSnapshot</a>().
 
  <li>
   <p>Let <var>result</var> be the result of <a for="Async Context Mapping">running</a> the
@@ -1880,6 +1896,105 @@ they are for.
 iterations of the DOM had a concept of "default actions" associated with <a>events</a>
 that gave folks all the wrong ideas. <a>Events</a> do not represent or cause actions, they
 can only be used to influence an ongoing one.
+
+
+<h3 id="propagates-async-context-to-events">The <dfn extended-attribute lt="PropagatesAsyncContextToEvents">[PropagatesAsyncContextToEvents]</dfn> extended attribute</h3>
+
+<p>To enable integration with the TC39 AsyncContext proposal for events fired asynchronously as a
+result of either a method call or the construction of an object, we introduce the
+[{{PropagatesAsyncContextToEvents}}] WebIDL [=extended attribute=]. [[!PROPOSAL-ASYNCCONTEXT]]
+
+<p>The [{{PropagatesAsyncContextToEvents}}] extended attribute must take either a string or a list
+of strings. It must only be used on a [=regular operation=] or a
+<a href="https://webidl.spec.whatwg.org/#idl-constructors">constructor operation</a> that is a
+member of an [=interface=] that inherits from {{EventTarget}}.
+
+<p>Regular operations and constructor operations annotated with
+[{{PropagatesAsyncContextToEvents}}] must run the following steps in place of their method steps or
+[=constructor steps=], respectively:
+
+<ol>
+ <li><p>If the [{{PropagatesAsyncContextToEvents}}] extended attribute takes a list of strings, let
+ <var>event types</var> be that list. Otherwise, the argument is a string; let <var>event
+ types</var> be a list containing that string.
+
+ <li><p><a for=EventTarget>Propagate AsyncContext for events</a> <var>event types</var> given
+ <a>this</a>.
+
+ <li><p>Run the originally-specified steps for this operation. If the steps return a value or throw
+ an exception, return or throw it in turn.
+</ol>
+
+<p algorithm>To <dfn export for=EventTarget>propagate AsyncContext for events</dfn> with a list of
+strings <var>event types</var>, given an {{EventTarget}} <var>target</var>, then for each
+<var>event type</var> in <var>event types</var>, set (<var>target</var>'s
+<a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>] to
+<a abstract-op>AsyncContextSnapshot</a>(). <span class=note>The return value of
+<a abstract-op>AsyncContextSnapshot</a>() will not change across these invocations.</span></p>
+
+<p algorithm>To <dfn export for=EventTarget>clear AsyncContext for events</dfn> with a list of
+strings <var>event types</var>, given an {{EventTarget}} <var>target</var>, then for each
+<var>event type</var> in <var>event types</var>, remove (<var>target</var>'s
+<a for=EventTarget>preserved AsyncContext map</a>)[<var>event type</var>].</p>
+
+<p>Specifications should set the [{{PropagatesAsyncContextToEvents}}] extended attribute on methods
+which start an async operation which will eventually cause events to be fired on the instance on
+which the method was called. <span class="non-normative">An example of this is the
+{{XMLHttpRequest}} interface and its {{XMLHttpRequest/send}} method:</span> [[XHR]]
+
+<pre highlight=idl>
+[Exposed=(Window,DedicatedWorker,SharedWorker)]
+interface XMLHttpRequest : XMLHttpRequestEventTarget {
+  // ...
+  [PropagatesAsyncContextToEvents=("loadstart", "progress", "error", "load", "timeout", "loadend")] undefined send(optional (Document or XMLHttpRequestBodyInit)? body = null);
+  // ...
+};
+</pre>
+
+<p>Specifications should also set this extended attribute on constructor operations which start an
+async operation which will eventually cause events to be fired on the newly-constructed instance.
+<span class="non-normative">An example of this is the {{EventSource}} interface, whose constructor
+starts the connection that fires <code>open</code> and <code>error</code> events:</span> [[HTML]]
+
+<pre highlight=idl>
+[Exposed=(Window,Worker)]
+interface EventSource : EventTarget {
+  [PropagatesAsyncContextToEvents=("open", "error")] constructor(USVString url, optional EventSourceInit eventSourceInitDict = {});
+  // ...
+};
+</pre>
+
+<p>When an operation creates a new {{EventTarget}} object and returns it, and starts an async
+operation which will eventually cause events to be fired on that object, the operation's
+description should <a for=EventTarget>propagate AsyncContext for events</a> given that object
+directly.
+
+<div class=example id=propagate-asynccontext-for-events-example>
+ <p>{{IDBOpenDBRequest}} objects can only be created by the {{IDBFactory/open()}} and
+ {{IDBFactory/deleteDatabase()}} methods of {{IDBFactory}}, both of which result in events being
+ fired on the returned object. Their method steps could contain the following steps after creating
+ the request: [[INDEXEDDB]]
+
+ <ol>
+  <li><p>Let <var>request</var> be a new open request.
+
+  <li><p><a for=EventTarget>Propagate AsyncContext for events</a> « "<code>success</code>",
+  "<code>error</code>", "<code>blocked</code>", "<code>upgradeneeded</code>" » given
+  <var>request</var>.
+ </ol>
+</div>
+
+<p>Once the events for which AsyncContext was propagated can no longer be fired as a result of the
+operation that started it, specifications should <a for=EventTarget>clear AsyncContext for
+events</a> for them, so that the <a>Async Context Mapping</a> is not used for events that are later
+fired for unrelated reasons.
+
+<p>Many async operations are not started by a method call or by constructing an object, but by
+setting an attribute, inserting a <a for=/>node</a> into a <a for=/>document</a>, or some other
+state change.
+For those, specifications do not use [{{PropagatesAsyncContextToEvents}}]. Instead, they capture
+<a abstract-op>AsyncContextSnapshot</a>() when the operation starts, and later pass it to
+<a>fire an event</a>.
 
 
 
