@@ -2923,6 +2923,43 @@ that all pending <a>node tree</a> insertions completely finish before more inser
 <a for=/>remove</a>, and <a for=/>replace data</a>.
 </div>
 
+<div algorithm="descendant changed and descendant moved steps">
+<p><a lt="other applicable specifications">Specifications</a> may define
+<dfn export id=concept-node-descendant-changed-ext>descendant changed steps</dfn> and
+<dfn export id=concept-node-descendant-moved-ext>descendant moved steps</dfn> for all or some
+<a for=/>nodes</a>. These algorithms are passed no argument. The <a>descendant changed steps</a>
+are called from <a>signal a descendant change</a>, which is used by <a for=/>insert</a>,
+<a for=/>remove</a>, and <a for=/>replace data</a>. The <a>descendant moved steps</a> are called
+from <a>signal a descendant move</a>, which is used by <a>move</a>.
+<a lt="other applicable specifications">Specifications</a> whose <a>descendant changed steps</a>
+also depend on other changes, such as those to a particular attribute, need to
+<a>signal a descendant change</a> for those themselves. Like the <a>insertion steps</a>, these
+steps must not modify the <a>node tree</a> that the <a for=/>node</a> they are run for
+<a>participates</a> in, create <a for=/>browsing contexts</a>,
+<a lt="fire an event">fire events</a>, or otherwise execute JavaScript.
+
+<p class=warning>Implementations cannot afford to visit each <a for=tree>inclusive ancestor</a> of
+each mutated <a for=/>node</a>. Instead, they track which <a for=/>nodes</a> have an
+<a for=tree>ancestor</a> that defines <a>descendant changed steps</a> or
+<a>descendant moved steps</a>, which is only cheap if such <a for=tree>ancestors</a> are rare and
+can be recognized by their <a for=Element>local name</a> and <a for=Element>namespace</a> alone.
+<a lt="other applicable specifications">Specifications</a> are strongly discouraged from defining
+these steps; please <a href="https://github.com/whatwg/dom/issues/new">file an issue</a> if you
+believe you need them.
+</div>
+
+<div algorithm>
+<p>To <dfn export>signal a descendant change</dfn> for a <a for=/>node</a> <var>node</var>: for each
+<a for=tree>inclusive ancestor</a> <var>ancestor</var> of <var>node</var>, in reverse
+<a>tree order</a>, run the <a>descendant changed steps</a> for <var>ancestor</var>.
+</div>
+
+<div algorithm>
+<p>To <dfn>signal a descendant move</dfn> for a <a for=/>node</a> <var>node</var>: for each
+<a for=tree>inclusive ancestor</a> <var>ancestor</var> of <var>node</var>, in reverse
+<a>tree order</a>, run the <a>descendant moved steps</a> for <var>ancestor</var>.
+</div>
+
 <div algorithm=insert>
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <a for=/>node</a> <var>node</var> into a
 <a for=/>node</a> <var>parent</var> before null or a <a for=/>node</a> <var>child</var>, with an
@@ -3036,6 +3073,8 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
  <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+
+ <li><p><a>Signal a descendant change</a> for <var>parent</var>.
 
  <li>
   <p>Let <var>staticNodeList</var> be a <a for=/>list</a> of <a for=/>nodes</a>, initially « ».
@@ -3213,6 +3252,10 @@ to do these things asynchronously, however.
 
  <li><p><a>Queue a tree mutation record</a> for <var>newParent</var> with « <var>node</var> », « »,
  <var>newPreviousSibling</var>, and <var>child</var>.
+
+ <li><p><a>Signal a descendant move</a> for <var>oldParent</var>.
+
+ <li><p><a>Signal a descendant move</a> for <var>newParent</var>.
 </ol>
 </div>
 
@@ -3388,6 +3431,8 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
  <var>oldNextSibling</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
+
+ <li><p><a>Signal a descendant change</a> for <var>parent</var>.
 </ol>
 </div>
 
@@ -8522,8 +8567,14 @@ boolean <var>piAttributesAlreadyUpdated</var> (default false):
  <var>piAttributesAlreadyUpdated</var> is false, then <a>update attributes from data</a> given
  <var>node</var>.
 
- <li><p>If <var>node</var>'s <a for=tree>parent</a> is non-null, then run the
- <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
+ <li>
+  <p>If <var>node</var>'s <a for=tree>parent</a> is non-null:
+
+  <ol>
+   <li><p>Run the <a>children changed steps</a> for <var>node</var>'s <a for=tree>parent</a>.
+
+   <li><p><a>Signal a descendant change</a> for <var>node</var>'s <a for=tree>parent</a>.
+  </ol>
 </ol>
 </div>
 <!-- delete happens after insert for better cursor positioning with editing
