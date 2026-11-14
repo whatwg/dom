@@ -33,6 +33,9 @@ type: interface
   text: DeviceOrientationEvent
 urlPrefix: https://tc39.es/ecma262/#; spec: ECMASCRIPT
  text: Construct; url: sec-construct; type: abstract-op
+ text: CreateDataPropertyOrThrow; url: sec-createdatapropertyorthrow; type: abstract-op
+ text: OrdinaryObjectCreate; url: sec-ordinaryobjectcreate; type: abstract-op
+ text: SetIntegrityLevel; url: sec-setintegritylevel; type: abstract-op
  type: dfn
   text: current realm; url: current-realm
   text: realm; url: realm
@@ -2926,7 +2929,10 @@ that all pending <a>node tree</a> insertions completely finish before more inser
 <div algorithm=insert>
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <a for=/>node</a> <var>node</var> into a
 <a for=/>node</a> <var>parent</var> before null or a <a for=/>node</a> <var>child</var>, with an
-optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default false):
+optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default false), an optional
+<a>active template</a> or null <dfn export for=insert><var>activeTemplate</var></dfn> (default
+null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
+<dfn export for=insert><var>activeTemplateStatus</var></dfn> (default null):
 
 <ol>
  <li><p>Let <var>nodes</var> be <var>node</var>'s <a for=tree>children</a>, if <var>node</var> is a
@@ -3032,7 +3038,8 @@ optional boolean <dfn for="insert"><var>suppressObservers</var></dfn> (default f
   </ol>
 
  <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
- <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, and <var>child</var>.
+ <var>parent</var> with <var>nodes</var>, « », <var>previousSibling</var>, <var>child</var>,
+ <var>activeTemplate</var>, and <var>activeTemplateStatus</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 
@@ -3319,7 +3326,10 @@ in the <a for=/>remove</a> algorithm below.
 
 <div algorithm=remove>
 <p>To <dfn export id=concept-node-remove>remove</dfn> a <a for=/>node</a> <var>node</var>, with an
-optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default false):
+optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default false), an optional
+<a>active template</a> or null <dfn export for=remove><var>activeTemplate</var></dfn> (default
+null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
+<dfn export for=remove><var>activeTemplateStatus</var></dfn> (default null):
 
 <ol>
  <li><p>Let <var>parent</var> be <var>node</var>'s <a for=tree>parent</a>.
@@ -3383,8 +3393,8 @@ optional boolean <dfn for=remove><var>suppressObservers</var></dfn> (default fal
  <li><p><a>Add transient registered observers</a> given <var>node</var> and <var>parent</var>.
 
  <li><p>If <var>suppressObservers</var> is false, then <a>queue a tree mutation record</a> for
- <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>, and
- <var>oldNextSibling</var>.
+ <var>parent</var> with « », « <var>node</var> », <var>oldPreviousSibling</var>,
+ <var>oldNextSibling</var>, <var>activeTemplate</var>, and <var>activeTemplateStatus</var>.
 
  <li><p>Run the <a>children changed steps</a> for <var>parent</var>.
 </ol>
@@ -4138,13 +4148,14 @@ interface MutationObserver {
 callback MutationCallback = undefined (sequence&lt;MutationRecord> mutations, MutationObserver observer);
 
 dictionary MutationObserverInit {
-  boolean childList = false;
+  boolean childList;
   boolean attributes;
   boolean characterData;
   boolean subtree = false;
   boolean attributeOldValue;
   boolean characterDataOldValue;
   sequence&lt;DOMString> attributeFilter;
+  sequence&lt;DOMString> activeTemplateAttributeFilter;
 };
 </pre>
 
@@ -4185,6 +4196,7 @@ dictionary MutationObserverInit {
   <dl>
    <dt>{{MutationObserverInit/childList}}
    <dd>Set to true if mutations to <var>target</var>'s <a for=tree>children</a> are to be observed.
+   Can be omitted if {{MutationObserverInit/activeTemplateAttributeFilter}} is specified.
 
    <dt>{{MutationObserverInit/attributes}}
    <dd>Set to true if mutations to <var>target</var>'s
@@ -4226,6 +4238,17 @@ dictionary MutationObserverInit {
    <a>attribute</a> mutations need to be
    observed and {{MutationObserverInit/attributes}} is true
    or omitted.
+
+   <dt>{{MutationObserverInit/activeTemplateAttributeFilter}}
+   <dd>Set to a list of <a>attribute</a> <a for=Attr>local names</a> (without
+   <a for=Attr>namespace</a>) if mutations that the HTML parser makes on behalf of a
+   <code>template</code> element with a <code>for</code> attribute need to be identified as such.
+   {{MutationObserverInit/childList}} needs to be true or omitted. The resulting
+   {{MutationRecord}} objects expose the status of the <code>template</code> element's update in
+   {{MutationRecord/activeTemplateStatus}} and the values of the listed attributes in
+   {{MutationRecord/activeTemplateAttributes}}. The observer also receives
+   "<code>childList</code>" records with no added or removed <a for=/>nodes</a> that mark the start
+   or end of such an update. [[HTML]]
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
@@ -4268,6 +4291,10 @@ method steps are:
  <a for=map>exist</a>, then set <var>options</var>["{{MutationObserverInit/characterData}}"] to
  true.
 
+ <li><p>If <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"]
+ <a for=map>exists</a> and <var>options</var>["{{MutationObserverInit/childList}}"] does not
+ <a for=map>exist</a>, then set <var>options</var>["{{MutationObserverInit/childList}}"] to true.
+
  <li><p>If none of <var>options</var>["{{MutationObserverInit/childList}}"],
  <var>options</var>["{{MutationObserverInit/attributes}}"], and
  <var>options</var>["{{MutationObserverInit/characterData}}"] is true, then <a>throw</a> a
@@ -4284,6 +4311,10 @@ method steps are:
  <li><p>If <var>options</var>["{{MutationObserverInit/characterDataOldValue}}"] is true and
  <var>options</var>["{{MutationObserverInit/characterData}}"] is false, then <a>throw</a> a
  <code>TypeError</code>.
+
+ <li><p>If <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"]
+ <a for=map>exists</a> and <var>options</var>["{{MutationObserverInit/childList}}"] is false, then
+ <a>throw</a> a <code>TypeError</code>.
 
  <li>
   <p>Let <var>registered</var> be the <a>registered observer</a> in <var>target</var>'s
@@ -4356,13 +4387,62 @@ method steps are:
 
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
+<p>An <dfn export>active template</dfn> is a <a for=/>struct</a> that identifies the
+mutations that the HTML parser makes on behalf of a <code>template</code> element with a
+<code>for</code> attribute. It has the following <a for=struct>items</a>: [[!HTML]]
+
+<dl>
+ <dt><dfn export for="active template">attribute map</dfn>
+ <dd>An <a for=/>ordered map</a> from strings (<a>attribute</a> <a for=Attr>local names</a>) to
+ strings (<a>attribute</a> <a for=Attr>values</a>).
+
+ <dt><dfn for="active template">attributes objects</dfn>
+ <dd>A <a for=/>map</a> from {{MutationObserver}} objects to objects, initially empty.
+</dl>
+
+<p class=note>The <a for="active template">attributes objects</a> make sure that all
+{{MutationRecord}} objects for a given {{MutationObserver}} object and a given
+<a>active template</a> return the same {{MutationRecord/activeTemplateAttributes}} object, so that
+it can be used as a key in a <code>WeakMap</code>.
+
+<div algorithm>
+<p>To <dfn>get the active template attributes object</dfn> given an <a>active template</a>
+<var>activeTemplate</var>, a {{MutationObserver}} object <var>observer</var>, and a
+<a for=/>list</a> of strings <var>filter</var>:
+
+<ol>
+ <li><p>If <var>activeTemplate</var>'s
+ <a for="active template">attributes objects</a>[<var>observer</var>] <a for=map>exists</a>, then
+ return <var>activeTemplate</var>'s
+ <a for="active template">attributes objects</a>[<var>observer</var>].
+
+ <li><p>Let <var>object</var> be [$OrdinaryObjectCreate$](null).
+
+ <li><p><a for=list>For each</a> <var>name</var> of <var>filter</var>: if <var>activeTemplate</var>'s
+ <a for="active template">attribute map</a>[<var>name</var>] <a for=map>exists</a>, then perform
+ ! [$CreateDataPropertyOrThrow$](<var>object</var>, <var>name</var>,
+ <var>activeTemplate</var>'s <a for="active template">attribute map</a>[<var>name</var>]).
+
+ <li><p>Perform ! [$SetIntegrityLevel$](<var>object</var>, frozen).
+
+ <li><p><a for=map>Set</a> <var>activeTemplate</var>'s
+ <a for="active template">attributes objects</a>[<var>observer</var>] to <var>object</var>.
+
+ <li><p>Return <var>object</var>.
+</ol>
+</div>
+
 <div algorithm>
 <p>To <dfn>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, and an optional
+<a>active template</a> or null <var>activeTemplate</var> (default null) and an optional
+{{MutationRecordActiveTemplateStatus}} value or null <var>activeTemplateStatus</var> (default null):
 
 <ol>
  <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
+
+ <li><p>Let <var>activeTemplateFilters</var> be an empty <a for=/>map</a>.
 
  <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
 
@@ -4395,7 +4475,13 @@ method steps are:
      <a for=map>exist</a> or is false
 
      <li><var>type</var> is "<code>childList</code>" and
-     <var>options</var>["{{MutationObserverInit/childList}}"] is false
+     <var>options</var>["{{MutationObserverInit/childList}}"] either does not <a for=map>exist</a>
+     or is false
+
+     <li><var>type</var> is "<code>childList</code>", <var>addedNodes</var>
+     <a for=list>is empty</a>, <var>removedNodes</var> <a for=list>is empty</a>, and
+     <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"] does not
+     <a for=map>exist</a>
     </ul>
 
     <p>then:
@@ -4405,6 +4491,11 @@ method steps are:
 
      <li><p>If <var>interestedObservers</var>[<var>mo</var>] does not <a for=map>exist</a>, then
      <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to null.
+
+     <li><p>If <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"]
+     <a for=map>exists</a> and <var>activeTemplateFilters</var>[<var>mo</var>] does not
+     <a for=map>exist</a>, then <a for=map>set</a> <var>activeTemplateFilters</var>[<var>mo</var>]
+     to <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"].
 
      <li><p>If either <var>type</var> is "<code>attributes</code>" and
      <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] is true, or <var>type</var> is
@@ -4421,14 +4512,31 @@ method steps are:
   <var>interestedObservers</var>:
 
   <ol>
+   <li><p>Let <var>recordActiveTemplateStatus</var> and <var>recordActiveTemplateAttributes</var>
+   be null.
+
+   <li>
+    <p>If <var>activeTemplate</var> is non-null and
+    <var>activeTemplateFilters</var>[<var>observer</var>] <a for=map>exists</a>:
+
+    <ol>
+     <li><p>Set <var>recordActiveTemplateStatus</var> to <var>activeTemplateStatus</var>.
+
+     <li><p>Set <var>recordActiveTemplateAttributes</var> to the result of
+     <a>getting the active template attributes object</a> given <var>activeTemplate</var>,
+     <var>observer</var>, and <var>activeTemplateFilters</var>[<var>observer</var>].
+    </ol>
+
    <li><p>Let <var>record</var> be a new {{MutationRecord}} object with its {{MutationRecord/type}}
    set to <var>type</var>, {{MutationRecord/target}} set to <var>target</var>,
    {{MutationRecord/attributeName}} set to <var>name</var>, {{MutationRecord/attributeNamespace}}
    set to <var>namespace</var>, {{MutationRecord/oldValue}} set to <var>mappedOldValue</var>,
    {{MutationRecord/addedNodes}} set to <var>addedNodes</var>,
    {{MutationRecord/removedNodes}} set to <var>removedNodes</var>,
-   {{MutationRecord/previousSibling}} set to <var>previousSibling</var>, and
-   {{MutationRecord/nextSibling}} set to <var>nextSibling</var>.
+   {{MutationRecord/previousSibling}} set to <var>previousSibling</var>,
+   {{MutationRecord/nextSibling}} set to <var>nextSibling</var>,
+   {{MutationRecord/activeTemplateStatus}} set to <var>recordActiveTemplateStatus</var>, and
+   {{MutationRecord/activeTemplateAttributes}} set to <var>recordActiveTemplateAttributes</var>.
 
    <li><p><a for=queue>Enqueue</a> <var>record</var> to <var>observer</var>'s
    <a for=MutationObserver>record queue</a>.
@@ -4442,18 +4550,24 @@ method steps are:
 </div>
 
 <div algorithm>
-<p>To <dfn>queue a tree mutation record</dfn> for <var>target</var> with <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<p>To <dfn export>queue a tree mutation record</dfn> for <var>target</var> with <var>addedNodes</var>,
+<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, and an optional
+<a>active template</a> or null <var>activeTemplate</var> (default null) and an optional
+{{MutationRecordActiveTemplateStatus}} value or null <var>activeTemplateStatus</var> (default null):
 
 <ol>
  <li><p><a for=/>Assert</a>: either <var>addedNodes</var> or <var>removedNodes</var>
- <a for=set>is not empty</a>.
+ <a for=set>is not empty</a>, or <var>activeTemplate</var> is non-null.
 
  <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
  null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>,
- and <var>nextSibling</var>.
+ <var>nextSibling</var>, <var>activeTemplate</var>, and <var>activeTemplateStatus</var>.
 </ol>
 </div>
+
+<p class=note>A "<code>childList</code>" record with neither added nor removed
+<a for=/>nodes</a> marks the start or end of an <a>active template</a>'s update. Only observers
+that specified {{MutationObserverInit/activeTemplateAttributeFilter}} receive it.
 
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
@@ -4470,7 +4584,11 @@ interface MutationRecord {
   readonly attribute DOMString? attributeName;
   readonly attribute DOMString? attributeNamespace;
   readonly attribute DOMString? oldValue;
+  readonly attribute MutationRecordActiveTemplateStatus? activeTemplateStatus;
+  readonly attribute object? activeTemplateAttributes;
 };
+
+enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
 </pre>
 
 <dl class=domintro>
@@ -4520,6 +4638,33 @@ interface MutationRecord {
  <a for=CharacterData>data</a> of the changed
  <a for=/>node</a> before the change. For
  "<code>childList</code>", it is null.
+
+ <dt><code><var>record</var> . {{MutationRecord/activeTemplateStatus}}</code>
+ <dd>
+  <p>If the observer specified {{MutationObserverInit/activeTemplateAttributeFilter}} and the HTML
+  parser made the mutation on behalf of a <code>template</code> element with a <code>for</code>
+  attribute, returns one of the following; otherwise null: [[HTML]]
+
+  <dl>
+   <dt>"<code>start</code>"
+   <dd>The update started. The record removes the <a for=/>nodes</a> that the update replaces, if
+   any.
+
+   <dt>"<code>update</code>"
+   <dd>The parser inserted or moved <a for=/>nodes</a> as part of the update.
+
+   <dt>"<code>end</code>"
+   <dd>The update finished.
+
+   <dt>"<code>abort</code>"
+   <dd>The update did not start because nothing matched, or stopped before it finished.
+  </dl>
+
+ <dt><code><var>record</var> . {{MutationRecord/activeTemplateAttributes}}</code>
+ <dd><p>If {{MutationRecord/activeTemplateStatus}} is non-null, returns a frozen object with a
+ null prototype that holds those attributes of the <code>template</code> element that the observer
+ listed in {{MutationObserverInit/activeTemplateAttributeFilter}}; otherwise null. All records for
+ a given <code>template</code> element and observer return the same object.
 </dl>
 
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
@@ -4528,9 +4673,11 @@ interface MutationRecord {
 <dfn attribute for="MutationRecord">previousSibling</dfn>,
 <dfn attribute for="MutationRecord">nextSibling</dfn>,
 <dfn attribute for="MutationRecord">attributeName</dfn>,
-<dfn attribute for="MutationRecord">attributeNamespace</dfn>, and
-<dfn attribute for="MutationRecord">oldValue</dfn> attributes must return the values they were
-initialized to.
+<dfn attribute for="MutationRecord">attributeNamespace</dfn>,
+<dfn attribute for="MutationRecord">oldValue</dfn>,
+<dfn attribute for="MutationRecord">activeTemplateStatus</dfn>, and
+<dfn attribute for="MutationRecord">activeTemplateAttributes</dfn> attributes must return the
+values they were initialized to.
 
 
 <h3 id=interface-node>Interface {{Node}}</h3>
