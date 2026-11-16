@@ -4403,13 +4403,15 @@ mutations that the HTML parser makes on behalf of a <code>template</code> elemen
 
 <p class=note>The <a for="active template">attributes objects</a> make sure that all
 {{MutationRecord}} objects for a given {{MutationObserver}} object and a given
-<a>active template</a> return the same {{MutationRecord/activeTemplateAttributes}} object, so that
-it can be used as a key in a <code>WeakMap</code>.
+<a>active template</a> return the same {{MutationRecord/activeTemplateAttributes}} object, created
+from the matching {{MutationObserverInit/activeTemplateAttributeFilter}} options when the first
+record for that <a>active template</a> is queued for the observer, so that it can be used as a key
+in a <code>WeakMap</code>.
 
 <div algorithm>
 <p>To <dfn>get the active template attributes object</dfn> given an <a>active template</a>
-<var>activeTemplate</var>, a {{MutationObserver}} object <var>observer</var>, and a
-<a for=/>list</a> of strings <var>filter</var>:
+<var>activeTemplate</var>, a {{MutationObserver}} object <var>observer</var>, and an
+<a>ordered set</a> of strings <var>filter</var>:
 
 <ol>
  <li><p>If <var>activeTemplate</var>'s
@@ -4448,7 +4450,8 @@ it can be used as a key in a <code>WeakMap</code>.
 
  <li><p>Let <var>activeTemplateFilters</var> be an empty <a for=/>map</a>.
 
- <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>.
+ <li><p>Let <var>nodes</var> be the <a for=tree>inclusive ancestors</a> of <var>target</var>, in
+ reverse <a>tree order</a>.
 
  <li>
   <p>For each <var>node</var> of <var>nodes</var>, and then <a for=list>for each</a>
@@ -4496,10 +4499,18 @@ it can be used as a key in a <code>WeakMap</code>.
      <li><p>If <var>interestedObservers</var>[<var>mo</var>] does not <a for=map>exist</a>, then
      <a for=map>set</a> <var>interestedObservers</var>[<var>mo</var>] to null.
 
-     <li><p>If <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"]
-     <a for=map>exists</a> and <var>activeTemplateFilters</var>[<var>mo</var>] does not
-     <a for=map>exist</a>, then <a for=map>set</a> <var>activeTemplateFilters</var>[<var>mo</var>]
-     to <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"].
+     <li>
+      <p>If <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"]
+      <a for=map>exists</a>:
+
+      <ol>
+       <li><p>If <var>activeTemplateFilters</var>[<var>mo</var>] does not <a for=map>exist</a>,
+       then <a for=map>set</a> <var>activeTemplateFilters</var>[<var>mo</var>] to a new
+       <a>ordered set</a>.
+
+       <li><p><a for=set>Extend</a> <var>activeTemplateFilters</var>[<var>mo</var>] with
+       <var>options</var>["{{MutationObserverInit/activeTemplateAttributeFilter}}"].
+      </ol>
 
      <li><p>If either <var>type</var> is "<code>attributes</code>" and
      <var>options</var>["{{MutationObserverInit/attributeOldValue}}"] is true, or <var>type</var> is
@@ -4667,8 +4678,9 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  <dt><code><var>record</var> . {{MutationRecord/activeTemplateAttributes}}</code>
  <dd><p>If {{MutationRecord/activeTemplateStatus}} is non-null, returns a frozen object with a
  null prototype that holds those attributes of the <code>template</code> element that the observer
- listed in {{MutationObserverInit/activeTemplateAttributeFilter}}; otherwise null. All records for
- a given <code>template</code> element and observer return the same object.
+ listed in {{MutationObserverInit/activeTemplateAttributeFilter}} when the first record for that
+ <code>template</code> element was queued for the observer; otherwise null. All records for a given
+ <code>template</code> element and observer return the same object.
 </dl>
 
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
