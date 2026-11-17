@@ -2929,9 +2929,9 @@ that all pending <a>node tree</a> insertions completely finish before more inser
 <div algorithm=insert>
 <p>To <dfn export id=concept-node-insert>insert</dfn> a <a for=/>node</a> <var>node</var> into a
 <a for=/>node</a> <var>parent</var> before null or a <a for=/>node</a> <var>child</var>, with an
-optional boolean <dfn export for="insert"><var>suppressObservers</var></dfn> (default false), an optional
-<a>active template</a> or null <dfn export for=insert><var>activeTemplate</var></dfn> (default
-null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
+optional boolean <dfn export for=insert><var>suppressObservers</var></dfn> (default false), an
+optional <a>active template</a> or null <dfn export for=insert><var>activeTemplate</var></dfn>
+(default null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
 <dfn export for=insert><var>activeTemplateStatus</var></dfn> (default null):
 
 <ol>
@@ -3327,9 +3327,9 @@ in the <a for=/>remove</a> algorithm below.
 
 <div algorithm=remove>
 <p>To <dfn export id=concept-node-remove>remove</dfn> a <a for=/>node</a> <var>node</var>, with an
-optional boolean <dfn export for=remove><var>suppressObservers</var></dfn> (default false), an optional
-<a>active template</a> or null <dfn export for=remove><var>activeTemplate</var></dfn> (default
-null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
+optional boolean <dfn export for=remove><var>suppressObservers</var></dfn> (default false), an
+optional <a>active template</a> or null <dfn export for=remove><var>activeTemplate</var></dfn>
+(default null), and an optional {{MutationRecordActiveTemplateStatus}} value or null
 <dfn export for=remove><var>activeTemplateStatus</var></dfn> (default null):
 
 <ol>
@@ -4243,9 +4243,9 @@ dictionary MutationObserverInit {
    <dt>{{MutationObserverInit/activeTemplateAttributeFilter}}
    <dd>Set to a list of <a>attribute</a> <a for=Attr>local names</a> (without
    <a for=Attr>namespace</a>) if mutations that the HTML parser makes on behalf of a
-   <code>template</code> element with a <code>for</code> attribute need to be identified as such.
+   <{template}> element with a <code>for</code> attribute need to be identified as such.
    {{MutationObserverInit/childList}} needs to be true or omitted. The resulting
-   {{MutationRecord}} objects expose the status of the <code>template</code> element's update in
+   {{MutationRecord}} objects expose the status of the <{template}> element's update in
    {{MutationRecord/activeTemplateStatus}} and the <a for=Attr>values</a> of the listed
    <a>attributes</a> in {{MutationRecord/activeTemplateAttributes}}. The observer also receives
    "<code>childList</code>" records with no added or removed <a for=/>nodes</a> that mark the
@@ -4389,7 +4389,7 @@ method steps are:
 <h4 id=queueing-a-mutation-record>Queuing a mutation record</h4>
 
 <p>An <dfn export>active template</dfn> is a <a for=/>struct</a> that identifies the
-mutations that the HTML parser makes on behalf of a <code>template</code> element with a
+mutations that the HTML parser makes on behalf of a <{template}> element with a
 <code>for</code> attribute. It has the following <a for=struct>items</a>: [[!HTML]]
 
 <dl>
@@ -4422,12 +4422,13 @@ all {{MutationRecord}} objects with non-null {{MutationRecord/activeTemplateStat
 
  <li><p>Let <var>object</var> be [$OrdinaryObjectCreate$](null).
 
- <li><p><a for=list>For each</a> <var>name</var> of <var>filter</var>: if <var>activeTemplate</var>'s
- <a for="active template">attribute map</a>[<var>name</var>] <a for=map>exists</a>, then perform
- ! [$CreateDataPropertyOrThrow$](<var>object</var>, <var>name</var>,
- <var>activeTemplate</var>'s <a for="active template">attribute map</a>[<var>name</var>]).
+ <li><p><a for=set>For each</a> <var>name</var> of <var>filter</var>: if
+ <var>activeTemplate</var>'s <a for="active template">attribute map</a>[<var>name</var>]
+ <a for=map>exists</a>, then perform ! [$CreateDataPropertyOrThrow$](<var>object</var>,
+ <var>name</var>, <var>activeTemplate</var>'s
+ <a for="active template">attribute map</a>[<var>name</var>]).
 
- <li><p>Perform ! [$SetIntegrityLevel$](<var>object</var>, frozen).
+ <li><p>Perform ! [$SetIntegrityLevel$](<var>object</var>, "<code>frozen</code>").
 
  <li><p><a for=map>Set</a> <var>activeTemplate</var>'s
  <a for="active template">attributes objects</a>[<var>observer</var>] to <var>object</var>.
@@ -4439,8 +4440,8 @@ all {{MutationRecord}} objects with non-null {{MutationRecord/activeTemplateStat
 <div algorithm>
 <p>To <dfn>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, and an optional
-<a>active template</a> or null <var>activeTemplate</var> (default null) and an optional
+<var>removedNodes</var>, <var>previousSibling</var>, <var>nextSibling</var>, an optional
+<a>active template</a> or null <var>activeTemplate</var> (default null), and an optional
 {{MutationRecordActiveTemplateStatus}} value or null <var>activeTemplateStatus</var> (default null):
 
 <ol>
@@ -4566,10 +4567,11 @@ all {{MutationRecord}} objects with non-null {{MutationRecord/activeTemplateStat
 </div>
 
 <div algorithm>
-<p>To <dfn export>queue a tree mutation record</dfn> for <var>target</var> with <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>, and an optional
-<a>active template</a> or null <var>activeTemplate</var> (default null) and an optional
-{{MutationRecordActiveTemplateStatus}} value or null <var>activeTemplateStatus</var> (default null):
+<p>To <dfn export>queue a tree mutation record</dfn> for <var>target</var> with
+<var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>, <var>nextSibling</var>,
+an optional <a>active template</a> or null <var>activeTemplate</var> (default null), and an
+optional {{MutationRecordActiveTemplateStatus}} value or null <var>activeTemplateStatus</var>
+(default null):
 
 <ol>
  <li><p><a for=/>Assert</a>: either <var>addedNodes</var> or <var>removedNodes</var>
@@ -4660,8 +4662,8 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  <dt><code><var>record</var> . {{MutationRecord/activeTemplateStatus}}</code>
  <dd>
   <p>If the observer specified {{MutationObserverInit/activeTemplateAttributeFilter}} and the HTML
-  parser queued the record on behalf of a <code>template</code> element with a <code>for</code>
-  attribute, returns one of the following; otherwise null: [[HTML]]
+  parser queued the record on behalf of a <{template}> element with a <code>for</code> attribute,
+  returns one of the following; otherwise null: [[HTML]]
 
   <dl>
    <dt>"<code>start</code>"
@@ -4680,10 +4682,10 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
 
  <dt><code><var>record</var> . {{MutationRecord/activeTemplateAttributes}}</code>
  <dd>If {{MutationRecord/activeTemplateStatus}} is non-null, returns a frozen object with a null
- prototype that holds those <a>attributes</a> of the <code>template</code> element that the
- observer listed in {{MutationObserverInit/activeTemplateAttributeFilter}} when the first such
- record for that <code>template</code> element was queued for the observer; otherwise null. All
- such records for a given <code>template</code> element and observer return the same object.
+ prototype that holds those <a>attributes</a> of the <{template}> element that the observer listed
+ in {{MutationObserverInit/activeTemplateAttributeFilter}} when the first such record for that
+ <{template}> element was queued for the observer; otherwise null. All such records for a given
+ <{template}> element and observer return the same object.
 </dl>
 
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
