@@ -4246,10 +4246,10 @@ dictionary MutationObserverInit {
    <code>template</code> element with a <code>for</code> attribute need to be identified as such.
    {{MutationObserverInit/childList}} needs to be true or omitted. The resulting
    {{MutationRecord}} objects expose the status of the <code>template</code> element's update in
-   {{MutationRecord/activeTemplateStatus}} and the values of the listed attributes in
-   {{MutationRecord/activeTemplateAttributes}}. The observer also receives
-   "<code>childList</code>" records with no added or removed <a for=/>nodes</a> that mark the start
-   or end of such an update. [[HTML]]
+   {{MutationRecord/activeTemplateStatus}} and the <a for=Attr>values</a> of the listed
+   <a>attributes</a> in {{MutationRecord/activeTemplateAttributes}}. The observer also receives
+   "<code>childList</code>" records with no added or removed <a for=/>nodes</a> that mark the
+   start, end, or aborting of such an update. [[HTML]]
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
@@ -4401,12 +4401,13 @@ mutations that the HTML parser makes on behalf of a <code>template</code> elemen
  <dd>A weak <a for=/>map</a> from {{MutationObserver}} objects to objects, initially empty.
 </dl>
 
-<p class=note>The <a for="active template">attributes objects</a> make sure that all
-{{MutationRecord}} objects for a given {{MutationObserver}} object and a given
-<a>active template</a> return the same {{MutationRecord/activeTemplateAttributes}} object, created
-from the matching {{MutationObserverInit/activeTemplateAttributeFilter}} options when the first
-record for that <a>active template</a> is queued for the observer, so that it can be used as a key
-in a <code>WeakMap</code>.
+<p class=note>The <a for="active template">attributes objects</a> <a for=/>map</a> makes sure that
+all {{MutationRecord}} objects with non-null {{MutationRecord/activeTemplateStatus}} for a given
+{{MutationObserver}} object and a given <a>active template</a> return the same
+{{MutationRecord/activeTemplateAttributes}} object, created from the matching
+{{MutationObserverInit/activeTemplateAttributeFilter}} options when the first such record for that
+<a>active template</a> is queued for the observer, so that it can be used as a key in a
+<code>WeakMap</code>.
 
 <div algorithm>
 <p>To <dfn>get the active template attributes object</dfn> given an <a>active template</a>
@@ -4581,8 +4582,8 @@ in a <code>WeakMap</code>.
 </div>
 
 <p class=note>A "<code>childList</code>" record with neither added nor removed
-<a for=/>nodes</a> marks the start or end of an <a>active template</a>'s update. Only observers
-that specified {{MutationObserverInit/activeTemplateAttributeFilter}} receive it.
+<a for=/>nodes</a> marks the start, end, or aborting of an <a>active template</a>'s update. Only
+observers that specified {{MutationObserverInit/activeTemplateAttributeFilter}} receive it.
 
 
 <h4 id=interface-mutationrecord>Interface {{MutationRecord}}</h4>
@@ -4614,7 +4615,7 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  {{CharacterData}} <a for=/>node</a>. And
  "<code>childList</code>" if it was a mutation to the
  <a>tree</a> of
- <a for=/>nodes</a>.
+ <a for=/>nodes</a>, or the start, end, or aborting of an <a>active template</a>'s update.
 
  <dt><code><var>record</var> . {{MutationRecord/target}}</code>
  <dd>Returns the <a for=/>node</a> the mutation
@@ -4625,7 +4626,8 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  "<code>characterData</code>", it is the {{CharacterData}}
  <a for=/>node</a>. For "<code>childList</code>",
  it is the <a for=/>node</a> whose
- <a for=tree>children</a> changed.
+ <a for=tree>children</a> changed, or the <a for=/>node</a> targeted by an <a>active template</a>'s
+ update.
 
  <dt><code><var>record</var> . {{MutationRecord/addedNodes}}</code>
  <dt><code><var>record</var> . {{MutationRecord/removedNodes}}</code>
@@ -4635,7 +4637,8 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  <dt><code><var>record</var> . {{MutationRecord/previousSibling}}</code>
  <dt><code><var>record</var> . {{MutationRecord/nextSibling}}</code>
  <dd>Return the <a lt="previous sibling">previous</a> and <a for=tree>next sibling</a> respectively
- of the added or removed <a for=/>nodes</a>; otherwise null.
+ of the added or removed <a for=/>nodes</a>, or of the insertion point when
+ {{MutationRecord/activeTemplateStatus}} is "<code>start</code>"; otherwise null.
 
  <dt><code><var>record</var> . {{MutationRecord/attributeName}}</code>
  <dd>Returns the <a for=Attr>local name</a> of the changed <a>attribute</a>; otherwise null.
@@ -4657,7 +4660,7 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
  <dt><code><var>record</var> . {{MutationRecord/activeTemplateStatus}}</code>
  <dd>
   <p>If the observer specified {{MutationObserverInit/activeTemplateAttributeFilter}} and the HTML
-  parser made the mutation on behalf of a <code>template</code> element with a <code>for</code>
+  parser queued the record on behalf of a <code>template</code> element with a <code>for</code>
   attribute, returns one of the following; otherwise null: [[HTML]]
 
   <dl>
@@ -4666,7 +4669,7 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
    any.
 
    <dt>"<code>update</code>"
-   <dd>The parser inserted or moved <a for=/>nodes</a> as part of the update.
+   <dd>The parser inserted, moved, or removed <a for=/>nodes</a> as part of the update.
 
    <dt>"<code>end</code>"
    <dd>The update finished.
@@ -4676,11 +4679,11 @@ enum MutationRecordActiveTemplateStatus { "start", "update", "end", "abort" };
   </dl>
 
  <dt><code><var>record</var> . {{MutationRecord/activeTemplateAttributes}}</code>
- <dd><p>If {{MutationRecord/activeTemplateStatus}} is non-null, returns a frozen object with a
- null prototype that holds those attributes of the <code>template</code> element that the observer
- listed in {{MutationObserverInit/activeTemplateAttributeFilter}} when the first record for that
- <code>template</code> element was queued for the observer; otherwise null. All records for a given
- <code>template</code> element and observer return the same object.
+ <dd>If {{MutationRecord/activeTemplateStatus}} is non-null, returns a frozen object with a null
+ prototype that holds those <a>attributes</a> of the <code>template</code> element that the
+ observer listed in {{MutationObserverInit/activeTemplateAttributeFilter}} when the first such
+ record for that <code>template</code> element was queued for the observer; otherwise null. All
+ such records for a given <code>template</code> element and observer return the same object.
 </dl>
 
 <p>The <dfn attribute for=MutationRecord>type</dfn>, <dfn attribute for=MutationRecord>target</dfn>,
