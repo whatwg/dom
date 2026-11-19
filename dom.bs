@@ -4145,6 +4145,7 @@ dictionary MutationObserverInit {
   boolean attributeOldValue;
   boolean characterDataOldValue;
   sequence&lt;DOMString> attributeFilter;
+  boolean parseEndChildList = false;
 };
 </pre>
 
@@ -4226,6 +4227,14 @@ dictionary MutationObserverInit {
    <a>attribute</a> mutations need to be
    observed and {{MutationObserverInit/attributes}} is true
    or omitted.
+
+   <dt>{{MutationObserverInit/parseEndChildList}}
+   <dd>Set to true if a "<code>childList</code>" {{MutationRecord}} (with empty
+   {{MutationRecord/addedNodes}} and {{MutationRecord/removedNodes}}, and
+   {{MutationRecord/previousSibling}} set to <var>target</var>'s <a for=tree>last child</a>) is to
+   be queued when an {{Element}} or {{ShadowRoot}} <var>target</var> finishes parsing, unless a
+   "<code>childList</code>" record is already queued for <var>target</var>. Requires
+   {{MutationObserverInit/childList}} to be true and {{MutationObserverInit/subtree}} to be false.
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
@@ -4283,6 +4292,11 @@ method steps are:
 
  <li><p>If <var>options</var>["{{MutationObserverInit/characterDataOldValue}}"] is true and
  <var>options</var>["{{MutationObserverInit/characterData}}"] is false, then <a>throw</a> a
+ <code>TypeError</code>.
+
+ <li><p>If <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is true and either
+ <var>options</var>["{{MutationObserverInit/childList}}"] is false or
+ <var>options</var>["{{MutationObserverInit/subtree}}"] is true, then <a>throw</a> a
  <code>TypeError</code>.
 
  <li>
@@ -4359,7 +4373,8 @@ method steps are:
 <div algorithm>
 <p>To <dfn>queue a mutation record</dfn> of <var>type</var> for <var>target</var> with
 <var>name</var>, <var>namespace</var>, <var>oldValue</var>, <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<var>removedNodes</var>, <var>previousSibling</var>, <var>nextSibling</var>, and an optional boolean
+<dfn for="queue a mutation record"><var>parseEnd</var></dfn> (default false):
 
 <ol>
  <li><p>Let <var>interestedObservers</var> be an empty <a for=/>map</a>.
@@ -4396,11 +4411,24 @@ method steps are:
 
      <li><var>type</var> is "<code>childList</code>" and
      <var>options</var>["{{MutationObserverInit/childList}}"] is false
+
+     <li><var>parseEnd</var> is true and
+     <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is false
+
+     <li><var>parseEnd</var> is true and <var>registered</var>'s
+     <a for="registered observer">observer</a>'s <a for=MutationObserver>record queue</a>
+     <a for=list>contains</a> a {{MutationRecord}} whose {{MutationRecord/type}} is
+     "<code>childList</code>" and whose {{MutationRecord/target}} is <var>target</var>
     </ul>
 
     <p>then:
 
     <ol>
+     <li><p><a for=/>Assert</a>: if <var>type</var> is "<code>childList</code>",
+     <var>addedNodes</var> <a for=list>is empty</a>, and <var>removedNodes</var>
+     <a for=list>is empty</a>, then <var>options</var>["{{MutationObserverInit/parseEndChildList}}"]
+     is true.
+
      <li><p>Let <var>mo</var> be <var>registered</var>'s <a for="registered observer">observer</a>.
 
      <li><p>If <var>interestedObservers</var>[<var>mo</var>] does not <a for=map>exist</a>, then
@@ -4443,16 +4471,33 @@ method steps are:
 
 <div algorithm>
 <p>To <dfn>queue a tree mutation record</dfn> for <var>target</var> with <var>addedNodes</var>,
-<var>removedNodes</var>, <var>previousSibling</var>, and <var>nextSibling</var>:
+<var>removedNodes</var>, <var>previousSibling</var>, <var>nextSibling</var>, and an optional boolean
+<dfn for="queue a tree mutation record"><var>parseEnd</var></dfn> (default false):
 
 <ol>
- <li><p><a for=/>Assert</a>: either <var>addedNodes</var> or <var>removedNodes</var>
- <a for=set>is not empty</a>.
+ <li><p><a for=/>Assert</a>: <var>addedNodes</var> <a for=list>is not empty</a>,
+ <var>removedNodes</var> <a for=list>is not empty</a>, or <var>parseEnd</var> is true.
 
  <li><p><a>Queue a mutation record</a> of "<code>childList</code>" for <var>target</var> with
  null, null, null, <var>addedNodes</var>, <var>removedNodes</var>, <var>previousSibling</var>,
- and <var>nextSibling</var>.
+ <var>nextSibling</var>, and <a for="queue a mutation record"><i>parseEnd</i></a> set to
+ <var>parseEnd</var>.
 </ol>
+</div>
+
+<div algorithm>
+<p>To <dfn export>signal parse end</dfn> for an {{Element}} or {{ShadowRoot}} <var>target</var>:
+
+<ol>
+ <li><p><a>Queue a tree mutation record</a> for <var>target</var> with « », « »,
+ <var>target</var>'s <a for=tree>last child</a>, null, and
+ <a for="queue a tree mutation record"><i>parseEnd</i></a> set to true.
+</ol>
+
+<p class=note>Unlike ordinary "<code>childList</code>" records, a record queued at parse end has
+empty {{MutationRecord/addedNodes}} and {{MutationRecord/removedNodes}}, while its
+{{MutationRecord/previousSibling}} is non-null whenever <var>target</var> has <a
+for=tree>children</a>.
 </div>
 
 
@@ -4481,7 +4526,7 @@ interface MutationRecord {
  {{CharacterData}} <a for=/>node</a>. And
  "<code>childList</code>" if it was a mutation to the
  <a>tree</a> of
- <a for=/>nodes</a>.
+ <a for=/>nodes</a> (or the end of parsing when {{MutationObserverInit/parseEndChildList}} is true).
 
  <dt><code><var>record</var> . {{MutationRecord/target}}</code>
  <dd>Returns the <a for=/>node</a> the mutation
@@ -4492,7 +4537,7 @@ interface MutationRecord {
  "<code>characterData</code>", it is the {{CharacterData}}
  <a for=/>node</a>. For "<code>childList</code>",
  it is the <a for=/>node</a> whose
- <a for=tree>children</a> changed.
+ <a for=tree>children</a> changed (or that finished parsing).
 
  <dt><code><var>record</var> . {{MutationRecord/addedNodes}}</code>
  <dt><code><var>record</var> . {{MutationRecord/removedNodes}}</code>
@@ -4502,7 +4547,10 @@ interface MutationRecord {
  <dt><code><var>record</var> . {{MutationRecord/previousSibling}}</code>
  <dt><code><var>record</var> . {{MutationRecord/nextSibling}}</code>
  <dd>Return the <a lt="previous sibling">previous</a> and <a for=tree>next sibling</a> respectively
- of the added or removed <a for=/>nodes</a>; otherwise null.
+ of the added or removed <a for=/>nodes</a>; otherwise null. If <var>record</var> was queued at the
+ end of parsing (via {{MutationObserverInit/parseEndChildList}}) with no added or removed
+ <a for=/>nodes</a>, {{MutationRecord/previousSibling}} returns <var>record</var>'s
+ {{MutationRecord/target}}'s <a for=tree>last child</a>.
 
  <dt><code><var>record</var> . {{MutationRecord/attributeName}}</code>
  <dd>Returns the <a for=Attr>local name</a> of the changed <a>attribute</a>; otherwise null.
