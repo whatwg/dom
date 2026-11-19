@@ -4232,9 +4232,10 @@ dictionary MutationObserverInit {
    <dd>Set to true if a "<code>childList</code>" {{MutationRecord}} (with empty
    {{MutationRecord/addedNodes}} and {{MutationRecord/removedNodes}}, and
    {{MutationRecord/previousSibling}} set to <var>target</var>'s <a for=tree>last child</a>) is to
-   be queued when an {{Element}} or {{ShadowRoot}} <var>target</var> finishes parsing, unless a
+   be queued when an {{Element}} or {{ShadowRoot}} <var>target</var> finishes parsing (not its
+   <a for=tree>descendants</a>, even if {{MutationObserverInit/subtree}} is true), unless a
    "<code>childList</code>" record is already queued for <var>target</var>. Requires
-   {{MutationObserverInit/childList}} to be true and {{MutationObserverInit/subtree}} to be false.
+   {{MutationObserverInit/childList}} to be true.
   </dl>
 
  <dt><code><var>observer</var> . {{disconnect()}}</code>
@@ -4294,9 +4295,8 @@ method steps are:
  <var>options</var>["{{MutationObserverInit/characterData}}"] is false, then <a>throw</a> a
  <code>TypeError</code>.
 
- <li><p>If <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is true and either
- <var>options</var>["{{MutationObserverInit/childList}}"] is false or
- <var>options</var>["{{MutationObserverInit/subtree}}"] is true, then <a>throw</a> a
+ <li><p>If <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is true and
+ <var>options</var>["{{MutationObserverInit/childList}}"] is false, then <a>throw</a> a
  <code>TypeError</code>.
 
  <li>
@@ -4412,6 +4412,11 @@ method steps are:
      <li><var>type</var> is "<code>childList</code>" and
      <var>options</var>["{{MutationObserverInit/childList}}"] is false
 
+     <li><var>parseEnd</var> is true and <var>node</var> is not <var>target</var>
+
+     <li><var>parseEnd</var> is true and <var>registered</var> is a
+     <a>transient registered observer</a>
+
      <li><var>parseEnd</var> is true and
      <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is false
 
@@ -4426,8 +4431,9 @@ method steps are:
     <ol>
      <li><p><a for=/>Assert</a>: if <var>type</var> is "<code>childList</code>",
      <var>addedNodes</var> <a for=list>is empty</a>, and <var>removedNodes</var>
-     <a for=list>is empty</a>, then <var>options</var>["{{MutationObserverInit/parseEndChildList}}"]
-     is true.
+     <a for=list>is empty</a>, then <var>node</var> is <var>target</var>, <var>registered</var> is
+     not a <a>transient registered observer</a>, and
+     <var>options</var>["{{MutationObserverInit/parseEndChildList}}"] is true.
 
      <li><p>Let <var>mo</var> be <var>registered</var>'s <a for="registered observer">observer</a>.
 
