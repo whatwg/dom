@@ -4170,8 +4170,8 @@ dictionary MutationObserverInit {
  <dd>Constructs a {{MutationObserver}} object and sets its <a for=MutationObserver>callback</a> to
  <var>callback</var>. The <var>callback</var> is invoked with a list of {{MutationRecord}} objects
  as first argument and the constructed {{MutationObserver}} object as second argument. It is
- invoked after <a for=/>nodes</a> registered with the {{MutationObserver/observe()}} method, are
- mutated.
+ invoked after <a for=/>nodes</a> registered with the {{MutationObserver/observe()}} method are
+ mutated (or finish parsing, when {{MutationObserverInit/parseEndChildList}} is true).
 
  <dt><code><var>observer</var> . {{observe(target, options)}}</code>
  <dd>
@@ -4229,12 +4229,12 @@ dictionary MutationObserverInit {
    or omitted.
 
    <dt>{{MutationObserverInit/parseEndChildList}}
-   <dd>Set to true if a "<code>childList</code>" {{MutationRecord}} (with empty
+   <dd>Set to true if a "<code>childList</code>" {{MutationRecord}} object (with empty
    {{MutationRecord/addedNodes}} and {{MutationRecord/removedNodes}}, and
    {{MutationRecord/previousSibling}} set to <var>target</var>'s <a for=tree>last child</a>) is to
-   be queued when an {{Element}} or {{ShadowRoot}} <var>target</var> finishes parsing (not its
-   <a for=tree>descendants</a>, even if {{MutationObserverInit/subtree}} is true), unless a
-   "<code>childList</code>" record is already queued for <var>target</var>. Requires
+   be queued when an <a for=/>element</a> or <a for=/>shadow root</a> <var>target</var> finishes
+   parsing (not its <a for=tree>descendants</a>, even if {{MutationObserverInit/subtree}} is true),
+   unless a "<code>childList</code>" record is already queued for <var>target</var>. Requires
    {{MutationObserverInit/childList}} to be true.
   </dl>
 
@@ -4422,7 +4422,7 @@ method steps are:
 
      <li><var>parseEnd</var> is true and <var>registered</var>'s
      <a for="registered observer">observer</a>'s <a for=MutationObserver>record queue</a>
-     <a for=list>contains</a> a {{MutationRecord}} whose {{MutationRecord/type}} is
+     <a for=list>contains</a> a {{MutationRecord}} object whose {{MutationRecord/type}} is
      "<code>childList</code>" and whose {{MutationRecord/target}} is <var>target</var>
     </ul>
 
@@ -4492,7 +4492,8 @@ method steps are:
 </div>
 
 <div algorithm>
-<p>To <dfn export>signal parse end</dfn> for an {{Element}} or {{ShadowRoot}} <var>target</var>:
+<p>To <dfn export>signal parse end</dfn> for an <a for=/>element</a> or <a for=/>shadow root</a>
+<var>target</var>:
 
 <ol>
  <li><p><a>Queue a tree mutation record</a> for <var>target</var> with « », « »,
@@ -4502,8 +4503,8 @@ method steps are:
 
 <p class=note>Unlike ordinary "<code>childList</code>" records, a record queued at parse end has
 empty {{MutationRecord/addedNodes}} and {{MutationRecord/removedNodes}}, while its
-{{MutationRecord/previousSibling}} is non-null whenever <var>target</var> has <a
-for=tree>children</a>.
+{{MutationRecord/previousSibling}} is non-null whenever <var>target</var> has
+<a for=tree>children</a>.
 </div>
 
 
