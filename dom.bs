@@ -5045,9 +5045,11 @@ and <{template}>. SVG ought to do the same for its <{script}> elements, but does
 and an optional <a for=/>document</a> <dfn export for="clone a node"><var>document</var></dfn>
 (default <var>node</var>'s <a for=Node>node document</a>), boolean
 <dfn export for="clone a node"><var>subtree</var></dfn> (default false), <a for=/>node</a>-or-null
-<dfn export for="clone a node"><var>parent</var></dfn> (default null), and null or a
+<dfn export for="clone a node"><var>parent</var></dfn> (default null), null or a
 {{CustomElementRegistry}} object <dfn export for="clone a node"><var>fallbackRegistry</var></dfn>
-(default null):
+(default null), and null or an algorithm
+<dfn export for="clone a node"><var>excludeDescendant</var></dfn> that takes a <a for=/>node</a> and
+returns a boolean (default null):
 
 <ol>
  <li><p><a for=/>Assert</a>: <var>node</var> is not a <a for=/>document</a> or <var>node</var> is
@@ -5063,12 +5065,10 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
  <li><p>If <var>parent</var> is non-null, then <a for=/>append</a> <var>copy</var> to
  <var>parent</var>.
 
- <li><p>If <var>subtree</var> is true, then for each <var>child</var> of <var>node</var>'s
- <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
- <a for="clone a node"><i>document</i></a> set to <var>document</var>,
- <a for="clone a node"><i>subtree</i></a> set to <var>subtree</var>,
- <a for="clone a node"><i>parent</i></a> set to <var>copy</var>, and
- <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>.
+ <li><p>If <var>subtree</var> is true, then <a>clone the children</a> of <var>node</var> into
+ <var>copy</var> with <a for="clone the children"><i>document</i></a> set to <var>document</var>,
+ <a for="clone the children"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>, and
+ <a for="clone the children"><i>excludeDescendant</i></a> set to <var>excludeDescendant</var>.
 
  <li>
   <p>If <var>node</var> is an <a for=/>element</a>, <var>node</var> is a
@@ -5100,17 +5100,44 @@ and an optional <a for=/>document</a> <dfn export for="clone a node"><var>docume
    <a for=Element>shadow root</a>'s <a for=ShadowRoot>keep custom element registry null</a>.
 
    <li>
-    <p>For each <var>child</var> of <var>node</var>'s <a for=Element>shadow root</a>'s
-    <a for=tree>children</a>, in <a>tree order</a>: <a>clone a node</a> given <var>child</var> with
-    <a for="clone a node"><i>document</i></a> set to <var>document</var>,
-    <a for="clone a node"><i>subtree</i></a> set to true, and
-    <a for="clone a node"><i>parent</i></a> set to <var>copy</var>'s <a for=Element>shadow root</a>.
+    <p><a>Clone the children</a> of <var>node</var>'s <a for=Element>shadow root</a> into
+    <var>copy</var>'s <a for=Element>shadow root</a> with
+    <a for="clone the children"><i>document</i></a> set to <var>document</var> and
+    <a for="clone the children"><i>excludeDescendant</i></a> set to <var>excludeDescendant</var>.
 
     <p class="note">This intentionally does not pass the
-    <a for="clone a node"><i>fallbackRegistry</i></a> argument.
+    <a for="clone the children"><i>fallbackRegistry</i></a> argument.
   </ol>
 
  <li><p>Return <var>copy</var>.
+</ol>
+</div>
+
+<div algorithm="clone the children">
+<p>To <dfn>clone the children</dfn> of a <a for=/>node</a> <var>node</var> into a
+<a for=/>node</a> <var>parent</var>, given an optional <a for=/>document</a>
+<dfn for="clone the children"><var>document</var></dfn> (default <var>node</var>'s
+<a for=Node>node document</a>), null or a {{CustomElementRegistry}} object
+<dfn for="clone the children"><var>fallbackRegistry</var></dfn> (default null), and null or
+an algorithm <dfn for="clone the children"><var>excludeDescendant</var></dfn> that takes a
+<a for=/>node</a> and returns a boolean (default null):
+
+<ol>
+ <li>
+  <p>For each <var>child</var> of <var>node</var>'s <a for=tree>children</a>, in
+  <a>tree order</a>:
+
+  <ol>
+   <li><p>If <var>excludeDescendant</var> is non-null and <var>excludeDescendant</var> given
+   <var>child</var> returns true, then <a for=iteration>continue</a>.
+
+   <li><p><a>Clone a node</a> given <var>child</var> with
+   <a for="clone a node"><i>document</i></a> set to <var>document</var>,
+   <a for="clone a node"><i>subtree</i></a> set to true,
+   <a for="clone a node"><i>parent</i></a> set to <var>parent</var>,
+   <a for="clone a node"><i>fallbackRegistry</i></a> set to <var>fallbackRegistry</var>, and
+   <a for="clone a node"><i>excludeDescendant</i></a> set to <var>excludeDescendant</var>.
+  </ol>
 </ol>
 </div>
 
