@@ -2267,6 +2267,11 @@ the following:
  object and do so in a manner that does not lead to clashes with other observers.
 </ul>
 
+<p class=note>When a method accepts a signal together with other arguments, always validate those
+arguments first and then check if the signal [=AbortSignal/aborted|was aborted=] last. If an
+argument is invalid, or [=exception/throws=] when getting, [=reject=] the promise with that error,
+even when the signal is [=AbortSignal/aborted|already aborted=].
+
 <div class=example id=aborting-ongoing-activities-spec-example>
  <p>The method steps for a promise-returning method <code>doAmazingness(<var>options</var>)</code>
  could be as follows:
@@ -2275,6 +2280,14 @@ the following:
   <li><p>Let |global| be [=this=]'s [=relevant global object=].
 
   <li><p>Let |p| be [=a new promise=].
+
+  <li><p>Let |json| be the result of [=serialize a JavaScript value to a JSON string|serializing=]
+  |options|["<code>data</code>"] to JSON.
+
+  <li><p>If |json| is an [=exception=], then [=reject=] |p| with |json| and return |p|.
+
+  <li><p>If |json|'s [=string/length=] is greater than 1024, then [=reject=] |p| with a
+  {{TypeError}} and return |p|.
 
   <li>
    <p>If |options|["<code>signal</code>"] <a for=map>exists</a>:
@@ -2299,7 +2312,7 @@ the following:
    <p>Run these steps [=in parallel=]:
 
    <ol>
-    <li><p>Let |amazingResult| be the result of doing some amazing things.
+    <li><p>Let |amazingResult| be the result of doing some amazing things with |json|.
 
     <li><p>[=Queue a global task=] on the amazing task source given |global| to [=/resolve=] |p|
     with |amazingResult|.
@@ -2307,6 +2320,10 @@ the following:
 
   <li><p>Return |p|.
  </ol>
+
+ <p class=note>The signal check comes after the validation on purpose. Serializing
+ |options|["<code>data</code>"] can run page script, such as a <code>toJSON()</code> method, and
+ that script can abort the signal.
 </div>
 
 <p>APIs not using promises should still adhere to the above as much as possible.
